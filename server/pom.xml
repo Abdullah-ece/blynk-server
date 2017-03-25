@@ -25,6 +25,7 @@
         <module>tcp-hardware-server</module>
 
         <module>launcher</module>
+        <module>../dashboard</module>
         <module>redis-client</module>
         <module>tools</module>
     </modules>
