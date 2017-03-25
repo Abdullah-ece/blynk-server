@@ -1,0 +1,44 @@
+const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  context: path.resolve(__dirname, './src'),
+  entry: {
+    app: './js/app.js',
+    login: './js/login.js',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: [/node_modules/],
+        use: [{
+          loader: 'babel-loader',
+          options: { presets: ['es2015', 'react'] }
+        }],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.less$/,
+        use: [{
+            loader: "style-loader" // creates style nodes from JS strings
+        }, {
+            loader: "css-loader" // translates CSS into CommonJS
+        }, {
+            loader: "less-loader" // compiles Less to CSS
+        }]
+      }
+    ],
+  },
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    filename: '[name].bundle.js',
+    publicPath: '/',
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, './src'),
+  },
+};
