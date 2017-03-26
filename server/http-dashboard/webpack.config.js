@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  context: path.resolve(__dirname, './src'),
+  context: path.resolve(__dirname, './src/main/webapp'),
   entry: {
     app: './js/app.js',
     login: './js/login.js',
@@ -34,11 +34,11 @@ module.exports = {
     ],
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './target/dist'),
     filename: '[name].bundle.js',
     publicPath: '/',
   },
   devServer: {
-    contentBase: path.resolve(__dirname, './src'),
+    contentBase: path.resolve(__dirname, './src/main/webapp'),
   },
 };

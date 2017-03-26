@@ -20,12 +20,12 @@
         <module>http-core</module>
         <module>http-admin</module>
         <module>http-api</module>
+        <module>http-dashboard</module>
 
         <module>tcp-app-server</module>
         <module>tcp-hardware-server</module>
 
         <module>launcher</module>
-        <module>../dashboard</module>
         <module>redis-client</module>
         <module>tools</module>
     </modules>
