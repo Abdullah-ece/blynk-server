@@ -31,6 +31,7 @@ If you need more information, please follow these links:
 - [App and sketch changes for Local Server](https://github.com/blynkkk/blynk-server#app-and-sketch-changes)
 - [Advanced local server setup](https://github.com/blynkkk/blynk-server#advanced-local-server-setup)
 - [Administration UI](https://github.com/blynkkk/blynk-server#administration-ui)
+- [Dashboard UI](https://github.com/blynkkk/blynk-server#dashboard-ui)
 - [HTTP/S RESTful API](https://github.com/blynkkk/blynk-server#https-restful)
 - [Enabling mail on Local server](https://github.com/blynkkk/blynk-server#enabling-mail-on-local-server)
 - [Enabling sms on local server](https://github.com/blynkkk/blynk-server#enabling-sms-on-local-server)
@@ -403,6 +404,29 @@ administration page available from any other computer. Please restrict access to
         chrome://flags/#allow-insecure-localhost
 
 - You should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
+ 
+## Dashboard UI
+
+Blynk server provides dashboard. It **should be** *(in progress)* accessible by this URL:
+
+        https://your_ip:9443/dashboard
+
+In order to work on dashboard UI install the following:
+- [node](https://nodejs.org/en/download/)
+- [yarn](https://yarnpkg.com/lang/en/docs/install/)
+- [webpack](https://webpack.js.org/guides/installation/)
+
+For the first time and every time new library is added run:
+
+    yarn istall
+    
+In order to start development server run the following:
+
+    webpack-dev-server
+      
+Open the following url in your browser(port may vary, check your console):
+
+    http://localhost:8080/index.html
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
