@@ -60,6 +60,9 @@
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>--optimize-minimize</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
