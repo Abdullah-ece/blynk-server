@@ -42,9 +42,9 @@ import static org.junit.Assert.*;
  */
 public class DBManagerTest {
 
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
-    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     @BeforeClass
     public static void init() throws Exception {

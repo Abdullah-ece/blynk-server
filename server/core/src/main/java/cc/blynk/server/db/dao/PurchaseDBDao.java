@@ -24,6 +24,13 @@ public class PurchaseDBDao {
         this.ds = ds;
     }
 
+    private static void insert(PreparedStatement ps, Purchase purchase) throws Exception {
+        ps.setString(1, purchase.email);
+        ps.setInt(2, purchase.reward);
+        ps.setString(3, purchase.transactionId);
+        ps.setDouble(4, purchase.price);
+    }
+
     public void insertPurchase(Purchase purchase) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertPurchase)) {
@@ -35,12 +42,5 @@ public class PurchaseDBDao {
         } catch (Throwable e) {
             log.error("Error inserting purchase data in DB.", e);
         }
-    }
-
-    private static void insert(PreparedStatement ps, Purchase purchase) throws Exception {
-        ps.setString(1, purchase.email);
-        ps.setInt(2, purchase.reward);
-        ps.setString(3, purchase.transactionId);
-        ps.setDouble(4, purchase.price);
     }
 }

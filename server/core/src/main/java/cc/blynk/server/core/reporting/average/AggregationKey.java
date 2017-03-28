@@ -12,8 +12,6 @@ import java.util.Comparator;
  */
 public final class AggregationKey implements Serializable {
 
-    public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
-
     public final String email;
     public final String appName;
     public final int dashId;
@@ -21,6 +19,7 @@ public final class AggregationKey implements Serializable {
     public final char pinType;
     public final byte pin;
     public final long ts;
+    public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
     public AggregationKey(String email, String appName, int dashId, int deviceId, char pinType, byte pin, long ts) {
         this.email = email;

@@ -41,9 +41,9 @@ import static org.mockito.Mockito.verify;
 @Ignore("ignored cause requires token to work properly")
 public class FacebookLoginTest extends IntegrationBase {
 
+    private final String facebookAuthToken = "";
     private BaseServer appServer;
     private BaseServer hardwareServer;
-    private final String facebookAuthToken = "";
 
     @Before
     public void init() throws Exception {

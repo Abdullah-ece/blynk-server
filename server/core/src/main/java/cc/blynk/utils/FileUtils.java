@@ -19,6 +19,7 @@ import java.nio.file.*;
 public class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
+    private static final int SIZE_OF_REPORT_ENTRY = 16;
 
     public static void deleteQuietly(Path path) {
         try {
@@ -56,8 +57,6 @@ public class FileUtils {
             dos.flush();
         }
     }
-
-    private static final int SIZE_OF_REPORT_ENTRY = 16;
 
     /**
      * Read bunch of last records from file.

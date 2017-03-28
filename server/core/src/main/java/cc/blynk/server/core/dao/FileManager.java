@@ -37,14 +37,12 @@ import static java.util.function.Function.identity;
 public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
-
+    private static final String DELETED_DATA_DIR_NAME = "deleted";
+    private static final String BACKUP_DATA_DIR_NAME = "backup";
     /**
      * Folder where all user profiles are stored locally.
      */
     private Path dataDir;
-
-    private static final String DELETED_DATA_DIR_NAME = "deleted";
-    private static final String BACKUP_DATA_DIR_NAME = "backup";
     private Path deletedDataDir;
     private Path backupDataDir;
 
@@ -81,6 +79,34 @@ public class FileManager {
             throw new RuntimeException("Error creating data folder '" + dataDir + "'");
         }
         return dataDir;
+    }
+
+    public static void migrateOldProfile(User user) {
+        if (user.email == null) {
+            user.email = user.name;
+        }
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            final Integer dashId = dashBoard.id;
+            if (user.dashTokens != null) {
+                String token = user.dashTokens.get(dashId);
+                if (token != null && !token.isEmpty()) {
+                    dashBoard.devices = new Device[]{
+                            new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
+                    };
+                    user.dashTokens.remove(dashId);
+                }
+            }
+
+            if (dashBoard.devices != null) {
+                for (Device device : dashBoard.devices) {
+                    device.status = null;
+                }
+            }
+
+            for (Widget widget : dashBoard.widgets) {
+                dashBoard.cleanPinStorage(widget);
+            }
+        }
     }
 
     public Path getDataDir() {
@@ -156,34 +182,6 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return new ConcurrentHashMap<>();
-    }
-
-    public static void migrateOldProfile(User user) {
-        if (user.email == null) {
-            user.email = user.name;
-        }
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            final Integer dashId = dashBoard.id;
-            if (user.dashTokens != null) {
-                String token = user.dashTokens.get(dashId);
-                if (token != null && !token.isEmpty()) {
-                    dashBoard.devices = new Device[]{
-                            new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
-                    };
-                    user.dashTokens.remove(dashId);
-                }
-            }
-
-            if (dashBoard.devices != null) {
-                for (Device device : dashBoard.devices) {
-                    device.status = null;
-                }
-            }
-
-            for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget);
-            }
-        }
     }
 
     public Map<String, Integer> getUserProfilesSize() {

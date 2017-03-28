@@ -40,6 +40,16 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         this.serverProperties = holder.props;
     }
 
+    private static Properties readPropertiesFromString(String propertiesAsString) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new StringReader(propertiesAsString));
+        } catch (IOException e) {
+            log.error("Error reading properties as string. {}", e.getMessage());
+        }
+        return properties;
+    }
+
     @GET
     @Path("")
     public Response getConfigs(@QueryParam("_filters") String filterParam,
@@ -74,7 +84,6 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         }
     }
 
-
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{name}")
@@ -95,16 +104,6 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         }
 
         return ok(updatedConfig.toString());
-    }
-
-    private static Properties readPropertiesFromString(String propertiesAsString) {
-        Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(propertiesAsString));
-        } catch (IOException e) {
-            log.error("Error reading properties as string. {}", e.getMessage());
-        }
-        return properties;
     }
 
     /**

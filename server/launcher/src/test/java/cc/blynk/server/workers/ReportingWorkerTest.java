@@ -56,6 +56,17 @@ public class ReportingWorkerTest {
 
     private BlockingIOProcessor blockingIOProcessor;
 
+    private static void createReportingFolder(String reportingFolder, String email) {
+        Path reportingPath = Paths.get(reportingFolder, email);
+        if (Files.notExists(reportingPath)) {
+            try {
+                Files.createDirectories(reportingPath);
+            } catch (IOException ioe) {
+                DefaultExceptionHandler.log.error("Error creating report folder. {}", reportingPath);
+            }
+        }
+    }
+
     @Before
     public void cleanup() throws IOException {
         blockingIOProcessor = new BlockingIOProcessor(1, 1, null);
@@ -68,17 +79,6 @@ public class ReportingWorkerTest {
         createReportingFolder(reportingFolder, "test2");
 
         reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, properties);
-    }
-
-    private static void createReportingFolder(String reportingFolder, String email) {
-        Path reportingPath = Paths.get(reportingFolder, email);
-        if (Files.notExists(reportingPath)) {
-            try {
-                Files.createDirectories(reportingPath);
-            } catch (IOException ioe) {
-                DefaultExceptionHandler.log.error("Error creating report folder. {}", reportingPath);
-            }
-        }
     }
 
     @Test

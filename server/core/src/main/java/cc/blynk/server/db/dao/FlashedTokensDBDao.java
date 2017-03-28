@@ -27,6 +27,12 @@ public class FlashedTokensDBDao {
         this.ds = ds;
     }
 
+    private static void insert(PreparedStatement ps, FlashedToken flashedToken) throws Exception {
+        ps.setString(1, flashedToken.token);
+        ps.setString(2, flashedToken.appName);
+        ps.setInt(3, flashedToken.deviceId);
+    }
+
     public FlashedToken selectFlashedToken(String token, String appName) {
         log.info("Select flashed {}, app {}", token, appName);
 
@@ -86,11 +92,5 @@ public class FlashedTokensDBDao {
             ps.executeBatch();
             connection.commit();
         }
-    }
-
-    private static void insert(PreparedStatement ps, FlashedToken flashedToken) throws Exception {
-        ps.setString(1, flashedToken.token);
-        ps.setString(2, flashedToken.appName);
-        ps.setInt(3, flashedToken.deviceId);
     }
 }

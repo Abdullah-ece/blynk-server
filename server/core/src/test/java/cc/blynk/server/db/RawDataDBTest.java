@@ -25,9 +25,9 @@ import static org.junit.Assert.*;
  */
 public class RawDataDBTest {
 
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
-    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private static User user;
 
     @BeforeClass

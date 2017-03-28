@@ -28,6 +28,12 @@ public class RedeemDBDao {
         this.ds = ds;
     }
 
+    private static void insert(PreparedStatement ps, Redeem redeem) throws Exception {
+        ps.setString(1, redeem.token);
+        ps.setString(2, redeem.company);
+        ps.setInt(3, redeem.reward);
+    }
+
     public Redeem selectRedeemByToken(String token) throws Exception {
         log.info("Redeem select for {}", token);
 
@@ -81,11 +87,5 @@ public class RedeemDBDao {
         } catch (Exception e) {
             log.error("Error inserting redeems data in DB.", e);
         }
-    }
-
-    private static void insert(PreparedStatement ps, Redeem redeem) throws Exception {
-        ps.setString(1, redeem.token);
-        ps.setString(2, redeem.company);
-        ps.setInt(3, redeem.reward);
     }
 }

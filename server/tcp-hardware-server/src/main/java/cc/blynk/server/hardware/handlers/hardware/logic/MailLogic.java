@@ -30,11 +30,10 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class MailLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(MailLogic.class);
-
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final MailWrapper mailWrapper;
     private static final int EMAIL_DAY_LIMIT = 100;
     private static final int MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final MailWrapper mailWrapper;
 
     public MailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);

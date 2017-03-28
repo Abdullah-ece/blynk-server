@@ -142,10 +142,6 @@ public class StatsLogic extends CookiesBaseHttpHandler {
         return ok(sort(searchByIP(filterParam), sortField, sortOrder));
     }
 
-    private static class IpFilter {
-        public String ip;
-    }
-
     public List<IpNameResponse> searchByIP(String ip) {
         List<IpNameResponse> res = new ArrayList<>();
 
@@ -181,6 +177,10 @@ public class StatsLogic extends CookiesBaseHttpHandler {
             }
         }
         return false;
+    }
+
+    private static class IpFilter {
+        public String ip;
     }
 
 

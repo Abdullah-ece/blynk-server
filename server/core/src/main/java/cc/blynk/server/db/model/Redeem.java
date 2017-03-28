@@ -24,13 +24,6 @@ public class Redeem {
 
     public Date ts;
 
-    public String formatToken() {
-        return new StringJoiner("+")
-                .add(company)
-                .add(String.valueOf(reward))
-                .add(token).toString();
-    }
-
     public Redeem() {
         this.isRedeemed = false;
         this.version = 1;
@@ -51,5 +44,12 @@ public class Redeem {
         this.reward = reward;
         this.version = version;
         this.ts = ts;
+    }
+
+    public String formatToken() {
+        return new StringJoiner("+")
+                .add(company)
+                .add(String.valueOf(reward))
+                .add(token).toString();
     }
 }

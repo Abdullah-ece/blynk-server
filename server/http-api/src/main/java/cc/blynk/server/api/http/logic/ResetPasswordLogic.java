@@ -33,15 +33,13 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class ResetPasswordLogic extends BaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
-
+    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
     private final UserDao userDao;
     private final TokensPool tokensPool;
     private final String emailBody;
     private final MailWrapper mailWrapper;
     private final String resetPassUrl;
     private final String pageContent;
-
-    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
 
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");
