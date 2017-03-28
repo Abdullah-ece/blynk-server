@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 
-import static cc.blynk.core.http.Response.redirect;
+import static cc.blynk.core.http.Response.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
 
 /**
@@ -34,8 +34,8 @@ public class AuthHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
 
-    public AuthHandler(Holder holder, String adminRootPath) {
-        super(holder, adminRootPath);
+    public AuthHandler(Holder holder, String rootPath) {
+        super(holder, rootPath);
         this.userDao = holder.userDao;
     }
 
@@ -52,20 +52,23 @@ public class AuthHandler extends BaseHttpHandler {
                           @FormParam("password") String password) {
 
         if (email == null || password == null) {
-            return redirect(rootPath);
+            log.error("Empty email or password field.");
+            return unauthorized();
         }
 
         User user = userDao.getByName(email, AppName.BLYNK);
 
-        if (user == null || !user.isSuperAdmin) {
-            return redirect(rootPath);
+        if (user == null) {
+            log.error("User not found.");
+            return unauthorized();
         }
 
         if (!password.equals(user.pass)) {
-            return redirect(rootPath);
+            log.error("Wrong password for {}", user.name);
+            return unauthorized();
         }
 
-        Response response = redirect(rootPath);
+        Response response = ok();
 
         Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));

@@ -58,7 +58,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
     private final AuthHandler authHandler;
-    private final  CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
+    private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
         this.stats = holder.stats;
@@ -79,7 +79,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
         this.authHandler = new AuthHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
+        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/index.html", "/static/index.html");
     }
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {

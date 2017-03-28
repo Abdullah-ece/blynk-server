@@ -33,12 +33,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class StaticFileHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
-
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
-
+    private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
     /**
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
      */
@@ -245,14 +243,14 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     }
 
     private Path getPathForLocalRun(String uri) {
-        Path path = Paths.get("./server/http-admin/target/classes", uri);
+        Path path = Paths.get("./server/http-dashboard/target/classes", uri);
 
         if (Files.exists(path)) {
             return path;
         }
 
         //path for integration tests
-        path = Paths.get("../server/http-admin/target/classes" , uri);
+        path = Paths.get("../server/http-dashboard/target/classes" , uri);
 
         if (Files.exists(path)) {
             return path;

@@ -30,7 +30,7 @@ public class Response extends DefaultFullHttpResponse {
     private static final String PLAIN_TEXT = "text/plain;charset=utf-8";
 
     public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
-        super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
+        super(version, status, (content == null || content.isEmpty() ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
         fillHeaders(contentType);
     }
 
@@ -39,21 +39,10 @@ public class Response extends DefaultFullHttpResponse {
         fillHeaders(contentType);
     }
 
-    private void fillHeaders(String contentType) {
-        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        headers().set(CONTENT_TYPE, contentType);
-        headers().set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers().set(CONTENT_LENGTH, content().readableBytes());
-    }
-
     public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
         headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_LENGTH, 0);
-    }
-    
-    public static Response ok() {
-        return new Response(HTTP_1_1, OK);
     }
 
     public static Response notFound() {
@@ -75,6 +64,10 @@ public class Response extends DefaultFullHttpResponse {
         return response;
     }
 
+    public static Response unauthorized() {
+        return new Response(HTTP_1_1, UNAUTHORIZED);
+    }
+
     public static Response redirect(String url) {
         Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
         response.headers().set(LOCATION, url);
@@ -94,6 +87,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, INTERNAL_SERVER_ERROR, message, PLAIN_TEXT);
     }
 
+    public static Response ok() {
+        return new Response(HTTP_1_1, OK, "", JSON);
+    }
+
     public static Response ok(String data) {
         return new Response(HTTP_1_1, OK, data, JSON);
     }
@@ -105,7 +102,6 @@ public class Response extends DefaultFullHttpResponse {
     public static Response ok(byte[] data, String contentType) {
         return new Response(HTTP_1_1, OK, data, contentType);
     }
-
 
     public static Response ok(boolean bool) {
         return new Response(HTTP_1_1, OK, String.valueOf(bool), JSON);
@@ -137,5 +133,12 @@ public class Response extends DefaultFullHttpResponse {
     public static Response appendTotalCountHeader(Response response, int count) {
         response.headers().set("X-Total-Count", count);
         return response;
+    }
+
+    private void fillHeaders(String contentType) {
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        headers().set(CONTENT_TYPE, contentType);
+        headers().set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 }
