@@ -68,7 +68,7 @@ public class AuthHandler extends BaseHttpHandler {
             return unauthorized();
         }
 
-        Response response = ok();
+        Response response = ok(user);
 
         Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));

@@ -217,6 +217,10 @@ public class HttpsAdminServerTest extends BaseTest {
             Header cookieHeader = response.getFirstHeader("set-cookie");
             assertNotNull(cookieHeader);
             assertTrue(cookieHeader.getValue().startsWith("session="));
+            User user = JsonParser.parseUserFromString(consumeText(response));
+            assertNotNull(user);
+            assertEquals("admin@blynk.cc", user.name);
+            assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
         }
     }
 
