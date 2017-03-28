@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 
+process.noDeprecation = true
+
 module.exports = {
   context: path.resolve(__dirname, './src/main/webapp'),
   entry: {
