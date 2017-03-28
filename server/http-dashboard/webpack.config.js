@@ -7,7 +7,7 @@ module.exports = {
   context: path.resolve(__dirname, './src/main/webapp'),
   entry: {
     app: './js/app.js',
-    login: './js/login.js',
+    login: './js/test.js',
   },
   module: {
     rules: [
