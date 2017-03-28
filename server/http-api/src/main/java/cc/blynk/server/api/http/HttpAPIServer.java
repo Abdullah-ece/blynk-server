@@ -16,13 +16,13 @@ import io.netty.handler.codec.http.HttpServerCodec;
  */
 public class HttpAPIServer extends BaseServer {
 
-    private final ChannelInitializer<SocketChannel> channelInitializer;
     public static final String WEBSOCKET_PATH = "/websocket";
+    private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpAPIServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
+        String adminRootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
         HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
 

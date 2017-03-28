@@ -23,7 +23,7 @@ public class HttpsAPIServer extends BaseServer {
     public HttpsAPIServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
+        String adminRootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),

@@ -27,16 +27,22 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  */
 @Path("")
 @ChannelHandler.Sharable
-public class AdminAuthHandler extends BaseHttpHandler {
+public class AuthHandler extends BaseHttpHandler {
 
     //1 month
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
     private final UserDao userDao;
 
-    public AdminAuthHandler(Holder holder, String adminRootPath) {
+    public AuthHandler(Holder holder, String adminRootPath) {
         super(holder, adminRootPath);
         this.userDao = holder.userDao;
+    }
+
+    private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
+        DefaultCookie cookie = new DefaultCookie(SessionDao.SESSION_COOKIE, sessionId);
+        cookie.setMaxAge(maxAge);
+        return cookie;
     }
 
     @POST
@@ -74,12 +80,6 @@ public class AdminAuthHandler extends BaseHttpHandler {
         Cookie cookie = makeDefaultSessionCookie("", 0);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
         return response;
-    }
-
-    private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
-        DefaultCookie cookie = new DefaultCookie(SessionDao.SESSION_COOKIE, sessionId);
-        cookie.setMaxAge(maxAge);
-        return cookie;
     }
 
 }
