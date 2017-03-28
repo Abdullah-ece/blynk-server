@@ -34,9 +34,9 @@ module.exports = {
     ],
   },
   output: {
-    path: path.resolve(__dirname, './target/dist'),
+    path: path.resolve(__dirname, './src/main/resources/static'),
     filename: '[name].bundle.js',
-    publicPath: '/',
+    publicPath: '/static/',
   },
   devServer: {
     contentBase: path.resolve(__dirname, './src/main/webapp'),

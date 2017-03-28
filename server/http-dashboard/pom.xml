@@ -78,9 +78,6 @@
                             <outputDirectory>${basedir}/src/main/resources/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>./target/dist</directory>
-                                </resource>
-                                <resource>
                                     <directory>./src/main/webapp</directory>
                                     <includes>
                                         <include>**/*.html</include>

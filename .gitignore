@@ -6,3 +6,4 @@ target
 dist
 node
 node_modules
+server/http-dashboard/src/main/resources/static
