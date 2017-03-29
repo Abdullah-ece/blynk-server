@@ -1,0 +1,4 @@
+Hello, {name}.
+
+You was invited as {role} to {product_name}. Please follow this {link}.
+

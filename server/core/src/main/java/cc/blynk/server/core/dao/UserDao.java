@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
@@ -64,7 +65,7 @@ public class UserDao {
 
     public boolean isSuperAdminExists() {
         for (User user : users.values()) {
-            if (user.isSuperAdmin) {
+            if (user.role == Role.SUPER_ADMIN) {
                 return true;
             }
         }
@@ -251,20 +252,20 @@ public class UserDao {
 
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
-        User newUser = new User(email, null, appName, region, true, false);
+        User newUser = new User(email, null, appName, region, true, Role.STAFF);
         users.put(new UserKey(email, appName), newUser);
         return newUser;
     }
 
     public void add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, false);
+        User newUser = new User(email, pass, appName, region, false, Role.STAFF);
         users.put(new UserKey(email, appName), newUser);
     }
 
-    public void add(String email, String pass, String appName, boolean isSuperAdmin) {
+    public void add(String email, String pass, String appName, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, isSuperAdmin);
+        User newUser = new User(email, pass, appName, region, false, role);
         users.put(new UserKey(email, appName), newUser);
     }
 

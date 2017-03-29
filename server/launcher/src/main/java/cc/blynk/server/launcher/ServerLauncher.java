@@ -6,6 +6,7 @@ import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
@@ -106,7 +107,7 @@ public class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppName.BLYNK, true);
+            holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
         }
     }
 

@@ -32,27 +32,24 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UsersLogicTest {
 
+    private static final String TEST_USER = "test_user";
+    private static final String DELETED_DATA_DIR_NAME = "deleted";
+    private static Path userFile;
+    private static Path deletedUserFile;
     @Mock
     private UserDao userDao;
     @Spy
     private SessionDao sessionDao;
     @Mock
     private DBManager dbManager;
-
     private User user;
-
     @Mock
     private Session session;
-
     private UsersLogic usersLogic;
-    private static final String TEST_USER = "test_user";
-    private static Path userFile;
-    private static Path deletedUserFile;
-    private static final String DELETED_DATA_DIR_NAME = "deleted";
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false, false);
+        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);

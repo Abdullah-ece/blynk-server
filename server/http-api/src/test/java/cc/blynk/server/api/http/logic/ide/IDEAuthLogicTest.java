@@ -30,16 +30,12 @@ public class IDEAuthLogicTest {
     public static final String PASS = "pass";
     public static final String SERVER_NAME = "127.0.0.1";
     public static final String REDIRECT = String.format("//%s%s", SERVER_NAME, IDE_AUTHORIZE_ENDPOINT);
-
+    private final User user = new User(TEST_USER1, PASS, "", "", false);
     @Mock
     private UserDao userDao;
-
     @Mock
     private RedisClient redisClient;
-
     private IDEAuthLogic ideAuthLogic;
-
-    private final User user = new User(TEST_USER1, PASS, "", "", false, false);
 
     @Before
     public void setUp() throws Exception {

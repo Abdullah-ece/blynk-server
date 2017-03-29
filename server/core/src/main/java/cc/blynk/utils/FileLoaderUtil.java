@@ -19,11 +19,16 @@ import java.util.List;
 public class FileLoaderUtil {
 
     public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
+    public static final String INVITE_MAIL_BODY = "invite_template.txt";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static Path getFileInCurrentDir(String filename) {
         return Paths.get(System.getProperty("user.dir"), filename);
+    }
+
+    public static String readInviteMailBody() {
+        return readFileAsString(INVITE_MAIL_BODY);
     }
 
     public static String readTokenMailBody() {

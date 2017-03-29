@@ -2,10 +2,7 @@ package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.admin.http.logic.ConfigsLogic;
-import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
-import cc.blynk.server.admin.http.logic.StatsLogic;
-import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.admin.http.logic.*;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
@@ -58,6 +55,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
     private final AuthHandler authHandler;
+    private final InvitationLogic invitationLogic;
     private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
@@ -77,6 +75,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.statsLogic = new StatsLogic(holder, rootPath);
         this.configsLogic = new ConfigsLogic(holder, rootPath);
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
+        this.invitationLogic = new InvitationLogic(holder, rootPath);
         this.authHandler = new AuthHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/index.html", "/static/index.html");
@@ -117,6 +116,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
 
+        pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
         pipeline.addLast(configsLogic);

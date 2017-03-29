@@ -22,6 +22,7 @@ public class User {
     public ConcurrentMap<Integer, String> dashTokens;
 
     public String name;
+    public Role role;
 
     //key fields
 	public String email;
@@ -39,7 +40,6 @@ public class User {
     public Profile profile;
 
     public boolean isFacebookUser;
-    public boolean isSuperAdmin;
 
     public volatile int energy;
 
@@ -54,7 +54,7 @@ public class User {
         this.appName = AppName.BLYNK;
     }
 
-    public User(String email, String pass, String appName, String region, boolean isFacebookUser, boolean isSuperAdmin) {
+    public User(String email, String pass, String appName, String region, boolean isFacebookUser, Role role) {
         this();
         this.email = email;
         this.name = email;
@@ -62,7 +62,11 @@ public class User {
         this.appName = appName;
         this.region = region;
         this.isFacebookUser = isFacebookUser;
-        this.isSuperAdmin = isSuperAdmin;
+        this.role = role;
+    }
+
+    public User(String email, String pass, String appName, String region, boolean isFacebookUser) {
+        this(email, pass, appName, region, isFacebookUser, Role.STAFF);
     }
 
     @JsonProperty("id")

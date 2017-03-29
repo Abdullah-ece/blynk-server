@@ -182,6 +182,17 @@ CREATE TABLE reporting_http_command_stat_minute (
   PRIMARY KEY (region, ts)
 );
 
+CREATE TABLE invitation_tokens (
+  token character(32),
+  email text,
+  name text,
+  role text,
+  is_activated boolean DEFAULT FALSE,
+  created_ts timestamp DEFAULT NOW(),
+  activated_ts timestamp,
+  PRIMARY KEY(token, email)
+);
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

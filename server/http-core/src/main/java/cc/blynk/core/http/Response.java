@@ -78,6 +78,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, UNAUTHORIZED);
     }
 
+    public static Response unauthorized(String msg) {
+        return new Response(HTTP_1_1, UNAUTHORIZED, msg, JSON);
+    }
+
     public static Response redirect(String url) {
         Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
         response.headers().set(LOCATION, url);

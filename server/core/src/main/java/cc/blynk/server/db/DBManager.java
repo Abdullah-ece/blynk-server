@@ -38,6 +38,7 @@ public class DBManager implements Closeable {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final boolean cleanOldReporting;
+    public InvitationTokensDBDao invitationTokensDBDao;
     protected UserDBDao userDBDao;
     protected ReportingDBDao reportingDBDao;
     protected RedeemDBDao redeemDBDao;
@@ -93,6 +94,7 @@ public class DBManager implements Closeable {
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
+        this.invitationTokensDBDao = new InvitationTokensDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         checkDBVersion();

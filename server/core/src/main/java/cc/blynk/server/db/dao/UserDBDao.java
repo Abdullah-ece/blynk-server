@@ -1,6 +1,7 @@
 package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
 import com.zaxxer.hikari.HikariDataSource;
@@ -21,7 +22,7 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
  */
 public class UserDBDao {
 
-    public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
+    public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, role, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, role = EXCLUDED.role, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     public static final String selectAllUsers = "SELECT * from users";
     public static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 
@@ -71,7 +72,7 @@ public class UserDBDao {
                 user.lastLoggedAt = rs.getTimestamp("last_logged", UTC_CALENDAR).getTime();
                 user.lastLoggedIP = rs.getString("last_logged_ip");
                 user.isFacebookUser = rs.getBoolean("is_facebook_user");
-                user.isSuperAdmin = rs.getBoolean("is_super_admin");
+                user.role = Role.valueOf(rs.getString("role"));
                 user.energy = rs.getInt("energy");
                 user.profile = JsonParser.parseProfileFromString(rs.getString("json"));
 
@@ -104,9 +105,9 @@ public class UserDBDao {
                 ps.setString(5, user.pass);
                 ps.setTimestamp(6, new Timestamp(user.lastModifiedTs), UTC_CALENDAR);
                 ps.setTimestamp(7, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
-                ps.setString(8, user.lastLoggedIP);//finish
+                ps.setString(8, user.lastLoggedIP);
                 ps.setBoolean(9, user.isFacebookUser);
-                ps.setBoolean(10, user.isSuperAdmin);
+                ps.setString(10, user.role.name());
                 ps.setInt(11, user.energy);
                 ps.setString(12, user.profile.toString());
                 ps.addBatch();

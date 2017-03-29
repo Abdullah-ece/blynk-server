@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -223,8 +224,8 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, false));
-        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false, false));
+        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false));
+        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false));
         dbManager.userDBDao.save(users);
         ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
         assertEquals(2, dbUsers.size());
@@ -235,7 +236,7 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false, false));
+            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
@@ -248,19 +249,19 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         user.name = "123";
         users.add(user);
-        user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -295,7 +296,7 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -304,7 +305,7 @@ public class DBManagerTest {
         dbManager.userDBDao.save(users);
 
         users = new ArrayList<>();
-        user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local2", true, true);
+        user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local2", true, Role.SUPER_ADMIN);
         user.name = "1234";
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
@@ -346,7 +347,7 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, true);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, Role.SUPER_ADMIN);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -374,7 +375,7 @@ public class DBManagerTest {
         assertEquals("127.0.0.1", dbUser.lastLoggedIP);
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
-        assertTrue(dbUser.isSuperAdmin);
+        assertEquals(Role.SUPER_ADMIN, dbUser.role);
         assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
@@ -384,7 +385,7 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testInsertGetDeleteUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, true);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, Role.SUPER_ADMIN);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -412,7 +413,7 @@ public class DBManagerTest {
         assertEquals("127.0.0.1", dbUser.lastLoggedIP);
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
-        assertTrue(dbUser.isSuperAdmin);
+        assertEquals(Role.SUPER_ADMIN, dbUser.role);
         assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
