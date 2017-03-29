@@ -93,20 +93,6 @@ public class ReportingDao implements Closeable {
         return noData;
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphType type) {
-        return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type);
-    }
-
-    public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
-        log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        Path userDataMinuteFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
-        FileUtils.deleteQuietly(userDataMinuteFile);
-        FileUtils.deleteQuietly(userDataHourlyFile);
-        FileUtils.deleteQuietly(userDataDailyFile);
-    }
-
     protected static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
         return format("minute", dashId, deviceId, pinType, pin);
     }
@@ -125,6 +111,20 @@ public class ReportingDao implements Closeable {
             return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";
         }
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
+    }
+
+    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphType type) {
+        return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type);
+    }
+
+    public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
+        log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
+        Path userDataMinuteFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataHourlyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataDailyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
+        FileUtils.deleteQuietly(userDataMinuteFile);
+        FileUtils.deleteQuietly(userDataHourlyFile);
+        FileUtils.deleteQuietly(userDataDailyFile);
     }
 
     public void process(User user, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {

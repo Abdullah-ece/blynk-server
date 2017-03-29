@@ -97,10 +97,6 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, INTERNAL_SERVER_ERROR, message, PLAIN_TEXT);
     }
 
-    public static Response ok() {
-        return new Response(HTTP_1_1, OK, "", JSON);
-    }
-
     public static Response ok(String data) {
         return new Response(HTTP_1_1, OK, data, JSON);
     }

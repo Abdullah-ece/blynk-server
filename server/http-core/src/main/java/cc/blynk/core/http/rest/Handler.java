@@ -25,14 +25,10 @@ public class Handler {
     private static final Logger log = LogManager.getLogger(Handler.class);
 
     public final UriTemplate uriTemplate;
-
-    public HttpMethod httpMethod;
-
     public final Method classMethod;
-
     public final Object handler;
-
     public final Param[] params;
+    public HttpMethod httpMethod;
 
     public Handler(UriTemplate uriTemplate, Method method, Object handler) {
         this.uriTemplate = uriTemplate;
