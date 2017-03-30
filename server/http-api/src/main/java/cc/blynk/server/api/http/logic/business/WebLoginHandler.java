@@ -27,14 +27,14 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  */
 @Path("")
 @ChannelHandler.Sharable
-public class AuthHandler extends BaseHttpHandler {
+public class WebLoginHandler extends BaseHttpHandler {
 
     //1 month
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
     private final UserDao userDao;
 
-    public AuthHandler(Holder holder, String rootPath) {
+    public WebLoginHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
     }

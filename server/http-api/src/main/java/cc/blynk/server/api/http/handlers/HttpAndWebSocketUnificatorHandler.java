@@ -7,7 +7,7 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
-import cc.blynk.server.api.http.logic.business.AuthHandler;
+import cc.blynk.server.api.http.logic.business.WebLoginHandler;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -54,7 +54,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final StatsLogic statsLogic;
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
-    private final AuthHandler authHandler;
+    private final WebLoginHandler webLoginHandler;
     private final InvitationLogic invitationLogic;
     private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
@@ -76,7 +76,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.configsLogic = new ConfigsLogic(holder, rootPath);
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
         this.invitationLogic = new InvitationLogic(holder, rootPath);
-        this.authHandler = new AuthHandler(holder, rootPath);
+        this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/index.html", "/static/index.html");
     }
@@ -109,7 +109,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addLast(new ChunkedWriteHandler());
 
-        pipeline.addLast(authHandler);
+        pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
