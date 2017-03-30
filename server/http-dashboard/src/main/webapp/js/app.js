@@ -28,7 +28,10 @@ class NormalLoginForm extends React.Component {
                 algo.update(CryptoJS.SHA256(email.toLowerCase()), 'utf-8');
                 const password = algo.finalize().toString(CryptoJS.enc.Base64);
 
-                axios.post('/dashboard/login', { email, password })
+                var params = new URLSearchParams();
+                params.append('email', email);
+                params.append('password', password);
+                axios.post('/dashboard/login', params)
                     .then(function (response) {
                         console.log(response);
                     })

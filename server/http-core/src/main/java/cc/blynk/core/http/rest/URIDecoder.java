@@ -19,11 +19,10 @@ import java.util.Map;
 public class URIDecoder extends QueryStringDecoder {
 
     public final String[] paths;
+    public final HttpRequest httpRequest;
     public Map<String, String> pathData;
     public String contentType;
     public Map<String, String> headers;
-    public final HttpRequest httpRequest;
-
     private HttpPostRequestDecoder decoder;
     private ByteBuf bodyData;
 
@@ -34,7 +33,8 @@ public class URIDecoder extends QueryStringDecoder {
         if (httpRequest.method() == HttpMethod.PUT || httpRequest.method() == HttpMethod.POST) {
             if (httpRequest instanceof HttpContent) {
                 this.contentType = httpRequest.headers().get(HttpHeaderNames.CONTENT_TYPE);
-                if (contentType != null && contentType.equals(MediaType.APPLICATION_FORM_URLENCODED)) {
+                //todo parse charset?
+                if (contentType != null && contentType.contains(MediaType.APPLICATION_FORM_URLENCODED)) {
                     this.decoder = new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), httpRequest);
                 } else {
                     this.bodyData = ((HttpContent) httpRequest).content();
