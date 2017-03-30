@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpsAdminServerTest extends BaseTest {
+public class HttpsLoginFlowTest extends BaseTest {
 
     private static String rootPath;
     private BaseServer httpServer;
@@ -161,6 +161,41 @@ public class HttpsAdminServerTest extends BaseTest {
             //todo add full page match?
             //assertTrue(adminPage.contains("Blynk Administration"));
             //assertTrue(adminPage.contains("admin.js"));
+        }
+    }
+
+    @Test
+    public void testLogoutAfterLogin()  throws Exception {
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        List <NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", admin.email));
+        nvps.add(new BasicNameValuePair("password", admin.pass));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            String[] split = cookieHeader.getValue().split("=|;", 3);
+            assertEquals("session", split[0]);
+            User user = JsonParser.parseUserFromString(consumeText(response));
+            assertNotNull(user);
+            assertEquals("admin@blynk.cc", user.email);
+            assertEquals("admin@blynk.cc", user.name);
+            assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
+        }
+
+        HttpPost logoutRequest = new HttpPost(httpsAdminServerUrl + "/logout");
+        try (CloseableHttpResponse response = httpclient.execute(logoutRequest)) {
+            assertEquals(301, response.getStatusLine().getStatusCode());
+            String location = response.getFirstHeader("location").getValue();
+            assertEquals("/dashboard", location);
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            String[] split = cookieHeader.getValue().split("=|;", 3);
+            assertEquals("session", split[0]);
+            assertEquals("", split[1]);
+            assertTrue(split[2].contains("Max-Age=0;"));
         }
     }
 
