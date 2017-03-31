@@ -1,7 +1,7 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,15 +25,15 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            User user = sessionDao.getUserFromCookie(request);
+            HttpSession httpSession = sessionDao.getUserFromCookie(request);
 
-            if (request.uri().equals("/admin/logout")) {
-                ctx.channel().attr(SessionDao.userAttributeKey).set(null);
-            } else {
-                if (user != null) {
-                    ctx.channel().attr(SessionDao.userAttributeKey).set(user);
+            //if (request.uri().equals("/admin/logout")) {
+            //    ctx.channel().attr(SessionDao.userSessionAttributeKey).set(null);
+            //} else {
+                if (httpSession != null) {
+                    ctx.channel().attr(SessionDao.userSessionAttributeKey).set(httpSession);
                 }
-            }
+            //}
         }
         super.channelRead(ctx, msg);
     }

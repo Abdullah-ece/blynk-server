@@ -61,7 +61,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         HandlerHolder handlerHolder = lookupHandler(req);
 
         if (handlerHolder != null) {
-            log.debug("{} : {}", req.method().name(), req.uri());
+            log.debug("Incoming {}", req);
             globalStats.mark(Command.HTTP_TOTAL);
 
             try {
@@ -83,6 +83,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
         if (response != Response.NO_RESPONSE) {
+            log.debug("Sending response {}", response);
             ctx.writeAndFlush(response);
         }
     }

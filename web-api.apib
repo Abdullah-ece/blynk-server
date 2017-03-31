@@ -1,0 +1,31 @@
+FORMAT: 1A
+HOST: http://blynk-cloud.com/
+
+# Login API
+
+## Login [POST]
+
++ Request (application/x-www-form-urlencoded)
+
+       "email" : "admin@blynk.cc"
+       "password" : "84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=" //SHA256 hash of password salted with username.toLowerCase
+        
++ Response 200 (application/json)
+
+        User json and with cookie "sessionId".
+
++ Response 401 (plain/text)
+
+        Email or password is empty, user not exists or password is wrong.
+        
++ Response 500 (plain/text)
+
+        Unexpected server error, probably wrong content-type.
+
+## Logout [POST]
+
++ Request (application/json)
+        
++ Response 301 (application/json)
+
+        /dashboard

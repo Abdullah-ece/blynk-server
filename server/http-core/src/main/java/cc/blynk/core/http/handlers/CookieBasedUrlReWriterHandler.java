@@ -29,7 +29,7 @@ public class CookieBasedUrlReWriterHandler extends ChannelInboundHandlerAdapter 
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
             if (request.uri().equals(initUrl)) {
-                if (ctx.channel().attr(SessionDao.userAttributeKey).get() == null) {
+                if (ctx.channel().attr(SessionDao.userSessionAttributeKey).get() == null) {
                     request.setUri(mapToUrlWithoutCookie);
                 } else {
                     request.setUri(mapToUrlWithCookie);

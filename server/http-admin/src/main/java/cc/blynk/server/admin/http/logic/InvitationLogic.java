@@ -6,6 +6,7 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
@@ -64,14 +65,16 @@ public class InvitationLogic extends BaseHttpHandler {
             return badRequest(email + " email has not valid format.");
         }
 
-        User user = ctx.channel().attr(SessionDao.userAttributeKey).get();
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        if (user == null) {
+        if (httpSession == null) {
             log.error("Not logged");
             return unauthorized("Not logged.");
         }
 
-        if (user.role == Role.STAFF) {
+        User user = httpSession.user;
+
+        if (user == null || user.role == Role.STAFF) {
             log.error("Not rights to perform invitation.");
             return forbidden();
         }
