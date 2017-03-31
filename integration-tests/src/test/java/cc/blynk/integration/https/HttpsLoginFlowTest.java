@@ -227,8 +227,6 @@ public class HttpsLoginFlowTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request, localContext)) {
             assertEquals(401, response.getStatusLine().getStatusCode());
-            String loginPage = consumeText(response);
-            assertTrue(loginPage.contains("<div id=\"app\">"));
         }
     }
 

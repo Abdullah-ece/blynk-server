@@ -2,16 +2,14 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.CookieUtil;
 import io.netty.channel.EventLoop;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.cookie.Cookie;
-import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.util.AttributeKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -57,29 +55,18 @@ public class SessionDao {
         httpSession.remove(sessionId);
     }
 
-    public boolean isValid(Cookie cookie) {
-        return cookie.name().equals(SESSION_COOKIE);
-    }
-
     public HttpSession getUserFromCookie(FullHttpRequest request) {
-        String cookieString = request.headers().get(HttpHeaderNames.COOKIE);
+        Cookie cookie = CookieUtil.findCookieByName(request, SESSION_COOKIE);
 
-        if (cookieString != null) {
-            Set<Cookie> cookies = ServerCookieDecoder.STRICT.decode(cookieString);
-            if (!cookies.isEmpty()) {
-                for (Cookie cookie : cookies) {
-                    if (isValid(cookie)) {
-                        String token = cookie.value();
-                        User user = httpSession.get(token);
-                        if (user == null) {
-                            return null;
-                        }
-                        return new HttpSession(user, token);
-                    }
-                }
+        if (cookie != null) {
+            String token = cookie.value();
+            User user = httpSession.get(token);
+            if (user != null) {
+                return new HttpSession(user, token);
             }
         }
 
         return null;
     }
+
 }

@@ -1,6 +1,6 @@
-package cc.blynk.core.http.rest;
+package cc.blynk.core.http.rest.params;
 
-import cc.blynk.core.http.rest.params.Param;
+import cc.blynk.core.http.rest.URIDecoder;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

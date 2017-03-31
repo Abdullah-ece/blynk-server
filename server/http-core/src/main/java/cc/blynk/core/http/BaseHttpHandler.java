@@ -70,6 +70,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
                 Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
                 finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
             } catch (Exception e) {
+                log.debug("Error processing http request.", e);
                 ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
             } finally {
                 ReferenceCountUtil.release(req);

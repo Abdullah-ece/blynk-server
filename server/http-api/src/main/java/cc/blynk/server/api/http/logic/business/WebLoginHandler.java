@@ -5,13 +5,11 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
@@ -77,12 +75,13 @@ public class WebLoginHandler extends BaseHttpHandler {
 
     @POST
     @Path("/logout")
-    public Response logout(@Context ChannelHandlerContext ctx) {
+    public Response logout(@CookieHeader("session") Cookie sessionCookie) {
         Response response = redirect(rootPath);
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        ctx.channel().attr(SessionDao.userSessionAttributeKey).set(null);
-        if (httpSession != null) {
-            sessionDao.deleteHttpSession(httpSession.token);
+
+        if (sessionCookie != null) {
+            sessionDao.deleteHttpSession(sessionCookie.value());
+        } else {
+            log.error("Cookie is empty for logout command.");
         }
         Cookie cookie = makeDefaultSessionCookie("", 0);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));

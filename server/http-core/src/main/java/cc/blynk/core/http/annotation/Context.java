@@ -9,7 +9,6 @@ import java.lang.annotation.*;
  *
  * @author Paul Sandoz
  * @author Marc Hadley
- * @see javax.ws.rs.ext.Providers
  * @since 1.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
