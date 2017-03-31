@@ -1,15 +1,22 @@
 package cc.blynk.server.api.http;
 
+import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileEdsWith;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.utils.SslUtil;
+import cc.blynk.utils.UrlMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -23,7 +30,7 @@ public class HttpsAPIServer extends BaseServer {
     public HttpsAPIServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        String adminRootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
+        String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
@@ -32,7 +39,7 @@ public class HttpsAPIServer extends BaseServer {
                 SslUtil.fetchSslProvider(holder.props));
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
+                new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -41,6 +48,12 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true));
+                pipeline.addLast(new ChunkedWriteHandler());
+                pipeline.addLast(new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+                        new UrlMapper(rootPath, "/static/index.html")));
+                pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"))
+                );
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };

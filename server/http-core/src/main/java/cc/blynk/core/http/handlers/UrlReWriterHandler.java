@@ -1,5 +1,6 @@
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.utils.UrlMapper;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -11,24 +12,33 @@ import io.netty.handler.codec.http.FullHttpRequest;
  */
 public class UrlReWriterHandler extends ChannelInboundHandlerAdapter {
 
-    private final String initUrl;
-    private final String mapToUrl;
+    private final UrlMapper[] mappers;
 
-    public UrlReWriterHandler(String initUrl, String mapToUrl) {
-        this.initUrl = initUrl;
-        this.mapToUrl = mapToUrl;
+    public UrlReWriterHandler(UrlMapper... mappers) {
+        this.mappers = mappers;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            if (request.uri().equals(initUrl)) {
-                request.setUri(mapToUrl);
+
+            UrlMapper urlMapper = isMatch(request.uri());
+            if (urlMapper != null) {
+                request.setUri(urlMapper.to);
             }
         }
 
         super.channelRead(ctx, msg);
+    }
+
+    private UrlMapper isMatch(String uri) {
+        for (UrlMapper urlMapper : mappers) {
+            if (uri.equals(urlMapper.from)) {
+                return urlMapper;
+            }
+        }
+        return null;
     }
 
 }

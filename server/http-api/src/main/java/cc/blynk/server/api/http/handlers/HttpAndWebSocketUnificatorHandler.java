@@ -1,6 +1,9 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.core.http.handlers.*;
+import cc.blynk.core.http.handlers.CookieBasedUrlReWriterHandler;
+import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.logic.*;
 import cc.blynk.server.api.http.HttpAPIServer;
@@ -12,7 +15,6 @@ import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
@@ -42,7 +44,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;
     private final String rootPath;
-    private final boolean isUnpacked;
     private final AuthCookieHandler authCookieHandler;
 
     private final ResetPasswordLogic resetPasswordLogic;
@@ -58,11 +59,10 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final InvitationLogic invitationLogic;
     private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
         this.rootPath = rootPath;
-        this.isUnpacked = isUnpacked;
 
         //http API handlers
         this.resetPasswordLogic = new ResetPasswordLogic(holder);
@@ -81,17 +81,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/index.html", "/static/index.html");
     }
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
-        this(holder, port, rootPath, false);
-    }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final FullHttpRequest req = (FullHttpRequest) msg;
         String uri = req.uri();
 
         if (uri.equals("/")) {
-            //for local server do redirect to admin page
             ctx.writeAndFlush(redirect(rootPath));
             return;
         } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
@@ -107,14 +102,10 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initUserPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast(new ChunkedWriteHandler());
 
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
-
-        pipeline.addLast(new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
-        pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
 
         pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);
@@ -130,10 +121,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
-        pipeline.addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
-        pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
-                                           new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
 
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
@@ -153,6 +140,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
         pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
         pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
+
+        //remove static file handlers
+        pipeline.remove(ChunkedWriteHandler.class);
+        pipeline.remove(UrlReWriterHandler.class);
+        pipeline.remove(StaticFileHandler.class);
+
         pipeline.remove(this);
     }
 

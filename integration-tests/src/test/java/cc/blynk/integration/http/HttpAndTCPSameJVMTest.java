@@ -78,7 +78,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, true).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);

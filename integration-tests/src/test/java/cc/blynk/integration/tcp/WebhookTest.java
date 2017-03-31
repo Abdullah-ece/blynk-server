@@ -16,12 +16,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -34,11 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -49,13 +40,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class WebhookTest extends IntegrationBase {
 
+    private static AsyncHttpClient httpclient;
+    private static String httpServerUrl;
     private BaseServer httpServer;
     private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
-
-    private static AsyncHttpClient httpclient;
-    private static String httpServerUrl;
 
     @BeforeClass
     public static void initHttpClient() {
@@ -74,7 +64,7 @@ public class WebhookTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, true).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 

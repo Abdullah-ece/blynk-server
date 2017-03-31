@@ -51,7 +51,7 @@ public class HttpAPIPinsTest extends BaseTest {
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap())
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HttpAPIServer(localHolder, true).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
     }

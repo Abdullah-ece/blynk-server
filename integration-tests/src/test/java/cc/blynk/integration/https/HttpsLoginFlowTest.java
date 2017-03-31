@@ -19,12 +19,17 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -83,7 +88,7 @@ public class HttpsLoginFlowTest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, false).start();
 
         String name = "admin@blynk.cc";
         String pass = "admin";
@@ -172,12 +177,15 @@ public class HttpsLoginFlowTest extends BaseTest {
         nvps.add(new BasicNameValuePair("password", admin.pass));
         loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
 
+        String sessionId;
+
         try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Header cookieHeader = response.getFirstHeader("set-cookie");
             assertNotNull(cookieHeader);
             String[] split = cookieHeader.getValue().split("=|;", 3);
             assertEquals("session", split[0]);
+            sessionId = split[1];
             User user = JsonParser.parseUserFromString(consumeText(response));
             assertNotNull(user);
             assertEquals("admin@blynk.cc", user.email);
@@ -196,6 +204,30 @@ public class HttpsLoginFlowTest extends BaseTest {
             assertEquals("session", split[0]);
             assertEquals("", split[1]);
             assertTrue(split[2].contains("Max-Age=0;"));
+        }
+
+        String testUser = "dmitriy@blynk.cc";
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+
+        request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("session", sessionId);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        HttpContext localContext = new BasicHttpContext();
+        localContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
+
+        try (CloseableHttpResponse response = httpclient.execute(request, localContext)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String loginPage = consumeText(response);
+            assertTrue(loginPage.contains("<div id=\"app\">"));
         }
     }
 

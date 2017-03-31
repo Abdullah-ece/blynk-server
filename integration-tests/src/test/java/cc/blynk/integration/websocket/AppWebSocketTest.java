@@ -34,14 +34,13 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class AppWebSocketTest extends IntegrationBase {
 
+    //web socket ports
+    public static int tcpWebSocketPort;
     private static BaseServer webSocketServer;
     private static BaseServer hardwareServer;
     private static BaseServer appServer;
     private static ClientPair clientPair;
     private static Holder localHolder;
-
-    //web socket ports
-    public static int tcpWebSocketPort;
 
     @AfterClass
     public static void shutdown() throws Exception {
@@ -61,7 +60,7 @@ public class AppWebSocketTest extends IntegrationBase {
                 new GCMProperties(Collections.emptyMap())
         );
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(localHolder).start();
+        webSocketServer = new HttpAPIServer(localHolder, true).start();
         appServer = new AppServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

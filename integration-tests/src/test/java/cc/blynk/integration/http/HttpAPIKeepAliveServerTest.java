@@ -41,7 +41,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, true).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         //this http client doesn't close HTTP connection.
