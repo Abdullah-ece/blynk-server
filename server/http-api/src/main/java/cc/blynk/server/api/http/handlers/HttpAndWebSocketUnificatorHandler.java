@@ -1,6 +1,5 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.core.http.handlers.CookieBasedUrlReWriterHandler;
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
@@ -57,7 +56,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final HardwareStatsLogic hardwareStatsLogic;
     private final WebLoginHandler webLoginHandler;
     private final InvitationLogic invitationLogic;
-    private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.stats = holder.stats;
@@ -78,7 +76,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.invitationLogic = new InvitationLogic(holder, rootPath);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/index.html", "/static/index.html");
     }
 
     @Override
@@ -105,7 +102,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
-        pipeline.addLast(cookieBasedUrlReWriterHandler);
 
         pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);

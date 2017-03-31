@@ -126,13 +126,14 @@ public class HttpsLoginFlowTest extends BaseTest {
     }
 
     @Test
-    public void testGetnOnExistingUser() throws Exception {
+    //todo authorize
+    public void testGetNonExistingUser() throws Exception {
         String testUser = "dima@dima.ua";
         HttpPut request = new HttpPut(httpsAdminServerUrl + "/users/" + "xxx/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -143,7 +144,7 @@ public class HttpsLoginFlowTest extends BaseTest {
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -211,7 +212,7 @@ public class HttpsLoginFlowTest extends BaseTest {
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
 
         request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
@@ -225,7 +226,7 @@ public class HttpsLoginFlowTest extends BaseTest {
         localContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
 
         try (CloseableHttpResponse response = httpclient.execute(request, localContext)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
             String loginPage = consumeText(response);
             assertTrue(loginPage.contains("<div id=\"app\">"));
         }
@@ -238,7 +239,7 @@ public class HttpsLoginFlowTest extends BaseTest {
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -250,7 +251,7 @@ public class HttpsLoginFlowTest extends BaseTest {
         request.setHeader("set-cookie", "session=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 

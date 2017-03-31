@@ -6,6 +6,10 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.core.http.Response.unauthorized;
 
 /**
  * The Blynk Project.
@@ -14,6 +18,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
  */
 @ChannelHandler.Sharable
 public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
+
+    private static final Logger log = LogManager.getLogger(AuthCookieHandler.class);
 
     private final SessionDao sessionDao;
 
@@ -27,13 +33,14 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
             FullHttpRequest request = (FullHttpRequest) msg;
             HttpSession httpSession = sessionDao.getUserFromCookie(request);
 
-            //if (request.uri().equals("/admin/logout")) {
-            //    ctx.channel().attr(SessionDao.userSessionAttributeKey).set(null);
-            //} else {
-                if (httpSession != null) {
-                    ctx.channel().attr(SessionDao.userSessionAttributeKey).set(httpSession);
-                }
-            //}
+            if (httpSession == null) {
+                log.error("User is not logged.", request);
+                ctx.writeAndFlush(unauthorized());
+                return;
+            } else {
+                ctx.channel().attr(SessionDao.userSessionAttributeKey).set(httpSession);
+            }
+
         }
         super.channelRead(ctx, msg);
     }

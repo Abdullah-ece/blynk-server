@@ -126,7 +126,7 @@ public class HttpsInvitationTest extends BaseTest {
         inviteReq.setEntity(new UrlEncodedFormEntity(nvps));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
