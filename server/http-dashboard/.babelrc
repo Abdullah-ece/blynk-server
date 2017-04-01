@@ -1,6 +1,53 @@
 {
-  "plugins": [["import", {
-    "libraryName": "antd",
-    "style": "css",
-  }]]
+  "presets": [
+    "react",
+    "stage-1"
+  ],
+  "env": {
+    "development": {
+      "presets": [
+        "latest",
+        "react-hmre"
+      ],
+      "plugins": [
+        [
+          "import",
+          {
+            "libraryName": "antd"
+          }
+        ],
+        "transform-decorators-legacy",
+        "transform-class-properties"
+      ]
+    },
+    "production": {
+      "presets": [
+        [
+          "latest",
+          {
+            "es2015": {
+              "modules": false
+            }
+          }
+        ]
+      ],
+      "plugins": [
+        [
+          "import",
+          {
+            "libraryName": "antd"
+          }
+        ],
+        "transform-react-constant-elements",
+        "transform-react-remove-prop-types",
+        "transform-decorators-legacy"
+      ]
+    },
+    "test": {
+      "presets": [
+        "latest"
+      ]
+    }
+  }
 }
+
