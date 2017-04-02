@@ -2,7 +2,6 @@
 *.iml
 .idea
 target
-*.log
 dist
 node
 node_modules
