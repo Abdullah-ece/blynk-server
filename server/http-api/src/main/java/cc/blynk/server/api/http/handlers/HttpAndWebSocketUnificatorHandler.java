@@ -8,6 +8,7 @@ import cc.blynk.server.admin.http.logic.*;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
+import cc.blynk.server.api.http.logic.UploadLogic;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.http.logic.business.WebLoginHandler;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
@@ -86,6 +87,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         if (uri.equals("/")) {
             ctx.writeAndFlush(redirect(rootPath));
             return;
+        } else if (uri.startsWith("/upload")) {
+            ctx.pipeline().addLast(new UploadLogic("/upload"));
         } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
             initUserPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
@@ -103,6 +106,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
 
+        pipeline.addLast(new UploadLogic("/upload"));
         pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);

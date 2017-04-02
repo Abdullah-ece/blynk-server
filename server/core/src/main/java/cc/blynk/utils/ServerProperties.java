@@ -22,9 +22,11 @@ public class ServerProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
     public static final String jarPath;
+    public static final String staticFilesFolder;
 
     static {
         jarPath = getJarPath();
+        staticFilesFolder = Paths.get(jarPath, "static").toString();
     }
 
     public ServerProperties(Map<String, String> cmdProperties) {
