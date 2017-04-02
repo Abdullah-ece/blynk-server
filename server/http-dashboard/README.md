@@ -1,8 +1,8 @@
 # some Dashboard
 
 ### Dependencies
-**Global Dependencies**: NPM, NodeJS
-**NPM Dependencies**: Webpack, ESW
+**Global Dependencies**: Git, NPM, NodeJS v6
+**NPM Dependencies**: babel-cli
 
 ### How to start
 1. Clone project

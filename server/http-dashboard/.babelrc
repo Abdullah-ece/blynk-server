@@ -40,7 +40,8 @@
         ],
         "transform-react-constant-elements",
         "transform-react-remove-prop-types",
-        "transform-decorators-legacy"
+        "transform-decorators-legacy",
+        "transform-class-properties"
       ]
     },
     "test": {
