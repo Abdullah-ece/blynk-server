@@ -37,7 +37,7 @@ function configureStoreProd(initialState) {
 
   const store = createStore(rootReducer, initialState, compose(
     applyMiddleware(...middlewares),
-    autoRehydrate(),
+    autoRehydrate()
     )
   );
 
