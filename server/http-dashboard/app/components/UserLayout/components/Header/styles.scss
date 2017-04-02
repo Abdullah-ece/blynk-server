@@ -1,3 +1,5 @@
+/* @todo put colors font sizes etc. to config in variables */
+
 .user-layout--header {
   height: 64px;
   background: #24c48e;
@@ -44,4 +46,28 @@
       border-bottom: 0 !important;
     }
   }
+}
+
+.user-layout--header-user {
+  float: right;
+  padding: 15px 0;
+  margin-left: 30px;
+}
+
+.user-layout--header-user-link {
+  font-size: 14px;
+  color: rgba(33, 34, 39, 0.75) !important;
+  &:hover {
+    color: #fff !important;
+    .user-layout--header-user-button {
+      background: #58d5ab;
+    }
+  }
+}
+
+.user-layout--header-user-button {
+  border: 0;
+  transition-timing-function: ease;
+  background-color: #1da678;
+  margin-left: 8px;
 }
