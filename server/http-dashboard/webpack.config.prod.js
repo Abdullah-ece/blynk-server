@@ -14,14 +14,18 @@ const GLOBALS = {
 
 export default {
   resolve: {
-    extensions: ['*', '.js', '.jsx', '.json']
+    extensions: ['*', '.js', '.jsx', '.json'],
+    modules: [
+      path.resolve('./app'),
+      path.resolve('./node_modules')
+    ]
   },
   devtool: 'source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
-  entry: path.resolve(__dirname, 'src/index'),
+  entry: path.resolve(__dirname, 'app/index'),
   target: 'web', // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    path: path.resolve(__dirname, 'src/main/resources/static'),
+    publicPath: '/static',
     filename: '[name].[chunkhash].js'
   },
   plugins: [
@@ -36,7 +40,7 @@ export default {
 
     // Generate HTML file that contains references to generated bundles. See here for how this works: https://github.com/ampedandwired/html-webpack-plugin#basic-usage
     new HtmlWebpackPlugin({
-      template: 'src/index.ejs',
+      template: 'app/index.ejs',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -64,7 +68,7 @@ export default {
       noInfo: true, // set to false to see a list of every file being bundled.
       options: {
         sassLoader: {
-          includePaths: [path.resolve(__dirname, 'src', 'scss')]
+          includePaths: [path.resolve(__dirname, 'app', 'scss')]
         },
         context: '/',
         postcss: () => [autoprefixer],
@@ -86,6 +90,10 @@ export default {
       {test: /\.svg(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=[name].[ext]'},
       {test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]'},
       {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
+      {
+        test: /(\.less)$/,
+        loaders: ['style-loader', 'css-loader?sourceMap', 'less-loader?sourceMap']
+      },
       {
         test: /(\.css|\.scss|\.sass)$/,
         loader: ExtractTextPlugin.extract('css-loader?sourceMap!postcss-loader!sass-loader?sourceMap')
