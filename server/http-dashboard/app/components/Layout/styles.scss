@@ -5,3 +5,35 @@
 .layout {
   height: 100%;
 }
+
+@font-face {
+  font-family: 'PF DinDisplay Pro';
+  src: url('assets/pfdindisplaypro-light-webfont.woff2') format('woff2'),
+  url('assets/pfdindisplaypro-light-webfont.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PF DinDisplay Pro';
+  src: url('assets/pfdindisplaypro-reg-webfont.woff2') format('woff2'),
+  url('assets/pfdindisplaypro-reg-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PF DinDisplay Pro';
+  src: url('assets/pfdindisplaypro-med-webfont.woff2') format('woff2'),
+  url('assets/pfdindisplaypro-med-webfont.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'PF DinDisplay Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
