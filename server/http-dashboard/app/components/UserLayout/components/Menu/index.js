@@ -26,7 +26,7 @@ class Menu extends React.Component {
           <AntMenu.Item key="/organization-settings">Organization Settings</AntMenu.Item>
           <AntMenu.Item key="/billing">Billing</AntMenu.Item>
           <AntMenu.Divider />
-          <AntMenu.Item key="/login">Logout</AntMenu.Item>
+          <AntMenu.Item key="/logout">Logout</AntMenu.Item>
         </AntMenu>
       </div>
     );
