@@ -91,8 +91,11 @@ export default {
       {test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]'},
       {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
       {
-        test: /(\.less)$/,
-        loaders: ['style-loader', 'css-loader?sourceMap', 'less-loader?sourceMap']
+        test: /\.less$/,
+        loaders: ExtractTextPlugin.extract({
+          fallbackLoader: 'style-loader',
+          loader: ["css-loader", "less-loader"],
+        })
       },
       {
         test: /(\.css|\.scss|\.sass)$/,
