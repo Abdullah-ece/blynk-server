@@ -2,6 +2,7 @@ import React from 'react';
 
 import Title from '../../components/Title';
 import {Section, Item} from '../../components/Section';
+import {Button, Modal} from 'antd';
 
 import Field from '../../components/Field';
 
@@ -22,6 +23,14 @@ class MyAccount extends React.Component {
     this.setState({name: name});
   }
 
+  showResetPasswordSuccessMessage() {
+    Modal.success({
+      title: 'Success',
+      content: 'New password has been sent to your email!',
+      okText: 'Ok'
+    });
+  }
+
   render() {
     return (
       <div className="user-profile">
@@ -32,6 +41,12 @@ class MyAccount extends React.Component {
           </Item>
           <Item title="Email Address">
             {this.state.email}
+          </Item>
+        </Section>
+        <Section title="Change Password">
+          <Item>
+            <Button type="primary" onClick={this.showResetPasswordSuccessMessage.bind(this)}>Send password reset
+              email</Button>
           </Item>
         </Section>
       </div>
