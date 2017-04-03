@@ -149,6 +149,39 @@ public class HttpsLoginFlowTest extends BaseTest {
     }
 
     @Test
+    public void testLoginReturnsBadRequest() throws Exception {
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        List <NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", admin.email));
+        nvps.add(new BasicNameValuePair("password", "fake pass"));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+
+        loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", null));
+        nvps.add(new BasicNameValuePair("password", null));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+
+        loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", "123"));
+        nvps.add(new BasicNameValuePair("password", admin.pass));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void adminLoginFlowSupport()  throws Exception {
         HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {

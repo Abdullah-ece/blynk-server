@@ -50,19 +50,19 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (email == null || password == null) {
             log.error("Empty email or password field.");
-            return unauthorized();
+            return badRequest();
         }
 
         User user = userDao.getByName(email, AppName.BLYNK);
 
         if (user == null) {
             log.error("User not found.");
-            return unauthorized();
+            return badRequest();
         }
 
         if (!password.equals(user.pass)) {
             log.error("Wrong password for {}", user.name);
-            return unauthorized();
+            return badRequest();
         }
 
         Response response = ok(user);
