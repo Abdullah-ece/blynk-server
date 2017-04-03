@@ -87,6 +87,8 @@ public final class JarUtil {
                filename.endsWith(".css") ||
                filename.endsWith(".html") ||
                filename.endsWith(".ico") ||
+               filename.endsWith(".woff") ||
+               filename.endsWith(".woff2") ||
                filename.endsWith(".png");
     }
 
