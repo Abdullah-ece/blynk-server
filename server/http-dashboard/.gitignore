@@ -38,6 +38,3 @@ dist
 
 # Mac files
 .DS_Store
-
-# Maven Build
-src/
