@@ -23,7 +23,7 @@ class Menu extends React.Component {
         <AntMenu onClick={this.handleClick.bind(this)}
                  defaultSelectedKeys={menuItemActive}>
           <AntMenu.Item key="/account">My Account</AntMenu.Item>
-          <AntMenu.Item key="/organizations">Organization Settings</AntMenu.Item>
+          <AntMenu.Item key="/organization-settings">Organization Settings</AntMenu.Item>
           <AntMenu.Item key="/billing">Billing</AntMenu.Item>
           <AntMenu.Divider />
           <AntMenu.Item key="/login">Logout</AntMenu.Item>

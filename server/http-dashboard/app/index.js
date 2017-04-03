@@ -8,7 +8,7 @@ import UserLayout from './components/UserLayout';
 
 /* scenes */
 import Login from './scenes/Login';
-import {MyAccount} from './scenes/UserProfile';
+import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 
 /* store */
 import {Provider} from 'react-redux';
@@ -25,6 +25,7 @@ Store().then((store) => {
         <Route component={Layout}>
           <Route component={UserLayout} /*onEnter={RouteAuthorizedOnly(store)}*/>
             <Route path="/account" component={MyAccount}/>
+            <Route path="/organization-settings" component={OrganizationSettings}/>
           </Route>
           <Route onEnter={RouteGuestOnly(store)}>
             <Route path="/login" component={Login}/>
