@@ -7,7 +7,7 @@ import {Field as FormField} from 'redux-form';
 import "./styles.scss";
 
 export default class Field extends React.Component {
-  renderField({displayError, placeholder, input, type, icon, meta: {touched, error, warning}}) {
+  renderField({displayError = true, placeholder, input, type, icon, meta: {touched, error, warning}}) {
     return (
       <Form.Item validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
                  help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>

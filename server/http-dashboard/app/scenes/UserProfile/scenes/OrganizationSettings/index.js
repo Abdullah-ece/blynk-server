@@ -2,11 +2,12 @@ import React from 'react';
 
 import Title from '../../components/Title';
 import {Section, Item} from '../../components/Section';
-import {Select} from 'antd';
+import {Select, Modal} from 'antd';
 
 import TimeZones from './services/Timezones';
 
 import Field from '../../components/Field';
+import InviteUsersForm from './components/InviteUsersForm';
 
 import './styles.scss';
 
@@ -18,6 +19,14 @@ class OrganizationSettings extends React.Component {
     this.state = {
       name: 'Blynk Inc.'
     };
+  }
+
+  showInviteSuccess() {
+    Modal.success({
+      title: 'Success',
+      content: 'Invite has been sent to email!',
+      okText: 'Ok'
+    });
   }
 
   handleNameSave(name) {
@@ -47,6 +56,11 @@ class OrganizationSettings extends React.Component {
             <Select defaultValue="Select timezone" className="user-profile--organization-settings-timezones-select">
               {timezonesOptions}
             </Select>
+          </Item>
+        </Section>
+        <Section title="Invite Users">
+          <Item>
+            <InviteUsersForm onSubmit={this.showInviteSuccess.bind(this)}/>
           </Item>
         </Section>
       </div>
