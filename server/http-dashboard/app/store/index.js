@@ -8,7 +8,7 @@ import {persistStore, autoRehydrate} from 'redux-persist';
 
 /* instance for basic API */
 const axiosAPI = axios.create({
-  baseURL: 'http://localhost:8080/dashboard',
+  baseURL: '/dashboard',
   responseType: 'json'
 });
 
