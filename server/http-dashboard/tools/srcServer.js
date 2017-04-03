@@ -8,6 +8,7 @@ import browserSync from 'browser-sync';
 import historyApiFallback from 'connect-history-api-fallback';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
+import proxyMiddleware from 'http-proxy-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import config from '../webpack.config.dev';
 
@@ -24,6 +25,12 @@ browserSync({
 
     middleware: [
       historyApiFallback(),
+
+      proxyMiddleware('/dashboard', {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        logLevel: 'debug'
+      }),
 
       webpackDevMiddleware(bundler, {
         // Dev middleware can't access config, so we provide publicPath
