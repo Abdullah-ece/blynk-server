@@ -8,7 +8,7 @@ import UserLayout from './components/UserLayout';
 
 /* scenes */
 import Login from './scenes/Login';
-import MyAccount from './scenes/MyAccount';
+import {MyAccount} from './scenes/UserProfile';
 
 /* store */
 import {Provider} from 'react-redux';

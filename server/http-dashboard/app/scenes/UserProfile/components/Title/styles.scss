@@ -1,0 +1,9 @@
+.user-profile--title {
+  font-size: 36px;
+  color: #212227;
+  font-weight: 300;
+  margin-bottom: 42px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

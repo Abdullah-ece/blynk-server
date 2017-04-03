@@ -1,0 +1,17 @@
+.user-profile--my-account {
+
+}
+
+.user-profile--my-account-edit-button {
+  background: #fcfefd !important;
+  padding: 6px !important;
+  padding-bottom: 2px !important;
+  border: 0 !important;
+  transition-timing-function: ease;
+  i {
+    font-size: 20px;
+  }
+  &:hover {
+    background: #eaf9f3 !important;
+  }
+}

@@ -6,16 +6,27 @@ import './styles.scss';
 
 class Menu extends React.Component {
 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
+  handleClick(e) {
+    this.context.router.push(e.key);
+  }
+
   render() {
+
+    const menuItemActive = [this.context.router.getCurrentLocation().pathname];
 
     return (
       <div className="user-layout--menu">
-        <AntMenu>
-          <AntMenu.Item>My Account</AntMenu.Item>
-          <AntMenu.Item>Organization Settings</AntMenu.Item>
-          <AntMenu.Item>Billing</AntMenu.Item>
+        <AntMenu onClick={this.handleClick.bind(this)}
+                 defaultSelectedKeys={menuItemActive}>
+          <AntMenu.Item key="/account">My Account</AntMenu.Item>
+          <AntMenu.Item key="/organizations">Organization Settings</AntMenu.Item>
+          <AntMenu.Item key="/billing">Billing</AntMenu.Item>
           <AntMenu.Divider />
-          <AntMenu.Item>Logout</AntMenu.Item>
+          <AntMenu.Item key="/login">Logout</AntMenu.Item>
         </AntMenu>
       </div>
     );
