@@ -4,11 +4,7 @@
 
 .user-layout-container {
   min-height: 100%;
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-box;
-  display: box;
+  display: flex;
 
   -ms-flex-direction: row;
   -webkit-box-orient: horizontal;
