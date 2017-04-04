@@ -32,7 +32,7 @@ public class ProductHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/list")
+    @Path("")
     public Response getAllProductsOfOwnOrganization(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         return ok(httpSession.user.organization.products);

@@ -6,6 +6,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.http.HttpsAPIServer;
@@ -86,6 +87,7 @@ public class ProductAPITest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        admin.organization = new Organization();
         holder.userDao.add(admin);
     }
 
@@ -120,7 +122,7 @@ public class ProductAPITest extends BaseTest {
 
     @Test
     public void getProductsNotAuthorized() throws Exception {
-        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/product/list");
+        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/product");
         try (CloseableHttpResponse response = httpclient.execute(getOwnProfile)) {
             assertEquals(401, response.getStatusLine().getStatusCode());
         }
@@ -197,7 +199,7 @@ public class ProductAPITest extends BaseTest {
     public void getEmptyListOfProducts() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product/list");
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -211,7 +213,7 @@ public class ProductAPITest extends BaseTest {
     public void getListOfProducts() throws Exception {
         createProduct();
 
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product/list");
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -241,7 +243,7 @@ public class ProductAPITest extends BaseTest {
             assertEquals(2, productFromApi.id);
         }
 
-        HttpGet getList = new HttpGet(httpsAdminServerUrl + "/product/list");
+        HttpGet getList = new HttpGet(httpsAdminServerUrl + "/product");
 
         try (CloseableHttpResponse response = httpclient.execute(getList)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
