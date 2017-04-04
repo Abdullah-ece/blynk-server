@@ -1,33 +1,41 @@
 import React from 'react';
 
-import {Link} from 'react-router';
-
 import {Menu, Button, Icon, Dropdown} from 'antd';
 
 import './styles.scss';
 
 class Header extends React.Component {
 
-  static AccountMenu() {
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
+  AccountMenu() {
+
+    const menuItemActive = [this.context.router.getCurrentLocation().pathname];
+
     return (
-      <Menu>
-        <Menu.Item key="0">
-          <Link to="/account">My Account</Link>
+      <Menu onClick={this.handleClick.bind(this)}
+            defaultSelectedKeys={menuItemActive}>
+        <Menu.Item key="/account">
+          My Account
         </Menu.Item>
-        <Menu.Item key="1">
-          <Link to="/">Organization Settings</Link>
+        <Menu.Item key="/organization-settings">
+          Organization Settings
         </Menu.Item>
-        <Menu.Item key="2">
-          <Link to="/">Billing</Link>
+        <Menu.Item key="/billing">
+          Billing
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="3">
-          <Link to="/">
-            <Icon type="logout"/> Log out
-          </Link>
+          <Icon type="logout"/> Log out
         </Menu.Item>
       </Menu>
     );
+  }
+
+  handleClick(e) {
+    this.context.router.push(e.key);
   }
 
   render() {
@@ -35,7 +43,7 @@ class Header extends React.Component {
       <div className="user-layout--header">
         <div className="user-layout--header-logo">Blynk Inc.</div>
         <div className="user-layout--header-user">
-          <Dropdown overlay={this.constructor.AccountMenu()} trigger={['click']}>
+          <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
             <a href="javascript:void(0)" className="dark user-layout--header-user-link">
               some.longemail@evilcoropoation.com
               <Button type="primary" icon="user" size="large" className="user-layout--header-user-button"/>
