@@ -57,6 +57,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final HardwareStatsLogic hardwareStatsLogic;
     private final WebLoginHandler webLoginHandler;
     private final InvitationLogic invitationLogic;
+    private final AccountHandler accountHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.stats = holder.stats;
@@ -77,6 +78,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.invitationLogic = new InvitationLogic(holder, rootPath);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
+        this.accountHandler = new AccountHandler();
     }
 
     @Override
@@ -107,6 +109,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(authCookieHandler);
 
         pipeline.addLast(new UploadLogic("/upload"));
+        pipeline.addLast(accountHandler);
         pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
