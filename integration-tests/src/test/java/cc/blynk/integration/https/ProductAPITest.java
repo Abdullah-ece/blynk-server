@@ -170,7 +170,7 @@ public class ProductAPITest extends BaseTest {
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(product);
+            assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertEquals(product.name, fromApi.name);
             assertEquals(product.description, fromApi.description);
@@ -178,6 +178,7 @@ public class ProductAPITest extends BaseTest {
             assertEquals(product.connectionType, fromApi.connectionType);
         }
 
+        product.id = 1;
         product.name = "Updated Name";
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
@@ -186,7 +187,7 @@ public class ProductAPITest extends BaseTest {
         try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(product);
+            assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertEquals("Updated Name", fromApi.name);
             assertEquals(product.description, fromApi.description);
