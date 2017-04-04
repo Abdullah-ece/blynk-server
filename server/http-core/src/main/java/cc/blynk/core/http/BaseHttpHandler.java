@@ -61,23 +61,26 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         HandlerHolder handlerHolder = lookupHandler(req);
 
         if (handlerHolder != null) {
-            log.debug("Incoming {}", req);
-            globalStats.mark(Command.HTTP_TOTAL);
-
-            try {
-                URIDecoder uriDecoder = new URIDecoder(req);
-                uriDecoder.pathData = handlerHolder.extractParameters();
-                Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
-                finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
-            } catch (Exception e) {
-                log.debug("Error processing http request.", e);
-                ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
-            } finally {
-                ReferenceCountUtil.release(req);
-            }
-
+            invokeHandler(ctx, req, handlerHolder);
         } else {
             ctx.fireChannelRead(req);
+        }
+    }
+
+    public void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerHolder handlerHolder) {
+        log.debug("Incoming {}", req);
+        globalStats.mark(Command.HTTP_TOTAL);
+
+        try {
+            URIDecoder uriDecoder = new URIDecoder(req);
+            uriDecoder.pathData = handlerHolder.extractParameters();
+            Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
+            finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
+        } catch (Exception e) {
+            log.debug("Error processing http request.", e);
+            ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
+        } finally {
+            ReferenceCountUtil.release(req);
         }
     }
 
