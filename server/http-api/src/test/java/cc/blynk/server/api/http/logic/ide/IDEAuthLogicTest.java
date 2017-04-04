@@ -3,6 +3,7 @@ package cc.blynk.server.api.http.logic.ide;
 import cc.blynk.core.http.Response;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.redis.RedisClient;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -30,7 +31,7 @@ public class IDEAuthLogicTest {
     public static final String PASS = "pass";
     public static final String SERVER_NAME = "127.0.0.1";
     public static final String REDIRECT = String.format("//%s%s", SERVER_NAME, IDE_AUTHORIZE_ENDPOINT);
-    private final User user = new User(TEST_USER1, PASS, "", "", false);
+    private final User user = new User(TEST_USER1, PASS, "", "", false, Role.STAFF);
     @Mock
     private UserDao userDao;
     @Mock

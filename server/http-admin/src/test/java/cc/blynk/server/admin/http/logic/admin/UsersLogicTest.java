@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
@@ -49,7 +50,7 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false);
+        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false, Role.STAFF);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);

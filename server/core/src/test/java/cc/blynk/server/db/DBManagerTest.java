@@ -224,8 +224,8 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false));
-        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false));
+        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, Role.STAFF));
+        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false, Role.STAFF));
         dbManager.userDBDao.save(users);
         ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
         assertEquals(2, dbUsers.size());
@@ -236,7 +236,7 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false));
+            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false, Role.STAFF));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
@@ -249,19 +249,19 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, Role.STAFF);
         user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
+        user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         user.name = "123";
         users.add(user);
-        user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false);
+        user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -296,7 +296,7 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";

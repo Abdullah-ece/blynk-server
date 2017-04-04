@@ -3,6 +3,7 @@ package cc.blynk.utils;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +27,8 @@ public class FileManagerIntegrationTest {
 
     private final String dataFolder = new ServerProperties(Collections.emptyMap()).getProperty("data.folder");
 
-    private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false);
-    private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false);
+    private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false, Role.STAFF);
+    private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false, Role.STAFF);
 
     private final FileManager fileManager = new FileManager(dataFolder);
 

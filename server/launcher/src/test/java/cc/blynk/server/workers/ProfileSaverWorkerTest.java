@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -44,10 +45,10 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
 
-        User user1 = new User("1", "", AppName.BLYNK, "local", false);
-        User user2 = new User("2", "", AppName.BLYNK, "local", false);
-        User user3 = new User("3", "", AppName.BLYNK, "local", false);
-        User user4 = new User("4", "", AppName.BLYNK, "local", false);
+        User user1 = new User("1", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user2 = new User("2", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user3 = new User("3", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user4 = new User("4", "", AppName.BLYNK, "local", false, Role.STAFF);
 
         ConcurrentMap<UserKey, User> userMap = new ConcurrentHashMap<>();
         userMap.put(new UserKey(user1), user1);
@@ -67,10 +68,10 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", AppName.BLYNK, "local", false);
-        User user2 = new User("2", "", AppName.BLYNK, "local", false);
-        User user3 = new User("3", "", AppName.BLYNK, "local", false);
-        User user4 = new User("4", "", AppName.BLYNK, "local", false);
+        User user1 = new User("1", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user2 = new User("2", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user3 = new User("3", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user4 = new User("4", "", AppName.BLYNK, "local", false, Role.STAFF);
 
         Map<UserKey, User> userMap = new HashMap<>();
         userMap.put(new UserKey("1", AppName.BLYNK), user1);

@@ -17,6 +17,8 @@ public class User {
     private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
 
     public String name;
+    public volatile String pass;
+
     public Role role;
 
     //key fields
@@ -24,7 +26,7 @@ public class User {
     public String appName;
     public String region;
 
-    public volatile String pass;
+    public Organization organization;
 
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
@@ -47,6 +49,7 @@ public class User {
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;
+        this.organization = Organization.DEFAULT_ORGANIZATION;
     }
 
     public User(String email, String pass, String appName, String region, boolean isFacebookUser, Role role) {
@@ -58,10 +61,7 @@ public class User {
         this.region = region;
         this.isFacebookUser = isFacebookUser;
         this.role = role;
-    }
-
-    public User(String email, String pass, String appName, String region, boolean isFacebookUser) {
-        this(email, pass, appName, region, isFacebookUser, Role.STAFF);
+        this.organization = Organization.DEFAULT_ORGANIZATION;
     }
 
     @JsonProperty("id")
