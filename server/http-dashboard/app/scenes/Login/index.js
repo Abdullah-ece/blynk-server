@@ -41,7 +41,7 @@ export default class Login extends React.Component {
     }).catch(() => {
       throw new SubmissionError({_error: 'Wrong email or password'});
     }).then(() => {
-      this.context.router.push('/');
+      this.context.router.push('/account');
     });
   }
 
