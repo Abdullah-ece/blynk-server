@@ -6,8 +6,9 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.HttpSession;
-import cc.blynk.server.core.dao.ProductDao;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,18 +25,25 @@ import static cc.blynk.core.http.Response.ok;
 @ChannelHandler.Sharable
 public class ProductHandler extends BaseHttpHandler {
 
-    private final ProductDao productDao;
+    private final OrganizationDao organizationDao;
 
     public ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
-        this.productDao = holder.productDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     @GET
     @Path("")
     public Response getAllProductsOfOwnOrganization(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        return ok(httpSession.user.organization.products);
+        Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {}", httpSession.user.organizationId);
+            return badRequest();
+        }
+
+        return ok(organization.products);
     }
 
     @PUT
@@ -43,8 +51,14 @@ public class ProductHandler extends BaseHttpHandler {
     @Path("")
     public Response createProduct(@Context ChannelHandlerContext ctx, Product product) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        product = productDao.createProduct(product);
-        httpSession.user.organization.products.add(product);
+
+        product = organizationDao.addProduct(httpSession.user.organizationId, product);
+
+        if (product == null) {
+            log.error("Cannot find org with id {}", httpSession.user.organizationId);
+            return badRequest();
+        }
+
         return ok(product);
     }
 
@@ -57,7 +71,9 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Product existingProduct = productDao.getById(updatedProduct.id);
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        Product existingProduct = organizationDao.getProduct(httpSession.user.organizationId, updatedProduct.id);
 
         if (existingProduct == null) {
             log.error("Product with passed is {} not found.", updatedProduct.id);

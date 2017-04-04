@@ -87,8 +87,8 @@ public class ProductAPITest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
-        admin.organization = new Organization();
         holder.userDao.add(admin);
+        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
     }
 
     @Override

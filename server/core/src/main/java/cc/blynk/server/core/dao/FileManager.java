@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -84,6 +83,23 @@ public class FileManager {
         log.info("Using data dir '{}'", dataDir);
     }
 
+    public static void migrateOldProfile(User user) {
+        if (user.email == null) {
+            user.email = user.name;
+        }
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (dashBoard.devices != null) {
+                for (Device device : dashBoard.devices) {
+                    device.status = null;
+                }
+            }
+
+            for (Widget widget : dashBoard.widgets) {
+                dashBoard.cleanPinStorage(widget);
+            }
+        }
+    }
+
     public Path getDataDir() {
         return dataDir;
     }
@@ -97,10 +113,6 @@ public class FileManager {
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
-    public Path generateOldFileName(String userName) {
-        return Paths.get(dataDir.toString(), "u_" + userName + USER_FILE_EXTENSION);
-    }
-
     public boolean delete(String email, String appName) {
         Path file = generateFileName(email, appName);
         return FileUtils.move(file, this.deletedDataDir);
@@ -110,18 +122,6 @@ public class FileManager {
         Path path = generateFileName(user.email, user.appName);
 
         JsonParser.writeUser(path.toFile(), user);
-
-        removeOldFile(user.email);
-    }
-
-    private void removeOldFile(String email) {
-        //this oldFileName is migration code. should be removed in future versions
-        Path oldFileName = generateOldFileName(email);
-        try {
-            Files.deleteIfExists(oldFileName);
-        } catch (Exception e) {
-            log.error("Error removing old file. {}", oldFileName, e);
-        }
     }
 
     public ConcurrentMap<Integer, Organization> deserializeOrganizations() {
@@ -184,24 +184,7 @@ public class FileManager {
         }
 
         log.debug("Reading user DB finished.");
-        return new ConcurrentHashMap<>();
-    }
-
-    public static void migrateOldProfile(User user) {
-        if (user.email == null) {
-            user.email = user.name;
-        }
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            if (dashBoard.devices != null) {
-                for (Device device : dashBoard.devices) {
-                    device.status = null;
-                }
-            }
-
-            for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget);
-            }
-        }
+        return temp;
     }
 
     public Map<String, Integer> getUserProfilesSize() {
