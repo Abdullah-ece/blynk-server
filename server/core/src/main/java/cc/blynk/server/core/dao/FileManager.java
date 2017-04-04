@@ -39,9 +39,12 @@ import static java.util.function.Function.identity;
 public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
+    private static final String USER_FILE_EXTENSION = ".user";
+    
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
     private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
+
     /**
      * Folder where all user profiles are stored locally.
      */
@@ -81,29 +84,12 @@ public class FileManager {
         log.info("Using data dir '{}'", dataDir);
     }
 
-    public static void migrateOldProfile(User user) {
-        if (user.email == null) {
-            user.email = user.name;
-        }
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            if (dashBoard.devices != null) {
-                for (Device device : dashBoard.devices) {
-                    device.status = null;
-                }
-            }
-
-            for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget);
-            }
-        }
-    }
-
     public Path getDataDir() {
         return dataDir;
     }
 
     public Path generateFileName(String email, String appName) {
-        return Paths.get(dataDir.toString(), email + "." + appName + ".user");
+        return Paths.get(dataDir.toString(), email + "." + appName + USER_FILE_EXTENSION);
     }
 
     public Path generateBackupFileName(String email, String appName) {
@@ -112,7 +98,7 @@ public class FileManager {
     }
 
     public Path generateOldFileName(String userName) {
-        return Paths.get(dataDir.toString(), "u_" + userName + ".user");
+        return Paths.get(dataDir.toString(), "u_" + userName + USER_FILE_EXTENSION);
     }
 
     public boolean delete(String email, String appName) {
@@ -176,9 +162,10 @@ public class FileManager {
 
         final File[] files = dataDir.toFile().listFiles();
 
+        ConcurrentMap<UserKey, User> temp;
         if (files != null) {
-            ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
-                    .filter(file -> file.isFile() && file.getName().endsWith(".user"))
+            temp = Arrays.stream(files).parallel()
+                    .filter(file -> file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION))
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
@@ -191,14 +178,30 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(UserKey::new, identity(), (user1, user2) -> user2));
-
-            log.debug("Reading user DB finished.");
-            return tempUsers;
+                    .collect(Collectors.toConcurrentMap(UserKey::new, identity()));
+        } else {
+            temp = new ConcurrentHashMap<>();
         }
 
         log.debug("Reading user DB finished.");
         return new ConcurrentHashMap<>();
+    }
+
+    public static void migrateOldProfile(User user) {
+        if (user.email == null) {
+            user.email = user.name;
+        }
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (dashBoard.devices != null) {
+                for (Device device : dashBoard.devices) {
+                    device.status = null;
+                }
+            }
+
+            for (Widget widget : dashBoard.widgets) {
+                dashBoard.cleanPinStorage(widget);
+            }
+        }
     }
 
     public Map<String, Integer> getUserProfilesSize() {
@@ -206,7 +209,7 @@ public class FileManager {
         File[] files = dataDir.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".user")) {
+                if (file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION)) {
                     userProfileSize.put(file.getName(), (int) file.length());
                 }
             }
