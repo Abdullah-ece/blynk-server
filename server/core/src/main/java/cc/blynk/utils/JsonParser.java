@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -45,6 +46,7 @@ public final class JsonParser {
             .writerFor(DashBoard.class);
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = mapper.readerFor(User.class);
+    private static final ObjectReader organizationReader = mapper.readerFor(Organization.class);
     private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
@@ -125,6 +127,10 @@ public final class JsonParser {
             log.error("Error reading json object.", e);
         }
         return null;
+    }
+
+    public static Organization parseOrganization(File orgFile) throws IOException {
+        return organizationReader.readValue(orgFile);
     }
 
     public static User parseUserFromFile(File userFile) throws IOException {

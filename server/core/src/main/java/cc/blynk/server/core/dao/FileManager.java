@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
@@ -40,10 +41,12 @@ public class FileManager {
     private static final Logger log = LogManager.getLogger(FileManager.class);
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
+    private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
     /**
      * Folder where all user profiles are stored locally.
      */
     private Path dataDir;
+    private Path orgDataDir;
     private Path deletedDataDir;
     private Path backupDataDir;
 
@@ -56,6 +59,7 @@ public class FileManager {
         try {
             Path dataFolderPath = Paths.get(dataFolder);
             this.dataDir = createDirectories(dataFolderPath);
+            this.orgDataDir = createDirectories(Paths.get(dataFolder, ORGANIZATION_DATA_DIR_NAME));
             this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
             this.backupDataDir = createDirectories(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
         } catch (Exception e) {
@@ -66,6 +70,7 @@ public class FileManager {
 
             try {
                 this.dataDir = createDirectories(tempDir);
+                this.orgDataDir = createDirectories(Paths.get(this.dataDir.toString(), ORGANIZATION_DATA_DIR_NAME));
                 this.deletedDataDir = createDirectories(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
                 this.backupDataDir = createDirectories(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
             } catch (Exception ioe) {
@@ -131,6 +136,34 @@ public class FileManager {
         } catch (Exception e) {
             log.error("Error removing old file. {}", oldFileName, e);
         }
+    }
+
+    public ConcurrentMap<Integer, Organization> deserializeOrganizations() {
+        log.debug("Starting reading organizations DB.");
+
+        final File[] files = orgDataDir.toFile().listFiles();
+
+        ConcurrentMap<Integer, Organization> temp;
+        if (files != null) {
+            temp = Arrays.stream(files).parallel()
+                    .filter(file -> file.isFile() && file.getName().endsWith(".org"))
+                    .flatMap(file -> {
+                        try {
+                            Organization org = JsonParser.parseOrganization(file);
+                            return Stream.of(org);
+                        } catch (IOException ioe) {
+                            log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
+                        }
+                        return Stream.empty();
+                    })
+                    .collect(Collectors.toConcurrentMap(org -> org.id, identity()));
+
+        } else {
+            temp = new ConcurrentHashMap<>();
+        }
+
+        log.debug("Reading organization DB finished.");
+        return temp;
     }
 
     /**
