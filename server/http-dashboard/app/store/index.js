@@ -9,8 +9,13 @@ import {persistStore, autoRehydrate} from 'redux-persist';
 /* instance for basic API */
 const axiosAPI = axios.create({
   baseURL: '/dashboard',
-  responseType: 'json'
+  responseType: 'json',
 });
+/* axios middleware options*/
+const axiosMiddlewareOptions = {
+  returnRejectedPromiseOnError: true,
+  errorSuffix: '_FAILURE'
+};
 
 /* Persist Store Config for PROD & DEV */
 const persisStoreConfig = {
@@ -32,7 +37,7 @@ const persisStoreConfigProd = {};
 function configureStoreProd(initialState) {
   const middlewares = [
     thunk,
-    axiosMiddleware(axiosAPI)
+    axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
 
   const store = createStore(rootReducer, initialState, compose(
@@ -52,7 +57,7 @@ function configureStoreDev() {
   const middlewares = [
     reduxImmutableStateInvariant(),
     thunk,
-    axiosMiddleware(axiosAPI)
+    axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
