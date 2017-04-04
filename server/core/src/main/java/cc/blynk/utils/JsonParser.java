@@ -54,6 +54,7 @@ public final class JsonParser {
     private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader productReader = mapper.readerFor(Product.class);
+    private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
@@ -68,6 +69,10 @@ public final class JsonParser {
                 .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    }
+
+    public static String toJson(Organization organization) {
+        return toJson(organizationWriter, organization);
     }
 
     public static String toJson(User user) {
@@ -151,6 +156,10 @@ public final class JsonParser {
 
     public static Product parseProduct(String product) throws IOException {
         return productReader.readValue(product);
+    }
+
+    public static Organization parseOrganization(String org) throws IOException {
+        return organizationReader.readValue(org);
     }
 
     public static DashBoard parseDashboard(String reader) {

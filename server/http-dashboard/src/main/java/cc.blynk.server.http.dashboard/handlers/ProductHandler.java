@@ -34,7 +34,7 @@ public class ProductHandler extends BaseHttpHandler {
 
     @GET
     @Path("")
-    public Response getAllProductsOfOwnOrganization(@Context ChannelHandlerContext ctx) {
+    public Response getAll(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
 
@@ -49,7 +49,7 @@ public class ProductHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response createProduct(@Context ChannelHandlerContext ctx, Product product) {
+    public Response create(@Context ChannelHandlerContext ctx, Product product) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
         product = organizationDao.addProduct(httpSession.user.organizationId, product);
@@ -65,7 +65,7 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response updateProduct(@Context ChannelHandlerContext ctx, Product updatedProduct) {
+    public Response update(@Context ChannelHandlerContext ctx, Product updatedProduct) {
         if (updatedProduct == null) {
             log.error("No product for update.");
             return badRequest();

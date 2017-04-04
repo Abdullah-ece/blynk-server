@@ -61,6 +61,11 @@ public class OrganizationDao {
         return organizations.get(id);
     }
 
+    public boolean delete(int id) {
+        return organizations.remove(id) != null;
+    }
+
+
     public Product addProduct(int orgId, Product product) {
         Organization organization = getOrgById(orgId);
         if (organization == null) {

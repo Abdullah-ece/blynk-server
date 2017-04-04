@@ -39,6 +39,7 @@ public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
     private static final String USER_FILE_EXTENSION = ".user";
+    private static final String ORG_FILE_EXTENSION = ".org";
     
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
@@ -104,6 +105,10 @@ public class FileManager {
         return dataDir;
     }
 
+    public Path generateOrgFileName(int orgId) {
+        return Paths.get(dataDir.toString(), orgId + ORG_FILE_EXTENSION);
+    }
+
     public Path generateFileName(String email, String appName) {
         return Paths.get(dataDir.toString(), email + "." + appName + USER_FILE_EXTENSION);
     }
@@ -111,6 +116,11 @@ public class FileManager {
     public Path generateBackupFileName(String email, String appName) {
         return Paths.get(backupDataDir.toString(), email + "." + appName + ".user." +
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+    }
+
+    public boolean deleteOrg(int orgId) {
+        Path file = generateOrgFileName(orgId);
+        return FileUtils.move(file, this.deletedDataDir);
     }
 
     public boolean delete(String email, String appName) {
@@ -132,7 +142,7 @@ public class FileManager {
         ConcurrentMap<Integer, Organization> temp;
         if (files != null) {
             temp = Arrays.stream(files).parallel()
-                    .filter(file -> file.isFile() && file.getName().endsWith(".org"))
+                    .filter(file -> file.isFile() && file.getName().endsWith(ORG_FILE_EXTENSION))
                     .flatMap(file -> {
                         try {
                             Organization org = JsonParser.parseOrganization(file);

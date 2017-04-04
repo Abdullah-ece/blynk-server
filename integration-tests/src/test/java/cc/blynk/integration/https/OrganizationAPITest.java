@@ -5,10 +5,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -17,10 +15,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -48,7 +43,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProductAPITest extends BaseTest {
+public class OrganizationAPITest extends BaseTest {
 
     private static String rootPath;
     private BaseServer httpsAdminServer;
@@ -121,137 +116,87 @@ public class ProductAPITest extends BaseTest {
     }
 
     @Test
-    public void getProductsNotAuthorized() throws Exception {
-        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/product");
+    public void getOrgNotAuthorized() throws Exception {
+        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/organization");
         try (CloseableHttpResponse response = httpclient.execute(getOwnProfile)) {
             assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
     @Test
-    public void createProduct() throws Exception {
+    public void getOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Product product = new Product();
-        product.name = "My product";
-        product.description = "Description";
-        product.boardType = "ESP8266";
-        product.connectionType = ConnectionType.WI_FI;
-
-        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization");
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
-            assertEquals(product.name, fromApi.name);
-            assertEquals(product.description, fromApi.description);
-            assertEquals(product.boardType, fromApi.boardType);
-            assertEquals(product.connectionType, fromApi.connectionType);
+            assertEquals("BLynk Inc.", fromApi.name);
+            assertEquals("Europe/Kiev", fromApi.tzName);
         }
     }
 
     @Test
-    public void updateProduct() throws Exception {
+    public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Product product = new Product();
-        product.name = "My product";
-        product.description = "Description";
-        product.boardType = "ESP8266";
-        product.connectionType = ConnectionType.WI_FI;
+        Organization organization = new Organization("My Org", "Some TimeZone");
 
-        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
-
-        Product fromApi;
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(product);
-            assertEquals(1, fromApi.id);
-            assertEquals(product.name, fromApi.name);
-            assertEquals(product.description, fromApi.description);
-            assertEquals(product.boardType, fromApi.boardType);
-            assertEquals(product.connectionType, fromApi.connectionType);
-        }
-
-        product.name = "Updated Name";
-
-        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
-        updateReq.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(product);
-            assertEquals(1, fromApi.id);
-            assertEquals("Updated Name", fromApi.name);
-            assertEquals(product.description, fromApi.description);
-            assertEquals(product.boardType, fromApi.boardType);
-            assertEquals(product.connectionType, fromApi.connectionType);
-        }
-    }
-
-    @Test
-    public void getEmptyListOfProducts() throws Exception {
-        login(admin.email, admin.pass);
-
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
-            assertNotNull(fromApi);
-            assertEquals(0, fromApi.length);
-        }
-    }
-
-    @Test
-    public void getListOfProducts() throws Exception {
-        createProduct();
-
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
-
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
-            assertNotNull(fromApi);
-            assertEquals(1, fromApi.length);
-        }
-    }
-
-    @Test
-    public void getListOfProducts2() throws Exception {
-        createProduct();
-
-        Product product2 = new Product();
-        product2.name = "My product2";
-        product2.description = "Description2";
-        product2.boardType = "ESP82662";
-        product2.connectionType = ConnectionType.WI_FI;
-
-        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(product2.toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
-        }
-
-        HttpGet getList = new HttpGet(httpsAdminServerUrl + "/product");
-
-        try (CloseableHttpResponse response = httpclient.execute(getList)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
-            assertNotNull(fromApi);
-            assertEquals(2, fromApi.length);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
         }
     }
+
+    @Test
+    public void updateOrganization() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("1", "2");
+        organization.id = 1;
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+    }
+
+
+    @Test
+    public void deleteOrganization() throws Exception {
+        createOrganization();
+
+        HttpDelete req = new HttpDelete(httpsAdminServerUrl + "/organization/1");
+
+        //do not allow to delete initial org
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
+        }
+
+        HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
 
     private void login(String name, String pass) throws Exception {
         HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");

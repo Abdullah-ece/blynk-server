@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.utils.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +15,15 @@ public class Organization {
 
     public int id;
 
-    public String name;
+    public volatile String name;
 
-    public String tzName;
+    public volatile String tzName;
 
-    public String logoUrl;
+    public volatile String logoUrl;
 
-    public int color;
+    public volatile int color;
 
-    public List<Product> products = new ArrayList<>();
+    public volatile List<Product> products = new ArrayList<>();
 
     public Organization() {
     }
@@ -30,5 +31,18 @@ public class Organization {
     public Organization(String name, String tzName) {
         this.name = name;
         this.tzName = tzName;
+    }
+
+    public void update(Organization updatedOrganization) {
+        this.name = updatedOrganization.name;
+        this.tzName = updatedOrganization.tzName;
+        this.logoUrl = updatedOrganization.logoUrl;
+        this.color = updatedOrganization.color;
+        this.products = updatedOrganization.products;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }
