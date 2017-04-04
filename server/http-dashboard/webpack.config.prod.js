@@ -93,8 +93,8 @@ export default {
       {
         test: /\.less$/,
         loaders: ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
-          loader: ["css-loader", "less-loader"],
+          fallback: 'style-loader',
+          use: ["css-loader", "less-loader"],
         })
       },
       {
