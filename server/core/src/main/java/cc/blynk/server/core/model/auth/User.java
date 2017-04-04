@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;

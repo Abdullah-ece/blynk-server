@@ -2,6 +2,7 @@ package cc.blynk.core.http;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -115,6 +116,10 @@ public class Response extends DefaultFullHttpResponse {
 
     public static Response ok(boolean bool) {
         return new Response(HTTP_1_1, OK, String.valueOf(bool), JSON);
+    }
+
+    public static Response ok(Product product) {
+        return ok(JsonParser.toJson(product));
     }
 
     public static Response ok(User user) {

@@ -30,6 +30,7 @@ HOST: https://knight-qa.blynk.cc/
 
         /dashboard
 
+
 # Account API
 
 ## Get Account Info [GET] [/account/me]
@@ -53,6 +54,49 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
         Full user json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+
+# Products API
+
+## Get List Of Products [GET] [/product/list]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        List of products for current user organization
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+## Create New Product [PUT] [/product]
+
++ Request (application/json)
+
+        Full product json (without id field)
+
++ Response 200 (application/json)
+
+        Full product json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+## Update Product [POST] [/product]
+
++ Request (application/json)
+
+        Full product json (with id field)
+
++ Response 200 (application/json)
+
+        Full product json
 
 + Response 401 (plain/text)
 

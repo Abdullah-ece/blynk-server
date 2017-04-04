@@ -3,8 +3,8 @@ package cc.blynk.utils;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Role;
 import org.junit.Before;
 import org.junit.Test;
 

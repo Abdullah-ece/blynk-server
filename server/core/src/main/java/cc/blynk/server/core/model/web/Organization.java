@@ -1,4 +1,9 @@
-package cc.blynk.server.core.model.auth;
+package cc.blynk.server.core.model.web;
+
+import cc.blynk.server.core.model.web.product.Product;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -18,6 +23,8 @@ public class Organization {
     public String logoUrl;
 
     public int color;
+
+    public List<Product> products = new ArrayList<>();
 
     public Organization() {
     }

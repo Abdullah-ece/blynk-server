@@ -17,6 +17,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.dashboard.handlers.AccountHandler;
+import cc.blynk.server.http.dashboard.handlers.ProductHandler;
 import cc.blynk.server.http.dashboard.handlers.UploadLogic;
 import cc.blynk.server.http.dashboard.handlers.auth.AuthCookieHandler;
 import cc.blynk.server.http.dashboard.handlers.auth.WebLoginHandler;
@@ -59,6 +60,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final WebLoginHandler webLoginHandler;
     private final InvitationLogic invitationLogic;
     private final AccountHandler accountHandler;
+    private final ProductHandler productHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.stats = holder.stats;
@@ -80,6 +82,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
+        this.productHandler = new ProductHandler(holder, rootPath);
     }
 
     @Override
@@ -111,6 +114,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         pipeline.addLast(new UploadLogic("/upload"));
         pipeline.addLast(accountHandler);
+        pipeline.addLast(productHandler);
         pipeline.addLast(invitationLogic);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);

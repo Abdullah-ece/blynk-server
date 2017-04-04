@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.Role;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;

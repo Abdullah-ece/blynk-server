@@ -3,9 +3,9 @@ package cc.blynk.integration.tools;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 

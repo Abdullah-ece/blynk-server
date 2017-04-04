@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.auth;
+package cc.blynk.server.core.model.web;
 
 /**
  * The Blynk Project.

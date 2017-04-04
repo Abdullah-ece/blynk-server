@@ -47,7 +47,7 @@ public class HttpsAPIServer extends BaseServer {
                 final ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
-                pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(1024 * 1024, true));
+                pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                         new UrlMapper(rootPath, "/static/index.html")));
