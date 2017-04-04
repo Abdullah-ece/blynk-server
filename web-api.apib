@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://blynk-cloud.com/
+HOST: https://knight-qa.blynk.cc/
 
 # Login API
 
@@ -29,3 +29,31 @@ HOST: http://blynk-cloud.com/
 + Response 301 (application/json)
 
         /dashboard
+
+# Account API
+
+## Get Account Info [GET] [/account/me]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        User json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+## Update Account Info [POST] [/account/me]
+
++ Request (application/json)
+
+        Full user json
+
++ Response 200 (application/json)
+
+        Full user json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.

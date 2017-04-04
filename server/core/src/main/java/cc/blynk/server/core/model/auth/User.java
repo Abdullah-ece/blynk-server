@@ -16,7 +16,7 @@ public class User {
 
     private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
 
-    public String name;
+    public volatile String name;
     public volatile String pass;
 
     public Role role;
@@ -86,6 +86,10 @@ public class User {
         //non-atomic. we are fine with that
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void update(User updatedUser) {
+        this.name = updatedUser.name;
     }
 
     @Override
