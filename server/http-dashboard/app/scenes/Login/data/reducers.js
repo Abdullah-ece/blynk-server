@@ -4,10 +4,13 @@ export default function Login(state = {}, action) {
     case "API_LOGIN_SUCCESS":
       return {
         ...state,
-        token: action.payload.data.token
+        isLoggedIn: true
       };
     case "API_LOGIN_FAILURE":
-      return {};
+      return {
+        ...state,
+        isLoggedIn: false
+      };
     default:
       return state;
   }

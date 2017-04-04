@@ -5,7 +5,7 @@ export const isLoggedIn = (store) => {
 
   const state = store.getState();
 
-  return state && state.Login && state.Login.token;
+  return state && state.Login && state.Login.isLoggedIn;
 };
 
 export const RouteAuthorizedOnly = (store) => {
@@ -20,7 +20,7 @@ export const RouteAuthorizedOnly = (store) => {
 export const RouteGuestOnly = (store) => {
   return (nextState, replaceWith, callback) => {
     if (isLoggedIn(store)) {
-      replaceWith('/');
+      replaceWith('/account');
     }
     callback();
   };

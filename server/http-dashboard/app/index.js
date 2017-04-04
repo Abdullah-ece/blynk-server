@@ -15,7 +15,7 @@ import {Provider} from 'react-redux';
 import Store from './store';
 
 /* services */
-import {RouteGuestOnly} from 'services/Login';
+import {RouteGuestOnly, RouteAuthorizedOnly} from 'services/Login';
 
 Store().then((store) => {
 
@@ -23,7 +23,7 @@ Store().then((store) => {
     <Provider store={store}>
       <Router history={hashHistory}>
         <Route component={Layout}>
-          <Route component={UserLayout} /*onEnter={RouteAuthorizedOnly(store)}*/>
+          <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
             <Route path="/account" component={MyAccount}/>
             <Route path="/organization-settings" component={OrganizationSettings}/>
           </Route>

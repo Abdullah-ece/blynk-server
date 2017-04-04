@@ -3,7 +3,7 @@ import reduceReducers from 'reduce-reducers';
 import API from './data/reducers';
 
 const initialState = {
-  token: ''
+  isLoggedIn: false
 };
 
 function Login(state = initialState) {
