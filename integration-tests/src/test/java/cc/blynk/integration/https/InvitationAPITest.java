@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpsInvitationTest extends BaseTest {
+public class InvitationAPITest extends BaseTest {
 
     private static String rootPath;
     private BaseServer httpsAdminServer;

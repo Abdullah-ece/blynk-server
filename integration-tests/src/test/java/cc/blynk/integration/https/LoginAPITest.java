@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpsLoginFlowTest extends BaseTest {
+public class LoginAPITest extends BaseTest {
 
     private static String rootPath;
     private BaseServer httpServer;

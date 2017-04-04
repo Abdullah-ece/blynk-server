@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpResetPassTest extends BaseTest {
+public class ResetPassAPITest extends BaseTest {
 
     private static BaseServer httpServer;
     private CloseableHttpClient httpclient;
