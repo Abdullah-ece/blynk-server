@@ -1,16 +1,12 @@
-package cc.blynk.server.api.http.handlers;
+package cc.blynk.server.http.handlers;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.logic.*;
-import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
-import cc.blynk.server.api.http.logic.UploadLogic;
-import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
-import cc.blynk.server.api.http.logic.business.WebLoginHandler;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -19,6 +15,11 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.http.dashboard.handlers.AccountHandler;
+import cc.blynk.server.http.dashboard.handlers.UploadLogic;
+import cc.blynk.server.http.dashboard.handlers.auth.AuthCookieHandler;
+import cc.blynk.server.http.dashboard.handlers.auth.WebLoginHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -78,7 +79,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.invitationLogic = new InvitationLogic(holder, rootPath);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        this.accountHandler = new AccountHandler();
+        this.accountHandler = new AccountHandler(holder, rootPath);
     }
 
     @Override

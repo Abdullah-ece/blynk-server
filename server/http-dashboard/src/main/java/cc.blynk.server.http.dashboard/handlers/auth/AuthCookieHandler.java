@@ -1,4 +1,4 @@
-package cc.blynk.server.api.http.logic.business;
+package cc.blynk.server.http.dashboard.handlers.auth;
 
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;

@@ -2,11 +2,11 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;

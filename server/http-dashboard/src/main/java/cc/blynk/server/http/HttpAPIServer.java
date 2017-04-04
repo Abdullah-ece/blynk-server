@@ -1,13 +1,13 @@
-package cc.blynk.server.api.http;
+package cc.blynk.server.http;
 
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
+import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.UrlMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

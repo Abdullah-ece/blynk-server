@@ -1,9 +1,9 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.http.HttpAPIServer;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

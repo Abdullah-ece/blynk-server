@@ -1,8 +1,8 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.http.HttpAPIServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;

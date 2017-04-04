@@ -1,4 +1,4 @@
-package cc.blynk.server.api.http.logic.business;
+package cc.blynk.server.http.dashboard.handlers.auth;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;

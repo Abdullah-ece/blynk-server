@@ -2,10 +2,10 @@ package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.websocket.WebSocketClient;
-import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.http.HttpsAPIServer;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +26,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class WebSslSocketTest extends BaseTest {
 
-    private static BaseServer webSocketServer;
     public static int sslWebSocketPort = httpsPort;
+    private static BaseServer webSocketServer;
 
     @AfterClass
     public static void shutdown() throws Exception {
