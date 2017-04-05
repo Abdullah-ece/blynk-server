@@ -8,6 +8,7 @@ import TimeZones from './services/Timezones';
 import Field from '../../components/Field';
 import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
+import OrganizationBranding from './components/OrganizationBranding';
 
 import './styles.scss';
 
@@ -66,6 +67,11 @@ class OrganizationSettings extends React.Component {
         <Section title="Users">
           <Item>
             <OrganizationUsers/>
+          </Item>
+        </Section>
+        <Section title="Branding">
+          <Item>
+            <OrganizationBranding/>
           </Item>
         </Section>
       </div>
