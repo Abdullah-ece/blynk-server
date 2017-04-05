@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# Git hook that prevents commits to master
+# use --no-verify to bypass this hook
+# ex: git commit -m "init commit" --no-verify
+
+# git diff --cached --name-only
+
+arrayName=( $(git diff --cached --name-only) )
+
+for i in "${arrayName[@]}"
+do
+  if [[ $i == *"server/http-dashboard/"* ]]; then
+    found=true
+  fi
+done
+
+if ! [ "$found" ];
+then
+  exit 0 # no dashboard changes. prevent linter running
+fi
+
+linter="npm run lint"
+
+cd server/http-dashboard
+npm run lint >/dev/null 2>&1
+OUT=$?
+if [ $OUT != 0 ];then
+   echo "Linter has errors. Commit not allowed. Please do 'npm run lint' to check linter issues"
+   exit 1
+fi
+
+exit 0
