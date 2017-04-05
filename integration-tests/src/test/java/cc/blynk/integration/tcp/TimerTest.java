@@ -159,7 +159,7 @@ public class TimerTest extends IntegrationBase {
         timerTime.days = new int[] {1,2,3,4,5,6,7};
 
         //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 3;
         timerTime.tzName = DateTimeUtils.UTC;
 
         Rule rule = new Rule();
@@ -185,7 +185,7 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(gcmWrapper, timeout(5000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
