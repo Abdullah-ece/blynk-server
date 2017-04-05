@@ -109,6 +109,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ctx.fireChannelRead(msg);
     }
 
+  
     private void initUserPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
 
