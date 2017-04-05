@@ -4,7 +4,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.Role;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
@@ -108,6 +109,7 @@ public class ServerLauncher {
 
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
+            holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev"));
         }
     }
 

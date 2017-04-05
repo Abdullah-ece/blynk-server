@@ -1,7 +1,9 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -26,7 +28,7 @@ public class User {
     public String appName;
     public String region;
 
-    public Organization organization;
+    public int organizationId;
 
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
@@ -49,7 +51,7 @@ public class User {
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;
-        this.organization = Organization.DEFAULT_ORGANIZATION;
+        this.organizationId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
     public User(String email, String pass, String appName, String region, boolean isFacebookUser, Role role) {
@@ -61,7 +63,6 @@ public class User {
         this.region = region;
         this.isFacebookUser = isFacebookUser;
         this.role = role;
-        this.organization = Organization.DEFAULT_ORGANIZATION;
     }
 
     @JsonProperty("id")

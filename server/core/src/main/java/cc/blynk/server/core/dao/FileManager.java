@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
@@ -11,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.file.Files.createDirectories;
 import static java.util.function.Function.identity;
 
 
@@ -37,12 +38,18 @@ import static java.util.function.Function.identity;
 public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
+    private static final String USER_FILE_EXTENSION = ".user";
+    private static final String ORG_FILE_EXTENSION = ".org";
+    
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
+    private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";
+
     /**
      * Folder where all user profiles are stored locally.
      */
     private Path dataDir;
+    private Path orgDataDir;
     private Path deletedDataDir;
     private Path backupDataDir;
 
@@ -54,31 +61,27 @@ public class FileManager {
         }
         try {
             Path dataFolderPath = Paths.get(dataFolder);
-            this.dataDir = createDir(dataFolderPath);
-            this.deletedDataDir = createDir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
-            this.backupDataDir = createDir(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
-        } catch (RuntimeException e) {
+            this.dataDir = createDirectories(dataFolderPath);
+            this.orgDataDir = createDirectories(Paths.get(dataFolder, ORGANIZATION_DATA_DIR_NAME));
+            this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
+            this.backupDataDir = createDirectories(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
+        } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
             System.out.println("WARNING : could not find folder '" + dataFolder + "'. Please specify correct -dataFolder parameter.");
             System.out.println("Your data may be lost during server restart. Using temp folder : " + tempDir.toString());
 
-            this.dataDir = createDir(tempDir);
-            this.deletedDataDir = createDir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
-            this.backupDataDir = createDir(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+            try {
+                this.dataDir = createDirectories(tempDir);
+                this.orgDataDir = createDirectories(Paths.get(this.dataDir.toString(), ORGANIZATION_DATA_DIR_NAME));
+                this.deletedDataDir = createDirectories(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+                this.backupDataDir = createDirectories(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+            } catch (Exception ioe) {
+                throw new RuntimeException(ioe);
+            }
         }
 
         log.info("Using data dir '{}'", dataDir);
-    }
-
-    private static Path createDir(Path dataDir) {
-        try {
-            Files.createDirectories(dataDir);
-        } catch (IOException ioe) {
-            log.error("Error creating data folder '{}'", dataDir);
-            throw new RuntimeException("Error creating data folder '" + dataDir + "'");
-        }
-        return dataDir;
     }
 
     public static void migrateOldProfile(User user) {
@@ -102,8 +105,12 @@ public class FileManager {
         return dataDir;
     }
 
+    public Path generateOrgFileName(int orgId) {
+        return Paths.get(dataDir.toString(), orgId + ORG_FILE_EXTENSION);
+    }
+
     public Path generateFileName(String email, String appName) {
-        return Paths.get(dataDir.toString(), email + "." + appName + ".user");
+        return Paths.get(dataDir.toString(), email + "." + appName + USER_FILE_EXTENSION);
     }
 
     public Path generateBackupFileName(String email, String appName) {
@@ -111,8 +118,9 @@ public class FileManager {
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
-    public Path generateOldFileName(String userName) {
-        return Paths.get(dataDir.toString(), "u_" + userName + ".user");
+    public boolean deleteOrg(int orgId) {
+        Path file = generateOrgFileName(orgId);
+        return FileUtils.move(file, this.deletedDataDir);
     }
 
     public boolean delete(String email, String appName) {
@@ -124,18 +132,34 @@ public class FileManager {
         Path path = generateFileName(user.email, user.appName);
 
         JsonParser.writeUser(path.toFile(), user);
-
-        removeOldFile(user.email);
     }
 
-    private void removeOldFile(String email) {
-        //this oldFileName is migration code. should be removed in future versions
-        Path oldFileName = generateOldFileName(email);
-        try {
-            Files.deleteIfExists(oldFileName);
-        } catch (Exception e) {
-            log.error("Error removing old file. {}", oldFileName, e);
+    public ConcurrentMap<Integer, Organization> deserializeOrganizations() {
+        log.debug("Starting reading organizations DB.");
+
+        final File[] files = orgDataDir.toFile().listFiles();
+
+        ConcurrentMap<Integer, Organization> temp;
+        if (files != null) {
+            temp = Arrays.stream(files).parallel()
+                    .filter(file -> file.isFile() && file.getName().endsWith(ORG_FILE_EXTENSION))
+                    .flatMap(file -> {
+                        try {
+                            Organization org = JsonParser.parseOrganization(file);
+                            return Stream.of(org);
+                        } catch (IOException ioe) {
+                            log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
+                        }
+                        return Stream.empty();
+                    })
+                    .collect(Collectors.toConcurrentMap(org -> org.id, identity()));
+
+        } else {
+            temp = new ConcurrentHashMap<>();
         }
+
+        log.debug("Reading organization DB finished.");
+        return temp;
     }
 
     /**
@@ -143,14 +167,15 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public ConcurrentMap<UserKey, User> deserialize() {
+    public ConcurrentMap<UserKey, User> deserializeUsers() {
         log.debug("Starting reading user DB.");
 
         final File[] files = dataDir.toFile().listFiles();
 
+        ConcurrentMap<UserKey, User> temp;
         if (files != null) {
-            ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
-                    .filter(file -> file.isFile() && file.getName().endsWith(".user"))
+            temp = Arrays.stream(files).parallel()
+                    .filter(file -> file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION))
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
@@ -163,14 +188,13 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(UserKey::new, identity(), (user1, user2) -> user2));
-
-            log.debug("Reading user DB finished.");
-            return tempUsers;
+                    .collect(Collectors.toConcurrentMap(UserKey::new, identity()));
+        } else {
+            temp = new ConcurrentHashMap<>();
         }
 
         log.debug("Reading user DB finished.");
-        return new ConcurrentHashMap<>();
+        return temp;
     }
 
     public Map<String, Integer> getUserProfilesSize() {
@@ -178,7 +202,7 @@ public class FileManager {
         File[] files = dataDir.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".user")) {
+                if (file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION)) {
                     userProfileSize.put(file.getName(), (int) file.length());
                 }
             }

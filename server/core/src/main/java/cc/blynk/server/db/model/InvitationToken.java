@@ -1,6 +1,6 @@
 package cc.blynk.server.db.model;
 
-import cc.blynk.server.core.model.auth.Role;
+import cc.blynk.server.core.model.web.Role;
 
 import java.util.Date;
 

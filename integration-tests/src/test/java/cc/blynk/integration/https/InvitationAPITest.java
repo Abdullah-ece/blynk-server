@@ -4,8 +4,8 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpsInvitationTest extends BaseTest {
+public class InvitationAPITest extends BaseTest {
 
     private static String rootPath;
     private BaseServer httpsAdminServer;

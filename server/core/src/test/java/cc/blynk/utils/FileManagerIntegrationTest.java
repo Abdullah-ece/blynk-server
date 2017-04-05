@@ -3,8 +3,8 @@ package cc.blynk.utils;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Role;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class FileManagerIntegrationTest {
     public void testNotNullTokenManager() throws IOException {
         fileManager.overrideUserFile(user1);
 
-        Map<UserKey, User> users = fileManager.deserialize();
+        Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
         assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
     }
@@ -75,7 +75,7 @@ public class FileManagerIntegrationTest {
         Files.deleteIfExists(fakeFile);
         Files.createFile(fakeFile);
 
-        Map<UserKey, User> users = fileManager.deserialize();
+        Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
         assertEquals(2, users.size());
         assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
@@ -87,7 +87,7 @@ public class FileManagerIntegrationTest {
         fileManager.overrideUserFile(user1);
         fileManager.overrideUserFile(user1);
 
-        Map<UserKey, User> users = fileManager.deserialize();
+        Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
         assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
     }

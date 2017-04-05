@@ -1,6 +1,7 @@
 FORMAT: 1A
 HOST: https://knight-qa.blynk.cc/
 
+
 # Login API
 
 ## Login [POST] [/login]
@@ -30,6 +31,76 @@ HOST: https://knight-qa.blynk.cc/
 
         /dashboard
 
+
+# Organizations API
+
+## Get organization assigned to user [GET] [/organization]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        Json of user organization
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
++ Response 500 (plain/text)
+
+        Unexpected error.
+
+## Create New Organization [PUT] [/organization]
+
++ Request (application/json)
+
+        Full organization json (without id field)
+
++ Response 200 (application/json)
+
+        Full organization json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
++ Response 500 (plain/text)
+
+        Unexpected error.
+
+## Update Organization [POST] [/organization]
+
++ Request (application/json)
+
+        Full organization json (with id field)
+
++ Response 200 (application/json)
+
+        Full organization json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
++ Response 500 (plain/text)
+
+        Unexpected error.
+
+## Delete Organization [DELETE] [/organization/{id}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request or user tries to remove initial organization.
+
++ Response 500 (plain/text)
+
+        Unexpected error.
+
+
 # Account API
 
 ## Get Account Info [GET] [/account/me]
@@ -53,6 +124,49 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
         Full user json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+
+# Products API
+
+## Get List Of Products [GET] [/product]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        List of products for current user organization
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+## Create New Product [PUT] [/product]
+
++ Request (application/json)
+
+        Full product json (without id field)
+
++ Response 200 (application/json)
+
+        Full product json
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.
+
+## Update Product [POST] [/product]
+
++ Request (application/json)
+
+        Full product json (with id field)
+
++ Response 200 (application/json)
+
+        Full product json
 
 + Response 401 (plain/text)
 

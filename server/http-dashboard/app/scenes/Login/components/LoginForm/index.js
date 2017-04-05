@@ -29,16 +29,15 @@ export default class LoginForm extends React.Component {
 
     const FormItem = Form.Item;
 
-    return (
-      <Row type="flex" justify="space-around" align="middle" className="login-page">
-        <Col>
+    return (<div className="login-scene">
+          <div className="login-logo-wrapper">
+            <div className="login-logo"/>
+          </div>
           <Form onSubmit={handleSubmit.bind(this)} className="login-form">
 
             <FormItem>
-              <span className="form-header">Log in to Blynk</span>
+              <span className="form-header">Log in</span>
             </FormItem>
-
-            { error && <FormItem><Alert description={error} type="error"/></FormItem>}
 
             <FormField type="text" name="email"
                        icon="user"
@@ -57,6 +56,10 @@ export default class LoginForm extends React.Component {
                          Validation.Rules.required
                        ]}/>
 
+            <FormItem className="login-alert">
+              { error && <Alert description={error} type="error"/> }
+            </FormItem>
+
             <FormItem>
               <Button type="primary" htmlType="submit" className="login-form-button"
                       disabled={invalid || pristine || submitting}>
@@ -68,8 +71,9 @@ export default class LoginForm extends React.Component {
               <a className="login-form-forgot">Forgot password?</a>
             </FormItem>
           </Form>
-        </Col>
-      </Row>
-    );
+          <div className="login-bottom-label">
+            ⚡ ️powered by Blynk
+          </div>
+      </div>);
   }
 }

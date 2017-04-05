@@ -38,7 +38,7 @@ public class HttpAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("HttpServerCodec", new HttpServerCodec());
-                pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024 * 1024, true));
+                pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                         new UrlMapper(rootPath, "/static/index.html")));

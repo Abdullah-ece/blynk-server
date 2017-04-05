@@ -2,8 +2,8 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Role;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import org.apache.logging.log4j.LogManager;
