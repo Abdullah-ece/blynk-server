@@ -1,13 +1,13 @@
 import React from 'react';
 
-import Title from '../../components/Title';
-import {Section, Item} from '../../components/Section';
+import {Title, Section, Item} from '../../index';
 import {Select, Modal} from 'antd';
 
 import TimeZones from './services/Timezones';
 
 import Field from '../../components/Field';
 import InviteUsersForm from './components/InviteUsersForm';
+import OrganizationUsers from './components/OrganizationUsers';
 
 import './styles.scss';
 
@@ -61,6 +61,11 @@ class OrganizationSettings extends React.Component {
         <Section title="Invite Users">
           <Item>
             <InviteUsersForm onSubmit={this.showInviteSuccess.bind(this)}/>
+          </Item>
+        </Section>
+        <Section title="Users">
+          <Item>
+            <OrganizationUsers/>
           </Item>
         </Section>
       </div>
