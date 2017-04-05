@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Git hook that prevents commits to master
 # use --no-verify to bypass this hook
