@@ -27,7 +27,7 @@ class Header extends React.Component {
           Billing
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="3">
+        <Menu.Item key="logout">
           <Icon type="logout"/> Log out
         </Menu.Item>
       </Menu>

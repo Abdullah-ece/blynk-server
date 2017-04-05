@@ -1,0 +1,29 @@
+export default function Login(state = { isLoggedIn: false }, action) {
+  switch (action.type) {
+
+    case "API_LOGIN_SUCCESS":
+      return {
+        ...state,
+        isLoggedIn: true
+      };
+    case "API_LOGIN_FAILURE":
+      return {
+        ...state,
+        isLoggedIn: false
+      };
+
+    case "API_LOGOUT_SUCCESS":
+      return {
+        ...state,
+        isLoggedIn: false
+      };
+
+    case "API_LOGOUT_FAILURE":
+      return {
+        ...state,
+        isLoggedIn: false
+      };
+    default:
+      return state;
+  }
+}
