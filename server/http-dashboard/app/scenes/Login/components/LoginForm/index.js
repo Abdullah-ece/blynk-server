@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Row, Col, Form, Alert} from 'antd';
+import {Button, Form, Alert} from 'antd';
 
 import {reduxForm} from 'redux-form';
 
