@@ -6,7 +6,7 @@ import {reducer as formReducer} from 'redux-form';
 
 // There are in-app reducers we want to connect to store
 
-import Login from 'scenes/Login/reducers';
+import Login from '../data/Login/reducers';
 
 const reducers = {
   form: formReducer,
