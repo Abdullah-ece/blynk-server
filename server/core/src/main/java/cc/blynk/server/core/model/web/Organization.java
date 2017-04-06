@@ -21,6 +21,8 @@ public class Organization {
 
     public volatile String logoUrl;
 
+    public volatile Unit unit;
+
     public volatile int color;
 
     public volatile long updatedAt;
