@@ -6,6 +6,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -17,6 +18,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -118,7 +121,7 @@ public class InvitationAPITest extends BaseTest {
     @Test
     public void sendInvitationNotAuthorized() throws Exception {
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/invitation/invite");
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
         List <NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("email", email));
         nvps.add(new BasicNameValuePair("name", "Dmitriy"));
@@ -135,18 +138,15 @@ public class InvitationAPITest extends BaseTest {
         login(admin.email, admin.pass);
 
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/invitation/invite");
-        List <NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", email));
-        nvps.add(new BasicNameValuePair("name", "Dmitriy"));
-        nvps.add(new BasicNameValuePair("role", "STAFF"));
-        inviteReq.setEntity(new UrlEncodedFormEntity(nvps));
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invitation/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
     }
 
     private void login(String name, String pass) throws Exception {

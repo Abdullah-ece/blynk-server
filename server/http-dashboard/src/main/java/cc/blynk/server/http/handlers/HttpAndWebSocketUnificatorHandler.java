@@ -19,7 +19,10 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.dashboard.handlers.*;
+import cc.blynk.server.http.dashboard.handlers.AccountHandler;
+import cc.blynk.server.http.dashboard.handlers.OrganizationHandler;
+import cc.blynk.server.http.dashboard.handlers.ProductHandler;
+import cc.blynk.server.http.dashboard.handlers.UploadLogic;
 import cc.blynk.server.http.dashboard.handlers.auth.AuthCookieHandler;
 import cc.blynk.server.http.dashboard.handlers.auth.WebLoginHandler;
 import io.netty.channel.ChannelHandler;
@@ -59,7 +62,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
     private final WebLoginHandler webLoginHandler;
-    private final InvitationHandler invitationHandler;
     private final AccountHandler accountHandler;
     private final ProductHandler productHandler;
     private final OrganizationHandler organizationHandler;
@@ -80,7 +82,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.statsLogic = new StatsLogic(holder, rootPath);
         this.configsLogic = new ConfigsLogic(holder, rootPath);
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
-        this.invitationHandler = new InvitationHandler(holder, rootPath);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
@@ -118,7 +119,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(accountHandler);
         pipeline.addLast(productHandler);
         pipeline.addLast(organizationHandler);
-        pipeline.addLast(invitationHandler);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
         pipeline.addLast(configsLogic);
