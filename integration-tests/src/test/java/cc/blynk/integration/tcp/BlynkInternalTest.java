@@ -20,13 +20,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.InputStream;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -62,7 +58,7 @@ public class BlynkInternalTest extends IntegrationBase {
                 "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
 
         clientPair.hardwareClient.send("internal rtc");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1500)).channelRead(any(), any());
 
         String rtcResponse = clientPair.hardwareClient.getBody();
         assertNotNull(rtcResponse);
