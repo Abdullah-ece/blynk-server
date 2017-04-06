@@ -34,7 +34,7 @@ import static cc.blynk.core.http.Response.*;
 public class ResetPasswordLogic extends BaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
-    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
+    private static final String RESET_PASS_STATIC_PATH = "";
     private final UserDao userDao;
     private final TokensPool tokensPool;
     private final String emailBody;
@@ -47,11 +47,11 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         super(holder, "");
         this.userDao = holder.userDao;
         this.tokensPool = new TokensPool(60 * 60 * 1000);
-        this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
+        this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.mailWrapper = holder.mailWrapper;
 
         String netInterface = holder.props.getProperty("net.interface", "eth");
-        String host = holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP(netInterface));
+        String host = holder.props.getProperty("reset-pass.host", IPUtils.resolveHostIP(netInterface));
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;

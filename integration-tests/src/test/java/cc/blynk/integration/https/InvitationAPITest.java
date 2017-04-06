@@ -135,7 +135,7 @@ public class InvitationAPITest extends BaseTest {
         login(admin.email, admin.pass);
 
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/invite");
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/invitation/invite");
         List <NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("email", email));
         nvps.add(new BasicNameValuePair("name", "Dmitriy"));
@@ -146,7 +146,7 @@ public class InvitationAPITest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invitation/invite?token="));
     }
 
     private void login(String name, String pass) throws Exception {

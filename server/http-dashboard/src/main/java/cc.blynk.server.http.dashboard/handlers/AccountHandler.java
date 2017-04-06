@@ -29,7 +29,6 @@ import static cc.blynk.core.http.Response.*;
 @ChannelHandler.Sharable
 public class AccountHandler extends BaseHttpHandler {
 
-    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
     private final UserDao userDao;
     private final String resetPassUrl;
     private final String emailBody;
@@ -43,7 +42,7 @@ public class AccountHandler extends BaseHttpHandler {
 
         this.resetPassUrl = "https://" + holder.props.getProperty("reset-pass.host") + "/landing?token=";
         this.mailWrapper = holder.mailWrapper;
-        this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
+        this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = new TokensPool(60 * 60 * 1000);
     }

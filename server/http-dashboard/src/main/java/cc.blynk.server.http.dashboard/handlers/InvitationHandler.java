@@ -44,8 +44,8 @@ public class InvitationHandler extends BaseHttpHandler {
         this.INVITE_TEMPLATE = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
-        String host = holder.props.getProperty("reset-pass.http.host");
-        this.inviteURL = "http://" + host + rootPath + "/invite?token=";
+        String host = holder.props.getProperty("reset-pass.host");
+        this.inviteURL = "https://" + host +  "/invitation/invite?token=";
         this.invitationTokensDBDao = holder.dbManager.invitationTokensDBDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
     }

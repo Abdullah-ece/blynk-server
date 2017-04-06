@@ -35,6 +35,10 @@ public class FileLoaderUtil {
         return readFileAsString(TOKEN_MAIL_BODY);
     }
 
+    public static String readResetPassMailBody() {
+        return readFileAsString("static/reset/reset-email.html");
+    }
+
     public static String readDynamicMailBody() {
         return readFileAsString("dynamic_provisioning_mail.html");
     }

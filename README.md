@@ -375,7 +375,7 @@ Available server options:
 
 + Host for reset password redirect. By default current server IP is taken from "eth" network interface. Could be replaced with more friendly hostname. It is recommended to override this property with your server IP to avoid possible problems of host resolving.
         
-        reset-pass.http.host=blynk-cloud.com
+        reset-pass.host=blynk-cloud.com
         
         
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
