@@ -31,7 +31,7 @@ public class AccountHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/me")
+    @Path("")
     public Response getOwnProfile(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         return ok(httpSession.user);
@@ -39,7 +39,7 @@ public class AccountHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/me")
+    @Path("")
     public Response updateOwnProfile(User updatedUser) {
         User existingUser = userDao.getByName(updatedUser.email, updatedUser.appName);
         existingUser.update(updatedUser);

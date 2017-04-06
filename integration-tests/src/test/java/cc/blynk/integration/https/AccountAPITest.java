@@ -117,7 +117,7 @@ public class AccountAPITest extends BaseTest {
 
     @Test
     public void getOwnProfileNotAuthorized() throws Exception {
-        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/account/me");
+        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/account");
         try (CloseableHttpResponse response = httpclient.execute(getOwnProfile)) {
             assertEquals(401, response.getStatusLine().getStatusCode());
         }
@@ -127,7 +127,7 @@ public class AccountAPITest extends BaseTest {
     public void getOwnProfileWorks() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/account/me");
+        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/account");
         try (CloseableHttpResponse response = httpclient.execute(getOwnProfile)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             User user = JsonParser.parseUserFromString(consumeText(response));
@@ -142,7 +142,7 @@ public class AccountAPITest extends BaseTest {
         login(admin.email, admin.pass);
 
         admin.name = "123@123.com";
-        HttpPost updateOwnProfileRequest = new HttpPost(httpsAdminServerUrl + "/account/me");
+        HttpPost updateOwnProfileRequest = new HttpPost(httpsAdminServerUrl + "/account");
         updateOwnProfileRequest.setEntity(new StringEntity(admin.toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(updateOwnProfileRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
