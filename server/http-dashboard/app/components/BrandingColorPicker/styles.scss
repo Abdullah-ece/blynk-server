@@ -1,0 +1,76 @@
+//styles
+
+.branding-color-picker {
+  display: inline-block;
+  margin-right: 8px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.branding-color-picker-name {
+  color: rgba(33, 34, 39, 0.5);
+  font-size: 12px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.branding-color-picker-box {
+  margin-top: 4px;
+  position: relative;
+  width: 96px;
+  height: 32px;
+  border: 1px solid rgba(32, 34, 39, 0.25);
+  border-radius: 4px;
+}
+
+.branding-color-picker-box-color-code {
+  font-size: 16px;
+  color: #212227;
+  padding: 8px 0 8px 8px;
+  line-height: 14px;
+  &.placeholder {
+    color: rgba(33, 34, 39, 0.5);
+  }
+}
+
+.branding-color-picker-color-preview {
+}
+
+.branding-color-picker-color-preview-choose {
+  cursor: pointer;
+  background-image: url('assets/colorpalette.png');
+  background-size: 100%;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -10px;
+}
+
+.branding-color-picker-color-preview-specific {
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  border-radius: 0 4px 4px 0;
+}
+
+.branding-color-picker-color-preview-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  z-index: 1;
+}
+
+.sketch-picker {
+  position: absolute;
+  z-index: 3;
+  top: -320px;
+}
