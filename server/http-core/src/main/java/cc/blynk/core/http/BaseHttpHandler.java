@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Matcher;
 
+import static cc.blynk.core.http.Response.unauthorized;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -61,7 +63,18 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         HandlerHolder handlerHolder = lookupHandler(req);
 
         if (handlerHolder != null) {
-            invokeHandler(ctx, req, handlerHolder);
+            try {
+                if (handlerHolder.hasAccess(ctx)) {
+                    invokeHandler(ctx, req, handlerHolder);
+                } else {
+                    ctx.writeAndFlush(unauthorized());
+                }
+            } catch (Exception e) {
+                log.debug("Error processing http request.", e);
+                ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
+            } finally {
+                ReferenceCountUtil.release(req);
+            }
         } else {
             ctx.fireChannelRead(req);
         }
@@ -70,18 +83,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     public void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerHolder handlerHolder) {
         log.debug("Incoming {}", req);
         globalStats.mark(Command.HTTP_TOTAL);
-
-        try {
-            URIDecoder uriDecoder = new URIDecoder(req);
-            uriDecoder.pathData = handlerHolder.extractParameters();
-            Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
-            finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
-        } catch (Exception e) {
-            log.debug("Error processing http request.", e);
-            ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
-        } finally {
-            ReferenceCountUtil.release(req);
-        }
+        URIDecoder uriDecoder = new URIDecoder(req);
+        uriDecoder.pathData = handlerHolder.extractParameters();
+        Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
+        finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
     }
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {

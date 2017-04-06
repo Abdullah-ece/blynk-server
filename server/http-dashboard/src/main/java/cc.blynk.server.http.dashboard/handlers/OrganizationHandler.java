@@ -50,16 +50,11 @@ public class OrganizationHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response create(@Context ChannelHandlerContext ctx, Organization newOrganization) {
+    @SuperAdmin
+    public Response create(Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
-        }
-
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        if (!httpSession.user.isSuperAdmin()) {
-            log.error("Only super admin can create organization. User {} is not super admin.", httpSession.user.email);
-            return unauthorized();
         }
 
         return ok(organizationDao.add(newOrganization));
@@ -68,16 +63,11 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response update(@Context ChannelHandlerContext ctx, Organization newOrganization) {
+    @Admin
+    public Response update(Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
-        }
-
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        if (!httpSession.user.isAdmin()) {
-            log.error("Only admins can edit organization. User {} is not admin.", httpSession.user.email);
-            return unauthorized();
         }
 
         Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
@@ -95,16 +85,10 @@ public class OrganizationHandler extends BaseHttpHandler {
     @DELETE
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
+    @SuperAdmin
+    public Response delete(@PathParam("id") int orgId) {
         if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
             log.error("Delete operation for initial organization (id = 1) is not allowed.");
-            return unauthorized();
-        }
-
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        if (!httpSession.user.isSuperAdmin()) {
-            log.error("Only super admins can delete organization. User {} is not super admin.", httpSession.user.email);
             return unauthorized();
         }
 

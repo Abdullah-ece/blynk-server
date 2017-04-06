@@ -2,11 +2,9 @@ package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.UriTemplate;
-import cc.blynk.core.http.annotation.DELETE;
-import cc.blynk.core.http.annotation.GET;
-import cc.blynk.core.http.annotation.POST;
-import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.rest.params.Param;
+import cc.blynk.server.core.model.web.Role;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
@@ -28,6 +26,7 @@ public class Handler {
     public final Method classMethod;
     public final Object handler;
     public final Param[] params;
+    public final Role allowedRoleAccess;
     public HttpMethod httpMethod;
 
     public Handler(UriTemplate uriTemplate, Method method, Object handler) {
@@ -46,6 +45,13 @@ public class Handler {
         }
         if (method.isAnnotationPresent(DELETE.class)) {
             this.httpMethod = HttpMethod.DELETE;
+        }
+        if (method.isAnnotationPresent(SuperAdmin.class)) {
+            this.allowedRoleAccess = Role.SUPER_ADMIN;
+        } else if (method.isAnnotationPresent(Admin.class)) {
+            this.allowedRoleAccess = Role.ADMIN;
+        } else {
+            this.allowedRoleAccess = null;
         }
 
         this.params = new Param[method.getParameterCount()];

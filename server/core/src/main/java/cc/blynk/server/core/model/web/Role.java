@@ -7,6 +7,8 @@ package cc.blynk.server.core.model.web;
  */
 public enum Role {
 
+    //DO NOT CHANGE ORDER!
+    //SEE HandlerHolder for details
     SUPER_ADMIN,
     ADMIN,
     STAFF
