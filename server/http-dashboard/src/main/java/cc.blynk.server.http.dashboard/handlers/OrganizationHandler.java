@@ -10,7 +10,6 @@ import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -107,7 +106,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        if (httpSession.user.role == Role.SUPER_ADMIN) {
+        if (httpSession.user.isSuperAdmin()) {
             if (!organizationDao.delete(orgId)) {
                 log.error("Wasn't able to remove organization with id {}.", orgId);
                 return badRequest();

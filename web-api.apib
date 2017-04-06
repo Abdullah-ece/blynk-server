@@ -172,6 +172,20 @@ HOST: https://knight-qa.blynk.cc/
 
         User is not authorized to make this request.
 
+## Delete Product [DELETE] [/product/{id}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
++ Response 400 (plain/text)
+
+        User not allowed to delete product (not admin) or product with passed id not found.
+
++ Response 500 (plain/text)
+
+        Unexpected error.
+
 
 ## Upload API [POST] [/upload]
 
@@ -179,7 +193,7 @@ HOST: https://knight-qa.blynk.cc/
 
         File content.
 
-+ Response 200 (lain/text)
++ Response 200 (plain/text)
 
         Full path to uploaded image. For example : '/static/FUp_5716167699683281586_logo.png'.
         Product and Org has logoUrl field you need to set with that url

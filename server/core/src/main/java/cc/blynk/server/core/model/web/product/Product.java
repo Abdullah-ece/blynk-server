@@ -23,6 +23,8 @@ public class Product {
 
     public volatile String logoUrl;
 
+    public volatile long updatedAt;
+
     public volatile MetaField[] metaFields;
 
     public void update(Product updatedProduct) {
@@ -32,6 +34,22 @@ public class Product {
         this.description = updatedProduct.description;
         this.logoUrl = updatedProduct.logoUrl;
         this.metaFields = updatedProduct.metaFields;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        return id == product.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override

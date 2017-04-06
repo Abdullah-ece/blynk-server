@@ -61,10 +61,21 @@ public class OrganizationDao {
         return organizations.get(id);
     }
 
+    public boolean deleteProduct(int orgId, Product product) {
+        Organization org = getOrgById(orgId);
+        if (org == null) {
+            return false;
+        }
+        if (org.products.remove(product)) {
+            org.updatedAt = System.currentTimeMillis();
+            return true;
+        }
+        return false;
+    }
+
     public boolean delete(int id) {
         return organizations.remove(id) != null;
     }
-
 
     public Product addProduct(int orgId, Product product) {
         Organization organization = getOrgById(orgId);

@@ -13,8 +13,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.core.http.Response.badRequest;
-import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.*;
 
 /**
  * The Blynk Project.
@@ -85,4 +84,26 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(existingProduct);
     }
 
+    @DELETE
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int productId) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        if (!httpSession.user.isAdmin()) {
+            log.error("Only admins can delete products. User {} not admin.", httpSession.user.email);
+            return unauthorized();
+        }
+
+        int orgId = httpSession.user.organizationId;
+        Product existingProduct = organizationDao.getProduct(orgId, productId);
+
+        if (existingProduct == null) {
+          log.error("Product with passed is {} not found in organization with id {}.", productId, orgId);
+          return badRequest();
+        }
+
+        organizationDao.deleteProduct(orgId, existingProduct);
+        return ok();
+    }
 }

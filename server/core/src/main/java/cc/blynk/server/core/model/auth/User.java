@@ -93,6 +93,14 @@ public class User {
         this.name = updatedUser.name;
     }
 
+    public boolean isAdmin() {
+        return role == Role.ADMIN || role == Role.SUPER_ADMIN;
+    }
+
+    public boolean isSuperAdmin() {
+        return role == Role.SUPER_ADMIN;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -23,6 +23,8 @@ public class Organization {
 
     public volatile int color;
 
+    public volatile long updatedAt;
+
     public volatile List<Product> products = new ArrayList<>();
 
     public Organization() {

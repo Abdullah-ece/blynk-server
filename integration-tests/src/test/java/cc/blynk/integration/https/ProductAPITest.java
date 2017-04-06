@@ -17,10 +17,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -251,6 +248,51 @@ public class ProductAPITest extends BaseTest {
             Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.length);
+        }
+    }
+
+    @Test
+    public void createProductAndDelete() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        HttpGet req2 = new HttpGet(httpsAdminServerUrl + "/product");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+        }
+
+        HttpDelete req3 = new HttpDelete(httpsAdminServerUrl + "/product/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(req3)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req4 = new HttpGet(httpsAdminServerUrl + "/product");
+
+        try (CloseableHttpResponse response = httpclient.execute(req4)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(0, fromApi.length);
         }
     }
 
