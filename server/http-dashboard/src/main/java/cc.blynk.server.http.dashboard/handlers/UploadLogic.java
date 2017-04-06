@@ -30,10 +30,7 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDec
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
 
@@ -58,15 +55,16 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
     @Override
     public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         if (msg instanceof HttpRequest) {
-            HttpRequest request = (HttpRequest) msg;
+            HttpRequest req = (HttpRequest) msg;
 
-            if (!request.uri().startsWith(reqPath)) {
+            if (!req.uri().startsWith(reqPath)) {
                 ctx.fireChannelRead(msg);
                 return;
             }
 
             try {
-                decoder = new HttpPostRequestDecoder(factory, request);
+              log.debug("Incoming {}", req);
+                decoder = new HttpPostRequestDecoder(factory, req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
                 ctx.writeAndFlush(Response.badRequest(e.getMessage()));
@@ -95,8 +93,10 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
                         if (data != null) {
                             if (data instanceof DiskFileUpload) {
                                 DiskFileUpload diskFileUpload = (DiskFileUpload) data;
-                                Files.move(diskFileUpload.getFile().toPath(), Paths.get(ServerProperties.staticFilesFolder, diskFileUpload.getFilename()), StandardCopyOption.REPLACE_EXISTING);
-                                pathTo += diskFileUpload.getFilename();
+                                Path tmpFile = diskFileUpload.getFile().toPath();
+                                String finalName = tmpFile.getFileName().toString();
+                                Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
+                                pathTo += finalName;
                             }
                             data.release();
                         }

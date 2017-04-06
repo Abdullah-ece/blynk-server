@@ -171,3 +171,19 @@ HOST: https://knight-qa.blynk.cc/
 + Response 401 (plain/text)
 
         User is not authorized to make this request.
+
+
+## Upload API [POST] [/upload]
+
++ Request (multipart/form-data)
+
+        File content.
+
++ Response 200 (lain/text)
+
+        Full path to uploaded image. For example : '/static/FUp_5716167699683281586_logo.png'.
+        Product and Org has logoUrl field you need to set with that url
+
++ Response 401 (plain/text)
+
+        User is not authorized to make this request.

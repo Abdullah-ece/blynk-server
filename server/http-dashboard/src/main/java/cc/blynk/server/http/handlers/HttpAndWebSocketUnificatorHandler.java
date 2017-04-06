@@ -109,14 +109,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ctx.fireChannelRead(msg);
     }
 
-  
+
     private void initUserPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
 
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
 
-        pipeline.addLast(new UploadLogic("/upload"));
+        pipeline.addLast(new UploadLogic(rootPath + "/upload"));
         pipeline.addLast(accountHandler);
         pipeline.addLast(productHandler);
         pipeline.addLast(organizationHandler);
