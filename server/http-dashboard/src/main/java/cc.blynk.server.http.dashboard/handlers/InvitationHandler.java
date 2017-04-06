@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.logic;
+package cc.blynk.server.http.dashboard.handlers;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
@@ -8,8 +8,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
 import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -29,11 +27,11 @@ import static cc.blynk.core.http.Response.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-@Path("")
+@Path("/invitation")
 @ChannelHandler.Sharable
-public class InvitationLogic extends BaseHttpHandler {
+public class InvitationHandler extends BaseHttpHandler {
 
-    private static final Logger log = LogManager.getLogger(InvitationLogic.class);
+    private static final Logger log = LogManager.getLogger(InvitationHandler.class);
 
     private final String INVITE_TEMPLATE;
     private final MailWrapper mailWrapper;
@@ -41,7 +39,7 @@ public class InvitationLogic extends BaseHttpHandler {
     private final InvitationTokensDBDao invitationTokensDBDao;
     private final BlockingIOProcessor blockingIOProcessor;
 
-    public InvitationLogic(Holder holder, String rootPath) {
+    public InvitationHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.INVITE_TEMPLATE = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
@@ -55,6 +53,7 @@ public class InvitationLogic extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
     @Path("/invite")
+    @Admin
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx,
                                 @FormParam("email") String email,
                                 @FormParam("name") String name,
@@ -67,18 +66,6 @@ public class InvitationLogic extends BaseHttpHandler {
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        if (httpSession == null) {
-            log.error("Not logged");
-            return unauthorized("Not logged.");
-        }
-
-        User user = httpSession.user;
-
-        if (user == null || user.role == Role.STAFF) {
-            log.error("Not rights to perform invitation.");
-            return forbidden();
-        }
-
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", email);
 
@@ -88,7 +75,7 @@ public class InvitationLogic extends BaseHttpHandler {
                 invitationTokensDBDao.insert(new InvitationToken(token, email, name, role));
                 String message = INVITE_TEMPLATE.replace("{link}", inviteURL + token);
                 mailWrapper.sendHtml(email, "Invitation to Blynk dashboard.", message);
-                log.info("Invitation sent to {}. From {}", email, user.email);
+                log.info("Invitation sent to {}. From {}", email, httpSession.user.email);
                 response = ok();
             } catch (Exception e) {
                 log.error("Error generating invitation email.", e);
