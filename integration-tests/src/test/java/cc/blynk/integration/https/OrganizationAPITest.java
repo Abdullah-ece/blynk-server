@@ -50,6 +50,8 @@ public class OrganizationAPITest extends BaseTest {
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
     private User admin;
+    private User regularAdmin;
+    private User regularUser;
 
     @BeforeClass
     public static void initRootPath() {
@@ -82,7 +84,19 @@ public class OrganizationAPITest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+
+        name = "admin2@blynk.cc";
+        pass = "admin2";
+        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.ADMIN);
+
+        name = "user@blynk.cc";
+        pass = "user";
+        regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
+
         holder.userDao.add(admin);
+        holder.userDao.add(regularAdmin);
+        holder.userDao.add(regularUser);
+
         holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
     }
 
@@ -136,6 +150,48 @@ public class OrganizationAPITest extends BaseTest {
             assertEquals(1, fromApi.id);
             assertEquals("BLynk Inc.", fromApi.name);
             assertEquals("Europe/Kiev", fromApi.tzName);
+        }
+    }
+
+    @Test
+    public void updateOrganizationNotAllowedForRegularUser() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Organization organization = new Organization("1", "2");
+        organization.id = 1;
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void createOrganizationNotAllowedForRegularAdmin() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone");
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
+        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
+
+        login(regularAdmin.email, regularAdmin.pass);
+
+        HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -212,9 +268,9 @@ public class OrganizationAPITest extends BaseTest {
             assertTrue(cookieHeader.getValue().startsWith("session="));
             User user = JsonParser.parseUserFromString(consumeText(response));
             assertNotNull(user);
-            assertEquals("admin@blynk.cc", user.email);
-            assertEquals("admin@blynk.cc", user.name);
-            assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
+            assertEquals(name, user.email);
+            assertEquals(name, user.name);
+            assertEquals(pass, user.pass);
         }
     }
 

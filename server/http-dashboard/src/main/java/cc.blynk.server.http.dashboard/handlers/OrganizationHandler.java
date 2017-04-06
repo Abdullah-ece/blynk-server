@@ -40,7 +40,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {}", httpSession.user.organizationId);
+            log.error("Cannot find org with id {} for user {}.", httpSession.user.organizationId, httpSession.user.email);
             return badRequest();
         }
 
@@ -51,30 +51,33 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response create(@Context ChannelHandlerContext ctx, Organization newOrganization) {
-        if (newOrganization == null) {
+        if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
         }
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        newOrganization = organizationDao.add(newOrganization);
-
-        if (newOrganization == null) {
-            log.error("Cannot find org with id {}", httpSession.user.organizationId);
-            return badRequest();
+        if (!httpSession.user.isSuperAdmin()) {
+            log.error("Only super admin can create organization. User {} is not super admin.", httpSession.user.email);
+            return unauthorized();
         }
 
-        return ok(newOrganization);
+        return ok(organizationDao.add(newOrganization));
     }
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response update(Organization newOrganization) {
-        if (newOrganization == null) {
+    public Response update(@Context ChannelHandlerContext ctx, Organization newOrganization) {
+        if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
+        }
+
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        if (!httpSession.user.isAdmin()) {
+            log.error("Only admins can edit organization. User {} is not admin.", httpSession.user.email);
+            return unauthorized();
         }
 
         Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
@@ -98,6 +101,13 @@ public class OrganizationHandler extends BaseHttpHandler {
             return unauthorized();
         }
 
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        if (!httpSession.user.isSuperAdmin()) {
+            log.error("Only super admins can delete organization. User {} is not super admin.", httpSession.user.email);
+            return unauthorized();
+        }
+
         Organization existingOrganization = organizationDao.getOrgById(orgId);
 
         if (existingOrganization == null) {
@@ -105,17 +115,18 @@ public class OrganizationHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        if (httpSession.user.isSuperAdmin()) {
-            if (!organizationDao.delete(orgId)) {
-                log.error("Wasn't able to remove organization with id {}.", orgId);
-                return badRequest();
-            } else {
-                fileManager.deleteOrg(orgId);
-            }
+        if (!organizationDao.delete(orgId)) {
+            log.error("Wasn't able to remove organization with id {}.", orgId);
+            return badRequest();
+        } else {
+            fileManager.deleteOrg(orgId);
         }
 
         return ok();
+    }
+
+    private boolean isEmpty(Organization newOrganization) {
+        return newOrganization == null || newOrganization.name == null || newOrganization.name.isEmpty();
     }
 
 }

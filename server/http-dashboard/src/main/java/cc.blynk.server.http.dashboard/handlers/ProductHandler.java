@@ -38,7 +38,7 @@ public class ProductHandler extends BaseHttpHandler {
         Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {}", httpSession.user.organizationId);
+            log.error("Cannot find org with id {} for user {}", httpSession.user.organizationId, httpSession.user.email);
             return badRequest();
         }
 
