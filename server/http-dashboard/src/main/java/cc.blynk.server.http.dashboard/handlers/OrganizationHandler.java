@@ -138,10 +138,27 @@ public class OrganizationHandler extends BaseHttpHandler {
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx, UserInvite userInvite) {
         if (BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
             log.error("{} email has not valid format.", userInvite.email);
-            return badRequest(userInvite.email + " email has not valid format.");
+            return badRequest("Invalid email.");
         }
 
+        Organization org = organizationDao.getOrgById(userInvite.orgId);
+        if (org == null) {
+            log.error("Organization with passed id {} not exists.", userInvite.orgId);
+            return badRequest("Wrong organization id.");
+        }
+
+        userInvite.email = userInvite.email.toLowerCase();
+
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        //if user is not super admin, check organization is correct
+        if (!httpSession.user.isSuperAdmin()) {
+            if (httpSession.user.organizationId != userInvite.orgId) {
+                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.organizationId, userInvite.orgId);
+                return unauthorized();
+            }
+        }
+
 
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);

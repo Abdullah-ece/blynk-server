@@ -7,6 +7,8 @@ package cc.blynk.server.core.model.web;
  */
 public class UserInvite {
 
+    public int orgId;
+
     public String email;
 
     public String name;
@@ -16,7 +18,8 @@ public class UserInvite {
     public UserInvite() {
     }
 
-    public UserInvite(String email, String name,  Role role) {
+    public UserInvite(int orgId, String email, String name,  Role role) {
+        this.orgId = orgId;
         this.email = email;
         this.name = name;
         this.role = role;

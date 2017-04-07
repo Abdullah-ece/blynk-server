@@ -5,6 +5,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.http.HttpsAPIServer;
@@ -54,6 +55,7 @@ public class InvitationAPITest extends BaseTest {
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
     private User admin;
+    private User regularUser;
 
     @BeforeClass
     public static void initrootPath() {
@@ -87,6 +89,13 @@ public class InvitationAPITest extends BaseTest {
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
         holder.userDao.add(admin);
+
+        name = "user@blynk.cc";
+        pass = "user";
+        regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
+        holder.userDao.add(regularUser);
+
+        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
     }
 
     @Override
@@ -134,12 +143,42 @@ public class InvitationAPITest extends BaseTest {
     }
 
     @Test
+    public void sendInvitationForNonExistingOrganization() throws Exception {
+        login(admin.email, admin.pass);
+
+        String email = "dmitriy@blynk.cc";
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(100, email, "Dmitriy", Role.STAFF));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Wrong organization id.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
+    public void userCantSendInvitation() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        String email = "dmitriy@blynk.cc";
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(1, email, "Dmitriy", Role.STAFF));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"You are not allowed to perform this action.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void sendInvitationFromSuperUser() throws Exception {
         login(admin.email, admin.pass);
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(1, email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -163,9 +202,9 @@ public class InvitationAPITest extends BaseTest {
             assertTrue(cookieHeader.getValue().startsWith("session="));
             User user = JsonParser.parseUserFromString(consumeText(response));
             assertNotNull(user);
-            assertEquals("admin@blynk.cc", user.email);
-            assertEquals("admin@blynk.cc", user.name);
-            assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
+            assertEquals(name, user.email);
+            assertEquals(name, user.name);
+            assertEquals(pass, user.pass);
         }
     }
 

@@ -100,6 +100,29 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
+## Invite user [POST] [/organization/invite]
+
++ Request (application/json)
+
+        {"orgId":1, "email":"USER_I_WANT_INVITE@gmail.com", "name":"Vasya Pupkin", "role":"ADMIN"}
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+        Invalid email.
+
++ Response 400 (application/json)
+
+        Wrong organization id.
+
++ Response 401 (application/json)
+
+        User not allowed to send invite or tries to send invite to organization he has no access.
+
++ Response 500 (application/json)
+
+        Error generating invitation email.
 
 # Account API
 
