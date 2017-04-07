@@ -30,6 +30,7 @@ export default class Login extends React.Component {
   static propTypes = {
     Login: React.PropTypes.func,
     UnmarkAsRecentRegistered: React.PropTypes.func,
+    AccountFetch: React.PropTypes.func,
     isRecentlyRegistered: React.PropTypes.bool
   };
 
