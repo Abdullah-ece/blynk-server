@@ -26,7 +26,8 @@ const persisStoreConfig = {
      - Login - stores user token
      - Name - description
      */
-    'Login'
+    'Login',
+    'Account'
   ]
 };
 /* Persist Store Config for DEV */
