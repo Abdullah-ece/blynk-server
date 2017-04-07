@@ -13,13 +13,13 @@ HOST: https://knight-qa.blynk.cc/
         
 + Response 200 (application/json)
 
-        User json and with cookie "sessionId".
+        User json with cookie "session".
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         Email or password is empty, user not exists or password is wrong.
         
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected server error, probably wrong content-type.
 
@@ -42,11 +42,11 @@ HOST: https://knight-qa.blynk.cc/
 
         Json of user organization
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected error.
 
@@ -60,11 +60,11 @@ HOST: https://knight-qa.blynk.cc/
 
         Full organization json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected error.
 
@@ -78,11 +78,11 @@ HOST: https://knight-qa.blynk.cc/
 
         Full organization json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected error.
 
@@ -92,11 +92,11 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 200 (application/json)
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request or user tries to remove initial organization.
 
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected error.
 
@@ -111,7 +111,7 @@ HOST: https://knight-qa.blynk.cc/
 
         User json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
@@ -125,7 +125,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full user json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
@@ -138,7 +138,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Email was sent.
 
-+ Response 400 (plain/text)
++ Response 400 (application/json)
 
         Error sending reset email.
 
@@ -153,7 +153,7 @@ HOST: https://knight-qa.blynk.cc/
 
         List of products for current user organization
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
@@ -167,7 +167,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full product json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
@@ -181,7 +181,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full product json
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
 
@@ -191,11 +191,11 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 200 (application/json)
 
-+ Response 400 (plain/text)
++ Response 400 (application/json)
 
         User not allowed to delete product (not admin) or product with passed id not found.
 
-+ Response 500 (plain/text)
++ Response 500 (application/json)
 
         Unexpected error.
 
@@ -206,11 +206,11 @@ HOST: https://knight-qa.blynk.cc/
 
         File content.
 
-+ Response 200 (plain/text)
++ Response 200 (application/json)
 
         Full path to uploaded image. For example : '/static/FUp_5716167699683281586_logo.png'.
         Product and Org has logoUrl field you need to set with that url
 
-+ Response 401 (plain/text)
++ Response 401 (application/json)
 
         User is not authorized to make this request.
