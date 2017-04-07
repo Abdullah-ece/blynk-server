@@ -9,6 +9,7 @@ import {SubmissionError} from 'redux-form';
 import {connect} from 'react-redux';
 
 import * as API from './data/actions';
+import * as AccountAPI from 'data/Account/actions';
 
 import {encryptUserPassword} from 'services/Crypto';
 
@@ -16,6 +17,7 @@ import {encryptUserPassword} from 'services/Crypto';
   return {};
 }, (dispatch) => {
   return {
+    AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
     Login: bindActionCreators(API.Login, dispatch)
   };
 })
@@ -31,24 +33,40 @@ export default class Login extends React.Component {
     isRecentlyRegistered: React.PropTypes.bool
   };
 
+  constructor() {
+    super();
+
+    this.state = {
+      loading: false
+    };
+  }
+
   handleSubmit(values) {
 
     const password = encryptUserPassword(values.email, values.password);
 
+    this.setState({
+      loading: true
+    });
     return this.props.Login({
       email: values.email,
       password: password
     }).catch(() => {
+      this.setState({
+        loading: false
+      });
       throw new SubmissionError({_error: 'Wrong email or password'});
     }).then(() => {
-      this.context.router.push('/account');
+      this.props.AccountFetch().then(() => {
+        this.context.router.push('/account');
+      });
     });
   }
 
   render() {
 
     return (
-      <LoginForm onSubmit={this.handleSubmit.bind(this)}/>
+      <LoginForm onSubmit={this.handleSubmit.bind(this)} loading={this.state.loading}/>
     );
   }
 

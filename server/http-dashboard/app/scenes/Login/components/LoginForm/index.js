@@ -20,7 +20,8 @@ export default class LoginForm extends React.Component {
     pristine: React.PropTypes.bool,
     submitting: React.PropTypes.bool,
     handleSubmit: React.PropTypes.func,
-    error: React.PropTypes.string
+    error: React.PropTypes.string,
+    loading: React.PropTypes.bool
   };
 
   render() {
@@ -61,7 +62,9 @@ export default class LoginForm extends React.Component {
             </FormItem>
 
             <FormItem>
-              <Button type="primary" htmlType="submit" className="login-form-button"
+              <Button type="primary"
+                      loading={submitting || this.props.loading}
+                      htmlType="submit" className="login-form-button"
                       disabled={invalid || pristine || submitting}>
                 Log in
               </Button>
