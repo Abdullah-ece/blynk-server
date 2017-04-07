@@ -8,6 +8,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.response.ErrorMessage;
+import cc.blynk.server.core.model.web.response.OkMessage;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
@@ -55,6 +57,8 @@ public final class JsonParser {
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader productReader = mapper.readerFor(Product.class);
     private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
+    private static final ObjectWriter errorMessageWriter = mapper.writerFor(ErrorMessage.class);
+    private static final ObjectWriter okMessageWriter = mapper.writerFor(OkMessage.class);
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
@@ -69,6 +73,14 @@ public final class JsonParser {
                 .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    }
+
+    public static String toJson(ErrorMessage errorMessage) {
+        return toJson(errorMessageWriter, errorMessage);
+    }
+
+    public static String toJson(OkMessage okMessage) {
+        return toJson(okMessageWriter, okMessage);
     }
 
     public static String toJson(Organization organization) {

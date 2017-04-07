@@ -80,7 +80,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/get/d8").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("Invalid token.", response.getResponseBody());
+        assertEquals("{\"error\":{\"message\":\"Invalid token.\"}}", response.getResponseBody());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/x8").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("Wrong pin format.", response.getResponseBody());
+        assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", response.getResponseBody());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("Requested pin not exists in app.", response.getResponseBody());
+        assertEquals("{\"error\":{\"message\":\"Requested pin not exists in app.\"}}", response.getResponseBody());
     }
 
     @Test
@@ -188,12 +188,12 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("No data for pin.", response.getResponseBody());
+        assertEquals("{\"error\":{\"message\":\"No data for pin.\"}}", response.getResponseBody());
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/z111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("Wrong pin format.", response.getResponseBody());
+        assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", response.getResponseBody());
     }
 
     @Test

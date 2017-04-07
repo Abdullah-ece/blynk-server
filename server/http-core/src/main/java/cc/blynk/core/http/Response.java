@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.response.ErrorMessage;
+import cc.blynk.server.core.model.web.response.OkMessage;
 import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -29,21 +31,30 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class Response extends DefaultFullHttpResponse {
 
     private static final String JSON = "application/json;charset=utf-8";
-    private static final String PLAIN_TEXT = "text/plain;charset=utf-8";
 
     public static Response NO_RESPONSE = null;
 
-    public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
+    private Response(HttpVersion version, HttpResponseStatus status, ErrorMessage content, String contentType) {
+        super(version, status, Unpooled.copiedBuffer(content.toString(), StandardCharsets.UTF_8));
+        fillHeaders(contentType);
+    }
+
+    private Response(HttpVersion version, HttpResponseStatus status, OkMessage content, String contentType) {
+        super(version, status, Unpooled.copiedBuffer(content.toString(), StandardCharsets.UTF_8));
+        fillHeaders(contentType);
+    }
+
+    private Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null || content.isEmpty() ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
         fillHeaders(contentType);
     }
 
-    public Response(HttpVersion version, HttpResponseStatus status, byte[] content, String contentType) {
+    private Response(HttpVersion version, HttpResponseStatus status, byte[] content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content)));
         fillHeaders(contentType);
     }
 
-    public Response(HttpVersion version, HttpResponseStatus status) {
+    private Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
         headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_LENGTH, 0);
@@ -81,7 +92,7 @@ public class Response extends DefaultFullHttpResponse {
     }
 
     public static Response unauthorized(String msg) {
-        return new Response(HTTP_1_1, UNAUTHORIZED, msg, JSON);
+        return new Response(HTTP_1_1, UNAUTHORIZED, new ErrorMessage(msg), JSON);
     }
 
     public static Response redirect(String url) {
@@ -92,7 +103,7 @@ public class Response extends DefaultFullHttpResponse {
     }
 
     public static Response badRequest(String message) {
-        return new Response(HTTP_1_1, BAD_REQUEST, message, PLAIN_TEXT);
+        return new Response(HTTP_1_1, BAD_REQUEST, new ErrorMessage(message), JSON);
     }
 
     public static Response serverError() {
@@ -100,7 +111,7 @@ public class Response extends DefaultFullHttpResponse {
     }
 
     public static Response serverError(String message) {
-        return new Response(HTTP_1_1, INTERNAL_SERVER_ERROR, message, PLAIN_TEXT);
+        return new Response(HTTP_1_1, INTERNAL_SERVER_ERROR, new ErrorMessage(message), JSON);
     }
 
     public static Response ok(String data) {

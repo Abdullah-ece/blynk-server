@@ -71,7 +71,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Invalid token.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Invalid token.\"}}", consumeText(response));
         }
     }
 
@@ -90,7 +90,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Wrong pin format.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", consumeText(response));
         }
     }
 
@@ -100,7 +100,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Requested pin not exists in app.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Requested pin not exists in app.\"}}", consumeText(response));
         }
     }
 
@@ -266,7 +266,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
         }
     }
 
@@ -278,7 +278,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Invalid token.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Invalid token.\"}}", consumeText(response));
         }
     }
 
@@ -290,7 +290,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Wrong pin format.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", consumeText(response));
         }
     }
 
@@ -313,7 +313,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("No pin for update provided.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"No pin for update provided.\"}}", consumeText(response));
         }
     }
 
@@ -365,7 +365,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Error parsing body param. \"100\"", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \\\"100\\\"\"}}", consumeText(response));
         }
     }
 
@@ -376,7 +376,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Error parsing body param. ", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
         }
     }
 
@@ -389,7 +389,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
         }
     }
 
@@ -400,7 +400,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Error parsing body param. ", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
         }
     }
 
@@ -415,7 +415,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Body is empty or larger than 255 chars.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Body is empty or larger than 255 chars.\"}}", consumeText(response));
         }
     }
 
@@ -438,7 +438,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
         }
     }
 
@@ -449,7 +449,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Error parsing body param. ", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
         }
     }
 
