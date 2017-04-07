@@ -22,6 +22,12 @@ class Editable extends React.Component {
     };
   }
 
+  componentWillReceiveProps(props) {
+    this.setState({
+      html: props.value
+    });
+  }
+
   startToEdit() {
     this.setState({isEditable: true});
   }

@@ -1,7 +1,9 @@
 import React from 'react';
 
 import {Title, Section, Item} from '../../index';
-import {Select, Modal} from 'antd';
+import {Select, Modal, message} from 'antd';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 import TimeZones from './services/Timezones';
 
@@ -10,16 +12,30 @@ import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
 import OrganizationBranding from './components/OrganizationBranding';
 
+import {OrganizationFetch, OrganizationUpdateName, OrganizationSave} from 'data/Organization/actions';
+
 import './styles.scss';
 
+@connect((state) => ({
+  Organization: state.Organization
+}), (dispatch) => ({
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
+  OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
+  OrganizationSave: bindActionCreators(OrganizationSave, dispatch),
+}))
 class OrganizationSettings extends React.Component {
+
+  static propTypes = {
+    Organization: React.PropTypes.object,
+    OrganizationFetch: React.PropTypes.func,
+    OrganizationUpdateName: React.PropTypes.func,
+    OrganizationSave: React.PropTypes.func,
+  };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      name: 'Blynk Inc.'
-    };
+    props.OrganizationFetch();
   }
 
   showInviteSuccess() {
@@ -31,7 +47,12 @@ class OrganizationSettings extends React.Component {
   }
 
   handleNameSave(name) {
-    this.setState({name: name});
+    const hideUpdatingMessage = message.loading('Updating organization name..', 0);
+    this.props.OrganizationUpdateName(name);
+    /** @todo track error */
+    this.props.OrganizationSave(Object.assign({}, this.props.Organization, {name: name})).then(() => {
+      hideUpdatingMessage();
+    });
   }
 
   generateOptions() {
@@ -51,7 +72,7 @@ class OrganizationSettings extends React.Component {
         <Title text="Organization Settings"/>
         <Section title="Global Settings">
           <Item title="Name">
-            <Field value={this.state.name} onChange={this.handleNameSave.bind(this)}/>
+            <Field value={this.props.Organization.name} onChange={this.handleNameSave.bind(this)}/>
           </Item>
           <Item title="Timezone">
             <Select defaultValue="Select timezone" className="user-profile--organization-settings-timezones-select">

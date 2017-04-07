@@ -8,11 +8,13 @@ import {reducer as formReducer} from 'redux-form';
 
 import Login from '../data/Login/reducers';
 import Account from '../data/Account/reducers';
+import Organization from '../data/Organization/reducers';
 
 const reducers = {
   form: formReducer,
   Login,
-  Account
+  Account,
+  Organization,
 };
 
 export default combineReducers(reducers);
