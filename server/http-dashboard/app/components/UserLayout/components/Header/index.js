@@ -1,13 +1,19 @@
 import React from 'react';
-
+import {connect} from 'react-redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
 
 import './styles.scss';
-
+@connect((state) => ({
+  Account: state.Account
+}))
 class Header extends React.Component {
 
   static contextTypes = {
     router: React.PropTypes.object
+  };
+
+  static propTypes = {
+    Account: React.PropTypes.object
   };
 
   AccountMenu() {
@@ -45,7 +51,7 @@ class Header extends React.Component {
         <div className="user-layout--header-user">
           <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
             <a href="javascript:void(0)" className="dark user-layout--header-user-link">
-              some.longemail@evilcoropoation.com
+              { this.props.Account.email }
               <Button type="primary" icon="user" size="large" className="user-layout--header-user-button"/>
             </a>
           </Dropdown>
