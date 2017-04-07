@@ -40,6 +40,11 @@ public class HttpsAPIServer extends BaseServer {
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
+        final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+                new UrlMapper(rootPath, "/static/index.html"));
+        final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+                new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
+
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -49,11 +54,9 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
                 pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
-                        new UrlMapper(rootPath, "/static/index.html")));
-                pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static"),
-                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"))
-                );
+                pipeline.addLast(favIconUrlRewriter);
+                pipeline.addLast(staticFileHandler);
+
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
