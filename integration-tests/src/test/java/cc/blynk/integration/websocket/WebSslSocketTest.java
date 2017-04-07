@@ -8,6 +8,7 @@ import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.HttpsAPIServer;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.verify;
  * Created on 13.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class WebSslSocketTest extends BaseTest {
 
     public static int sslWebSocketPort = httpsPort;
