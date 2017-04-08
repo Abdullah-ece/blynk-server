@@ -5,9 +5,8 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.pojo.TokenUser;
-import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
@@ -34,7 +33,6 @@ import static cc.blynk.core.http.Response.*;
 public class ResetPasswordLogic extends BaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
-    private static final String RESET_PASS_STATIC_PATH = "";
     private final UserDao userDao;
     private final TokensPool tokensPool;
     private final String emailBody;
@@ -46,14 +44,14 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");
         this.userDao = holder.userDao;
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = holder.tokensPool;
         this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.mailWrapper = holder.mailWrapper;
 
         String netInterface = holder.props.getProperty("net.interface", "eth");
         String host = holder.props.getProperty("reset-pass.host", IPUtils.resolveHostIP(netInterface));
         this.resetPassUrl = "http://" + host + "/landing?token=";
-        this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
+        this.pageContent = FileLoaderUtil.readFileAsString("enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 
@@ -84,8 +82,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         String token = generateToken();
         log.info("{} trying to reset pass.", trimmedEmail);
 
-        TokenUser userToken = new TokenUser(trimmedEmail, appName);
-        tokensPool.addToken(token, userToken);
+        tokensPool.addToken(token, user);
         String message = emailBody.replace("{RESET_URL}", resetPassUrl + token);
         log.info("Sending token to {} address", trimmedEmail);
 
@@ -108,7 +105,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     @GET
     @Path("landing")
     public Response generateResetPage(@QueryParam("token") String token) {
-        TokenUser user = tokensPool.getUser(token);
+        User user = tokensPool.getUser(token);
         if (user == null) {
             return badRequest("Your token was not found or it is outdated. Please try again.");
         }
@@ -123,7 +120,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     @Path("updatePassword")
     public Response updatePassword(@FormParam("password") String password,
                                    @FormParam("token") String token) {
-        TokenUser tokenUser = tokensPool.getUser(token);
+        User tokenUser = tokensPool.getUser(token);
         if (tokenUser == null) {
             return badRequest("Invalid token. Please repeat all steps.");
         }

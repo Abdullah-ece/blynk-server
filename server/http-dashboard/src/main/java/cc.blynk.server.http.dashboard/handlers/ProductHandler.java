@@ -35,10 +35,10 @@ public class ProductHandler extends BaseHttpHandler {
     @Path("")
     public Response getAll(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
+        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", httpSession.user.organizationId, httpSession.user.email);
+            log.error("Cannot find org with id {} for user {}", httpSession.user.orgId, httpSession.user.email);
             return badRequest();
         }
 
@@ -51,10 +51,10 @@ public class ProductHandler extends BaseHttpHandler {
     public Response create(@Context ChannelHandlerContext ctx, Product product) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        product = organizationDao.addProduct(httpSession.user.organizationId, product);
+        product = organizationDao.addProduct(httpSession.user.orgId, product);
 
         if (product == null) {
-            log.error("Cannot find org with id {}", httpSession.user.organizationId);
+            log.error("Cannot find org with id {}", httpSession.user.orgId);
             return badRequest();
         }
 
@@ -72,7 +72,7 @@ public class ProductHandler extends BaseHttpHandler {
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        Product existingProduct = organizationDao.getProduct(httpSession.user.organizationId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
 
         if (existingProduct == null) {
             log.error("Product with passed is {} not found.", updatedProduct.id);
@@ -95,7 +95,7 @@ public class ProductHandler extends BaseHttpHandler {
             return unauthorized();
         }
 
-        int orgId = httpSession.user.organizationId;
+        int orgId = httpSession.user.orgId;
         Product existingProduct = organizationDao.getProduct(orgId, productId);
 
         if (existingProduct == null) {

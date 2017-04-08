@@ -6,14 +6,11 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.HttpSession;
-import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
-import cc.blynk.server.db.dao.InvitationTokensDBDao;
-import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -32,17 +29,19 @@ import static cc.blynk.core.http.Response.*;
 @ChannelHandler.Sharable
 public class OrganizationHandler extends BaseHttpHandler {
 
+    private final UserDao userDao;
     private final OrganizationDao organizationDao;
     private final FileManager fileManager;
 
     private final String INVITE_TEMPLATE;
     private final MailWrapper mailWrapper;
     private final String inviteURL;
-    private final InvitationTokensDBDao invitationTokensDBDao;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final TokensPool tokensPool;
 
     public OrganizationHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
+        this.userDao = holder.userDao;
         this.organizationDao = holder.organizationDao;
         this.fileManager = holder.fileManager;
 
@@ -51,18 +50,18 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("reset-pass.host");
         this.inviteURL = "https://" + host +  "/invite?token=";
-        this.invitationTokensDBDao = holder.dbManager.invitationTokensDBDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.tokensPool = holder.tokensPool;
     }
 
     @GET
     @Path("")
     public Response get(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(httpSession.user.organizationId);
+        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}.", httpSession.user.organizationId, httpSession.user.email);
+            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
             return badRequest();
         }
 
@@ -136,9 +135,9 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/invite")
     @Admin
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx, UserInvite userInvite) {
-        if (BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
-            log.error("{} email has not valid format.", userInvite.email);
-            return badRequest("Invalid email.");
+        if (userInvite.isNotValid() || BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
+            log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
+            return badRequest("Invalid invitation.");
         }
 
         Organization org = organizationDao.getOrgById(userInvite.orgId);
@@ -153,12 +152,13 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         //if user is not super admin, check organization is correct
         if (!httpSession.user.isSuperAdmin()) {
-            if (httpSession.user.organizationId != userInvite.orgId) {
-                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.organizationId, userInvite.orgId);
+            if (httpSession.user.orgId != userInvite.orgId) {
+                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, userInvite.orgId);
                 return unauthorized();
             }
         }
 
+        User invitedUser = userDao.invite(userInvite, AppName.BLYNK);
 
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);
@@ -166,7 +166,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         blockingIOProcessor.execute(() -> {
             Response response;
             try {
-                invitationTokensDBDao.insert(new InvitationToken(token, userInvite.email, userInvite.name, userInvite.role.name()));
+                tokensPool.addToken(token, invitedUser);
                 String message = INVITE_TEMPLATE.replace("{link}", inviteURL + token);
                 mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);

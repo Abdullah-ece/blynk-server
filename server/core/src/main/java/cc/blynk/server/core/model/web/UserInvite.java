@@ -24,4 +24,8 @@ public class UserInvite {
         this.name = name;
         this.role = role;
     }
+
+    public boolean isNotValid() {
+        return orgId == 0 || email == null || email.isEmpty() || role == null;
+    }
 }

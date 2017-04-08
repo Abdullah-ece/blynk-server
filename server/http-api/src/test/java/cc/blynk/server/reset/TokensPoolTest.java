@@ -1,7 +1,7 @@
 package cc.blynk.server.reset;
 
 import cc.blynk.server.api.http.pojo.TokenUser;
-import cc.blynk.server.api.http.pojo.TokensPool;
+import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.model.AppName;
 import org.junit.Test;
 import org.junit.runner.RunWith;

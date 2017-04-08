@@ -1,5 +1,6 @@
-package cc.blynk.server.api.http.pojo;
+package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,20 +19,20 @@ public final class TokensPool {
     private static final Logger log = LogManager.getLogger(TokensPool.class);
 
     private final int TOKEN_EXPIRATION_PERIOD_MILLIS;
-    private final ConcurrentMap<String, TokenUser> holder;
+    private final ConcurrentMap<String, User> holder;
 
     public TokensPool(int expirationPeriodMillis) {
         this.holder = new ConcurrentHashMap<>();
         this.TOKEN_EXPIRATION_PERIOD_MILLIS = expirationPeriodMillis;
     }
 
-    public void addToken(String token, TokenUser user) {
+    public void addToken(String token, User user) {
         log.info("Adding token for {} user to the pool", user.email);
         cleanupOldTokens();
         holder.put(token, user);
     }
 
-    public TokenUser getUser(String token) {
+    public User getUser(String token) {
         cleanupOldTokens();
         return holder.get(token);
     }
@@ -46,9 +47,9 @@ public final class TokensPool {
 
     private void cleanupOldTokens() {
         final long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<String, TokenUser>> iterator = holder.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<String, TokenUser> entry = iterator.next();
-            if (entry.getValue().createdAt + TOKEN_EXPIRATION_PERIOD_MILLIS < now) {
+        for (Iterator<Map.Entry<String, User>> iterator = holder.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<String, User> entry = iterator.next();
+            if (entry.getValue().lastModifiedTs + TOKEN_EXPIRATION_PERIOD_MILLIS < now) {
                 iterator.remove();
             }
         }

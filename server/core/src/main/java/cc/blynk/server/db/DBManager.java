@@ -9,6 +9,7 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.*;
 import cc.blynk.server.db.model.FlashedToken;
+import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
 import cc.blynk.utils.ServerProperties;
@@ -203,6 +204,12 @@ public class DBManager implements Closeable {
     public void insertPurchase(Purchase purchase) {
         if (isDBEnabled()) {
             purchaseDBDao.insertPurchase(purchase);
+        }
+    }
+
+    public void insertInvitation(InvitationToken invitationToken) throws Exception {
+        if (isDBEnabled()) {
+            invitationTokensDBDao.insert(invitationToken);
         }
     }
 

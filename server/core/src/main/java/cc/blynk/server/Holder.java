@@ -64,6 +64,8 @@ public class Holder implements Closeable {
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
 
+    public final TokensPool tokensPool;
+
     public final Limits limits;
 
     public final String currentIp;
@@ -111,6 +113,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     //for tests only
@@ -155,6 +158,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     @Override

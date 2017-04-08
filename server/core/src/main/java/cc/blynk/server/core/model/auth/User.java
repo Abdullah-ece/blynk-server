@@ -28,7 +28,8 @@ public class User {
     public String appName;
     public String region;
 
-    public int organizationId;
+    public int orgId;
+    public UserStatus status;
 
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
@@ -51,7 +52,7 @@ public class User {
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;
-        this.organizationId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
+        this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
     public User(String email, String pass, String appName, String region, boolean isFacebookUser, Role role) {

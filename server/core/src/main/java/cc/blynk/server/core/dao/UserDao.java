@@ -3,7 +3,9 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import org.apache.logging.log4j.LogManager;
@@ -253,20 +255,29 @@ public class UserDao {
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
         User newUser = new User(email, null, appName, region, true, Role.STAFF);
-        users.put(new UserKey(email, appName), newUser);
+        add(newUser);
         return newUser;
     }
 
     public void add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, Role.STAFF);
-        users.put(new UserKey(email, appName), newUser);
+        add(newUser);
     }
 
     public void add(String email, String pass, String appName, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, role);
-        users.put(new UserKey(email, appName), newUser);
+        add(newUser);
+    }
+
+    public User invite(UserInvite invite, String appName) {
+        User newUser = new User(invite.email, null, appName, region, false, invite.role);
+        newUser.name = invite.name;
+        newUser.orgId = invite.orgId;
+        newUser.status = UserStatus.Pending;
+        add(newUser);
+        return newUser;
     }
 
 }
