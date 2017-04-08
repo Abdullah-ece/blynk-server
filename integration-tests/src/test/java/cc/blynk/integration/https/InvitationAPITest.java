@@ -43,7 +43,7 @@ public class InvitationAPITest extends APIBaseTest {
     @Test
     public void sendInvitationNotAuthorized() throws Exception {
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
         List <NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("email", email));
         nvps.add(new BasicNameValuePair("name", "Dmitriy"));
@@ -60,8 +60,8 @@ public class InvitationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(100, email, "Dmitriy", Role.STAFF));
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/100/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -75,8 +75,8 @@ public class InvitationAPITest extends APIBaseTest {
         login(regularUser.email, regularUser.pass);
 
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(1, email, "Dmitriy", Role.STAFF));
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -90,8 +90,8 @@ public class InvitationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(1, email, "Dmitriy", Role.STAFF));
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -114,13 +114,12 @@ public class InvitationAPITest extends APIBaseTest {
     public void invitationFullFlow() throws Exception {
         login(admin.email, admin.pass);
 
-        int orgId = 1;
         String email = "dmitriy@blynk.cc";
         String name = "Dmitriy";
         Role role = Role.STAFF;
 
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(orgId, email, name, role));
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, name, role));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -171,7 +170,7 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(name, user.name);
             assertEquals("123", user.pass);
             assertEquals(role, user.role);
-            assertEquals(orgId, user.orgId);
+            assertEquals(1, user.orgId);
         }
     }
 

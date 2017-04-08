@@ -281,10 +281,10 @@ public class UserDao {
         add(newUser);
     }
 
-    public User invite(UserInvite invite, String appName) {
+    public User invite(UserInvite invite, int orgId, String appName) {
         User newUser = new User(invite.email, null, appName, region, false, invite.role);
         newUser.name = invite.name;
-        newUser.orgId = invite.orgId;
+        newUser.orgId = orgId;
         newUser.status = UserStatus.Pending;
         add(newUser);
         return newUser;

@@ -171,17 +171,17 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/invite")
+    @Path("/{id}/invite")
     @Admin
-    public Response sendInviteEmail(@Context ChannelHandlerContext ctx, UserInvite userInvite) {
-        if (userInvite.isNotValid() || BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
+    public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite userInvite) {
+        if (orgId == 0 || userInvite.isNotValid() || BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
             return badRequest("Invalid invitation.");
         }
 
-        Organization org = organizationDao.getOrgById(userInvite.orgId);
+        Organization org = organizationDao.getOrgById(orgId);
         if (org == null) {
-            log.error("Organization with passed id {} not exists.", userInvite.orgId);
+            log.error("Organization with passed id {} not exists.", orgId);
             return badRequest("Wrong organization id.");
         }
 
@@ -191,13 +191,13 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         //if user is not super admin, check organization is correct
         if (!httpSession.user.isSuperAdmin()) {
-            if (httpSession.user.orgId != userInvite.orgId) {
-                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, userInvite.orgId);
+            if (httpSession.user.orgId != orgId) {
+                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, orgId);
                 return forbidden();
             }
         }
 
-        User invitedUser = userDao.invite(userInvite, AppName.BLYNK);
+        User invitedUser = userDao.invite(userInvite, orgId, AppName.BLYNK);
 
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);

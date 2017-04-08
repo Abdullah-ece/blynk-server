@@ -7,8 +7,6 @@ package cc.blynk.server.core.model.web;
  */
 public class UserInvite {
 
-    public int orgId;
-
     public String email;
 
     public String name;
@@ -18,14 +16,13 @@ public class UserInvite {
     public UserInvite() {
     }
 
-    public UserInvite(int orgId, String email, String name,  Role role) {
-        this.orgId = orgId;
+    public UserInvite(String email, String name,  Role role) {
         this.email = email;
         this.name = name;
         this.role = role;
     }
 
     public boolean isNotValid() {
-        return orgId == 0 || email == null || email.isEmpty() || role == null || role == Role.SUPER_ADMIN;
+        return email == null || email.isEmpty() || role == null || role == Role.SUPER_ADMIN;
     }
 }
