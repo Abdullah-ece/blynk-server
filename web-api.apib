@@ -53,13 +53,21 @@ HOST: https://knight-qa.blynk.cc/
 
 # Organizations API
 
-## Get organization assigned to user [GET] [/organization]
+## Get organization assigned to user [GET] [/organization/{id}]
 
 + Request (application/json)
 
 + Response 200 (application/json)
 
         Json of user organization
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
 
 + Response 500 (application/json)
 
@@ -83,7 +91,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Update Organization [POST] [/organization]
+## Update Organization [POST] [/organization/{id}]
 
 + Request (application/json)
 
@@ -96,6 +104,10 @@ HOST: https://knight-qa.blynk.cc/
 + Response 403 (application/json)
 
         User is not authorized to make this request.
+
++ Response 403 (application/json)
+
+        You are not allowed update to access this organization.
 
 + Response 500 (application/json)
 

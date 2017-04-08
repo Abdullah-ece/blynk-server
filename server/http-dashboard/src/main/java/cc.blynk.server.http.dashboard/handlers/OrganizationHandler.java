@@ -55,14 +55,21 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("")
-    public Response get(@Context ChannelHandlerContext ctx) {
+    @Path("/{id}")
+    public Response get(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+        Organization organization = organizationDao.getOrgById(orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
-            return badRequest();
+            return badRequest("Cannot find organization with passed id.");
+        }
+
+        if (!httpSession.user.isSuperAdmin()) {
+            if (orgId != httpSession.user.orgId) {
+                log.error("User {} tries to access organization he has no access.");
+                return forbidden("You are not allowed to access this organization.");
+            }
         }
 
         return ok(organization);
@@ -83,19 +90,27 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("")
+    @Path("/{id}")
     @Admin
-    public Response update(Organization newOrganization) {
+    public Response update(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
         }
 
-        Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
+        Organization existingOrganization = organizationDao.getOrgById(orgId);
 
         if (existingOrganization == null) {
             log.error("Organization with passed is {} not found.", newOrganization.id);
             return badRequest();
+        }
+
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        if (!httpSession.user.isSuperAdmin()) {
+            if (orgId != httpSession.user.orgId) {
+                log.error("User {} tries to update organization he has no access.", httpSession.user.email);
+                return forbidden("You are not allowed to update this organization.");
+            }
         }
 
         existingOrganization.update(newOrganization);

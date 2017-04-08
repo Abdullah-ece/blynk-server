@@ -2,9 +2,14 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.utils.JsonParser;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,9 +27,25 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void getOrgNotAuthorized() throws Exception {
-        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/organization");
+        HttpGet getOwnProfile = new HttpGet(httpsAdminServerUrl + "/organization/1");
         try (CloseableHttpResponse response = httpclient.execute(getOwnProfile)) {
             assertEquals(401, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void getOrganizationWithRegularUser() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals("BLynk Inc.", fromApi.name);
+            assertEquals("Europe/Kiev", fromApi.tzName);
         }
     }
 
@@ -32,7 +53,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void getOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization");
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization/1");
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -49,9 +70,8 @@ public class OrganizationAPITest extends APIBaseTest {
         login(regularUser.email, regularUser.pass);
 
         Organization organization = new Organization("1", "2", "/static/logo.png");
-        organization.id = 1;
 
-        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
@@ -110,9 +130,8 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         Organization organization = new Organization("1", "2", "/static/logo.png");
-        organization.id = 1;
 
-        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
@@ -124,7 +143,6 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(organization.tzName, fromApi.tzName);
         }
     }
-
 
     @Test
     public void deleteOrganization() throws Exception {
@@ -141,6 +159,26 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void regularAdminCantDeleteOtherOrganization() throws Exception {
+        createOrganization();
+
+        //we don't need cookie from initial login here
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
+        CloseableHttpClient newHttpClient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        login(newHttpClient, regularAdmin.email, regularAdmin.pass);
+
+        HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");
+
+        try (CloseableHttpResponse response = newHttpClient.execute(req2)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
     }
 
