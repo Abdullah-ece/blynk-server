@@ -97,7 +97,10 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
                                 String finalName = tmpFile.getFileName().toString();
 
                                 //this is just to make it work on team city.
-                                Files.createDirectories(Paths.get(ServerProperties.staticFilesFolder));
+                                Path staticPath = Paths.get(ServerProperties.staticFilesFolder);
+                                if (!Files.exists(staticPath)) {
+                                    Files.createDirectories(staticPath);
+                                }
 
                                 Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
                                 pathTo += finalName;
