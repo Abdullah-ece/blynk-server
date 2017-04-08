@@ -29,3 +29,10 @@ export function OrganizationUpdateName(name) {
     name: name
   };
 }
+
+export function OrganizationUpdateTimezone(tzName) {
+  return {
+    type: 'ORGANIZATION_UPDATE_TIMEZONE',
+    tzName: tzName
+  };
+}

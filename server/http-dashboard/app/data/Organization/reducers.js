@@ -1,5 +1,6 @@
 const initialState = {
-  name: ''
+  name: '',
+  tzName: ''
 };
 
 export default function Account(state = initialState, action) {
