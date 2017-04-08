@@ -143,7 +143,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @DELETE
-    @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @SuperAdmin
     public Response delete(@PathParam("id") int orgId) {
@@ -206,7 +205,11 @@ public class OrganizationHandler extends BaseHttpHandler {
             Response response;
             try {
                 tokensPool.addToken(token, invitedUser);
-                String message = INVITE_TEMPLATE.replace("{link}", inviteURL + token + "&email=" + URLEncoder.encode(userInvite.email, "UTF-8"));
+                String message = INVITE_TEMPLATE
+                        .replace("{name}", userInvite.name)
+                        .replace("{role}", userInvite.role.name().toLowerCase())
+                        .replace("{product_name}", org.name)
+                        .replace("{link}", inviteURL + token + "&email=" + URLEncoder.encode(userInvite.email, "UTF-8"));
                 mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);
                 response = ok();
