@@ -23,7 +23,9 @@ public class Organization {
 
     public volatile Unit unit;
 
-    public volatile int color;
+    public volatile int primaryColor;
+
+    public volatile int secondaryColor;
 
     public volatile long updatedAt;
 
@@ -41,7 +43,8 @@ public class Organization {
         this.name = updatedOrganization.name;
         this.tzName = updatedOrganization.tzName;
         this.logoUrl = updatedOrganization.logoUrl;
-        this.color = updatedOrganization.color;
+        this.primaryColor = updatedOrganization.primaryColor;
+        this.secondaryColor = updatedOrganization.secondaryColor;
         this.products = updatedOrganization.products;
     }
 
