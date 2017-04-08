@@ -74,9 +74,7 @@ export default class LoginForm extends React.Component {
               <a className="login-form-forgot">Forgot password?</a>
             </FormItem>
           </Form>
-          <div className="login-bottom-label">
-            ⚡ ️powered by Blynk
-          </div>
+          <div className="login-bottom-label">⚡ powered by Blynk</div>
       </div>);
   }
 }
