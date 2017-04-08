@@ -15,7 +15,7 @@ HOST: https://knight-qa.blynk.cc/
 
         User json with cookie "session".
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
         Email or password is empty, user not exists or password is wrong.
         
@@ -34,7 +34,7 @@ HOST: https://knight-qa.blynk.cc/
 
         User json with cookie "session".
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
         Token does not exists.
 
@@ -61,10 +61,6 @@ HOST: https://knight-qa.blynk.cc/
 
         Json of user organization
 
-+ Response 401 (application/json)
-
-        User is not authorized to make this request.
-
 + Response 500 (application/json)
 
         Unexpected error.
@@ -79,7 +75,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full organization json
 
-+ Response 401 (application/json)
++ Response 403 (application/json)
 
         User is not authorized to make this request.
 
@@ -97,7 +93,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full organization json
 
-+ Response 401 (application/json)
++ Response 403 (application/json)
 
         User is not authorized to make this request.
 
@@ -111,7 +107,7 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 200 (application/json)
 
-+ Response 401 (application/json)
++ Response 403 (application/json)
 
         User is not authorized to make this request or user tries to remove initial organization.
 
@@ -135,7 +131,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Wrong organization id.
 
-+ Response 401 (application/json)
++ Response 403 (application/json)
 
         User not allowed to send invite or tries to send invite to organization he has no access.
 
@@ -153,9 +149,6 @@ HOST: https://knight-qa.blynk.cc/
 
         User json
 
-+ Response 401 (application/json)
-
-        User is not authorized to make this request.
 
 ## Update Account Info [POST] [/account]
 
@@ -166,10 +159,6 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
         Full user json
-
-+ Response 401 (application/json)
-
-        User is not authorized to make this request.
 
 
 ## Send reset password email [POST] [/account/resetPass]
@@ -195,9 +184,9 @@ HOST: https://knight-qa.blynk.cc/
 
         List of products for current user organization
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
-        User is not authorized to make this request.
+        No organization with products.
 
 ## Create New Product [PUT] [/product]
 
@@ -209,9 +198,9 @@ HOST: https://knight-qa.blynk.cc/
 
         Full product json
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
-        User is not authorized to make this request.
+        Wrong data for product.
 
 ## Update Product [POST] [/product]
 
@@ -223,9 +212,9 @@ HOST: https://knight-qa.blynk.cc/
 
         Full product json
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
-        User is not authorized to make this request.
+        Wrong data for product.
 
 ## Delete Product [DELETE] [/product/{id}]
 
@@ -253,6 +242,6 @@ HOST: https://knight-qa.blynk.cc/
         Full path to uploaded image. For example : '/static/FUp_5716167699683281586_logo.png'.
         Product and Org has logoUrl field you need to set with that url
 
-+ Response 401 (application/json)
++ Response 400 (application/json)
 
-        User is not authorized to make this request.
+        Something went wrong during upload.

@@ -92,7 +92,7 @@ public class ProductHandler extends BaseHttpHandler {
 
         if (!httpSession.user.isAdmin()) {
             log.error("Only admins can delete products. User {} not admin.", httpSession.user.email);
-            return unauthorized();
+            return forbidden();
         }
 
         int orgId = httpSession.user.orgId;

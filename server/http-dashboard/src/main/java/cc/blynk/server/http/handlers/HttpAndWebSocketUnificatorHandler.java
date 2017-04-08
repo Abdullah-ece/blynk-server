@@ -22,7 +22,7 @@ import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.dashboard.handlers.AccountHandler;
 import cc.blynk.server.http.dashboard.handlers.OrganizationHandler;
 import cc.blynk.server.http.dashboard.handlers.ProductHandler;
-import cc.blynk.server.http.dashboard.handlers.UploadLogic;
+import cc.blynk.server.http.dashboard.handlers.UploadHandler;
 import cc.blynk.server.http.dashboard.handlers.auth.AuthCookieHandler;
 import cc.blynk.server.http.dashboard.handlers.auth.WebLoginHandler;
 import io.netty.channel.ChannelHandler;
@@ -115,7 +115,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
 
-        pipeline.addLast(new UploadLogic(rootPath + "/upload"));
+        pipeline.addLast(new UploadHandler(rootPath + "/upload"));
         pipeline.addLast(accountHandler);
         pipeline.addLast(productHandler);
         pipeline.addLast(organizationHandler);

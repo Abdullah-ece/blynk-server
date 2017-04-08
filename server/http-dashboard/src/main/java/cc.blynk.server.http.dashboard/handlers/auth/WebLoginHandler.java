@@ -66,7 +66,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (!password.equals(user.pass)) {
             log.error("Wrong password for {}", user.name);
-            return badRequest("Wrong password.");
+            return badRequest("Wrong password or username.");
         }
 
         Response response = ok(user);
@@ -92,7 +92,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.error("User not found.");
-            return unauthorized("Token does not exists.");
+            return badRequest("Token does not exists.");
         }
 
         user.pass = password;

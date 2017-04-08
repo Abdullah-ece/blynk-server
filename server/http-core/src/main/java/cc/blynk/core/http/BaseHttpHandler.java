@@ -21,8 +21,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Matcher;
 
+import static cc.blynk.core.http.Response.forbidden;
 import static cc.blynk.core.http.Response.serverError;
-import static cc.blynk.core.http.Response.unauthorized;
 
 /**
  * The Blynk Project.
@@ -68,7 +68,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
                 if (handlerHolder.hasAccess(ctx)) {
                     invokeHandler(ctx, req, handlerHolder);
                 } else {
-                    ctx.writeAndFlush(unauthorized("You are not allowed to perform this action."));
+                    ctx.writeAndFlush(forbidden("You are not allowed to perform this action."));
                 }
             } catch (Exception e) {
                 log.debug("Error processing http request.", e);

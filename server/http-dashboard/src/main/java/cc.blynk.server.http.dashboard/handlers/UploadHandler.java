@@ -15,7 +15,6 @@
  */
 package cc.blynk.server.http.dashboard.handlers;
 
-import cc.blynk.core.http.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,15 +31,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.*;
 
-public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
+import static cc.blynk.core.http.Response.*;
 
-    private static final Logger log = LogManager.getLogger(UploadLogic.class);
+public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
+
+    private static final Logger log = LogManager.getLogger(UploadHandler.class);
 
     private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
     private final String reqPath;
     private HttpPostRequestDecoder decoder;
 
-    public UploadLogic(String reqPath) {
+    public UploadHandler(String reqPath) {
         super(false);
         this.reqPath = reqPath;
     }
@@ -63,11 +64,11 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
             }
 
             try {
-              log.debug("Incoming {}", req);
+                log.debug("Incoming {}", req);
                 decoder = new HttpPostRequestDecoder(factory, req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
-                ctx.writeAndFlush(Response.badRequest(e.getMessage()));
+                ctx.writeAndFlush(badRequest(e.getMessage()));
                 return;
             }
 
@@ -80,7 +81,7 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
                 decoder.offer(chunk);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post offer.", e);
-                ctx.writeAndFlush(Response.badRequest(e.getMessage()));
+                ctx.writeAndFlush(badRequest(e.getMessage()));
                 return;
             }
 
@@ -115,9 +116,9 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
                 }
 
                 if (!pathTo.equals("/static/")) {
-                    ctx.writeAndFlush(Response.ok(pathTo));
+                    ctx.writeAndFlush(ok(pathTo));
                 } else {
-                    ctx.writeAndFlush(Response.serverError());
+                    ctx.writeAndFlush(serverError());
                 }
 
                 // destroy the decoder to release all resources

@@ -110,7 +110,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     public Response delete(@PathParam("id") int orgId) {
         if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
             log.error("Delete operation for initial organization (id = 1) is not allowed.");
-            return unauthorized();
+            return forbidden();
         }
 
         Organization existingOrganization = organizationDao.getOrgById(orgId);
@@ -154,7 +154,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         if (!httpSession.user.isSuperAdmin()) {
             if (httpSession.user.orgId != userInvite.orgId) {
                 log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, userInvite.orgId);
-                return unauthorized();
+                return forbidden();
             }
         }
 
