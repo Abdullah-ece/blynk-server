@@ -48,7 +48,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganizationNotAllowedForRegularUser() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        Organization organization = new Organization("1", "2");
+        Organization organization = new Organization("1", "2", "/static/logo.png");
         organization.id = 1;
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");
@@ -63,7 +63,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganizationNotAllowedForRegularAdmin() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone");
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -75,7 +75,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
-        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
+        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev", "/static/logo.png"));
 
         login(regularAdmin.email, regularAdmin.pass);
 
@@ -90,7 +90,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone");
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -109,7 +109,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("1", "2");
+        Organization organization = new Organization("1", "2", "/static/logo.png");
         organization.id = 1;
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization");

@@ -34,9 +34,10 @@ public class Organization {
     public Organization() {
     }
 
-    public Organization(String name, String tzName) {
+    public Organization(String name, String tzName, String logoUrl) {
         this.name = name;
         this.tzName = tzName;
+        this.logoUrl = logoUrl;
     }
 
     public void update(Organization updatedOrganization) {

@@ -109,7 +109,7 @@ public class ServerLauncher {
 
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
-            holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev"));
+            holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
         }
     }
 

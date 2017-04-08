@@ -87,7 +87,7 @@ public abstract class APIBaseTest extends BaseTest {
         regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
         holder.userDao.add(regularUser);
 
-        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev"));
+        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev", "/static/logo.png"));
     }
 
     @After
