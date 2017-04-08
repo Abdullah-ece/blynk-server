@@ -93,15 +93,13 @@ class OrganizationSettings extends React.Component {
             <Field value={this.props.Organization.name} onChange={this.handleNameSave.bind(this)}/>
           </Item>
           <Item title="Timezone">
-            { this.props.Organization.tzName &&
             <Select showSearch
                     filterOption={this.timezoneSearch.bind(this)}
-                    defaultValue={this.props.Organization.tzName}
+                    value={this.props.Organization.tzName}
                     className="user-profile--organization-settings-timezones-select"
                     onChange={this.handleTimezoneChange.bind(this)}>
               {timezonesOptions}
             </Select>
-            }
           </Item>
         </Section>
         <Section title="Invite Users">

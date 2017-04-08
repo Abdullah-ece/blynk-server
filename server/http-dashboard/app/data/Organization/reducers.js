@@ -1,6 +1,6 @@
 const initialState = {
   name: '',
-  tzName: ''
+  tzName: 'Select timezone', // default timezone if not specified on backend
 };
 
 export default function Account(state = initialState, action) {
