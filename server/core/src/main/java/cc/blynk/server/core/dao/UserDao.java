@@ -95,6 +95,16 @@ public class UserDao {
         return users.values().stream().filter(user -> user.email.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
+    public List<User> getUsersByOrgId(int orgId) {
+        List<User> result = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user.orgId == orgId) {
+                result.add(user);
+            }
+        }
+        return result;
+    }
+
     public User delete(UserKey userKey) {
         return users.remove(userKey);
     }

@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.config.CookieSpecs;
@@ -13,6 +14,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -179,6 +182,21 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = newHttpClient.execute(req2)) {
             assertEquals(403, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void getUsersFromOrg() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization/1/users");
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<User> fromApi = JsonParser.mapper.readValue(consumeText(response), List.class);
+            assertNotNull(fromApi);
+            assertEquals(4, fromApi.size());
         }
     }
 

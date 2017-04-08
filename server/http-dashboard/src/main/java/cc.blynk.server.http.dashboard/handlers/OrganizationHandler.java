@@ -75,6 +75,28 @@ public class OrganizationHandler extends BaseHttpHandler {
         return ok(organization);
     }
 
+
+    @GET
+    @Path("/{id}/users")
+    public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        Organization organization = organizationDao.getOrgById(orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
+            return badRequest("Cannot find organization with passed id.");
+        }
+
+        if (!httpSession.user.isSuperAdmin()) {
+            if (orgId != httpSession.user.orgId) {
+                log.error("User {} tries to access organization he has no access.");
+                return forbidden("You are not allowed to access this organization.");
+            }
+        }
+
+        return ok(userDao.getUsersByOrgId(orgId));
+    }
+
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")

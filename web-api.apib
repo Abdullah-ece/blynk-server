@@ -73,6 +73,26 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
+## Get organization users [GET] [/organization/{id}/users]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        Json of users belongs to organization
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
++ Response 500 (application/json)
+
+        Unexpected error.
+
 ## Create New Organization [PUT] [/organization]
 
 + Request (application/json)
