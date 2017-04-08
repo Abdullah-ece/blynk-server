@@ -44,7 +44,7 @@ public class HttpsAPIServer extends BaseServer {
         final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"),
-                new UrlStartWithMapper("/invite", "/static/index.html"));
+                new UrlStartWithMapper("/dashboard#/invite", "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
         //final NoAuthFlowInterceptorHandler noAuthFlowInterceptorHandler = new NoAuthFlowInterceptorHandler(holder);

@@ -98,12 +98,12 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
     }
 
     @Test
     public void invitationLandingWorks() throws Exception {
-        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl.replace("/dashboard", "") + "/invite?token=123");
+        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl + "#/invite?token=123");
 
         try (CloseableHttpResponse response = httpclient.execute(inviteGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -133,13 +133,13 @@ public class InvitationAPITest extends APIBaseTest {
 
         String url = body.substring(body.indexOf("https"), body.length() - 3);
 
-        String token = body.substring(body.indexOf("=") + 1, body.length() - 3);
+        String token = body.substring(body.indexOf("=") + 1, body.indexOf("&"));
         assertEquals(32, token.length());
 
         url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);
-        assertTrue(url.startsWith("https://localhost:" + httpsPort + "/invite?token="));
+        assertTrue(url.startsWith("https://localhost:" + httpsPort + rootPath + "#/invite?token="));
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
 
         HttpGet inviteGet = new HttpGet(url);
 

@@ -18,6 +18,8 @@ import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.net.URLEncoder;
+
 import static cc.blynk.core.http.Response.*;
 
 /**
@@ -49,7 +51,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("reset-pass.host");
-        this.inviteURL = "https://" + host +  "/invite?token=";
+        this.inviteURL = "https://" + host + rootPath + "#/invite?token=";
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
     }
@@ -204,7 +206,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             Response response;
             try {
                 tokensPool.addToken(token, invitedUser);
-                String message = INVITE_TEMPLATE.replace("{link}", inviteURL + token);
+                String message = INVITE_TEMPLATE.replace("{link}", inviteURL + token + "&email=" + URLEncoder.encode(userInvite.email, "UTF-8"));
                 mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);
                 response = ok();
