@@ -6,6 +6,7 @@ import cc.blynk.utils.JsonParser;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -88,7 +89,17 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
+    }
+
+    @Test
+    public void invitationLandingWorks() throws Exception {
+        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl + "/invite?token=123");
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
     }
 
 }

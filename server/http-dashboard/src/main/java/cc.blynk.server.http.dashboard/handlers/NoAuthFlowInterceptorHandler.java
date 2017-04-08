@@ -1,5 +1,6 @@
 package cc.blynk.server.http.dashboard.handlers;
 
+import cc.blynk.server.Holder;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,8 +19,9 @@ public class NoAuthFlowInterceptorHandler extends ChannelInboundHandlerAdapter {
     private final String resetPathLandingUri;
 
 
-    public NoAuthFlowInterceptorHandler() {
-        this.invitationLandingUri = "";
+    public NoAuthFlowInterceptorHandler(Holder holder) {
+        String host = holder.props.getProperty("reset-pass.host");
+        this.invitationLandingUri = "/dashboard/invite";
         this.invitationCreateAccUri = "";
         this.resetPathLandingUri = "";
     }
@@ -33,7 +35,9 @@ public class NoAuthFlowInterceptorHandler extends ChannelInboundHandlerAdapter {
         FullHttpRequest req = (FullHttpRequest) msg;
 
         String uri = req.uri();
-        //if (uri.startsWith())
+        if (uri.startsWith(invitationLandingUri)) {
+
+        }
 
         ctx.fireChannelRead(req);
     }

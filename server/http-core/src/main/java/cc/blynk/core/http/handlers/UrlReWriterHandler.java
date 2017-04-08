@@ -25,19 +25,19 @@ public class UrlReWriterHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
 
-            UrlMapper urlMapper = isMatch(request.uri());
-            if (urlMapper != null) {
-                request.setUri(urlMapper.to);
+            String mapTo = isMatch(request.uri());
+            if (mapTo != null) {
+                request.setUri(mapTo);
             }
         }
 
         super.channelRead(ctx, msg);
     }
 
-    private UrlMapper isMatch(String uri) {
+    private String isMatch(String uri) {
         for (UrlMapper urlMapper : mappers) {
-            if (uri.equals(urlMapper.from)) {
-                return urlMapper;
+            if (urlMapper.isMatch(uri)) {
+                return urlMapper.mapTo(uri);
             }
         }
         return null;

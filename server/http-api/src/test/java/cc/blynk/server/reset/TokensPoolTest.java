@@ -1,8 +1,8 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -17,7 +17,9 @@ public class TokensPoolTest {
 
     @Test
     public void addTokenTest() {
-        final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
+        final User user = new User();
+        user.name = "test.gmail.com";
+        user.appName = AppName.BLYNK;
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
@@ -26,7 +28,9 @@ public class TokensPoolTest {
 
     @Test
     public void addTokenTwiceTest() {
-        final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
+        final User user = new User();
+        user.name = "test.gmail.com";
+        user.appName = AppName.BLYNK;
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
@@ -36,7 +40,9 @@ public class TokensPoolTest {
 
     @Test
     public void remoteTokenTest() {
-        final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
+        final User user = new User();
+        user.name = "test.gmail.com";
+        user.appName = AppName.BLYNK;
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);

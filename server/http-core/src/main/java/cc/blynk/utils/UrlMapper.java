@@ -7,11 +7,19 @@ package cc.blynk.utils;
  */
 public class UrlMapper {
 
-    public final String from;
-    public final String to;
+    protected final String from;
+    protected final String to;
 
     public UrlMapper(String from, String to) {
         this.from = from;
         this.to = to;
+    }
+
+    public boolean isMatch(String uri) {
+        return from.equals(uri);
+    }
+
+    public String mapTo(String uri) {
+        return to;
     }
 }

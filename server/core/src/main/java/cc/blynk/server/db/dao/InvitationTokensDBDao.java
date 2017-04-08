@@ -1,5 +1,6 @@
 package cc.blynk.server.db.dao;
 
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.db.model.InvitationToken;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +41,7 @@ public class InvitationTokensDBDao {
 
             if (rs.next()) {
                 return new InvitationToken(rs.getString("token"), rs.getString("email"),
-                        rs.getString("name"), rs.getString("role"),
+                        rs.getString("name"), Role.valueOf(rs.getString("role")),
                         rs.getBoolean("is_activated"), rs.getDate("created_ts"), rs.getDate("activated_ts"));
             }
         } catch (Exception e) {

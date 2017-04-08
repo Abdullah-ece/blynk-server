@@ -163,6 +163,11 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         Path path;
         String uri = request.uri();
+
+        if (uri.contains("?")) {
+            uri = uri.split("\\?")[0];
+        }
+
         //running from jar
         if (isUnpacked) {
             if (staticFile instanceof StaticFileEdsWith) {

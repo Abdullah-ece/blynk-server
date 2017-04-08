@@ -5,7 +5,6 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
@@ -74,8 +73,7 @@ public class AccountHandler extends BaseHttpHandler {
 
         String email = httpSession.user.email;
 
-        TokenUser userToken = new TokenUser(email, httpSession.user.appName);
-        tokensPool.addToken(token, userToken);
+        tokensPool.addToken(token, httpSession.user);
         String message = emailBody.replace("{RESET_URL}", resetPassUrl + token);
         log.info("Sending token to {} address", email);
 

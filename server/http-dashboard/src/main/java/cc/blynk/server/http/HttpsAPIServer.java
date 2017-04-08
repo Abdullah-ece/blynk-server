@@ -7,10 +7,10 @@ import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.http.dashboard.handlers.NoAuthFlowInterceptorHandler;
 import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.SslUtil;
 import cc.blynk.utils.UrlMapper;
+import cc.blynk.utils.UrlStartWithMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -41,11 +41,13 @@ public class HttpsAPIServer extends BaseServer {
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
-        final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
-                new UrlMapper(rootPath, "/static/index.html"));
+        final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
+                new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+                new UrlMapper(rootPath, "/static/index.html"),
+                new UrlStartWithMapper("/dashboard/invite", "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
-        final NoAuthFlowInterceptorHandler noAuthFlowInterceptorHandler = new NoAuthFlowInterceptorHandler();
+        //final NoAuthFlowInterceptorHandler noAuthFlowInterceptorHandler = new NoAuthFlowInterceptorHandler(holder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -57,7 +59,7 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);
-                pipeline.addLast(noAuthFlowInterceptorHandler);
+                //pipeline.addLast(noAuthFlowInterceptorHandler);
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
