@@ -55,7 +55,7 @@ public class OrganizationAPITest extends APIBaseTest {
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -69,7 +69,7 @@ public class OrganizationAPITest extends APIBaseTest {
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -82,7 +82,7 @@ public class OrganizationAPITest extends APIBaseTest {
         HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -134,7 +134,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         //do not allow to delete initial org
         try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
 
         HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");

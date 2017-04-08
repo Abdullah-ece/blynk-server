@@ -80,7 +80,7 @@ public class InvitationAPITest extends APIBaseTest {
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
             assertEquals("{\"error\":{\"message\":\"You are not allowed to perform this action.\"}}", consumeText(response));
         }
     }
@@ -98,12 +98,12 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/invite?token="));
     }
 
     @Test
     public void invitationLandingWorks() throws Exception {
-        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl + "/invite?token=123");
+        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl.replace("/dashboard", "") + "/invite?token=123");
 
         try (CloseableHttpResponse response = httpclient.execute(inviteGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
