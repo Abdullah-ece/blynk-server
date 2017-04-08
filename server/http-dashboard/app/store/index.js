@@ -4,6 +4,7 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
+import {responseInterceptor as axiosResponseInterceptor} from './axios';
 import {persistStore, autoRehydrate} from 'redux-persist';
 
 /* instance for basic API */
@@ -14,7 +15,12 @@ const axiosAPI = axios.create({
 /* axios middleware options*/
 const axiosMiddlewareOptions = {
   returnRejectedPromiseOnError: true,
-  errorSuffix: '_FAILURE'
+  errorSuffix: '_FAILURE',
+  interceptors: {
+    response: [
+      axiosResponseInterceptor
+    ]
+  }
 };
 
 /* Persist Store Config for PROD & DEV */
