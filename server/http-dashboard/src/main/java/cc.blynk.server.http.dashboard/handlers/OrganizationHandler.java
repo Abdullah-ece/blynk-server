@@ -49,7 +49,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("reset-pass.host");
-        this.inviteURL = "https://" + host + rootPath +  "/invite?token=";
+        this.inviteURL = "https://" + host +  "/invite?token=";
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
     }

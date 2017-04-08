@@ -281,7 +281,6 @@ public class LoginAPITest extends APIBaseTest {
     }
 
     @Test
-    //todo fix it
     public void getStaticFile() throws Exception {
         HttpGet request = new HttpGet(httpsAdminServerUrl.replace(rootPath, "/static/index.html"));
 

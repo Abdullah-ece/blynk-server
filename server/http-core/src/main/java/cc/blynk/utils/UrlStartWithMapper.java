@@ -16,7 +16,11 @@ public class UrlStartWithMapper extends UrlMapper {
     }
 
     public String mapTo(String uri) {
-        String[] split = uri.split("\\?");
-        return to + "?" + split[1];
+        if (uri.contains("?")) {
+            String[] split = uri.split("\\?");
+            return to + "?" + split[1];
+        } else {
+            return to;
+        }
     }
 }
