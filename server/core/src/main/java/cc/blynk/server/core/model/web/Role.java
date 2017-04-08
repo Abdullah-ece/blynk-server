@@ -11,6 +11,7 @@ public enum Role {
     //SEE HandlerHolder for details
     SUPER_ADMIN,
     ADMIN,
-    STAFF
+    STAFF,
+    USER
 
 }

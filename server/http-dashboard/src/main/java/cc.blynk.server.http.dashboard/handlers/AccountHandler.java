@@ -17,6 +17,8 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.net.URLEncoder;
+
 import static cc.blynk.core.http.Response.*;
 
 /**
@@ -29,7 +31,7 @@ import static cc.blynk.core.http.Response.*;
 public class AccountHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
-    private final String resetPassUrl;
+    private final String resetURL;
     private final String emailBody;
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -39,11 +41,11 @@ public class AccountHandler extends BaseHttpHandler {
         super(holder, rootPath);
         this.userDao = holder.userDao;
 
-        this.resetPassUrl = "https://" + holder.props.getProperty("reset-pass.host") + "/landing?token=";
+        this.resetURL = "https://" + holder.props.getProperty("reset-pass.host") + rootPath + "#/resetPass?token=";
         this.mailWrapper = holder.mailWrapper;
         this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = holder.tokensPool;
     }
 
     @GET
@@ -74,14 +76,15 @@ public class AccountHandler extends BaseHttpHandler {
         String email = httpSession.user.email;
 
         tokensPool.addToken(token, httpSession.user);
-        String message = emailBody.replace("{RESET_URL}", resetPassUrl + token);
-        log.info("Sending token to {} address", email);
 
         blockingIOProcessor.execute(() -> {
             Response response;
             try {
-                mailWrapper.sendHtml(email, "Password reset request.", message);
-                log.info("{} mail sent.", email);
+                String body = emailBody
+                        .replace("{name}", httpSession.user.name)
+                        .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
+                mailWrapper.sendHtml(email, "Password reset request.", body);
+                log.info("Reset email sent to {}.", email);
                 response = ok("Email was sent.");
             } catch (Exception e) {
                 log.info("Error sending mail for {}. Reason : {}", email, e.getMessage());

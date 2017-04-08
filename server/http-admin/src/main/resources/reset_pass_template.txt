@@ -1,0 +1,4 @@
+Hello, {name}.
+
+You request password reset. Please follow this {link}.
+

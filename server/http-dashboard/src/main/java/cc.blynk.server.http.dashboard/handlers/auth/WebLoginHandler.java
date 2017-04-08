@@ -107,6 +107,35 @@ public class WebLoginHandler extends BaseHttpHandler {
     }
 
     @POST
+    @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/resetPass")
+    public Response resetPass(@FormParam("token") String token,
+                              @FormParam("password") String password) {
+
+        if (token == null || password == null) {
+            log.error("Empty token or password field.");
+            return badRequest("Empty token or password field.");
+        }
+
+        User user = tokensPool.getUser(token);
+
+        if (user == null) {
+            log.error("User not found.");
+            return badRequest("Token does not exists.");
+        }
+
+        user.pass = password;
+        user.status = UserStatus.Active;
+
+        Response response = ok(user);
+
+        Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
+        response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+
+        return response;
+    }
+
+    @POST
     @Path("/logout")
     public Response logout(@CookieHeader("session") Cookie sessionCookie) {
         Response response = redirect(rootPath);

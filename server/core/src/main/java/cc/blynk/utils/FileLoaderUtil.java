@@ -20,6 +20,7 @@ public class FileLoaderUtil {
 
     public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
     public static final String INVITE_MAIL_BODY = "invite_template.txt";
+    public static final String RESET_PASS_MAIL_BODY = "reset_pass_template.txt";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -36,7 +37,7 @@ public class FileLoaderUtil {
     }
 
     public static String readResetPassMailBody() {
-        return readFileAsString("static/reset/reset-email.html");
+        return readFileAsString(RESET_PASS_MAIL_BODY);
     }
 
     public static String readDynamicMailBody() {

@@ -42,6 +42,25 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected server error, probably wrong content-type.
 
+## Reset Password [POST] [/resetPass]
+
++ Request (application/x-www-form-urlencoded)
+
+       "token" : "da59f715fe674730bed3dc6aacad399e"
+       "password" : "84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=" //SHA256 hash of password salted with username.toLowerCase
+
++ Response 200 (application/json)
+
+        User json with cookie "session".
+
++ Response 400 (application/json)
+
+        Token does not exists.
+
++ Response 500 (application/json)
+
+        Unexpected server error, probably wrong content-type.
+
 ## Logout [POST] [/logout]
 
 + Request (application/json)

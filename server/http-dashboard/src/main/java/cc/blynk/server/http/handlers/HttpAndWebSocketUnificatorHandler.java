@@ -9,7 +9,6 @@ import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -52,7 +51,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final String rootPath;
     private final AuthCookieHandler authCookieHandler;
 
-    private final ResetPasswordLogic resetPasswordLogic;
     private final HttpAPILogic httpAPILogic;
     private final IDEAuthLogic ideAuthLogic;
     private final NoMatchHandler noMatchHandler;
@@ -72,7 +70,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.rootPath = rootPath;
 
         //http API handlers
-        this.resetPasswordLogic = new ResetPasswordLogic(holder);
         this.httpAPILogic = new HttpAPILogic(holder);
         this.ideAuthLogic = new IDEAuthLogic(holder);
         this.noMatchHandler = new NoMatchHandler();
@@ -124,7 +121,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(configsLogic);
         pipeline.addLast(hardwareStatsLogic);
 
-        pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
@@ -133,7 +129,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
 
-        pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
         pipeline.addLast(ideAuthLogic);
 

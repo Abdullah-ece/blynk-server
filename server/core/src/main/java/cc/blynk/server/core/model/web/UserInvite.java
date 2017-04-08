@@ -26,6 +26,6 @@ public class UserInvite {
     }
 
     public boolean isNotValid() {
-        return orgId == 0 || email == null || email.isEmpty() || role == null;
+        return orgId == 0 || email == null || email.isEmpty() || role == null || role == Role.SUPER_ADMIN;
     }
 }
