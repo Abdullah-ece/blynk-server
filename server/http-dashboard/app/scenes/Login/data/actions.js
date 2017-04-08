@@ -9,7 +9,7 @@ export function Login(data) {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         method: 'post',
         url: '/login',
-        data: data
+        data
       }
     }
   };

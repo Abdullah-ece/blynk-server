@@ -11,7 +11,7 @@ import * as API from './data/actions';
     Logout: bindActionCreators(API.Logout, dispatch)
   };
 })
-export default class Login extends React.Component {
+export default class Logout extends React.Component {
 
   static contextTypes = {
     router: React.PropTypes.object

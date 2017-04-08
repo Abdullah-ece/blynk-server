@@ -5,9 +5,11 @@ import {Router, Route, hashHistory, Redirect} from 'react-router';
 /* components */
 import Layout from './components/Layout';
 import UserLayout from './components/UserLayout';
+import LoginLayout from './components/LoginLayout';
 
 /* scenes */
 import Login from './scenes/Login';
+import ForgotPass from './scenes/ForgotPass';
 import Logout from './scenes/Logout';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 
@@ -34,8 +36,9 @@ Store().then((store) => {
               <Route path="/organization-settings" component={OrganizationSettings}/>
             </Route>
             <Route path="/logout" component={Logout}/>
-            <Route onEnter={RouteGuestOnly(store)}>
+            <Route component={LoginLayout} onEnter={RouteGuestOnly(store)}>
               <Route path="/login" component={Login}/>
+              <Route path="/forgot-pass" component={ForgotPass}/>
             </Route>
           </Route>
           <Redirect from="*" to="/login"/>

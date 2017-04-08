@@ -1,12 +1,3 @@
-.login-scene {
-  height: 100%;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  display: flex;
-  background-color: #23c890 !important;
-}
-
 .login-form {
   width: 408px;
   background-color: white;
@@ -19,23 +10,6 @@
     font-weight: 300;
   }
 }
-
-.login-logo-wrapper {
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  flex-grow: 1;
-  align-items: flex-end;
-
-  .login-logo {
-    background: url('assets/logo.png');
-    width: 45px;
-    height: 45px;
-    background-size: 100% 100%;
-    display: flex;
-  }
-}
-
 
 .login-alert {
   height: 32px;
@@ -62,11 +36,4 @@
 
 .form-field {
   margin-bottom: 8px;
-}
-
-.login-bottom-label {
-  display: flex;
-  flex-grow: 1;
-  align-items: flex-end;
-  padding: 20px;
 }

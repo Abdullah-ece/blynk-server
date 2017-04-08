@@ -58,17 +58,22 @@ export default class Login extends React.Component {
       });
       throw new SubmissionError({_error: 'Wrong email or password'});
     }).then(() => {
+      //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
         this.context.router.push('/account');
       });
     });
   }
 
+  forgotPassHandler() {
+    this.context.router.push('/forgot-pass');
+  }
+
   render() {
 
-    return (
-      <LoginForm onSubmit={this.handleSubmit.bind(this)} loading={this.state.loading}/>
-    );
+    return (<LoginForm onSubmit={this.handleSubmit.bind(this)}
+                       handleForgotPass={this.forgotPassHandler.bind(this)}
+                       loading={this.state.loading}/>);
   }
 
 }
