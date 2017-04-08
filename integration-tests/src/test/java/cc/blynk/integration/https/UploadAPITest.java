@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class UploadAPITest extends APIBaseTest {
 
     @Test
-    public void getOwnProfileWorks() throws Exception {
+    public void uploadFileToServer() throws Exception {
         login(admin.email, admin.pass);
 
         InputStream logoStream = UploadAPITest.class.getResourceAsStream("/logo.png");

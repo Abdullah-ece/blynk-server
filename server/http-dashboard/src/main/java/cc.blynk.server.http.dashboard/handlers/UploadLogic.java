@@ -95,6 +95,10 @@ public class UploadLogic extends SimpleChannelInboundHandler<HttpObject> impleme
                                 DiskFileUpload diskFileUpload = (DiskFileUpload) data;
                                 Path tmpFile = diskFileUpload.getFile().toPath();
                                 String finalName = tmpFile.getFileName().toString();
+
+                                //this is just to make it work on team city.
+                                Files.createDirectories(Paths.get(ServerProperties.staticFilesFolder));
+
                                 Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
                                 pathTo += finalName;
                             }
