@@ -1,19 +1,23 @@
 import React from 'react';
-
+import {reduxForm} from 'redux-form';
 import {Button, Form, Alert} from 'antd';
 
-import {reduxForm} from 'redux-form';
-
 import {Field as FormField} from 'components/Form';
-
 import Validation from 'services/Validation';
 
-import './styles.scss';
+const validate = values => {
+  const errors = {};
+  if (values.password !== values.passwordCopy) {
+    errors.passwordCopy = "Password doesn't match";
+  }
+  return errors;
+};
 
 @reduxForm({
-  form: 'Login'
+  form: 'ResetPass',
+  validate
 })
-export default class LoginForm extends React.Component {
+export default class ResetPassForm extends React.Component {
 
   static propTypes = {
     invalid: React.PropTypes.bool,
@@ -22,40 +26,35 @@ export default class LoginForm extends React.Component {
     handleSubmit: React.PropTypes.func,
     error: React.PropTypes.string,
     loading: React.PropTypes.bool,
-    router: React.PropTypes.object
   };
 
-  forgotPassHandler() {
-    this.props.router.push('/forgot-pass');
-  }
-
   render() {
-
-    const {invalid, pristine, handleSubmit, error, submitting} = this.props;
+    const {invalid, pristine, error, submitting, handleSubmit} = this.props;
 
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
       <FormItem>
-        <span className="form-header">Log in</span>
+        <span className="form-header">Password change</span>
       </FormItem>
-
-      <FormField type="text" name="email"
-                 icon="user"
-                 placeholder="Email"
-                 displayError={false}
-                 validate={[
-                   Validation.Rules.required,
-                   Validation.Rules.email
-                 ]}/>
 
       <FormField type="password" name="password"
                  icon="lock"
-                 placeholder="Password"
+                 placeholder="New password"
                  displayError={false}
                  validate={[
                    Validation.Rules.required
                  ]}/>
+
+      <div className="password-copy">
+        <FormField type="password" name="passwordCopy"
+                   icon="lock"
+                   placeholder="Repeat password"
+                   displayError={true}
+                   validate={[
+                     Validation.Rules.required
+                   ]}/>
+      </div>
 
       <FormItem className="login-alert">
         { error && <Alert description={error} type="error"/> }
@@ -66,12 +65,9 @@ export default class LoginForm extends React.Component {
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
                 disabled={invalid || pristine || submitting}>
-          Log in
+          Save
         </Button>
 
-      </FormItem>
-      <FormItem>
-        <a className="login-form-forgot" onClick={this.forgotPassHandler.bind(this)}>Forgot password?</a>
       </FormItem>
     </Form>);
   }

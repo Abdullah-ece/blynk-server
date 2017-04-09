@@ -79,7 +79,7 @@ class MyAccount extends React.Component {
   showResetPasswordSuccessMessage() {
     Modal.success({
       title: 'Success',
-      content: 'New password has been sent to your email!',
+      content: 'Check your email for further instructions.',
       okText: 'Ok'
     });
   }

@@ -65,14 +65,10 @@ export default class Login extends React.Component {
     });
   }
 
-  forgotPassHandler() {
-    this.context.router.push('/forgot-pass');
-  }
-
   render() {
 
     return (<LoginForm onSubmit={this.handleSubmit.bind(this)}
-                       handleForgotPass={this.forgotPassHandler.bind(this)}
+                       router={this.context.router}
                        loading={this.state.loading}/>);
   }
 

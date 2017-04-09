@@ -10,6 +10,7 @@ import LoginLayout from './components/LoginLayout';
 /* scenes */
 import Login from './scenes/Login';
 import ForgotPass from './scenes/ForgotPass';
+import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 
@@ -36,9 +37,10 @@ Store().then((store) => {
               <Route path="/organization-settings" component={OrganizationSettings}/>
             </Route>
             <Route path="/logout" component={Logout}/>
-            <Route component={LoginLayout} onEnter={RouteGuestOnly(store)}>
-              <Route path="/login" component={Login}/>
-              <Route path="/forgot-pass" component={ForgotPass}/>
+            <Route component={LoginLayout}>
+              <Route path="/login" component={Login} onEnter={RouteGuestOnly(store)}/>
+              <Route path="/forgot-pass" component={ForgotPass} onEnter={RouteGuestOnly(store)}/>
+              <Route path="/resetpass" component={ResetPass}/>
             </Route>
           </Route>
           <Redirect from="*" to="/login"/>

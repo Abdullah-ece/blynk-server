@@ -23,6 +23,12 @@ export default function Login(state = { isLoggedIn: false }, action) {
         ...state,
         isLoggedIn: false
       };
+
+    case "API_RESET_SUCCESS":
+      return {
+        ...state,
+        isLoggedIn: false
+      };
     default:
       return state;
   }
