@@ -16,9 +16,9 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -198,6 +198,46 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(fromApi);
             assertEquals(4, fromApi.size());
         }
+    }
+
+    @Test
+    public void deleteRegularUserFromOrg() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
+        String body = JsonParser.mapper.writeValueAsString(new String[]{"user@blynk.cc"});
+        req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req2 = new HttpGet(httpsAdminServerUrl + "/organization/1/users");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<Map> fromApi = JsonParser.mapper.readValue(consumeText(response), List.class);
+            assertNotNull(fromApi);
+            assertEquals(3, fromApi.size());
+            for (Map user : fromApi) {
+                assertNotEquals("user@blynk.cc", user.get("email"));
+            }
+        }
+    }
+
+    @Test
+    public void regularUserCantDelete() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
+        String body = JsonParser.mapper.writeValueAsString(new String[]{"user@blynk.cc"});
+        req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+        }
+
     }
 
 }

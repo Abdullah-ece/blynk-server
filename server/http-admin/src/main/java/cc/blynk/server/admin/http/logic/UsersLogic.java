@@ -9,7 +9,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.db.DBManager;
@@ -181,11 +180,7 @@ public class UsersLogic extends BaseHttpHandler {
         }
 
         dbManager.deleteUser(userKey);
-
-        Session session = sessionDao.userSession.remove(userKey);
-        if (session != null) {
-            session.closeAll();
-        }
+        sessionDao.deleteUser(userKey);
 
         log.info("User {} successfully removed.", email);
 

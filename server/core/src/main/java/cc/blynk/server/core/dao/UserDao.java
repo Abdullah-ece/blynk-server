@@ -74,6 +74,10 @@ public class UserDao {
         return false;
     }
 
+    public User getByName(UserKey uSerKey) {
+        return users.get(uSerKey);
+    }
+
     public User getByName(String name, String appName) {
         return users.get(new UserKey(name, appName));
     }

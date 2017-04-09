@@ -112,6 +112,26 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
+## Delete organization users [POST] [/organization/{id}/users/delete]
+
++ Request (application/json)
+
+        ["user1@blynk.cc","user2.blynk.cc"]
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
++ Response 500 (application/json)
+
+        Unexpected error.
+
 ## Create New Organization [PUT] [/organization]
 
 + Request (application/json)

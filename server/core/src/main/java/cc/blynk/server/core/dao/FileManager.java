@@ -123,6 +123,10 @@ public class FileManager {
         return FileUtils.move(file, this.deletedDataDir);
     }
 
+    public boolean delete(UserKey userKey) {
+        return delete(userKey.email, userKey.appName);
+    }
+
     public boolean delete(String email, String appName) {
         Path file = generateFileName(email, appName);
         return FileUtils.move(file, this.deletedDataDir);

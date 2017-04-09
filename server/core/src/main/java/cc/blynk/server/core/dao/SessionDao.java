@@ -10,6 +10,7 @@ import io.netty.util.AttributeKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,6 +54,20 @@ public class SessionDao {
 
     public void deleteHttpSession(String sessionId) {
         httpSession.remove(sessionId);
+    }
+
+    public void deleteUser(UserKey userKey) {
+        Session session = userSession.remove(userKey);
+        if (session != null) {
+            session.closeAll();
+        }
+        for (Map.Entry<String, User> entry : httpSession.entrySet()) {
+            User user = entry.getValue();
+            if (user.email.equals(userKey.email) && user.appName.equals(userKey.appName)) {
+                httpSession.remove(entry.getKey());
+                return;
+            }
+        }
     }
 
     public HttpSession getUserFromCookie(FullHttpRequest request) {

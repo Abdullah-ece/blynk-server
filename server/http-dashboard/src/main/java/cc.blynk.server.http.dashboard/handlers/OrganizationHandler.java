@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -34,6 +35,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     private final UserDao userDao;
     private final OrganizationDao organizationDao;
     private final FileManager fileManager;
+    private final DBManager dbManager;
 
     private final String INVITE_TEMPLATE;
     private final MailWrapper mailWrapper;
@@ -46,6 +48,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.userDao = holder.userDao;
         this.organizationDao = holder.organizationDao;
         this.fileManager = holder.fileManager;
+        this.dbManager = holder.dbManager;
 
         this.INVITE_TEMPLATE = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
@@ -97,6 +100,43 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         return ok(userDao.getUsersByOrgId(orgId));
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id}/users/delete")
+    @Admin
+    public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, String[] emailsToDelete) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        Organization organization = organizationDao.getOrgById(orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
+            return badRequest("Cannot find organization with passed id.");
+        }
+
+        if (!httpSession.user.isSuperAdmin()) {
+            if (orgId != httpSession.user.orgId) {
+                log.error("User {} tries to access organization he has no access.");
+                return forbidden("You are not allowed to access this organization.");
+            }
+        }
+
+        String appName = httpSession.user.appName;
+
+        for (String email : emailsToDelete) {
+            UserKey userKey = new UserKey(email, appName);
+            User user = userDao.getByName(userKey);
+            if (user != null && user.orgId == orgId) {
+                log.info("Deleting {} user.", email);
+                userDao.delete(userKey);
+                fileManager.delete(userKey);
+                dbManager.deleteUser(userKey);
+                sessionDao.deleteUser(userKey);
+            }
+        }
+
+        return ok();
     }
 
     @PUT
