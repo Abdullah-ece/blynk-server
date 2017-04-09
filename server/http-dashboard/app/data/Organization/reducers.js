@@ -3,7 +3,8 @@ const initialState = {
   tzName: 'Select timezone', // default timezone if not specified on backend
   primaryColor: 'f00a0a',
   secondaryColor: '979282',
-  logoUrl: ''
+  logoUrl: '',
+  users: []
 };
 
 export default function Account(state = initialState, action) {
@@ -13,6 +14,11 @@ export default function Account(state = initialState, action) {
       return {
         ...state,
         ...action.payload.data
+      };
+    case "API_ORGANIZATION_USERS_SUCCESS":
+      return {
+        ...state,
+        users: action.payload.data
       };
     case "API_ORGANIZATION_FAILURE":
       return {

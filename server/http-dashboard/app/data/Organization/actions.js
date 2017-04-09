@@ -27,6 +27,20 @@ export function OrganizationSave(data = {}) {
   };
 }
 
+export function OrganizationUsersFetch(data) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATION_USERS',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/organization/${data.id}/users`
+      }
+    }
+  };
+}
+
 export function OrganizationSendInvite(data = {}) {
   if (!data.id)
     throw Error('Organization id is not specified');
@@ -41,7 +55,6 @@ export function OrganizationSendInvite(data = {}) {
     }
   };
 }
-
 export function OrganizationLogoUpdate(logo) {
   return {
     type: 'ORGANIZATION_UPDATE_LOGO',

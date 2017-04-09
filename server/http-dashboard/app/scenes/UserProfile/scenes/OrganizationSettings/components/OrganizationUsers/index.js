@@ -4,12 +4,38 @@ import {Table, Button, Modal} from 'antd';
 
 import {Status, Role} from 'components/User';
 
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+
+import {
+  OrganizationFetch,
+  OrganizationUsersFetch
+} from 'data/Organization/actions';
+
 import './styles.scss';
 
+@connect((state) => ({
+  Organization: state.Organization,
+  Account: state.Account,
+}), (dispatch) => ({
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
+  OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
+}))
 class OrganizationUsers extends React.Component {
+
+  static propTypes = {
+    Account: React.PropTypes.object,
+    Organization: React.PropTypes.object,
+    OrganizationFetch: React.PropTypes.func,
+    OrganizationUsersFetch: React.PropTypes.func
+  };
 
   constructor(props) {
     super(props);
+
+    this.props.OrganizationUsersFetch({
+      id: this.props.Account.orgId
+    });
 
     this.state = {
       'selectedRows': 0
@@ -37,7 +63,7 @@ class OrganizationUsers extends React.Component {
     filterMultiple: false,
     onFilter: (value, record) => record.role === value,
     sorter: (a, b) => a.role < b.role,
-    render: (text, record) => <Role role={record.role}/>
+    render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record.id)}/>
   }, {
     title: 'Status',
     dataIndex: 'status',
@@ -80,6 +106,10 @@ class OrganizationUsers extends React.Component {
     status: 1
   }];
 
+  onRoleChange(id, role) {
+    console.log('role changed for ', id, role);
+  }
+
   rowSelection = {
     onChange: this.onRowSelectionChange.bind(this)
   };
@@ -107,7 +137,8 @@ class OrganizationUsers extends React.Component {
           <Button type="danger" onClick={this.showDeleteConfirmationModal.bind(this)}
                   disabled={!this.state.selectedRows}>Delete</Button>
         </div>
-        <Table rowSelection={this.rowSelection} columns={this.columns} dataSource={this.data}
+        <Table rowKey={(record) => record.id} rowSelection={this.rowSelection} columns={this.columns}
+               dataSource={this.props.Organization.users}
                pagination={false}/>
       </div>
     );

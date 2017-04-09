@@ -23,7 +23,15 @@ const InviteAvailableRoles = [
   Roles.USER
 ];
 
+const UsersAvailableRoles = [
+  Object.assign({}, Roles.SUPER_ADMIN, {disabled: true}),
+  Roles.ADMIN,
+  Roles.STAFF,
+  Roles.USER
+];
+
 export {
   Roles,
-  InviteAvailableRoles
+  InviteAvailableRoles,
+  UsersAvailableRoles
 };
