@@ -23,9 +23,9 @@ public class Organization {
 
     public volatile Unit unit;
 
-    public volatile int primaryColor;
+    public volatile String primaryColor;
 
-    public volatile int secondaryColor;
+    public volatile String secondaryColor;
 
     public volatile long updatedAt;
 
