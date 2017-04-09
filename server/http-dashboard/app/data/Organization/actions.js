@@ -1,22 +1,41 @@
-export function OrganizationFetch() {
+export function OrganizationFetch(data = {}) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION',
     payload: {
       request: {
         method: 'get',
-        url: '/organization'
+        url: `/organization/${data.id}`
       }
     }
   };
 }
 
-export function OrganizationSave(data) {
+export function OrganizationSave(data = {}) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_SAVE',
     payload: {
       request: {
         method: 'post',
-        url: '/organization',
+        url: `/organization/${data.id}`,
+        data: data
+      }
+    }
+  };
+}
+
+export function OrganizationSendInvite(data = {}) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATION_SEND_INVITE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/organization/${data.id}/invite`,
         data: data
       }
     }

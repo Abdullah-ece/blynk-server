@@ -1,13 +1,17 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
+import {reduxForm, Field} from 'redux-form';
 import {Form, Button, Select} from 'antd';
 import {Field as FormField} from 'components/Form';
 import Validation from 'services/Validation';
+import {InviteAvailableRoles} from 'services/Roles';
 
 import './styles.scss';
 
 @reduxForm({
-  form: 'OrganizationSettingsInviteUsersForm'
+  form: 'OrganizationSettingsInviteUsersForm',
+  initialValues: {
+    role: InviteAvailableRoles[0].value
+  }
 })
 class InviteUsersForm extends React.Component {
 
@@ -21,8 +25,19 @@ class InviteUsersForm extends React.Component {
     error: React.PropTypes.string
   };
 
+  getRolesListOptions() {
+    const options = [];
+    InviteAvailableRoles.forEach((role) => {
+      options.push(<Select.Option key={role.value}>{role.title}</Select.Option>);
+    });
+
+    return options;
+  }
+
   render() {
     const {invalid, pristine, handleSubmit, submitting} = this.props;
+
+    const rolesOptions = this.getRolesListOptions();
 
     return (
       <Form onSubmit={handleSubmit.bind(this)} layout="inline">
@@ -44,16 +59,19 @@ class InviteUsersForm extends React.Component {
                    ]}/>
 
         <Form.Item>
-          <Select defaultValue="Admin" className="user-profile--organization-settings--invite-users-form-role-select"
-                  style={{width: 100}}>
-            <Select.Option value="Admin">Admin</Select.Option>
-            <Select.Option value="Manager">Manager</Select.Option>
-            <Select.Option value="Read Only">Read Only</Select.Option>
-          </Select>
+          <Field name="role" component={(props) => {
+            return (
+              <Select onChange={(value) => props.input.onChange(value)} value={InviteAvailableRoles[0].value}
+                      className="user-profile--organization-settings--invite-users-form-role-select">
+                { rolesOptions }
+              </Select>
+            );
+          }}/>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" size="default" htmlType="submit"
+                  loading={submitting}
                   disabled={invalid || pristine || submitting}>
             Invite
           </Button>

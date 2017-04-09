@@ -9,23 +9,26 @@ import Field from '../../components/Field';
 import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
 import OrganizationBranding from './components/OrganizationBranding';
-
+import {SubmissionError} from 'redux-form';
 import {
   OrganizationFetch,
   OrganizationUpdateName,
   OrganizationSave,
-  OrganizationUpdateTimezone
+  OrganizationUpdateTimezone,
+  OrganizationSendInvite
 } from 'data/Organization/actions';
 
 import './styles.scss';
 
 @connect((state) => ({
-  Organization: state.Organization
+  Organization: state.Organization,
+  Account: state.Account
 }), (dispatch) => ({
   OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
   OrganizationSave: bindActionCreators(OrganizationSave, dispatch),
   OrganizationUpdateTimezone: bindActionCreators(OrganizationUpdateTimezone, dispatch),
+  OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
 }))
 class OrganizationSettings extends React.Component {
 
@@ -35,12 +38,40 @@ class OrganizationSettings extends React.Component {
     OrganizationUpdateName: React.PropTypes.func,
     OrganizationSave: React.PropTypes.func,
     OrganizationUpdateTimezone: React.PropTypes.func,
+    OrganizationSendInvite: React.PropTypes.func,
+    Account: React.PropTypes.object
   };
 
   constructor(props) {
     super(props);
 
-    props.OrganizationFetch();
+    props.OrganizationFetch({
+      id: this.props.Account.orgId
+    });
+
+  }
+
+  handleInviteSubmit(values) {
+    return this.props.OrganizationSendInvite({
+      id: this.props.Account.orgId,
+      email: values.email,
+      name: values.name,
+      role: values.role
+    }).then(() => {
+      this.showInviteSuccess();
+    }).catch((err) => {
+      this.showInviteError(
+        err.error.response.message || 'Error sending invite'
+      );
+      new SubmissionError(err);
+    });
+  }
+
+  showInviteError(message) {
+    Modal.error({
+      title: 'Ooops!',
+      content: String(message)
+    });
   }
 
   showInviteSuccess() {
@@ -78,7 +109,7 @@ class OrganizationSettings extends React.Component {
   }
 
   timezoneSearch(input, option) {
-    return option.props.children.indexOf(input) >= 0;
+    return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   }
 
   render() {
@@ -104,7 +135,7 @@ class OrganizationSettings extends React.Component {
         </Section>
         <Section title="Invite Users">
           <Item>
-            <InviteUsersForm onSubmit={this.showInviteSuccess.bind(this)}/>
+            <InviteUsersForm onSubmit={this.handleInviteSubmit.bind(this)}/>
           </Item>
         </Section>
         <Section title="Users">

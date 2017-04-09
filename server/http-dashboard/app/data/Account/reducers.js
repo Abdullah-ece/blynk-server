@@ -1,7 +1,8 @@
 const initialState = {
   name: '',
   email: '',
-  role: ''
+  role: '',
+  orgId: null
 };
 
 export default function Account(state = initialState, action) {
