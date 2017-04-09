@@ -2,7 +2,8 @@ const initialState = {
   name: '',
   tzName: 'Select timezone', // default timezone if not specified on backend
   primaryColor: 'f00a0a',
-  secondaryColor: '979282'
+  secondaryColor: '979282',
+  logoUrl: ''
 };
 
 export default function Account(state = initialState, action) {
@@ -33,6 +34,12 @@ export default function Account(state = initialState, action) {
         ...state,
         primaryColor: action.colors.primaryColor || 0,
         secondaryColor: action.colors.secondaryColor || 0
+      };
+
+    case "ORGANIZATION_UPDATE_LOGO":
+      return {
+        ...state,
+        logo: action.logo
       };
 
     case "ORGANIZATION_UPDATE_NAME":

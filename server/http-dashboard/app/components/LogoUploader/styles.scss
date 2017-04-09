@@ -16,4 +16,12 @@
   width: 304px;
   height: 116px;
   margin-top: 8px;
+  &.contains-logo {
+    height: auto;
+  }
+}
+
+.logo-uploader-dropdown-zone-logo {
+  width: 100%;
+  padding: 8px;
 }

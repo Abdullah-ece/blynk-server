@@ -42,6 +42,12 @@ export function OrganizationSendInvite(data = {}) {
   };
 }
 
+export function OrganizationLogoUpdate(logo) {
+  return {
+    type: 'ORGANIZATION_UPDATE_LOGO',
+    logoUrl: logo
+  };
+}
 export function OrganizationUpdateName(name) {
   return {
     type: 'ORGANIZATION_UPDATE_NAME',

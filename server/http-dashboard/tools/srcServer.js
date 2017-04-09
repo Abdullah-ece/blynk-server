@@ -32,6 +32,12 @@ browserSync({
         logLevel: 'debug'
       }),
 
+      proxyMiddleware('/static', {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        logLevel: 'debug'
+      }),
+
       webpackDevMiddleware(bundler, {
         // Dev middleware can't access config, so we provide publicPath
         publicPath: config.output.publicPath,
