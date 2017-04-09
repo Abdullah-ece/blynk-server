@@ -9,14 +9,16 @@ import './styles.scss';
 class BrandingColorPicker extends React.Component {
 
   static propTypes = {
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    color: React.PropTypes.any,
+    onChange: React.PropTypes.func
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      color: '',
+      color: props.color || '',
       displayColorPicker: false
     };
   }
@@ -31,6 +33,7 @@ class BrandingColorPicker extends React.Component {
     this.setState({
       displayColorPicker: false
     });
+    if (this.props.onChange) this.props.onChange(this.state.color);
   }
 
   handleColorChange(color) {

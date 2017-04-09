@@ -1,6 +1,8 @@
 const initialState = {
   name: '',
   tzName: 'Select timezone', // default timezone if not specified on backend
+  primaryColor: 'f00a0a',
+  secondaryColor: '979282'
 };
 
 export default function Account(state = initialState, action) {
@@ -24,6 +26,13 @@ export default function Account(state = initialState, action) {
     case "API_ORGANIZATION_SAVE_FAILURE":
       return {
         ...state,
+      };
+
+    case "ORGANIZATION_BRANDING_UPDATE":
+      return {
+        ...state,
+        primaryColor: action.colors.primaryColor || 0,
+        secondaryColor: action.colors.secondaryColor || 0
       };
 
     case "ORGANIZATION_UPDATE_NAME":

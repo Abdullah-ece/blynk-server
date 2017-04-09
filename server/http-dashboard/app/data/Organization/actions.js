@@ -49,6 +49,13 @@ export function OrganizationUpdateName(name) {
   };
 }
 
+export function OrganizationBrandingUpdate(colors) {
+  return {
+    type: 'ORGANIZATION_BRANDING_UPDATE',
+    colors
+  };
+}
+
 export function OrganizationUpdateTimezone(tzName) {
   return {
     type: 'ORGANIZATION_UPDATE_TIMEZONE',
