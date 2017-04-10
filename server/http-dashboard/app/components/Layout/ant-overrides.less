@@ -66,7 +66,7 @@
 @ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
 
 // Border color
-@border-color-base: #d9d9d9; // base border outline a component
+@border-color-base: @color-dark-grey-25; // base border outline a component
 @border-color-split: #e9e9e9; // split border inside a component
 @border-width-base: 1px; // width of the border for a component
 @border-style-base: solid; // style of a components border
@@ -414,6 +414,55 @@
         }
       }
     }
+  }
+
+  // select
+  &-select {
+    height: @style-size-4;
+    .font-input;
+
+    .@{ant-prefix} {
+      &-select-selection {
+        &:hover {
+          border-color: @color-dark-grey-25;
+        }
+        &:focus {
+          border-color: @color-primary-3;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  &-select-disabled {
+    .@{ant-prefix} {
+      &-select-selection {
+        border-color: @color-dark-grey-12;
+        background: @color-white;
+        &:hover, &:focus {
+          border-color: @color-dark-grey-12;
+          background: @color-white;
+        }
+      }
+    }
+  }
+
+  &-select-dropdown-menu-item {
+    .font-input;
+
+    &:hover {
+      background: @color-primary-1;
+    }
+  }
+
+  &-select-dropdown-menu-item-selected {
+    &:hover {
+      .font-input;
+    }
+  }
+
+  &-select-dropdown-menu-item-disabled {
+    color: @color-dark-grey-25;
   }
   //&-btn {
   //  padding: 8px 16px !important;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Input, Checkbox} from 'antd';
+import {Button, Input, Checkbox, Select} from 'antd';
 
 import './styles.scss';
 
@@ -40,6 +40,22 @@ class StyleGuide extends React.Component {
         </div>
         <div className="style-guide-element">
           <Checkbox disabled>Check me</Checkbox>
+        </div>
+        <div className="style-guide-element">
+          <Select defaultValue="lucy" style={{width: 120}}>
+            <Select.Option value="jack">Jack</Select.Option>
+            <Select.Option value="lucy">Lucy</Select.Option>
+            <Select.Option value="disabled" disabled>Disabled</Select.Option>
+            <Select.Option value="Yiminghe">yiminghe</Select.Option>
+          </Select>
+        </div>
+        <div className="style-guide-element">
+          <Select defaultValue="lucy" style={{width: 120}} disabled>
+            <Select.Option value="jack">Jack</Select.Option>
+            <Select.Option value="lucy">Lucy</Select.Option>
+            <Select.Option value="disabled" disabled>Disabled</Select.Option>
+            <Select.Option value="Yiminghe">yiminghe</Select.Option>
+          </Select>
         </div>
       </div>
     );
