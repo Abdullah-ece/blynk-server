@@ -16,7 +16,7 @@ export function AccountResetPassword() {
     payload: {
       request: {
         method: 'post',
-        url: '/account/resetPass'
+        url: '/sendResetPass'
       }
     }
   };

@@ -6,6 +6,8 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Map;
  * Created on 06.12.15.
  */
 public class URIDecoder extends QueryStringDecoder {
+
+    private static final Logger log = LogManager.getLogger(URIDecoder.class);
 
     public final String[] paths;
     public final HttpRequest httpRequest;
@@ -44,6 +48,10 @@ public class URIDecoder extends QueryStringDecoder {
     }
 
     public List<InterfaceHttpData> getBodyHttpDatas() {
+        if (decoder == null) {
+            log.error("No body params while API requires.");
+            return null;
+        }
         return decoder.getBodyHttpDatas();
     }
 

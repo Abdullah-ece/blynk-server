@@ -4,7 +4,7 @@ export function ForgotPass(data) {
     payload: {
       request: {
         method: 'post',
-        url: '/account/resetPass',
+        url: '/sendResetPass',
         data
       }
     }
