@@ -434,6 +434,21 @@
     }
   }
 
+  &-select-open {
+    .@{ant-prefix} {
+      &-select-selection {
+        box-shadow: none;
+        &:hover {
+          border-color: @color-dark-grey-25;
+        }
+        &:focus {
+          border-color: @color-primary-3;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
   &-select-disabled {
     .@{ant-prefix} {
       &-select-selection {

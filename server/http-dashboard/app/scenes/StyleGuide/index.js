@@ -57,6 +57,9 @@ class StyleGuide extends React.Component {
             <Select.Option value="Yiminghe">yiminghe</Select.Option>
           </Select>
         </div>
+        <div className="style-guide-element">
+          <a href="javascript:void(0);">Link</a>
+        </div>
       </div>
     );
   }
