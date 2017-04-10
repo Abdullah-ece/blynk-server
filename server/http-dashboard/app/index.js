@@ -12,6 +12,7 @@ import Login from './scenes/Login';
 import ForgotPass from './scenes/ForgotPass';
 import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
+import StyleGuide from './scenes/StyleGuide';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 
 /* store */
@@ -43,6 +44,7 @@ Store().then((store) => {
               <Route path="/resetpass" component={ResetPass}/>
             </Route>
           </Route>
+          <Route component={StyleGuide} path="/style-guide"/>
           <Redirect from="*" to="/login"/>
         </Router>
       </LocaleProvider>
