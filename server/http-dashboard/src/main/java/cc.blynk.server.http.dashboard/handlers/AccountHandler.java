@@ -42,7 +42,7 @@ public class AccountHandler extends BaseHttpHandler {
     @Path("")
     public Response update(User updatedUser) {
         User existingUser = userDao.getByName(updatedUser.email, updatedUser.appName);
-        existingUser.update(updatedUser);
+        existingUser.name = updatedUser.name;
         return ok(existingUser);
     }
 

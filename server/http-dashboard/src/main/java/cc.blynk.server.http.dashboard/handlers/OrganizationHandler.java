@@ -15,7 +15,6 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
-import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -100,6 +99,46 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         return ok(userDao.getUsersByOrgId(orgId));
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id}/users/update")
+    @Admin
+    public Response updateUserInfo(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite user) {
+        if (user.isNotValid()) {
+            log.error("Bad data for account update.");
+            return badRequest("Bad data for account update.");
+        }
+
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        Organization organization = organizationDao.getOrgById(orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
+            return badRequest("Cannot find organization with passed id.");
+        }
+
+        if (!httpSession.user.isSuperAdmin()) {
+            if (orgId != httpSession.user.orgId) {
+                log.error("User {} tries to access organization he has no access.");
+                return forbidden("You are not allowed to access this organization.");
+            }
+        }
+
+        String appName = httpSession.user.appName;
+        UserKey userKey = new UserKey(user.email, appName);
+        User existingUser = userDao.getByName(userKey);
+
+        if (existingUser == null || existingUser.orgId != orgId) {
+            log.error("User {} not found.", user.email);
+            return badRequest("User not found.");
+        }
+
+        log.info("Updating {} user.", user.email);
+        existingUser.role = user.role;
+
+        return ok();
     }
 
     @POST
@@ -213,7 +252,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{id}/invite")
     @Admin
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite userInvite) {
-        if (orgId == 0 || userInvite.isNotValid() || BlynkEmailValidator.isNotValidEmail(userInvite.email)) {
+        if (orgId == 0 || userInvite.isNotValid()) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
             return badRequest("Invalid invitation.");
         }

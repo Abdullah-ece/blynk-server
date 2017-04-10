@@ -110,46 +110,6 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Get organization users [GET] [/organization/{id}/users]
-
-+ Request (application/json)
-
-+ Response 200 (application/json)
-
-        Json of users belongs to organization
-
-+ Response 400 (application/json)
-
-        Cannot find organization with passed id.
-
-+ Response 403 (application/json)
-
-        You are not allowed to access this organization.
-
-+ Response 500 (application/json)
-
-        Unexpected error.
-
-## Delete organization users [POST] [/organization/{id}/users/delete]
-
-+ Request (application/json)
-
-        ["user1@blynk.cc","user2.blynk.cc"]
-
-+ Response 200 (application/json)
-
-+ Response 400 (application/json)
-
-        Cannot find organization with passed id.
-
-+ Response 403 (application/json)
-
-        You are not allowed to access this organization.
-
-+ Response 500 (application/json)
-
-        Unexpected error.
-
 ## Create New Organization [PUT] [/organization]
 
 + Request (application/json)
@@ -227,6 +187,78 @@ HOST: https://knight-qa.blynk.cc/
 + Response 500 (application/json)
 
         Error generating invitation email.
+
+
+# Organization Users API
+
+## Get organization users [GET] [/organization/{id}/users]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        Json of users belongs to organization
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
++ Response 500 (application/json)
+
+        Unexpected error.
+
+## Update organization user [POST] [/organization/{id}/users/update]
+
++ Request (application/json)
+
+        {"email":"USER_I_WANT_UPDATE@gmail.com", "name":"Vasya Pupkin", "role":"ADMIN"}
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+        Bad data for user update.
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 400 (application/json)
+
+        User not exists.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
++ Response 500 (application/json)
+
+        Unexpected error.
+
+## Delete organization users [POST] [/organization/{id}/users/delete]
+
++ Request (application/json)
+
+        ["user1@blynk.cc","user2.blynk.cc"]
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+        Cannot find organization with passed id.
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
++ Response 500 (application/json)
+
+        Unexpected error.
+
 
 # Account API
 

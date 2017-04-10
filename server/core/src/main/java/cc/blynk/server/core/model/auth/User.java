@@ -90,10 +90,6 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void update(User updatedUser) {
-        this.name = updatedUser.name;
-    }
-
     public boolean isAdmin() {
         return role == Role.ADMIN || role == Role.SUPER_ADMIN;
     }

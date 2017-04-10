@@ -2,6 +2,8 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -16,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -217,11 +218,11 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<Map> fromApi = JsonParser.mapper.readValue(consumeText(response), List.class);
+            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
-            assertEquals(3, fromApi.size());
-            for (Map user : fromApi) {
-                assertNotEquals("user@blynk.cc", user.get("email"));
+            assertEquals(3, fromApi.length);
+            for (User user : fromApi) {
+                assertNotEquals("user@blynk.cc", user.email);
             }
         }
     }
@@ -238,6 +239,48 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(403, response.getStatusLine().getStatusCode());
         }
 
+    }
+
+    @Test
+    public void updateAccountRole() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
+        String body = JsonParser.mapper.writeValueAsString(new UserInvite("user@blynk.cc", "123", Role.ADMIN));
+        req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req2 = new HttpGet(httpsAdminServerUrl + "/organization/1/users");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
+            assertNotNull(fromApi);
+            assertEquals(4, fromApi.length);
+            for (User user : fromApi) {
+                if (user.email.equals("user@blynk.cc")) {
+                    assertEquals(Role.ADMIN, user.role);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void updateAccountRoleForNonExistingUser() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
+        String body = JsonParser.mapper.writeValueAsString(new UserInvite("userzzz@blynk.cc", "123", Role.ADMIN));
+        req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
     }
 
 }
