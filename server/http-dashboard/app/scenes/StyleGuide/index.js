@@ -33,13 +33,13 @@ class StyleGuide extends React.Component {
           <Input placeholder="Label" style={{width: 168}}/>
         </div>
         <div className="style-guide-element">
-          <Checkbox/>
+          <Checkbox></Checkbox>
         </div>
         <div className="style-guide-element">
-          <Checkbox disabled/>
+          <Checkbox>Check me</Checkbox>
         </div>
-        <div className="style-guide-element has-error">
-          <Checkbox/>
+        <div className="style-guide-element">
+          <Checkbox disabled>Check me</Checkbox>
         </div>
       </div>
     );
