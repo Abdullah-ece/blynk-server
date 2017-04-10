@@ -5,7 +5,7 @@ import {Field as FormField} from 'components/Form';
 import Validation from 'services/Validation';
 import {InviteAvailableRoles} from 'services/Roles';
 
-import './styles.scss';
+import './styles.less';
 
 @reduxForm({
   form: 'OrganizationSettingsInviteUsersForm',

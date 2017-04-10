@@ -4,7 +4,7 @@ import {SketchPicker} from 'react-color';
 
 import classNames from 'classnames';
 
-import './styles.scss';
+import './styles.less';
 
 class BrandingColorPicker extends React.Component {
 

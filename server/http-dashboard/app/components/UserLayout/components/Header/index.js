@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
 
-import './styles.scss';
+import './styles.less';
 @connect((state) => ({
   Account: state.Account
 }))

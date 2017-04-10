@@ -4,7 +4,7 @@ import {Icon, Tooltip, Upload, message} from 'antd';
 
 import classnames from 'classnames';
 
-import './styles.scss';
+import './styles.less';
 
 class LogoUploader extends React.Component {
 

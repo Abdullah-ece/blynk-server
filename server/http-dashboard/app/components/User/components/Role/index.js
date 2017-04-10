@@ -4,7 +4,7 @@ import {Select} from 'antd';
 
 import {UsersAvailableRoles} from 'services/Roles';
 
-import './styles.scss';
+import './styles.less';
 
 export default class Role extends React.Component {
 

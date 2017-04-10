@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './styles.scss';
+import './styles.less';
 
 export default class LoginLayout extends React.Component {
 

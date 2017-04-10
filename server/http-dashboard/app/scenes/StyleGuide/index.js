@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Button, Input, Checkbox, Select} from 'antd';
 
-import './styles.scss';
+import './styles.less';
 
 class StyleGuide extends React.Component {
   render() {

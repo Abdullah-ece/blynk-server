@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Menu as AntMenu}  from 'antd';
 
-import './styles.scss';
+import './styles.less';
 
 class Menu extends React.Component {
 

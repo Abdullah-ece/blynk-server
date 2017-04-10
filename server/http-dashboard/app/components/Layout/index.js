@@ -2,7 +2,7 @@ import React from 'react';
 
 import './ant-overrides.less';
 
-import './styles.scss';
+import './styles.less';
 
 export default class Layout extends React.Component {
 

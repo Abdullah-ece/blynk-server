@@ -13,7 +13,7 @@ import {
 } from 'data/Account/actions';
 import Field from '../../components/Field';
 
-import './styles.scss';
+import './styles.less';
 
 @connect((state) => ({
   Account: state.Account

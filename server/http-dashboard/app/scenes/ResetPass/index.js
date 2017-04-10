@@ -7,7 +7,7 @@ import {encryptUserPassword} from 'services/Crypto';
 import * as API from './data/actions';
 import ResetPassForm from "./components/ResetPassForm";
 import Confirmation from "./components/Confirmation";
-import './styles.scss';
+import './styles.less';
 
 @connect(() => {
   return {};

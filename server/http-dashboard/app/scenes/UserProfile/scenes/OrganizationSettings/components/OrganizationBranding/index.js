@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './styles.scss';
+import './styles.less';
 import LogoUploader from "components/LogoUploader/index";
 import BrandingColorPicker from "components/BrandingColorPicker/index";
 import {bindActionCreators} from 'redux';

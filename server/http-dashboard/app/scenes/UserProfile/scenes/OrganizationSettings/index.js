@@ -18,7 +18,7 @@ import {
   OrganizationSendInvite
 } from 'data/Organization/actions';
 
-import './styles.scss';
+import './styles.less';
 
 @connect((state) => ({
   Organization: state.Organization,

@@ -63,12 +63,8 @@ export default {
       {test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]'},
       {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
       {
-        test: /(\.less)$/,
-        loaders: ['style-loader', 'css-loader?sourceMap', 'less-loader?sourceMap']
-      },
-      {
-        test: /(\.css|\.scss|\.sass)$/,
-        loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader', 'sass-loader?sourceMap']
+        test: /(\.css|\.less)$/,
+        loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader', 'less-loader?sourceMap']
       }
     ]
   }

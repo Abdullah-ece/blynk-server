@@ -6,7 +6,7 @@ import {SubmissionError} from 'redux-form';
 import * as API from './data/actions';
 import ForgotPassForm from "./components/ForgotPassForm";
 import Confirmation from "./components/Confirmation";
-import './styles.scss';
+import './styles.less';
 
 @connect(() => {
   return {};

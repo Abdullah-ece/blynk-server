@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './styles.scss';
+import './styles.less';
 
 class Title extends React.Component {
 

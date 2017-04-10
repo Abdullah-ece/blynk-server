@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as AccountActions from 'data/Account/actions';
 
-import './styles.scss';
+import './styles.less';
 
 @connect(() => ({}), (dispatch) => ({
   fetchAccount: bindActionCreators(AccountActions.Account, dispatch)

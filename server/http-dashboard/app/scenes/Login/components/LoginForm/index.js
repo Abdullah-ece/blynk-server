@@ -8,7 +8,7 @@ import {Field as FormField} from 'components/Form';
 
 import Validation from 'services/Validation';
 
-import './styles.scss';
+import './styles.less';
 
 @reduxForm({
   form: 'Login'

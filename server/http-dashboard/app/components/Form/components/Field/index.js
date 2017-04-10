@@ -4,7 +4,7 @@ import {Form, Input, Icon} from 'antd';
 
 import {Field as FormField} from 'redux-form';
 
-import "./styles.scss";
+import "./styles.less";
 
 export default class Field extends React.Component {
   renderField({displayError = true, placeholder, input, type, icon, meta: {touched, error, warning}}) {
