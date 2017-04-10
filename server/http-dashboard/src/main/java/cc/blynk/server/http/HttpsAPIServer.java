@@ -7,7 +7,6 @@ import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.http.dashboard.handlers.ResetPassNotLoggedHandler;
 import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.SslUtil;
 import cc.blynk.utils.UrlMapper;
@@ -49,7 +48,6 @@ public class HttpsAPIServer extends BaseServer {
                 new UrlStartWithMapper("/dashboard#/resetPass", "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
-        final ResetPassNotLoggedHandler resetPassNotLoggedHandler = new ResetPassNotLoggedHandler(holder, rootPath);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -61,7 +59,6 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);
-                pipeline.addLast(resetPassNotLoggedHandler);
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
