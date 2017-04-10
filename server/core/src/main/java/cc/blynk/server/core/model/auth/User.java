@@ -98,6 +98,16 @@ public class User {
         return role == Role.SUPER_ADMIN;
     }
 
+    public void setName(String name) {
+        this.name = name;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

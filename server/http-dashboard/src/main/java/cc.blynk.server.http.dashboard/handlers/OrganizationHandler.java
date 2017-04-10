@@ -136,7 +136,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         log.info("Updating {} user.", user.email);
-        existingUser.role = user.role;
+        existingUser.setRole(user.role);
 
         return ok();
     }
