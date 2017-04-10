@@ -14,6 +14,7 @@ import cc.blynk.utils.UrlStartWithMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
@@ -59,6 +60,7 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);
+                pipeline.addLast(new HttpContentCompressor());
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
