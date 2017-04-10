@@ -1,26 +1,26 @@
 @import "~antd/dist/antd.less";
-
+@import "style-guide";
 // Prefix
 @ant-prefix: ant;
 
 // Color
-@primary-color: #23c890;
+@primary-color: @color-primary-6;
 @success-color: @green-6;
 @error-color: @red-6;
 @highlight-color: @red-6;
 @warning-color: @yellow-6;
 @normal-color: #d9d9d9;
 
-@primary-1: color(~`colorPalette("@{primary-color}", 1)`); // replace tint(@primary-color, 90%)
-@primary-2: color(~`colorPalette("@{primary-color}", 2)`); // replace tint(@primary-color, 80%)
-@primary-3: color(~`colorPalette("@{primary-color}", 3)`);
-@primary-4: color(~`colorPalette("@{primary-color}", 4)`);
-@primary-5: color(~`colorPalette("@{primary-color}", 5)`); // replace tint(@primary-color, 20%)
+@primary-1: @color-primary-1; // replace tint(@primary-color, 90%)
+@primary-2: @color-primary-2; // replace tint(@primary-color, 80%)
+@primary-3: @color-primary-3;
+@primary-4: @color-primary-4;
+@primary-5: @color-primary-5; // replace tint(@primary-color, 20%)
 @primary-6: @primary-color; // don't use, use @primary-color
-@primary-7: color(~`colorPalette("@{primary-color}", 7)`); // replace shade(@primary-color, 5%)
-@primary-8: color(~`colorPalette("@{primary-color}", 8)`);
-@primary-9: color(~`colorPalette("@{primary-color}", 9)`);
-@primary-10: color(~`colorPalette("@{primary-color}", 10)`);
+@primary-7: @color-primary-7; // replace shade(@primary-color, 5%)
+@primary-8: @color-primary-8;
+@primary-9: @color-primary-9;
+@primary-10: @color-primary-10;
 
 // ------ Base & Require ------
 @body-background: #fff;
@@ -101,7 +101,7 @@
 @btn-default-border: @border-color-base;
 
 @btn-danger-color: #fff;
-@btn-danger-bg: @red-6;
+@btn-danger-bg: @color-critical;
 
 @btn-disable-color: @disabled-color;
 @btn-disable-bg: @background-color-base;
@@ -267,9 +267,10 @@
 
 .@{ant-prefix} {
   &-btn {
-    font-weight: 300;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
+    padding: 8px 16px !important;
+    border: 0;
+    line-height: 16px;
+    .font-primary-button;
   }
   &-confirm-title {
     font-weight: 400 !important;
