@@ -30,7 +30,7 @@ class MyAccount extends React.Component {
     AccountFetch: React.PropTypes.func,
     AccountSave: React.PropTypes.func,
     AccountUpdateName: React.PropTypes.func,
-    AccountResetPassword: React.PropTypes.func,
+    AccountResetPassword: React.PropTypes.func
   };
 
   constructor(props) {
@@ -55,7 +55,7 @@ class MyAccount extends React.Component {
     this.setState({
       resetPasswordProcessing: true
     });
-    this.props.AccountResetPassword().then(() => {
+    this.props.AccountResetPassword(Object.assign({}, {email: this.props.Account.email})).then(() => {
       this.setState({
         resetPasswordProcessing: false
       });

@@ -1,3 +1,5 @@
+import {transformJsonToFormUrlEncoded} from 'services/Form';
+
 export function Account() {
   return {
     type: 'API_ACCOUNT',
@@ -10,13 +12,16 @@ export function Account() {
   };
 }
 
-export function AccountResetPassword() {
+export function AccountResetPassword(data) {
   return {
     type: 'API_ACCOUNT_SAVE',
     payload: {
       request: {
+        transformRequest: transformJsonToFormUrlEncoded,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         method: 'post',
-        url: '/sendResetPass'
+        url: '/sendResetPass',
+        data
       }
     }
   };
