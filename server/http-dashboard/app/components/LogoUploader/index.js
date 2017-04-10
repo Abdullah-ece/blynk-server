@@ -29,7 +29,7 @@ class LogoUploader extends React.Component {
 
   onChange(info) {
     if (info.file.status === 'uploading' && this.hide === null) {
-      this.hide = message.loading('Action in progress..', 0);
+      this.hide = message.loading('Uploading image...', 0);
     }
     if (info.file.status !== 'uploading') {
       if (this.props.onChange) {
