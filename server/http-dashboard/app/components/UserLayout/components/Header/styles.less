@@ -8,24 +8,13 @@
 }
 
 .user-layout--header-logo {
-  &:before {
-    background: url('../../../../assets/logo.png');
-    content: ' ';
-    position: absolute;
-    display: block;
-    width: 45px;
-    height: 45px;
-    background-size: 100% 100%;
-    margin-left: -60px;
-    margin-top: -7px;
-  }
-  font-size: 20px;
-  line-height: 32px;
-  color: #fff;
-  font-weight: 300;
-  padding-top: 16px;
-  margin-left: 60px;
+  height: @style-size-5;
+  padding: @style-size-2 0;
   float: left;
+  img {
+    max-width: 200px;
+    max-height: 48px;
+  }
 }
 
 .user-layout--header-menu {

@@ -1,10 +1,16 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
+
+import {OrganizationFetch} from 'data/Organization/actions';
 
 import './styles.less';
 @connect((state) => ({
-  Account: state.Account
+  Account: state.Account,
+  Organization: state.Organization
+}), (dispatch) => ({
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch)
 }))
 class Header extends React.Component {
 
@@ -13,8 +19,18 @@ class Header extends React.Component {
   };
 
   static propTypes = {
-    Account: React.PropTypes.object
+    Account: React.PropTypes.object,
+    Organization: React.PropTypes.object,
+    OrganizationFetch: React.PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    props.OrganizationFetch({
+      id: props.Account.orgId
+    });
+  }
 
   AccountMenu() {
 
@@ -47,7 +63,9 @@ class Header extends React.Component {
   render() {
     return (
       <div className="user-layout--header">
-        <div className="user-layout--header-logo">Blynk Inc.</div>
+        <div className="user-layout--header-logo">
+          <img src={ this.props.Organization.logoUrl || "assets/logo.png"} alt=""/>
+        </div>
         <div className="user-layout--header-user">
           <div className="dark user-layout--header-user-link">
             { this.props.Account.email }
