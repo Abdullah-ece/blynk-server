@@ -9,7 +9,7 @@ import Field from '../../components/Field';
 import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
 import OrganizationBranding from './components/OrganizationBranding';
-import {SubmissionError} from 'redux-form';
+import {SubmissionError, reset} from 'redux-form';
 import {
   OrganizationFetch,
   OrganizationUpdateName,
@@ -29,6 +29,7 @@ import './styles.less';
   OrganizationSave: bindActionCreators(OrganizationSave, dispatch),
   OrganizationUpdateTimezone: bindActionCreators(OrganizationUpdateTimezone, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
+  ResetForm: bindActionCreators(reset, dispatch)
 }))
 class OrganizationSettings extends React.Component {
 
@@ -39,6 +40,7 @@ class OrganizationSettings extends React.Component {
     OrganizationSave: React.PropTypes.func,
     OrganizationUpdateTimezone: React.PropTypes.func,
     OrganizationSendInvite: React.PropTypes.func,
+    ResetForm: React.PropTypes.func,
     Account: React.PropTypes.object
   };
 
@@ -58,6 +60,7 @@ class OrganizationSettings extends React.Component {
       name: values.name,
       role: values.role
     }).then(() => {
+      this.props.ResetForm('OrganizationSettingsInviteUsersForm');
       this.showInviteSuccess();
     }).catch((err) => {
       this.showInviteError(
@@ -75,11 +78,7 @@ class OrganizationSettings extends React.Component {
   }
 
   showInviteSuccess() {
-    Modal.success({
-      title: 'Success',
-      content: 'Invite has been sent to email!',
-      okText: 'Ok'
-    });
+    message.success('Invite has been sent to email!');
   }
 
   handleTimezoneChange(timezone) {
