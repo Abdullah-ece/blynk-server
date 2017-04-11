@@ -50,6 +50,8 @@ public class Handler {
             this.allowedRoleAccess = Role.SUPER_ADMIN;
         } else if (method.isAnnotationPresent(Admin.class)) {
             this.allowedRoleAccess = Role.ADMIN;
+        } else if (method.isAnnotationPresent(Staff.class)) {
+            this.allowedRoleAccess = Role.STAFF;
         } else {
             this.allowedRoleAccess = null;
         }

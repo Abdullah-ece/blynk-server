@@ -1,9 +1,11 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
@@ -72,11 +74,16 @@ public class InvitationAPITest extends APIBaseTest {
 
     @Test
     public void userCantSendInvitation() throws Exception {
-        login(regularUser.email, regularUser.pass);
+        String name = "user2@blynk.cc";
+        String pass = "user2";
+        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.USER);
+        holder.userDao.add(simpleUser);
+
+        login(simpleUser.email, simpleUser.pass);
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -130,9 +137,9 @@ public class InvitationAPITest extends APIBaseTest {
         verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
-        String url = body.substring(body.indexOf("https"), body.length() - 3);
+        String url = body.substring(body.indexOf("https"), body.indexOf("&"));
 
-        String token = body.substring(body.indexOf("=") + 1, body.indexOf("&"));
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
         url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);

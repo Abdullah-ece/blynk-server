@@ -250,7 +250,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}/invite")
-    @Admin
+    @Staff
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite userInvite) {
         if (orgId == 0 || userInvite.isNotValid()) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
@@ -273,6 +273,11 @@ public class OrganizationHandler extends BaseHttpHandler {
                 log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, orgId);
                 return forbidden();
             }
+        }
+
+        if (httpSession.user.role.ordinal() > userInvite.role.ordinal()) {
+            log.error("User {} with role {} has no right to invite role {}.", httpSession.user.email,  httpSession.user.role, userInvite.role);
+            return forbidden();
         }
 
         User invitedUser = userDao.invite(userInvite, orgId, AppName.BLYNK);
