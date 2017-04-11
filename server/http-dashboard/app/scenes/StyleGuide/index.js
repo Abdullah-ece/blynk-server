@@ -9,13 +9,13 @@ class StyleGuide extends React.Component {
     return (
       <div className="style-guide">
         <div className="style-guide-element">
-          <Button type="primary">Button</Button>
+          <Button type="primary">Button</Button> <Button type="primary" disabled>Button</Button>
         </div>
         <div className="style-guide-element">
-          <Button type="primary" icon="plus">Button</Button>
+          <Button type="primary" icon="plus">Button</Button> <Button type="primary" icon="plus" disabled>Button</Button>
         </div>
         <div className="style-guide-element">
-          <Button>Button</Button>
+          <Button>Button</Button> <Button disabled>Button</Button>
         </div>
         <div className="style-guide-element">
           <Button icon="edit"/>
@@ -24,7 +24,7 @@ class StyleGuide extends React.Component {
           <Button icon="edit" className="dark"/> <Button icon="user" className="dark"/>
         </div>
         <div className="style-guide-element">
-          <Button type="danger">Button</Button>
+          <Button type="danger">Button</Button> <Button type="danger" disabled>Button</Button>
         </div>
         <div className="style-guide-element">
           <Button type="dashed" icon="plus">Add Meta data</Button>

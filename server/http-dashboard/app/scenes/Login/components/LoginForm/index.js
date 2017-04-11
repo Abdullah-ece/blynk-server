@@ -37,7 +37,7 @@ export default class LoginForm extends React.Component {
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
       <FormItem>
-        <span className="form-header">Log in</span>
+        <span className="form-header">Log In</span>
       </FormItem>
 
       <FormField type="text" name="email"
@@ -63,6 +63,7 @@ export default class LoginForm extends React.Component {
 
       <FormItem>
         <Button type="primary"
+                size="default"
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
                 disabled={invalid || pristine || submitting}>
