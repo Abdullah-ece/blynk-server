@@ -49,12 +49,12 @@ class Header extends React.Component {
       <div className="user-layout--header">
         <div className="user-layout--header-logo">Blynk Inc.</div>
         <div className="user-layout--header-user">
-          <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
-            <a href="javascript:void(0)" className="dark user-layout--header-user-link">
-              { this.props.Account.email }
-              <Button type="primary" icon="user" size="large" className="user-layout--header-user-button"/>
-            </a>
-          </Dropdown>
+          <div className="dark user-layout--header-user-link">
+            { this.props.Account.email }
+            <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
+              <Button type="primary" icon="user" className="user-layout--header-user-button dark"/>
+            </Dropdown>
+          </div>
         </div>
         <Menu mode="horizontal" className="user-layout--header-menu">
           <Menu.Item>Dashboard</Menu.Item>

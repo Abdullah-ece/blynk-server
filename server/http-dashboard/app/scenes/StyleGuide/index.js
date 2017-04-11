@@ -18,6 +18,12 @@ class StyleGuide extends React.Component {
           <Button>Button</Button>
         </div>
         <div className="style-guide-element">
+          <Button icon="edit"/>
+        </div>
+        <div className="style-guide-element dark">
+          <Button icon="edit" className="dark"/> <Button icon="user" className="dark"/>
+        </div>
+        <div className="style-guide-element">
           <Button type="danger">Button</Button>
         </div>
         <div className="style-guide-element">

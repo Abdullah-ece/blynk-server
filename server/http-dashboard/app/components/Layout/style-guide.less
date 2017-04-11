@@ -2,6 +2,7 @@
 @color-primary-2: #bfdff0;
 @color-primary-3: #8ac3e6;
 @color-primary-4: #45a2d8;
+@color-primary-4-30: rgba(69, 162, 216, 0.3); //
 @color-primary-5: #007dc4;
 @color-primary-6: #026bb1;
 @color-primary-7: #035a9d;
@@ -32,6 +33,7 @@
 @style-size-5: 64px;
 
 @style-font-size-1: 12px;
+@style-font-size-1-2: 14px;
 @style-font-size-2: 16px;
 @style-font-size-3: 18px;
 @style-font-size-4: 20px;
@@ -56,7 +58,7 @@
   font-size: @style-font-size-4;
   color: @color-white;
   font-weight: 300;
-  line-height: 32px;
+  line-height: @style-size-4;
 }
 
 .font-active-tab {
@@ -123,4 +125,27 @@
   font-size: @style-font-size-2;
   color: @color-dark-grey;
   font-weight: 300;
+}
+
+.font-menu-item {
+  font-size: @style-font-size-2;
+  color: @color-white;
+  line-height: @style-size-4;
+}
+
+.font-simple-white {
+  font-size: @style-font-size-1-2;
+  line-height: @style-size-4;
+  color: @color-white;
+}
+
+.font-button-icon {
+  font-size: @style-font-size-4;
+  color: @color-primary-5;
+  line-height: @style-font-size-4;
+}
+
+.font-button-icon-dark {
+  .font-button-icon;
+  color: @color-white;
 }

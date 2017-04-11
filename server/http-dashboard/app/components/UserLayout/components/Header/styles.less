@@ -1,9 +1,10 @@
 /* @todo put colors font sizes etc. to config in variables */
+@import "components/Layout/style-guide.less";
 
 .user-layout--header {
-  height: 64px;
-  background: #24c48e;
-  padding: 0 32px;
+  height: @style-size-5;
+  background: @color-primary-5;
+  padding: 0 @style-size-4;
 }
 
 .user-layout--header-logo {
@@ -30,44 +31,49 @@
 .user-layout--header-menu {
   background: none;
   border: 0;
-  padding: 9px 0;
+  padding: calc(@style-size-4 / 2) 0;
   float: right;
   li {
     &.ant-menu-item {
-      font-size: 16px;
-      color: #fff;
+      .font-menu-item;
+      margin: 0 @style-size-3;
+      padding: 0 @style-size-2;
+      border-radius: @style-size-1;
+      height: @style-size-4;
       border: 0 !important;
+      &:hover {
+        color: @color-white;
+        background: @color-primary-4-30;
+      }
     }
     &.ant-menu-item-selected {
-      color: rgba(33, 34, 39, 0.75);
+      color: @color-white;
+      background: @color-primary-6;
+      &:hover {
+        background: @color-primary-6;
+      }
     }
     &.ant-menu-item-active {
-      color: rgba(33, 34, 39, 0.75) !important;
+      color: @color-white;
+      background: @color-primary-6;
       border-bottom: 0 !important;
     }
   }
 }
 
 .user-layout--header-user {
+  .font-simple-white;
   float: right;
-  padding: 15px 0;
-  margin-left: 30px;
-}
-
-.user-layout--header-user-link {
-  font-size: 14px;
-  color: rgba(33, 34, 39, 0.75) !important;
-  &:hover {
-    color: #fff !important;
-    .user-layout--header-user-button {
-      background: #58d5ab;
-    }
-  }
+  height: @style-size-4;
+  margin: calc(@style-size-4 / 2) 0 calc(@style-size-4 / 2) 30px;
 }
 
 .user-layout--header-user-button {
   border: 0;
   transition-timing-function: ease;
-  background-color: #1da678;
+  background-color: @color-primary-6;
   margin-left: 8px;
+  i {
+    font-size: @style-font-size-2 !important;
+  }
 }

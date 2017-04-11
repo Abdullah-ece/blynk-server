@@ -328,8 +328,33 @@
       }
     }
 
-    & > .anticon {
+    &:not(.ant-btn-icon-only) > .anticon {
       line-height: 0; // fix icon height
+    }
+  }
+
+  &-btn-icon-only {
+    width: @style-size-4;
+    height: @style-size-4;
+    padding: 4px !important;
+    border: 0;
+    i {
+      .font-button-icon;
+    }
+    &:hover {
+      background: @color-primary-1;
+    }
+  }
+  &-btn-icon-only.dark {
+    background: @color-primary-6;
+    i {
+      .font-button-icon-dark;
+    }
+    &:hover {
+      background: @color-primary-4-30;
+    }
+    &:active {
+      box-shadow: 0 0 0 2px @color-primary-6;
     }
   }
 
