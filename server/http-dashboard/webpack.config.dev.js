@@ -64,7 +64,22 @@ export default {
       {test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'},
       {
         test: /(\.css|\.less)$/,
-        loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader', 'less-loader?sourceMap']
+        // loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader', 'less-loader?sourceMap']
+        use: [{
+          loader: 'style-loader'
+        }, {
+          loader: 'css-loader?sourceMap'
+        }, {
+          loader: 'postcss-loader'
+        }, {
+          loader: 'less-loader',
+          options: {
+            paths: [
+              path.resolve(__dirname, "app"),
+              path.resolve(__dirname, "node_modules"),
+            ]
+          }
+        }]
       }
     ]
   }
