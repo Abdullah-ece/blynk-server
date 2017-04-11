@@ -387,6 +387,20 @@
         }
       }
 
+      &-checkbox-indeterminate {
+        .@{ant-prefix} {
+          &-checkbox-inner {
+            background: @color-white;
+            border-color: @color-dark-grey-25;
+            &:after {
+              border-color: @color-primary-4;
+              left: 3px;
+              top: 6px;
+            }
+          }
+        }
+      }
+
       &-checkbox-inner, &-checkbox-input {
         top: -1px;
       }
