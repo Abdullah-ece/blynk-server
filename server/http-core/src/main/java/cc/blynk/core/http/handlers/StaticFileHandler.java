@@ -36,7 +36,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = 60;
+    public static final int HTTP_CACHE_SECONDS = 24 * 60 * 60;
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
     private static final String[] possibleLocalPaths =  new String[] {
             "./server/http-dashboard/target/classes",
@@ -101,24 +101,19 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
      * @param fileToCache
      *            file to extract content type
      */
-    private static void setDateAndCacheHeaders(io.netty.handler.codec.http.HttpResponse response, File fileToCache, StaticFile staticFile) {
-        if (staticFile.doCaching) {
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
-            dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
+    private static void setDateAndCacheHeaders(io.netty.handler.codec.http.HttpResponse response, File fileToCache) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
+        dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
 
-            // Date header
-            Calendar time = new GregorianCalendar();
-            response.headers().set(DATE, dateFormatter.format(time.getTime()));
+        // Date header
+        Calendar time = new GregorianCalendar();
+        response.headers().set(DATE, dateFormatter.format(time.getTime()));
 
-            // Add cache headers
-            time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
-            response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
-            response.headers().set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-            response.headers().set(
-                    LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
-        } else {
-            response.headers().set(CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-        }
+        // Add cache headers
+        time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
+        response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
+        response.headers().set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+        response.headers().set(LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
 
     @Override
@@ -181,13 +176,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             path = getPathForLocalRun(uri);
         }
 
-        if (path == null || Files.isHidden(path) || Files.notExists(path)) {
+        if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);
-            return;
-        }
-
-        if (Files.isDirectory(path)) {
-            sendError(ctx, FORBIDDEN);
             return;
         }
 
@@ -223,9 +213,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         //setting content type
         response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
+        setDateAndCacheHeaders(response, file);
 
-        //todo setup caching for files.
-        setDateAndCacheHeaders(response, file, staticFile);
         if (HttpUtil.isKeepAlive(request)) {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }

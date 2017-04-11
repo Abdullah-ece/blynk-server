@@ -10,17 +10,17 @@ public class ContentTypeUtil {
     public static String getContentType(String fileName) {
         if (fileName.endsWith(".ico")) {
             return "image/x-icon";
-        }
-        if (fileName.endsWith(".js")) {
+        } else if (fileName.endsWith(".js")) {
             return "application/javascript";
-        }
-        if (fileName.endsWith(".css")) {
+        } else if (fileName.endsWith(".css")) {
             return "text/css";
-        }
-        if (fileName.endsWith(".png")) {
+        } else if (fileName.endsWith(".png")) {
             return "image/png";
-        }
-        if (fileName.endsWith(".gz")) {
+        } else if (fileName.endsWith(".jpg")) {
+            return "image/jpg";
+        } else if (fileName.endsWith(".jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.endsWith(".gz")) {
             return "application/x-gzip";
         }
 
