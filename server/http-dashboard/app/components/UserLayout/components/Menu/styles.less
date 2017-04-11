@@ -1,44 +1,41 @@
+@import 'components/Layout/style-guide';
+
 .user-layout--menu {
   background: #212227;
-  width: 275px;
 }
 
 .user-layout--menu > .ant-menu {
-  padding-left: 25px;
+  padding: @style-size-4 - @style-size-2;
   background: transparent;
-  margin-top: 27px;
   border: none;
   li {
-    height: 48px;
+    .font-menu-item;
+    height: @style-size-4;
+    margin-bottom: @style-size-3;
     &:before {
       content: ' ';
       display: block;
       position: absolute;
-      width: 4px;
-      height: 32px;
+      width: @style-size-1;
+      height: @style-size-4;
       border-radius: 2px 0 0 2px;
-      background-color: #212227;
-      margin-top: 6px;
-      margin-left: -12px;
+      background-color: transparent;
+      margin-left: -(@style-size-1 + @style-size-2);
     }
-    color: #fff;
-    font-size: 16px;
     background: transparent;
   }
   li.ant-menu-item-active {
     &:before {
-      background-color: #23c890;
+      background-color: @color-primary-5;
       transition-duration: 0.3s;
       transition-timing-function: ease;
     }
-    color: #fff;
     background: transparent;
   }
   li.ant-menu-item-selected {
     &:before {
-      background-color: #23c890;
+      background-color: @color-primary-5;
     }
-    color: #fff;
     background: transparent;
   }
 }
