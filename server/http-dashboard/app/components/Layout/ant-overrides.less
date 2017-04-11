@@ -493,6 +493,25 @@
   &-select-dropdown-menu-item-disabled {
     color: @color-dark-grey-25;
   }
+
+  &-table-wrapper {
+    .@{ant-prefix} {
+      &-table-thead th {
+        .font-table-head;
+        padding: @style-size-2;
+        height: 20px;
+      }
+      &-table-tbody td {
+        .font-descriptions;
+        padding: @style-size-3 @style-size-2;
+        height: 64px;
+      }
+      &-table-selection-column {
+        line-height: 0;
+      }
+    }
+  }
+
   //&-btn {
   //  padding: 8px 16px !important;
   //  border: 0;
