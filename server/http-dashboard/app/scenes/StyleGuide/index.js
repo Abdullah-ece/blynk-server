@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Input, Checkbox, Select} from 'antd';
+import {Button, Input, Checkbox, Select, Radio} from 'antd';
 
 import './styles.less';
 
@@ -40,6 +40,12 @@ class StyleGuide extends React.Component {
         </div>
         <div className="style-guide-element">
           <Checkbox disabled>Check me</Checkbox>
+        </div>
+        <div className="style-guide-element">
+          <Radio>Radio</Radio>
+        </div>
+        <div className="style-guide-element">
+          <Radio disabled>Radio</Radio>
         </div>
         <div className="style-guide-element">
           <Select defaultValue="lucy" style={{width: 120}}>
