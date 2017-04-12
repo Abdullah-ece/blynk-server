@@ -143,7 +143,8 @@ class OrganizationUsers extends React.Component {
           <Popconfirm title="Are you sure you want to delete selected users?？"
                       okText="Yes"
                       cancelText="No"
-                      onConfirm={this.handleDeleteUsers.bind(this)}>
+                      onConfirm={this.handleDeleteUsers.bind(this)}
+                      overlayClassName="danger">
             <Button type="danger"
                     disabled={!this.state.selectedRows}
                     loading={this.state.usersDeleteLoading}>Delete</Button>

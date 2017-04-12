@@ -586,6 +586,30 @@
     }
   }
 
+  &-popover.danger &-popover-buttons button:nth-child(2) {
+    .font-ghost-button-critical;
+    .font-button-sm;
+    background: @color-white;
+    border-color: @color-critical;
+    &:hover {
+      color: @color-white;
+      border-color: @color-critical;
+      background-color: @color-critical;
+    }
+    &:active {
+      box-shadow: 0 0 0 2px @color-critical-25;
+    }
+  }
+
+  &-popover-buttons {
+    button:nth-child(1) {
+
+    }
+    button&:nth-child(2) {
+
+    }
+  }
+
   //&-btn {
   //  padding: 8px 16px !important;
   //  border: 0;
