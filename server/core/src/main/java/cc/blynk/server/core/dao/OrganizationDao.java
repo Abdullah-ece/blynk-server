@@ -17,13 +17,14 @@ public class OrganizationDao {
 
     public static final int DEFAULT_ORGANIZATION_ID = 1;
     private static final Logger log = LogManager.getLogger(OrganizationDao.class);
-
+    public final ConcurrentMap<Integer, Organization> organizations;
     private final AtomicInteger orgSequence;
     private final AtomicInteger productSequence;
-    private final ConcurrentMap<Integer, Organization> organizations;
+    private final FileManager fileManager;
 
-    public OrganizationDao(ConcurrentMap<Integer, Organization> organizations) {
-        this.organizations = organizations;
+    public OrganizationDao(FileManager fileManager) {
+        this.fileManager = fileManager;
+        this.organizations = fileManager.deserializeOrganizations();
 
         int largestOrgSequenceNumber = 0;
         int largestProductSequenceNumber = 0;
@@ -67,14 +68,19 @@ public class OrganizationDao {
             return false;
         }
         if (org.products.remove(product)) {
-            org.updatedAt = System.currentTimeMillis();
+            org.lastModifiedTs = System.currentTimeMillis();
             return true;
         }
         return false;
     }
 
     public boolean delete(int id) {
-        return organizations.remove(id) != null;
+        Organization org = organizations.remove(id);
+        if (org != null) {
+            fileManager.deleteOrg(id);
+            return true;
+        }
+        return false;
     }
 
     public Product addProduct(int orgId, Product product) {
@@ -84,6 +90,7 @@ public class OrganizationDao {
         }
         product.id = productSequence.incrementAndGet();
         organization.products.add(product);
+        organization.lastModifiedTs = System.currentTimeMillis();
         return product;
     }
 

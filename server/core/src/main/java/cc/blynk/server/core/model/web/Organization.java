@@ -27,14 +27,16 @@ public class Organization {
 
     public volatile String secondaryColor;
 
-    public volatile long updatedAt;
+    public volatile long lastModifiedTs;
 
     public volatile List<Product> products = new ArrayList<>();
 
     public Organization() {
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public Organization(String name, String tzName, String logoUrl) {
+        this();
         this.name = name;
         this.tzName = tzName;
         this.logoUrl = logoUrl;
@@ -47,6 +49,11 @@ public class Organization {
         this.primaryColor = updatedOrganization.primaryColor;
         this.secondaryColor = updatedOrganization.secondaryColor;
         this.products = updatedOrganization.products;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public boolean isUpdated(long lastStart) {
+        return lastStart <= lastModifiedTs;
     }
 
     @Override

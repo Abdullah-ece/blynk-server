@@ -2,6 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
@@ -37,13 +38,16 @@ public class ProfileSaverWorkerTest {
     private FileManager fileManager;
 
     @Mock
+    private OrganizationDao organizationDao;
+
+    @Mock
     private GlobalStats stats;
 
     private BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 1);
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
 
         User user1 = new User("1", "", AppName.BLYNK, "local", false, Role.STAFF);
         User user2 = new User("2", "", AppName.BLYNK, "local", false, Role.STAFF);
@@ -81,7 +85,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

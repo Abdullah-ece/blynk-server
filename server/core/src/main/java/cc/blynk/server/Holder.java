@@ -84,7 +84,7 @@ public class Holder implements Closeable {
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
-        this.organizationDao = new OrganizationDao(fileManager.deserializeOrganizations());
+        this.organizationDao = new OrganizationDao(fileManager);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
@@ -129,7 +129,7 @@ public class Holder implements Closeable {
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
-        this.organizationDao = new OrganizationDao(fileManager.deserializeOrganizations());
+        this.organizationDao = new OrganizationDao(fileManager);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)

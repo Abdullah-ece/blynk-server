@@ -37,7 +37,7 @@ class JobLauncher {
         startDelay = AverageAggregatorProcessor.MINUTE - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay, AverageAggregatorProcessor.MINUTE, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,

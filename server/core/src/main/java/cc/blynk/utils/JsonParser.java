@@ -119,6 +119,10 @@ public final class JsonParser {
         userWriter.writeValue(file, user);
     }
 
+    public static void writeOrg(File file, Organization org) throws IOException {
+        organizationWriter.writeValue(file, org);
+    }
+
     private static String toJson(ObjectWriter writer, Object o) {
         try {
             return writer.writeValueAsString(o);

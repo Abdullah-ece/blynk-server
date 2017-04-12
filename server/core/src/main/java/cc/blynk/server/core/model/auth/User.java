@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
@@ -106,6 +107,19 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
         this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public boolean isUpdated(long lastStart) {
+        return (lastStart <= lastModifiedTs) || isDashUpdated(lastStart);
+    }
+
+    private boolean isDashUpdated(long lastStart) {
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (lastStart <= dashBoard.updatedAt) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -1,9 +1,10 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
@@ -28,52 +29,55 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private final UserDao userDao;
     private final FileManager fileManager;
     private final DBManager dbManager;
+    private final OrganizationDao organizationDao;
     private long lastStart;
     private long backupTs;
 
-    public ProfileSaverWorker(UserDao userDao, FileManager fileManager, DBManager dbManager) {
+    public ProfileSaverWorker(UserDao userDao, FileManager fileManager, DBManager dbManager, OrganizationDao organizationDao) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.dbManager = dbManager;
+        this.organizationDao = organizationDao;
         this.lastStart = System.currentTimeMillis();
         this.backupTs = 0;
     }
 
-    private static boolean isUpdated(long lastStart, User user) {
-        return (lastStart <= user.lastModifiedTs) || isDashUpdated(lastStart, user);
-    }
-
-    private static boolean isDashUpdated(long lastStart, User user) {
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            if (lastStart <= dashBoard.updatedAt) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void run() {
+        final long now = System.currentTimeMillis();
         try {
-            log.debug("Starting saving user db.");
-
-            final long now = System.currentTimeMillis();
-
-            ArrayList<User> users = saveModified();
-
-            dbManager.saveUsers(users);
-
-            //backup only for local mode
-            if (!dbManager.isDBEnabled() && users.size() > 0) {
-                archiveUser(now);
-            }
-
-            lastStart = now;
-
-            log.debug("Saving user db finished. Modified {} users.", users.size());
+            saveOrgs(now);
+        } catch (Throwable t) {
+            log.error("Error saving organizations.", t);
+        }
+        try {
+            saveUsers(now);
         } catch (Throwable t) {
             log.error("Error saving users.", t);
         }
+        lastStart = now;
+    }
+
+    private void saveOrgs(long now) {
+        log.debug("Starting saving organization db.");
+        ArrayList<Organization> orgs = saveModifiedOrgs();
+        log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
+
+    }
+
+    private void saveUsers(long now) {
+        log.debug("Starting saving user db.");
+
+        ArrayList<User> users = saveModifiedUsers();
+
+        dbManager.saveUsers(users);
+
+        //backup only for local mode
+        if (!dbManager.isDBEnabled() && users.size() > 0) {
+            archiveUser(now);
+        }
+
+        log.debug("Saving user db finished. Modified {} users.", users.size());
     }
 
     private void archiveUser(long now) {
@@ -91,11 +95,28 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         }
     }
 
-    private ArrayList<User> saveModified() {
+    private ArrayList<Organization> saveModifiedOrgs() {
+        ArrayList<Organization> orgs = new ArrayList<>();
+
+        for (Organization org : organizationDao.organizations.values()) {
+            if (org.isUpdated(lastStart)) {
+                try {
+                    fileManager.override(org);
+                    orgs.add(org);
+                } catch (Exception e) {
+                    log.error("Error saving : {}.", org);
+                }
+            }
+        }
+
+        return orgs;
+    }
+
+    private ArrayList<User> saveModifiedUsers() {
         ArrayList<User> users = new ArrayList<>();
 
         for (User user : userDao.getUsers().values()) {
-            if (isUpdated(lastStart, user)) {
+            if (user.isUpdated(lastStart)) {
                 try {
                     fileManager.overrideUserFile(user);
                     users.add(user);

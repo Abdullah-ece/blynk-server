@@ -106,7 +106,7 @@ public class FileManager {
     }
 
     public Path generateOrgFileName(int orgId) {
-        return Paths.get(dataDir.toString(), orgId + ORG_FILE_EXTENSION);
+        return Paths.get(orgDataDir.toString(), orgId + ORG_FILE_EXTENSION);
     }
 
     public Path generateFileName(String email, String appName) {
@@ -130,6 +130,11 @@ public class FileManager {
     public boolean delete(String email, String appName) {
         Path file = generateFileName(email, appName);
         return FileUtils.move(file, this.deletedDataDir);
+    }
+
+    public void override(Organization org) throws IOException {
+        Path path = generateOrgFileName(org.id);
+        JsonParser.writeOrg(path.toFile(), org);
     }
 
     public void overrideUserFile(User user) throws IOException {

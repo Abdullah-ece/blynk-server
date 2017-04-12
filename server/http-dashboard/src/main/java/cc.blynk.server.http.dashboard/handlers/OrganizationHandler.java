@@ -246,8 +246,6 @@ public class OrganizationHandler extends BaseHttpHandler {
         if (!organizationDao.delete(orgId)) {
             log.error("Wasn't able to remove organization with id {}.", orgId);
             return badRequest();
-        } else {
-            fileManager.deleteOrg(orgId);
         }
 
         return ok();
