@@ -561,7 +561,7 @@ To display the date/time in excel you may use formula:
 
 ### Generate Let's Encrypt SSL/TLS Certificates
 
-+ First install [certbot] (https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
++ First install [certbot](https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
 
         wget https://dl.eff.org/certbot-auto
         chmod a+x certbot-auto
@@ -574,24 +574,12 @@ For example
 
         ./certbot-auto certonly --agree-tos --email pupkin@blynk.cc --standalone -d blynk.cc
 
-+ Add password to your let's encrypt certificate and reformat it:
-
-        mkdir /srv/blynk-data
-        cp /etc/letsencrypt/live/YOUR_HOST/fullchain.pem /srv/blynk-data
-        cp /etc/letsencrypt/live/YOUR_HOST/privkey.pem /srv/blynk-data
-        cd /srv/blynk-data
-        openssl pkcs8 -topk8 -inform PEM -outform PEM -in privkey.pem -out privkey_pass.pem
-
 + Then add to your ```server.properties``` file (in folder with server.jar)
 
-        server.ssl.cert=/srv/blynk-data/fullchain.pem
-        server.ssl.key=/srv/blynk-data/privkey_pass.pem
-        server.ssl.key.pass=your_password
+        server.ssl.cert=/etc/letsencrypt/live/YOUR_HOST/fullchain.pem
+        server.ssl.key=/etc/letsencrypt/live/YOUR_HOST/privkey.pem
+        server.ssl.key.pass=
         
-        https.cert=/srv/blynk-data/fullchain.pem
-        https.key=/srv/blynk-data/privkey_pass.pem
-        https.key.pass=our_password
-
 ### Generate own SSL certificates
 
 + Generate self-signed certificate and key
@@ -602,8 +590,6 @@ For example
 
         openssl pkcs8 -topk8 -inform PEM -outform PEM -in server.key -out server.pem
         
-WARNING: 
-You should have password for certificate. Certificates without passwords are not accepted. 
 If you connect hardware with [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
         
 As an output you'll retrieve server.crt and server.pem files that you need to provide for server.ssl properties.
