@@ -102,7 +102,7 @@ public class UserDao {
     public List<User> getUsersByOrgId(int orgId) {
         List<User> result = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.orgId == orgId) {
+            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN) {
                 result.add(user);
             }
         }
