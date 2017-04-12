@@ -25,6 +25,14 @@ class InviteUsersForm extends React.Component {
     error: React.PropTypes.string
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      role: InviteAvailableRoles[0].value
+    };
+  }
+
   getRolesListOptions() {
     const options = [];
     InviteAvailableRoles.forEach((role) => {
@@ -36,6 +44,8 @@ class InviteUsersForm extends React.Component {
 
   render() {
     const {invalid, pristine, handleSubmit, submitting} = this.props;
+
+    console.log(this.props);
 
     const rolesOptions = this.getRolesListOptions();
 
@@ -61,7 +71,11 @@ class InviteUsersForm extends React.Component {
         <Form.Item>
           <Field name="role" component={(props) => {
             return (
-              <Select onChange={(value) => props.input.onChange(value)} value={InviteAvailableRoles[0].value}
+              <Select onChange={(value) => {
+                props.input.onChange(value);
+                this.setState({role: value});
+              }} defaultValue={InviteAvailableRoles[0].value}
+                      value={this.state.role}
                       className="user-profile--organization-settings--invite-users-form-role-select">
                 { rolesOptions }
               </Select>
