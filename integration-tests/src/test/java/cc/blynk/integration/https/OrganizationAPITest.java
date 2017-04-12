@@ -228,6 +228,19 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void cantDeleteSuperAdmin() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
+        String body = JsonParser.mapper.writeValueAsString(new String[]{admin.email});
+        req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void regularUserCantDelete() throws Exception {
         login(regularUser.email, regularUser.pass);
 

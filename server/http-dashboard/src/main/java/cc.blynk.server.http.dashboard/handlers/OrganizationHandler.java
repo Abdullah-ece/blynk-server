@@ -166,12 +166,18 @@ public class OrganizationHandler extends BaseHttpHandler {
         for (String email : emailsToDelete) {
             UserKey userKey = new UserKey(email, appName);
             User user = userDao.getByName(userKey);
-            if (user != null && user.orgId == orgId) {
-                log.info("Deleting {} user.", email);
-                userDao.delete(userKey);
-                fileManager.delete(userKey);
-                dbManager.deleteUser(userKey);
-                sessionDao.deleteUser(userKey);
+            if (user != null) {
+                if (user.isSuperAdmin()) {
+                    log.error("You can't remove super admin.");
+                    return forbidden("Removal of super admin is not allowed.");
+                }
+                if (user.orgId == orgId) {
+                    log.info("Deleting {} user.", email);
+                    userDao.delete(userKey);
+                    fileManager.delete(userKey);
+                    dbManager.deleteUser(userKey);
+                    sessionDao.deleteUser(userKey);
+                }
             }
         }
 
