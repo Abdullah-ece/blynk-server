@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Select} from 'antd';
 
-import {UsersAvailableRoles} from 'services/Roles';
+import {UsersAvailableRoles, Roles} from 'services/Roles';
 
 import './styles.less';
 
@@ -13,6 +13,14 @@ export default class Role extends React.Component {
     onChange: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      role: props.role
+    };
+  }
+
   getRolesList() {
     const options = [];
     UsersAvailableRoles.forEach((role) => {
@@ -22,6 +30,7 @@ export default class Role extends React.Component {
   }
 
   onChange(value) {
+    this.setState({role: value.key});
     if (this.props.onChange) this.props.onChange(value);
   }
 
@@ -30,10 +39,12 @@ export default class Role extends React.Component {
     const options = this.getRolesList();
 
     return (
-      <Select labelInValue className="user--role-select" value={{key: this.props.role}}
-              onChange={this.onChange.bind(this)}>
+      (this.state.role === Roles.SUPER_ADMIN.value && <div>{Roles.SUPER_ADMIN.title}</div> ) || (
+        <Select labelInValue className="user--role-select"
+                value={{key: this.state.role}}
+                onChange={this.onChange.bind(this)} disabled={this.state.role === Roles.SUPER_ADMIN.value}>
         { options }
-      </Select>
+        </Select>)
     );
   }
 

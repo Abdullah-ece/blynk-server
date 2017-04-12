@@ -45,8 +45,6 @@ class InviteUsersForm extends React.Component {
   render() {
     const {invalid, pristine, handleSubmit, submitting} = this.props;
 
-    console.log(this.props);
-
     const rolesOptions = this.getRolesListOptions();
 
     return (

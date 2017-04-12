@@ -1,15 +1,17 @@
 import React from 'react';
 
-import {Table, Button, Modal} from 'antd';
+import {Table, Button, Modal, message} from 'antd';
 
-import {Status, Role} from 'components/User';
+import {/*Status,*/ Role} from 'components/User';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {Roles} from 'services/Roles';
 
 import {
   OrganizationFetch,
-  OrganizationUsersFetch
+  OrganizationUsersFetch,
+  OrganizationUpdateUser
 } from 'data/Organization/actions';
 
 import './styles.less';
@@ -20,6 +22,7 @@ import './styles.less';
 }), (dispatch) => ({
   OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
+  OrganizationUpdateUser: bindActionCreators(OrganizationUpdateUser, dispatch),
 }))
 class OrganizationUsers extends React.Component {
 
@@ -27,7 +30,8 @@ class OrganizationUsers extends React.Component {
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
     OrganizationFetch: React.PropTypes.func,
-    OrganizationUsersFetch: React.PropTypes.func
+    OrganizationUsersFetch: React.PropTypes.func,
+    OrganizationUpdateUser: React.PropTypes.func
   };
 
   constructor(props) {
@@ -54,60 +58,52 @@ class OrganizationUsers extends React.Component {
     title: 'Role',
     dataIndex: 'role',
     filters: [{
-      text: 'Admin',
-      value: 'admin',
+      text: Roles.ADMIN.title,
+      value: Roles.ADMIN.value,
     }, {
-      text: 'Staff',
-      value: 'staff',
+      text: Roles.STAFF.title,
+      value: Roles.STAFF.value,
+    }, {
+      text: Roles.USER.title,
+      value: Roles.USER.value,
     }],
     filterMultiple: false,
     onFilter: (value, record) => record.role === value,
     sorter: (a, b) => a.role < b.role,
-    render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record.id)}/>
-  }, {
-    title: 'Status',
-    dataIndex: 'status',
-    filters: [{
-      text: 'Active',
-      value: 1,
-    }, {
-      text: 'Pending',
-      value: 0,
-    }],
-    filterMultiple: false,
-    onFilter: (value, record) => Number(record.status) === Number(value),
-    sorter: (a, b) => Number(a.status) < Number(b.status),
-    render: (text, record) => <Status status={record.status}/>
-  }];
+    render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
+  },
+    /*{
+     title: 'Status',
+     dataIndex: 'status',
+     filters: [{
+     text: 'Active',
+     value: 1,
+     }, {
+     text: 'Pending',
+     value: 0,
+     }],
+     filterMultiple: false,
+     onFilter: (value, record) => Number(record.status) === Number(value),
+     sorter: (a, b) => Number(a.status) < Number(b.status),
+     render: (text, record) => <Status status={record.status}/>
+     }*/
+  ];
 
-  data = [{
-    key: '1',
-    name: 'Albert Einstein',
-    email: 'albert.einstein@gmail.com',
-    role: 'admin',
-    status: 0
-  }, {
-    key: '2',
-    name: 'Nikola Tesla',
-    email: 'nikola.tesla@tesla.com',
-    role: 'staff',
-    status: 1
-  }, {
-    key: '3',
-    name: 'Frederic Chopin',
-    email: 'frederic@warsaw.com',
-    role: 'staff',
-    status: 0
-  }, {
-    key: '4',
-    name: 'Nicolaus Copernicus',
-    email: 'superman@nicolaus.com',
-    role: 'admin',
-    status: 1
-  }];
+  data = [];
 
-  onRoleChange(id, role) {
-    console.log('role changed for ', id, role);
+  onRoleChange(user, role) {
+
+    const hide = message.loading('Updating user role', 0);
+
+    this.props.OrganizationUpdateUser(this.props.Account.orgId, Object.assign({}, user, {
+      role: role.key
+    })).then(() => {
+      this.props.OrganizationUsersFetch({
+        id: this.props.Account.orgId
+      }).then(() => {
+        hide();
+      });
+    });
   }
 
   rowSelection = {

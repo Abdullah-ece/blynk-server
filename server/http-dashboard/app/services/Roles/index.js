@@ -24,7 +24,6 @@ const InviteAvailableRoles = [
 ];
 
 const UsersAvailableRoles = [
-  Object.assign({}, Roles.SUPER_ADMIN, {disabled: true}),
   Roles.ADMIN,
   Roles.STAFF,
   Roles.USER

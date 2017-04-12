@@ -39,7 +39,7 @@ class StyleGuide extends React.Component {
           <Input placeholder="Label" style={{width: 168}}/>
         </div>
         <div className="style-guide-element">
-          <Checkbox></Checkbox>
+          <Checkbox />
         </div>
         <div className="style-guide-element">
           <Checkbox>Check me</Checkbox>

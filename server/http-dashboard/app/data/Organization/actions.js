@@ -81,3 +81,18 @@ export function OrganizationUpdateTimezone(tzName) {
     tzName: tzName
   };
 }
+
+export function OrganizationUpdateUser(id, data) {
+  if (!id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATION_UPDATE_USER',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/organization/${id}/users/update`,
+        data: data
+      }
+    }
+  };
+}

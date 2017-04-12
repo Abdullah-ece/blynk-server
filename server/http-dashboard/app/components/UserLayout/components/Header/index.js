@@ -64,7 +64,7 @@ class Header extends React.Component {
     return (
       <div className="user-layout--header">
         <div className="user-layout--header-logo">
-          <img src={ this.props.Organization.logoUrl || "assets/logo.png"} alt=""/>
+          <img src={this.props.Organization.logoUrl || "assets/logo.png"} alt=""/>
         </div>
         <div className="user-layout--header-user">
           <div className="dark user-layout--header-user-link">
