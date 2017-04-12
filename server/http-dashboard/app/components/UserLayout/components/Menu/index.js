@@ -24,7 +24,7 @@ class Menu extends React.Component {
                  defaultSelectedKeys={menuItemActive}>
           <AntMenu.Item key="/account">My Account</AntMenu.Item>
           <AntMenu.Item key="/organization-settings">Organization Settings</AntMenu.Item>
-          <AntMenu.Item key="/billing">Billing</AntMenu.Item>
+          {/*<AntMenu.Item key="/billing">Billing</AntMenu.Item>*/}
           <AntMenu.Divider />
           <AntMenu.Item key="/logout">Logout</AntMenu.Item>
         </AntMenu>

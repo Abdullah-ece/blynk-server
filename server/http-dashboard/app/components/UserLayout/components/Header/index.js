@@ -45,9 +45,9 @@ class Header extends React.Component {
         <Menu.Item key="/organization-settings">
           Organization Settings
         </Menu.Item>
-        <Menu.Item key="/billing">
-          Billing
-        </Menu.Item>
+        {/*<Menu.Item key="/billing">*/}
+        {/*Billing*/}
+        {/*</Menu.Item>*/}
         <Menu.Divider />
         <Menu.Item key="logout">
           <Icon type="logout"/> Log out
@@ -75,10 +75,10 @@ class Header extends React.Component {
           </div>
         </div>
         <Menu mode="horizontal" className="user-layout--header-menu">
-          <Menu.Item>Dashboard</Menu.Item>
-          <Menu.Item>Devices</Menu.Item>
-          <Menu.Item>Products</Menu.Item>
-          <Menu.Item>Organizations</Menu.Item>
+          {/*<Menu.Item>Dashboard</Menu.Item>*/}
+          {/*<Menu.Item>Devices</Menu.Item>*/}
+          {/*<Menu.Item>Products</Menu.Item>*/}
+          {/*<Menu.Item>Organizations</Menu.Item>*/}
         </Menu>
       </div>
     );
