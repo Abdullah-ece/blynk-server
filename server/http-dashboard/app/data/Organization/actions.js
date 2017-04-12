@@ -96,3 +96,18 @@ export function OrganizationUpdateUser(id, data) {
     }
   };
 }
+
+export function OrganizationUsersDelete(id, data) {
+  if (!id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATION_USERS_DELETE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/organization/${id}/users/delete`,
+        data: data
+      }
+    }
+  };
+}

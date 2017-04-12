@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Table, Button, Modal, message} from 'antd';
+import {Table, Button, message, Popconfirm} from 'antd';
 
 import {/*Status,*/ Role} from 'components/User';
 
@@ -11,7 +11,8 @@ import {Roles} from 'services/Roles';
 import {
   OrganizationFetch,
   OrganizationUsersFetch,
-  OrganizationUpdateUser
+  OrganizationUpdateUser,
+  OrganizationUsersDelete
 } from 'data/Organization/actions';
 
 import './styles.less';
@@ -23,6 +24,7 @@ import './styles.less';
   OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
   OrganizationUpdateUser: bindActionCreators(OrganizationUpdateUser, dispatch),
+  OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
 }))
 class OrganizationUsers extends React.Component {
 
@@ -31,7 +33,8 @@ class OrganizationUsers extends React.Component {
     Organization: React.PropTypes.object,
     OrganizationFetch: React.PropTypes.func,
     OrganizationUsersFetch: React.PropTypes.func,
-    OrganizationUpdateUser: React.PropTypes.func
+    OrganizationUpdateUser: React.PropTypes.func,
+    OrganizationUsersDelete: React.PropTypes.func
   };
 
   constructor(props) {
@@ -42,7 +45,8 @@ class OrganizationUsers extends React.Component {
     });
 
     this.state = {
-      'selectedRows': 0
+      'selectedRows': 0,
+      'usersDeleteLoading': false
     };
   }
 
@@ -89,6 +93,20 @@ class OrganizationUsers extends React.Component {
      }*/
   ];
 
+  handleDeleteUsers() {
+    this.setState({
+      usersDeleteLoading: true
+    });
+
+    this.props.OrganizationUsersDelete(this.props.Account.orgId, this.state.selectedRows).then(() => {
+      this.props.OrganizationUsersFetch({id: this.props.Account.orgId}).then(() => {
+        this.setState({
+          usersDeleteLoading: false
+        });
+      });
+    });
+  }
+
   data = [];
 
   onRoleChange(user, role) {
@@ -110,18 +128,10 @@ class OrganizationUsers extends React.Component {
     onChange: this.onRowSelectionChange.bind(this)
   };
 
-  onRowSelectionChange(selectedRowKeys, selectedRows) {
+  onRowSelectionChange(selectedRowKeys) {
     this.setState({
-      selectedRows: selectedRows.length
-    });
-  }
-
-  showDeleteConfirmationModal() {
-    Modal.confirm({
-      title: 'Warning',
-      content: 'Are you sure you want to delete selected users?',
-      okText: 'Ok',
-      cancelText: 'Nope'
+      isAnyRowSelected: !!selectedRowKeys.length,
+      selectedRows: selectedRowKeys
     });
   }
 
@@ -130,10 +140,16 @@ class OrganizationUsers extends React.Component {
     return (
       <div className="users-profile--organization-settings--organization-users">
         <div className="users-profile--organization-settings--organization-users-delete-button">
-          <Button type="danger" onClick={this.showDeleteConfirmationModal.bind(this)}
-                  disabled={!this.state.selectedRows}>Delete</Button>
+          <Popconfirm title="Are you sure you want to delete selected users?？"
+                      okText="Yes"
+                      cancelText="No"
+                      onConfirm={this.handleDeleteUsers.bind(this)}>
+            <Button type="danger"
+                    disabled={!this.state.selectedRows}
+                    loading={this.state.usersDeleteLoading}>Delete</Button>
+          </Popconfirm>
         </div>
-        <Table rowKey={(record) => record.id} rowSelection={this.rowSelection} columns={this.columns}
+        <Table rowKey={(record) => record.email} rowSelection={this.rowSelection} columns={this.columns}
                dataSource={this.props.Organization.users}
                pagination={false}/>
       </div>
