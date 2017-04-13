@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import {Router, Route, hashHistory, Redirect} from 'react-router';
 
 /* components */
-import Layout from './components/Layout';
-import UserLayout from './components/UserLayout';
+import Layout, {UserLayout, UserProfileLayout} from './components/Layout';
 import LoginLayout from './components/LoginLayout';
 
 /* scenes */
@@ -15,6 +14,7 @@ import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
 import Invite from './scenes/Invite';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
+import ProductsIndex from './scenes/Products';
 
 /* store */
 import {Provider} from 'react-redux';
@@ -35,8 +35,11 @@ Store().then((store) => {
         <Router history={hashHistory}>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
-              <Route path="/account" component={MyAccount}/>
-              <Route path="/organization-settings" component={OrganizationSettings}/>
+              <Route component={UserProfileLayout}>
+                <Route path="/account" component={MyAccount}/>
+                <Route path="/organization-settings" component={OrganizationSettings}/>
+              </Route>
+              <Route component={ProductsIndex}/>
             </Route>
             <Route path="/logout" component={Logout}/>
             <Route component={LoginLayout}>

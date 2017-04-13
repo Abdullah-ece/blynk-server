@@ -1,11 +1,9 @@
 import React from 'react';
+import Header from '../Header';
 
-import Content from './components/Content';
-import Header from './components/Header';
-import Menu from './components/Menu';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as AccountActions from 'data/Account/actions';
+import * as AccountActions from '../../../../data/Account/actions';
 
 import './styles.less';
 
@@ -31,12 +29,7 @@ class UserLayout extends React.Component {
     return (
       <div className="user-layout">
         <Header />
-        <div className="user-layout-container">
-          <Menu/>
-          <Content>
-            { this.props.children }
-          </Content>
-        </div>
+        { this.props.children }
       </div>
     );
   }
