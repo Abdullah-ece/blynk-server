@@ -22,6 +22,7 @@ class Header extends React.Component {
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
     OrganizationFetch: React.PropTypes.func,
+    location: React.PropTypes.object
   };
 
   constructor(props) {
@@ -29,6 +30,16 @@ class Header extends React.Component {
 
     props.OrganizationFetch({
       id: props.Account.orgId
+    });
+
+    this.state = {
+      current: props.location.pathname
+    };
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      current: props.location.pathname
     });
   }
 
@@ -74,11 +85,14 @@ class Header extends React.Component {
             </Dropdown>
           </div>
         </div>
-        <Menu mode="horizontal" className="user-layout--header-menu">
-          {/*<Menu.Item>Dashboard</Menu.Item>*/}
-          {/*<Menu.Item>Devices</Menu.Item>*/}
-          {/*<Menu.Item>Products</Menu.Item>*/}
-          {/*<Menu.Item>Organizations</Menu.Item>*/}
+        <Menu mode="horizontal"
+              className="user-layout--header-menu"
+              onClick={this.handleClick.bind(this)}
+              selectedKeys={[this.state.current]}>
+          {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
+          {/*<Menu.Item key="/devices">Devices</Menu.Item>*/}
+          <Menu.Item key="/products">Products</Menu.Item>
+          {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
         </Menu>
       </div>
     );

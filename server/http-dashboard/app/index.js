@@ -39,7 +39,7 @@ Store().then((store) => {
                 <Route path="/account" component={MyAccount}/>
                 <Route path="/organization-settings" component={OrganizationSettings}/>
               </Route>
-              <Route component={ProductsIndex}/>
+              <Route path="/products" component={ProductsIndex}/>
             </Route>
             <Route path="/logout" component={Logout}/>
             <Route component={LoginLayout}>

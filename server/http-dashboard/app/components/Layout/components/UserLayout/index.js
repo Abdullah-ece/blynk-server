@@ -14,6 +14,7 @@ class UserLayout extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.object,
+    location: React.PropTypes.object,
     fetchAccount: React.PropTypes.func
   };
 
@@ -28,7 +29,7 @@ class UserLayout extends React.Component {
 
     return (
       <div className="user-layout">
-        <Header />
+        <Header location={this.props.location}/>
         { this.props.children }
       </div>
     );
