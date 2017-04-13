@@ -14,7 +14,7 @@ export function Account() {
 
 export function AccountResetPassword(data) {
   return {
-    type: 'API_ACCOUNT_SAVE',
+    type: 'API_ACCOUNT_SEND_RESET_PASS',
     payload: {
       request: {
         transformRequest: transformJsonToFormUrlEncoded,
