@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {alphabetSort} from 'services/Sort';
 import {Table, Button, message, Popconfirm} from 'antd';
 
 import {/*Status,*/ Role} from 'components/User';
@@ -53,11 +53,11 @@ class OrganizationUsers extends React.Component {
   columns = [{
     title: 'Name',
     dataIndex: 'name',
-    sorter: (a, b) => a.name > b.name,
+    sorter: (a, b) => alphabetSort(a.name, b.name),
   }, {
     title: 'Email',
     dataIndex: 'email',
-    sorter: (a, b) => a.email > b.email,
+    sorter: (a, b) => alphabetSort(a.email, b.email),
   }, {
     title: 'Role',
     dataIndex: 'role',
@@ -73,7 +73,7 @@ class OrganizationUsers extends React.Component {
     }],
     filterMultiple: false,
     onFilter: (value, record) => record.role === value,
-    sorter: (a, b) => a.role < b.role,
+    sorter: (a, b) => alphabetSort(a.role, b.role),
     render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
   },
     /*{
