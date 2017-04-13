@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import './styles.less';
 
@@ -12,7 +13,9 @@ export default class LoginLayout extends React.Component {
 
     return (<div className="login-scene">
       <div className="login-logo-wrapper">
-        <div className="login-logo"/>
+        <Link to="/login">
+          <div className="login-logo"/>
+        </Link>
       </div>
       <div className="login-form">
         { this.props.children }
