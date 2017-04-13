@@ -4,11 +4,13 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * User: ddumanskiy
@@ -19,17 +21,27 @@ public class User {
 
     private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
 
+    @JsonView(Views.WebUser.class)
     public volatile String name;
+
     public volatile String pass;
 
+    @JsonView(Views.WebUser.class)
     public Role role;
 
     //key fields
+    @JsonView(Views.WebUser.class)
 	public String email;
+
+    @JsonView(Views.WebUser.class)
     public String appName;
+
     public String region;
 
+    @JsonView(Views.WebUser.class)
     public int orgId;
+
+    @JsonView(Views.WebUser.class)
     public UserStatus status;
 
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important

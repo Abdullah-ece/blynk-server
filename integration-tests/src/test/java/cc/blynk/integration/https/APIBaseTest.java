@@ -5,6 +5,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.http.HttpsAPIServer;
@@ -75,16 +76,19 @@ public abstract class APIBaseTest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        admin.status = UserStatus.Active;
         holder.userDao.add(admin);
 
         name = "admin2@blynk.cc";
         pass = "admin2";
         regularAdmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.ADMIN);
+        admin.status = UserStatus.Active;
         holder.userDao.add(regularAdmin);
 
         name = "user@blynk.cc";
         pass = "user";
         regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
+        admin.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
         holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev", "/static/logo.png"));
@@ -144,7 +148,7 @@ public abstract class APIBaseTest extends BaseTest {
             assertNotNull(user);
             assertEquals(name, user.email);
             assertEquals(name, user.name);
-            assertEquals(pass, user.pass);
+            assertNull(user.pass);
         }
     }
 

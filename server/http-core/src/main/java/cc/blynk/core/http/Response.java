@@ -139,7 +139,7 @@ public class Response extends DefaultFullHttpResponse {
     }
 
     public static Response ok(User user) {
-        return ok(JsonParser.toJson(user));
+        return ok(JsonParser.toJsonWeb(user));
     }
 
     public static Response ok(Organization org) {

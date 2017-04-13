@@ -3,7 +3,6 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -135,7 +134,7 @@ public class LoginAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals("admin@blynk.cc", user.email);
             assertEquals("admin@blynk.cc", user.name);
-            assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
+            //assertEquals("84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=", user.pass);
         }
 
         HttpPost logoutRequest = new HttpPost(httpsAdminServerUrl + "/logout");
@@ -212,53 +211,6 @@ public class LoginAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(testUser, user.email);
             assertNotNull(user.profile.dashBoards);
-            assertEquals(5, user.profile.dashBoards.length);
-        }
-    }
-
-    @Test
-    public void testChangeUsernameChangesPassToo() throws Exception {
-        login(admin.email, admin.pass);
-
-        User user;
-        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
-        try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
-            assertNotNull(userProfile);
-            user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(admin.email, user.email);
-        }
-
-        user.email = "123@blynk.cc";
-
-        //we are no allowed to change username without cahnged password
-        HttpPut changeUserNameRequestWrong = new HttpPut(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
-        changeUserNameRequestWrong.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
-        try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestWrong)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
-        }
-
-        user.pass = "123";
-        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
-        changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
-        try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpGet getNonExistingUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
-        try (CloseableHttpResponse response = httpclient.execute(getNonExistingUserRequest)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
-        }
-
-        HttpGet getUserRequest2 = new HttpGet(httpsAdminServerUrl + "/users/123@blynk.cc-Blynk");
-        try (CloseableHttpResponse response = httpclient.execute(getUserRequest2)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
-            assertNotNull(userProfile);
-            user = JsonParser.parseUserFromString(userProfile);
-            assertEquals("123@blynk.cc", user.email);
-            assertEquals(SHA256Util.makeHash("123", user.email), user.pass);
         }
     }
 

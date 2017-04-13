@@ -269,6 +269,7 @@ public class UserDao {
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
         User newUser = new User(email, null, appName, region, true, Role.STAFF);
+        newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
     }
@@ -276,12 +277,14 @@ public class UserDao {
     public void add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, Role.STAFF);
+        newUser.status = UserStatus.Active;
         add(newUser);
     }
 
     public void add(String email, String pass, String appName, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, role);
+        newUser.status = UserStatus.Active;
         add(newUser);
     }
 

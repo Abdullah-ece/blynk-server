@@ -175,7 +175,6 @@ public class InvitationAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(email, user.email);
             assertEquals(name, user.name);
-            assertEquals("123", user.pass);
             assertEquals(role, user.role);
             assertEquals(1, user.orgId);
         }

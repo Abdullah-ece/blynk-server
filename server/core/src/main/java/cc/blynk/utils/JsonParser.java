@@ -2,6 +2,7 @@ package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -21,10 +22,7 @@ import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,10 +54,12 @@ public final class JsonParser {
     private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader productReader = mapper.readerFor(Product.class);
+
     private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
     private static final ObjectWriter errorMessageWriter = mapper.writerFor(ErrorMessage.class);
     private static final ObjectWriter okMessageWriter = mapper.writerFor(OkMessage.class);
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
+    private static final ObjectWriter userWebWriter = init().disable(MapperFeature.DEFAULT_VIEW_INCLUSION).writerWithView(Views.WebUser.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
@@ -89,6 +89,10 @@ public final class JsonParser {
 
     public static String toJson(User user) {
         return toJson(userWriter, user);
+    }
+
+    public static String toJsonWeb(User user) {
+        return toJson(userWebWriter, user);
     }
 
     public static String toJson(Profile profile) {

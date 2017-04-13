@@ -102,7 +102,6 @@ public class ResetPassAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(regularUser.email, user.email);
             assertEquals(regularUser.name, user.name);
-            assertEquals(hash, user.pass);
             assertEquals(regularUser.role, user.role);
             assertEquals(regularUser.orgId, user.orgId);
         }
@@ -166,7 +165,6 @@ public class ResetPassAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(admin.email, user.email);
             assertEquals(admin.name, user.name);
-            assertEquals("123", user.pass);
             assertEquals(admin.role, user.role);
             assertEquals(admin.orgId, user.orgId);
         }
