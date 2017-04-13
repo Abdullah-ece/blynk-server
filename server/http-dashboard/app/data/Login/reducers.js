@@ -30,6 +30,12 @@ export default function Login(state = { isLoggedIn: false }, action) {
         isLoggedIn: false
       };
 
+    case "API_RESET_PASS_SUCCESS":
+      return {
+        ...state,
+        isLoggedIn: true
+      };
+
     case "API_INVITE_SUCCESS":
       return {
         ...state,

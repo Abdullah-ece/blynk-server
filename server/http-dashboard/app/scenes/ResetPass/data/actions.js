@@ -2,7 +2,7 @@ import {transformJsonToFormUrlEncoded} from 'services/Form';
 
 export function ResetPass(data) {
   return {
-    type: 'API_RESET',
+    type: 'API_RESET_PASS',
     payload: {
       request: {
         transformRequest: transformJsonToFormUrlEncoded,

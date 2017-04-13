@@ -62,6 +62,7 @@ export default class ResetPassForm extends React.Component {
 
       <FormItem>
         <Button type="primary"
+                size="default"
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
                 disabled={invalid || pristine || submitting}>
