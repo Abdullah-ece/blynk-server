@@ -13,6 +13,7 @@ import ForgotPass from './scenes/ForgotPass';
 import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
+import Invite from './scenes/Invite';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 
 /* store */
@@ -42,6 +43,7 @@ Store().then((store) => {
               <Route path="/login" component={Login} onEnter={RouteGuestOnly(store)}/>
               <Route path="/forgot-pass" component={ForgotPass} onEnter={RouteGuestOnly(store)}/>
               <Route path="/resetpass" component={ResetPass}/>
+              <Route path="/invite" component={Invite}/>
             </Route>
           </Route>
           <Route component={StyleGuide} path="/style-guide"/>
