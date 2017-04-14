@@ -94,7 +94,19 @@ export default {
         test: /(\.css|\.less)$/,
         loaders: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ["css-loader", "postcss-loader", "less-loader"],
+          use: [{
+            loader: 'css-loader'
+          }, {
+            loader: 'postcss-loader'
+          }, {
+            loader: 'less-loader',
+            options: {
+              paths: [
+                path.resolve(__dirname, "app"),
+                path.resolve(__dirname, "node_modules"),
+              ]
+            }
+          }],
         })
       }
     ]
