@@ -2,7 +2,7 @@ import React from 'react';
 import {alphabetSort} from 'services/Sort';
 import {Table, Button, message, Popconfirm} from 'antd';
 
-import {/*Status,*/ Role} from 'components/User';
+import {Status, Role} from 'components/User';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -53,7 +53,6 @@ class OrganizationUsers extends React.Component {
   columns = [{
     title: 'Name',
     dataIndex: 'name',
-    sortOrder: 'ascend',
     sorter: (a, b) => alphabetSort(a.name, b.name),
   }, {
     title: 'Email',
@@ -77,21 +76,21 @@ class OrganizationUsers extends React.Component {
     sorter: (a, b) => alphabetSort(a.role, b.role),
     render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
   },
-    /*{
-     title: 'Status',
-     dataIndex: 'status',
-     filters: [{
-     text: 'Active',
-     value: 1,
-     }, {
-     text: 'Pending',
-     value: 0,
-     }],
-     filterMultiple: false,
-     onFilter: (value, record) => Number(record.status) === Number(value),
-     sorter: (a, b) => Number(a.status) < Number(b.status),
-     render: (text, record) => <Status status={record.status}/>
-     }*/
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      filters: [{
+        text: 'Active',
+        value: 'Active',
+      }, {
+        text: 'Pending',
+        value: 'Pending',
+      }],
+      filterMultiple: false,
+      onFilter: (value, record) => record.status === value,
+      sorter: (a, b) => alphabetSort(a.status, b.status),
+      render: (text, record) => <Status status={record.status}/>
+    }
   ];
 
   handleDeleteUsers() {
