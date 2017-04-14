@@ -129,11 +129,11 @@ public abstract class APIBaseTest extends BaseTest {
     }
 
     protected void login(String name, String pass) throws Exception {
-        login(httpclient, name, pass);
+        login(httpclient, httpsAdminServerUrl, name, pass);
     }
 
-    protected void login(CloseableHttpClient httpclient, String name, String pass) throws Exception {
-        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+    protected void login(CloseableHttpClient httpclient, String server, String name, String pass) throws Exception {
+        HttpPost loginRequest = new HttpPost(server + "/login");
         List <NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("email", name));
         nvps.add(new BasicNameValuePair("password", pass));

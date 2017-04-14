@@ -175,7 +175,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
 
-        login(newHttpClient, regularAdmin.email, regularAdmin.pass);
+        login(newHttpClient,  httpsAdminServerUrl, regularAdmin.email, regularAdmin.pass);
 
         HttpDelete req2 = new HttpDelete(httpsAdminServerUrl + "/organization/2");
 
