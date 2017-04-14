@@ -46,39 +46,47 @@ class OrganizationUsers extends React.Component {
 
     this.state = {
       'selectedRows': 0,
-      'usersDeleteLoading': false
+      'usersDeleteLoading': false,
+      'sortedInfo': {
+        order: 'ascend',
+        columnKey: 'name'
+      }
     };
   }
 
-  columns = [{
-    title: 'Name',
-    dataIndex: 'name',
-    sorter: (a, b) => alphabetSort(a.name, b.name),
-  }, {
-    title: 'Email',
-    dataIndex: 'email',
-    sorter: (a, b) => alphabetSort(a.email, b.email),
-  }, {
-    title: 'Role',
-    dataIndex: 'role',
-    filters: [{
-      text: Roles.ADMIN.title,
-      value: Roles.ADMIN.value,
+  updateColumns(sortedInfo) {
+    return [{
+      title: 'Name',
+      dataIndex: 'name',
+      sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+      sorter: (a, b) => alphabetSort(a.name, b.name),
     }, {
-      text: Roles.STAFF.title,
-      value: Roles.STAFF.value,
+      title: 'Email',
+      dataIndex: 'email',
+      sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
+      sorter: (a, b) => alphabetSort(a.email, b.email),
     }, {
-      text: Roles.USER.title,
-      value: Roles.USER.value,
-    }],
-    filterMultiple: false,
-    onFilter: (value, record) => record.role === value,
-    sorter: (a, b) => alphabetSort(a.role, b.role),
-    render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
-  },
-    {
+      title: 'Role',
+      dataIndex: 'role',
+      sortOrder: sortedInfo.columnKey === 'role' && sortedInfo.order,
+      filters: [{
+        text: Roles.ADMIN.title,
+        value: Roles.ADMIN.value,
+      }, {
+        text: Roles.STAFF.title,
+        value: Roles.STAFF.value,
+      }, {
+        text: Roles.USER.title,
+        value: Roles.USER.value,
+      }],
+      filterMultiple: false,
+      onFilter: (value, record) => record.role === value,
+      sorter: (a, b) => alphabetSort(a.role, b.role),
+      render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
+    }, {
       title: 'Status',
       dataIndex: 'status',
+      sortOrder: sortedInfo.columnKey === 'status' && sortedInfo.order,
       filters: [{
         text: 'Active',
         value: 'Active',
@@ -90,8 +98,8 @@ class OrganizationUsers extends React.Component {
       onFilter: (value, record) => record.status === value,
       sorter: (a, b) => alphabetSort(a.status, b.status),
       render: (text, record) => <Status status={record.status}/>
-    }
-  ];
+    }];
+  }
 
   handleDeleteUsers() {
     this.setState({
@@ -135,7 +143,15 @@ class OrganizationUsers extends React.Component {
     });
   }
 
+  handleTableChange(pagination, filters, sorter) {
+    this.setState({
+      sortedInfo: sorter,
+    });
+  }
+
   render() {
+
+    const columns = this.updateColumns(this.state.sortedInfo);
 
     return (
       <div className="users-profile--organization-settings--organization-users">
@@ -150,8 +166,8 @@ class OrganizationUsers extends React.Component {
                     loading={this.state.usersDeleteLoading}>Delete</Button>
           </Popconfirm>
         </div>
-        <Table rowKey={(record) => record.email} rowSelection={this.rowSelection} columns={this.columns}
-               dataSource={this.props.Organization.users}
+        <Table rowKey={(record) => record.email} rowSelection={this.rowSelection} columns={columns}
+               dataSource={this.props.Organization.users} onChange={this.handleTableChange.bind(this)}
                pagination={false}/>
       </div>
     );
