@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.StringJoiner;
 
 /**
@@ -95,6 +96,10 @@ public final class JsonParser {
         return toJson(userWebWriter, user);
     }
 
+    public static String toJsonWeb(List<User> users) {
+        return toJson(userWebWriter, users);
+    }
+
     public static String toJson(Profile profile) {
         return toJson(profileWriter, profile);
     }
@@ -125,6 +130,15 @@ public final class JsonParser {
 
     public static void writeOrg(File file, Organization org) throws IOException {
         organizationWriter.writeValue(file, org);
+    }
+
+    private static String toJson(ObjectWriter writer, List<User> users) {
+        try {
+            return writer.writeValueAsString(users);
+        } catch (Exception e) {
+            log.error("Error jsoning object.", e);
+        }
+        return "{}";
     }
 
     private static String toJson(ObjectWriter writer, Object o) {

@@ -142,6 +142,11 @@ public class Response extends DefaultFullHttpResponse {
         return ok(JsonParser.toJsonWeb(user));
     }
 
+    public static Response ok(List<User> list) {
+        String data = JsonParser.toJsonWeb(list);
+        return ok(data == null ? "[]" : data);
+    }
+
     public static Response ok(Organization org) {
         return ok(JsonParser.toJson(org));
     }

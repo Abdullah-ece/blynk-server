@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 /**
@@ -195,9 +193,13 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<User> fromApi = JsonParser.mapper.readValue(consumeText(response), List.class);
+            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
-            assertEquals(3, fromApi.size());
+            assertEquals(3, fromApi.length);
+            for (User user : fromApi) {
+                assertNotNull(user);
+                assertNull(user.pass);
+            }
         }
     }
 
