@@ -31,6 +31,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.util.ReferenceCountUtil;
 
 import static cc.blynk.core.http.Response.redirect;
 
@@ -92,16 +93,20 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         String uri = req.uri();
 
         if (uri.equals("/")) {
-            ctx.writeAndFlush(redirect(rootPath));
-            return;
-        } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
+            try {
+                ctx.writeAndFlush(redirect(rootPath));
+                return;
+            } finally {
+                ReferenceCountUtil.release(msg);
+            }
+        } else if (uri.startsWith(rootPath)) {
             initUserPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
+            //todo remove
             initHttpPipeline(ctx);
         }
-
         ctx.fireChannelRead(msg);
     }
 

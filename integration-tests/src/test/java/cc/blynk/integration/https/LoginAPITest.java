@@ -197,6 +197,23 @@ public class LoginAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testLoginAndAccessNonExistingResource() throws Exception {
+        login(admin.email, admin.pass);
+        HttpGet request = new HttpGet(httpsAdminServerUrl.replace(rootPath, "") + "/static/logoxxx.png");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet request2 = new HttpGet(httpsAdminServerUrl.replace(rootPath, "") + "/static/logoxxx.png");
+
+        try (CloseableHttpResponse response = httpclient.execute(request2)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+
+    }
+
+    @Test
     public void testGetUserFromAdminPage() throws Exception {
         login(admin.email, admin.pass);
         String testUser = "dmitriy@blynk.cc";
