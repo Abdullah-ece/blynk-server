@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
+import { Link } from 'react-router';
 
 import {OrganizationFetch} from 'data/Organization/actions';
 
@@ -64,7 +65,9 @@ class Header extends React.Component {
     return (
       <div className="user-layout--header">
         <div className="user-layout--header-logo">
-          <img src={this.props.Organization.logoUrl || "assets/logo.png"} alt=""/>
+          <Link to="/">
+            <img src={this.props.Organization.logoUrl} alt=""/>
+          </Link>
         </div>
         <div className="user-layout--header-user">
           <div className="dark user-layout--header-user-link">
