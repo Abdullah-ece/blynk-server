@@ -53,6 +53,7 @@ class OrganizationUsers extends React.Component {
   columns = [{
     title: 'Name',
     dataIndex: 'name',
+    sortOrder: 'ascend',
     sorter: (a, b) => alphabetSort(a.name, b.name),
   }, {
     title: 'Email',
