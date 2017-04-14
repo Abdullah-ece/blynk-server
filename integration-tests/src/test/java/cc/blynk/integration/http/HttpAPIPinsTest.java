@@ -80,7 +80,7 @@ public class HttpAPIPinsTest extends BaseTest {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/w/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
 

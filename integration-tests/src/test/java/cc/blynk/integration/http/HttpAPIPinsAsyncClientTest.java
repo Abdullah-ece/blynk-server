@@ -86,7 +86,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     @Test
     public void testGetWithWrongPathToken() throws Exception {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/w/d8").execute();
-        assertEquals(404, f.get().getStatusCode());
+        assertEquals(401, f.get().getStatusCode());
     }
 
     @Test

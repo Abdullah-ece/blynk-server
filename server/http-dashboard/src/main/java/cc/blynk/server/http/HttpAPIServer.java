@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
@@ -37,6 +38,7 @@ public class HttpAPIServer extends BaseServer {
                 new UrlMapper(rootPath, "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
+        final HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -47,6 +49,7 @@ public class HttpAPIServer extends BaseServer {
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);
+                pipeline.addLast(httpAPILogic);
                 pipeline.addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };

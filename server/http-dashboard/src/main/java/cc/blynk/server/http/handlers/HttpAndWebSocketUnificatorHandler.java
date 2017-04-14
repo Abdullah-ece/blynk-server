@@ -9,7 +9,6 @@ import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
@@ -51,8 +50,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final String rootPath;
     private final AuthCookieHandler authCookieHandler;
 
-    private final HttpAPILogic httpAPILogic;
-    private final IDEAuthLogic ideAuthLogic;
     private final NoMatchHandler noMatchHandler;
 
     private final UsersLogic usersLogic;
@@ -70,8 +67,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.rootPath = rootPath;
 
         //http API handlers
-        this.httpAPILogic = new HttpAPILogic(holder);
-        this.ideAuthLogic = new IDEAuthLogic(holder);
         this.noMatchHandler = new NoMatchHandler();
 
         //admin API handlers
@@ -98,13 +93,10 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
             } finally {
                 req.release();
             }
-        } else if (uri.startsWith(rootPath)) {
-            initUserPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
-            //todo remove
-            initHttpPipeline(ctx);
+            initUserPipeline(ctx);
         }
         ctx.fireChannelRead(msg);
     }
@@ -125,17 +117,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(configsLogic);
         pipeline.addLast(hardwareStatsLogic);
 
-        pipeline.addLast(httpAPILogic);
-        pipeline.addLast(noMatchHandler);
-        pipeline.remove(this);
-    }
-
-    private void initHttpPipeline(ChannelHandlerContext ctx) {
-        ChannelPipeline pipeline = ctx.pipeline();
-
-        pipeline.addLast(httpAPILogic);
-        pipeline.addLast(ideAuthLogic);
-
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
     }
@@ -155,6 +136,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.remove(ChunkedWriteHandler.class);
         pipeline.remove(UrlReWriterHandler.class);
         pipeline.remove(StaticFileHandler.class);
+        pipeline.remove(HttpAPILogic.class);
 
         pipeline.remove(this);
     }
