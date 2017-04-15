@@ -32,7 +32,6 @@ class Invite extends React.Component {
       token: this.props.location.query.token,
       password: password
     }).then(() => {
-      //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
         this.context.router.push('/account');
       });

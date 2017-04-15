@@ -15,6 +15,7 @@ import {
   OrganizationUpdateName,
   OrganizationSave,
   OrganizationUpdateTimezone,
+  OrganizationUsersFetch,
   OrganizationSendInvite
 } from 'data/Organization/actions';
 
@@ -25,6 +26,7 @@ import './styles.less';
   Account: state.Account
 }), (dispatch) => ({
   OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
+  OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
   OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
   OrganizationSave: bindActionCreators(OrganizationSave, dispatch),
   OrganizationUpdateTimezone: bindActionCreators(OrganizationUpdateTimezone, dispatch),
@@ -36,6 +38,7 @@ class OrganizationSettings extends React.Component {
   static propTypes = {
     Organization: React.PropTypes.object,
     OrganizationFetch: React.PropTypes.func,
+    OrganizationUsersFetch: React.PropTypes.func,
     OrganizationUpdateName: React.PropTypes.func,
     OrganizationSave: React.PropTypes.func,
     OrganizationUpdateTimezone: React.PropTypes.func,
@@ -60,6 +63,9 @@ class OrganizationSettings extends React.Component {
       name: values.name,
       role: values.role
     }).then(() => {
+      this.props.OrganizationUsersFetch({
+        id: this.props.Account.orgId
+      });
       this.props.ResetForm('OrganizationSettingsInviteUsersForm');
       this.showInviteSuccess();
     }).catch((err) => {
