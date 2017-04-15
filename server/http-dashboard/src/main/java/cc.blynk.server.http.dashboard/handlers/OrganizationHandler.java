@@ -98,7 +98,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             }
         }
 
-        return ok(userDao.getUsersByOrgId(orgId));
+        return ok(userDao.getUsersByOrgId(orgId, httpSession.user.email));
     }
 
     @POST

@@ -195,10 +195,11 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
-            assertEquals(3, fromApi.length);
+            assertEquals(2, fromApi.length);
             for (User user : fromApi) {
                 assertNotNull(user);
                 assertNull(user.pass);
+                assertNotEquals(regularAdmin.email, user.email);
             }
         }
     }
@@ -222,9 +223,10 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
-            assertEquals(2, fromApi.length);
+            assertEquals(1, fromApi.length);
             for (User user : fromApi) {
                 assertNotEquals("user@blynk.cc", user.email);
+                assertNotEquals(regularAdmin.email, user.email);
             }
         }
     }

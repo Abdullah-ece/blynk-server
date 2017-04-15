@@ -99,10 +99,10 @@ public class UserDao {
         return users.values().stream().filter(user -> user.email.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
-    public List<User> getUsersByOrgId(int orgId) {
+    public List<User> getUsersByOrgId(int orgId, String filterMail) {
         List<User> result = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN) {
+            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN && !user.email.equals(filterMail)) {
                 result.add(user);
             }
         }
