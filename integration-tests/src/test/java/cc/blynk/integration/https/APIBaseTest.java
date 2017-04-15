@@ -82,13 +82,13 @@ public abstract class APIBaseTest extends BaseTest {
         name = "admin2@blynk.cc";
         pass = "admin2";
         regularAdmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.ADMIN);
-        admin.status = UserStatus.Active;
+        regularAdmin.status = UserStatus.Active;
         holder.userDao.add(regularAdmin);
 
         name = "user@blynk.cc";
         pass = "user";
         regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
-        admin.status = UserStatus.Active;
+        regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
         holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev", "/static/logo.png"));

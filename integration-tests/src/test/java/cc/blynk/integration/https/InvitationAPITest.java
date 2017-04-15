@@ -93,6 +93,21 @@ public class InvitationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void userSendInvitationToExistingUser() throws Exception {
+        login(admin.email, admin.pass);
+
+        String email = "user@blynk.cc";
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"User is already in a system.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void sendInvitationFromSuperUser() throws Exception {
         login(admin.email, admin.pass);
 

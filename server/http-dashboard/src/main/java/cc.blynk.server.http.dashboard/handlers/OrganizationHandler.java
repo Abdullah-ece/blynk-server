@@ -286,6 +286,11 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         User invitedUser = userDao.invite(userInvite, orgId, AppName.BLYNK);
 
+        if (invitedUser == null) {
+            log.error("User {} is already in a system.", userInvite.email);
+            return forbidden("User is already in a system.");
+        }
+
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);
 

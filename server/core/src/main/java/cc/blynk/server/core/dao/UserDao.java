@@ -289,6 +289,14 @@ public class UserDao {
     }
 
     public User invite(UserInvite invite, int orgId, String appName) {
+        UserKey userKey = new UserKey(invite.email, appName);
+        User existingUser = users.get(userKey);
+
+        //do not allow to invite signed up user
+        if (existingUser != null && existingUser.status == UserStatus.Active) {
+            return null;
+        }
+
         User newUser = new User(invite.email, null, appName, region, false, invite.role);
         newUser.name = invite.name;
         newUser.orgId = orgId;
