@@ -1,7 +1,5 @@
 export function alphabetSort(a, b) {
 
-  console.log(a, b);
-
   a = String(a).toLowerCase();
   b = String(b).toLowerCase();
 
