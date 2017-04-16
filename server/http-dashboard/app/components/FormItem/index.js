@@ -3,15 +3,23 @@ import './styles.less';
 import Title from './components/Title';
 import TitleGroup from './components/TitleGroup';
 import Content from './components/Content';
+import classnames from 'classnames';
 
 class FormItem extends React.Component {
   static propTypes = {
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    offset: React.PropTypes.bool
   };
 
   render() {
+
+    const classNames = classnames({
+      'form-item': true,
+      'none-offset': this.props.offset === false
+    });
+
     return (
-      <div className="form-item">
+      <div className={classNames}>
         {this.props.children}
       </div>
     );

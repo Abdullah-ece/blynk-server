@@ -6,6 +6,7 @@ import {SelectSimpleMatch} from 'services/Filters';
 import FormItem from 'components/FormItem';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 import AddNewMetadataField from "./components/AddNewMetadataField/index";
+import MetadataItem from "../../components/MetadataItem/index";
 
 class ProductCreate extends React.Component {
 
@@ -103,7 +104,7 @@ class ProductCreate extends React.Component {
             <Icon type="info-circle" className="products-metadata-info"
                   onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
           </Popover>}
-          <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
+          <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)} className="products-tabs">
             <Tabs.TabPane tab="Info" key="1">
 
               <Row gutter={24} className="products-create-tabs-inner-content">
@@ -164,6 +165,7 @@ class ProductCreate extends React.Component {
 
             </Tabs.TabPane>
             <Tabs.TabPane tab="Metadata" key="2">
+              <MetadataItem/>
               <AddNewMetadataField/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="Data Streams" key="3">Content of Data Streams</Tabs.TabPane>
