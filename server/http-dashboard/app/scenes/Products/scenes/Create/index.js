@@ -73,7 +73,7 @@ class ProductCreate extends React.Component {
 
   toggleMetadataIntroductionMessage() {
     this.setState({
-      metadataIntroVisible: !this.state.metadataIntroVisible,
+      metadataIntroVisible: this.state.metadataIntroVisible === null ? false : !this.state.metadataIntroVisible,
       isMetadataInfoRead: true
     });
   }
