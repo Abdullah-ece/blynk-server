@@ -10,3 +10,4 @@ logs/
 .project
 .classpath
 .settings
+dependency-reduced-pom.xml
