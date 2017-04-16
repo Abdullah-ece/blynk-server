@@ -5,6 +5,7 @@ import {HARDWARE_DEFAULT, HARDWARES, CONNECTIONS_TYPES, CONNECTIONS_TYPES_DEFAUL
 import {SelectSimpleMatch} from 'services/Filters';
 import FormItem from 'components/FormItem';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
+import AddNewMetadataField from "./components/AddNewMetadataField/index";
 
 class ProductCreate extends React.Component {
 
@@ -162,7 +163,9 @@ class ProductCreate extends React.Component {
 
 
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Metadata" key="2">Content of Metadata</Tabs.TabPane>
+            <Tabs.TabPane tab="Metadata" key="2">
+              <AddNewMetadataField/>
+            </Tabs.TabPane>
             <Tabs.TabPane tab="Data Streams" key="3">Content of Data Streams</Tabs.TabPane>
             <Tabs.TabPane tab="Events" key="4">Content of Events</Tabs.TabPane>
           </Tabs>
