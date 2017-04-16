@@ -1,11 +1,22 @@
 import React from 'react';
 import './styles.less';
-import {Button, Tabs, Input, Upload, Icon, message, Col, Row, Select} from 'antd';
+import {Button, Tabs, Input, Upload, Icon, message, Col, Row, Select, Popover} from 'antd';
 import {HARDWARE_DEFAULT, HARDWARES, CONNECTIONS_TYPES, CONNECTIONS_TYPES_DEFAULT} from 'services/Devices';
 import {SelectSimpleMatch} from 'services/Filters';
 import FormItem from 'components/FormItem';
+import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 
 class ProductCreate extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      activeTab: 0,
+      isMetadataInfoRead: false,
+      metadataIntroVisible: null
+    };
+  }
 
   InfoFileProps = {
     name: 'file',
@@ -47,6 +58,25 @@ class ProductCreate extends React.Component {
     return options;
   }
 
+  handleTabChange(key) {
+    this.setState({
+      activeTab: Number(key)
+    });
+  }
+
+  isMetadataIntroductionMessageVisible() {
+    if (this.state.metadataIntroVisible === null) return !this.state.isMetadataInfoRead;
+
+    return !!this.state.metadataIntroVisible;
+  }
+
+  toggleMetadataIntroductionMessage() {
+    this.setState({
+      metadataIntroVisible: !this.state.metadataIntroVisible,
+      isMetadataInfoRead: true
+    });
+  }
+
   render() {
 
     const hardwareOptions = this.getHardwareOptions();
@@ -61,11 +91,21 @@ class ProductCreate extends React.Component {
             <Button type="primary">Save</Button>
           </div>
         </div>
-        <div className="products-content">
-          <Tabs defaultActiveKey="1">
+        <div className="products-content" style={{position: 'relative'}}>
+          { this.state.activeTab === 2 && <Popover
+            placement="bottomRight"
+            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
+            visible={this.isMetadataIntroductionMessageVisible()}
+            overlayClassName="products-metadata-introduction-message-popover"
+            trigger="click">
+
+            <Icon type="info-circle" className="products-metadata-info"
+                  onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
+          </Popover>}
+          <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
             <Tabs.TabPane tab="Info" key="1">
 
-              <Row gutter={24}>
+              <Row gutter={24} className="products-create-tabs-inner-content">
                 <Col span={15}>
                   <FormItem>
                     <FormItem.Title>Name</FormItem.Title>
