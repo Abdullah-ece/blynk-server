@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Select, Icon} from 'antd';
+import {Row, Col, Select, Icon, Popconfirm} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
 
@@ -8,7 +8,8 @@ class MetadataItem extends React.Component {
   static propTypes = {
     preview: React.PropTypes.object,
     children: React.PropTypes.any,
-    onDelete: React.PropTypes.func
+    onDelete: React.PropTypes.func,
+    touched: React.PropTypes.bool
   };
 
   handleDelete() {
@@ -29,6 +30,16 @@ class MetadataItem extends React.Component {
       preview = '';
     } else {
       preview = <Preview> <Preview.Unavailable /> </Preview>;
+    }
+
+    let deleteButton;
+    if (this.props.touched) {
+      deleteButton = (<Popconfirm title="Are you sure you want to delete this task?" overlayClassName="danger"
+                                  onConfirm={this.handleDelete.bind(this)} okText="Yes" cancelText="No">
+        <Icon type="delete"/>
+      </Popconfirm>);
+    } else {
+      deleteButton = (<Icon type="delete" onClick={this.handleDelete.bind(this)}/>);
     }
 
     return (
@@ -54,7 +65,7 @@ class MetadataItem extends React.Component {
         </Row>
         <div className="product-metadata-item-tools">
           <Icon type="bars"/>
-          <Icon type="delete" onClick={this.handleDelete.bind(this)}/>
+          {deleteButton}
           <Icon type="copy"/>
         </div>
       </div>

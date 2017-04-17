@@ -36,7 +36,8 @@ class TextField extends React.Component {
     const fieldsErrors = this.props.form.getFieldsError();
 
     return (
-      <Metadata.Item preview={this.getPreviewValues()} onDelete={this.handleDelete.bind(this)}>
+      <Metadata.Item touched={this.props.form.isFieldsTouched()} preview={this.getPreviewValues()}
+                     onDelete={this.handleDelete.bind(this)}>
         <Form>
           <FormItem offset={false}>
             <FormItem.TitleGroup>
