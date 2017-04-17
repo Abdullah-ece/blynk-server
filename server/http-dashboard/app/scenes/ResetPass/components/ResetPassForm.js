@@ -1,6 +1,6 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
-import {Button, Form, Alert} from 'antd';
+import {Button, Form} from 'antd';
 
 import {Field as FormField} from 'components/Form';
 import Validation from 'services/Validation';
@@ -34,9 +34,9 @@ export default class ResetPassForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <FormItem>
-        <span className="form-header">Password change</span>
-      </FormItem>
+      <span className="form-header">Password change</span>
+
+      <div className="login-error">{ error && error }</div>
 
       <FormField type="password" name="password"
                  icon="lock"
@@ -55,10 +55,6 @@ export default class ResetPassForm extends React.Component {
                      Validation.Rules.required
                    ]}/>
       </div>
-
-      <FormItem className="login-alert">
-        { error && <Alert description={error} type="error"/> }
-      </FormItem>
 
       <FormItem>
         <Button type="primary"
