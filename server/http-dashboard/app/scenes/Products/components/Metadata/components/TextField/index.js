@@ -40,7 +40,7 @@ class TextField extends React.Component {
             <FormItem.Content>
               <Form.Item validateStatus={formHasError(fieldsErrors) ? 'error' : 'success'}
                          help={getFormFirstError(fieldsErrors)} required={true}>
-                <Input.Group>
+                <Input.Group compact>
                   {getFieldDecorator('name', {rules: [{required: true, message: 'Name is required'}]})(
                     <Input placeholder="Field name" style={{width: '50%'}}/>
                   )}
