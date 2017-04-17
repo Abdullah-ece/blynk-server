@@ -1,8 +1,7 @@
 import React from 'react';
 import {Row, Col, Input, Select, Icon} from 'antd';
 import FormItem from 'components/FormItem';
-import './styles.less';
-import Preview from './components/Preview';
+import Preview from '../../components/Preview';
 
 class MetadataItem extends React.Component {
   render() {

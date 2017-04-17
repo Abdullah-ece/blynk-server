@@ -6,7 +6,7 @@ import {SelectSimpleMatch} from 'services/Filters';
 import FormItem from 'components/FormItem';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 import AddNewMetadataField from "./components/AddNewMetadataField/index";
-import MetadataItem from "../../components/MetadataItem/index";
+import Metadata from "../../components/Metadata/index";
 
 class ProductCreate extends React.Component {
 
@@ -165,7 +165,11 @@ class ProductCreate extends React.Component {
 
             </Tabs.TabPane>
             <Tabs.TabPane tab="Metadata" key="2">
-              <MetadataItem/>
+              <Metadata.ItemsList>
+                <Metadata.Item/>
+                <Metadata.Item/>
+                <Metadata.Item/>
+              </Metadata.ItemsList>
               <AddNewMetadataField/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="Data Streams" key="3">Content of Data Streams</Tabs.TabPane>
