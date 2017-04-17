@@ -42,6 +42,12 @@ export default class ResetPass extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+    }
+  }
+
   handleSubmit(values) {
     const token = this.props.location.query.token;
     const email = this.props.location.query.email;
@@ -61,12 +67,6 @@ export default class ResetPass extends React.Component {
 
       this.redirectTimeout = setTimeout(() => this.context.router.push('/login'), 5000);
     });
-  }
-
-  componentWillUnmount() {
-    if (this.redirectTimeout) {
-      clearTimeout(this.redirectTimeout);
-    }
   }
 
   render() {
