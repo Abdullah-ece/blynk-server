@@ -9,7 +9,8 @@ class TextField extends React.Component {
   static propTypes = {
     id: React.PropTypes.number,
     form: React.PropTypes.object,
-    onDelete: React.PropTypes.func
+    onDelete: React.PropTypes.func,
+    isUnique: React.PropTypes.func
   };
 
   getPreviewValues() {
@@ -48,7 +49,12 @@ class TextField extends React.Component {
               <Form.Item validateStatus={formHasError(fieldsErrors) ? 'error' : 'success'}
                          help={getFormFirstError(fieldsErrors)} required={true}>
                 <Input.Group compact>
-                  {getFieldDecorator('name', {rules: [{required: true, message: 'Name is required'}]})(
+                  {getFieldDecorator('name', {
+                    rules: [
+                      {validator: this.props.isUnique.bind(this, this.props.id), message: 'Name should be unique'},
+                      {required: true, message: 'Name is required'},
+                    ]
+                  })(
                     <Input placeholder="Field name" style={{width: '50%'}}/>
                   )}
                   {getFieldDecorator('value')(

@@ -27,6 +27,18 @@ class ProductMetadata extends React.Component {
     this.setState({metadata: metadata});
   }
 
+  isUnique(id, field, name, cb) {
+    if (name) {
+      for (let key in this.state.metadata) {
+        const values = this.state.metadata[key].values;
+        if (Number(key) !== Number(id) && name === values.name) {
+          return cb(true);
+        }
+      }
+    }
+    cb();
+  }
+
   genMetadataId() {
     if (!Object.keys(this.state.metadata).length) return 1;
 
@@ -68,6 +80,7 @@ class ProductMetadata extends React.Component {
       const field = this.state.metadata[id];
 
       const props = {
+        isUnique: this.isUnique.bind(this),
         onChange: this.handleItemChange.bind(this),
         key: id,
         onDelete: this.handleDelete.bind(this),
