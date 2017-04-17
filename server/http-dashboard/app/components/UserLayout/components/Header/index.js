@@ -51,7 +51,7 @@ class Header extends React.Component {
         {/*</Menu.Item>*/}
         <Menu.Divider className="user-layout--menu-divider" />
         <Menu.Item key="logout">
-          <Icon type="logout"/> Log out
+          <Icon type="login"/> Log out
         </Menu.Item>
       </Menu>
     );
