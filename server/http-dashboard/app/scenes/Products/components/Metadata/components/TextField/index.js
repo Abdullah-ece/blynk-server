@@ -8,7 +8,8 @@ class TextField extends React.Component {
 
   static propTypes = {
     id: React.PropTypes.number,
-    form: React.PropTypes.object
+    form: React.PropTypes.object,
+    onDelete: React.PropTypes.func
   };
 
   getPreviewValues() {
@@ -24,13 +25,18 @@ class TextField extends React.Component {
     };
   }
 
+  handleDelete() {
+    if (this.props.onDelete)
+      this.props.onDelete(this.props.id);
+  }
+
   render() {
 
     const {getFieldDecorator} = this.props.form;
     const fieldsErrors = this.props.form.getFieldsError();
 
     return (
-      <Metadata.Item preview={this.getPreviewValues()}>
+      <Metadata.Item preview={this.getPreviewValues()} onDelete={this.handleDelete.bind(this)}>
         <Form>
           <FormItem offset={false}>
             <FormItem.TitleGroup>

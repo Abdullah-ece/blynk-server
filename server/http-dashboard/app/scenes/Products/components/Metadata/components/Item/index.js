@@ -7,8 +7,14 @@ class MetadataItem extends React.Component {
 
   static propTypes = {
     preview: React.PropTypes.object,
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    onDelete: React.PropTypes.func
   };
+
+  handleDelete() {
+    if (this.props.onDelete)
+      this.props.onDelete();
+  }
 
   render() {
 
@@ -48,7 +54,7 @@ class MetadataItem extends React.Component {
         </Row>
         <div className="product-metadata-item-tools">
           <Icon type="bars"/>
-          <Icon type="delete"/>
+          <Icon type="delete" onClick={this.handleDelete.bind(this)}/>
           <Icon type="copy"/>
         </div>
       </div>

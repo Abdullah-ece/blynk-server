@@ -43,6 +43,15 @@ class ProductMetadata extends React.Component {
     });
   }
 
+  handleDelete(id) {
+
+    let metadata = Object.assign({}, this.state.metadata);
+
+    delete metadata[id];
+
+    this.setState({metadata: metadata});
+  }
+
   generateFields() {
     const fields = [];
     Object.keys(this.state.metadata).forEach((id) => {
@@ -51,6 +60,7 @@ class ProductMetadata extends React.Component {
       const props = {
         onChange: this.handleItemChange.bind(this),
         key: id,
+        onDelete: this.handleDelete.bind(this),
         id: Number(id)
       };
 
