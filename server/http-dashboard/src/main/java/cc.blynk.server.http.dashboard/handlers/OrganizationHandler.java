@@ -314,7 +314,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             ctx.writeAndFlush(response);
         });
 
-        return noResponse();
+        return null;
     }
 
     private boolean isEmpty(Organization newOrganization) {

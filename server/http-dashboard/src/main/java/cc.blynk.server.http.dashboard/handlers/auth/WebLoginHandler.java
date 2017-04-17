@@ -207,7 +207,7 @@ public class WebLoginHandler extends BaseHttpHandler {
             ctx.writeAndFlush(response);
         });
 
-        return noResponse();
+        return null;
     }
 
 }
