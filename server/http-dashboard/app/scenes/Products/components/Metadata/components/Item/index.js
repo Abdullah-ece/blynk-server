@@ -1,26 +1,35 @@
 import React from 'react';
-import {Row, Col, Input, Select, Icon} from 'antd';
+import {Row, Col, Select, Icon} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
 
 class MetadataItem extends React.Component {
+
+  static propTypes = {
+    preview: React.PropTypes.object,
+    children: React.PropTypes.any
+  };
+
   render() {
+
+    let preview;
+
+    if (this.props.preview.isTouched && this.props.preview.values.name) {
+      preview = (<Preview>
+        <Preview.Name>{this.props.preview.values.name}</Preview.Name>
+        <Preview.Value>{this.props.preview.values.value || 'Empty'}</Preview.Value>
+      </Preview>);
+    } else if (!this.props.preview.isTouched) {
+      preview = '';
+    } else {
+      preview = <Preview> <Preview.Unavailable /> </Preview>;
+    }
+
     return (
       <div className="product-metadata-item">
         <Row gutter={8}>
           <Col span={12}>
-            <FormItem offset={false}>
-              <FormItem.TitleGroup>
-                <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
-                <FormItem.Title style={{width: '50%'}}>Value</FormItem.Title>
-              </FormItem.TitleGroup>
-              <FormItem.Content>
-                <Input.Group compact>
-                  <Input placeholder="Key" style={{width: '50%'}}/>
-                  <Input placeholder="Value" style={{width: '50%'}}/>
-                </Input.Group>
-              </FormItem.Content>
-            </FormItem>
+            { this.props.children }
           </Col>
           <Col span={4}>
             <FormItem offset={false}>
@@ -34,10 +43,7 @@ class MetadataItem extends React.Component {
             </FormItem>
           </Col>
           <Col span={7} offset={1}>
-            <Preview>
-              <Preview.Name>Temperature:</Preview.Name>
-              <Preview.Value>20˚</Preview.Value>
-            </Preview>
+            { preview }
           </Col>
         </Row>
         <div className="product-metadata-item-tools">

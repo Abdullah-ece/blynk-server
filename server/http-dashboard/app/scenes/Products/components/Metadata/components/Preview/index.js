@@ -2,6 +2,7 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import Name from './components/Name';
 import Value from './components/Value';
+import Unavailable from './components/Unavailable';
 import './styles.less';
 class Preview extends React.Component {
   static propTypes = {
@@ -24,5 +25,6 @@ class Preview extends React.Component {
 
 Preview.Name = Name;
 Preview.Value = Value;
+Preview.Unavailable = Unavailable;
 
 export default Preview;

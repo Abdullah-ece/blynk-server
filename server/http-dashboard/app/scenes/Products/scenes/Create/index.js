@@ -7,6 +7,7 @@ import FormItem from 'components/FormItem';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 import AddNewMetadataField from "./components/AddNewMetadataField/index";
 import Metadata from "../../components/Metadata/index";
+const MetadataFields = Metadata.Fields;
 
 class ProductCreate extends React.Component {
 
@@ -70,6 +71,10 @@ class ProductCreate extends React.Component {
     if (this.state.metadataIntroVisible === null) return !this.state.isMetadataInfoRead;
 
     return !!this.state.metadataIntroVisible;
+  }
+
+  handleItemChange(key, values) {
+    console.log(key, values);
   }
 
   toggleMetadataIntroductionMessage() {
@@ -166,9 +171,9 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
             <Tabs.TabPane tab="Metadata" key="2">
               <Metadata.ItemsList>
-                <Metadata.Item/>
-                <Metadata.Item/>
-                <Metadata.Item/>
+                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>
+                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>
+                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>
               </Metadata.ItemsList>
               <AddNewMetadataField/>
             </Tabs.TabPane>
