@@ -59,7 +59,7 @@ class MetadataItem extends React.Component {
               </FormItem.Content>
             </FormItem>
           </Col>
-          <Col span={7} offset={1}>
+          <Col span={6} offset={1}>
             { preview }
           </Col>
         </Row>
