@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Form, Alert} from 'antd';
+import {Button, Form} from 'antd';
 
 import {reduxForm} from 'redux-form';
 
@@ -36,9 +36,9 @@ export default class LoginForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <FormItem>
-        <span className="form-header">Log In</span>
-      </FormItem>
+      <span className="form-header">Log In</span>
+
+      <div className="login-error">{ error && error }</div>
 
       <FormField type="text" name="email"
                  icon="user"
@@ -56,10 +56,6 @@ export default class LoginForm extends React.Component {
                  validate={[
                    Validation.Rules.required
                  ]}/>
-
-      <FormItem className="login-alert">
-        { error && <Alert description={error} type="error"/> }
-      </FormItem>
 
       <FormItem>
         <Button type="primary"
