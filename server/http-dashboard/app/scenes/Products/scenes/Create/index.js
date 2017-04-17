@@ -1,69 +1,32 @@
 import React from 'react';
 import './styles.less';
-import {Button, Tabs, Input, Upload, Icon, message, Col, Row, Select, Popover} from 'antd';
-import {HARDWARE_DEFAULT, HARDWARES, CONNECTIONS_TYPES, CONNECTIONS_TYPES_DEFAULT} from 'services/Devices';
-import {SelectSimpleMatch} from 'services/Filters';
-import FormItem from 'components/FormItem';
+import {Button, Tabs, Icon, Popover} from 'antd';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
-import AddNewMetadataField from "./components/AddNewMetadataField/index";
-import Metadata from "../../components/Metadata/index";
-const MetadataFields = Metadata.Fields;
+import ProductCreateInfoTab from './scenes/Info';
+import ProductCreateMetadataTab from './scenes/Metadata';
 
 class ProductCreate extends React.Component {
+
+  TABS = {
+    INFO: 'info',
+    METADATA: 'metadata',
+    DATA_STREAMS: 'datastreams',
+    EVENTS: 'events'
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       activeTab: 0,
-      isMetadataInfoRead: false,
-      metadataIntroVisible: null
+      isMetadataInfoRead: false
     };
   }
 
-  InfoFileProps = {
-    name: 'file',
-    multiple: true,
-    showUploadList: false,
-    action: '//somepoint',
-    onChange: this.handleInfoFileChenge
-  };
-
-  handleInfoFileChenge(info) {
-    const status = info.file.status;
-    if (status !== 'uploading') {
-      message.info(`status ${info.file.name}`);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  }
-
-  getHardwareOptions() {
-    let options = [];
-    HARDWARES.forEach((item) => {
-      options.push(
-        <Select.Option key={item}>{item}</Select.Option>
-      );
-    });
-    return options;
-  }
-
-  getConnectionOptions() {
-    let options = [];
-    CONNECTIONS_TYPES.forEach((item) => {
-      options.push(
-        <Select.Option key={item}>{item}</Select.Option>
-      );
-    });
-    return options;
-  }
 
   handleTabChange(key) {
     this.setState({
-      activeTab: Number(key)
+      activeTab: key
     });
   }
 
@@ -71,10 +34,6 @@ class ProductCreate extends React.Component {
     if (this.state.metadataIntroVisible === null) return !this.state.isMetadataInfoRead;
 
     return !!this.state.metadataIntroVisible;
-  }
-
-  handleItemChange(key, values) {
-    console.log(key, values);
   }
 
   toggleMetadataIntroductionMessage() {
@@ -86,9 +45,6 @@ class ProductCreate extends React.Component {
 
   render() {
 
-    const hardwareOptions = this.getHardwareOptions();
-    const connectionsOptions = this.getConnectionOptions();
-
     return (
       <div className="products-create">
         <div className="products-header">
@@ -99,7 +55,7 @@ class ProductCreate extends React.Component {
           </div>
         </div>
         <div className="products-content" style={{position: 'relative'}}>
-          { this.state.activeTab === 2 && <Popover
+          { this.state.activeTab === this.TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
             visible={this.isMetadataIntroductionMessageVisible()}
@@ -109,76 +65,16 @@ class ProductCreate extends React.Component {
             <Icon type="info-circle" className="products-metadata-info"
                   onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
           </Popover>}
-          <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)} className="products-tabs">
-            <Tabs.TabPane tab="Info" key="1">
 
-              <Row gutter={24} className="products-create-tabs-inner-content">
-                <Col span={15}>
-                  <FormItem>
-                    <FormItem.Title>Name</FormItem.Title>
-                    <FormItem.Content>
-                      <Input/>
-                    </FormItem.Content>
-                  </FormItem>
-
-                  <FormItem>
-                    <FormItem.TitleGroup>
-                      <FormItem.Title style={{width: '50%'}}>hardware</FormItem.Title>
-                      <FormItem.Title style={{width: '50%'}}>connection type</FormItem.Title>
-                    </FormItem.TitleGroup>
-                    <FormItem.Content>
-                      <Input.Group compact>
-                        <Select showSearch
-                                defaultValue={HARDWARE_DEFAULT}
-                                style={{width: '50%'}}
-                                filterOption={SelectSimpleMatch}>
-                          {hardwareOptions}
-                        </Select>
-                        <Select showSearch
-                                style={{width: '50%'}}
-                                defaultValue={CONNECTIONS_TYPES_DEFAULT}
-                                filterOption={SelectSimpleMatch}>
-                          {connectionsOptions}
-                        </Select>
-                      </Input.Group>
-                    </FormItem.Content>
-                  </FormItem>
-
-                  <FormItem>
-                    <FormItem.Title>description</FormItem.Title>
-                    <FormItem.Content>
-                      <Input type="textarea" rows="4"/>
-                    </FormItem.Content>
-                  </FormItem>
-                </Col>
-                <Col span={9}>
-                  <div className="products-create-drag-and-drop">
-                    <Upload.Dragger {...this.InfoFileProps}>
-                      <p className="ant-upload-drag-icon">
-                        <Icon type="cloud-upload-o"/>
-                      </p>
-                      <p className="ant-upload-text">Add image</p>
-                      <p className="ant-upload-hint">
-                        Upload from computer or drag-n-drop<br/>
-                        .png or .jpg, min 500x500px
-                      </p>
-                    </Upload.Dragger>
-                  </div>
-                </Col>
-              </Row>
-
-
+          <Tabs defaultActiveKey={this.TABS.INFO} onChange={this.handleTabChange.bind(this)} className="products-tabs">
+            <Tabs.TabPane tab="Info" key={this.TABS.INFO}>
+              <ProductCreateInfoTab />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Metadata" key="2">
-              <Metadata.ItemsList>
-                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>
-                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>
-                <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>
-              </Metadata.ItemsList>
-              <AddNewMetadataField/>
+            <Tabs.TabPane tab="Metadata" key={this.TABS.METADATA}>
+              <ProductCreateMetadataTab />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Data Streams" key="3">Content of Data Streams</Tabs.TabPane>
-            <Tabs.TabPane tab="Events" key="4">Content of Events</Tabs.TabPane>
+            <Tabs.TabPane tab="Data Streams" key={this.TABS.DATA_STREAMS}>Content of Data Streams</Tabs.TabPane>
+            <Tabs.TabPane tab="Events" key={this.TABS.EVENTS}>Content of Events</Tabs.TabPane>
           </Tabs>
         </div>
       </div>
