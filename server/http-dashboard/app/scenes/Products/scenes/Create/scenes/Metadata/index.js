@@ -14,8 +14,17 @@ class ProductMetadata extends React.Component {
     };
   }
 
-  handleItemChange(key, values) {
-    console.log(key, values);
+  handleItemChange(id, values) {
+    let metadata = Object.assign({}, this.state.metadata);
+
+    for (let key in values) {
+      const value = values[key];
+      Object.assign(metadata[id].values, {
+        [key]: value
+      });
+    }
+
+    this.setState({metadata: metadata});
   }
 
   genMetadataId() {
@@ -34,7 +43,8 @@ class ProductMetadata extends React.Component {
     const metadata = Object.assign({}, this.state.metadata, {
       [id]: {
         id,
-        type: params.type
+        type: params.type,
+        values: {}
       }
     });
 
