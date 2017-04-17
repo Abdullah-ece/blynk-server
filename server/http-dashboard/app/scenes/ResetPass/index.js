@@ -58,7 +58,15 @@ export default class ResetPass extends React.Component {
         loading: false,
         success: true
       });
+
+      this.redirectTimeout = setTimeout(() => this.context.router.push('/login'), 5000);
     });
+  }
+
+  componentWillUnmount() {
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+    }
   }
 
   render() {
