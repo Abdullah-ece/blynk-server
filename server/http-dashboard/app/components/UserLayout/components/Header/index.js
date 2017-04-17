@@ -49,7 +49,7 @@ class Header extends React.Component {
         {/*<Menu.Item key="/billing">*/}
         {/*Billing*/}
         {/*</Menu.Item>*/}
-        <Menu.Divider />
+        <Menu.Divider className="user-layout--menu-divider" />
         <Menu.Item key="logout">
           <Icon type="logout"/> Log out
         </Menu.Item>
