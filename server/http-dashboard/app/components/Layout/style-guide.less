@@ -42,6 +42,7 @@
 @style-font-size-6: 36px;
 
 @style-font-size-base: @style-font-size-2;
+@shadow-color: rgba(0, 0, 0, .2);
 
 .font-h1 {
   font-size: @style-font-size-6;
@@ -153,4 +154,8 @@
 .font-button-icon-dark {
   .font-button-icon;
   color: @color-white;
+}
+
+.base-shadow {
+  box-shadow: 0 0 30px 0 @shadow-color;
 }
