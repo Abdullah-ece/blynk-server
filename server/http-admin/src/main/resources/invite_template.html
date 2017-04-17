@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Blynk</title>
+  <style>
+    .text {
+      font-size: 16px;
+      font-weight: 300;
+      color: #7c888d;
+      padding-bottom: 30px;
+      font-family: Arial, Helvetica, sans-serif
+    }
+    .header {
+      font-size: 24px;
+      font-weight: 300;
+      padding-bottom: 20px;
+      color: #2e4255;
+      font-family: Arial, Helvetica, sans-serif
+    }
+    .button {
+      width: 400px;
+      height: 64px;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #007dc4;
+      text-decoration: none;
+      padding: 10px 30px 10px 30px;
+      border-radius: 4px;
+    }
+
+    .content {
+      text-align: center;
+      max-width: 570px;
+      background-color: #fff;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .content-wrapper {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .copyright {
+      color: #a7afb3;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      line-height: 20px;
+      text-align:center;
+      padding-top: 60px;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body style="background-color: #202227; padding: 0; margin: 0;">
+
+<div class="content-wrapper" style="background-color: #007dc4; padding-top: 50px; ">
+  <div style="text-align: center; margin-bottom: 10px;">
+    <img src="{host}/static/logo.png" height="64px"/>
+  </div>
+  <div class="content" style="padding: 50px 50px 0 50px; border-top-left-radius: 6px; border-top-right-radius: 6px;">
+    <div class="header">
+      Welcome to {productName} Dashboard!
+    </div>
+
+    <div class="text" style="padding-top: 20px;">
+      We're excited to see you on board.
+    </div>
+  </div>
+</div>
+
+<div class="content-wrapper">
+  <div class="content" style="padding: 0px 50px 0 50px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px;">
+    <div class="text">
+      To get started, you'll need to create a password for your new account.
+    </div>
+
+    <div style="padding-top: 30px; padding-bottom: 50px;">
+      <a href="{link}" class="button">
+        Create Password
+      </a>
+    </div>
+    <div class="header">
+      Thank you.
+    </div>
+    <div class="text">
+      Knight Team
+    </div>
+  </div>
+</div>
+
+<div class="copyright">
+  Copyright © 2017 {productName}, All rights reserved
+</div>
+</body>
+</html>

@@ -1,8 +1,0 @@
-Hello, {name}.<br>
-<br>
-You was invited as {role} to {product_name}.
-<br>
-Please follow this <a href="{link}">link</a>.<br>
-<br>
-Regards.
-

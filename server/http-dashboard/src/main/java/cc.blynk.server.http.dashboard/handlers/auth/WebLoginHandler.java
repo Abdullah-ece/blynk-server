@@ -41,6 +41,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final String resetURL;
+    private final String host;
     private final String emailBody;
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -51,6 +52,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         this.userDao = holder.userDao;
 
         this.resetURL = "https://" + holder.props.getProperty("reset-pass.host") + rootPath + "#/resetPass?token=";
+        this.host = "https://" + holder.props.getProperty("reset-pass.host");
         this.mailWrapper = holder.mailWrapper;
         this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.blockingIOProcessor = holder.blockingIOProcessor;
@@ -193,6 +195,7 @@ public class WebLoginHandler extends BaseHttpHandler {
             try {
                 String body = emailBody
                         .replace("{name}", user.name)
+                        .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
                 mailWrapper.sendHtml(email, "Password reset request.", body);
                 log.info("Reset email sent to {}.", email);
