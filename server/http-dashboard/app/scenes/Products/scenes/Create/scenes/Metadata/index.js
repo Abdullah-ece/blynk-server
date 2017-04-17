@@ -1,5 +1,6 @@
 import React from 'react';
 import AddNewMetadataField from "../../components/AddNewMetadataField/index";
+import {Metadata as MetadataService} from 'services/Products';
 import Metadata from "../../../../components/Metadata/index";
 const MetadataFields = Metadata.Fields;
 
@@ -27,25 +28,53 @@ class ProductMetadata extends React.Component {
     return 1;
   }
 
-  addMetadataField(type) {
+  addMetadataField(params) {
     const id = this.genMetadataId();
-    this.setState({
-      metadata: this.state.metadata[id] = {
+
+    const metadata = Object.assign({}, this.state.metadata, {
+      [id]: {
         id,
-        type: type
+        type: params.type
       }
+    });
+
+    this.setState({
+      metadata: metadata
     });
   }
 
+  generateFields() {
+    const fields = [];
+    Object.keys(this.state.metadata).forEach((id) => {
+      const field = this.state.metadata[id];
+
+      const props = {
+        onChange: this.handleItemChange.bind(this),
+        key: id,
+        id: Number(id)
+      };
+
+      if (field.type === MetadataService.Fields.TEXT) {
+        fields.push(<MetadataFields.TextField {...props}/>);
+      }
+    });
+
+    return fields;
+  }
+
   render() {
+
+    const fields = this.generateFields();
+
     return (
       <div>
-        <Metadata.ItemsList>
-          <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>
-          <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>
-          <MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>
-        </Metadata.ItemsList>
-        <AddNewMetadataField/>
+        { !!fields.length && <Metadata.ItemsList>
+          { fields }
+          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>*/}
+          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>*/}
+          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>*/}
+        </Metadata.ItemsList> }
+        <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
     );
   }
