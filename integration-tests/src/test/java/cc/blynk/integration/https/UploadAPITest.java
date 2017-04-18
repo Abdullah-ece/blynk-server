@@ -30,10 +30,14 @@ public class UploadAPITest extends APIBaseTest {
     public void uploadFileToServer() throws Exception {
         login(admin.email, admin.pass);
 
-        InputStream logoStream = UploadAPITest.class.getResourceAsStream("/logo.png");
+        upload("logo.png");
+    }
+
+    private void upload(String filename) throws Exception {
+        InputStream logoStream = UploadAPITest.class.getResourceAsStream("/" + filename);
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/upload");
-        ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, "logo.png");
+        ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, filename);
         StringBody stringBody1 = new StringBody("Message 1", ContentType.MULTIPART_FORM_DATA);
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -50,8 +54,19 @@ public class UploadAPITest extends APIBaseTest {
             assertNotNull(staticPath);
             assertTrue(staticPath.startsWith("/static"));
             assertTrue(staticPath.endsWith("png"));
-            assertTrue(staticPath.contains("_logo"));
+            assertTrue(staticPath.contains("_" + filename));
         }
+    }
+
+    @Test
+    public void upload2FilesToServer() throws Exception {
+        login(admin.email, admin.pass);
+
+        upload("logo.png");
+        upload("logo.png");
+        upload("logo.png");
+        upload("logo.png");
+        upload("logo.png");
     }
 
 }

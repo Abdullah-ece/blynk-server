@@ -83,6 +83,8 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                 log.error("Error creating http post offer.", e);
                 ctx.writeAndFlush(badRequest(e.getMessage()));
                 return;
+            } finally {
+                chunk.release();
             }
 
             // example of reading only if at the end
@@ -113,6 +115,10 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                     //ignore. that's fine.
                 } catch (NoSuchFileException e) {
                     log.error("Unable to copy uploaded image to static folder. Reason : {}", e.getMessage());
+                } finally {
+                    // destroy the decoder to release all resources
+                    decoder.destroy();
+                    decoder = null;
                 }
 
                 if (!pathTo.equals("/static/")) {
@@ -120,10 +126,6 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                 } else {
                     ctx.writeAndFlush(serverError());
                 }
-
-                // destroy the decoder to release all resources
-                decoder.destroy();
-                decoder = null;
             }
         }
     }
