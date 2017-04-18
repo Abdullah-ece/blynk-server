@@ -7,13 +7,6 @@ import ProductCreateMetadataTab from './scenes/Metadata';
 
 class ProductCreate extends React.Component {
 
-  TABS = {
-    INFO: 'info',
-    METADATA: 'metadata',
-    DATA_STREAMS: 'datastreams',
-    EVENTS: 'events'
-  };
-
   constructor(props) {
     super(props);
 
@@ -23,6 +16,12 @@ class ProductCreate extends React.Component {
     };
   }
 
+  TABS = {
+    INFO: 'info',
+    METADATA: 'metadata',
+    DATA_STREAMS: 'datastreams',
+    EVENTS: 'events'
+  };
 
   handleTabChange(key) {
     this.setState({
