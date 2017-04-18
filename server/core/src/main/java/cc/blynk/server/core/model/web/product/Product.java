@@ -27,6 +27,8 @@ public class Product {
 
     public volatile MetaField[] metaFields;
 
+    public int deviceCount;
+
     public void update(Product updatedProduct) {
         this.name = updatedProduct.name;
         this.boardType = updatedProduct.boardType;

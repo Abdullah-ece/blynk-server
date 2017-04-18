@@ -109,6 +109,16 @@ public class UserDao {
         return result;
     }
 
+    public List<User> getAllUsersByOrgId(int orgId) {
+        List<User> result = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user.orgId == orgId) {
+                result.add(user);
+            }
+        }
+        return result;
+    }
+
     public User delete(UserKey userKey) {
         return users.remove(userKey);
     }

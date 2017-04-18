@@ -12,6 +12,8 @@ public class Device implements Target {
 
     public int id;
 
+    public int productId = -1;
+
     public volatile String name;
 
     public volatile String boardType;

@@ -8,10 +8,18 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import com.koloboke.collect.map.hash.HashIntIntMap;
+import com.koloboke.collect.map.hash.HashIntIntMaps;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.List;
 
 import static cc.blynk.core.http.Response.*;
 
@@ -25,10 +33,12 @@ import static cc.blynk.core.http.Response.*;
 public class ProductHandler extends BaseHttpHandler {
 
     private final OrganizationDao organizationDao;
+    private final UserDao userDao;
 
     public ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.organizationDao = holder.organizationDao;
+        this.userDao = holder.userDao;
     }
 
     @GET
@@ -42,7 +52,29 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        return ok(organization.products);
+        return ok(calcDeviceCount(organization));
+    }
+
+    //todo make sure performance is ok
+    private List<Product> calcDeviceCount(Organization org) {
+        HashIntIntMap productIdCount = productDeviceCount(org);
+        for (Product product : org.products) {
+            product.deviceCount = productIdCount.get(product.id);
+        }
+        return org.products;
+    }
+
+    private HashIntIntMap productDeviceCount(Organization org) {
+        HashIntIntMap productIdCount = HashIntIntMaps.newMutableMap();
+        List<User> users = userDao.getAllUsersByOrgId(org.id);
+        for (User user : users) {
+            for (DashBoard dash : user.profile.dashBoards) {
+                for (Device device : dash.devices) {
+                    productIdCount.addValue(device.productId, 1);
+                }
+            }
+        }
+        return productIdCount;
     }
 
     @PUT
