@@ -152,17 +152,12 @@ public class InvitationAPITest extends APIBaseTest {
         verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
-        String url = body.substring(body.indexOf("https"), body.indexOf("&"));
-
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);
-        assertTrue(url.startsWith("https://localhost:" + httpsPort + rootPath + "#/invite?token="));
-
         verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
 
-        HttpGet inviteGet = new HttpGet(url);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
