@@ -43,6 +43,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             "./server/http-api/target/classes",
             "../server/http-dashboard/target/classes",
             "../server/http-core/target/classes",
+            "../server/core/target",
             "/tmp/blynk",
     };
     /**

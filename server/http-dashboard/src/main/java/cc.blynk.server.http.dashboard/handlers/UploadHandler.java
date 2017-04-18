@@ -89,45 +89,58 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
 
             // example of reading only if at the end
             if (chunk instanceof LastHttpContent) {
-                String pathTo = "/static/";
                 try {
-                    while (decoder.hasNext()) {
-                        InterfaceHttpData data = decoder.next();
-                        if (data != null) {
-                            if (data instanceof DiskFileUpload) {
-                                DiskFileUpload diskFileUpload = (DiskFileUpload) data;
-                                Path tmpFile = diskFileUpload.getFile().toPath();
-                                String finalName = tmpFile.getFileName().toString();
-
-                                //this is just to make it work on team city.
-                                Path staticPath = Paths.get(ServerProperties.staticFilesFolder);
-                                if (!Files.exists(staticPath)) {
-                                    Files.createDirectories(staticPath);
-                                }
-
-                                Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
-                                pathTo += finalName;
-                            }
-                            data.release();
-                        }
+                    String path = finishUpload();
+                    if (path != null) {
+                        ctx.writeAndFlush(ok(path));
+                    } else {
+                        ctx.writeAndFlush(serverError());
                     }
-                } catch (EndOfDataDecoderException endOfData) {
-                    //ignore. that's fine.
+
                 } catch (NoSuchFileException e) {
                     log.error("Unable to copy uploaded image to static folder. Reason : {}", e.getMessage());
-                } finally {
-                    // destroy the decoder to release all resources
-                    decoder.destroy();
-                    decoder = null;
-                }
-
-                if (!pathTo.equals("/static/")) {
-                    ctx.writeAndFlush(ok(pathTo));
-                } else {
+                    ctx.writeAndFlush(serverError());
+                } catch (Exception e) {
+                    log.error("Error during file upload.", e);
                     ctx.writeAndFlush(serverError());
                 }
             }
         }
+    }
+
+    private String finishUpload() throws Exception{
+        String pathTo = null;
+        try {
+            while (decoder.hasNext()) {
+                InterfaceHttpData data = decoder.next();
+                if (data != null) {
+                    if (data instanceof DiskFileUpload) {
+                        DiskFileUpload diskFileUpload = (DiskFileUpload) data;
+                        Path tmpFile = diskFileUpload.getFile().toPath();
+                        String nameWithoutExtension = diskFileUpload.getFilename().substring(0, diskFileUpload.getFilename().lastIndexOf("."));
+                        String finalName = tmpFile.getFileName().toString().replace("_" + nameWithoutExtension, "");
+
+                        //this is just to make it work on team city.
+                        Path staticPath = Paths.get(ServerProperties.staticFilesFolder);
+                        if (!Files.exists(staticPath)) {
+                            Files.createDirectories(staticPath);
+                        }
+
+                        Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
+                        pathTo =  "/static/" + finalName;
+                    }
+                    data.release();
+                }
+            }
+        } catch (EndOfDataDecoderException endOfData) {
+            //ignore. that's fine.
+        } finally {
+            // destroy the decoder to release all resources
+            decoder.destroy();
+            decoder = null;
+        }
+
+        return pathTo;
     }
 
     @Override
