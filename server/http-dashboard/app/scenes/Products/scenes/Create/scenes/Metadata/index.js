@@ -10,43 +10,40 @@ import * as ProductAction from 'data/Products/actions';
 @connect((state) => ({
   MetadataFields: state.Products.creating.metadata.fields
 }), (dispatch) => ({
-  addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch)
+  addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch),
+  deleteMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldDelete, dispatch),
+  updateMetadataFieldValues: bindActionCreators(ProductAction.ProductMetadataFieldValuesUpdate, dispatch)
 }))
 class ProductMetadata extends React.Component {
 
   static propTypes = {
     MetadataFields: React.PropTypes.array,
-    addMetadataField: React.PropTypes.func
+    addMetadataField: React.PropTypes.func,
+    deleteMetadataField: React.PropTypes.func,
+    updateMetadataFieldValues: React.PropTypes.func,
   };
 
   constructor(props) {
     super(props);
+  }
 
-    props.addMetadataField({
-      type: MetadataService.Fields.TEXT,
-      values: {
-        name: 'Series',
-        value: ''
-      }
-    });
-
-    props.addMetadataField({
-      type: MetadataService.Fields.TEXT,
-      values: {
-        name: 'Manufactured By',
-        value: 'Apple'
-      }
+  handleChangeField(values, dispatch, props) {
+    this.props.updateMetadataFieldValues({
+      id: props.id,
+      values: values
     });
   }
 
   getFields() {
     const fields = [];
-    this.props.MetadataFields.forEach((field, key) => {
+    this.props.MetadataFields.forEach((field) => {
 
       const props = {
-        id: key,
-        key: key,
-        form: `metadatafield${key}`
+        id: field.id,
+        key: field.id,
+        form: `metadatafield${field.id}`,
+        onDelete: this.handleDeleteField.bind(this),
+        onChange: this.handleChangeField.bind(this)
       };
 
       if (field.type === MetadataService.Fields.TEXT) {
@@ -76,6 +73,12 @@ class ProductMetadata extends React.Component {
     });
   }
 
+  handleDeleteField(key) {
+    this.props.deleteMetadataField({
+      id: key
+    });
+  }
+
   render() {
 
     const fields = this.getFields();
@@ -84,12 +87,6 @@ class ProductMetadata extends React.Component {
       <div>
         <Metadata.ItemsList>
           { fields }
-          {/*<MetadataFields.TextField form="form1"/>*/}
-          {/*<MetadataFields.TextField form="form2"/>*/}
-          {/*<MetadataFields.TextField form="form3"/>*/}
-          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>*/}
-          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>*/}
-          {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>*/}
         </Metadata.ItemsList>
         <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>

@@ -10,7 +10,6 @@ import Validation from 'services/Validation';
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
-    myProperty: selector(state, 'name'),
     fields: {
       name: selector(state, 'name'),
       value: selector(state, 'value')
