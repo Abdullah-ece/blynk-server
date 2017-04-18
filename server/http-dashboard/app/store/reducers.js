@@ -9,12 +9,14 @@ import {reducer as formReducer} from 'redux-form';
 import Login from '../data/Login/reducers';
 import Account from '../data/Account/reducers';
 import Organization from '../data/Organization/reducers';
+import Products from '../data/Products/reducers';
 
 const reducers = {
   form: formReducer,
   Login,
   Account,
   Organization,
+  Products
 };
 
 export default combineReducers(reducers);

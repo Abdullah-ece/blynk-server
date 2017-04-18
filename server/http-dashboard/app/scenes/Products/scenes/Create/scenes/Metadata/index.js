@@ -3,110 +3,94 @@ import AddNewMetadataField from "../../components/AddNewMetadataField/index";
 import {Metadata as MetadataService} from 'services/Products';
 import Metadata from "../../../../components/Metadata/index";
 const MetadataFields = Metadata.Fields;
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import * as ProductAction from 'data/Products/actions';
 
+@connect((state) => ({
+  MetadataFields: state.Products.creating.metadata.fields
+}), (dispatch) => ({
+  addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch)
+}))
 class ProductMetadata extends React.Component {
+
+  static propTypes = {
+    MetadataFields: React.PropTypes.array,
+    addMetadataField: React.PropTypes.func
+  };
+
   constructor(props) {
     super(props);
 
-    this.state = {
-      metadataIntroVisible: null,
-      metadata: {}
-    };
-  }
-
-  handleItemChange(id, values) {
-    let metadata = Object.assign({}, this.state.metadata);
-
-    for (let key in values) {
-      const value = values[key];
-      Object.assign(metadata[id].values, {
-        [key]: value
-      });
-    }
-
-    this.setState({metadata: metadata});
-  }
-
-  isUnique(id, field, name, cb) {
-    if (name) {
-      for (let key in this.state.metadata) {
-        const values = this.state.metadata[key].values;
-        if (Number(key) !== Number(id) && name === values.name) {
-          return cb(true);
-        }
-      }
-    }
-    cb();
-  }
-
-  genMetadataId() {
-    if (!Object.keys(this.state.metadata).length) return 1;
-
-    let max = Math.max.apply({}, Object.keys(this.state.metadata));
-    if (!isNaN(max))
-      return ++max;
-
-    return 1;
-  }
-
-  addMetadataField(params) {
-    const id = this.genMetadataId();
-
-    const metadata = Object.assign({}, this.state.metadata, {
-      [id]: {
-        id,
-        type: params.type,
-        values: {}
+    props.addMetadataField({
+      type: MetadataService.Fields.TEXT,
+      values: {
+        name: 'Series',
+        value: ''
       }
     });
 
-    this.setState({
-      metadata: metadata
+    props.addMetadataField({
+      type: MetadataService.Fields.TEXT,
+      values: {
+        name: 'Manufactured By',
+        value: 'Apple'
+      }
     });
   }
 
-  handleDelete(id) {
-
-    let metadata = Object.assign({}, this.state.metadata);
-
-    delete metadata[id];
-
-    this.setState({metadata: metadata});
-  }
-
-  generateFields() {
+  getFields() {
     const fields = [];
-    Object.keys(this.state.metadata).forEach((id) => {
-      const field = this.state.metadata[id];
+    this.props.MetadataFields.forEach((field, key) => {
 
       const props = {
-        isUnique: this.isUnique.bind(this),
-        onChange: this.handleItemChange.bind(this),
-        key: id,
-        onDelete: this.handleDelete.bind(this),
-        id: Number(id)
+        id: key,
+        key: key,
+        form: `metadatafield${key}`
       };
 
       if (field.type === MetadataService.Fields.TEXT) {
-        fields.push(<MetadataFields.TextField {...props}/>);
+        fields.push(
+          <MetadataFields.TextField
+            {...props}
+            initialValues={{
+              name: field.values.name,
+              value: field.values.value
+            }}
+          />
+        );
       }
+
     });
 
     return fields;
   }
 
+  addMetadataField(params) {
+    this.props.addMetadataField({
+      type: params.type,
+      values: {
+        name: '',
+        value: ''
+      }
+    });
+  }
+
   render() {
 
-    const fields = this.generateFields();
+    const fields = this.getFields();
 
     return (
       <div>
-        { !!fields.length && <Metadata.ItemsList>
+        <Metadata.ItemsList>
           { fields }
+          {/*<MetadataFields.TextField form="form1"/>*/}
+          {/*<MetadataFields.TextField form="form2"/>*/}
+          {/*<MetadataFields.TextField form="form3"/>*/}
           {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={1}/>*/}
           {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={2}/>*/}
           {/*<MetadataFields.TextField onChange={this.handleItemChange.bind(this)} id={3}/>*/}
-        </Metadata.ItemsList> }
+        </Metadata.ItemsList>
         <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
     );

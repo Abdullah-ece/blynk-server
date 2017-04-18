@@ -17,20 +17,26 @@ class MetadataItem extends React.Component {
       this.props.onDelete();
   }
 
-  render() {
+  preview() {
 
-    let preview;
+    if (!this.props.preview.isTouched && !this.props.preview.values.name) {
+      return null;
+    }
 
-    if (this.props.preview.isTouched && this.props.preview.values.name) {
-      preview = (<Preview>
+    if (this.props.preview.invalid) {
+      return (<Preview> <Preview.Unavailable /> </Preview>);
+    }
+
+    return (
+      <Preview>
         <Preview.Name>{this.props.preview.values.name}</Preview.Name>
         <Preview.Value>{this.props.preview.values.value || 'Empty'}</Preview.Value>
-      </Preview>);
-    } else if (!this.props.preview.isTouched) {
-      preview = '';
-    } else {
-      preview = <Preview> <Preview.Unavailable /> </Preview>;
-    }
+      </Preview>
+    );
+
+  }
+
+  render() {
 
     let deleteButton;
     if (this.props.touched) {
@@ -60,7 +66,7 @@ class MetadataItem extends React.Component {
             </FormItem>
           </Col>
           <Col span={6} offset={1}>
-            { preview }
+            { this.preview() }
           </Col>
         </Row>
         <div className="product-metadata-item-tools">

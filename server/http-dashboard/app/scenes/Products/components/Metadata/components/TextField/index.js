@@ -1,28 +1,46 @@
 import React from 'react';
 import Metadata from '../../index';
 import FormItem from 'components/FormItem';
-import {Input, Form} from 'antd';
-import {formHasError, getFormFirstError} from 'services/Form';
+import {Input} from 'antd';
+import {MetadataField as MetadataFormField} from 'components/Form';
+import {reduxForm, formValueSelector} from 'redux-form';
+import {connect} from 'react-redux';
+import Validation from 'services/Validation';
 
-class TextField extends React.Component {
+@connect((state, ownProps) => {
+  const selector = formValueSelector(ownProps.form);
+  return {
+    myProperty: selector(state, 'name'),
+    fields: {
+      name: selector(state, 'name'),
+      value: selector(state, 'value')
+    }
+  };
+})
+@reduxForm()
+export default class TextField extends React.Component {
 
   static propTypes = {
     id: React.PropTypes.number,
-    form: React.PropTypes.object,
+    fields: React.PropTypes.object,
+    pristine: React.PropTypes.bool,
+    invalid: React.PropTypes.bool,
+    anyTouched: React.PropTypes.bool,
     onDelete: React.PropTypes.func,
     isUnique: React.PropTypes.func
   };
 
   getPreviewValues() {
-    const name = this.props.form.getFieldValue('name');
-    const value = this.props.form.getFieldValue('value');
+    const name = this.props.fields.name;
+    const value = this.props.fields.value;
+
     return {
       values: {
-        name: name ? `${name}:` : null,
-        value: value
+        name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+        value: value && typeof value === 'string' ? value.trim() : null
       },
-      isTouched: this.props.form.isFieldsTouched(),
-      errors: this.props.form.getFieldsError()
+      isTouched: this.props.anyTouched,
+      invalid: this.props.invalid
     };
   }
 
@@ -33,47 +51,24 @@ class TextField extends React.Component {
 
   render() {
 
-    const {getFieldDecorator} = this.props.form;
-    const fieldsErrors = this.props.form.getFieldsError();
-
     return (
-      <Metadata.Item touched={this.props.form.isFieldsTouched()} preview={this.getPreviewValues()}
+      <Metadata.Item touched={this.props.anyTouched} preview={this.getPreviewValues()}
                      onDelete={this.handleDelete.bind(this)}>
-        <Form>
-          <FormItem offset={false}>
-            <FormItem.TitleGroup>
-              <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
-              <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
-            </FormItem.TitleGroup>
-            <FormItem.Content>
-              <Form.Item validateStatus={formHasError(fieldsErrors) ? 'error' : 'success'}
-                         help={getFormFirstError(fieldsErrors)} required={true}>
-                <Input.Group compact>
-                  {getFieldDecorator('name', {
-                    rules: [
-                      {validator: this.props.isUnique.bind(this, this.props.id), message: 'Name should be unique'},
-                      {required: true, message: 'Name is required'},
-                    ]
-                  })(
-                    <Input placeholder="Field name" style={{width: '50%'}}/>
-                  )}
-                  {getFieldDecorator('value')(
-                    <Input placeholder="Default value" style={{width: '50%'}}/>
-                  )}
-                </Input.Group>
-              </Form.Item>
-            </FormItem.Content>
-          </FormItem>
-        </Form>
+        <FormItem offset={false}>
+          <FormItem.TitleGroup>
+            <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
+            <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
+          </FormItem.TitleGroup>
+          <FormItem.Content>
+            <Input.Group compact>
+              <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
+                Validation.Rules.required
+              ]}/>
+              <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
+            </Input.Group>
+          </FormItem.Content>
+        </FormItem>
       </Metadata.Item>
     );
   }
 }
-
-export default Form.create({
-  onValuesChange: (props, values) => {
-    if (props.onChange && props.id) {
-      props.onChange(props.id, values);
-    }
-  }
-})(TextField);

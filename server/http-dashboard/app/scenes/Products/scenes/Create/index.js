@@ -7,6 +7,23 @@ import ProductCreateMetadataTab from './scenes/Metadata';
 
 class ProductCreate extends React.Component {
 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
+  static propTypes = {
+    params: React.PropTypes.object
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      activeTab: props.params.tab || this.TABS.INFO,
+      isMetadataInfoRead: false
+    };
+  }
+
   TABS = {
     INFO: 'info',
     METADATA: 'metadata',
@@ -14,20 +31,13 @@ class ProductCreate extends React.Component {
     EVENTS: 'events'
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activeTab: 0,
-      isMetadataInfoRead: false
-    };
-  }
-
 
   handleTabChange(key) {
     this.setState({
       activeTab: key
     });
+
+    this.context.router.push(`/products/create/${key}`);
   }
 
   isMetadataIntroductionMessageVisible() {
@@ -66,7 +76,8 @@ class ProductCreate extends React.Component {
                   onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
           </Popover>}
 
-          <Tabs defaultActiveKey={this.TABS.INFO} onChange={this.handleTabChange.bind(this)} className="products-tabs">
+          <Tabs defaultActiveKey={this.TABS.INFO} activeKey={this.state.activeTab}
+                onChange={this.handleTabChange.bind(this)} className="products-tabs">
             <Tabs.TabPane tab="Info" key={this.TABS.INFO}>
               <ProductCreateInfoTab />
             </Tabs.TabPane>

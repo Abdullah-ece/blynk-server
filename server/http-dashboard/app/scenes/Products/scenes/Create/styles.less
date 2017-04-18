@@ -56,3 +56,33 @@
   margin-left: -15px;
   padding: 0 15px;
 }
+
+.ant-input-group {
+  display: flex;
+  .ant-form-item.ant-row {
+    width: 100%;
+    .ant-form-item-control {
+      width: 100%;
+      input {
+        width: 100%;
+      }
+    }
+    &:last-child {
+      input {
+        border-radius: 0 4px 4px 0;
+      }
+    }
+    &:first-child {
+      input {
+        border-right: 0;
+        border-radius: 4px 0 0 4px;
+      }
+    }
+    &:not(:first-child):not(:last-child) {
+      input {
+        border-right: 0;
+        border-radius: 0;
+      }
+    }
+  }
+}
