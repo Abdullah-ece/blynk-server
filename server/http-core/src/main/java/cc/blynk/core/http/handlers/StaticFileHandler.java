@@ -1,7 +1,6 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -12,6 +11,7 @@ import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
@@ -213,7 +213,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         HttpUtil.setContentLength(response, fileLength);
 
         //setting content type
-        response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
+        setContentTypeHeader(response, file);
         setDateAndCacheHeaders(response, file);
 
         if (HttpUtil.isKeepAlive(request)) {
@@ -253,6 +253,19 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             }
         }
         return null;
+    }
+
+    /**
+     * Sets the content type header for the HTTP Response
+     *
+     * @param response
+     *            HTTP response
+     * @param file
+     *            file to extract content type
+     */
+    private static void setContentTypeHeader(HttpResponse response, File file) {
+        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
     }
 
     @Override

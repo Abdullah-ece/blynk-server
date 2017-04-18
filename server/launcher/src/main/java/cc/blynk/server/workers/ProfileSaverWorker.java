@@ -46,7 +46,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     public void run() {
         final long now = System.currentTimeMillis();
         try {
-            saveOrgs(now);
+            saveOrgs();
         } catch (Throwable t) {
             log.error("Error saving organizations.", t);
         }
@@ -58,7 +58,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         lastStart = now;
     }
 
-    private void saveOrgs(long now) {
+    private void saveOrgs() {
         log.debug("Starting saving organization db.");
         ArrayList<Organization> orgs = saveModifiedOrgs();
         log.debug("Saving organization db finished. Modified {} organizations.", orgs.size());
