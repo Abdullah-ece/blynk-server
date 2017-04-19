@@ -133,6 +133,7 @@ class ProductMetadata extends React.Component {
         { this.props.MetadataFields && this.props.MetadataFields.length && (
           <this.SortableList items={this.props.MetadataFields} onSortEnd={this.onSortEnd.bind(this)}
                              useDragHandle={true}
+                             lockAxis="y"
                              helperClass="product-metadata-item-drag-active"/>) || null
         }
 

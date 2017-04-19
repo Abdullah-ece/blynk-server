@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Select, Icon, Popconfirm} from 'antd';
+import {Row, Col, Select, Icon, Popconfirm, Button} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
 import {SortableHandle} from 'react-sortable-hoc';
@@ -46,10 +46,10 @@ class MetadataItem extends React.Component {
     if (this.props.touched) {
       deleteButton = (<Popconfirm title="Are you sure you want to delete this task?" overlayClassName="danger"
                                   onConfirm={this.handleDelete.bind(this)} okText="Yes" cancelText="No">
-        <Icon type="delete"/>
+        <Button icon="delete" size="small" onClick={this.handleDelete.bind(this)}/>
       </Popconfirm>);
     } else {
-      deleteButton = (<Icon type="delete" onClick={this.handleDelete.bind(this)}/>);
+      deleteButton = (<Button size="small" icon="delete" onClick={this.handleDelete.bind(this)}/>);
     }
 
     return (
@@ -76,7 +76,7 @@ class MetadataItem extends React.Component {
         <div className="product-metadata-item-tools">
           <DragHandler/>
           {deleteButton}
-          <Icon type="copy" onClick={this.props.onClone}/>
+          <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
         </div>
       </div>
     );
