@@ -2,6 +2,9 @@ import React from 'react';
 import {Row, Col, Select, Icon, Popconfirm} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
+import {SortableHandle} from 'react-sortable-hoc';
+
+const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 
 class MetadataItem extends React.Component {
 
@@ -9,6 +12,7 @@ class MetadataItem extends React.Component {
     preview: React.PropTypes.object,
     children: React.PropTypes.any,
     onDelete: React.PropTypes.func,
+    onClone: React.PropTypes.func,
     touched: React.PropTypes.bool
   };
 
@@ -70,7 +74,7 @@ class MetadataItem extends React.Component {
           </Col>
         </Row>
         <div className="product-metadata-item-tools">
-          <Icon type="bars"/>
+          <DragHandler/>
           {deleteButton}
           <Icon type="copy" onClick={this.props.onClone}/>
         </div>

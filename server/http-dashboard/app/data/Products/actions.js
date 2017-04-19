@@ -18,3 +18,10 @@ export function ProductMetadataFieldValuesUpdate(data = {}) {
     data: data
   };
 }
+
+export function ProductMetadataFieldsOrderUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_METADATA_FIELDS_ORDER_UPDATE',
+    data: data
+  };
+}

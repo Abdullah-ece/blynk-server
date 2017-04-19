@@ -40,6 +40,21 @@ export default function Account(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_METADATA_FIELDS_ORDER_UPDATE":
+
+      return {
+        ...state,
+        creating: {
+          ...state.creating,
+          metadata: {
+            ...state.creating.metadata,
+            fields: [
+              ...action.data
+            ]
+          }
+        }
+      };
+
     case "PRODUCT_METADATA_FIELD_VALUES_UPDATE":
 
       return {

@@ -7,13 +7,15 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as ProductAction from 'data/Products/actions';
 import _ from 'lodash';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 @connect((state) => ({
   MetadataFields: state.Products.creating.metadata.fields
 }), (dispatch) => ({
   addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch),
   deleteMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldDelete, dispatch),
-  updateMetadataFieldValues: bindActionCreators(ProductAction.ProductMetadataFieldValuesUpdate, dispatch)
+  updateMetadataFieldValues: bindActionCreators(ProductAction.ProductMetadataFieldValuesUpdate, dispatch),
+  updateMetadataFieldsOrder: bindActionCreators(ProductAction.ProductMetadataFieldsOrderUpdate, dispatch)
 }))
 class ProductMetadata extends React.Component {
 
@@ -22,6 +24,7 @@ class ProductMetadata extends React.Component {
     addMetadataField: React.PropTypes.func,
     deleteMetadataField: React.PropTypes.func,
     updateMetadataFieldValues: React.PropTypes.func,
+    updateMetadataFieldsOrder: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -35,35 +38,43 @@ class ProductMetadata extends React.Component {
     });
   }
 
-  getFields() {
-    const fields = [];
-    this.props.MetadataFields.forEach((field) => {
+  SortableItem = SortableElement(({value}) => {
 
-      const props = {
-        id: field.id,
-        key: field.id,
-        form: `metadatafield${field.id}`,
-        onDelete: this.handleDeleteField.bind(this),
-        onChange: this.handleChangeField.bind(this),
-        onClone: this.handleCloneField.bind(this)
-      };
+    const field = value;
 
-      if (field.type === MetadataService.Fields.TEXT) {
-        fields.push(
-          <MetadataFields.TextField
-            {...props}
-            initialValues={{
-              name: field.values.name,
-              value: field.values.value
-            }}
-          />
-        );
-      }
+    const props = {
+      id: field.id,
+      key: field.id,
+      form: `metadatafield${field.id}`,
+      onChange: this.handleChangeField.bind(this),
+      onDelete: this.handleDeleteField.bind(this),
+      onClone: this.handleCloneField.bind(this)
+    };
 
-    });
+    if (field.type === MetadataService.Fields.TEXT) {
+      return (
+        <MetadataFields.TextField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            value: field.values.value
+          }}
+        />
+      );
+    }
+  });
 
-    return fields;
-  }
+  SortableList = SortableContainer(({items}) => {
+    return (
+      <Metadata.ItemsList>
+        {items.map((value, index) => {
+          return (
+            <this.SortableItem key={`item-${value.id}`} index={index} value={value}/>
+          );
+        })}
+      </Metadata.ItemsList>
+    );
+  });
 
   handleCloneField(id) {
 
@@ -94,15 +105,21 @@ class ProductMetadata extends React.Component {
     });
   }
 
-  render() {
+  onSortEnd({oldIndex, newIndex}) {
 
-    const fields = this.getFields();
+    this.props.updateMetadataFieldsOrder(
+      arrayMove(this.props.MetadataFields, oldIndex, newIndex)
+    );
+
+  }
+
+  render() {
 
     return (
       <div>
-        <Metadata.ItemsList>
-          { fields }
-        </Metadata.ItemsList>
+        <this.SortableList items={this.props.MetadataFields} onSortEnd={this.onSortEnd.bind(this)} useDragHandle={true}
+                           helperClass="product-metadata-item-drag-active"/>
+
         <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
     );
