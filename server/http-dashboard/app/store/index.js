@@ -32,10 +32,13 @@ const persisStoreConfig = {
      there is white list of stores we should store on storage like LocalStorage.
      Description for each of whitelists below:
      - Login - stores user token
+     - Account - ????
+     - Storage - Created specially to store data on localStorage
      - Name - description
      */
     'Login',
-    'Account'
+    'Account',
+    'Storage'
   ]
 };
 /* Persist Store Config for DEV */

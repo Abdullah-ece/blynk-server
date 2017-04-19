@@ -10,13 +10,15 @@ import Login from '../data/Login/reducers';
 import Account from '../data/Account/reducers';
 import Organization from '../data/Organization/reducers';
 import Product from '../data/Product/reducers';
+import Storage from '../data/Storage/reducers';
 
 const reducers = {
   form: formReducer,
   Login,
   Account,
   Organization,
-  Product
+  Product,
+  Storage
 };
 
 export default combineReducers(reducers);

@@ -4,7 +4,15 @@ import {Button, Tabs, Icon, Popover} from 'antd';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 import ProductCreateInfoTab from './scenes/Info';
 import ProductCreateMetadataTab from './scenes/Metadata';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {ProductsUpdateMetadataInfoRead} from 'data/Storage/actions';
 
+@connect((state) => ({
+  isMetadataInfoRead: state.Storage.products.isMetadataInfoRead
+}), (dispatch) => ({
+  updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch)
+}))
 class ProductCreate extends React.Component {
 
   static contextTypes = {
@@ -12,7 +20,9 @@ class ProductCreate extends React.Component {
   };
 
   static propTypes = {
-    params: React.PropTypes.object
+    params: React.PropTypes.object,
+    isMetadataInfoRead: React.PropTypes.bool,
+    updateMetadataInfoReadFlag: React.PropTypes.func
   };
 
   constructor(props) {
@@ -20,7 +30,7 @@ class ProductCreate extends React.Component {
 
     this.state = {
       activeTab: props.params.tab || this.TABS.INFO,
-      isMetadataInfoRead: false
+      metadataIntroVisible: false
     };
   }
 
@@ -41,16 +51,24 @@ class ProductCreate extends React.Component {
   }
 
   isMetadataIntroductionMessageVisible() {
-    if (this.state.metadataIntroVisible === null) return !this.state.isMetadataInfoRead;
 
-    return !!this.state.metadataIntroVisible;
+    if (!this.props.isMetadataInfoRead) return true;
+
+    return this.state.metadataIntroVisible;
   }
 
   toggleMetadataIntroductionMessage() {
+
     this.setState({
-      metadataIntroVisible: this.state.metadataIntroVisible === null ? false : !this.state.metadataIntroVisible,
-      isMetadataInfoRead: true
+      metadataIntroVisible: !this.state.metadataIntroVisible,
     });
+
+    if (!this.props.isMetadataInfoRead) {
+      this.props.updateMetadataInfoReadFlag(true);
+      this.setState({
+        metadataIntroVisible: false
+      });
+    }
   }
 
   render() {
