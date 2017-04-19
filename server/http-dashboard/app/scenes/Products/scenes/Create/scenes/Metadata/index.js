@@ -130,8 +130,11 @@ class ProductMetadata extends React.Component {
 
     return (
       <div>
-        <this.SortableList items={this.props.MetadataFields} onSortEnd={this.onSortEnd.bind(this)} useDragHandle={true}
-                           helperClass="product-metadata-item-drag-active"/>
+        { this.props.MetadataFields && this.props.MetadataFields.length && (
+          <this.SortableList items={this.props.MetadataFields} onSortEnd={this.onSortEnd.bind(this)}
+                             useDragHandle={true}
+                             helperClass="product-metadata-item-drag-active"/>) || null
+        }
 
         <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
