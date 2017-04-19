@@ -18,7 +18,7 @@ class ProductsIndex extends React.Component {
 
   static propTypes = {
     ProductsFetch: React.PropTypes.func,
-    Product: React.PropTypes.obj
+    Product: React.PropTypes.object
   };
 
   constructor(props) {
