@@ -5,12 +5,12 @@ import Metadata from "../../../../components/Metadata/index";
 const MetadataFields = Metadata.Fields;
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as ProductAction from 'data/Products/actions';
+import * as ProductAction from 'data/Product/actions';
 import _ from 'lodash';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 @connect((state) => ({
-  MetadataFields: state.Products.creating.metadata.fields
+  MetadataFields: state.Product.creating.metadata.fields
 }), (dispatch) => ({
   addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch),
   deleteMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldDelete, dispatch),
