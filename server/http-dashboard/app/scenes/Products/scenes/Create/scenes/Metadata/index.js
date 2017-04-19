@@ -6,6 +6,7 @@ const MetadataFields = Metadata.Fields;
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as ProductAction from 'data/Products/actions';
+import _ from 'lodash';
 
 @connect((state) => ({
   MetadataFields: state.Products.creating.metadata.fields
@@ -43,7 +44,8 @@ class ProductMetadata extends React.Component {
         key: field.id,
         form: `metadatafield${field.id}`,
         onDelete: this.handleDeleteField.bind(this),
-        onChange: this.handleChangeField.bind(this)
+        onChange: this.handleChangeField.bind(this),
+        onClone: this.handleCloneField.bind(this)
       };
 
       if (field.type === MetadataService.Fields.TEXT) {
@@ -61,6 +63,19 @@ class ProductMetadata extends React.Component {
     });
 
     return fields;
+  }
+
+  handleCloneField(id) {
+
+    const cloned = _.find(this.props.MetadataFields, {id: id});
+
+    this.props.addMetadataField({
+      ...cloned,
+      values: {
+        ...cloned.values,
+        name: `${cloned.values.name} Copy`
+      }
+    });
   }
 
   addMetadataField(params) {

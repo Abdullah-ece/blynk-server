@@ -16,10 +16,10 @@ export default function Account(state = initialState, action) {
           metadata: {
             ...state.creating.metadata,
             fields: state.creating.metadata.fields.concat({
+              ...action.data,
               id: state.creating.metadata.fields.reduce((acc, value) => (
                 acc < value.id ? value.id : acc
-              ), state.creating.metadata.fields.length ? state.creating.metadata.fields[0].id : 0) + 1,
-              ...action.data
+              ), state.creating.metadata.fields.length ? state.creating.metadata.fields[0].id : 0) + 1
             })
           }
         }

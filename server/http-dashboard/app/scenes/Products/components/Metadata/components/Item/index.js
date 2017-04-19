@@ -72,7 +72,7 @@ class MetadataItem extends React.Component {
         <div className="product-metadata-item-tools">
           <Icon type="bars"/>
           {deleteButton}
-          <Icon type="copy"/>
+          <Icon type="copy" onClick={this.props.onClone}/>
         </div>
       </div>
     );

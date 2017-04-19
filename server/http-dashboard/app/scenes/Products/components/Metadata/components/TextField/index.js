@@ -26,6 +26,7 @@ export default class TextField extends React.Component {
     invalid: React.PropTypes.bool,
     anyTouched: React.PropTypes.bool,
     onDelete: React.PropTypes.func,
+    onClone: React.PropTypes.func,
     isUnique: React.PropTypes.func
   };
 
@@ -48,11 +49,17 @@ export default class TextField extends React.Component {
       this.props.onDelete(this.props.id);
   }
 
+  handleClone() {
+    if (this.props.onClone)
+      this.props.onClone(this.props.id);
+  }
+
   render() {
 
     return (
       <Metadata.Item touched={this.props.anyTouched} preview={this.getPreviewValues()}
-                     onDelete={this.handleDelete.bind(this)}>
+                     onDelete={this.handleDelete.bind(this)}
+                     onClone={this.handleClone.bind(this)}>
         <FormItem offset={false}>
           <FormItem.TitleGroup>
             <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
