@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.Role;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -11,4 +13,12 @@ public class ShiftMetaField extends MetaField {
 
     public int to;
 
+    public ShiftMetaField() {
+    }
+
+    public ShiftMetaField(String name, Role role, int from, int to) {
+        super(name, role);
+        this.from = from;
+        this.to = to;
+    }
 }

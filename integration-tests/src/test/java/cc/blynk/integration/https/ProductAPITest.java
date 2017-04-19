@@ -1,7 +1,9 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
@@ -9,6 +11,8 @@ import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Currency;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,6 +24,30 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ProductAPITest extends APIBaseTest {
+
+    @Test
+    public void printProduct() throws Exception {
+        Product product = new Product();
+        product.id = 1;
+        product.name = "My Product";
+        product.boardType = "Arduino UNO";
+        product.connectionType = ConnectionType.WI_FI;
+        product.description = "Description";
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                new TextMetaField("My Farm", Role.ADMIN, "Farm of Smith"),
+                new ShiftMetaField("Farm of Smith", Role.ADMIN, 60, 120),
+                new NumberMetaField("Farm of Smith", Role.ADMIN, 10.222),
+                new MeasurementUnitMetaField("Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
+                new CostMetaField("Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99),
+                new ContactMetaField("Farm of Smith", Role.ADMIN, "Tech Support",
+                        "Dmitriy", "Dumanskiy", "dmitriy@blynk.cc", "+38063673333", "My street",
+                        "Kyiv", "Ukraine", "03322")
+        };
+
+        System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
+    }
 
     @Test
     public void getProductsNotAuthorized() throws Exception {

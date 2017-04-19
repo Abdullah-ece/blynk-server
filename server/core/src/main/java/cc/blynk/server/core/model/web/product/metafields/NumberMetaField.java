@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.Role;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -9,4 +11,11 @@ public class NumberMetaField extends MetaField {
 
     public double value;
 
+    public NumberMetaField() {
+    }
+
+    public NumberMetaField(String name, Role role, double value) {
+        super(name, role);
+        this.value = value;
+    }
 }

@@ -1,5 +1,9 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.Role;
+
+import java.util.Currency;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,8 +11,16 @@ package cc.blynk.server.core.model.web.product.metafields;
  */
 public class CostMetaField extends MetaField {
 
-    public String currency;
+    public Currency currency;
 
     public double value;
 
+    public CostMetaField() {
+    }
+
+    public CostMetaField(String name, Role role, Currency currency, double value) {
+        super(name, role);
+        this.currency = currency;
+        this.value = value;
+    }
 }

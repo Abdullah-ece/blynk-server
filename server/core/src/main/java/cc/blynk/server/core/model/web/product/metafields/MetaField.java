@@ -30,4 +30,11 @@ public abstract class MetaField {
 
     public Role role;
 
+    public MetaField() {
+    }
+
+    public MetaField(String name, Role role) {
+        this.name = name;
+        this.role = role;
+    }
 }
