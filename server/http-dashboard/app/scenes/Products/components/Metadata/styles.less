@@ -2,6 +2,13 @@
 
 @dnd-cursor: row-resize;
 
+.product-metadata-item-active {
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.10);
+  .product-metadata-item-tools {
+    opacity: 1;
+  }
+}
+
 .product-metadata-item {
   position: relative;
   padding: @style-size-4 @style-size-3 (@style-size-4 - 24px);
@@ -10,10 +17,7 @@
   transition: 0.3s;
   transition-property: box-shadow;
   &:hover {
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.10);
-    .product-metadata-item-tools {
-      opacity: 1;
-    }
+    .product-metadata-item-active;
   }
   &.active {
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.10);
