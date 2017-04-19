@@ -47,6 +47,7 @@ class ProductMetadata extends React.Component {
       key: field.id,
       form: `metadatafield${field.id}`,
       onChange: this.handleChangeField.bind(this),
+      validate: this.metadataFieldValidation.bind(this),
       onDelete: this.handleDeleteField.bind(this),
       onClone: this.handleCloneField.bind(this)
     };
@@ -75,6 +76,18 @@ class ProductMetadata extends React.Component {
       </Metadata.ItemsList>
     );
   });
+
+  metadataFieldValidation(values, props) {
+    const errors = {};
+
+    this.props.MetadataFields.forEach((field) => {
+      if (field.values.name === values.name && Number(props.id) !== Number(field.id)) {
+        errors.name = 'Name should be unique';
+      }
+    });
+
+    return errors;
+  }
 
   handleCloneField(id) {
 

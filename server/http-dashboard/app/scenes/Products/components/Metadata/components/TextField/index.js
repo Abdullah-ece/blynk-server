@@ -16,7 +16,9 @@ import Validation from 'services/Validation';
     }
   };
 })
-@reduxForm()
+@reduxForm({
+  touchOnChange: true
+})
 export default class TextField extends React.Component {
 
   static propTypes = {
