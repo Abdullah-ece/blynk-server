@@ -26,10 +26,13 @@ import com.fasterxml.jackson.databind.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.io.OutputStream;
 import java.util.StringJoiner;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * User: ddumanskiy
@@ -106,6 +109,29 @@ public final class JsonParser {
 
     public static String toJson(DashBoard dashBoard) {
         return toJson(dashboardWriter, dashBoard);
+    }
+
+    public static byte[] gzipDash(DashBoard dash) {
+        return writeJsonAsCompressedBytes(dashboardWriter, dash);
+    }
+
+    public static byte[] gzipDashRestrictive(DashBoard dash) {
+        return writeJsonAsCompressedBytes(restrictiveDashWriter, dash);
+    }
+
+    public static byte[] gzipProfile(Profile profile) {
+        return writeJsonAsCompressedBytes(profileWriter, profile);
+    }
+
+    private static byte[] writeJsonAsCompressedBytes(ObjectWriter objectWriter, Object o) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
+            objectWriter.writeValue(out, o);
+        } catch (Exception e) {
+            log.error("Error compressing data.", e);
+            return null;
+        }
+        return baos.toByteArray();
     }
 
     public static String toJsonRestrictiveDashboard(DashBoard dashBoard) {

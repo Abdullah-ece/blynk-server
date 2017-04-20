@@ -18,6 +18,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
@@ -59,6 +60,7 @@ public class HttpsAPIServer extends BaseServer {
                 final ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
+                pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
