@@ -38,13 +38,19 @@ class AddNewMetadataField extends React.Component {
     });
   }
 
+  addNumberField() {
+    this.props.onFieldAdd({
+      type: Metadata.Fields.NUMBER
+    });
+  }
+
   render() {
     return (
       <div className="products-add-new-metadata-field">
         <div className="products-add-new-metadata-field-title">+ Add new Metadata Field:</div>
         <div className="products-add-new-metadata-field-fields">
           <Button type="dashed" onClick={this.addTextField.bind(this)}>Text</Button>
-          {/*<Button type="dashed">Number</Button>*/}
+          <Button type="dashed" onClick={this.addNumberField.bind(this)}>Number</Button>
           {/*<Button type="dashed">Unit</Button>*/}
           {/*<Button type="dashed">Cost</Button>*/}
           {/*<Button type="dashed">Contact</Button>*/}

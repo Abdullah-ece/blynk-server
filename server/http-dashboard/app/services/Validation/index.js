@@ -8,7 +8,8 @@ export const Messages = {
   password: 'Password must contain only letters and numbers',
   email: 'Email is not correct',
   required: 'Field is required',
-  minLength: (n) => `Minimal length should be ${n} symbols`
+  minLength: (n) => `Minimal length should be ${n} symbols`,
+  number: 'Field should contain number'
 };
 
 export const Rules = {
@@ -19,6 +20,7 @@ export const Rules = {
   email: (value) => !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value) ? Messages.email : undefined,
   minLength: (n) => (value) => !value || value.length < n ? Messages.minLength(n) : undefined,
   required: (value) => !value ? Messages.required : undefined,
+  number: (value) => isNaN(Number(value)) ? Messages.number : undefined
 };
 
 const Validation = {
