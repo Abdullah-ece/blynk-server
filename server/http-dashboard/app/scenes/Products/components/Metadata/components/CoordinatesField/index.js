@@ -60,8 +60,6 @@ export default class CoordinatesField extends React.Component {
 
   render() {
 
-    console.log(this.props.invalid);
-
     return (
       <Metadata.Item touched={this.props.anyTouched} preview={this.getPreviewValues()}
                      onDelete={this.handleDelete.bind(this)}
