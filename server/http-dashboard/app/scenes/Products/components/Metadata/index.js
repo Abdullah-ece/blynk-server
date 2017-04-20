@@ -5,6 +5,7 @@ import ItemsList from './components/ItemsList';
 import TextField from './components/TextField';
 import NumberField from './components/NumberField';
 import CostField from './components/CostField';
+import TimeField from './components/TimeField';
 
 const Metadata = {
   Item: Item,
@@ -12,7 +13,8 @@ const Metadata = {
   Fields: {
     TextField,
     NumberField,
-    CostField
+    CostField,
+    TimeField
   }
 };
 

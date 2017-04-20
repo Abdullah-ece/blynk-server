@@ -50,6 +50,12 @@ class AddNewMetadataField extends React.Component {
     });
   }
 
+  addTimeField() {
+    this.props.onFieldAdd({
+      type: Metadata.Fields.TIME
+    });
+  }
+
   render() {
     return (
       <div className="products-add-new-metadata-field">
@@ -57,7 +63,7 @@ class AddNewMetadataField extends React.Component {
         <div className="products-add-new-metadata-field-fields">
           <Button type="dashed" onClick={this.addTextField.bind(this)}>Text</Button>
           <Button type="dashed" onClick={this.addNumberField.bind(this)}>Number</Button>
-          {/*<Button type="dashed">Unit</Button>*/}
+          <Button type="dashed" onClick={this.addTimeField.bind(this)}>Time</Button>
           <Button type="dashed" onClick={this.addCostField.bind(this)}>Cost</Button>
           {/*<Button type="dashed">Contact</Button>*/}
         </div>

@@ -3,6 +3,7 @@ export const Metadata = {
     TEXT: 'text',
     NUMBER: 'number',
     COST: 'cost',
+    TIME: 'time',
   }
 };
 

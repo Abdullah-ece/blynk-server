@@ -88,6 +88,18 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+
+    if (field.type === MetadataService.Fields.TIME) {
+      return (
+        <MetadataFields.TimeField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            value: field.values.value
+          }}
+        />
+      );
+    }
   });
 
   SortableList = SortableContainer(({items}) => {
