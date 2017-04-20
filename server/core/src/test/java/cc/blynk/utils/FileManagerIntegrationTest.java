@@ -24,8 +24,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FileManagerIntegrationTest {
 
-    private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false, false);
-    private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false, false);
+    private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false, Role.ADMIN);
+    private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false, Role.ADMIN);
 
     private FileManager fileManager;
 
