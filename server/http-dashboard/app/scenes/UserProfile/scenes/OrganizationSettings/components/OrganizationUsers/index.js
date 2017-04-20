@@ -109,7 +109,8 @@ class OrganizationUsers extends React.Component {
     this.props.OrganizationUsersDelete(this.props.Account.orgId, this.state.selectedRows).then(() => {
       this.props.OrganizationUsersFetch({id: this.props.Account.orgId}).then(() => {
         this.setState({
-          usersDeleteLoading: false
+          usersDeleteLoading: false,
+          selectedRows: 0
         });
       });
     });
