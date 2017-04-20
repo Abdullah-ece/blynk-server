@@ -100,6 +100,20 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+
+    if (field.type === MetadataService.Fields.COORDINATES) {
+      return (
+        <MetadataFields.CoordinatesField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            lat: field.values.lat,
+            long: field.values.long
+          }}
+        />
+      );
+    }
+
   });
 
   SortableList = SortableContainer(({items}) => {
