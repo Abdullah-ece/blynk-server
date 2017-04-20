@@ -4,6 +4,7 @@ export const Metadata = {
     NUMBER: 'number',
     COST: 'cost',
     TIME: 'time',
+    SHIFT: 'shift',
     COORDINATES: 'coordinates'
   }
 };
