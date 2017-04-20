@@ -75,6 +75,19 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+
+    if (field.type === MetadataService.Fields.COST) {
+      return (
+        <MetadataFields.CostField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            value: field.values.value,
+            currency: field.values.currency
+          }}
+        />
+      );
+    }
   });
 
   SortableList = SortableContainer(({items}) => {

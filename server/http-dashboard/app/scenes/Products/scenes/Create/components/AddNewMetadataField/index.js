@@ -44,6 +44,12 @@ class AddNewMetadataField extends React.Component {
     });
   }
 
+  addCostField() {
+    this.props.onFieldAdd({
+      type: Metadata.Fields.COST
+    });
+  }
+
   render() {
     return (
       <div className="products-add-new-metadata-field">
@@ -52,7 +58,7 @@ class AddNewMetadataField extends React.Component {
           <Button type="dashed" onClick={this.addTextField.bind(this)}>Text</Button>
           <Button type="dashed" onClick={this.addNumberField.bind(this)}>Number</Button>
           {/*<Button type="dashed">Unit</Button>*/}
-          {/*<Button type="dashed">Cost</Button>*/}
+          <Button type="dashed" onClick={this.addCostField.bind(this)}>Cost</Button>
           {/*<Button type="dashed">Contact</Button>*/}
         </div>
         {/* @todo uncomment when add additional types of metadata*/}

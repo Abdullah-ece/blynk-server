@@ -1,7 +1,8 @@
 export const Metadata = {
   Fields: {
     TEXT: 'text',
-    NUMBER: 'number'
+    NUMBER: 'number',
+    COST: 'cost',
   }
 };
 
