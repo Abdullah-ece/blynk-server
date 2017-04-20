@@ -34,11 +34,11 @@ export default class CostField extends React.Component {
   };
 
   Currency = {
-    '$': 'USD',
-    '€': 'EUR',
-    '£': 'GBP',
-    '¥': 'CNY',
-    '₽': 'RUB',
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CNY': '¥',
+    'RUB': '₽'
   };
 
   getPreviewValues() {
@@ -83,7 +83,8 @@ export default class CostField extends React.Component {
               <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
                 Validation.Rules.required
               ]}/>
-              <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>
+              <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}
+                                  defaultValue={this.Currency.USD}/>
               <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
                 Validation.Rules.number
               ]}/>

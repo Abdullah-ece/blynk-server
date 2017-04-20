@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {Field as FormField} from 'redux-form';
 
 export default class Field extends React.Component {
-  renderField({displayError = true, values, style, placeholder, input, meta: {touched, error, warning}}) {
+  renderField({displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}}) {
 
     let validateStatus = 'success';
     let help = '';
@@ -29,11 +29,11 @@ export default class Field extends React.Component {
           onChange={input.onChange}
           placeholder={placeholder}
           optionFilterProp="children"
-          value={input.value ? input.value : undefined}
+          value={input.value ? input.value : defaultValue ? defaultValue : undefined}
           filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           { _.map(values, (value, key) => (
-            <Select.Option key={key} value={key} stringValue={value}>{value}</Select.Option>
+            <Select.Option key={value} value={value} stringValue={key}>{key}</Select.Option>
           ))}
         </Select>
       </Form.Item>
