@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CostMetaField.class, name = "Cost"),
         @JsonSubTypes.Type(value = ContactMetaField.class, name = "Contact"),
         @JsonSubTypes.Type(value = MeasurementUnitMetaField.class, name = "Measurement"),
+        @JsonSubTypes.Type(value = TimeMetaField.class, name = "Time"),
+        @JsonSubTypes.Type(value = CoordinatesMetaField.class, name = "Coordinates")
 
 })
 public abstract class MetaField {

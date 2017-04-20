@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Currency;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,7 +44,9 @@ public class ProductAPITest extends APIBaseTest {
                 new CostMetaField("Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99),
                 new ContactMetaField("Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", "Dumanskiy", "dmitriy@blynk.cc", "+38063673333", "My street",
-                        "Kyiv", "Ukraine", "03322")
+                        "Kyiv", "Ukraine", "03322"),
+                new CoordinatesMetaField("Farm Location", Role.ADMIN, 22.222, 23.333),
+                new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
 
         System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
