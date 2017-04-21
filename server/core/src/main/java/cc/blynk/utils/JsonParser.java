@@ -2,6 +2,7 @@ package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -21,16 +22,17 @@ import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * User: ddumanskiy
@@ -56,10 +58,12 @@ public final class JsonParser {
     private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader productReader = mapper.readerFor(Product.class);
+
     private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
     private static final ObjectWriter errorMessageWriter = mapper.writerFor(ErrorMessage.class);
     private static final ObjectWriter okMessageWriter = mapper.writerFor(OkMessage.class);
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
+    private static final ObjectWriter userWebWriter = init().disable(MapperFeature.DEFAULT_VIEW_INCLUSION).writerWithView(Views.WebUser.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
@@ -91,12 +95,43 @@ public final class JsonParser {
         return toJson(userWriter, user);
     }
 
+    public static String toJsonWeb(User user) {
+        return toJson(userWebWriter, user);
+    }
+
+    public static String toJsonWeb(List<User> users) {
+        return toJson(userWebWriter, users);
+    }
+
     public static String toJson(Profile profile) {
         return toJson(profileWriter, profile);
     }
 
     public static String toJson(DashBoard dashBoard) {
         return toJson(dashboardWriter, dashBoard);
+    }
+
+    public static byte[] gzipDash(DashBoard dash) {
+        return writeJsonAsCompressedBytes(dashboardWriter, dash);
+    }
+
+    public static byte[] gzipDashRestrictive(DashBoard dash) {
+        return writeJsonAsCompressedBytes(restrictiveDashWriter, dash);
+    }
+
+    public static byte[] gzipProfile(Profile profile) {
+        return writeJsonAsCompressedBytes(profileWriter, profile);
+    }
+
+    private static byte[] writeJsonAsCompressedBytes(ObjectWriter objectWriter, Object o) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
+            objectWriter.writeValue(out, o);
+        } catch (Exception e) {
+            log.error("Error compressing data.", e);
+            return null;
+        }
+        return baos.toByteArray();
     }
 
     public static String toJsonRestrictiveDashboard(DashBoard dashBoard) {
@@ -121,6 +156,15 @@ public final class JsonParser {
 
     public static void writeOrg(File file, Organization org) throws IOException {
         organizationWriter.writeValue(file, org);
+    }
+
+    private static String toJson(ObjectWriter writer, List<User> users) {
+        try {
+            return writer.writeValueAsString(users);
+        } catch (Exception e) {
+            log.error("Error jsoning object.", e);
+        }
+        return "{}";
     }
 
     private static String toJson(ObjectWriter writer, Object o) {

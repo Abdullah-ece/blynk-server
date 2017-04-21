@@ -62,17 +62,12 @@ public class ResetPassAPITest extends APIBaseTest {
         verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(regularUser.email), eq("Password reset request."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
-        String url = body.substring(body.indexOf("https"), body.length() - 3);
-
-        String token = body.substring(body.indexOf("=") + 1, body.indexOf("&"));
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
-
-        url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);
-        assertTrue(url.startsWith("https://localhost:" + httpsPort + rootPath + "#/resetPass?token="));
 
         verify(mailWrapper).sendHtml(eq(regularUser.email), eq("Password reset request."), contains(rootPath + "#/resetPass?token="));
 
-        HttpGet inviteGet = new HttpGet(url);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -102,7 +97,6 @@ public class ResetPassAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(regularUser.email, user.email);
             assertEquals(regularUser.name, user.name);
-            assertEquals(hash, user.pass);
             assertEquals(regularUser.role, user.role);
             assertEquals(regularUser.orgId, user.orgId);
         }
@@ -128,17 +122,12 @@ public class ResetPassAPITest extends APIBaseTest {
         verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(admin.email), eq("Password reset request."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
-        String url = body.substring(body.indexOf("https"), body.length() - 3);
-
-        String token = body.substring(body.indexOf("=") + 1, body.indexOf("&"));
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
-
-        url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);
-        assertTrue(url.startsWith("https://localhost:" + httpsPort + rootPath + "#/resetPass?token="));
 
         verify(mailWrapper).sendHtml(eq(admin.email), eq("Password reset request."), contains(rootPath + "#/resetPass?token="));
 
-        HttpGet inviteGet = new HttpGet(url);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -166,7 +155,6 @@ public class ResetPassAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(admin.email, user.email);
             assertEquals(admin.name, user.name);
-            assertEquals("123", user.pass);
             assertEquals(admin.role, user.role);
             assertEquals(admin.orgId, user.orgId);
         }

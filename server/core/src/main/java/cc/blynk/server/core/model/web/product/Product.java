@@ -25,7 +25,20 @@ public class Product {
 
     public volatile long updatedAt;
 
+    public long createdAt;
+
     public volatile MetaField[] metaFields;
+
+    public volatile DataStream[] dataSteams;
+
+    public int deviceCount;
+
+    public volatile int version;
+
+    public Product() {
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = createdAt;
+    }
 
     public void update(Product updatedProduct) {
         this.name = updatedProduct.name;
@@ -34,6 +47,9 @@ public class Product {
         this.description = updatedProduct.description;
         this.logoUrl = updatedProduct.logoUrl;
         this.metaFields = updatedProduct.metaFields;
+        this.dataSteams = updatedProduct.dataSteams;
+        this.updatedAt = System.currentTimeMillis();
+        this.version++;
     }
 
     @Override

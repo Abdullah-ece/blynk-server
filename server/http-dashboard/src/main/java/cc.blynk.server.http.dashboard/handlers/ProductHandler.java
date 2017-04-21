@@ -8,10 +8,18 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.core.http.Response.*;
 
@@ -25,10 +33,12 @@ import static cc.blynk.core.http.Response.*;
 public class ProductHandler extends BaseHttpHandler {
 
     private final OrganizationDao organizationDao;
+    private final UserDao userDao;
 
     public ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.organizationDao = holder.organizationDao;
+        this.userDao = holder.userDao;
     }
 
     @GET
@@ -42,7 +52,30 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        return ok(organization.products);
+        return ok(calcDeviceCount(organization));
+    }
+
+    //todo make sure performance is ok
+    private List<Product> calcDeviceCount(Organization org) {
+        Map<Integer, Integer> productIdCount = productDeviceCount(org);
+        for (Product product : org.products) {
+            product.deviceCount = productIdCount.getOrDefault(product.id, 0);
+        }
+        return org.products;
+    }
+
+    private Map<Integer, Integer> productDeviceCount(Organization org) {
+        Map<Integer, Integer> productIdCount =  new HashMap<>();
+        List<User> users = userDao.getAllUsersByOrgId(org.id);
+        for (User user : users) {
+            for (DashBoard dash : user.profile.dashBoards) {
+                for (Device device : dash.devices) {
+                    Integer count = productIdCount.getOrDefault(device.productId, 0);
+                    productIdCount.put(device.productId, count + 1);
+                }
+            }
+        }
+        return productIdCount;
     }
 
     @PUT

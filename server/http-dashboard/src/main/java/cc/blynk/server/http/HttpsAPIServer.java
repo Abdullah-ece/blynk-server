@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
@@ -17,6 +18,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
@@ -50,17 +52,21 @@ public class HttpsAPIServer extends BaseServer {
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
 
+        final HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
+
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
+                pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);
                 pipeline.addLast(new HttpContentCompressor());
+                pipeline.addLast(httpAPILogic);
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };

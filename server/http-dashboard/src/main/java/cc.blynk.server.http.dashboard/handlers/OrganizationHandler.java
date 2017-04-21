@@ -39,6 +39,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     private final String INVITE_TEMPLATE;
     private final MailWrapper mailWrapper;
     private final String inviteURL;
+    private final String host;
     private final BlockingIOProcessor blockingIOProcessor;
     private final TokensPool tokensPool;
 
@@ -53,6 +54,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("reset-pass.host");
+        this.host = "https://" + host;
         this.inviteURL = "https://" + host + rootPath + "#/invite?token=";
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
@@ -98,7 +100,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             }
         }
 
-        return ok(userDao.getUsersByOrgId(orgId));
+        return ok(userDao.getUsersByOrgId(orgId, httpSession.user.email));
     }
 
     @POST
@@ -286,6 +288,11 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         User invitedUser = userDao.invite(userInvite, orgId, AppName.BLYNK);
 
+        if (invitedUser == null) {
+            log.error("User {} is already in a system.", userInvite.email);
+            return forbidden("User is already in a system.");
+        }
+
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);
 
@@ -294,9 +301,8 @@ public class OrganizationHandler extends BaseHttpHandler {
             try {
                 tokensPool.addToken(token, invitedUser);
                 String message = INVITE_TEMPLATE
-                        .replace("{name}", userInvite.name)
-                        .replace("{role}", userInvite.role.name().toLowerCase())
-                        .replace("{product_name}", org.name)
+                        .replace("{productName}", org.name)
+                        .replace("{host}", this.host)
                         .replace("{link}", inviteURL + token + "&email=" + URLEncoder.encode(userInvite.email, "UTF-8"));
                 mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);
@@ -308,7 +314,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             ctx.writeAndFlush(response);
         });
 
-        return noResponse();
+        return null;
     }
 
     private boolean isEmpty(Organization newOrganization) {

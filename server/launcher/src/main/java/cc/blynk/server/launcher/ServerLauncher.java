@@ -48,6 +48,7 @@ public class ServerLauncher {
     //required for QR generation
     static {
         System.setProperty("java.awt.headless", "true");
+        System.setProperty("io.netty.leakDetection.maxRecords", "20");
     }
 
     public static void main(String[] args) throws Exception {

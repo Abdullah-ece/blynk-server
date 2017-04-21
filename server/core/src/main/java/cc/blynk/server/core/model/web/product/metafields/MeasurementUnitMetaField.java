@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
+import cc.blynk.server.core.model.web.Role;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -11,4 +13,12 @@ public class MeasurementUnitMetaField extends MetaField {
 
     public String value;
 
+    public MeasurementUnitMetaField() {
+    }
+
+    public MeasurementUnitMetaField(String name, Role role, MeasurementUnit units, String value) {
+        super(name, role);
+        this.units = units;
+        this.value = value;
+    }
 }

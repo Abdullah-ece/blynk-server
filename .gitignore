@@ -7,3 +7,7 @@ node
 node_modules
 server/http-dashboard/src/main/resources/static
 logs/
+.project
+.classpath
+.settings
+dependency-reduced-pom.xml*.log

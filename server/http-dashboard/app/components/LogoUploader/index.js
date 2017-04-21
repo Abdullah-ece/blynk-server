@@ -24,7 +24,8 @@ class LogoUploader extends React.Component {
   draggerProps = {
     name: 'file',
     action: '/dashboard/upload',
-    showUploadList: false
+    showUploadList: false,
+    accept: 'image/*'
   };
 
   onChange(info) {

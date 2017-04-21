@@ -92,7 +92,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
-        if (response != Response.NO_RESPONSE) {
+        if (response != null) {
             log.debug("Sending response {}", response);
             ctx.writeAndFlush(response);
         }

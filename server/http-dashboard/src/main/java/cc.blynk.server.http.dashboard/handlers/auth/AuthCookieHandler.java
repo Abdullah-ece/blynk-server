@@ -35,7 +35,11 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
 
             if (httpSession == null) {
                 log.error("User is not logged.", request);
-                ctx.writeAndFlush(unauthorized());
+                try {
+                    ctx.writeAndFlush(unauthorized());
+                } finally {
+                    request.release();
+                }
                 return;
             } else {
                 ctx.channel().attr(SessionDao.userSessionAttributeKey).set(httpSession);

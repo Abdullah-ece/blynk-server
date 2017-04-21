@@ -36,7 +36,7 @@ public class OrganizationDao {
         }
         this.orgSequence = new AtomicInteger(largestOrgSequenceNumber);
         this.productSequence = new AtomicInteger(largestProductSequenceNumber);
-        log.debug("Organization sequence number is {}", largestOrgSequenceNumber);
+        log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
     public Organization add(Organization organization) {

@@ -99,10 +99,20 @@ public class UserDao {
         return users.values().stream().filter(user -> user.email.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
-    public List<User> getUsersByOrgId(int orgId) {
+    public List<User> getUsersByOrgId(int orgId, String filterMail) {
         List<User> result = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN) {
+            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN && !user.email.equals(filterMail)) {
+                result.add(user);
+            }
+        }
+        return result;
+    }
+
+    public List<User> getAllUsersByOrgId(int orgId) {
+        List<User> result = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user.orgId == orgId) {
                 result.add(user);
             }
         }
@@ -269,6 +279,7 @@ public class UserDao {
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
         User newUser = new User(email, null, appName, region, true, Role.STAFF);
+        newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
     }
@@ -276,16 +287,26 @@ public class UserDao {
     public void add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, Role.STAFF);
+        newUser.status = UserStatus.Active;
         add(newUser);
     }
 
     public void add(String email, String pass, String appName, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, role);
+        newUser.status = UserStatus.Active;
         add(newUser);
     }
 
     public User invite(UserInvite invite, int orgId, String appName) {
+        UserKey userKey = new UserKey(invite.email, appName);
+        User existingUser = users.get(userKey);
+
+        //do not allow to invite signed up user
+        if (existingUser != null && existingUser.status == UserStatus.Active) {
+            return null;
+        }
+
         User newUser = new User(invite.email, null, appName, region, false, invite.role);
         newUser.name = invite.name;
         newUser.orgId = orgId;

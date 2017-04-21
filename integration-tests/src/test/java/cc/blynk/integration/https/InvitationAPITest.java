@@ -93,6 +93,21 @@ public class InvitationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void userSendInvitationToExistingUser() throws Exception {
+        login(admin.email, admin.pass);
+
+        String email = "user@blynk.cc";
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"User is already in a system.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void sendInvitationFromSuperUser() throws Exception {
         login(admin.email, admin.pass);
 
@@ -137,17 +152,12 @@ public class InvitationAPITest extends APIBaseTest {
         verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
-        String url = body.substring(body.indexOf("https"), body.indexOf("&"));
-
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        url = url.replace("knight-qa.blynk.cc", "localhost:" + httpsPort);
-        assertTrue(url.startsWith("https://localhost:" + httpsPort + rootPath + "#/invite?token="));
-
         verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
 
-        HttpGet inviteGet = new HttpGet(url);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -175,7 +185,6 @@ public class InvitationAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(email, user.email);
             assertEquals(name, user.name);
-            assertEquals("123", user.pass);
             assertEquals(role, user.role);
             assertEquals(1, user.orgId);
         }

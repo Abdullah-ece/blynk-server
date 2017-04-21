@@ -86,8 +86,8 @@ public class Holder implements Closeable {
         this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
         this.organizationDao = new OrganizationDao(fileManager);
         this.blockingIOProcessor = new BlockingIOProcessor(
-                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000)
+                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
+                serverProperties.getIntProperty("notifications.queue.limit", 5000)
         );
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();

@@ -33,7 +33,7 @@ export default function Login(state = { isLoggedIn: false }, action) {
     case "API_RESET_PASS_SUCCESS":
       return {
         ...state,
-        isLoggedIn: true
+        isLoggedIn: false
       };
 
     case "API_INVITE_SUCCESS":

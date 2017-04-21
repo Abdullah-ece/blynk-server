@@ -19,8 +19,8 @@ import java.util.List;
 public class FileLoaderUtil {
 
     public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
-    public static final String INVITE_MAIL_BODY = "invite_template.txt";
-    public static final String RESET_PASS_MAIL_BODY = "reset_pass_template.txt";
+    public static final String INVITE_MAIL_BODY = "invite_template.html";
+    public static final String RESET_PASS_MAIL_BODY = "reset_pass_template.html";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
