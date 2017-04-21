@@ -23,10 +23,11 @@ export default class Field extends React.Component {
     _.map(groups, (group, groupName) => {
       const groupPrefix = new Array(level).fill('-').join('');
       if (Array.isArray(group)) {
-        options.push(<Select.OptGroup label={`${groupPrefix}${groupName}`}>{this.getFields(group)}</Select.OptGroup>);
+        options.push(<Select.OptGroup key={groupName}
+                                      label={`${groupPrefix}${groupName}`}>{this.getFields(group)}</Select.OptGroup>);
       } else {
-        options.push(<Select.OptGroup
-          label={`${groupPrefix}${groupName}`}>{this.getFieldsForGroup(group, level + 2)}</Select.OptGroup>);
+        options.push(<Select.OptGroup key={groupName}
+                                      label={`${groupPrefix}${groupName}`}>{this.getFieldsForGroup(group, level + 2)}</Select.OptGroup>);
       }
     });
     return options;
