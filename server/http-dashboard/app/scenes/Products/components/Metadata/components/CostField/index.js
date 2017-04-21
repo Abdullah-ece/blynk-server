@@ -33,13 +33,28 @@ export default class CostField extends React.Component {
     isUnique: React.PropTypes.func
   };
 
-  Currency = {
-    'USD': '$',
-    'EUR': '€',
-    'GBP': '£',
-    'CNY': '¥',
-    'RUB': '₽'
-  };
+  Currency = [
+    {
+      key: '$',
+      value: 'USD'
+    },
+    {
+      key: '€',
+      value: 'EUR'
+    },
+    {
+      key: '£',
+      value: 'GBP'
+    },
+    {
+      key: '¥',
+      value: 'CNY'
+    },
+    {
+      key: '₽',
+      value: 'RUB'
+    }
+  ];
 
   getPreviewValues() {
     const name = this.props.fields.name;
@@ -84,7 +99,7 @@ export default class CostField extends React.Component {
                 Validation.Rules.required
               ]}/>
               <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}
-                                  defaultValue={this.Currency.USD}/>
+                                  defaultValue={this.Currency[0].key}/>
               <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
                 Validation.Rules.number
               ]}/>

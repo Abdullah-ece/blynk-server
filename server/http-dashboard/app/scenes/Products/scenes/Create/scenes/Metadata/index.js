@@ -127,6 +127,19 @@ class ProductMetadata extends React.Component {
       );
     }
 
+    if (field.type === MetadataService.Fields.UNIT) {
+      return (
+        <MetadataFields.UnitField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            value: field.values.value,
+            unit: field.values.unit
+          }}
+        />
+      );
+    }
+
   });
 
   SortableList = SortableContainer(({items}) => {
