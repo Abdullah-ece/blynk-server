@@ -1,13 +1,13 @@
 export const Metadata = {
   Fields: {
-    TEXT: 'text',
-    NUMBER: 'number',
-    COST: 'cost',
-    TIME: 'time',
-    COORDINATES: 'coordinates',
-    UNIT: 'unit',
-    SHIFT: 'shift',
-    CONTACT: 'contact',
+    TEXT: 'Text',
+    NUMBER: 'Number',
+    COST: 'Cost',
+    TIME: 'Time',
+    COORDINATES: 'Coordinates',
+    UNIT: 'Measurement',
+    SHIFT: 'Shift',
+    CONTACT: 'Contact',
   }
 };
 
