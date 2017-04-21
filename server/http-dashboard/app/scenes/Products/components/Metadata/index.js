@@ -9,6 +9,7 @@ import TimeField from './components/TimeField';
 import ShiftField from './components/ShiftField';
 import CoordinatesField from './components/CoordinatesField';
 import UnitField from './components/UnitField';
+import ContactField from './components/ContactField';
 
 const Metadata = {
   Item: Item,
@@ -20,7 +21,8 @@ const Metadata = {
     TimeField,
     ShiftField,
     CoordinatesField,
-    UnitField
+    UnitField,
+    ContactField
   }
 };
 

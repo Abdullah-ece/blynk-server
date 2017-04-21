@@ -74,6 +74,12 @@ class AddNewMetadataField extends React.Component {
     });
   }
 
+  addContactField() {
+    this.props.onFieldAdd({
+      type: Metadata.Fields.CONTACT
+    });
+  }
+
   render() {
     return (
       <div className="products-add-new-metadata-field">
@@ -86,6 +92,7 @@ class AddNewMetadataField extends React.Component {
           <Button type="dashed" onClick={this.addCostField.bind(this)}>Cost</Button>
           <Button type="dashed" onClick={this.addCoordinatesField.bind(this)}>Coordinates</Button>
           <Button type="dashed" onClick={this.addUnitField.bind(this)}>Unit</Button>
+          <Button type="dashed" onClick={this.addContactField.bind(this)}>Contact</Button>
           {/*<Button type="dashed">Contact</Button>*/}
         </div>
         {/* @todo uncomment when add additional types of metadata*/}

@@ -6,7 +6,8 @@ export const Metadata = {
     TIME: 'time',
     COORDINATES: 'coordinates',
     UNIT: 'unit',
-    SHIFT: 'shift'
+    SHIFT: 'shift',
+    CONTACT: 'contact',
   }
 };
 
