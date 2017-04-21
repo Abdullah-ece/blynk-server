@@ -1,4 +1,4 @@
-package cc.blynk.server.http.handlers;
+package cc.blynk.server.http.web;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFileHandler;
@@ -17,12 +17,6 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.dashboard.handlers.AccountHandler;
-import cc.blynk.server.http.dashboard.handlers.OrganizationHandler;
-import cc.blynk.server.http.dashboard.handlers.ProductHandler;
-import cc.blynk.server.http.dashboard.handlers.UploadHandler;
-import cc.blynk.server.http.dashboard.handlers.auth.AuthCookieHandler;
-import cc.blynk.server.http.dashboard.handlers.auth.WebLoginHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

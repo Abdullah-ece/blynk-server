@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package cc.blynk.server.http.dashboard.handlers;
+package cc.blynk.server.http.web;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ServerProperties;
