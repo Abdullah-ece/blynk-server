@@ -20,7 +20,7 @@ import Validation from 'services/Validation';
 @reduxForm({
   touchOnChange: true
 })
-export default class CostField extends React.Component {
+export default class UnitField extends React.Component {
 
   static propTypes = {
     id: React.PropTypes.number,
