@@ -9,6 +9,14 @@ class AddNewMetadataField extends React.Component {
     onFieldAdd: React.PropTypes.func
   };
 
+  typesPredefinedValues = {
+    [Metadata.Fields.COST]: {
+      values: {
+        currency: '$' /** @todo move to service or config */
+      }
+    }
+  };
+
   menu = (
     <Menu selectable={false} onClick={this.handleMenuClick.bind(this)}>
       <Menu.Item key={Metadata.Fields.COST}>
@@ -26,55 +34,8 @@ class AddNewMetadataField extends React.Component {
 
   addField(type) {
     this.props.onFieldAdd({
-      type: type
-    });
-  }
-
-  addTextField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.TEXT
-    });
-  }
-
-  addNumberField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.NUMBER
-    });
-  }
-
-  addCostField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.COST
-    });
-  }
-
-  addTimeField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.TIME
-    });
-  }
-
-  addShiftField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.SHIFT
-    });
-  }
-
-  addCoordinatesField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.COORDINATES
-    });
-  }
-
-  addUnitField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.UNIT
-    });
-  }
-
-  addContactField() {
-    this.props.onFieldAdd({
-      type: Metadata.Fields.CONTACT
+      type: type,
+      ...this.typesPredefinedValues && this.typesPredefinedValues[type]
     });
   }
 
@@ -83,17 +44,12 @@ class AddNewMetadataField extends React.Component {
       <div className="products-add-new-metadata-field">
         <div className="products-add-new-metadata-field-title">+ Add new Metadata Field:</div>
         <div className="products-add-new-metadata-field-fields">
-          <Button type="dashed" onClick={this.addTextField.bind(this)}>Text</Button>
-          <Button type="dashed" onClick={this.addNumberField.bind(this)}>Number</Button>
-          <Button type="dashed" onClick={this.addUnitField.bind(this)}>Unit</Button>
-          <Button type="dashed" onClick={this.addTimeField.bind(this)}>Time</Button>
-          <Button type="dashed" onClick={this.addShiftField.bind(this)}>Shift</Button>
-          {/*<Button type="dashed" onClick={this.addCostField.bind(this)}>Cost</Button>*/}
-          {/*<Button type="dashed" onClick={this.addCoordinatesField.bind(this)}>Coordinates</Button>*/}
-          {/*<Button type="dashed" onClick={this.addContactField.bind(this)}>Contact</Button>*/}
-          {/*<Button type="dashed">Contact</Button>*/}
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.TEXT)}>Text</Button>
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.NUMBER)}>Number</Button>
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.UNIT)}>Unit</Button>
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.TIME)}>Time</Button>
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.SHIFT)}>Shift</Button>
         </div>
-        {/* @todo uncomment when add additional types of metadata*/}
         <div className="products-add-new-metadata-field-other-fields">
           <Dropdown overlay={this.menu}>
             <a className="ant-dropdown-link" href="javascript:void(0);">

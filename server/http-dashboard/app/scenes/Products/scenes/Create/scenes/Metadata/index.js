@@ -2,6 +2,7 @@ import React from 'react';
 import AddNewMetadataField from "../../components/AddNewMetadataField/index";
 import {Metadata as MetadataService} from 'services/Products';
 import Metadata from "../../../../components/Metadata/index";
+import {MetadataRolesDefault} from 'services/Roles';
 const MetadataFields = Metadata.Fields;
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -15,7 +16,8 @@ import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc'
   addMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldAdd, dispatch),
   deleteMetadataField: bindActionCreators(ProductAction.ProductMetadataFieldDelete, dispatch),
   updateMetadataFieldValues: bindActionCreators(ProductAction.ProductMetadataFieldValuesUpdate, dispatch),
-  updateMetadataFieldsOrder: bindActionCreators(ProductAction.ProductMetadataFieldsOrderUpdate, dispatch)
+  updateMetadataFieldsOrder: bindActionCreators(ProductAction.ProductMetadataFieldsOrderUpdate, dispatch),
+  updateMetadataFieldInvalidFlag: bindActionCreators(ProductAction.ProductMetadataFieldInvalidFlagUpdate, dispatch)
 }))
 class ProductMetadata extends React.Component {
 
@@ -25,6 +27,7 @@ class ProductMetadata extends React.Component {
     deleteMetadataField: React.PropTypes.func,
     updateMetadataFieldValues: React.PropTypes.func,
     updateMetadataFieldsOrder: React.PropTypes.func,
+    updateMetadataFieldInvalidFlag: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -58,7 +61,8 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            value: field.values.value
+            value: field.values.value,
+            user: field.values.user
           }}
         />
       );
@@ -70,7 +74,8 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            value: field.values.value
+            value: field.values.value,
+            user: field.values.user
           }}
         />
       );
@@ -83,7 +88,8 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            currency: field.values.currency
+            currency: field.values.currency,
+            user: field.values.user
           }}
         />
       );
@@ -95,7 +101,8 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            value: field.values.value
+            value: field.values.value,
+            user: field.values.user
           }}
         />
       );
@@ -108,6 +115,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             from: field.values.from,
+            user: field.values.user,
             to: field.values.to
           }}
         />
@@ -121,6 +129,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             lat: field.values.lat,
+            user: field.values.user,
             long: field.values.long
           }}
         />
@@ -134,7 +143,8 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            unit: field.values.unit
+            user: field.values.user,
+            measure: field.values.measure
           }}
         />
       );
@@ -146,6 +156,7 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
+            user: field.values.user,
             value: field.values.value
           }}
         />
@@ -195,8 +206,10 @@ class ProductMetadata extends React.Component {
     this.props.addMetadataField({
       type: params.type,
       values: {
+        user: MetadataRolesDefault,
         name: '',
-        value: ''
+        value: '',
+        ...params.values
       }
     });
   }
