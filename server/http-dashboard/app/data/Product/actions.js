@@ -19,9 +19,30 @@ export function ProductMetadataFieldValuesUpdate(data = {}) {
   };
 }
 
+export function ProductMetadataFieldInvalidFlagUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_METADATA_FIELD_INVALID_FLAG_UPDATE',
+    data: data
+  };
+}
+
 export function ProductMetadataFieldsOrderUpdate(data = {}) {
   return {
     type: 'PRODUCT_METADATA_FIELDS_ORDER_UPDATE',
+    data: data
+  };
+}
+
+export function ProductMetadataUpdateInvalidFlag(data = {}) {
+  return {
+    type: 'PRODUCT_METADATA_UPDATE_INVALID_FLAG',
+    data: data
+  };
+}
+
+export function ProductInfoUpdateInvalidFlag(data = false) {
+  return {
+    type: 'PRODUCT_INFO_UPDATE_INVALID_FLAG',
     data: data
   };
 }
