@@ -29,7 +29,26 @@ const UsersAvailableRoles = [
   Roles.USER
 ];
 
+const MetadataRoles = [
+  {
+    key: Roles.ADMIN.value,
+    value: Roles.ADMIN.title
+  },
+  {
+    key: Roles.STAFF.value,
+    value: Roles.STAFF.title
+  },
+  {
+    key: Roles.USER.value,
+    value: Roles.USER.title
+  }
+];
+
+const MetadataRolesDefault = MetadataRoles[0].key;
+
 export {
+  MetadataRoles,
+  MetadataRolesDefault,
   Roles,
   InviteAvailableRoles,
   UsersAvailableRoles
