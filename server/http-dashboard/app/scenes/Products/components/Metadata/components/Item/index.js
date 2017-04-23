@@ -1,28 +1,58 @@
 import React from 'react';
-import {Row, Col, Select, Icon, Popconfirm, Button} from 'antd';
+import {Row, Col, Icon, Popconfirm, Button} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
 import {SortableHandle} from 'react-sortable-hoc';
+import {MetadataSelect} from 'components/Form';
+import {MetadataRoles} from 'services/Roles';
 import classnames from 'classnames';
-
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {reduxForm, touch, Form} from 'redux-form';
+import {ProductMetadataFieldInvalidFlagUpdate} from 'data/Product/actions';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 
+@connect(() => ({}), (dispatch) => ({
+  touchFormById: bindActionCreators(touch, dispatch),
+  updateMetadataFieldInvalidFlag: bindActionCreators(ProductMetadataFieldInvalidFlagUpdate, dispatch)
+}))
+@reduxForm({
+  touchOnChange: true
+})
 class MetadataItem extends React.Component {
 
   static propTypes = {
+    anyTouched: React.PropTypes.bool,
+    invalid: React.PropTypes.bool,
     preview: React.PropTypes.object,
+    form: React.PropTypes.string,
+    fields: React.PropTypes.object,
     children: React.PropTypes.any,
     onDelete: React.PropTypes.func,
+    touchFormById: React.PropTypes.func,
     onClone: React.PropTypes.func,
-    touched: React.PropTypes.bool
+    touched: React.PropTypes.bool,
+    updateMetadataFieldInvalidFlag: React.PropTypes.func
   };
 
   constructor(props) {
     super(props);
 
+    this.invalid = false;
+
     this.state = {
       isActive: false
     };
+  }
+
+  componentWillReceiveProps(props) {
+    if (this.invalid !== props.invalid) {
+      this.props.updateMetadataFieldInvalidFlag({
+        id: props.id,
+        invalid: props.invalid
+      });
+      this.invalid = props.invalid;
+    }
   }
 
   handleConfirmDelete() {
@@ -40,27 +70,31 @@ class MetadataItem extends React.Component {
 
   preview() {
 
-    if (!this.props.preview.isTouched && !this.props.preview.values.name) {
+    if (!this.props.anyTouched && !this.props.preview.name) {
       return null;
     }
 
-    if (this.props.preview.invalid) {
+    if (this.props.invalid) {
       return (<Preview> <Preview.Unavailable /> </Preview>);
     }
 
     return (
       <Preview>
-        <Preview.Name>{this.props.preview.values.name}</Preview.Name>
-        <Preview.Value>{this.props.preview.values.value || 'Empty'}</Preview.Value>
+        <Preview.Name>{this.props.preview.name}</Preview.Name>
+        <Preview.Value>{this.props.preview.value || 'Empty'}</Preview.Value>
       </Preview>
     );
 
   }
 
+  handleSubmit() {
+    this.props.touchFormById(this.props.form, ...Object.keys(this.props.fields));
+  }
+
   render() {
 
     let deleteButton;
-    if (this.props.touched) {
+    if (this.props.anyTouched) {
       deleteButton = (<Popconfirm title="Are you sure you want to delete this task?" overlayClassName="danger"
                                   onConfirm={this.handleConfirmDelete.bind(this)}
                                   onCancel={this.handleCancelDelete.bind(this)} okText="Yes" cancelText="No">
@@ -77,30 +111,29 @@ class MetadataItem extends React.Component {
 
     return (
       <div className={itemClasses}>
-        <Row gutter={8}>
-          <Col span={12}>
-            { this.props.children }
-          </Col>
-          <Col span={4}>
-            <FormItem offset={false}>
-              <FormItem.Title>Who can edit</FormItem.Title>
-              <FormItem.Content>
-                <Select defaultValue="Admin" style={{width: 120}}>
-                  <Select.Option value="Admin">Admin</Select.Option>
-                  <Select.Option value="User">User</Select.Option>
-                </Select>
-              </FormItem.Content>
-            </FormItem>
-          </Col>
-          <Col span={6} offset={1}>
-            { this.preview() }
-          </Col>
-        </Row>
-        <div className="product-metadata-item-tools">
-          <DragHandler/>
-          {deleteButton}
-          <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
-        </div>
+        <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Row gutter={8}>
+            <Col span={12}>
+              { this.props.children }
+            </Col>
+            <Col span={4}>
+              <FormItem offset={false}>
+                <FormItem.Title>Who can edit</FormItem.Title>
+                <FormItem.Content>
+                  <MetadataSelect name="user" style={{width: 120}} values={MetadataRoles}/>
+                </FormItem.Content>
+              </FormItem>
+            </Col>
+            <Col span={6} offset={1}>
+              { this.preview() }
+            </Col>
+          </Row>
+          <div className="product-metadata-item-tools">
+            <DragHandler/>
+            {deleteButton}
+            <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+          </div>
+        </Form>
       </div>
     );
   }
