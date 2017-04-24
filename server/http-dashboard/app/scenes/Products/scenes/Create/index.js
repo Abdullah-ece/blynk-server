@@ -100,6 +100,8 @@ class ProductCreate extends React.Component {
       });
     }
 
+    this.props.submitFormById(`product-creation-info`);
+
     this.setState({
       submited: true
     });

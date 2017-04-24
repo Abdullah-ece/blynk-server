@@ -5,12 +5,16 @@ import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {Field, Select} from 'components/Form';
 import ImageUploader from 'components/ImageUploader';
 import {reduxForm, Field as FormField} from 'redux-form';
+import Validation from 'services/Validation';
 
 @reduxForm({
   form: 'product-creation-info',
   initialValues: {
     hardware: HARDWARES['Particle Electron'].key,
     connectionType: CONNECTIONS_TYPES.GSM.key
+  },
+  onSubmit: () => {
+
   }
 })
 class Info extends React.Component {
@@ -74,7 +78,6 @@ class Info extends React.Component {
   handleInfoFileChange(valueChanger, info) {
     const status = info.file.status;
     if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
       valueChanger(info.file.response);
     } else if (status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
@@ -97,7 +100,7 @@ class Info extends React.Component {
           <FormItem>
             <FormItem.Title>Name</FormItem.Title>
             <FormItem.Content>
-              <Field name="name" placeholder="Name"/>
+              <Field name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
             </FormItem.Content>
           </FormItem>
 
@@ -117,20 +120,24 @@ class Info extends React.Component {
           <FormItem>
             <FormItem.Title>description</FormItem.Title>
             <FormItem.Content>
-              <Field name="description" type="textarea" placeholder="Description (optional)"/>
+              <Field name="description" type="textarea" rows="5" placeholder="Description (optional)"/>
             </FormItem.Content>
           </FormItem>
         </Col>
         <Col span={9}>
           <div className="products-create-drag-and-drop">
-            <FormField name="file" component={({input}) => (
-              <ImageUploader text="Add image"
-                             logo={input.value}
-                             hint={() => (
-                               <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
-                             )}
-                             onChange={this.handleInfoFileChange.bind(this, input.onChange)}/>
-            )}/>
+            <FormField name="file"
+                       validate={[Validation.Rules.imageRequired]}
+                       component={({input, meta: {error, touched}}) => (
+                         <ImageUploader text="Add image"
+                                        logo={input.value}
+                                        error={error}
+                                        touched={touched}
+                                        hint={() => (
+                                          <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
+                                        )}
+                                        onChange={this.handleInfoFileChange.bind(this, input.onChange)}/>
+                       )}/>
           </div>
         </Col>
       </Row>
