@@ -1,8 +1,9 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
-import {Input, Upload, Icon, Col, Row, message} from 'antd';
+import {Input, Col, Row, message} from 'antd';
 import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {Field, Select} from 'components/Form';
+import ImageUploader from 'components/ImageUploader';
 import {reduxForm, Field as FormField} from 'redux-form';
 
 @reduxForm({
@@ -72,9 +73,6 @@ class Info extends React.Component {
 
   handleInfoFileChange(valueChanger, info) {
     const status = info.file.status;
-    if (status !== 'uploading') {
-      message.info(`status ${info.file.name}`);
-    }
     if (status === 'done') {
       message.success(`${info.file.name} file uploaded successfully.`);
       valueChanger(info.file.response);
@@ -126,16 +124,12 @@ class Info extends React.Component {
         <Col span={9}>
           <div className="products-create-drag-and-drop">
             <FormField name="file" component={({input}) => (
-              <Upload.Dragger {...this.InfoFileProps} onChange={this.handleInfoFileChange.bind(this, input.onChange)}>
-                <p className="ant-upload-drag-icon">
-                  <Icon type="cloud-upload-o"/>
-                </p>
-                <p className="ant-upload-text">Add image</p>
-                <p className="ant-upload-hint">
-                  Upload from computer or drag-n-drop<br/>
-                  .png or .jpg, min 500x500px
-                </p>
-              </Upload.Dragger>
+              <ImageUploader text="Add image"
+                             logo={input.value}
+                             hint={() => (
+                               <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
+                             )}
+                             onChange={this.handleInfoFileChange.bind(this, input.onChange)}/>
             )}/>
           </div>
         </Col>
