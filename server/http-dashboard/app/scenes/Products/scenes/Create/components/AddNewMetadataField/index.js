@@ -1,5 +1,5 @@
 import React from 'react';
-import {Metadata} from 'services/Products';
+import {Metadata, Currency} from 'services/Products';
 import {Button, Menu, Dropdown, Icon} from 'antd';
 import './styles.less';
 
@@ -12,7 +12,7 @@ class AddNewMetadataField extends React.Component {
   typesPredefinedValues = {
     [Metadata.Fields.COST]: {
       values: {
-        currency: '$' /** @todo move to service or config */
+        currency: Currency.USD.key
       }
     }
   };

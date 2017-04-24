@@ -6,6 +6,8 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
+import {Currency} from 'services/Products';
+
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
@@ -19,26 +21,11 @@ import BaseField from '../BaseField';
 export default class CostField extends BaseField {
 
   Currency = [
-    {
-      key: '$',
-      value: 'USD'
-    },
-    {
-      key: '€',
-      value: 'EUR'
-    },
-    {
-      key: '£',
-      value: 'GBP'
-    },
-    {
-      key: '¥',
-      value: 'CNY'
-    },
-    {
-      key: '₽',
-      value: 'RUB'
-    }
+    Currency.USD,
+    Currency.EUR,
+    Currency.GBP,
+    Currency.CNY,
+    Currency.RUB
   ];
 
   getPreviewValues() {

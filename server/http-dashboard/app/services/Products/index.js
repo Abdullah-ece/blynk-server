@@ -11,3 +11,26 @@ export const Metadata = {
   }
 };
 
+export const Currency = {
+  USD: {
+    key: '$',
+    value: 'USD'
+  },
+  EUR: {
+    key: '€',
+    value: 'EUR'
+  },
+  GBP: {
+    key: '£',
+    value: 'GBP'
+  },
+  CNY: {
+    key: '¥',
+    value: 'CNY'
+  },
+  RUB: {
+    key: '₽',
+    value: 'RUB'
+  }
+};
+
