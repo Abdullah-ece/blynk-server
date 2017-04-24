@@ -92,9 +92,9 @@ class OrganizationSettings extends React.Component {
     this.props.OrganizationSave(Object.assign({}, this.props.Organization, {tzName: timezone})).then(() => {
       this.props.OrganizationUpdateTimezone(timezone);
       hideUpdatingMessage();
-    }).catch(() => {
+    }).catch((err) => {
       hideUpdatingMessage();
-      message.error('Updating organization timezone failed');
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
@@ -103,9 +103,9 @@ class OrganizationSettings extends React.Component {
     this.props.OrganizationSave(Object.assign({}, this.props.Organization, {name: name})).then(() => {
       this.props.OrganizationUpdateName(name);
       hideUpdatingMessage();
-    }).catch(() => {
+    }).catch((err) => {
       hideUpdatingMessage();
-      message.error('Updating organization name failed');
+      message.error(err && err.error && err.error.response.message);
     });
   }
 

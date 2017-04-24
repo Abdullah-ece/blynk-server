@@ -117,9 +117,9 @@ class OrganizationUsers extends React.Component {
       this.props.OrganizationUsersFetch({id: this.props.Account.orgId}).then(() => {
         initState();
       });
-    }).catch(() => {
+    }).catch((err) => {
       initState();
-      message.error('Failed to delete user');
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
@@ -140,9 +140,9 @@ class OrganizationUsers extends React.Component {
       role: role.key
     })).then(() => {
       resetUsersList();
-    }).catch(() => {
+    }).catch((err) => {
       resetUsersList();
-      message.error("Updating user role failed");
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
