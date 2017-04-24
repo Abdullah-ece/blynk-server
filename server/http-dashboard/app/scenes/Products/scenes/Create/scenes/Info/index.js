@@ -6,8 +6,15 @@ import {Field, Select} from 'components/Form';
 import ImageUploader from 'components/ImageUploader';
 import {reduxForm, Field as FormField} from 'redux-form';
 import Validation from 'services/Validation';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {ProductInfoUpdateInvalidFlag} from 'data/Product/actions';
 
+@connect(() => ({}), (dispatch) => ({
+  updateInfoInvalidFlag: bindActionCreators(ProductInfoUpdateInvalidFlag, dispatch)
+}))
 @reduxForm({
+  touchOnChange: true,
   form: 'product-creation-info',
   initialValues: {
     hardware: HARDWARES['Particle Electron'].key,
@@ -18,6 +25,17 @@ import Validation from 'services/Validation';
   }
 })
 class Info extends React.Component {
+
+  static propTypes = {
+    updateInfoInvalidFlag: React.PropTypes.func,
+    invalid: React.PropTypes.bool
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.invalid = false;
+  }
 
   hardware = [
     HARDWARES['Arduino 101'],
@@ -90,6 +108,14 @@ class Info extends React.Component {
     showUploadList: false,
     accept: 'image/*'
   };
+
+  componentWillReceiveProps(props) {
+    console.log(props.invalid);
+    if (this.invalid !== props.invalid) {
+      this.props.updateInfoInvalidFlag(props.invalid);
+      this.invalid = props.invalid;
+    }
+  }
 
   render() {
 

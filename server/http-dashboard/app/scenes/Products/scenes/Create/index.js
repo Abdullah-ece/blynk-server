@@ -29,6 +29,7 @@ class ProductCreate extends React.Component {
     isProductInfoInvalid: React.PropTypes.bool,
     metadataFields: React.PropTypes.array,
     updateMetadataInfoReadFlag: React.PropTypes.func,
+    updateInfoInvalidFlag: React.PropTypes.func,
     submitFormById: React.PropTypes.func
   };
 
@@ -89,7 +90,7 @@ class ProductCreate extends React.Component {
   }
 
   isInfoFormInvalid() {
-    return false;
+    return this.props.isProductInfoInvalid;
   }
 
   handleSubmit() {
@@ -154,8 +155,6 @@ class ProductCreate extends React.Component {
             <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={this.TABS.METADATA}>
               <ProductCreateMetadataTab />
             </Tabs.TabPane>
-            {/*<Tabs.TabPane tab="Data Streams" key={this.TABS.DATA_STREAMS}>Content of Data Streams</Tabs.TabPane>*/}
-            {/*<Tabs.TabPane tab="Events" key={this.TABS.EVENTS}>Content of Events</Tabs.TabPane>*/}
           </Tabs>
         </div>
       </div>

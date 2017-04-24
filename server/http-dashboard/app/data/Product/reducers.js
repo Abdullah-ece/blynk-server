@@ -41,9 +41,12 @@ export default function Product(state = initialState, action) {
     case "PRODUCT_INFO_UPDATE_INVALID_FLAG":
       return {
         ...state,
-        info: {
-          ...state.info,
-          invalid: action.data
+        creating: {
+          ...state.creating,
+          info: {
+            ...state.info,
+            invalid: action.data
+          }
         }
       };
 
