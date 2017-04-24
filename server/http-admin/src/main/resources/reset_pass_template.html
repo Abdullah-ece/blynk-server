@@ -54,34 +54,37 @@
     }
   </style>
 </head>
-<body style="background-color: #202227; padding: 0; margin: 0;">
+<body style="background-color: #707175; padding: 0; margin: 0;">
 
 <div class="content-wrapper" style="background-color: #007dc4; padding-top: 50px; ">
   <div style="text-align: center; margin-bottom: 10px;">
     <img src="{host}/static/logo.png" height="64px"/>
   </div>
-  <div class="content" style="padding: 50px 50px 0 50px; border-top-left-radius: 6px; border-top-right-radius: 6px;">
+  <div class="content" style="padding: 50px 50px 0 50px; box-shadow: 0px 0px 10px 0px #c0c0c0;
+                              border-top-left-radius: 6px; border-top-right-radius: 6px;">
     <div class="header">
-      Hello {name},
+      Reset your password
     </div>
 
     <div class="text" style="padding-top: 20px;">
-      To change the password, please click the button below.
+      Recently you requested to reset your {organization} Dashboard password. Click the button below and follow the reset instructions.
     </div>
   </div>
 </div>
 
 <div class="content-wrapper">
   <div class="content" style="padding: 0px 50px 0 50px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px;">
-    <div class="text">
-      Ignore this email if you didn't request that.
-    </div>
 
     <div style="padding-top: 30px; padding-bottom: 50px;">
       <a href="{link}" class="button">
-        Change Password
+        Reset Password
       </a>
     </div>
+
+    <div class="text">
+      Ignore this email if you don't want to reset your password.
+    </div>
+
     <div class="header">
       Thank you.
     </div>
@@ -92,7 +95,7 @@
 </div>
 
 <div class="copyright">
-  Copyright © 2017, All rights reserved
+  Copyright &#64; 2017, All rights reserved
 </div>
 </body>
 </html>
