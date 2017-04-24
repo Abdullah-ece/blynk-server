@@ -15,10 +15,6 @@ export default class Role extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      role: props.role
-    };
   }
 
   getRolesList() {
@@ -30,19 +26,19 @@ export default class Role extends React.Component {
   }
 
   onChange(value) {
-    this.setState({role: value.key});
     if (this.props.onChange) this.props.onChange(value);
   }
 
   render() {
 
     const options = this.getRolesList();
+    const role = this.props && this.props.role;
 
     return (
-      (this.state.role === Roles.SUPER_ADMIN.value && <div>{Roles.SUPER_ADMIN.title}</div> ) || (
+      (role === Roles.SUPER_ADMIN.value && <div>{Roles.SUPER_ADMIN.title}</div> ) || (
         <Select labelInValue className="user--role-select"
-                value={{key: this.state.role}}
-                onChange={this.onChange.bind(this)} disabled={this.state.role === Roles.SUPER_ADMIN.value}>
+                value={{key: role}}
+                onChange={this.onChange.bind(this)} disabled={role === Roles.SUPER_ADMIN.value}>
         { options }
         </Select>)
     );
