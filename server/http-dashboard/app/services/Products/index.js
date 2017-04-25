@@ -7,6 +7,7 @@ export const Metadata = {
     COORDINATES: 'Coordinates',
     UNIT: 'Measurement',
     SHIFT: 'Shift',
+    DATE: 'Date',
     CONTACT: 'Contact',
   }
 };
