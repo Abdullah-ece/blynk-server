@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -13,6 +15,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
  */
 @ChannelHandler.Sharable
 public class UrlReWriterHandler extends ChannelInboundHandlerAdapter {
+
+    private static final Logger log = LogManager.getLogger(UrlReWriterHandler.class);
 
     private final UrlMapper[] mappers;
 
@@ -27,6 +31,7 @@ public class UrlReWriterHandler extends ChannelInboundHandlerAdapter {
 
             String mapTo = isMatch(request.uri());
             if (mapTo != null) {
+                log.debug("Mapping from {} to {}", request.uri(), mapTo);
                 request.setUri(mapTo);
             }
         }
