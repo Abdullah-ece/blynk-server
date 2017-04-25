@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Title from '../../components/Title';
 import {Section, Item} from '../../components/Section';
-import {Button, Modal, Popconfirm, message} from 'antd';
+import {Button, Modal, message} from 'antd';
 import {
   Account as AccountFetch,
   AccountSave,
@@ -99,13 +99,11 @@ class MyAccount extends React.Component {
         </Section>
         <Section title="Change Password">
           <Item>
-            <Popconfirm title="Are you sure reset password?" onConfirm={this.resetPassword.bind(this)} okText="Yes"
-                        cancelText="No">
-              <Button type="primary"
-                      loading={this.state.resetPasswordProcessing}>
-                Send password reset email
-              </Button>
-            </Popconfirm>
+            <Button type="primary"
+                    onClick={this.resetPassword.bind(this)}
+                    loading={this.state.resetPasswordProcessing}>
+              Send password reset email
+            </Button>
           </Item>
         </Section>
       </div>
