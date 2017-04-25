@@ -144,7 +144,7 @@ class ProductMetadata extends React.Component {
             name: field.values.name,
             value: field.values.value,
             role: field.values.role,
-            measure: field.values.measure
+            units: field.values.units
           }}
         />
       );

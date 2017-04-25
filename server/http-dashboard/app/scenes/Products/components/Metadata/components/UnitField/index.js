@@ -6,6 +6,7 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
+import {Unit} from 'services/Products';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -13,7 +14,7 @@ import BaseField from '../BaseField';
     fields: {
       name: selector(state, 'name'),
       value: selector(state, 'value'),
-      measure: selector(state, 'measure')
+      units: selector(state, 'units')
     }
   };
 })
@@ -22,130 +23,58 @@ export default class UnitField extends BaseField {
   Unit = {
     'Length, Distance': {
       'Imperial': [
-        {
-          key: 'in',
-          value: 'Inch'
-        },
-        {
-          key: 'ft',
-          value: 'Foot'
-        },
-        {
-          key: 'yd',
-          value: 'Yard'
-        },
-        {
-          key: 'mi',
-          value: 'Mile'
-        }
+        Unit.Inch,
+        Unit.Foot,
+        Unit.Yard,
+        Unit.Mile
       ],
       'Metric': [
-        {
-          key: 'mm',
-          value: 'Millimeter'
-        },
-        {
-          key: 'cm',
-          value: 'Centimeter'
-        },
-        {
-          key: 'm',
-          value: 'Meter'
-        },
-        {
-          key: 'km',
-          value: 'Kilometer'
-        },
+        Unit.Millimeter,
+        Unit.Centimeter,
+        Unit.Meter,
+        Unit.Kilometer
       ]
     },
     'Mass': {
       'Imperial': [
-        {
-          key: 'oz',
-          value: 'Ounce'
-        },
-        {
-          key: 'lb',
-          value: 'Pound'
-        },
-        {
-          key: 'st',
-          value: 'Stone'
-        },
-        {
-          key: 'qrt',
-          value: 'Quarter'
-        },
-        {
-          key: 'cwt',
-          value: 'Hundredweight'
-        },
-        {
-          key: 't',
-          value: 'Ton'
-        }
+        Unit.Ounce,
+        Unit.Pound,
+        Unit.Stone,
+        Unit.Quarter,
+        Unit.Hundredweight,
+        Unit.Ton
       ],
       'Metric': [
-        {
-          key: 'mg',
-          value: 'Milligram'
-        },
-        {
-          key: 'g',
-          value: 'Gram'
-        },
-        {
-          key: 'kg',
-          value: 'Kilogram'
-        },
-        {
-          key: 't',
-          value: 'Tonne'
-        },
+        Unit.Milligram,
+        Unit.Gram,
+        Unit.Kilogram,
+        Unit.Tonne
       ]
     },
     'Volume': {
       'Imperial': [
-        {
-          key: 'pt',
-          value: 'Pint'
-        },
-        {
-          key: 'gal',
-          value: 'Gallon'
-        }
+        Unit.Pint,
+        Unit.Gallon,
       ],
       'Metric': [
-        {
-          key: 'lt',
-          value: 'Liter'
-        }
+        Unit.Liter
       ]
     },
     'Temperature': [
-      {
-        key: '°C',
-        value: 'Celsius'
-      },
-      {
-        key: '°F',
-        value: 'Fahrenheit'
-      },
-      {
-        key: '°K',
-        value: 'Kelvin'
-      }
+      Unit.Celsius,
+      Unit.Fahrenheit,
+      Unit.Kelvin
     ]
   };
 
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
-    const measure = this.props.fields.measure;
+    const units = this.props.fields.units;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: value && typeof value === 'string' && measure ? `${value} ${measure}` : null
+      value: value && typeof value === 'string' && units ? `${value} ${Unit[units].abbreviation}` : null
     };
   }
 
@@ -163,7 +92,7 @@ export default class UnitField extends BaseField {
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
               Validation.Rules.required
             ]}/>
-            <MetadataFormSelect name="measure" type="text" placeholder="Choose"
+            <MetadataFormSelect name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
             <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
               Validation.Rules.number
