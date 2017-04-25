@@ -40,6 +40,13 @@ export function ProductMetadataUpdateInvalidFlag(data = {}) {
   };
 }
 
+export function ProductInfoUpdateValues(data = {}) {
+  return {
+    type: 'PRODUCT_INFO_UPDATE_VALUES',
+    data: data
+  };
+}
+
 export function ProductInfoUpdateInvalidFlag(data = false) {
   return {
     type: 'PRODUCT_INFO_UPDATE_INVALID_FLAG',

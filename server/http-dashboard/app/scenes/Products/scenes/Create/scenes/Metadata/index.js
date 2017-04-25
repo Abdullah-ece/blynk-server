@@ -62,7 +62,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            user: field.values.user
+            role: field.values.role
           }}
         />
       );
@@ -75,7 +75,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            user: field.values.user
+            role: field.values.role
           }}
         />
       );
@@ -89,7 +89,7 @@ class ProductMetadata extends React.Component {
             name: field.values.name,
             value: field.values.value,
             currency: field.values.currency,
-            user: field.values.user
+            role: field.values.role
           }}
         />
       );
@@ -102,7 +102,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            user: field.values.user
+            role: field.values.role
           }}
         />
       );
@@ -115,7 +115,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             from: field.values.from,
-            user: field.values.user,
+            role: field.values.role,
             to: field.values.to
           }}
         />
@@ -129,7 +129,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             lat: field.values.lat,
-            user: field.values.user,
+            role: field.values.role,
             long: field.values.long
           }}
         />
@@ -143,7 +143,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             value: field.values.value,
-            user: field.values.user,
+            role: field.values.role,
             measure: field.values.measure
           }}
         />
@@ -156,7 +156,7 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            user: field.values.user,
+            role: field.values.role,
             value: field.values.value
           }}
         />
@@ -206,7 +206,7 @@ class ProductMetadata extends React.Component {
     this.props.addMetadataField({
       type: params.type,
       values: {
-        user: MetadataRolesDefault,
+        role: MetadataRolesDefault,
         name: '',
         value: '',
         ...params.values

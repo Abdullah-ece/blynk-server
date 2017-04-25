@@ -120,7 +120,7 @@ class MetadataItem extends React.Component {
               <FormItem offset={false}>
                 <FormItem.Title>Who can edit</FormItem.Title>
                 <FormItem.Content>
-                  <MetadataSelect name="user" style={{width: 120}} values={MetadataRoles}/>
+                  <MetadataSelect name="role" style={{width: 120}} values={MetadataRoles}/>
                 </FormItem.Content>
               </FormItem>
             </Col>

@@ -1,10 +1,11 @@
 const initialState = {
   creating: {
     info: {
-      invalid: false
+      invalid: true,
+      values: {}
     },
     metadata: {
-      invalid: false,
+      invalid: true,
       fields: []
     }
   },
@@ -44,7 +45,7 @@ export default function Product(state = initialState, action) {
         creating: {
           ...state.creating,
           info: {
-            ...state.info,
+            ...state.creating.info,
             invalid: action.data
           }
         }
@@ -56,6 +57,21 @@ export default function Product(state = initialState, action) {
         metadata: {
           ...state.metadata,
           invalid: action.data
+        }
+      };
+
+    case "PRODUCT_INFO_UPDATE_VALUES":
+      return {
+        ...state,
+        creating: {
+          ...state.creating,
+          info: {
+            ...state.creating.info,
+            values: {
+              ...state.creating.info.values,
+              ...action.data
+            }
+          }
         }
       };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles.less';
-import {Button, Tabs, Icon, Popover} from 'antd';
+import {Button, Tabs, Icon, Popover, message} from 'antd';
 import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
 import ProductCreateInfoTab from './scenes/Info';
 import ProductCreateMetadataTab from './scenes/Metadata';
@@ -8,12 +8,15 @@ import {connect} from 'react-redux';
 import {submit} from 'redux-form';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataInfoRead} from 'data/Storage/actions';
+import * as API from 'data/Product/api';
 
 @connect((state) => ({
   isMetadataInfoRead: state.Storage.products.isMetadataInfoRead,
   isProductInfoInvalid: state.Product.creating.info.invalid,
-  metadataFields: state.Product.creating.metadata.fields
+  metadataFields: state.Product.creating.metadata.fields,
+  productInfo: state.Product.creating.info
 }), (dispatch) => ({
+  ProductCreate: bindActionCreators(API.ProductCreate, dispatch),
   updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch),
   submitFormById: bindActionCreators(submit, dispatch)
 }))
@@ -30,7 +33,9 @@ class ProductCreate extends React.Component {
     metadataFields: React.PropTypes.array,
     updateMetadataInfoReadFlag: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
-    submitFormById: React.PropTypes.func
+    submitFormById: React.PropTypes.func,
+    ProductCreate: React.PropTypes.func,
+    productInfo: React.PropTypes.object
   };
 
   constructor(props) {
@@ -108,9 +113,27 @@ class ProductCreate extends React.Component {
     });
 
     if (!this.isMetadataFormsInvalid() && !this.isInfoFormInvalid()) {
-      console.log('create product');
-    } else {
-      console.log('unable to create product');
+
+      let metaFields = [];
+
+      this.props.metadataFields.forEach((value) => {
+        metaFields.push({
+          name: value.name,
+          type: value.type,
+          ...value.values
+        });
+      });
+
+      let values = {
+        ...this.props.productInfo.values,
+        metaFields: metaFields
+      };
+
+      this.props.ProductCreate(values).then(() => {
+        this.context.router.push('/products?success=true');
+      }).catch((err) => {
+        message.error(err.message || 'Cannot create product');
+      });
     }
   }
 

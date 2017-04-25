@@ -3,6 +3,7 @@ import './styles.less';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as ProductsAPI from './data/actions';
+import {message} from 'antd';
 
 import ProductsList from './scenes/List';
 import NoProducts from './scenes/NoProducts';
@@ -16,7 +17,12 @@ import NoProducts from './scenes/NoProducts';
 })
 class ProductsIndex extends React.Component {
 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
   static propTypes = {
+    location: React.PropTypes.object,
     ProductsFetch: React.PropTypes.func,
     Product: React.PropTypes.object
   };
@@ -25,6 +31,13 @@ class ProductsIndex extends React.Component {
     super(props);
 
     this.props.ProductsFetch();
+  }
+
+  componentWillMount() {
+    if (this.props.location.query && this.props.location.query.success) {
+      message.success('Product created successfully');
+      this.context.router.push('/products');
+    }
   }
 
   render() {
