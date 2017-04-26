@@ -138,23 +138,28 @@ export const Unit = {
 
 export const Currency = {
   USD: {
-    key: '$',
+    abbreviation: '$',
+    key: 'USD',
     value: 'USD'
   },
   EUR: {
-    key: '€',
+    abbreviation: '€',
+    key: 'EUR',
     value: 'EUR'
   },
   GBP: {
-    key: '£',
+    abbreviation: '£',
+    key: 'GBP',
     value: 'GBP'
   },
   CNY: {
-    key: '¥',
+    abbreviation: '¥',
+    key: 'CNY',
     value: 'CNY'
   },
   RUB: {
-    key: '₽',
+    abbreviation: '₽',
+    key: 'RUB',
     value: 'RUB'
   }
 };

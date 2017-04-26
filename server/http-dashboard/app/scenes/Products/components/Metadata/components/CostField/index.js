@@ -35,7 +35,7 @@ export default class CostField extends BaseField {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: value && typeof value === 'string' && currency ? `${currency} ${value}` : null
+      value: value && typeof value === 'string' && currency ? `${Currency[currency].abbreviation} ${value}` : null
     };
   }
 
