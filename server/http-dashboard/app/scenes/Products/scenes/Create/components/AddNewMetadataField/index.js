@@ -60,6 +60,12 @@ class AddNewMetadataField extends React.Component {
     });
   }
 
+  addSwitchField() {
+    this.props.onFieldAdd({
+      type: Metadata.Fields.SWITCH
+    });
+  }
+
   addDateField() {
     this.props.onFieldAdd({
       type: Metadata.Fields.DATE
@@ -94,6 +100,7 @@ class AddNewMetadataField extends React.Component {
           <Button type="dashed" onClick={this.addUnitField.bind(this)}>Unit</Button>
           <Button type="dashed" onClick={this.addTimeField.bind(this)}>Time</Button>
           <Button type="dashed" onClick={this.addShiftField.bind(this)}>Shift</Button>
+          {/*<Button type="dashed" onClick={this.addSwitchField.bind(this)}>Switch</Button>*/}
           {/*<Button type="dashed" onClick={this.addDateField.bind(this)}>Date</Button>*/}
           {/*<Button type="dashed" onClick={this.addCostField.bind(this)}>Cost</Button>*/}
           {/*<Button type="dashed" onClick={this.addCoordinatesField.bind(this)}>Coordinates</Button>*/}

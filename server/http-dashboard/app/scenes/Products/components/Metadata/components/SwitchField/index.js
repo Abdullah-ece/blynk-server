@@ -2,7 +2,7 @@ import React from 'react';
 import Metadata from '../../index';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
-import {MetadataField as MetadataFormField, MetadataDate as MetadataDateField} from 'components/Form';
+import {MetadataField as MetadataFormField} from 'components/Form';
 import {reduxForm, formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
@@ -12,14 +12,15 @@ import Validation from 'services/Validation';
   return {
     fields: {
       name: selector(state, 'name'),
-      value: selector(state, 'value')
+      on: selector(state, 'on'),
+      off: selector(state, 'off'),
     }
   };
 })
 @reduxForm({
   touchOnChange: true
 })
-export default class DateField extends React.Component {
+export default class SwitchField extends React.Component {
 
   static propTypes = {
     id: React.PropTypes.number,
@@ -34,12 +35,13 @@ export default class DateField extends React.Component {
 
   getPreviewValues() {
     const name = this.props.fields.name;
-    const value = this.props.fields.value;
+    const on = this.props.fields.on;
+    const off = this.props.fields.off;
 
     return {
       values: {
         name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-        value: value && typeof value === 'string' ? value.trim() : null
+        value: on && typeof on === 'string' && off && typeof off === 'string' ? `From ${on} to ${off}` : null
       },
       isTouched: this.props.anyTouched,
       invalid: this.props.invalid
@@ -64,15 +66,21 @@ export default class DateField extends React.Component {
                      onClone={this.handleClone.bind(this)}>
         <FormItem offset={false}>
           <FormItem.TitleGroup>
-            <FormItem.Title style={{width: '50%'}}>Date</FormItem.Title>
-            <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
+            <FormItem.Title style={{width: '50%'}}>Switch</FormItem.Title>
+            <FormItem.Title style={{width: '25%'}}>Option A</FormItem.Title>
+            <FormItem.Title style={{width: '25%'}}>Option B</FormItem.Title>
           </FormItem.TitleGroup>
           <FormItem.Content>
             <Input.Group compact>
-              <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
+              <MetadataFormField name="name" type="text" placeholder="Switch Name" style={{width: '200%'}} validate={[
                 Validation.Rules.required
               ]}/>
-              <MetadataDateField name="value" type="text" timeFormat="MM-DD-YYYY" placeholder="Default value(optional)"/>
+              <MetadataFormField name="on" type="text" placeholder="ON" validate={[
+                Validation.Rules.required
+              ]}/>
+              <MetadataFormField name="off" type="text" placeholder="OFF" validate={[
+                Validation.Rules.required
+              ]}/>
             </Input.Group>
           </FormItem.Content>
         </FormItem>
