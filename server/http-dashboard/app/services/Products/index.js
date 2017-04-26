@@ -173,3 +173,24 @@ export const transformTimeToTimestamp = (data) => {
   }
   return data;
 };
+
+export const transformShiftToMinutes = (data) => {
+  if (data.metaFields) {
+    data.metaFields = data.metaFields.map((field) => {
+      if (field.type === Metadata.Fields.SHIFT && field.to) {
+        field = {
+          ...field,
+          from: (moment.duration(field.from).asMinutes())
+        };
+      }
+      if (field.type === Metadata.Fields.SHIFT && field.from) {
+        field = {
+          ...field,
+          to: (moment.duration(field.to).asMinutes())
+        };
+      }
+      return field;
+    });
+  }
+  return data;
+};

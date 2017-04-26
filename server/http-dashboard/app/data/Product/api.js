@@ -1,5 +1,5 @@
 import {applyTransformers} from 'services/API';
-import {transformTimeToTimestamp} from 'services/Products';
+import {transformTimeToTimestamp, transformShiftToMinutes} from 'services/Products';
 
 export function ProductCreate(data = false) {
   return {
@@ -9,7 +9,7 @@ export function ProductCreate(data = false) {
         method: 'put',
         url: '/product',
         data: data,
-        transformRequest: applyTransformers([transformTimeToTimestamp])
+        transformRequest: applyTransformers([transformTimeToTimestamp, transformShiftToMinutes])
       }
     }
   };
