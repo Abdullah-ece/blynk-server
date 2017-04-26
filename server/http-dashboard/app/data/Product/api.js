@@ -1,3 +1,6 @@
+import {applyTransformers} from 'services/API';
+import {transformTimeToTimestamp} from 'services/Products';
+
 export function ProductCreate(data = false) {
   return {
     type: 'API_PRODUCT_CREATE',
@@ -5,7 +8,8 @@ export function ProductCreate(data = false) {
       request: {
         method: 'put',
         url: '/product',
-        data: data
+        data: data,
+        transformRequest: applyTransformers([transformTimeToTimestamp])
       }
     }
   };

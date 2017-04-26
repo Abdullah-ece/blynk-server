@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const Metadata = {
   Fields: {
     TEXT: 'Text',
@@ -157,3 +159,17 @@ export const Currency = {
   }
 };
 
+export const transformTimeToTimestamp = (data) => {
+  if (data.metaFields) {
+    data.metaFields = data.metaFields.map((field) => {
+      if (field.type === Metadata.Fields.TIME && field.value) {
+        return {
+          ...field,
+          value: (moment().hours(field.value.split(':')[0]).minutes(field.value.split(':')[1]).valueOf())
+        };
+      }
+      return field;
+    });
+  }
+  return data;
+};
