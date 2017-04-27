@@ -4,8 +4,6 @@ import Metadata from 'scenes/Products/components/Metadata';
 
 class BaseFieldStatic extends React.Component {
 
-  DEFAULT_VALUE = 'No Value';
-
   static propTypes = {
     role: React.PropTypes.string
   };
@@ -17,6 +15,8 @@ class BaseFieldStatic extends React.Component {
       throw Error('BaseFieldStatic children should have component method');
     }
   }
+
+  DEFAULT_VALUE = 'No Value';
 
   render() {
 
