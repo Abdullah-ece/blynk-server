@@ -6,6 +6,7 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -13,16 +14,16 @@ import BaseField from '../BaseField';
     fields: {
       name: selector(state, 'name'),
       lat: selector(state, 'lat'),
-      long: selector(state, 'long'),
+      lon: selector(state, 'lon'),
     }
   };
 })
-export default class CoordinatesField extends BaseField {
+class CoordinatesField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
     const lat = this.props.fields.lat;
-    const long = this.props.fields.long;
+    const long = this.props.fields.lon;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
@@ -47,7 +48,7 @@ export default class CoordinatesField extends BaseField {
             <MetadataFormField name="lat" type="text" placeholder="Latitude" validate={[
               Validation.Rules.latitude
             ]}/>
-            <MetadataFormField name="long" type="text" placeholder="Longitude" validate={[
+            <MetadataFormField name="lon" type="text" placeholder="Longitude" validate={[
               Validation.Rules.longitude
             ]}/>
           </Input.Group>
@@ -56,3 +57,6 @@ export default class CoordinatesField extends BaseField {
     );
   }
 }
+
+CoordinatesField.Static = Static;
+export default CoordinatesField;

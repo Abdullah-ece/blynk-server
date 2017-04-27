@@ -155,7 +155,7 @@ class ProductMetadata extends React.Component {
             name: field.values.name,
             lat: field.values.lat,
             role: field.values.role,
-            long: field.values.long
+            lon: field.values.lon
           }}
         />
       );
