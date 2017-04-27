@@ -7,12 +7,14 @@ package cc.blynk.server.core.model.web.product.metafields;
  */
 public enum MeasurementUnit {
 
+    Millimeter,
     Centimeter,
     Meter,
     Kilometer,
 
     Inch,
     Foot,
+    Yard,
     Mile,
 
     Milligram,
@@ -24,10 +26,12 @@ public enum MeasurementUnit {
 
     Ounce,
     Pint,
-    Quart,
     Gallon,
 
     Pound,
+    Stone,
+    Quarter,
+    Hundredweight,
 
     Celsius,
     Fahrenheit,
