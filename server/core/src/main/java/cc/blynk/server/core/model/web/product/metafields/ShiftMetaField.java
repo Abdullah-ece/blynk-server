@@ -14,6 +14,8 @@ public class ShiftMetaField extends MetaField {
     public int to;
 
     public ShiftMetaField() {
+        this.from = -1;
+        this.to = -1;
     }
 
     public ShiftMetaField(String name, Role role, int from, int to) {
