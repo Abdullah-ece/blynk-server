@@ -1,7 +1,7 @@
 import React from 'react';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields} from 'services/Products';
-const {ItemsList, Fields: {TextField}} = MetadataComponents;
+const {ItemsList, Fields: {TextField, NumberField}} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -23,6 +23,17 @@ class Metadata extends React.Component {
       if (field.type === MetadataFields.Fields.TEXT) {
         fields.push(
           <TextField.Static
+            {...props}
+            name={field.name}
+            value={field.value}
+            role={field.role}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.NUMBER) {
+        fields.push(
+          <NumberField.Static
             {...props}
             name={field.name}
             value={field.value}

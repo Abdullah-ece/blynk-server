@@ -6,6 +6,7 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -16,7 +17,7 @@ import BaseField from '../BaseField/index';
     }
   };
 })
-export default class NumberField extends BaseField {
+class NumberField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
@@ -50,3 +51,7 @@ export default class NumberField extends BaseField {
     );
   }
 }
+
+NumberField.Static = Static;
+
+export default NumberField;
