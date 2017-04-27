@@ -1,25 +1,13 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
-import {MetadataField as MetadataFormField, MetadataSelect as MetadataFormSelect} from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
-import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import {Unit} from 'services/Products';
-import Static from './static';
+import classnames from 'classnames';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      value: selector(state, 'value'),
-      units: selector(state, 'units')
-    }
-  };
-})
-class UnitField extends BaseField {
+export default class UnitStaticField extends BaseField.Static {
+
+  DEFAULT_VALUE = 'No Value';
 
   Unit = {
     'Length, Distance': {
@@ -69,9 +57,9 @@ class UnitField extends BaseField {
   };
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const value = this.props.fields.value;
-    const units = this.props.fields.units;
+    const name = this.props.name;
+    const value = this.props.value;
+    const units = this.props.units;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
@@ -80,6 +68,11 @@ class UnitField extends BaseField {
   }
 
   component() {
+
+    const valueClassNames = classnames({
+      'product-metadata-static-field': true,
+      'no-value': !this.props.value
+    });
 
     return (
       <FormItem offset={false}>
@@ -90,21 +83,20 @@ class UnitField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
-            ]}/>
-            <MetadataFormSelect name="units" type="text" placeholder="Choose"
-                                dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-            <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
-              Validation.Rules.number
-            ]}/>
+
+            <div className="product-metadata-static-field" style={{width: '200%'}}>
+              {this.props.name}
+            </div>
+            <div className="product-metadata-static-field">
+              {this.props.units}
+            </div>
+            <div className={valueClassNames}>
+              {this.props.value || this.DEFAULT_VALUE}
+            </div>
+
           </Input.Group>
         </FormItem.Content>
       </FormItem>
     );
   }
 }
-
-UnitField.Static = Static;
-
-export default UnitField;
