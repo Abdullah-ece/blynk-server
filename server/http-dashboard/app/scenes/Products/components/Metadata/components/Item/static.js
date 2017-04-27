@@ -3,11 +3,17 @@ import {Row, Col} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from '../../components/Preview';
 import classnames from 'classnames';
+import {Roles} from 'services/Roles';
 
 class MetadataItemStatic extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    preview: React.PropTypes.shape({
+      name: React.PropTypes.string,
+      value: React.PropTypes.any
+    }),
+    role: React.PropTypes.string
   };
 
   constructor(props) {
@@ -18,8 +24,8 @@ class MetadataItemStatic extends React.Component {
 
     return (
       <Preview>
-        <Preview.Name>Name:</Preview.Name>
-        <Preview.Value>Empty</Preview.Value>
+        <Preview.Name>{this.props.preview.name}</Preview.Name>
+        <Preview.Value>{this.props.preview.value}</Preview.Value>
       </Preview>
     );
 
@@ -43,7 +49,7 @@ class MetadataItemStatic extends React.Component {
               <FormItem.Title>Who can edit</FormItem.Title>
               <FormItem.Content>
                 <div className="product-metadata-static-field">
-                  Admin
+                  {Roles[this.props.role].title}
                 </div>
               </FormItem.Content>
             </FormItem>
