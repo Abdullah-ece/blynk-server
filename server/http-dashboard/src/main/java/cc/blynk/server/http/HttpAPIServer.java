@@ -8,7 +8,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.UrlMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

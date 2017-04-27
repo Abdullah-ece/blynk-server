@@ -1,4 +1,4 @@
-package cc.blynk.server.http.dashboard.handlers;
+package cc.blynk.server.http.web;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
