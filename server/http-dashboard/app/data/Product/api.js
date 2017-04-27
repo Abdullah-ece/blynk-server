@@ -2,7 +2,8 @@ import {applyRequestTransformers, applyResponseTransformers} from 'services/API'
 import {
   transformTimeToTimestamp,
   transformShiftToMinutes,
-  transformTimestampToTime
+  transformTimestampToTime,
+  transformMinutesToShift
 } from 'services/Products';
 
 export function ProductsFetch() {
@@ -12,7 +13,7 @@ export function ProductsFetch() {
       request: {
         method: 'get',
         url: `/product`,
-        transformResponse: applyResponseTransformers([transformTimestampToTime])
+        transformResponse: applyResponseTransformers([transformTimestampToTime, transformMinutesToShift])
       }
     }
   };

@@ -6,6 +6,7 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -17,7 +18,7 @@ import BaseField from '../BaseField';
     }
   };
 })
-export default class ShiftField extends BaseField {
+class ShiftField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
@@ -52,3 +53,7 @@ export default class ShiftField extends BaseField {
     );
   }
 }
+
+ShiftField.Static = Static;
+
+export default ShiftField;
