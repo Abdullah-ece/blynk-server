@@ -18,7 +18,7 @@ class ProductDetails extends React.Component {
   static propTypes = {
     params: React.PropTypes.object,
     fetch: React.PropTypes.func,
-    Product: React.PropTypes.object,
+    Product: React.PropTypes.array
   };
 
   constructor(props) {
