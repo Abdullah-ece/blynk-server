@@ -11,6 +11,7 @@ import {bindActionCreators} from 'redux';
 import {reduxForm, touch, Form} from 'redux-form';
 import {ProductMetadataFieldInvalidFlagUpdate} from 'data/Product/actions';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
+import Static from './static';
 
 @connect(() => ({}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch),
@@ -139,4 +140,5 @@ class MetadataItem extends React.Component {
   }
 }
 
+MetadataItem.Static = Static;
 export default MetadataItem;

@@ -1,7 +1,8 @@
 import React from 'react';
 import Metadata from '../../index';
+import Static from './static';
 
-export default class BaseField extends React.Component {
+class BaseField extends React.Component {
 
   static propTypes = {
     id: React.PropTypes.number,
@@ -53,3 +54,7 @@ export default class BaseField extends React.Component {
     );
   }
 }
+
+BaseField.Static = Static;
+
+export default BaseField;
