@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
@@ -53,6 +54,7 @@ public final class JsonParser {
     private static final ObjectReader organizationReader = mapper.readerFor(Organization.class);
     private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
+    private static final ObjectReader dashboardSettingsReader = mapper.readerFor(DashboardSettings.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
     private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
@@ -220,6 +222,15 @@ public final class JsonParser {
 
     public static Organization parseOrganization(String org) throws IOException {
         return organizationReader.readValue(org);
+    }
+
+    public static DashboardSettings parseDashboardSettings(String reader) {
+        try {
+            return dashboardSettingsReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing dashboard settings.");
+        }
     }
 
     public static DashBoard parseDashboard(String reader) {

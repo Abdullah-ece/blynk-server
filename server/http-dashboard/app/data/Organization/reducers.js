@@ -18,7 +18,7 @@ export default function Account(state = initialState, action) {
     case "API_ORGANIZATION_USERS_SUCCESS":
       return {
         ...state,
-        users: action.payload.data
+        users: [...action.payload.data]
       };
     case "API_ORGANIZATION_FAILURE":
       return {

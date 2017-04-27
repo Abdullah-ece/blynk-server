@@ -9,6 +9,8 @@ export const Metadata = {
     COORDINATES: 'Coordinates',
     UNIT: 'Measurement',
     SHIFT: 'Shift',
+    SWITCH: 'Switch',
+    DATE: 'Date',
     CONTACT: 'Contact',
   }
 };

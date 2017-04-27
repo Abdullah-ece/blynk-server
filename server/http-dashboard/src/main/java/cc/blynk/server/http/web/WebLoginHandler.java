@@ -6,12 +6,14 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -40,6 +42,7 @@ public class WebLoginHandler extends BaseHttpHandler {
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
     private final UserDao userDao;
+    private final OrganizationDao organizationDao;
     private final String resetURL;
     private final String host;
     private final String emailBody;
@@ -50,6 +53,7 @@ public class WebLoginHandler extends BaseHttpHandler {
     public WebLoginHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
+        this.organizationDao = holder.organizationDao;
 
         this.resetURL = "https://" + holder.props.getProperty("reset-pass.host") + rootPath + "#/resetPass?token=";
         this.host = "https://" + holder.props.getProperty("reset-pass.host");
@@ -187,6 +191,11 @@ public class WebLoginHandler extends BaseHttpHandler {
             log.info("User with passed email {} not found.", email);
             return badRequest("User email field is wrong.");
         }
+        Organization organization = organizationDao.getOrgById(user.orgId);
+        if (organization == null) {
+            log.info("Organization with id {} not found.", user.orgId);
+            return badRequest("Organization doesn't exist");
+        }
 
         tokensPool.addToken(token, user);
 
@@ -194,10 +203,12 @@ public class WebLoginHandler extends BaseHttpHandler {
             Response response;
             try {
                 String body = emailBody
-                        .replace("{name}", user.name)
+                        .replace("{organization}", organization.name)
                         .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
-                mailWrapper.sendHtml(email, "Password reset request.", body);
+                String subject = "Reset your {organization} Dashboard password".replace("{organization}", organization.name);
+
+                mailWrapper.sendHtml(email, subject, body);
                 log.info("Reset email sent to {}.", email);
                 response = ok("Email was sent.");
             } catch (Exception e) {

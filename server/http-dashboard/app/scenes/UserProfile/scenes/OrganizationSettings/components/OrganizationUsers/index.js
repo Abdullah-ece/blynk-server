@@ -106,13 +106,20 @@ class OrganizationUsers extends React.Component {
       usersDeleteLoading: true
     });
 
+    const initState = () => {
+      this.setState({
+        usersDeleteLoading: false,
+        selectedRows: 0
+      });
+    };
+
     this.props.OrganizationUsersDelete(this.props.Account.orgId, this.state.selectedRows).then(() => {
       this.props.OrganizationUsersFetch({id: this.props.Account.orgId}).then(() => {
-        this.setState({
-          usersDeleteLoading: false,
-          selectedRows: 0
-        });
+        initState();
       });
+    }).catch((err) => {
+      initState();
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
@@ -121,15 +128,21 @@ class OrganizationUsers extends React.Component {
   onRoleChange(user, role) {
 
     const hide = message.loading('Updating user role', 0);
-
-    this.props.OrganizationUpdateUser(this.props.Account.orgId, Object.assign({}, user, {
-      role: role.key
-    })).then(() => {
+    const resetUsersList = () => {
       this.props.OrganizationUsersFetch({
         id: this.props.Account.orgId
       }).then(() => {
         hide();
       });
+    };
+
+    this.props.OrganizationUpdateUser(this.props.Account.orgId, Object.assign({}, user, {
+      role: role.key
+    })).then(() => {
+      resetUsersList();
+    }).catch((err) => {
+      resetUsersList();
+      message.error(err && err.error && err.error.response.message);
     });
   }
 

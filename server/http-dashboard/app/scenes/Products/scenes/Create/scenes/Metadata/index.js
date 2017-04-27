@@ -122,6 +122,31 @@ class ProductMetadata extends React.Component {
       );
     }
 
+    if (field.type === MetadataService.Fields.SWITCH) {
+      return (
+        <MetadataFields.SwitchField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            from: field.values.from,
+            to: field.values.to
+          }}
+        />
+      );
+    }
+
+    if (field.type === MetadataService.Fields.DATE) {
+      return (
+        <MetadataFields.DateField
+          {...props}
+          initialValues={{
+            name: field.values.name,
+            value: field.values.value
+          }}
+        />
+      );
+    }
+
     if (field.type === MetadataService.Fields.COORDINATES) {
       return (
         <MetadataFields.CoordinatesField

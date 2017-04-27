@@ -89,19 +89,23 @@ class OrganizationSettings extends React.Component {
 
   handleTimezoneChange(timezone) {
     const hideUpdatingMessage = message.loading('Updating organization timezone...', 0);
-    this.props.OrganizationUpdateTimezone(timezone);
-    /** @todo track error */
     this.props.OrganizationSave(Object.assign({}, this.props.Organization, {tzName: timezone})).then(() => {
+      this.props.OrganizationUpdateTimezone(timezone);
       hideUpdatingMessage();
+    }).catch((err) => {
+      hideUpdatingMessage();
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
   handleNameSave(name) {
     const hideUpdatingMessage = message.loading('Updating organization name..', 0);
-    this.props.OrganizationUpdateName(name);
-    /** @todo track error */
     this.props.OrganizationSave(Object.assign({}, this.props.Organization, {name: name})).then(() => {
+      this.props.OrganizationUpdateName(name);
       hideUpdatingMessage();
+    }).catch((err) => {
+      hideUpdatingMessage();
+      message.error(err && err.error && err.error.response.message);
     });
   }
 
