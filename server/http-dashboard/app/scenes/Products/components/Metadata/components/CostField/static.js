@@ -1,25 +1,12 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
-import {MetadataField as MetadataFormField, MetadataSelect as MetadataFormSelect} from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
-import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import {Currency} from 'services/Products';
 import Static from './static';
+import classnames from 'classnames';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      value: selector(state, 'value'),
-      currency: selector(state, 'currency')
-    }
-  };
-})
-class CostField extends BaseField {
+class CostField extends BaseField.Static {
 
   Currency = [
     Currency.USD,
@@ -30,9 +17,9 @@ class CostField extends BaseField {
   ];
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const value = this.props.fields.value;
-    const currency = this.props.fields.currency;
+    const name = this.props.name;
+    const value = this.props.value;
+    const currency = this.props.currency;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
@@ -42,6 +29,11 @@ class CostField extends BaseField {
 
   component() {
 
+    const valueClassNames = classnames({
+      'product-metadata-static-field': true,
+      'no-value': !this.props.value
+    });
+
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
@@ -50,15 +42,19 @@ class CostField extends BaseField {
           <FormItem.Title style={{width: '25%'}}>Value</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
+
           <Input.Group compact>
-            <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
-            ]}/>
-            <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>
-            <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
-              Validation.Rules.number
-            ]}/>
+            <div className="product-metadata-static-field" style={{width: '200%'}}>
+              {this.props.name}
+            </div>
+            <div className="product-metadata-static-field">
+              {this.props.currency}
+            </div>
+            <div className={valueClassNames}>
+              {this.props.value || this.DEFAULT_VALUE}
+            </div>
           </Input.Group>
+
         </FormItem.Content>
       </FormItem>
     );
