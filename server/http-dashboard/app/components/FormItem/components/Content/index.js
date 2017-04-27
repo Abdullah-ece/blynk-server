@@ -3,7 +3,8 @@ import classnames from 'classnames';
 
 class Content extends React.Component {
   static propTypes = {
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    input: React.PropTypes.any
   };
 
   render() {

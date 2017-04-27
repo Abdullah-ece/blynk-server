@@ -6,6 +6,10 @@ import classnames from 'classnames';
 
 class MetadataItemStatic extends React.Component {
 
+  static propTypes = {
+    children: React.PropTypes.any
+  };
+
   constructor(props) {
     super(props);
   }

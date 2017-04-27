@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.less';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as ProductsAPI from './data/actions';
+import * as ProductsAPI from 'data/Product/api';
 import {message} from 'antd';
 
 import ProductsList from './scenes/List';

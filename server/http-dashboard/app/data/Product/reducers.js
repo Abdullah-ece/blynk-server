@@ -15,7 +15,7 @@ const initialState = {
 export default function Product(state = initialState, action) {
   switch (action.type) {
 
-    case "API_PRODUCTS_SUCCESS":
+    case "API_PRODUCTS_FETCH_SUCCESS":
       return {
         ...state,
         products: action.payload.data
