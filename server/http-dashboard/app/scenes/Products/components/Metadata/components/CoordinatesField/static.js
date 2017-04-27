@@ -39,7 +39,7 @@ export default class CoordinatesField extends BaseField.Static {
         <FormItem.Content>
           <Input.Group compact>
             <Input.Group compact>
-              <div className="product-metadata-static-field">
+              <div className="product-metadata-static-field" style={{width: '200%'}}>
                 {this.props.name}
               </div>
               <div className={latClassNames}>
