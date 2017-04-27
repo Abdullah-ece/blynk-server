@@ -101,7 +101,7 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            value: field.values.value,
+            time: field.values.time,
             role: field.values.role
           }}
         />

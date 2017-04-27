@@ -6,25 +6,26 @@ import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
     fields: {
       name: selector(state, 'name'),
-      value: selector(state, 'value')
+      time: selector(state, 'time')
     }
   };
 })
-export default class TimeField extends BaseField {
+class TimeField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
-    const value = this.props.fields.value;
+    const time = this.props.fields.time;
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: value && typeof value === 'string' ? `${value}` : null
+      value: time && typeof time === 'string' ? `${time}` : null
     };
   }
 
@@ -41,10 +42,14 @@ export default class TimeField extends BaseField {
             <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required
             ]}/>
-            <MetadataFormTime name="value" type="text" timeFormat="HH:mm" placeholder="Choose Time"/>
+            <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"/>
           </Input.Group>
         </FormItem.Content>
       </FormItem>
     );
   }
 }
+
+TimeField.Static = Static;
+
+export default TimeField;

@@ -1,5 +1,9 @@
-import {applyTransformers} from 'services/API';
-import {transformTimeToTimestamp, transformShiftToMinutes} from 'services/Products';
+import {applyRequestTransformers, applyResponseTransformers} from 'services/API';
+import {
+  transformTimeToTimestamp,
+  transformShiftToMinutes,
+  transformTimestampToTime
+} from 'services/Products';
 
 export function ProductsFetch() {
   return {
@@ -7,7 +11,8 @@ export function ProductsFetch() {
     payload: {
       request: {
         method: 'get',
-        url: `/product`
+        url: `/product`,
+        transformResponse: applyResponseTransformers([transformTimestampToTime])
       }
     }
   };
@@ -21,7 +26,7 @@ export function ProductCreate(data = false) {
         method: 'put',
         url: '/product',
         data: data,
-        transformRequest: applyTransformers([transformTimeToTimestamp, transformShiftToMinutes])
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformShiftToMinutes])
       }
     }
   };
