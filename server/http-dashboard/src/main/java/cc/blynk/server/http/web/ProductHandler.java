@@ -55,6 +55,30 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(calcDeviceCount(organization));
     }
 
+    @GET
+    @Path("/{id}")
+    public Response getAll(@Context ChannelHandlerContext ctx, @PathParam("id") int productId) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}", httpSession.user.orgId, httpSession.user.email);
+            return badRequest();
+        }
+
+        //Map<Integer, Integer> productIdCount = productDeviceCount(organization);
+        //product.deviceCount = productIdCount.getOrDefault(productId, 0);
+
+        Product product = organization.getProduct(productId);
+        if (product == null) {
+            log.error("Cannot find product with id {}", productId);
+            return badRequest();
+        }
+
+        return ok(product);
+    }
+
+
     //todo make sure performance is ok
     private List<Product> calcDeviceCount(Organization org) {
         Map<Integer, Integer> productIdCount = productDeviceCount(org);

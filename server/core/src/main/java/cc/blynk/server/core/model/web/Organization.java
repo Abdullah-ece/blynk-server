@@ -52,6 +52,15 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public Product getProduct(int id)  {
+        for (Product product : products) {
+            if (product.id == id) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     public boolean isUpdated(long lastStart) {
         return lastStart <= lastModifiedTs;
     }
