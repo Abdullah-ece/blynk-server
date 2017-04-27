@@ -98,6 +98,10 @@ class ProductCreate extends React.Component {
     return this.props.isProductInfoInvalid;
   }
 
+  handleCancel() {
+    this.context.router.push('/products');
+  }
+
   handleSubmit() {
 
     if (Array.isArray(this.props.metadataFields)) {
@@ -154,7 +158,7 @@ class ProductCreate extends React.Component {
         <div className="products-header">
           <div className="products-header-name">New Product</div>
           <div className="products-header-options">
-            <Button type="default">Cancel</Button>
+            <Button type="default" onClick={this.handleCancel.bind(this)}>Cancel</Button>
             <Button type="primary" onClick={this.handleSubmit.bind(this)}>Create</Button>
           </div>
         </div>
