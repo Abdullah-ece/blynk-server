@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 class Content extends React.Component {
   static propTypes = {
@@ -6,8 +7,14 @@ class Content extends React.Component {
   };
 
   render() {
+
+    const classNames = classnames({
+      'form-item-content': true,
+      'input': !!this.props.input
+    });
+
     return (
-      <div className="form-item-content">
+      <div className={classNames}>
         {this.props.children}
       </div>
     );
