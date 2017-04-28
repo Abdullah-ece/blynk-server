@@ -354,7 +354,7 @@ HOST: https://knight-qa.blynk.cc/
                 "role" : "ADMIN",
                 "time" : 1492697668006
               } ],
-              "dataSteams" : [ {
+              "dataStreams" : [ {
                 "name" : "Temperature",
                 "units" : "Celsius",
                 "min" : 0.0,
@@ -369,6 +369,17 @@ HOST: https://knight-qa.blynk.cc/
 + Response 400 (application/json)
 
         No organization with products.
+
+
+## Get Product by Id [GET] [/product/{id}]
+
++ Request (application/json)
+
+        Full product json
+
++ Response 400 (application/json)
+
+        Product with passed id is not found.
 
 ## Create New Product [PUT] [/product]
 

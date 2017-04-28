@@ -49,7 +49,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataSteams = new DataStream[] {
+        product.dataStreams = new DataStream[] {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
@@ -63,6 +63,46 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(401, response.getStatusLine().getStatusCode());
         }
     }
+
+    @Test
+    public void getNonExistingProduct() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpGet product = new HttpGet(httpsAdminServerUrl + "/product/123");
+        try (CloseableHttpResponse response = httpclient.execute(product)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void getProductById() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        HttpGet product1 = new HttpGet(httpsAdminServerUrl + "/product/1");
+        try (CloseableHttpResponse response = httpclient.execute(product1)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+    }
+
 
     @Test
     public void createProduct() throws Exception {
@@ -88,7 +128,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataSteams = new DataStream[] {
+        product.dataStreams = new DataStream[] {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
@@ -107,7 +147,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(product.logoUrl, fromApi.logoUrl);
             assertEquals(0, fromApi.version);
             assertNotEquals(0, fromApi.updatedAt);
-            assertNotNull(fromApi.dataSteams);
+            assertNotNull(fromApi.dataStreams);
             assertNotNull(fromApi.metaFields);
             assertEquals(8, fromApi.metaFields.length);
         }

@@ -200,6 +200,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             }
         }
 
+        log.debug("Delivering static {}", file.getAbsolutePath());
+
         RandomAccessFile raf;
         try {
             raf = new RandomAccessFile(file, "r");
