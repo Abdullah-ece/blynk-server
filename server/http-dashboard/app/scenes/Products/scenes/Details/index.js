@@ -22,6 +22,8 @@ class ProductDetails extends React.Component {
     Delete: React.PropTypes.func,
 
     params: React.PropTypes.object,
+    location: React.PropTypes.object,
+
     Product: React.PropTypes.array,
   };
 
@@ -39,6 +41,10 @@ class ProductDetails extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.location.query && this.props.location.query.save) {
+      message.success('Product saved successfully');
+      this.context.router.push(`/product/${this.props.params.id}`);
+    }
     this.props.Fetch({
       id: this.props.params.id
     }).then(() => {
@@ -75,6 +81,10 @@ class ProductDetails extends React.Component {
     });
   }
 
+  handleEdit() {
+    this.context.router.push(`/products/edit/${this.props.params.id}`);
+  }
+
   render() {
 
     if (!this.state.product) {
@@ -87,7 +97,7 @@ class ProductDetails extends React.Component {
           <div className="products-header-name">{this.state.product.name}</div>
           <div className="products-header-options">
             <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
-            <Button type="primary">Edit</Button>
+            <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
           </div>
         </div>
         <div className="products-content">

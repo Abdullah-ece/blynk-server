@@ -5,6 +5,27 @@ export function ProductMetadataFieldAdd(data = {}) {
   };
 }
 
+export function ProductEditInfoValuesUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_INFO_VALUES_UPDATE',
+    data: data
+  };
+}
+
+export function ProductEditMetadataFieldsUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_METADATA_FIELDS_UPDATE',
+    data: data
+  };
+}
+
+export function ProductEditMetadataFieldUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_METADATA_FIELD_UPDATE',
+    data: data
+  };
+}
+
 export function ProductMetadataFieldDelete(data = {}) {
   return {
     type: 'PRODUCT_METADATA_FIELD_DELETE',

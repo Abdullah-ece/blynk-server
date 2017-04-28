@@ -18,7 +18,7 @@ const initialState = {
     },
     metadata: {
       invalid: true,
-      fields: {}
+      fields: []
     }
   },
   products: []
@@ -26,6 +26,30 @@ const initialState = {
 
 export default function Product(state = initialState, action) {
   switch (action.type) {
+
+    case "PRODUCT_EDIT_METADATA_FIELDS_UPDATE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          metadata: {
+            ...state.edit.metadata,
+            fields: action.data
+          }
+        }
+      };
+
+    case "PRODUCT_EDIT_METADATA_FIELD_UPDATE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          metadata: {
+            ...state.edit.metadata,
+            fields: state.edit.metadata.fields.map((field) => field.id !== action.data.id ? field : action.data)
+          }
+        }
+      };
 
     case "API_PRODUCT_DELETE_SUCCESS":
       return {
@@ -68,10 +92,10 @@ export default function Product(state = initialState, action) {
     case "PRODUCT_INFO_UPDATE_INVALID_FLAG":
       return {
         ...state,
-        creating: {
-          ...state.creating,
+        edit: {
+          ...state.edit,
           info: {
-            ...state.creating.info,
+            ...state.edit.info,
             invalid: action.data
           }
         }
@@ -86,15 +110,15 @@ export default function Product(state = initialState, action) {
         }
       };
 
-    case "PRODUCT_INFO_UPDATE_VALUES":
+    case "PRODUCT_EDIT_INFO_VALUES_UPDATE":
       return {
         ...state,
-        creating: {
-          ...state.creating,
+        edit: {
+          ...state.edit,
           info: {
-            ...state.creating.info,
+            ...state.edit.info,
             values: {
-              ...state.creating.info.values,
+              ...state.edit.info.values,
               ...action.data
             }
           }
@@ -157,12 +181,12 @@ export default function Product(state = initialState, action) {
 
       return {
         ...state,
-        creating: {
-          ...state.creating,
+        edit: {
+          ...state.edit,
           metadata: {
-            ...state.creating.metadata,
+            ...state.edit.metadata,
             fields: [
-              ...state.creating.metadata.fields.map((field) => {
+              ...state.edit.metadata.fields.map((field) => {
                 if (field.id === action.data.id) {
                   return Object.assign({}, field, {
                     invalid: action.data.invalid

@@ -19,6 +19,20 @@ export function ProductsFetch() {
   };
 }
 
+export function ProductUpdate(data) {
+  return {
+    type: 'API_PRODUCT_UPDATE',
+    payload: {
+      request: {
+        method: 'post',
+        url: '/product',
+        data: data,
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformShiftToMinutes])
+      }
+    }
+  };
+}
+
 export function ProductDelete(id) {
 
   if (isNaN(Number(id)))

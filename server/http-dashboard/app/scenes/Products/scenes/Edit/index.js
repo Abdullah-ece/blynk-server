@@ -1,26 +1,36 @@
 import React from 'react';
 import './styles.less';
-import {Button, Tabs, Icon, Popover} from 'antd';
-import MetadataIntroductionMessage from "./components/MetadataIntroductionMessage/index";
-import ProductCreateInfoTab from './scenes/Info';
-import ProductCreateMetadataTab from './scenes/Metadata';
+
 import {connect} from 'react-redux';
 import {submit} from 'redux-form';
+import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataInfoRead} from 'data/Storage/actions';
+import {prepareProductForSave} from 'services/Products';
 import * as API from 'data/Product/api';
-import {ProductSetEdit} from 'data/Product/actions';
+import {
+  ProductSetEdit,
+  ProductEditMetadataFieldUpdate,
+  ProductEditMetadataFieldsUpdate,
+  ProductEditInfoValuesUpdate
+} from 'data/Product/actions';
 import _ from 'lodash';
+import ProductEdit from 'scenes/Products/components/ProductEdit';
 
 @connect((state) => ({
+  product: state.Product.edit,
+  products: state.Product.products,
+  isProductInfoInvalid: state.Product.edit.info.invalid,
   isMetadataInfoRead: state.Storage.products.isMetadataInfoRead,
-  isProductInfoInvalid: state.Product.creating.info.invalid,
-  Products: state.Product.products
 }), (dispatch) => ({
+  submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
+  Update: bindActionCreators(API.ProductUpdate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch),
-  submitFormById: bindActionCreators(submit, dispatch)
+  ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
+  ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
+  ProductEditMetadataFieldsUpdate: bindActionCreators(ProductEditMetadataFieldsUpdate, dispatch),
 }))
 class ProductCreate extends React.Component {
 
@@ -35,73 +45,36 @@ class ProductCreate extends React.Component {
     metadataFields: React.PropTypes.array,
 
     Fetch: React.PropTypes.func,
+    Update: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
     updateMetadataInfoReadFlag: React.PropTypes.func,
+    ProductEditInfoValuesUpdate: React.PropTypes.func,
+    ProductEditMetadataFieldUpdate: React.PropTypes.func,
+    ProductEditMetadataFieldsUpdate: React.PropTypes.func,
 
     params: React.PropTypes.object,
-    Products: React.PropTypes.object,
-    productInfo: React.PropTypes.object
+    products: React.PropTypes.array,
+    product: React.PropTypes.object,
   };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      submited: false,
-      activeTab: props.params.tab || this.TABS.INFO,
-      metadataIntroVisible: false
-    };
-  }
 
   componentWillMount() {
     this.props.Fetch().then(() => {
-      const product = _.find(this.props.Products, {id: Number(this.props.params.id)});
-      this.props.ProductSetEdit(product);
+      if (!this.getProduct())
+        this.context.router.push('/products?notFound=true');
+
+      this.props.ProductSetEdit(this.getProduct());
     });
   }
 
-  TABS = {
-    INFO: 'info',
-    METADATA: 'metadata',
-    // DATA_STREAMS: 'datastreams',
-    // EVENTS: 'events'
-  };
-
-
-  handleTabChange(key) {
-    this.setState({
-      activeTab: key
-    });
-
-    // this.context.router.push(`/products/create/${key}`);
+  getProduct() {
+    return _.find(this.props.products, {id: Number(this.props.params.id)});
   }
 
-  isMetadataIntroductionMessageVisible() {
-
-    if (!this.props.isMetadataInfoRead) return true;
-
-    return this.state.metadataIntroVisible;
-  }
-
-  toggleMetadataIntroductionMessage() {
-
-    this.setState({
-      metadataIntroVisible: !this.state.metadataIntroVisible,
-    });
-
-    if (!this.props.isMetadataInfoRead) {
-      this.props.updateMetadataInfoReadFlag(true);
-      this.setState({
-        metadataIntroVisible: false
-      });
-    }
-  }
-
-  isMetadataFormsInvalid() {
-    if (Array.isArray(this.props.metadataFields)) {
-      return this.props.metadataFields.some((field) => {
+  isMetadataFormInvalid() {
+    if (Array.isArray(this.props.product.metadata.fields)) {
+      return this.props.product.metadata.fields.some((field) => {
         return field.invalid;
       });
     }
@@ -113,57 +86,61 @@ class ProductCreate extends React.Component {
   }
 
   handleCancel() {
-    this.context.router.push('/products');
+    this.context.router.push(`/product/${this.props.params.id}`);
   }
 
   handleSubmit() {
 
+    if (Array.isArray(this.props.metadataFields)) {
+      this.props.metadataFields.forEach((field) => {
+        this.props.submitFormById(`metadatafield${field.id}`);
+      });
+    }
+
+    this.props.submitFormById(`product-edit-info`);
+
+    this.setState({
+      submited: true
+    });
+
+    if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
+
+      this.props.Update(prepareProductForSave(this.props.product)).then(() => {
+        this.context.router.push(`/product/${this.props.params.id}?save=true`);
+      }).catch((err) => {
+        message.error(err.message || 'Cannot save product');
+      });
+
+    }
+
   }
 
-  productInfoInvalidIcon() {
-    return this.state.submited && this.isInfoFormInvalid() &&
-      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  onInfoValuesChange(values) {
+    this.props.ProductEditInfoValuesUpdate(values);
   }
 
-  productMetadataInvalidIcon() {
-    return this.state.submited && this.isMetadataFormsInvalid() &&
-      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  onMetadataFieldChange(field) {
+    this.props.ProductEditMetadataFieldUpdate(field);
+  }
+
+  onMetadataFieldsChange(values) {
+    this.props.ProductEditMetadataFieldsUpdate(values);
   }
 
   render() {
+    if (!this.props.product.info.values.id)
+      return null;
 
     return (
-      <div className="products-create">
-        <div className="products-header">
-          <div className="products-header-name"> Product</div>
-          <div className="products-header-options">
-            <Button type="default" onClick={this.handleCancel.bind(this)}>Cancel</Button>
-            <Button type="primary" onClick={this.handleSubmit.bind(this)}>Save</Button>
-          </div>
-        </div>
-        <div className="products-content" style={{position: 'relative'}}>
-          { this.state.activeTab === this.TABS.METADATA && <Popover
-            placement="bottomRight"
-            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
-            visible={this.isMetadataIntroductionMessageVisible()}
-            overlayClassName="products-metadata-introduction-message-popover"
-            trigger="click">
-
-            <Icon type="info-circle" className="products-metadata-info"
-                  onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
-          </Popover>}
-
-          <Tabs defaultActiveKey={this.TABS.INFO} activeKey={this.state.activeTab}
-                onChange={this.handleTabChange.bind(this)} className="products-tabs">
-            <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={this.TABS.INFO}>
-              <ProductCreateInfoTab />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={this.TABS.METADATA}>
-              <ProductCreateMetadataTab />
-            </Tabs.TabPane>
-          </Tabs>
-        </div>
-      </div>
+      <ProductEdit product={this.props.product}
+                   isInfoFormInvalid={this.props.isProductInfoInvalid}
+                   isMetadataFormInvalid={this.isMetadataFormInvalid()}
+                   isMetadataInfoRead={this.props.isMetadataInfoRead}
+                   onInfoValuesChange={this.onInfoValuesChange.bind(this)}
+                   onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
+                   onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
+                   handleSubmit={this.handleSubmit.bind(this)}
+                   handleCancel={this.handleCancel.bind(this)}/>
     );
   }
 }

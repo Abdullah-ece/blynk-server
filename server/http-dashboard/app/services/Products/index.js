@@ -282,3 +282,23 @@ export const prepareProductForEdit = (data) => {
   return edit;
 
 };
+
+export const prepareProductForSave = (data) => {
+
+  const product = {
+    ...data.info.values,
+    metaFields: []
+  };
+
+  if (Array.isArray(data.metadata.fields)) {
+    data.metadata.fields.forEach((value) => {
+      product.metaFields.push({
+        name: value.name,
+        type: value.type,
+        ...value.values
+      });
+    });
+  }
+
+  return product;
+};
