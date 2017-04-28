@@ -1,6 +1,8 @@
 import React from 'react';
 import {Row, Col} from 'antd';
 import FormItem from 'components/FormItem';
+import {CONNECTIONS_TYPES, HARDWARES} from 'services/Devices';
+import _ from 'lodash';
 
 class Info extends React.Component {
 
@@ -9,6 +11,10 @@ class Info extends React.Component {
   };
 
   render() {
+
+    const connectionType = _.find(CONNECTIONS_TYPES, {key: this.props.product.connectionType}).value;
+    const boardType = _.find(HARDWARES, {key: this.props.product.boardType}).value;
+
     return (
       <div className="products-create-tabs-inner-content">
         <Row gutter={24}>
@@ -19,7 +25,7 @@ class Info extends React.Component {
                   <FormItem>
                     <FormItem.Title>hardware</FormItem.Title>
                     <FormItem.Content>
-                      { this.props.product.boardType }
+                      { boardType }
                     </FormItem.Content>
                   </FormItem>
                 </Col>
@@ -27,7 +33,7 @@ class Info extends React.Component {
                   <FormItem>
                     <FormItem.Title>connection type</FormItem.Title>
                     <FormItem.Content>
-                      { this.props.product.connectionType }
+                      { connectionType }
                     </FormItem.Content>
                   </FormItem>
                 </Col>
