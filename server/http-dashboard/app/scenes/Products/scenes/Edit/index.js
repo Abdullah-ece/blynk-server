@@ -59,6 +59,14 @@ class ProductCreate extends React.Component {
     product: React.PropTypes.object,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      activeTab: props && props.params.tab || this.TABS.INFO,
+    };
+  }
+
   componentWillMount() {
     this.props.Fetch().then(() => {
       if (!this.getProduct())
@@ -110,10 +118,11 @@ class ProductCreate extends React.Component {
     if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Update(prepareProductForSave(this.props.product)).then(() => {
+        console.log('save', this.state.activeTab);
         if (this.state.activeTab) {
-          this.context.router.push(`/product/${this.props.params.id}?save=true`);
-        } else {
           this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
+        } else {
+          this.context.router.push(`/product/${this.props.params.id}?save=true`);
         }
       }).catch((err) => {
         message.error(err.message || 'Cannot save product');

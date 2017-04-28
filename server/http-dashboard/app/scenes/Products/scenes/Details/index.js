@@ -36,6 +36,7 @@ class ProductDetails extends React.Component {
 
     this.state = {
       product: null,
+      activeTab: props && props.params.tab || this.TABS.INFO,
       showDeleteModal: false
     };
   }
@@ -43,7 +44,12 @@ class ProductDetails extends React.Component {
   componentDidMount() {
     if (this.props.location.query && this.props.location.query.save) {
       message.success('Product saved successfully');
-      this.context.router.push(`/product/${this.props.params.id}`);
+      console.log('on init', this.props.params.tab);
+      if (this.props.params.tab) {
+        this.context.router.push(`/product/${this.props.params.id}/${this.props.params.tab}`);
+      } else {
+        this.context.router.push(`/product/${this.props.params.id}`);
+      }
     }
     this.props.Fetch({
       id: this.props.params.id
@@ -66,6 +72,12 @@ class ProductDetails extends React.Component {
     // EVENTS: 'events'
   };
 
+  handleTabChange(key) {
+    this.setState({
+      activeTab: key
+    });
+  }
+
   handleDeleteSubmit() {
     return this.props.Delete(this.props.params.id).then(() => {
       this.toggleDelete();
@@ -82,7 +94,12 @@ class ProductDetails extends React.Component {
   }
 
   handleEdit() {
-    this.context.router.push(`/products/edit/${this.props.params.id}`);
+    console.log(this.state);
+    if (this.state.activeTab) {
+      this.context.router.push(`/products/edit/${this.props.params.id}/${this.state.activeTab}`);
+    } else {
+      this.context.router.push(`/products/edit/${this.props.params.id}`);
+    }
   }
 
   render() {
@@ -101,7 +118,10 @@ class ProductDetails extends React.Component {
           </div>
         </div>
         <div className="products-content">
-          <Tabs className="products-tabs">
+          <Tabs className="products-tabs"
+                defaultActiveKey={this.TABS.INFO}
+                activeKey={this.state.activeTab}
+                onChange={this.handleTabChange.bind(this)}>
             <Tabs.TabPane tab="Info" key={this.TABS.INFO}>
               <Info product={this.state.product}/>
             </Tabs.TabPane>
