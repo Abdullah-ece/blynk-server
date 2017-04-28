@@ -103,7 +103,7 @@ class ProductCreate extends React.Component {
 
     return (
       <div className="products-create">
-        <ProductHeader title='New Product'
+        <ProductHeader title="New Product"
                        options={(
                          <div>
                            <Button type="default"
