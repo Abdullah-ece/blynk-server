@@ -41,8 +41,9 @@ Store().then((store) => {
               </Route>
               <Route path="/products" component={ProductsIndex}/>
               <Route path="/products/create" component={ProductCreate}/>
-              <Route path="/products/edit/:id" component={ProductEdit}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
+              <Route path="/products/edit/:id" component={ProductEdit}/>
+              <Route path="/products/edit/:id/:tab" component={ProductEdit}/>
               <Route path="/product/:id" component={ProductDetails}/>
             </Route>
             <Route path="/logout" component={Logout}/>

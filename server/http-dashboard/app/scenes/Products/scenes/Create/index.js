@@ -131,7 +131,8 @@ class Create extends React.Component {
                      onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                      onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
                      handleSubmit={this.handleSubmit.bind(this)}
-                     handleCancel={this.handleCancel.bind(this)}/>
+                     handleCancel={this.handleCancel.bind(this)}
+                     params={this.props.params}/>
     );
   }
 
