@@ -110,6 +110,21 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_EDIT_CLEAR_FIELDS":
+      return {
+        ...state,
+        edit: {
+          info: {
+            invalid: true,
+            values: {}
+          },
+          metadata: {
+            invalid: true,
+            fields: []
+          }
+        }
+      };
+
     case "PRODUCT_EDIT_INFO_VALUES_UPDATE":
       return {
         ...state,

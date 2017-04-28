@@ -10,6 +10,7 @@ import {prepareProductForSave} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
+  ProductEditClearFields,
   ProductEditMetadataFieldUpdate,
   ProductEditMetadataFieldsUpdate,
   ProductEditInfoValuesUpdate
@@ -26,6 +27,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
+  ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
@@ -45,6 +47,7 @@ class Create extends React.Component {
     Create: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
+    ProductEditClearFields: React.PropTypes.func,
     updateMetadataInfoReadFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
@@ -96,6 +99,7 @@ class Create extends React.Component {
     if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Create(prepareProductForSave(this.props.product)).then(() => {
+        this.props.ProductEditClearFields();
         this.context.router.push(`/products/?success=true`);
       }).catch((err) => {
         message.error(err.message || 'Cannot create product');

@@ -19,6 +19,13 @@ export function ProductEditMetadataFieldsUpdate(data = {}) {
   };
 }
 
+export function ProductEditClearFields(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_CLEAR_FIELDS',
+    data: data
+  };
+}
+
 export function ProductEditMetadataFieldUpdate(data = {}) {
   return {
     type: 'PRODUCT_EDIT_METADATA_FIELD_UPDATE',
