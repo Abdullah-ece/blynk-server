@@ -14,6 +14,9 @@ class Metadata extends React.Component {
 
     const fields = [];
 
+    if (!this.props.product.metaFields)
+      return fields;
+
     this.props.product.metaFields.forEach((field, key) => {
 
       const props = {
