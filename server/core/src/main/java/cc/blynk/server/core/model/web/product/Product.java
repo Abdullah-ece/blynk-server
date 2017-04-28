@@ -29,7 +29,7 @@ public class Product {
 
     public volatile MetaField[] metaFields;
 
-    public volatile DataStream[] dataSteams;
+    public volatile DataStream[] dataStreams;
 
     public int deviceCount;
 
@@ -47,7 +47,7 @@ public class Product {
         this.description = updatedProduct.description;
         this.logoUrl = updatedProduct.logoUrl;
         this.metaFields = updatedProduct.metaFields;
-        this.dataSteams = updatedProduct.dataSteams;
+        this.dataStreams = updatedProduct.dataStreams;
         this.updatedAt = System.currentTimeMillis();
         this.version++;
     }

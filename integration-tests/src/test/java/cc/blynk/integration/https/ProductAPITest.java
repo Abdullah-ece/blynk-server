@@ -49,7 +49,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataSteams = new DataStream[] {
+        product.dataStreams = new DataStream[] {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
@@ -128,7 +128,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataSteams = new DataStream[] {
+        product.dataStreams = new DataStream[] {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
@@ -147,7 +147,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(product.logoUrl, fromApi.logoUrl);
             assertEquals(0, fromApi.version);
             assertNotEquals(0, fromApi.updatedAt);
-            assertNotNull(fromApi.dataSteams);
+            assertNotNull(fromApi.dataStreams);
             assertNotNull(fromApi.metaFields);
             assertEquals(8, fromApi.metaFields.length);
         }
