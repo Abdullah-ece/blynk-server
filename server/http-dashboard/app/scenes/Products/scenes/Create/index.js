@@ -99,7 +99,6 @@ class Create extends React.Component {
     if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Create(prepareProductForSave(this.props.product)).then(() => {
-        this.props.ProductEditClearFields();
         this.context.router.push(`/products/?success=true`);
       }).catch((err) => {
         message.error(err.message || 'Cannot create product');
@@ -107,6 +106,10 @@ class Create extends React.Component {
 
     }
 
+  }
+
+  componentWillUnmount() {
+    this.props.ProductEditClearFields();
   }
 
   onInfoValuesChange(values) {

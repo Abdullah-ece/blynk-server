@@ -12,7 +12,8 @@ import {
   ProductSetEdit,
   ProductEditMetadataFieldUpdate,
   ProductEditMetadataFieldsUpdate,
-  ProductEditInfoValuesUpdate
+  ProductEditInfoValuesUpdate,
+  ProductEditClearFields
 } from 'data/Product/actions';
 import _ from 'lodash';
 import ProductEdit from 'scenes/Products/components/ProductEdit';
@@ -27,6 +28,7 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
+  ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
@@ -49,6 +51,7 @@ class ProductCreate extends React.Component {
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
+    ProductEditClearFields: React.PropTypes.func,
     updateMetadataInfoReadFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
@@ -99,6 +102,10 @@ class ProductCreate extends React.Component {
     } else {
       this.context.router.push(`/product/${this.props.params.id}`);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.ProductEditClearFields();
   }
 
   handleSubmit() {
