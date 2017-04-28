@@ -25,6 +25,8 @@ class DeleteForm extends React.Component {
     onOk: React.PropTypes.func,
     onCancel: React.PropTypes.func,
     handleSubmit: React.PropTypes.func,
+
+    productName: React.PropTypes.string
   };
 
   render() {
