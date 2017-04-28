@@ -8,7 +8,12 @@ import ProductContent from 'scenes/Products/components/ProductContent';
 
 class ProductEdit extends React.Component {
 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
   static propTypes = {
+    onTabChange: React.PropTypes.func,
     handleCancel: React.PropTypes.func,
     handleSubmit: React.PropTypes.func,
     onInfoValuesChange: React.PropTypes.func,
@@ -20,6 +25,7 @@ class ProductEdit extends React.Component {
     isInfoFormInvalid: React.PropTypes.bool,
     isMetadataFormInvalid: React.PropTypes.bool,
 
+    params: React.PropTypes.object,
     product: React.PropTypes.object
   };
 
@@ -29,7 +35,7 @@ class ProductEdit extends React.Component {
     this.state = {
       originalName: null,
       submited: false,
-      activeTab: this.TABS.INFO,
+      activeTab: props && props.params.tab || this.TABS.INFO,
       metadataIntroVisible: false
     };
   }
@@ -74,6 +80,10 @@ class ProductEdit extends React.Component {
     this.setState({
       activeTab: key
     });
+
+    this.context.router.push(`/products/edit/${this.props.params.id}/${key}`);
+
+    this.props.onTabChange(key);
   }
 
   isInfoFormInvalid() {

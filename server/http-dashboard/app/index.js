@@ -45,6 +45,7 @@ Store().then((store) => {
               <Route path="/products/edit/:id" component={ProductEdit}/>
               <Route path="/products/edit/:id/:tab" component={ProductEdit}/>
               <Route path="/product/:id" component={ProductDetails}/>
+              <Route path="/product/:id/:tab" component={ProductDetails}/>
             </Route>
             <Route path="/logout" component={Logout}/>
             <Route component={LoginLayout}>

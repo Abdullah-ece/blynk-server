@@ -86,7 +86,11 @@ class ProductCreate extends React.Component {
   }
 
   handleCancel() {
-    this.context.router.push(`/product/${this.props.params.id}`);
+    if (this.state.activeTab) {
+      this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}`);
+    } else {
+      this.context.router.push(`/product/${this.props.params.id}`);
+    }
   }
 
   handleSubmit() {
@@ -106,13 +110,23 @@ class ProductCreate extends React.Component {
     if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Update(prepareProductForSave(this.props.product)).then(() => {
-        this.context.router.push(`/product/${this.props.params.id}?save=true`);
+        if (this.state.activeTab) {
+          this.context.router.push(`/product/${this.props.params.id}?save=true`);
+        } else {
+          this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
+        }
       }).catch((err) => {
         message.error(err.message || 'Cannot save product');
       });
 
     }
 
+  }
+
+  onTabChange(key) {
+    this.setState({
+      activeTab: key
+    });
   }
 
   onInfoValuesChange(values) {
@@ -140,7 +154,9 @@ class ProductCreate extends React.Component {
                    onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                    onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
                    handleSubmit={this.handleSubmit.bind(this)}
-                   handleCancel={this.handleCancel.bind(this)}/>
+                   handleCancel={this.handleCancel.bind(this)}
+                   onTabChange={this.onTabChange.bind(this)}
+                   params={this.props.params}/>
     );
   }
 }
