@@ -31,9 +31,6 @@ class Info extends React.Component {
 
   render() {
 
-    if (!this.props.values.name)
-      return null;
-
     return (
       <InfoForm onChange={this.onChange.bind(this)} initialValues={this.getInitialValues()}/>
     );

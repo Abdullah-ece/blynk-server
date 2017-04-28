@@ -91,8 +91,8 @@ class ProductCreate extends React.Component {
 
   handleSubmit() {
 
-    if (Array.isArray(this.props.metadataFields)) {
-      this.props.metadataFields.forEach((field) => {
+    if (Array.isArray(this.props.product.metadata.fields)) {
+      this.props.product.metadata.fields.forEach((field) => {
         this.props.submitFormById(`metadatafield${field.id}`);
       });
     }
