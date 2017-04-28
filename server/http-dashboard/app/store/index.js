@@ -8,7 +8,7 @@ import {responseInterceptor as axiosResponseInterceptor} from './axios';
 import {persistStore, autoRehydrate} from 'redux-persist';
 
 /* instance for basic API */
-axios.defaults.headers.put['Content-Type'] = 'application/json';
+axios.defaults.headers['Content-Type'] = 'application/json';
 const axiosAPI = axios.create({
   baseURL: '/dashboard',
   options: {
