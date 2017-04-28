@@ -118,7 +118,6 @@ class ProductCreate extends React.Component {
     if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Update(prepareProductForSave(this.props.product)).then(() => {
-        console.log('save', this.state.activeTab);
         if (this.state.activeTab) {
           this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
         } else {

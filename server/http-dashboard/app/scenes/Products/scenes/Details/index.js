@@ -44,7 +44,6 @@ class ProductDetails extends React.Component {
   componentDidMount() {
     if (this.props.location.query && this.props.location.query.save) {
       message.success('Product saved successfully');
-      console.log('on init', this.props.params.tab);
       if (this.props.params.tab) {
         this.context.router.push(`/product/${this.props.params.id}/${this.props.params.tab}`);
       } else {
@@ -94,7 +93,6 @@ class ProductDetails extends React.Component {
   }
 
   handleEdit() {
-    console.log(this.state);
     if (this.state.activeTab) {
       this.context.router.push(`/products/edit/${this.props.params.id}/${this.state.activeTab}`);
     } else {
