@@ -1,3 +1,5 @@
+import {prepareProductForEdit} from 'services/Products';
+
 const initialState = {
   creating: {
     info: {
@@ -9,6 +11,16 @@ const initialState = {
       fields: []
     }
   },
+  edit: {
+    info: {
+      invalid: true,
+      values: {}
+    },
+    metadata: {
+      invalid: true,
+      fields: {}
+    }
+  },
   products: []
 };
 
@@ -18,6 +30,15 @@ export default function Product(state = initialState, action) {
     case "API_PRODUCT_DELETE_SUCCESS":
       return {
         ...state
+      };
+
+    case "PRODUCT_SET_EDIT":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          ...prepareProductForEdit(action.data)
+        }
       };
 
     case "API_PRODUCTS_FETCH_SUCCESS":

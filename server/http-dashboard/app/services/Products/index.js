@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
 
@@ -252,4 +253,32 @@ export const transformShiftToMinutes = (data) => {
     });
   }
   return data;
+};
+
+export const prepareProductForEdit = (data) => {
+
+  const edit = {
+    info: {
+      values: {}
+    },
+    metadata: {
+      fields: {}
+    }
+  };
+
+  edit.info.values = _.pickBy(data, (value, key) => {
+    return key !== 'metaFields';
+  });
+
+  let id = 1;
+  edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
+      return {
+        id: ++id,
+        type: field.type,
+        values: _.pickBy(field, (value, key) => key !== 'type')
+      };
+    })) || [];
+
+  return edit;
+
 };
