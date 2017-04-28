@@ -96,9 +96,10 @@ class MetadataItem extends React.Component {
 
     let deleteButton;
     if (this.props.anyTouched) {
-      deleteButton = (<Popconfirm title="Are you sure you want to delete this task?" overlayClassName="danger"
+      deleteButton = (<Popconfirm title="Are you sure?" overlayClassName="danger"
                                   onConfirm={this.handleConfirmDelete.bind(this)}
-                                  onCancel={this.handleCancelDelete.bind(this)} okText="Yes" cancelText="No">
+                                  onCancel={this.handleCancelDelete.bind(this)} okText="Yes, Delete"
+                                  cancelText="Cancel">
         <Button icon="delete" size="small" onClick={this.markAsActive.bind(this)}/>
       </Popconfirm>);
     } else {
