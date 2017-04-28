@@ -19,6 +19,22 @@ export function ProductsFetch() {
   };
 }
 
+export function ProductDelete(id) {
+
+  if (isNaN(Number(id)))
+    throw Error('ProductDelete is missing id parameter');
+
+  return {
+    type: 'API_PRODUCT_DELETE',
+    payload: {
+      request: {
+        method: 'delete',
+        url: `/product/${id}`
+      }
+    }
+  };
+}
+
 export function ProductCreate(data = false) {
   return {
     type: 'API_PRODUCT_CREATE',

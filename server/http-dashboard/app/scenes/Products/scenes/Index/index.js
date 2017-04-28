@@ -38,6 +38,10 @@ class ProductsIndex extends React.Component {
       message.success('Product created successfully');
       this.context.router.push('/products');
     }
+    if (this.props.location.query && this.props.location.query.deleted) {
+      message.success('Product deleted successfully');
+      this.context.router.push('/products');
+    }
   }
 
   render() {

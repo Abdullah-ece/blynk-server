@@ -15,6 +15,11 @@ const initialState = {
 export default function Product(state = initialState, action) {
   switch (action.type) {
 
+    case "API_PRODUCT_DELETE_SUCCESS":
+      return {
+        ...state
+      };
+
     case "API_PRODUCTS_FETCH_SUCCESS":
       return {
         ...state,

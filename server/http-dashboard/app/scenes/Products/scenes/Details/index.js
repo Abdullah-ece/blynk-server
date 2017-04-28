@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Tabs} from 'antd';
+import {Button, Tabs, message} from 'antd';
 import './styles.less';
 import Info from './scenes/Info';
 import Metadata from './scenes/Metadata';
@@ -7,25 +7,34 @@ import * as API from 'data/Product/api';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import _ from 'lodash';
+import DeleteModal from './components/Delete';
 
 @connect((state) => ({
   Product: state.Product.products
 }), (dispatch) => ({
-  Fetch: bindActionCreators(API.ProductsFetch, dispatch)
+  Fetch: bindActionCreators(API.ProductsFetch, dispatch),
+  Delete: bindActionCreators(API.ProductDelete, dispatch)
 }))
 class ProductDetails extends React.Component {
 
   static propTypes = {
-    params: React.PropTypes.object,
     Fetch: React.PropTypes.func,
-    Product: React.PropTypes.array
+    Delete: React.PropTypes.func,
+
+    params: React.PropTypes.object,
+    Product: React.PropTypes.array,
+  };
+
+  static contextTypes = {
+    router: React.PropTypes.object
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      product: null
+      product: null,
+      showDeleteModal: false
     };
   }
 
@@ -38,7 +47,8 @@ class ProductDetails extends React.Component {
       });
 
       this.setState({
-        product: product
+        product: product,
+        showDeleteModal: false
       });
     });
   }
@@ -49,6 +59,21 @@ class ProductDetails extends React.Component {
     // DATA_STREAMS: 'datastreams',
     // EVENTS: 'events'
   };
+
+  handleDeleteSubmit() {
+    return this.props.Delete(this.props.params.id).then(() => {
+      this.toggleDelete();
+      this.context.router.push('/products?deleted=true');
+    }).catch((err) => {
+      message.error(err.message || 'Cannot delete product');
+    });
+  }
+
+  toggleDelete() {
+    this.setState({
+      showDeleteModal: !this.state.showDeleteModal
+    });
+  }
 
   render() {
 
@@ -61,7 +86,7 @@ class ProductDetails extends React.Component {
         <div className="products-header">
           <div className="products-header-name">{this.state.product.name}</div>
           <div className="products-header-options">
-            <Button type="danger">Delete</Button>
+            <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
             <Button type="primary">Edit</Button>
           </div>
         </div>
@@ -74,6 +99,9 @@ class ProductDetails extends React.Component {
               <Metadata product={this.state.product}/>
             </Tabs.TabPane>
           </Tabs>
+          <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}
+                       visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
+                       productName={this.state.product.name}/>
         </div>
       </div>
     );
