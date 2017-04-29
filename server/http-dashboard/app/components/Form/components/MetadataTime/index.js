@@ -29,7 +29,7 @@ export default class Field extends React.Component {
           style={{width: '100%'}}
           onChange={(moment, timeString) => input.onChange(timeString)}
           placeholder={placeholder}
-          value={input.value ? moment(input.value, timeFormat) : defaultValue ? moment(defaultValue, timeFormat) : undefined}
+          value={input.value ? moment(input.value, timeFormat) : defaultValue ? moment(defaultValue, timeFormat) : moment('00:00', timeFormat)}
         />
       </Form.Item>
     );
