@@ -36,12 +36,6 @@ public class HttpsAPIServer extends BaseServer {
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-        final SslContext sslCtx = SslUtil.initSslContext(
-                holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
-                holder.props.getProperty("https.key", holder.props.getProperty("server.ssl.key")),
-                holder.props.getProperty("https.key.pass", holder.props.getProperty("server.ssl.key.pass")),
-                SslUtil.fetchSslProvider(holder.props));
-
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
         final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
@@ -58,7 +52,7 @@ public class HttpsAPIServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HttpsSslContext", holder.sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
