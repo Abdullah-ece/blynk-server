@@ -195,6 +195,7 @@ public class Holder implements Closeable {
                 props.getProperty("server.ssl.key.pass"),
                 props.getProperty("client.ssl.cert"),
                 sslProvider);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     private static void disableNettyLeakDetector() {
@@ -203,7 +204,6 @@ public class Holder implements Closeable {
         if (leakProperty == null) {
             ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
         }
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     @Override

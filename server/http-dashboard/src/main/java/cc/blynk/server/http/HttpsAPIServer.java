@@ -9,7 +9,6 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
-import cc.blynk.utils.SslUtil;
 import cc.blynk.utils.UrlMapper;
 import cc.blynk.utils.UrlStartWithMapper;
 import io.netty.channel.ChannelInitializer;
@@ -19,7 +18,6 @@ import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
-import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
