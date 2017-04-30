@@ -1,5 +1,5 @@
 import React from 'react';
-import AddNewMetadataField from "scenes/Products/components/AddNewMetadataField";
+import {AddMetadataFields} from 'scenes/Products/components/AddField';
 import {Metadata as MetadataService} from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
@@ -292,7 +292,7 @@ class ProductMetadata extends React.Component {
                              helperClass="product-metadata-item-drag-active"/>) || null
         }
 
-        <AddNewMetadataField onFieldAdd={this.addMetadataField.bind(this)}/>
+        <AddMetadataFields onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
     );
   }
