@@ -149,6 +149,8 @@ class Clone extends React.Component {
     this.setState({
       activeTab: key
     });
+
+    this.context.router.push(`/products/clone/${this.props.params.id}/${key}`);
   }
 
   onInfoValuesChange(values) {

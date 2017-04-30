@@ -76,6 +76,8 @@ class ProductDetails extends React.Component {
     this.setState({
       activeTab: key
     });
+
+    this.context.router.push(`/product/${this.props.params.id}/${key}`);
   }
 
   handleDeleteSubmit() {
