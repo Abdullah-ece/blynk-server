@@ -142,6 +142,8 @@ class ProductCreate extends React.Component {
     this.setState({
       activeTab: key
     });
+
+    this.context.router.push(`/products/edit/${this.props.params.id}/${key}`);
   }
 
   onInfoValuesChange(values) {

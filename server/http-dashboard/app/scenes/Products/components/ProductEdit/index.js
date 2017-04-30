@@ -77,8 +77,6 @@ class ProductEdit extends React.Component {
       activeTab: key
     });
 
-    this.context.router.push(`/products/edit/${this.props.params.id}/${key}`);
-
     this.props.onTabChange(key);
   }
 
