@@ -38,7 +38,7 @@ public class ProductAPITest extends APIBaseTest {
 
         product.metaFields = new MetaField[] {
                 new TextMetaField("My Farm", Role.ADMIN, "Farm of Smith"),
-                new ShiftMetaField("Farm of Smith", Role.ADMIN, 60, 120),
+                new RangeMetaField("Farm of Smith", Role.ADMIN, 60, 120),
                 new NumberMetaField("Farm of Smith", Role.ADMIN, 10.222),
                 new MeasurementUnitMetaField("Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
                 new CostMetaField("Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99),
@@ -117,7 +117,7 @@ public class ProductAPITest extends APIBaseTest {
 
         product.metaFields = new MetaField[] {
                 new TextMetaField("My Farm", Role.ADMIN, "Farm of Smith"),
-                new ShiftMetaField("Farm of Smith", Role.ADMIN, 60, 120),
+                new RangeMetaField("Farm of Smith", Role.ADMIN, 60, 120),
                 new NumberMetaField("Farm of Smith", Role.ADMIN, 10.222),
                 new MeasurementUnitMetaField("Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
                 new CostMetaField("Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99),
