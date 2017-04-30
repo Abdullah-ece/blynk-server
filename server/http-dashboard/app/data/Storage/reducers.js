@@ -1,17 +1,17 @@
 const initialState = {
   products: {
-    isMetadataInfoRead: false
+    metadataFirstTime: false
   }
 };
 
 export default function Account(state = initialState, action) {
   switch (action.type) {
-    case "STORAGE_PRODUCTS_UPDATE_METADATA_INFO_READ":
+    case "STORAGE_PRODUCTS_UPDATE_METADATA_FIRST_TIME_FLAG":
       return {
         ...state,
         products: {
           ...state.products,
-          isMetadataInfoRead: action.data
+          metadataFirstTime: action.data
         }
       };
 

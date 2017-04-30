@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {submit} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
-import {ProductsUpdateMetadataInfoRead} from 'data/Storage/actions';
+import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {prepareProductForSave} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
@@ -22,14 +22,14 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
   product: state.Product.edit,
   products: state.Product.products,
   isProductInfoInvalid: state.Product.edit.info.invalid,
-  isMetadataInfoRead: state.Storage.products.isMetadataInfoRead,
+  isMetadataFirstTime: state.Storage.products.metadataFirstTime,
 }), (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
-  updateMetadataInfoReadFlag: bindActionCreators(ProductsUpdateMetadataInfoRead, dispatch),
+  updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
   ProductEditMetadataFieldsUpdate: bindActionCreators(ProductEditMetadataFieldsUpdate, dispatch),
@@ -41,7 +41,7 @@ class ProductCreate extends React.Component {
   };
 
   static propTypes = {
-    isMetadataInfoRead: React.PropTypes.bool,
+    isMetadataFirstTime: React.PropTypes.bool,
     isProductInfoInvalid: React.PropTypes.bool,
 
     metadataFields: React.PropTypes.array,
@@ -52,7 +52,7 @@ class ProductCreate extends React.Component {
     submitFormById: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
     ProductEditClearFields: React.PropTypes.func,
-    updateMetadataInfoReadFlag: React.PropTypes.func,
+    updateMetadataFirstTimeFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
     ProductEditMetadataFieldsUpdate: React.PropTypes.func,
@@ -164,8 +164,8 @@ class ProductCreate extends React.Component {
       <ProductEdit product={this.props.product}
                    isInfoFormInvalid={this.props.isProductInfoInvalid}
                    isMetadataFormInvalid={this.isMetadataFormInvalid()}
-                   isMetadataInfoRead={this.props.isMetadataInfoRead}
-                   updateMetadataInfoReadFlag={this.props.updateMetadataInfoReadFlag}
+                   isMetadataInfoRead={!this.props.isMetadataFirstTime}
+                   updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
                    onInfoValuesChange={this.onInfoValuesChange.bind(this)}
                    onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                    onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
