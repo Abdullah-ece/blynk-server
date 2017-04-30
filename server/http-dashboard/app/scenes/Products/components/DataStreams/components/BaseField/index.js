@@ -1,0 +1,120 @@
+import React from 'react';
+import DataStreamsItem from '../Item';
+import FormItem from 'components/FormItem';
+import {Input} from 'antd';
+import {
+  MetadataField as MetadataFormField,
+  MetadataSelect as MetadataFormSelect
+} from 'components/Form';
+import Validation from 'services/Validation';
+
+import {connect} from 'react-redux';
+import {formValueSelector} from 'redux-form';
+
+@connect((state, ownProps) => {
+  const selector = formValueSelector(ownProps.form);
+  return {
+    fields: {
+      name: selector(state, 'name'),
+      units: selector(state, 'units'),
+      min: selector(state, 'min'),
+      max: selector(state, 'max'),
+    }
+  };
+})
+class BaseField extends React.Component {
+
+  static propTypes = {
+    onChange: React.PropTypes.func,
+
+    validate: React.PropTypes.object,
+    initialValues: React.PropTypes.object,
+
+    id: React.PropTypes.number,
+
+    form: React.PropTypes.string,
+
+    fields: React.PropTypes.object,
+  };
+
+  onChange() {
+
+  }
+
+  validate() {
+
+  }
+
+  handleDelete() {
+
+  }
+
+  handleClone() {
+
+  }
+
+  getPreviewValues() {
+    const name = this.props.fields.name;
+    const min = this.props.fields.min;
+    const max = this.props.fields.max;
+    // const units = this.props.fields.units;
+
+    let value = null;
+    if (!isNaN(Number(min)) && !isNaN(Number(max)) /*&& units*/) {
+      value = `from ${min} to ${max}`;
+    }
+
+    return {
+      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      value: value
+    };
+  }
+
+  component() {
+    return (
+      <FormItem offset={false}>
+        <FormItem.TitleGroup>
+          <FormItem.Title style={{width: '50%'}}>Name</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Units</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Min</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Max</FormItem.Title>
+        </FormItem.TitleGroup>
+        <FormItem.Content>
+          <Input.Group compact>
+            <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
+              Validation.Rules.required
+            ]}/>
+            <MetadataFormSelect name="units" type="text" placeholder="Choose"
+                                dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
+            <MetadataFormField name="min" type="text" placeholder="Min" validate={[
+              Validation.Rules.number
+            ]}/>
+            <MetadataFormField name="max" type="text" placeholder="Max" validate={[
+              Validation.Rules.number
+            ]}/>
+          </Input.Group>
+        </FormItem.Content>
+      </FormItem>
+    );
+  }
+
+  render() {
+    return (
+      <DataStreamsItem
+        preview={this.getPreviewValues()}
+        // onChange={this.props.onChange.bind(this)}
+        onDelete={this.handleDelete.bind(this)}
+        onClone={this.handleClone.bind(this)}
+        // validate={this.props.validate.bind(this)}
+        initialValues={this.props.initialValues}
+        fields={this.props.fields}
+        id={this.props.id}
+        form={this.props.form}
+      >
+        { this.component() }
+      </DataStreamsItem>
+    );
+  }
+}
+
+export default BaseField;

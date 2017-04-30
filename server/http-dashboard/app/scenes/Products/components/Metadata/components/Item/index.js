@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Icon, Popconfirm, Button} from 'antd';
 import FormItem from 'components/FormItem';
-import Preview from '../../components/Preview';
+import Preview from 'scenes/Products/components/Preview';
 import {SortableHandle} from 'react-sortable-hoc';
 import {MetadataSelect} from 'components/Form';
 import {MetadataRoles} from 'services/Roles';
