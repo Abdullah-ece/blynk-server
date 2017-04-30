@@ -17,6 +17,12 @@ export const Metadata = {
   }
 };
 
+export const exampleMetadataField = {
+  type: Metadata.Fields.TEXT,
+  name: 'Example: Serial Number',
+  role: 'ADMIN'
+};
+
 export const Unit = {
   Inch: {
     abbreviation: 'in',

@@ -6,7 +6,7 @@ import {submit} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
-import {prepareProductForSave} from 'services/Products';
+import {prepareProductForSave, exampleMetadataField} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -61,7 +61,8 @@ class Create extends React.Component {
   componentWillMount() {
     this.props.ProductSetEdit({
       boardType: HARDWARES["Particle Electron"].key,
-      connectionType: CONNECTIONS_TYPES["GSM"].key
+      connectionType: CONNECTIONS_TYPES["GSM"].key,
+      metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : []
     });
   }
 
