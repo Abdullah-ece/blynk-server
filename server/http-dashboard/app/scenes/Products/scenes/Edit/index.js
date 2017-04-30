@@ -6,7 +6,7 @@ import {submit} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
-import {prepareProductForSave} from 'services/Products';
+import {prepareProductForSave, TABS} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -66,7 +66,7 @@ class ProductCreate extends React.Component {
     super(props);
 
     this.state = {
-      activeTab: props && props.params.tab || this.TABS.INFO,
+      activeTab: props && props.params.tab || TABS.INFO,
     };
   }
 
@@ -77,6 +77,10 @@ class ProductCreate extends React.Component {
 
       this.props.ProductSetEdit(this.getProduct());
     });
+  }
+
+  componentWillUnmount() {
+    this.props.ProductEditClearFields();
   }
 
   getProduct() {
@@ -102,10 +106,6 @@ class ProductCreate extends React.Component {
     } else {
       this.context.router.push(`/product/${this.props.params.id}`);
     }
-  }
-
-  componentWillUnmount() {
-    this.props.ProductEditClearFields();
   }
 
   handleSubmit() {

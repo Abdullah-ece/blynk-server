@@ -66,6 +66,10 @@ class Create extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    this.props.ProductEditClearFields();
+  }
+
   isMetadataFormInvalid() {
     if (Array.isArray(this.props.product.metadata.fields)) {
       return this.props.product.metadata.fields.some((field) => {
@@ -107,10 +111,6 @@ class Create extends React.Component {
 
     }
 
-  }
-
-  componentWillUnmount() {
-    this.props.ProductEditClearFields();
   }
 
   onInfoValuesChange(values) {
