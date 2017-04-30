@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import DeleteModal from './components/Delete';
+import {TABS} from 'services/Products';
 
 @connect((state) => ({
   Product: state.Product.products
@@ -36,7 +37,7 @@ class ProductDetails extends React.Component {
 
     this.state = {
       product: null,
-      activeTab: props && props.params.tab || this.TABS.INFO,
+      activeTab: props && props.params.tab || TABS.INFO,
       showDeleteModal: false
     };
   }
@@ -122,13 +123,13 @@ class ProductDetails extends React.Component {
         </div>
         <div className="products-content">
           <Tabs className="products-tabs"
-                defaultActiveKey={this.TABS.INFO}
+                defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
                 onChange={this.handleTabChange.bind(this)}>
-            <Tabs.TabPane tab="Info" key={this.TABS.INFO}>
+            <Tabs.TabPane tab="Info" key={TABS.INFO}>
               <Info product={this.state.product}/>
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Metadata" key={this.TABS.METADATA}>
+            <Tabs.TabPane tab="Metadata" key={TABS.METADATA}>
               <Metadata product={this.state.product}/>
             </Tabs.TabPane>
           </Tabs>

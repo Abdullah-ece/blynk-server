@@ -2,6 +2,13 @@ import _ from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
 
+export const TABS = {
+  INFO: 'info',
+  METADATA: 'metadata',
+  DATA_STREAMS: 'datastreams',
+  // EVENTS: 'events'
+};
+
 export const Metadata = {
   Fields: {
     TEXT: 'Text',

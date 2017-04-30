@@ -5,6 +5,7 @@ import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
 import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
 import ProductHeader from 'scenes/Products/components/ProductHeader';
 import ProductContent from 'scenes/Products/components/ProductContent';
+import {TABS} from 'services/Products';
 
 class ProductEdit extends React.Component {
 
@@ -37,7 +38,7 @@ class ProductEdit extends React.Component {
     this.state = {
       originalName: null,
       submited: false,
-      activeTab: props && props.params.tab || this.TABS.INFO,
+      activeTab: props && props.params.tab || TABS.INFO,
       metadataIntroVisible: false
     };
   }
@@ -49,13 +50,6 @@ class ProductEdit extends React.Component {
       });
     }
   }
-
-  TABS = {
-    INFO: 'info',
-    METADATA: 'metadata',
-    // DATA_STREAMS: 'datastreams',
-    // EVENTS: 'events'
-  };
 
   isMetadataIntroductionMessageVisible() {
     if (!this.props.isMetadataInfoRead) return true;
@@ -130,7 +124,7 @@ class ProductEdit extends React.Component {
                          </div>
                        )}/>
         <ProductContent>
-          { this.state.activeTab === this.TABS.METADATA && <Popover
+          { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
             visible={this.isMetadataIntroductionMessageVisible()}
@@ -141,16 +135,16 @@ class ProductEdit extends React.Component {
                   onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
           </Popover>}
 
-          <Tabs defaultActiveKey={this.TABS.INFO}
+          <Tabs defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
                 onChange={this.handleTabChange.bind(this)} className="products-tabs">
 
-            <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={this.TABS.INFO}>
+            <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
               <InfoTab values={this.props.product.info.values}
                        onChange={this.props.onInfoValuesChange}/>
             </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={this.TABS.METADATA}>
+            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA}>
               <MetadataTab fields={this.props.product.metadata.fields}
                            onFieldChange={this.props.onMetadataFieldChange}
                            onFieldsChange={this.props.onMetadataFieldsChange}/>

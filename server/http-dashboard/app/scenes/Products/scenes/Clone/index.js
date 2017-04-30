@@ -74,13 +74,6 @@ class Clone extends React.Component {
     };
   }
 
-  TABS = {
-    INFO: 'info',
-    METADATA: 'metadata',
-    // DATA_STREAMS: 'datastreams',
-    // EVENTS: 'events'
-  };
-
   componentWillMount() {
     this.props.Fetch().then(() => {
       if (!this.getProduct())
@@ -89,6 +82,17 @@ class Clone extends React.Component {
       this.props.ProductSetEdit(this.getProduct());
     });
   }
+
+  componentWillUnmount() {
+    this.props.ProductEditClearFields();
+  }
+
+  TABS = {
+    INFO: 'info',
+    METADATA: 'metadata',
+    // DATA_STREAMS: 'datastreams',
+    // EVENTS: 'events'
+  };
 
   getProduct() {
     return _.find(this.props.products, {id: Number(this.props.params.id)});
@@ -113,10 +117,6 @@ class Clone extends React.Component {
     } else {
       this.context.router.push(`/product/${this.props.params.id}`);
     }
-  }
-
-  componentWillUnmount() {
-    this.props.ProductEditClearFields();
   }
 
   handleSubmit() {
