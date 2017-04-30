@@ -118,15 +118,15 @@ class MetadataItem extends React.Component {
             <Col span={12}>
               { this.props.children }
             </Col>
-            <Col span={4}>
+            <Col span={3}>
               <FormItem offset={false}>
                 <FormItem.Title>Who can edit</FormItem.Title>
                 <FormItem.Content>
-                  <MetadataSelect name="role" style={{width: 120}} values={MetadataRoles}/>
+                  <MetadataSelect name="role" style={{width: '100%'}} values={MetadataRoles}/>
                 </FormItem.Content>
               </FormItem>
             </Col>
-            <Col span={6} offset={1}>
+            <Col span={8}>
               { this.preview() }
             </Col>
           </Row>

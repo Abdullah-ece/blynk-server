@@ -11,14 +11,16 @@ class Preview extends React.Component {
 
   render() {
     return (
-      <FormItem offset={false}>
-        <FormItem.Title>Preview</FormItem.Title>
-        <FormItem.Content>
-          <div className="product-metadata-item--preview">
-            {this.props.children}
-          </div>
-        </FormItem.Content>
-      </FormItem>
+      <div className="product-metadata-item--preview">
+        <FormItem offset={false}>
+          <FormItem.Title>Preview</FormItem.Title>
+          <FormItem.Content>
+            <div className="product-metadata-item--preview-content">
+              {this.props.children}
+            </div>
+          </FormItem.Content>
+        </FormItem>
+      </div>
     );
   }
 }
