@@ -3,6 +3,7 @@ import {Button, Tabs, Icon, Popover} from 'antd';
 import MetadataIntroductionMessage from "../MetadataIntroductionMessage";
 import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
 import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
+import DataStreamsTab from 'scenes/Products/components/ProductManage/components/DataStreams';
 import ProductHeader from 'scenes/Products/components/ProductHeader';
 import ProductContent from 'scenes/Products/components/ProductContent';
 import {TABS} from 'services/Products';
@@ -93,6 +94,12 @@ class ProductCreate extends React.Component {
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   }
 
+  productDataStreamsInvalidIcon() {
+    /** @todo replace false for isDataStreamsValid() function */
+    return this.state.submited && false &&
+      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  }
+
   productMetadataInvalidIcon() {
     return this.state.submited && this.props.isMetadataFormInvalid &&
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
@@ -150,6 +157,12 @@ class ProductCreate extends React.Component {
               <MetadataTab fields={this.props.product.metadata.fields}
                            onFieldChange={this.props.onMetadataFieldChange}
                            onFieldsChange={this.props.onMetadataFieldsChange}/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS}>
+              <DataStreamsTab fields={this.props.product.metadata.fields}
+                              onFieldChange={this.props.onMetadataFieldChange}
+                              onFieldsChange={this.props.onMetadataFieldsChange}/>
             </Tabs.TabPane>
 
           </Tabs>
