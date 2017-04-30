@@ -1,6 +1,6 @@
-export function ProductsUpdateMetadataInfoRead(data) {
+export function ProductsUpdateMetadataFirstTime(data) {
   return {
-    type: 'STORAGE_PRODUCTS_UPDATE_METADATA_INFO_READ',
+    type: 'STORAGE_PRODUCTS_UPDATE_METADATA_FIRST_TIME_FLAG',
     data: data
   };
 }

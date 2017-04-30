@@ -18,7 +18,7 @@ class ProductCreate extends React.Component {
     onInfoValuesChange: React.PropTypes.func,
     onMetadataFieldChange: React.PropTypes.func,
     onMetadataFieldsChange: React.PropTypes.func,
-    updateMetadataInfoReadFlag: React.PropTypes.func,
+    updateMetadataFirstTimeFlag: React.PropTypes.func,
 
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
@@ -68,7 +68,7 @@ class ProductCreate extends React.Component {
     });
 
     if (!this.props.isMetadataInfoRead) {
-      this.props.updateMetadataInfoReadFlag(true);
+      this.props.updateMetadataFirstTimeFlag(false);
       this.setState({
         metadataIntroVisible: false
       });
