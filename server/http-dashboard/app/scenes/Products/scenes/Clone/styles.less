@@ -1,0 +1,97 @@
+@import 'components/Layout/style-guide';
+
+.products-create {
+  max-width: 820px;
+  margin: @style-size-4 auto 0;
+}
+
+.products-header {
+  display: flex;
+  height: @style-font-size-6;
+}
+
+.products-header-name {
+  .font-h1;
+  width: 100%;
+  line-height: @style-font-size-6;
+  justify-content: space-between;
+}
+
+.products-create-tabs-inner-content {
+  padding-top: @style-size-4;
+  padding-left: @style-size-3;
+}
+
+.products-header-options {
+  width: 100%;
+  text-align: right;
+  padding: (@style-size-1/2) 0;
+  button {
+    min-width: 92px;
+    margin: 0 @style-size-1;
+  }
+}
+
+.products-content {
+  margin: @style-size-3-1 0;
+  position: relative;
+}
+
+.products-create-drag-and-drop {
+  margin-top: @style-size-3;
+  padding-bottom: @style-size-4-1;
+  height: 329px;
+}
+
+.products-metadata-info {
+  cursor: pointer;
+  font-size: @style-font-size-1-2;
+  color: @color-primary-6;
+  position: absolute;
+  right: 10px;
+  top: 15px;
+  z-index: 5;
+  padding: 1px;
+}
+
+.products-tabs {
+  width: 850px;
+  margin-left: -15px;
+  padding: 0 15px;
+}
+
+.ant-input-group {
+  display: flex;
+  .ant-form-item.ant-row {
+    width: 100%;
+    .ant-form-item-control {
+      width: 100%;
+      input, .ant-select-selection {
+        width: 100%;
+      }
+    }
+    &:last-child {
+      input, .ant-select-selection {
+        border-radius: 0 4px 4px 0;
+      }
+    }
+    &:first-child {
+      input, .ant-select-selection {
+        border-right: 0;
+        border-radius: 4px 0 0 4px;
+      }
+    }
+    &:not(:first-child):not(:last-child) {
+      input, .ant-select-selection {
+        border-right: 0;
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+.product-tab-invalid {
+  color: red;
+  font-size: 14px;
+  line-height: 21px;
+}

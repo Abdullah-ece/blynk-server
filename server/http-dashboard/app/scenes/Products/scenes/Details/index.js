@@ -100,6 +100,10 @@ class ProductDetails extends React.Component {
     }
   }
 
+  handleClone() {
+    this.context.router.push(`/products/clone/${this.props.params.id}`);
+  }
+
   render() {
 
     if (!this.state.product) {
@@ -112,6 +116,7 @@ class ProductDetails extends React.Component {
           <div className="products-header-name">{this.state.product.name}</div>
           <div className="products-header-options">
             <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
+            <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
             <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
           </div>
         </div>
