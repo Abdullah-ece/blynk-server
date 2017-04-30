@@ -107,10 +107,11 @@ class ProductCreate extends React.Component {
   }
 
   render() {
+    const productName = this.props.product.info.values.name;
 
     return (
       <div className="products-create">
-        <ProductHeader title="New Product"
+        <ProductHeader title={productName ? productName : "New Product"}
                        options={(
                          <div>
                            <Button type="default"
