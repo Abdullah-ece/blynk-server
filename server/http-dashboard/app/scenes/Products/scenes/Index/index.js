@@ -42,6 +42,10 @@ class ProductsIndex extends React.Component {
       message.success('Product deleted successfully');
       this.context.router.push('/products');
     }
+    if (this.props.location.query && this.props.location.query.cloned) {
+      message.success('Product cloned successfully');
+      this.context.router.push('/products');
+    }
   }
 
   render() {

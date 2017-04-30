@@ -289,6 +289,15 @@ export const prepareProductForEdit = (data) => {
 
 };
 
+export const prepareProductForClone = (data) => {
+
+  if (data && data.id) {
+    delete data.id;
+  }
+
+  return data;
+};
+
 export const prepareProductForSave = (data) => {
 
   const product = {

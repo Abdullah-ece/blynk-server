@@ -14,7 +14,7 @@ import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
 import Invite from './scenes/Invite';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
-import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit} from './scenes/Products';
+import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
 
 /* store */
 import {Provider} from 'react-redux';
@@ -44,6 +44,8 @@ Store().then((store) => {
               <Route path="/products/create/:tab" component={ProductCreate}/>
               <Route path="/products/edit/:id" component={ProductEdit}/>
               <Route path="/products/edit/:id/:tab" component={ProductEdit}/>
+              <Route path="/products/clone/:id" component={ProductClone}/>
+              <Route path="/products/clone/:id/:tab" component={ProductClone}/>
               <Route path="/product/:id" component={ProductDetails}/>
               <Route path="/product/:id/:tab" component={ProductDetails}/>
             </Route>

@@ -26,7 +26,9 @@ class ProductEdit extends React.Component {
     isMetadataFormInvalid: React.PropTypes.bool,
 
     params: React.PropTypes.object,
-    product: React.PropTypes.object
+    product: React.PropTypes.object,
+
+    successButtonLabel: React.PropTypes.string
   };
 
   constructor(props) {
@@ -123,7 +125,7 @@ class ProductEdit extends React.Component {
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
                                    disabled={this.state.submited && (this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
-                             Save
+                             { this.props.successButtonLabel || 'Save' }
                            </Button>
                          </div>
                        )}/>
