@@ -147,7 +147,6 @@ class Info extends React.Component {
         <Col span={9}>
           <div className="products-create-drag-and-drop">
             <FormField name="logoUrl"
-                       validate={[Validation.Rules.imageRequired]}
                        component={({input, meta: {error, touched}}) => (
                          <ImageUploader text="Add image"
                                         logo={input.value}
