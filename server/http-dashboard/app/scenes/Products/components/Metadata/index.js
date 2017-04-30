@@ -12,6 +12,7 @@ import DateField from './components/DateField';
 import CoordinatesField from './components/CoordinatesField';
 import UnitField from './components/UnitField';
 import ContactField from './components/ContactField';
+import AddressField from './components/AddressField';
 
 const Metadata = {
   Item: Item,
@@ -26,7 +27,8 @@ const Metadata = {
     CoordinatesField,
     UnitField,
     SwitchField,
-    ContactField
+    ContactField,
+    AddressField
   }
 };
 

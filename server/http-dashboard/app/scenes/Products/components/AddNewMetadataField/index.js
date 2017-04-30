@@ -25,6 +25,10 @@ class AddNewMetadataField extends React.Component {
       <Menu.Item key={Metadata.Fields.COORDINATES}>
         Coordinates
       </Menu.Item>
+      <Menu.Divider/>
+      <Menu.Item key={Metadata.Fields.ADDRESS}>
+        Address
+      </Menu.Item>
     </Menu>
   );
 

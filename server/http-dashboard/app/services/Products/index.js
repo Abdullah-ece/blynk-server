@@ -13,6 +13,7 @@ export const Metadata = {
     SHIFT: 'Shift',
     SWITCH: 'Switch',
     DATE: 'Date',
+    ADDRESS: 'Address',
     CONTACT: 'Contact',
   }
 };
