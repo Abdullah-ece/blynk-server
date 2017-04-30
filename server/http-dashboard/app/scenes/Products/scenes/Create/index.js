@@ -134,6 +134,7 @@ class Create extends React.Component {
                      isInfoFormInvalid={this.props.isProductInfoInvalid}
                      isMetadataFormInvalid={this.isMetadataFormInvalid()}
                      isMetadataInfoRead={this.props.isMetadataInfoRead}
+                     updateMetadataInfoReadFlag={this.props.updateMetadataInfoReadFlag}
                      onInfoValuesChange={this.onInfoValuesChange.bind(this)}
                      onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                      onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
