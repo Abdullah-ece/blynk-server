@@ -61,16 +61,16 @@ class AddressField extends BaseField.Static {
             </div>
           </Input.Group>
           <Input.Group compact className="address-group">
-            {this.props.city && <div>
+            {this.props.city && <div className="product-metadata-static-field">
               {this.props.city}
             </div>}
-            {this.props.zip && <div>
+            {this.props.zip && <div className="product-metadata-static-field">
               {this.props.zip}
             </div>}
-            {this.props.state && <div>
+            {this.props.state && <div className="product-metadata-static-field">
               {this.props.state}
             </div>}
-            {this.props.country && <div>
+            {this.props.country && <div className="product-metadata-static-field">
               {this.props.country}
             </div>}
           </Input.Group>
