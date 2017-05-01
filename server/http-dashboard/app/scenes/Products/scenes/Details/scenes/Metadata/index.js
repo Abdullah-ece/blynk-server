@@ -1,7 +1,7 @@
 import React from 'react';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields} from 'services/Products';
-const {ItemsList, Fields: {TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField}} = MetadataComponents;
+const {ItemsList, Fields: {TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField}} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -53,6 +53,21 @@ class Metadata extends React.Component {
             value={field.value}
             units={field.units}
             role={field.role}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.ADDRESS) {
+        fields.push(
+          <AddressField.Static
+            {...props}
+            name={field.name}
+            role={field.role}
+            streetAddress={field.streetAddress}
+            city={field.city}
+            state={field.state}
+            zip={field.zip}
+            country={field.country}
           />
         );
       }
