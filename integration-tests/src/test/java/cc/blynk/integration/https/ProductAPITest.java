@@ -45,6 +45,8 @@ public class ProductAPITest extends APIBaseTest {
                 new ContactMetaField("Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", "Dumanskiy", "dmitriy@blynk.cc", "+38063673333", "My street",
                         "Kyiv", "Ukraine", "03322"),
+                new AddressMetaField("Farm of Smith", Role.ADMIN, "My street",
+                        "San Diego", "CA", "03322", "US"),
                 new CoordinatesMetaField("Farm Location", Role.ADMIN, 22.222, 23.333),
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };
@@ -124,6 +126,8 @@ public class ProductAPITest extends APIBaseTest {
                 new ContactMetaField("Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", "Dumanskiy", "dmitriy@blynk.cc", "+38063673333", "My street",
                         "Kyiv", "Ukraine", "03322"),
+                new AddressMetaField("Farm of Smith", Role.ADMIN, "My street",
+                        "San Diego", "CA", "03322", "US"),
                 new CoordinatesMetaField("Farm Location", Role.ADMIN, 22.222, 23.333),
                 new TimeMetaField("Some Time", Role.ADMIN, new Date())
         };

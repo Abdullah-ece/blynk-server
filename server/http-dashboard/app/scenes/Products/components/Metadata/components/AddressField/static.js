@@ -14,22 +14,22 @@ class AddressField extends BaseField.Static {
   };
 
   getPreviewValues() {
-    const name = this.props.fields.name;
+    const name = this.props.name;
     const address = [];
-    if (this.props.fields.streetAddress) {
-      address.push(this.props.fields.streetAddress);
+    if (this.props.streetAddress) {
+      address.push(this.props.streetAddress);
     }
-    if (this.props.fields.city) {
-      address.push(this.props.fields.city);
+    if (this.props.city) {
+      address.push(this.props.city);
     }
-    if (this.props.fields.zip) {
-      address.push(this.props.fields.zip);
+    if (this.props.zip) {
+      address.push(this.props.zip);
     }
-    if (this.props.fields.state) {
-      address.push(this.props.fields.state);
+    if (this.props.state) {
+      address.push(this.props.state);
     }
-    if (this.props.fields.country) {
-      address.push(this.props.fields.country);
+    if (this.props.country) {
+      address.push(this.props.country);
     }
 
     return {
@@ -42,24 +42,8 @@ class AddressField extends BaseField.Static {
 
     const streetAddressClassNames = classnames({
       'product-metadata-static-field': true,
-      'no-value': !this.props.value
+      'no-value': !this.props.streetAddress
     });
-    const cityClassNames = classnames({
-          'product-metadata-static-field': true,
-          'no-value': !this.props.value
-        });
-    const zipClassNames = classnames({
-          'product-metadata-static-field': true,
-          'no-value': !this.props.value
-        });
-    const stateClassNames = classnames({
-          'product-metadata-static-field': true,
-          'no-value': !this.props.value
-        });
-    const countryClassNames = classnames({
-          'product-metadata-static-field': true,
-          'no-value': !this.props.value
-        });
 
     return (
       <FormItem offset={false}>
@@ -77,18 +61,18 @@ class AddressField extends BaseField.Static {
             </div>
           </Input.Group>
           <Input.Group compact className="address-group">
-            <div className={cityClassNames}>
-              {this.props.city || this.DEFAULT_VALUE}
-            </div>
-            <div className={zipClassNames}>
-              {this.props.zip || this.DEFAULT_VALUE}
-            </div>
-            <div className={stateClassNames}>
-              {this.props.state || this.DEFAULT_VALUE}
-            </div>
-            <div className={countryClassNames}>
-              {this.props.country || this.DEFAULT_VALUE}
-            </div>
+            {this.props.city && <div>
+              {this.props.city}
+            </div>}
+            {this.props.zip && <div>
+              {this.props.zip}
+            </div>}
+            {this.props.state && <div>
+              {this.props.state}
+            </div>}
+            {this.props.country && <div>
+              {this.props.country}
+            </div>}
           </Input.Group>
         </FormItem.Content>
       </FormItem>

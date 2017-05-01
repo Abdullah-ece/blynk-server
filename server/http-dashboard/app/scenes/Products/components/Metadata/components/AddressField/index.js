@@ -14,7 +14,7 @@ import './styles.less';
   return {
     fields: {
       name: selector(state, 'name'),
-      street: selector(state, 'street'),
+      streetAddress: selector(state, 'streetAddress'),
       city: selector(state, 'city'),
       zip: selector(state, 'zip'),
       state: selector(state, 'state'),
