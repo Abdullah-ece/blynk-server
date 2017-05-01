@@ -184,7 +184,11 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             role: field.values.role,
-            value: field.values.value
+            streetAddress: field.values.streetAddress,
+            city: field.values.city,
+            state: field.values.state,
+            zip: field.values.zip,
+            country: field.values.country
           }}
         />
       );
