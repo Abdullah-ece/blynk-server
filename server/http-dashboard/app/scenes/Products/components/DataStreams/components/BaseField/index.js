@@ -87,7 +87,7 @@ class BaseField extends React.Component {
   };
 
   handleDelete() {
-
+    this.props.onDelete(this.props.id);
   }
 
   handleClone() {
@@ -144,7 +144,7 @@ class BaseField extends React.Component {
       <DataStreamsItem
         preview={this.getPreviewValues()}
         onChange={this.props.onChange.bind(this)}
-        onDelete={this.props.onDelete.bind(this)}
+        onDelete={this.handleDelete.bind(this)}
         onClone={this.handleClone.bind(this)}
         validate={this.props.validate.bind(this)}
         initialValues={this.props.initialValues}
