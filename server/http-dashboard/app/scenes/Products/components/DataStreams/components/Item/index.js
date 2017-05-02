@@ -119,7 +119,7 @@ class DataStreamItem extends React.Component {
             <Col span={3}>
 
               <FormItem.TitleGroup>
-                <FormItem.Title>PIn</FormItem.Title>
+                <FormItem.Title>Pin</FormItem.Title>
               </FormItem.TitleGroup>
               <FormItem.Content>
                 <MetadataFormSelect name="pin" type="text" placeholder="Pin"
