@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col} from 'antd';
 import FormItem from 'components/FormItem';
-import Preview from '../../components/Preview';
+import Preview from 'scenes/Products/components/Preview';
 import classnames from 'classnames';
 import {Roles} from 'services/Roles';
 
