@@ -6,6 +6,8 @@ import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
+import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
@@ -43,6 +45,7 @@ public class HttpsAPIServer extends BaseServer {
                 new UrlStartWithMapper("/dashboard#/resetPass", "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
+        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         final HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
 
@@ -50,10 +53,11 @@ public class HttpsAPIServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("HttpsSslContext", holder.sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
+                pipeline.addLast(letsEncryptHandler);
                 pipeline.addLast(new ChunkedWriteHandler());
                 pipeline.addLast(favIconUrlRewriter);
                 pipeline.addLast(staticFileHandler);

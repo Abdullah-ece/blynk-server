@@ -113,6 +113,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
@@ -133,6 +134,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.remove(HttpAPILogic.class);
 
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     @Override

@@ -16,11 +16,11 @@ import cc.blynk.utils.properties.SmsProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collections;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -38,36 +38,36 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class WebSocketTest extends IntegrationBase {
 
+    private BaseServer webSocketServer;
+    private BaseServer hardwareServer;
+    private BaseServer appServer;
+    private ClientPair clientPair;
+    //private static Holder localHolder;
+
     //web socket ports
     public static int tcpWebSocketPort;
-    private static BaseServer webSocketServer;
-    private static BaseServer hardwareServer;
-    private static BaseServer appServer;
-    private static ClientPair clientPair;
-    private static Holder localHolder;
 
-    @AfterClass
-    public static void shutdown() throws Exception {
+    @After
+    public void shutdown() throws Exception {
         webSocketServer.close();
         appServer.close();
         hardwareServer.close();
         clientPair.stop();
-        localHolder.close();
+        holder.close();
     }
 
-    @BeforeClass
-    public static void init() throws Exception {
-        properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        localHolder = new Holder(properties,
-                new MailProperties(Collections.emptyMap()),
-                new SmsProperties(Collections.emptyMap()),
-                new GCMProperties(Collections.emptyMap())
-        );
+    @Before
+    public void init() throws Exception {
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(localHolder, true).start();
-        appServer = new AppServer(localHolder).start();
-        hardwareServer = new HardwareServer(localHolder).start();
+        webSocketServer = new HttpAPIServer(holder).start();
+        appServer = new AppServer(holder).start();
+        hardwareServer = new HardwareServer(holder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+    }
+
+    @Override
+    public String getDataFolder() {
+        return getRelativeDataFolder("/profiles");
     }
 
     @Test
