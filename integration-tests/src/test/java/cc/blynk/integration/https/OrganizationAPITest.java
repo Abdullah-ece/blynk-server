@@ -46,7 +46,7 @@ public class OrganizationAPITest extends APIBaseTest {
             Organization fromApi = JsonParser.parseOrganization(consumeText(response));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
-            assertEquals("BLynk Inc.", fromApi.name);
+            assertEquals("Blynk Inc.", fromApi.name);
             assertEquals("Europe/Kiev", fromApi.tzName);
         }
     }
@@ -62,7 +62,7 @@ public class OrganizationAPITest extends APIBaseTest {
             Organization fromApi = JsonParser.parseOrganization(consumeText(response));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
-            assertEquals("BLynk Inc.", fromApi.name);
+            assertEquals("Blynk Inc.", fromApi.name);
             assertEquals("Europe/Kiev", fromApi.tzName);
         }
     }
@@ -97,7 +97,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
-        holder.organizationDao.add(new Organization("BLynk Inc.", "Europe/Kiev", "/static/logo.png"));
+        holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
 
         login(regularAdmin.email, regularAdmin.pass);
 
