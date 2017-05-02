@@ -13,6 +13,8 @@ import {
   ProductEditClearFields,
   ProductEditMetadataFieldUpdate,
   ProductEditMetadataFieldsUpdate,
+  ProductEditDataStreamsFieldUpdate,
+  ProductEditDataStreamsFieldsUpdate,
   ProductEditInfoValuesUpdate
 } from 'data/Product/actions';
 import ProductCreate from 'scenes/Products/components/ProductCreate';
@@ -32,6 +34,8 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
   ProductEditMetadataFieldsUpdate: bindActionCreators(ProductEditMetadataFieldsUpdate, dispatch),
+  ProductEditDataStreamsFieldUpdate: bindActionCreators(ProductEditDataStreamsFieldUpdate, dispatch),
+  ProductEditDataStreamsFieldsUpdate: bindActionCreators(ProductEditDataStreamsFieldsUpdate, dispatch),
 }))
 class Create extends React.Component {
 
@@ -52,6 +56,8 @@ class Create extends React.Component {
     ProductEditInfoValuesUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
     ProductEditMetadataFieldsUpdate: React.PropTypes.func,
+    ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
+    ProductEditDataStreamsFieldsUpdate: React.PropTypes.func,
 
     params: React.PropTypes.object,
     products: React.PropTypes.array,
@@ -125,6 +131,14 @@ class Create extends React.Component {
     this.props.ProductEditMetadataFieldsUpdate(values);
   }
 
+  onDataStreamsFieldChange(field) {
+    this.props.ProductEditDataStreamsFieldUpdate(field);
+  }
+
+  onDataStreamsFieldsChange(values) {
+    this.props.ProductEditDataStreamsFieldsUpdate(values);
+  }
+
   render() {
 
     if (!this.props.product.info.values.boardType)
@@ -139,6 +153,8 @@ class Create extends React.Component {
                      onInfoValuesChange={this.onInfoValuesChange.bind(this)}
                      onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                      onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
                      handleSubmit={this.handleSubmit.bind(this)}
                      handleCancel={this.handleCancel.bind(this)}
                      params={this.props.params}/>

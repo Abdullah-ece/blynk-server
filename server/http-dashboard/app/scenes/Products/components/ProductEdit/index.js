@@ -20,6 +20,8 @@ class ProductEdit extends React.Component {
     onInfoValuesChange: React.PropTypes.func,
     onMetadataFieldChange: React.PropTypes.func,
     onMetadataFieldsChange: React.PropTypes.func,
+    onDataStreamsFieldChange: React.PropTypes.func,
+    onDataStreamsFieldsChange: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
 
     isMetadataInfoRead: React.PropTypes.bool,

@@ -19,6 +19,20 @@ export function ProductEditMetadataFieldsUpdate(data = {}) {
   };
 }
 
+export function ProductEditDataStreamsFieldUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_DATA_STREAMS_FIELD_UPDATE',
+    data: data
+  };
+}
+
+export function ProductEditDataStreamsFieldsUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_EDIT_DATA_STREAMS_FIELDS_UPDATE',
+    data: data
+  };
+}
+
 export function ProductEditClearFields(data = {}) {
   return {
     type: 'PRODUCT_EDIT_CLEAR_FIELDS',

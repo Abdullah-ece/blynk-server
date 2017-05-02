@@ -7,7 +7,7 @@ import {
   MetadataSelect as MetadataFormSelect
 } from 'components/Form';
 import Validation from 'services/Validation';
-
+import {Unit} from 'services/Products';
 import {connect} from 'react-redux';
 import {formValueSelector} from 'redux-form';
 
@@ -25,9 +25,11 @@ import {formValueSelector} from 'redux-form';
 class BaseField extends React.Component {
 
   static propTypes = {
+    onClone: React.PropTypes.func,
+    onDelete: React.PropTypes.func,
     onChange: React.PropTypes.func,
+    validate: React.PropTypes.func,
 
-    validate: React.PropTypes.object,
     initialValues: React.PropTypes.object,
 
     id: React.PropTypes.number,
@@ -37,31 +39,70 @@ class BaseField extends React.Component {
     fields: React.PropTypes.object,
   };
 
-  onChange() {
-
-  }
-
-  validate() {
-
-  }
+  Unit = {
+    'Length, Distance': {
+      'Imperial': [
+        Unit.Inch,
+        Unit.Foot,
+        Unit.Yard,
+        Unit.Mile
+      ],
+      'Metric': [
+        Unit.Millimeter,
+        Unit.Centimeter,
+        Unit.Meter,
+        Unit.Kilometer
+      ]
+    },
+    'Mass': {
+      'Imperial': [
+        Unit.Ounce,
+        Unit.Pound,
+        Unit.Stone,
+        Unit.Quarter,
+        Unit.Hundredweight,
+        Unit.Ton
+      ],
+      'Metric': [
+        Unit.Milligram,
+        Unit.Gram,
+        Unit.Kilogram,
+        Unit.Tonne
+      ]
+    },
+    'Volume': {
+      'Imperial': [
+        Unit.Pint,
+        Unit.Gallon,
+      ],
+      'Metric': [
+        Unit.Liter
+      ]
+    },
+    'Temperature': [
+      Unit.Celsius,
+      Unit.Fahrenheit,
+      Unit.Kelvin
+    ]
+  };
 
   handleDelete() {
 
   }
 
   handleClone() {
-
+    this.props.onClone(this.props.id);
   }
 
   getPreviewValues() {
     const name = this.props.fields.name;
     const min = this.props.fields.min;
     const max = this.props.fields.max;
-    // const units = this.props.fields.units;
+    const units = this.props.fields.units;
 
     let value = null;
-    if (!isNaN(Number(min)) && !isNaN(Number(max)) /*&& units*/) {
-      value = `from ${min} to ${max}`;
+    if (!isNaN(Number(min)) && !isNaN(Number(max)) && units) {
+      value = `from ${min} to ${max} ${Unit[units].abbreviation}`;
     }
 
     return {
@@ -102,10 +143,10 @@ class BaseField extends React.Component {
     return (
       <DataStreamsItem
         preview={this.getPreviewValues()}
-        // onChange={this.props.onChange.bind(this)}
-        onDelete={this.handleDelete.bind(this)}
+        onChange={this.props.onChange.bind(this)}
+        onDelete={this.props.onDelete.bind(this)}
         onClone={this.handleClone.bind(this)}
-        // validate={this.props.validate.bind(this)}
+        validate={this.props.validate.bind(this)}
         initialValues={this.props.initialValues}
         fields={this.props.fields}
         id={this.props.id}

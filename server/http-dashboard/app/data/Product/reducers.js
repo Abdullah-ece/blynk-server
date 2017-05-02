@@ -19,6 +19,28 @@ const initialState = {
     metadata: {
       invalid: true,
       fields: []
+    },
+    dataStreams: {
+      invalid: true,
+      fields: [{
+        "id": 5,
+        "values": {
+          "name": "Temperature",
+          "units": "Celsius",
+          "min": 0.0,
+          "max": 50.0,
+          "pin": "1"
+        }
+      }, {
+        "id": 6,
+        "values": {
+          "name": "Volume",
+          "units": "Liter",
+          "min": 25.0,
+          "max": 50.0,
+          "pin": "125"
+        }
+      }]
     }
   },
   products: []
@@ -39,6 +61,18 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_EDIT_DATA_STREAMS_FIELDS_UPDATE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dataStreams: {
+            ...state.edit.dataStreams,
+            fields: action.data
+          }
+        }
+      };
+
     case "PRODUCT_EDIT_METADATA_FIELD_UPDATE":
       return {
         ...state,
@@ -47,6 +81,18 @@ export default function Product(state = initialState, action) {
           metadata: {
             ...state.edit.metadata,
             fields: state.edit.metadata.fields.map((field) => field.id !== action.data.id ? field : action.data)
+          }
+        }
+      };
+
+    case "PRODUCT_EDIT_DATA_STREAMS_FIELD_UPDATE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dataStreams: {
+            ...state.edit.dataStreams,
+            fields: state.edit.dataStreams.fields.map((field) => field.id !== action.data.id ? field : action.data)
           }
         }
       };
@@ -119,6 +165,10 @@ export default function Product(state = initialState, action) {
             values: {}
           },
           metadata: {
+            invalid: true,
+            fields: []
+          },
+          dataStreams: {
             invalid: true,
             fields: []
           }

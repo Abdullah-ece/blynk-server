@@ -20,6 +20,8 @@ class ProductCreate extends React.Component {
     onInfoValuesChange: React.PropTypes.func,
     onMetadataFieldChange: React.PropTypes.func,
     onMetadataFieldsChange: React.PropTypes.func,
+    onDataStreamsFieldChange: React.PropTypes.func,
+    onDataStreamsFieldsChange: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
 
     isMetadataInfoRead: React.PropTypes.bool,
@@ -161,9 +163,9 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS}>
-              <DataStreamsTab fields={this.props.product.metadata.fields}
-                              onFieldChange={this.props.onMetadataFieldChange}
-                              onFieldsChange={this.props.onMetadataFieldsChange}/>
+              <DataStreamsTab fields={this.props.product.dataStreams.fields}
+                              onFieldChange={this.props.onDataStreamsFieldChange}
+                              onFieldsChange={this.props.onDataStreamsFieldsChange}/>
             </Tabs.TabPane>
 
           </Tabs>
