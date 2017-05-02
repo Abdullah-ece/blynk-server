@@ -3,21 +3,15 @@ package cc.blynk.integration.websocket;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
-import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.utils.properties.GCMProperties;
-import cc.blynk.utils.properties.MailProperties;
-import cc.blynk.utils.properties.SmsProperties;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,7 +36,6 @@ public class WebSocketTest extends IntegrationBase {
     private BaseServer hardwareServer;
     private BaseServer appServer;
     private ClientPair clientPair;
-    //private static Holder localHolder;
 
     //web socket ports
     public static int tcpWebSocketPort;
@@ -59,7 +52,7 @@ public class WebSocketTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(holder).start();
+        webSocketServer = new HttpAPIServer(holder, true).start();
         appServer = new AppServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

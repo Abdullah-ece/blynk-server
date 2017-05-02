@@ -118,6 +118,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
 
         this.sslContextHolder = new SslContextHolder(props, mailProperties.getProperty("mail.smtp.username"));
     }
@@ -165,6 +166,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
     }

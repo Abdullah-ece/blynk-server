@@ -1,8 +1,11 @@
 package cc.blynk.server.http;
 
-import cc.blynk.core.http.handlers.*;
+import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileEdsWith;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
@@ -31,7 +34,7 @@ public class HttpAPIServer extends BaseServer {
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
+        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
