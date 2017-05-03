@@ -19,7 +19,7 @@ class LogoUploader extends React.Component {
     this.hide = null;
   }
 
-  tooltip = <span>Recommended 5:1 ratio, 1mb size</span>;
+  tooltip = <span>Recommended 5:1 ratio, 1Mb size</span>;
 
   draggerProps = {
     name: 'file',

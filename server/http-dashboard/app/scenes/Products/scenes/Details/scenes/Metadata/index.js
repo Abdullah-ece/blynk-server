@@ -83,7 +83,7 @@ class Metadata extends React.Component {
         );
       }
 
-      if (field.type === MetadataFields.Fields.SHIFT) {
+      if (field.type === MetadataFields.Fields.RANGE) {
         fields.push(
           <ShiftField.Static
             {...props}

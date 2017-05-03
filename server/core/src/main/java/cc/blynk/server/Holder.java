@@ -15,9 +15,6 @@ import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
-import cc.blynk.utils.SslUtil;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslProvider;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -75,9 +72,7 @@ public class Holder implements Closeable {
 
     public final String currentIp;
 
-    public final SslContext sslCtx;
-
-    public final SslContext sslCtxMutual;
+    public final SslContextHolder sslContextHolder;
 
     public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
                   ServerProperties smsProperties, ServerProperties gcmProperties) {
@@ -86,7 +81,7 @@ public class Holder implements Closeable {
 
         this.region = serverProperties.getProperty("region", "local");
         String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.currentIp = serverProperties.getProperty("reset-pass.host", IPUtils.resolveHostIP(netInterface));
+        this.currentIp = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
 
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), region);
 
@@ -123,20 +118,9 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
-
-        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-        this.sslCtx = SslUtil.initSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                sslProvider);
-        this.sslCtxMutual = SslUtil.initSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                props.getProperty("client.ssl.cert"),
-                sslProvider);
         this.tokensPool = new TokensPool(60 * 60 * 1000);
+
+        this.sslContextHolder = new SslContextHolder(props, mailProperties.getProperty("mail.smtp.username"));
     }
 
     //for tests only
@@ -146,7 +130,7 @@ public class Holder implements Closeable {
 
         this.region = "local";
         String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.currentIp = serverProperties.getProperty("reset-pass.host", IPUtils.resolveHostIP(netInterface));
+        this.currentIp = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), "real");
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -182,20 +166,9 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
-
-        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-        this.sslCtx = SslUtil.initSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                sslProvider);
-        this.sslCtxMutual = SslUtil.initSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                props.getProperty("client.ssl.cert"),
-                sslProvider);
         this.tokensPool = new TokensPool(60 * 60 * 1000);
+
+        this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
     }
 
     private static void disableNettyLeakDetector() {

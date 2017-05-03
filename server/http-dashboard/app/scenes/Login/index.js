@@ -56,7 +56,7 @@ export default class Login extends React.Component {
       this.setState({
         loading: false
       });
-      throw new SubmissionError({_error: 'Wrong email or password'});
+      throw new SubmissionError({_error: 'Incorrect email or password. Please try again.'});
     }).then(() => {
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {

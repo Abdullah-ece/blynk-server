@@ -117,8 +117,12 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                     if (data instanceof DiskFileUpload) {
                         DiskFileUpload diskFileUpload = (DiskFileUpload) data;
                         Path tmpFile = diskFileUpload.getFile().toPath();
-                        String nameWithoutExtension = diskFileUpload.getFilename().substring(0, diskFileUpload.getFilename().lastIndexOf("."));
-                        String finalName = tmpFile.getFileName().toString().replace("_" + nameWithoutExtension, "");
+                        String uploadedFilename = diskFileUpload.getFilename();
+                        String extension = "";
+                        if (uploadedFilename.contains(".")) {
+                            extension = uploadedFilename.substring(uploadedFilename.lastIndexOf("."), uploadedFilename.length());
+                        }
+                        String finalName = tmpFile.getFileName().toString() + extension;
 
                         //this is just to make it work on team city.
                         Path staticPath = Paths.get(ServerProperties.staticFilesFolder);

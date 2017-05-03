@@ -104,7 +104,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.SHIFT) {
+    if (field.type === MetadataService.Fields.RANGE) {
       return (
         <MetadataFields.ShiftField
           {...props}

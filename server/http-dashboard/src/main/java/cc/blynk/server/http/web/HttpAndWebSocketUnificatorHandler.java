@@ -8,6 +8,7 @@ import cc.blynk.server.admin.http.logic.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -113,6 +114,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
@@ -133,6 +135,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.remove(HttpAPILogic.class);
 
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     @Override

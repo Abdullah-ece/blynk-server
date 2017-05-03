@@ -48,14 +48,13 @@ class UnitField extends BaseField {
       'Metric': [
         Unit.Milligram,
         Unit.Gram,
-        Unit.Kilogram,
-        Unit.Tonne
+        Unit.Kilogram
       ]
     },
     'Volume': {
       'Imperial': [
         Unit.Pint,
-        Unit.Gallon,
+        Unit.Gallon
       ],
       'Metric': [
         Unit.Liter

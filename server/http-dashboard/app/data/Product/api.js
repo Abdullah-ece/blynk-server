@@ -1,7 +1,7 @@
 import {applyRequestTransformers, applyResponseTransformers} from 'services/API';
 import {
   transformTimeToTimestamp,
-  transformShiftToMinutes,
+  transformRangeToMinutes,
   transformTimestampToTime,
   transformMinutesToShift
 } from 'services/Products';
@@ -27,7 +27,7 @@ export function ProductUpdate(data) {
         method: 'post',
         url: '/product',
         data: data,
-        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformShiftToMinutes])
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformRangeToMinutes])
       }
     }
   };
@@ -57,7 +57,7 @@ export function ProductCreate(data = false) {
         method: 'put',
         url: '/product',
         data: data,
-        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformShiftToMinutes])
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformRangeToMinutes])
       }
     }
   };

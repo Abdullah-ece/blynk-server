@@ -59,13 +59,13 @@ public class ResetPassAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(regularUser.email), eq("Password reset request."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(regularUser.email), eq("Reset your Blynk Inc. Dashboard password"), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(regularUser.email), eq("Password reset request."), contains(rootPath + "#/resetPass?token="));
+        verify(mailWrapper).sendHtml(eq(regularUser.email), eq("Reset your Blynk Inc. Dashboard password"), contains(rootPath + "#/resetPass?token="));
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
 
@@ -119,13 +119,13 @@ public class ResetPassAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(admin.email), eq("Password reset request."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(admin.email), eq("Reset your Blynk Inc. Dashboard password"), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(admin.email), eq("Password reset request."), contains(rootPath + "#/resetPass?token="));
+        verify(mailWrapper).sendHtml(eq(admin.email), eq("Reset your Blynk Inc. Dashboard password"), contains(rootPath + "#/resetPass?token="));
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
 
