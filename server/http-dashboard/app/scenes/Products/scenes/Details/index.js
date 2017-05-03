@@ -3,6 +3,7 @@ import {Button, Tabs, message} from 'antd';
 import './styles.less';
 import Info from './scenes/Info';
 import Metadata from './scenes/Metadata';
+import DataStreams from './scenes/DataStreams';
 import * as API from 'data/Product/api';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -133,6 +134,9 @@ class ProductDetails extends React.Component {
             </Tabs.TabPane>
             <Tabs.TabPane tab="Metadata" key={TABS.METADATA}>
               <Metadata product={this.state.product}/>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Data Streams" key={TABS.DATA_STREAMS}>
+              <DataStreams product={this.state.product}/>
             </Tabs.TabPane>
           </Tabs>
           <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}

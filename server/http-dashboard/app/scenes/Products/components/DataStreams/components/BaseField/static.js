@@ -2,40 +2,20 @@ import React from 'react';
 import DataStreamsItem from '../Item';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
-import {
-  MetadataField as MetadataFormField,
-  MetadataSelect as MetadataFormSelect
-} from 'components/Form';
-import Validation from 'services/Validation';
 import {Unit} from 'services/Products';
-import {connect} from 'react-redux';
-import {formValueSelector} from 'redux-form';
 import Static from './static';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      units: selector(state, 'units'),
-      min: selector(state, 'min'),
-      max: selector(state, 'max'),
-    }
-  };
-})
 class BaseField extends React.Component {
 
   static propTypes = {
-    onClone: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    validate: React.PropTypes.func,
-
-    initialValues: React.PropTypes.object,
-
     id: React.PropTypes.number,
+    min: React.PropTypes.number,
+    max: React.PropTypes.number,
+    pin: React.PropTypes.number,
 
     form: React.PropTypes.string,
+    name: React.PropTypes.string,
+    units: React.PropTypes.string,
 
     fields: React.PropTypes.object,
     field: React.PropTypes.object,
@@ -88,19 +68,11 @@ class BaseField extends React.Component {
     ]
   };
 
-  handleDelete() {
-    this.props.onDelete(this.props.id);
-  }
-
-  handleClone() {
-    this.props.onClone(this.props.id);
-  }
-
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const min = this.props.fields.min;
-    const max = this.props.fields.max;
-    const units = this.props.fields.units;
+    const name = this.props.name;
+    const min = this.props.min;
+    const max = this.props.max;
+    const units = this.props.units;
 
     let value = null;
     if (!isNaN(Number(min)) && !isNaN(Number(max)) && units) {
@@ -113,6 +85,8 @@ class BaseField extends React.Component {
     };
   }
 
+  DEFAULT_VALUE = 'No Value';
+
   component() {
     return (
       <FormItem offset={false}>
@@ -124,17 +98,18 @@ class BaseField extends React.Component {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
-            ]}/>
-            <MetadataFormSelect name="units" type="text" placeholder="Choose"
-                                dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-            <MetadataFormField name="min" type="text" placeholder="Min" validate={[
-              Validation.Rules.number
-            ]}/>
-            <MetadataFormField name="max" type="text" placeholder="Max" validate={[
-              Validation.Rules.number
-            ]}/>
+            <div className="product-metadata-static-field" style={{width: '200%'}}>
+              {this.props.name}
+            </div>
+            <div className="product-metadata-static-field">
+              {this.props.units}
+            </div>
+            <div className="product-metadata-static-field">
+              {this.props.min}
+            </div>
+            <div className="product-metadata-static-field">
+              {this.props.max}
+            </div>
           </Input.Group>
         </FormItem.Content>
       </FormItem>
@@ -143,20 +118,13 @@ class BaseField extends React.Component {
 
   render() {
     return (
-      <DataStreamsItem
+      <DataStreamsItem.Static
+        {...this.props}
         preview={this.getPreviewValues()}
-        onChange={this.props.onChange.bind(this)}
-        onDelete={this.handleDelete.bind(this)}
-        onClone={this.handleClone.bind(this)}
-        validate={this.props.validate.bind(this)}
-        initialValues={this.props.initialValues}
-        fields={this.props.fields}
-        field={this.props.field}
         id={this.props.id}
-        form={this.props.form}
       >
         { this.component() }
-      </DataStreamsItem>
+      </DataStreamsItem.Static>
     );
   }
 }

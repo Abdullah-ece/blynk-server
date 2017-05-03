@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-
 class ItemsList extends React.Component {
   static propTypes = {
     children: React.PropTypes.any,

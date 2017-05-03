@@ -11,6 +11,7 @@ import FormItem from 'components/FormItem';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import Static from './static';
 
 @connect(() => ({}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
@@ -157,5 +158,7 @@ class DataStreamItem extends React.Component {
     );
   }
 }
+
+DataStreamItem.Static = Static;
 
 export default DataStreamItem;
