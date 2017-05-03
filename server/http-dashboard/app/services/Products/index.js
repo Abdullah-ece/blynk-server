@@ -310,7 +310,8 @@ export const prepareProductForSave = (data) => {
 
   const product = {
     ...data.info.values,
-    metaFields: []
+    metaFields: [],
+    dataStreams: []
   };
 
   if (Array.isArray(data.metadata.fields)) {
@@ -318,6 +319,14 @@ export const prepareProductForSave = (data) => {
       product.metaFields.push({
         name: value.name,
         type: value.type,
+        ...value.values
+      });
+    });
+  }
+
+  if (Array.isArray(data.dataStreams.fields)) {
+    data.dataStreams.fields.forEach((value) => {
+      product.dataStreams.push({
         ...value.values
       });
     });
