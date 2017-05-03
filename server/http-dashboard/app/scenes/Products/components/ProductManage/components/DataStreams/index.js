@@ -63,8 +63,19 @@ class DataStreams extends React.Component {
     });
   }
 
-  fieldsValidation() {
-    console.log(`validate for uniq pins & names${this.props.id}`);
+  fieldsValidation(values, props) {
+    const errors = {};
+
+    this.props.fields.forEach((field) => {
+      if (field.values.name === values.name && Number(props.id) !== Number(field.id)) {
+        errors.name = 'Name should be unique';
+      }
+      if (field.values.pin === values.pin && Number(props.id) !== Number(field.id)) {
+        errors.pin = 'Pin should be unique';
+      }
+    });
+
+    return errors;
   }
 
   handleDeleteField(key) {
@@ -99,8 +110,22 @@ class DataStreams extends React.Component {
     );
   }
 
-  addDataStreamsField() {
-    //  some there
+  addDataStreamsField(params) {
+    const nextId = this.props.fields.reduce((acc, value) => (
+        acc < value.id ? value.id : acc
+      ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
+
+
+    this.props.onFieldsChange([
+      ...this.props.fields,
+      {
+        id: nextId,
+        type: params.type,
+        values: {
+          ...params.values
+        }
+      }
+    ]);
   }
 
   onSortEnd({oldIndex, newIndex}) {
