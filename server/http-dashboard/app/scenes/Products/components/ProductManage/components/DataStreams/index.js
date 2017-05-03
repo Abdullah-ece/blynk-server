@@ -24,6 +24,7 @@ class DataStreams extends React.Component {
       validate: this.fieldsValidation.bind(this),
       onDelete: this.handleDeleteField.bind(this),
       onClone: this.handleCloneField.bind(this),
+      field: field,
       initialValues: {
         name: field.values.name,
         units: field.values.units,
@@ -55,12 +56,18 @@ class DataStreams extends React.Component {
   });
 
   handleChangeField(values, dispatch, props) {
-    const field = _.find(this.props.fields, {id: props.id});
+    if (values.id) {
+      // updates full entity
+      this.props.onFieldChange(values);
+    } else {
+      // updates only values of entity
+      const field = _.find(this.props.fields, {id: props.id});
 
-    this.props.onFieldChange({
-      ...field,
-      values
-    });
+      this.props.onFieldChange({
+        ...field,
+        values
+      });
+    }
   }
 
   fieldsValidation(values, props) {

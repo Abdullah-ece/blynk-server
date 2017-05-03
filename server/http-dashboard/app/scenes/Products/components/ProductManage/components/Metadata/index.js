@@ -22,12 +22,18 @@ class ProductMetadata extends React.Component {
 
   handleChangeField(values, dispatch, props) {
 
-    const field = _.find(this.props.fields, {id: props.id});
+    if (values.id) {
+      // updates full entity
+      this.props.onFieldChange(values);
+    } else {
+      // updates only values of entity
+      const field = _.find(this.props.fields, {id: props.id});
 
-    this.props.onFieldChange({
-      ...field,
-      values
-    });
+      this.props.onFieldChange({
+        ...field,
+        values
+      });
+    }
   }
 
   SortableItem = SortableElement(({value}) => {
@@ -41,7 +47,8 @@ class ProductMetadata extends React.Component {
       onChange: this.handleChangeField.bind(this),
       validate: this.metadataFieldValidation.bind(this),
       onDelete: this.handleDeleteField.bind(this),
-      onClone: this.handleCloneField.bind(this)
+      onClone: this.handleCloneField.bind(this),
+      field: field
     };
 
     if (field.type === MetadataService.Fields.TEXT) {

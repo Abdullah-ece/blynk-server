@@ -9,13 +9,11 @@ import classnames from 'classnames';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {reduxForm, touch, Form} from 'redux-form';
-import {ProductMetadataFieldInvalidFlagUpdate} from 'data/Product/actions';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
 
 @connect(() => ({}), (dispatch) => ({
-  touchFormById: bindActionCreators(touch, dispatch),
-  updateMetadataFieldInvalidFlag: bindActionCreators(ProductMetadataFieldInvalidFlagUpdate, dispatch)
+  touchFormById: bindActionCreators(touch, dispatch)
 }))
 @reduxForm({
   touchOnChange: true
@@ -32,6 +30,9 @@ class MetadataItem extends React.Component {
     onDelete: React.PropTypes.func,
     touchFormById: React.PropTypes.func,
     onClone: React.PropTypes.func,
+    id: React.PropTypes.number,
+    onChange: React.PropTypes.func,
+    field: React.PropTypes.object,
     touched: React.PropTypes.bool,
     updateMetadataFieldInvalidFlag: React.PropTypes.func
   };
@@ -48,8 +49,8 @@ class MetadataItem extends React.Component {
 
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
-      this.props.updateMetadataFieldInvalidFlag({
-        id: props.id,
+      this.props.onChange({
+        ...this.props.field,
         invalid: props.invalid
       });
       this.invalid = props.invalid;

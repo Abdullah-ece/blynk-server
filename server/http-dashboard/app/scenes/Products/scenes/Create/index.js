@@ -85,6 +85,15 @@ class Create extends React.Component {
     return false;
   }
 
+  isDataStreamsFormInvalid() {
+    if (Array.isArray(this.props.product.dataStreams.fields)) {
+      return this.props.product.dataStreams.fields.some((field) => {
+        return field.invalid;
+      });
+    }
+    return false;
+  }
+
   isInfoFormInvalid() {
     return this.props.isProductInfoInvalid;
   }
@@ -101,13 +110,19 @@ class Create extends React.Component {
       });
     }
 
+    if (Array.isArray(this.props.product.dataStreams.fields)) {
+      this.props.product.dataStreams.fields.forEach((field) => {
+        this.props.submitFormById(`datastreamfield${field.id}`);
+      });
+    }
+
     this.props.submitFormById(`product-edit-info`);
 
     this.setState({
       submited: true
     });
 
-    if (!this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
+    if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
 
       this.props.Create(prepareProductForSave(this.props.product)).then(() => {
         this.context.router.push(`/products/?success=true`);
@@ -148,6 +163,7 @@ class Create extends React.Component {
       <ProductCreate product={this.props.product}
                      isInfoFormInvalid={this.props.isProductInfoInvalid}
                      isMetadataFormInvalid={this.isMetadataFormInvalid()}
+                     isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
                      onInfoValuesChange={this.onInfoValuesChange.bind(this)}

@@ -7,6 +7,7 @@ class BaseField extends React.Component {
   static propTypes = {
     id: React.PropTypes.number,
     fields: React.PropTypes.object,
+    field: React.PropTypes.object,
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
     pristine: React.PropTypes.bool,
@@ -47,6 +48,7 @@ class BaseField extends React.Component {
                      validate={this.props.validate.bind(this)}
                      initialValues={this.props.initialValues}
                      fields={this.props.fields}
+                     field={this.props.field}
                      id={this.props.id}
                      form={this.props.form}>
         { this.component() }

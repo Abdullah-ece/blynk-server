@@ -27,6 +27,7 @@ class ProductCreate extends React.Component {
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
     isMetadataFormInvalid: React.PropTypes.bool,
+    isDataStreamsFormInvalid: React.PropTypes.bool,
 
     params: React.PropTypes.object,
     product: React.PropTypes.object
@@ -97,8 +98,7 @@ class ProductCreate extends React.Component {
   }
 
   productDataStreamsInvalidIcon() {
-    /** @todo replace false for isDataStreamsValid() function */
-    return this.state.submited && false &&
+    return this.state.submited && this.props.isDataStreamsFormInvalid &&
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   }
 

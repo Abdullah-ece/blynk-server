@@ -37,6 +37,7 @@ class BaseField extends React.Component {
     form: React.PropTypes.string,
 
     fields: React.PropTypes.object,
+    field: React.PropTypes.object,
   };
 
   Unit = {
@@ -149,6 +150,7 @@ class BaseField extends React.Component {
         validate={this.props.validate.bind(this)}
         initialValues={this.props.initialValues}
         fields={this.props.fields}
+        field={this.props.field}
         id={this.props.id}
         form={this.props.form}
       >

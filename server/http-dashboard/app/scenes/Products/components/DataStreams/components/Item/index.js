@@ -5,11 +5,16 @@ import {SortableHandle} from 'react-sortable-hoc';
 import {
   MetadataSelect as MetadataFormSelect
 } from 'components/Form';
-import {Form, reduxForm} from 'redux-form';
+import {Form, reduxForm, touch} from 'redux-form';
 import Preview from 'scenes/Products/components/Preview';
 import FormItem from 'components/FormItem';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
+@connect(() => ({}), (dispatch) => ({
+  touchFormById: bindActionCreators(touch, dispatch)
+}))
 @reduxForm({
   touchOnChange: true
 })
@@ -18,12 +23,14 @@ class DataStreamItem extends React.Component {
     anyTouched: React.PropTypes.bool,
     invalid: React.PropTypes.bool,
     preview: React.PropTypes.object,
+    field: React.PropTypes.object,
     form: React.PropTypes.string,
     fields: React.PropTypes.object,
     children: React.PropTypes.any,
     onDelete: React.PropTypes.func,
     touchFormById: React.PropTypes.func,
     onClone: React.PropTypes.func,
+    onChange: React.PropTypes.func,
     touched: React.PropTypes.bool,
     updateMetadataFieldInvalidFlag: React.PropTypes.func
   };
@@ -36,6 +43,16 @@ class DataStreamItem extends React.Component {
     this.state = {
       isActive: false
     };
+  }
+
+  componentWillReceiveProps(props) {
+    if (this.invalid !== props.invalid) {
+      this.props.onChange({
+        ...this.props.field,
+        invalid: props.invalid
+      });
+      this.invalid = props.invalid;
+    }
   }
 
   handleConfirmDelete() {
@@ -52,7 +69,7 @@ class DataStreamItem extends React.Component {
   }
 
   handleSubmit() {
-
+    this.props.touchFormById(this.props.form, ...Object.keys(this.props.fields));
   }
 
   preview() {
