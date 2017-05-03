@@ -21,122 +21,117 @@ export const Unit = {
   Inch: {
     abbreviation: 'in',
     key: 'Inch',
-    value: 'Inch',
+    value: 'Inch'
   },
   Foot: {
     abbreviation: 'ft',
     key: 'Foot',
-    value: 'Foot',
+    value: 'Foot'
   },
   Yard: {
     abbreviation: 'yd',
     key: 'Yard',
-    value: 'Yard',
+    value: 'Yard'
   },
   Mile: {
     abbreviation: 'mi',
     key: 'Mile',
-    value: 'Mile',
+    value: 'Mile'
   },
   Millimeter: {
     abbreviation: 'mm',
     key: 'Millimeter',
-    value: 'Millimeter',
+    value: 'Millimeter'
   },
   Centimeter: {
     abbreviation: 'cm',
     key: 'Centimeter',
-    value: 'Centimeter',
+    value: 'Centimeter'
   },
   Meter: {
     abbreviation: 'm',
     key: 'Meter',
-    value: 'Meter',
+    value: 'Meter'
   },
   Kilometer: {
     abbreviation: 'km',
     key: 'Kilometer',
-    value: 'Kilometer',
+    value: 'Kilometer'
   },
   Ounce: {
     abbreviation: 'oz',
     key: 'Ounce',
-    value: 'Ounce',
+    value: 'Ounce'
   },
   Pound: {
     abbreviation: 'lb',
     key: 'Pound',
-    value: 'Pound',
+    value: 'Pound'
   },
   Stone: {
     abbreviation: 'st',
     key: 'Stone',
-    value: 'Stone',
+    value: 'Stone'
   },
   Quarter: {
     abbreviation: 'qrt',
     key: 'Quarter',
-    value: 'Quarter',
+    value: 'Quarter'
   },
   Hundredweight: {
     abbreviation: 'cwt',
     key: 'Hundredweight',
-    value: 'Hundredweight',
+    value: 'Hundredweight'
   },
   Ton: {
     abbreviation: 't',
     key: 'Ton',
-    value: 'Ton',
+    value: 'Ton'
   },
   Milligram: {
     abbreviation: 'mg',
     key: 'Milligram',
-    value: 'Milligram',
+    value: 'Milligram'
   },
   Gram: {
     abbreviation: 'g',
     key: 'Gram',
-    value: 'Gram',
+    value: 'Gram'
   },
   Kilogram: {
     abbreviation: 'kg',
     key: 'Kilogram',
-    value: 'Kilogram',
-  },
-  Tonne: {
-    abbreviation: 't',
-    key: 'Tonne',
-    value: 'Tonne',
+    value: 'Kilogram'
   },
   Pint: {
     abbreviation: 'pt',
     key: 'Pint',
-    value: 'Pint',
+    value: 'Pint'
   },
   Gallon: {
     abbreviation: 'gal',
     key: 'Gallon',
-    value: 'Gallon',
+    value: 'Gallon'
   },
   Liter: {
     abbreviation: 'lt',
     key: 'Liter',
-    value: 'Liter',
+    value: 'Liter'
   },
   Celsius: {
     abbreviation: '°C',
     key: 'Celsius',
-    value: 'Celsius',
+    value: 'Celsius'
   },
   Fahrenheit: {
     abbreviation: '°F',
     key: 'Fahrenheit',
-    value: 'Fahrenheit',
+    value: 'Fahrenheit'
   },
   Kelvin: {
     abbreviation: '°K',
     key: 'Kelvin',
-    value: 'Kelvin',
+    value: 'Kelvin'
   }
 };
 

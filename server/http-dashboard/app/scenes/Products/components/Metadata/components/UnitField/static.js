@@ -36,14 +36,13 @@ export default class UnitStaticField extends BaseField.Static {
       'Metric': [
         Unit.Milligram,
         Unit.Gram,
-        Unit.Kilogram,
-        Unit.Tonne
+        Unit.Kilogram
       ]
     },
     'Volume': {
       'Imperial': [
         Unit.Pint,
-        Unit.Gallon,
+        Unit.Gallon
       ],
       'Metric': [
         Unit.Liter
