@@ -13,14 +13,20 @@ public class CostMetaField extends MetaField {
 
     public Currency currency;
 
-    public double value;
+    public double price;
+
+    public double perValue;
+
+    public MeasurementUnit units;
 
     public CostMetaField() {
     }
 
-    public CostMetaField(String name, Role role, Currency currency, double value) {
+    public CostMetaField(String name, Role role, Currency currency, double price, double perValue, MeasurementUnit units) {
         super(name, role);
         this.currency = currency;
-        this.value = value;
+        this.price = price;
+        this.perValue = perValue;
+        this.units = units;
     }
 }
