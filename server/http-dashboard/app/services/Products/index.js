@@ -10,10 +10,10 @@ export const Metadata = {
     TIME: 'Time',
     COORDINATES: 'Coordinates',
     UNIT: 'Measurement',
-    SHIFT: 'Shift',
+    RANGE: 'Range',
     SWITCH: 'Switch',
     DATE: 'Date',
-    CONTACT: 'Contact',
+    CONTACT: 'Contact'
   }
 };
 
@@ -213,13 +213,13 @@ export const transformMinutesToShift = (data) => {
     data.forEach((product) => {
       if (product.metaFields) {
         product.metaFields = product.metaFields.map((field) => {
-          if (field.type === Metadata.Fields.SHIFT && !isNaN(Number(field.from))) {
+          if (field.type === Metadata.Fields.RANGE && !isNaN(Number(field.from))) {
             field = {
               ...field,
               from: !field.from ? '00:00' : (moment.duration(field.from, 'minutes').format('HH:mm'))
             };
           }
-          if (field.type === Metadata.Fields.SHIFT && !isNaN(Number(field.to))) {
+          if (field.type === Metadata.Fields.RANGE && !isNaN(Number(field.to))) {
             field = {
               ...field,
               to: !field.to ? '00:00' : (moment.duration(field.to, 'minutes').format('HH:mm'))
@@ -234,16 +234,16 @@ export const transformMinutesToShift = (data) => {
   return data;
 };
 
-export const transformShiftToMinutes = (data) => {
+export const transformRangeToMinutes = (data) => {
   if (data.metaFields) {
     data.metaFields = data.metaFields.map((field) => {
-      if (field.type === Metadata.Fields.SHIFT && field.from) {
+      if (field.type === Metadata.Fields.RANGE && field.from) {
         field = {
           ...field,
           from: (moment.duration(field.from).asMinutes())
         };
       }
-      if (field.type === Metadata.Fields.SHIFT && field.to) {
+      if (field.type === Metadata.Fields.RANGE && field.to) {
         field = {
           ...field,
           to: (moment.duration(field.to).asMinutes())

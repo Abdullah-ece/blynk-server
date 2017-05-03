@@ -48,7 +48,7 @@ class AddNewMetadataField extends React.Component {
           <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.NUMBER)}>Number</Button>
           <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.UNIT)}>Unit</Button>
           <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.TIME)}>Time</Button>
-          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.SHIFT)}>Shift</Button>
+          <Button type="dashed" onClick={this.addField.bind(this, Metadata.Fields.RANGE)}>Range</Button>
         </div>
         <div className="products-add-new-metadata-field-other-fields">
           <Dropdown overlay={this.menu}>
