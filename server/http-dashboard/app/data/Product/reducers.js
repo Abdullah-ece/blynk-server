@@ -22,25 +22,7 @@ const initialState = {
     },
     dataStreams: {
       invalid: true,
-      fields: [{
-        "id": 5,
-        "values": {
-          "name": "Temperature",
-          "units": "Celsius",
-          "min": 0.0,
-          "max": 50.0,
-          "pin": "1"
-        }
-      }, {
-        "id": 6,
-        "values": {
-          "name": "Volume",
-          "units": "Liter",
-          "min": 25.0,
-          "max": 50.0,
-          "pin": "125"
-        }
-      }]
+      fields: []
     }
   },
   products: []

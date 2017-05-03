@@ -128,7 +128,7 @@ class ProductCreate extends React.Component {
                            </Button>
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
-                                   disabled={this.state.submited && (this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
+                                   disabled={this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
                              Create
                            </Button>
                          </div>

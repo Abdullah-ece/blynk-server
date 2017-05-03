@@ -276,7 +276,10 @@ export const prepareProductForEdit = (data) => {
       values: {}
     },
     metadata: {
-      fields: {}
+      fields: []
+    },
+    dataStreams: {
+      fields: []
     }
   };
 
@@ -285,13 +288,27 @@ export const prepareProductForEdit = (data) => {
   });
 
   let id = 1;
-  edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
-      return {
-        id: ++id,
-        type: field.type,
-        values: _.pickBy(field, (value, key) => key !== 'type')
-      };
-    })) || [];
+  if (data.metaFields) {
+    edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
+        return {
+          id: ++id,
+          type: field.type,
+          values: _.pickBy(field, (value, key) => key !== 'type')
+        };
+      })) || [];
+  }
+
+  id = 1;
+  if (data.dataStreams) {
+    edit.dataStreams.fields = (data.dataStreams && data.dataStreams.map((field) => {
+        return {
+          id: ++id,
+          values: field
+        };
+      })) || [];
+  }
+
+  console.log(edit.dataStreams.fields, edit.metadata.fields);
 
   return edit;
 

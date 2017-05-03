@@ -3,6 +3,7 @@ import {Button, Tabs, Icon, Popover} from 'antd';
 import MetadataIntroductionMessage from "../MetadataIntroductionMessage";
 import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
 import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
+import DataStreamsTab from 'scenes/Products/components/ProductManage/components/DataStreams';
 import ProductHeader from 'scenes/Products/components/ProductHeader';
 import ProductContent from 'scenes/Products/components/ProductContent';
 import {TABS} from 'services/Products';
@@ -27,6 +28,7 @@ class ProductEdit extends React.Component {
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
     isMetadataFormInvalid: React.PropTypes.bool,
+    isDataStreamsFormInvalid: React.PropTypes.bool,
 
     params: React.PropTypes.object,
     product: React.PropTypes.object,
@@ -91,6 +93,11 @@ class ProductEdit extends React.Component {
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   }
 
+  productDataStreamsInvalidIcon() {
+    return this.state.submited && this.props.isDataStreamsFormInvalid &&
+      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  }
+
   productMetadataInvalidIcon() {
     return this.state.submited && this.props.isMetadataFormInvalid &&
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
@@ -118,7 +125,7 @@ class ProductEdit extends React.Component {
                            </Button>
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
-                                   disabled={this.state.submited && (this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
+                                   disabled={this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
                              { this.props.successButtonLabel || 'Save' }
                            </Button>
                          </div>
@@ -148,6 +155,12 @@ class ProductEdit extends React.Component {
               <MetadataTab fields={this.props.product.metadata.fields}
                            onFieldChange={this.props.onMetadataFieldChange}
                            onFieldsChange={this.props.onMetadataFieldsChange}/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS}>
+              <DataStreamsTab fields={this.props.product.dataStreams.fields}
+                              onFieldChange={this.props.onDataStreamsFieldChange}
+                              onFieldsChange={this.props.onDataStreamsFieldsChange}/>
             </Tabs.TabPane>
 
           </Tabs>

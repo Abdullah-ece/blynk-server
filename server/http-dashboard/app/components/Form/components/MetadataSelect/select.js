@@ -83,7 +83,7 @@ export default class SelectField extends React.Component {
           onChange={input.onChange}
           placeholder={placeholder}
           optionFilterProp="children"
-          value={input.value ? input.value : defaultValue ? defaultValue : undefined}
+          value={input.value ? String(input.value) : defaultValue ? String(defaultValue) : undefined}
           filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           { this.getOptions(values) }
