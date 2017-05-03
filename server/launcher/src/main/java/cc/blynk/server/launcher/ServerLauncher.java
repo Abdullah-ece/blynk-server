@@ -117,6 +117,7 @@ public class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
             holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
+            holder.organizationDao.add(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png"));
         }
 
         //todo
@@ -129,9 +130,6 @@ public class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.STAFF);
         }
-
-        holder.organizationDao.add(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png"));
-
     }
 
     private static boolean startServers(BaseServer[] servers) {
