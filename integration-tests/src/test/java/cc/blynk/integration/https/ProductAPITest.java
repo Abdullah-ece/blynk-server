@@ -153,7 +153,7 @@ public class ProductAPITest extends APIBaseTest {
             assertNotEquals(0, fromApi.updatedAt);
             assertNotNull(fromApi.dataStreams);
             assertNotNull(fromApi.metaFields);
-            assertEquals(8, fromApi.metaFields.length);
+            assertEquals(9, fromApi.metaFields.length);
         }
     }
 
