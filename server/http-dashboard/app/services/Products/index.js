@@ -308,8 +308,6 @@ export const prepareProductForEdit = (data) => {
       })) || [];
   }
 
-  console.log(edit.dataStreams.fields, edit.metadata.fields);
-
   return edit;
 
 };
