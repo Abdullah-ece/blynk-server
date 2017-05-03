@@ -39,7 +39,7 @@ class ProductCreate extends React.Component {
     this.state = {
       originalName: null,
       submited: false,
-      activeTab: props && props.params.tab || TABS.INFO,
+      activeTab: TABS.INFO,
       metadataIntroVisible: false
     };
   }
@@ -84,8 +84,6 @@ class ProductCreate extends React.Component {
     this.setState({
       activeTab: key
     });
-
-    this.context.router.push(`/products/create/${key}`);
   }
 
   isInfoFormInvalid() {
