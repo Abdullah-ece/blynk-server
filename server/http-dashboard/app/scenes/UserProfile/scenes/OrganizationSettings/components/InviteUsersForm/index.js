@@ -1,7 +1,8 @@
 import React from 'react';
-import {reduxForm, Field} from 'redux-form';
-import {Form, Button, Select} from 'antd';
-import {Field as FormField} from 'components/Form';
+import {reduxForm} from 'redux-form';
+import {Form, Button} from 'antd';
+import FormItem from 'components/FormItem';
+import {Field as FormField, Select as FormSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {InviteAvailableRoles} from 'services/Roles';
 
@@ -10,7 +11,7 @@ import './styles.less';
 @reduxForm({
   form: 'OrganizationSettingsInviteUsersForm',
   initialValues: {
-    role: InviteAvailableRoles[0].value
+    role: InviteAvailableRoles[0].key
   }
 })
 class InviteUsersForm extends React.Component {
@@ -29,27 +30,16 @@ class InviteUsersForm extends React.Component {
     super(props);
 
     this.state = {
-      role: InviteAvailableRoles[0].value
+      role: InviteAvailableRoles[0].key
     };
-  }
-
-  getRolesListOptions() {
-    const options = [];
-    InviteAvailableRoles.forEach((role) => {
-      options.push(<Select.Option key={role.value}>{role.title}</Select.Option>);
-    });
-
-    return options;
   }
 
   render() {
     const {invalid, pristine, handleSubmit, submitting} = this.props;
 
-    const rolesOptions = this.getRolesListOptions();
-
     return (
       <Form onSubmit={handleSubmit.bind(this)} layout="inline">
-        <FormField type="text" name="name"
+        <FormField title="Name" type="text" name="name"
                    icon="user"
                    placeholder="Enter name"
                    validate={[
@@ -58,7 +48,7 @@ class InviteUsersForm extends React.Component {
                      Validation.Rules.minLength(3)
                    ]}/>
 
-        <FormField type="text" name="email"
+        <FormField title="Email" type="text" name="email"
                    icon="mail"
                    placeholder="Enter email"
                    validate={[
@@ -66,28 +56,23 @@ class InviteUsersForm extends React.Component {
                      Validation.Rules.email
                    ]}/>
 
-        <Form.Item>
-          <Field name="role" component={(props) => {
-            return (
-              <Select onChange={(value) => {
-                props.input.onChange(value);
-                this.setState({role: value});
-              }} defaultValue={InviteAvailableRoles[0].value}
-                      value={this.state.role}
-                      className="user-profile--organization-settings--invite-users-form-role-select">
-                { rolesOptions }
-              </Select>
-            );
-          }}/>
-        </Form.Item>
+        <FormSelect title="Role" type="text" name="role"
+                    className="user-profile--organization-settings--invite-users-form-role-select"
+                    values={InviteAvailableRoles} validate={[
+          Validation.Rules.required,
+        ]}/>
 
         <Form.Item>
-          <Button type="primary" size="default" htmlType="submit"
-                  loading={submitting}
-                  disabled={invalid || pristine || submitting}>
-            Invite
-          </Button>
-
+          <FormItem>
+            <FormItem.Title />
+            <FormItem.Content>
+              <Button type="primary" size="default" htmlType="submit"
+                      loading={submitting}
+                      disabled={invalid || pristine || submitting}>
+                Invite
+              </Button>
+            </FormItem.Content>
+          </FormItem>
         </Form.Item>
       </Form>
     );

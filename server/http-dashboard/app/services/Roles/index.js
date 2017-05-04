@@ -17,10 +17,25 @@ const Roles = {
   }
 };
 
+const AvailableRoles = {
+  'ADMIN': {
+    key: 'ADMIN',
+    value: 'Admin'
+  },
+  'STAFF': {
+    key: 'STAFF',
+    value: 'Staff'
+  },
+  'USER': {
+    key: 'USER',
+    value: 'User'
+  }
+};
+
 const InviteAvailableRoles = [
-  Roles.ADMIN,
-  Roles.STAFF,
-  Roles.USER
+  AvailableRoles.ADMIN,
+  AvailableRoles.STAFF,
+  AvailableRoles.USER
 ];
 
 const UsersAvailableRoles = [

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import FormItem from 'components/FormItem';
 import {Form, Select} from 'antd';
 import _ from 'lodash';
 
@@ -14,7 +14,9 @@ export default class SelectField extends React.Component {
     style: React.PropTypes.any,
     placeholder: React.PropTypes.any,
     input: React.PropTypes.any,
-    meta: React.PropTypes.any
+    meta: React.PropTypes.any,
+    className: React.PropTypes.any,
+    title: React.PropTypes.string
   };
 
   getFields(array) {
@@ -55,9 +57,57 @@ export default class SelectField extends React.Component {
     return options;
   }
 
+  titledSelect() {
+    const {dropdownClassName, dropdownStyle, values, defaultValue, placeholder, input} = this.props;
+
+    return (
+      <FormItem>
+        <FormItem.Title>
+          { this.props.title }
+        </FormItem.Title>
+        <FormItem.Content>
+          <Select
+            dropdownClassName={dropdownClassName}
+            dropdownStyle={dropdownStyle}
+            showSearch
+            style={{width: '100%'}}
+            onChange={input.onChange}
+            placeholder={placeholder}
+            optionFilterProp="children"
+            value={input.value ? input.value : defaultValue ? defaultValue : undefined}
+            filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          >
+            { this.getOptions(values) }
+          </Select>
+        </FormItem.Content>
+      </FormItem>
+    );
+  }
+
+  simpleSelect() {
+
+    const {dropdownClassName, dropdownStyle, values, defaultValue, placeholder, input} = this.props;
+
+    return (
+      <Select
+        dropdownClassName={dropdownClassName}
+        dropdownStyle={dropdownStyle}
+        showSearch
+        style={{width: '100%'}}
+        onChange={input.onChange}
+        placeholder={placeholder}
+        optionFilterProp="children"
+        value={input.value ? input.value : defaultValue ? defaultValue : undefined}
+        filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+      >
+        { this.getOptions(values) }
+      </Select>
+    );
+  }
+
   render() {
 
-    const {dropdownClassName, dropdownStyle, displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}} = this.props;
+    const {displayError = true, style, input, meta: {touched, error, warning}} = this.props;
 
     let validateStatus = 'success';
     let help = '';
@@ -74,20 +124,9 @@ export default class SelectField extends React.Component {
     return (
       <Form.Item validateStatus={validateStatus}
                  help={help}
-                 style={style}>
-        <Select
-          dropdownClassName={dropdownClassName}
-          dropdownStyle={dropdownStyle}
-          showSearch
-          style={{width: '100%'}}
-          onChange={input.onChange}
-          placeholder={placeholder}
-          optionFilterProp="children"
-          value={input.value ? input.value : defaultValue ? defaultValue : undefined}
-          filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-        >
-          { this.getOptions(values) }
-        </Select>
+                 style={style}
+                 className={this.props.className || null}>
+        { this.props.title ? this.titledSelect() : this.simpleSelect() }
       </Form.Item>
     );
   }
