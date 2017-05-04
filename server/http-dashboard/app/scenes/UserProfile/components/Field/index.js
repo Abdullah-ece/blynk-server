@@ -37,14 +37,33 @@ class Editable extends React.Component {
     this.setState({html: this.defaultHtml});
   }
 
+  prepareForSave(value) {
+    return value.replace(/&nbsp;/g, ' ')
+      .replace(/&.*;/g, '')
+      .trim();
+  }
+
   saveEdit() {
-    this.setState({isEditable: false});
-    this.props.onChange(this.state.html);
-    this.defaultHtml = this.state.html;
+
+    let html = this.prepareForSave(this.state.html);
+
+    if (!html) {
+      this.cancelEdit();
+    } else {
+      this.setState({
+        isEditable: false,
+        html: html
+      });
+      this.props.onChange(html);
+      this.defaultHtml = html;
+    }
+
   }
 
   handleChange(event) {
-    this.setState({html: event.target.value});
+    this.setState({
+      html: event.target.value
+    });
   }
 
   handleBlur(event) {
