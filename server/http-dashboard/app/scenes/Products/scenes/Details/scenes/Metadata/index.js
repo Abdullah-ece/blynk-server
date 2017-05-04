@@ -100,8 +100,10 @@ class Metadata extends React.Component {
           <CostField.Static
             {...props}
             name={field.name}
-            value={field.value}
+            price={field.price}
+            perValue={field.perValue}
             currency={field.currency}
+            units={field.units}
             role={field.role}
           />
         );

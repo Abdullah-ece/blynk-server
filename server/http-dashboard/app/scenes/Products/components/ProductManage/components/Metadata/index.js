@@ -83,7 +83,9 @@ class ProductMetadata extends React.Component {
           {...props}
           initialValues={{
             name: field.values.name,
-            value: field.values.value,
+            price: field.values.price,
+            perValue: field.values.perValue,
+            units: field.values.units,
             currency: field.values.currency,
             role: field.values.role
           }}

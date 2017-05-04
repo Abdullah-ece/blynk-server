@@ -7,7 +7,8 @@ class Name extends React.Component {
 
   render() {
     return (
-      <div className="product-metadata-item--preview--name">{this.props.children.trim()}{'\u00A0'}</div>
+      <div
+        className="product-metadata-item--preview--name">{this.props.children && this.props.children.trim()}{'\u00A0'}</div>
     );
   }
 }

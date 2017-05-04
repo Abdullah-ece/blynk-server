@@ -2,9 +2,8 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
-import {Currency} from 'services/Products';
+import {Currency, Unit} from 'services/Products';
 import Static from './static';
-import classnames from 'classnames';
 
 class CostField extends BaseField.Static {
 
@@ -17,29 +16,46 @@ class CostField extends BaseField.Static {
   ];
 
   getPreviewValues() {
-    const name = this.props.name;
-    const value = this.props.value;
+    const fieldName = this.props.name;
+    const perValue = this.props.perValue;
+    const price = this.props.price;
+    const units = this.props.units;
     const currency = this.props.currency;
 
+    let name = null;
+    let value = null;
+
+    if (fieldName) {
+      name = fieldName && typeof fieldName === 'string' ? `${fieldName.trim()}:` : null;
+    }
+
+    if (price) {
+      value = currency ? `${Currency[currency].abbreviation} ${price}` : null;
+    }
+    if (fieldName && price && perValue && units) {
+      if (Number(perValue) === 1) {
+        value = `${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`;
+      } else {
+        value = `${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`;
+      }
+    }
+
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: value && typeof value === 'string' && currency ? `${Currency[currency].abbreviation} ${value}` : null
+      name: name,
+      value: value
     };
   }
 
   component() {
 
-    const valueClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.value
-    });
-
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>Cost</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Currency</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Value</FormItem.Title>
+          <FormItem.Title style={{width: '50%'}}>Cost of</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>CCY</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Price</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Per</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Unit</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
 
@@ -50,8 +66,14 @@ class CostField extends BaseField.Static {
             <div className="product-metadata-static-field">
               {this.props.currency}
             </div>
-            <div className={valueClassNames}>
-              {this.props.value || this.DEFAULT_VALUE}
+            <div className={`product-metadata-static-field ${ !this.props.price && 'no-value' }`}>
+              {this.props.price || '--'}
+            </div>
+            <div className={`product-metadata-static-field ${ !this.props.perValue && 'no-value' }`}>
+              {this.props.perValue || '--'}
+            </div>
+            <div className={`product-metadata-static-field ${ !this.props.units && 'no-value' }`}>
+              {this.props.units || '--'}
             </div>
           </Input.Group>
 
