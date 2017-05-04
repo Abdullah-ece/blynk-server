@@ -4,7 +4,7 @@
 @ant-prefix: ant;
 
 // Color
-@primary-color: @color-primary-6;
+@primary-color: @color-primary-5;
 @success-color: @green-6;
 @error-color: @red-6;
 @highlight-color: @red-6;
@@ -12,15 +12,15 @@
 @normal-color: #d9d9d9;
 
 @primary-1: @color-primary-1; // replace tint(@primary-color, 90%)
-@primary-2: @color-primary-2; // replace tint(@primary-color, 80%)
-@primary-3: @color-primary-3;
-@primary-4: @color-primary-4;
-@primary-5: @color-primary-5; // replace tint(@primary-color, 20%)
+@primary-2: @color-primary-1; // replace tint(@primary-color, 80%)
+@primary-3: @color-primary-2;
+@primary-4: @color-primary-3;
+@primary-5: @color-primary-4; // replace tint(@primary-color, 20%)
 @primary-6: @primary-color; // don't use, use @primary-color
-@primary-7: @color-primary-7; // replace shade(@primary-color, 5%)
-@primary-8: @color-primary-8;
-@primary-9: @color-primary-9;
-@primary-10: @color-primary-10;
+@primary-7: @color-primary-6; // replace shade(@primary-color, 5%)
+@primary-8: @color-primary-7;
+@primary-9: @color-primary-8;
+@primary-10: @color-primary-9;
 
 // ------ Base & Require ------
 @body-background: #fff;
@@ -93,11 +93,11 @@
 @btn-border-radius-sm: @border-radius-base;
 
 @btn-primary-color: @color-white;
-@btn-primary-bg: @color-primary-6;
+@btn-primary-bg: @color-primary-5;
 
-@btn-default-color: @color-primary-6;
+@btn-default-color: @color-primary-5;
 @btn-default-bg: @color-white;
-@btn-default-border: @color-primary-6;
+@btn-default-border: @color-primary-5;
 
 @btn-danger-color: @color-critical;
 @btn-danger-bg: @color-white;
@@ -292,23 +292,23 @@
       .font-ghost-button;
       opacity: 0.4;
       background-color: @color-white;
-      border-color: @color-primary-6;
+      border-color: @color-primary-5;
     }
 
     // Button primary
     &-primary {
       .font-primary-button;
-      background-color: @color-primary-6;
+      background-color: @color-primary-5;
       &:hover {
-        background-color: @color-primary-5;
+        background-color: @color-primary-5-30;
       }
       &:active {
-        background-color: @color-primary-6;
+        background-color: @color-primary-5;
       }
       &[disabled], &[disabled]:hover, &[disabled]:active {
         .font-primary-button;
         opacity: 0.4;
-        background-color: @color-primary-6;
+        background-color: @color-primary-5;
       }
     }
 
@@ -377,7 +377,7 @@
     }
   }
   &-btn-icon-only.dark {
-    background: @color-primary-6;
+    background: @color-primary-5;
     i {
       .font-button-icon-dark;
     }
@@ -385,7 +385,7 @@
       background: @color-primary-4-30;
     }
     &:active {
-      box-shadow: 0 0 0 2px @color-primary-6;
+      box-shadow: 0 0 0 2px @color-primary-5;
     }
   }
 
