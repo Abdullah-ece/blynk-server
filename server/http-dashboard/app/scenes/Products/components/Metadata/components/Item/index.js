@@ -76,7 +76,7 @@ class MetadataItem extends React.Component {
       return null;
     }
 
-    if (this.props.invalid) {
+    if (this.props.invalid && !this.props.preview.name) {
       return (<Preview> <Preview.Unavailable /> </Preview>);
     }
 
