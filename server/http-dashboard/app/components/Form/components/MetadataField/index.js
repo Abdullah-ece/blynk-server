@@ -5,7 +5,7 @@ import {Form, Input, Icon} from 'antd';
 import {Field as FormField} from 'redux-form';
 
 export default class Field extends React.Component {
-  renderField({displayError = true, style, placeholder, input, type, icon, meta: {touched, error, warning}}) {
+  renderField({className, displayError = true, style, placeholder, input, type, icon, meta: {touched, error, warning}}) {
 
     let validateStatus = 'success';
     let help = '';
@@ -22,7 +22,8 @@ export default class Field extends React.Component {
     return (
       <Form.Item validateStatus={validateStatus}
                  help={help}
-                 style={style}>
+                 style={style}
+                 className={className}>
         <Input {...input} type={type} placeholder={placeholder}
                prefix={icon ? <Icon type={icon} className="form--field-icon"/> : null}/>
       </Form.Item>
