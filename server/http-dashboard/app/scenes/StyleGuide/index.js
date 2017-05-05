@@ -1,5 +1,7 @@
 import React from 'react';
 
+import UI from 'components/UI';
+
 import {Button, Input, Checkbox, Select, Radio} from 'antd';
 
 import './styles.less';
@@ -71,6 +73,16 @@ class StyleGuide extends React.Component {
         </div>
         <div className="style-guide-element">
           <a href="javascript:void(0);">Link</a>
+        </div>
+        <div className="style-guide-element">
+          <UI.Form layout="vertical" form="style-guide">
+            <UI.Form.Item>
+              <UI.Form.Input name="name"/>
+            </UI.Form.Item>
+            {/*<UI.Form.Item>*/}
+            {/*<UI.Form.Input label="Name"/>*/}
+            {/*</UI.Form.Item>*/}
+          </UI.Form>
         </div>
       </div>
     );
