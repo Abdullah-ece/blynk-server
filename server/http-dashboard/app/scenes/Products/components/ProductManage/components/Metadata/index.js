@@ -180,7 +180,23 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             role: field.values.role,
-            allowDefaults: field.values.allowDefaults
+            allowDefaults: field.values.allowDefaults,
+            firstNameCheck: field.values.firstNameCheck,
+            lastNameCheck: field.values.lastNameCheck,
+            emailCheck: field.values.emailCheck,
+            phoneCheck: field.values.phoneCheck,
+            streetAddressCheck: field.values.streetAddressCheck,
+            cityCheck: field.values.cityCheck,
+            stateCheck: field.values.stateCheck,
+            zipCheck: field.values.zipCheck,
+            firstNameInput: field.values.firstNameInput,
+            lastNameInput: field.values.lastNameInput,
+            emailInput: field.values.emailInput,
+            phoneInput: field.values.phoneInput,
+            streetAddressInput: field.values.streetAddressInput,
+            cityInput: field.values.cityInput,
+            stateInput: field.values.stateInput,
+            zipInput: field.values.zipInput
           }}
         />
       );

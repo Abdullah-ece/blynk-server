@@ -12,7 +12,7 @@ export default class Default extends React.Component {
 
   checkbox(props) {
     return (
-      <Checkbox onChange={props.input.onChange} checked={props.input.value}>{props.placeholder}</Checkbox>
+      <Checkbox onChange={props.input.onChange} checked={!!props.input.value}>{props.placeholder}</Checkbox>
     );
   }
 

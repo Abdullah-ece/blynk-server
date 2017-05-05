@@ -285,10 +285,16 @@ export const prepareProductForEdit = (data) => {
   let id = 1;
   if (data.metaFields) {
     edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
+        let values = _.pickBy(field, (value, key) => key !== 'type');
+
+        if (field.type === Metadata.Fields.CONTACT) {
+          values = prepareContactValuesForEdit(values);
+        }
+
         return {
           id: ++id,
           type: field.type,
-          values: _.pickBy(field, (value, key) => key !== 'type')
+          values: values
         };
       })) || [];
   }
@@ -368,9 +374,43 @@ const prepareContactValuesForSave = (values) => {
       } else {
         updated[getNativeName(key)] = !!value;
       }
+    } else {
+      updated[key] = value;
     }
   });
 
   return updated;
+
+};
+
+const prepareContactValuesForEdit = (fields) => {
+
+  const TYPE = 'type'; //type of metadata field
+  const NAME = 'name'; //name of metadata field
+  const ROLE = 'role'; //name of metadata field
+  const TRUE = 'true'; //checked as required
+
+  const values = {};
+
+  const checkbox = (name) => `${name}Check`;
+  const input = (name) => `${name}Input`;
+
+  let anyFilled = false;
+
+  _.forEach(fields, (field, name) => {
+    if (name !== NAME && name !== TYPE && name !== ROLE) {
+      values[checkbox(name)] = true;
+      if (field !== TRUE) {
+        values[input(name)] = field;
+        anyFilled = true;
+      }
+    } else {
+      values[name] = field;
+    }
+  });
+
+  values.allowDefaults = anyFilled;
+
+  return values;
 
 };

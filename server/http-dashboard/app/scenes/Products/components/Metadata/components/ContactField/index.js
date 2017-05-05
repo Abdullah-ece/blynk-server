@@ -24,9 +24,9 @@ import './styles.less';
         lastName: selector(state, 'lastNameCheck'),
         email: selector(state, 'emailCheck'),
         phone: selector(state, 'phoneCheck'),
-        address: selector(state, 'addressCheck'),
+        streetAddress: selector(state, 'streetAddressCheck'),
         city: selector(state, 'cityCheck'),
-        state: selector(state, 'statCheck'),
+        state: selector(state, 'stateCheck'),
         zip: selector(state, 'zipCheck'),
       },
       values: {
@@ -34,9 +34,9 @@ import './styles.less';
         lastName: selector(state, 'lastNameInput'),
         email: selector(state, 'emailInput'),
         phone: selector(state, 'phoneInput'),
-        address: selector(state, 'addressInput'),
+        streetAddress: selector(state, 'streetAddressInput'),
         city: selector(state, 'cityInput'),
-        state: selector(state, 'statInput'),
+        state: selector(state, 'stateInput'),
         zip: selector(state, 'zipInput'),
       }
     }
@@ -53,7 +53,7 @@ export default class ContactField extends BaseField {
 
     const regex = /^(.*){1,}$/;
 
-    const values = ['email', 'phone', 'address', 'city', 'stat', 'zip'];
+    const values = ['email', 'phone', 'streetAddress', 'city', 'stat', 'zip'];
 
     const checkIsFieldValid = (name) => {
       return this.props.fields.isChecked[name]
@@ -77,13 +77,13 @@ export default class ContactField extends BaseField {
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
       value: this.props.fields.allowDefaults && value.length ? value.join('\n') : null,
-      inline: this.props.fields.allowDefaults && value.length
+      inline: !!this.props.fields.allowDefaults && !!value.length
     };
   }
 
   switch(props) {
     return (
-      <Switch size="small" className="contact-field-allow-default-values-switch" value={props.input.value}
+      <Switch size="small" className="contact-field-allow-default-values-switch" checked={props.input.value}
               onChange={(value) => {
                 props.input.onChange(value);
               }}/>
@@ -107,57 +107,54 @@ export default class ContactField extends BaseField {
             <span className="contact-field-allow-default-values-title">Allow default values</span>
           </div>
         </Form.Item>
-        { this.props.fields.allowDefaults && (
-          <FormItem offset={false}>
-            <Row gutter={8}>
-              <Col span={12}>
-                <Form.Items offset="small">
-                  <DefinedInput placeholder="First name" prefix="firstName"
-                                isChecked={this.props.fields.isChecked.firstName}/>
-                  <DefinedInput placeholder="Last name" prefix="lastName"
-                                isChecked={this.props.fields.isChecked.lastName}/>
-                </Form.Items>
-              </Col>
-              <Col span={12}>
-                <Form.Items offset="small">
-                  <DefinedInput placeholder="E-mail address" prefix="email"
-                                isChecked={this.props.fields.isChecked.email}/>
-                  <DefinedInput placeholder="Phone number" prefix="phone"
-                                isChecked={this.props.fields.isChecked.phone}/>
-                  <DefinedInput placeholder="Street address" prefix="address"
-                                isChecked={this.props.fields.isChecked.address}/>
-                  <DefinedInput placeholder="City" prefix="city" isChecked={this.props.fields.isChecked.city}/>
-                  <DefinedInput placeholder="State" prefix="state" isChecked={this.props.fields.isChecked.state}/>
-                  <DefinedInput placeholder="ZIP Code" prefix="zip" isChecked={this.props.fields.isChecked.zip}/>
-                </Form.Items>
-              </Col>
-            </Row>
-          </FormItem>
-        )}
+
+        <FormItem offset={false} visible={this.props.fields.allowDefaults}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <DefinedInput placeholder="First name" prefix="firstName"
+                              isChecked={this.props.fields.isChecked.firstName}/>
+                <DefinedInput placeholder="Last name" prefix="lastName"
+                              isChecked={this.props.fields.isChecked.lastName}/>
+              </Form.Items>
+            </Col>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <DefinedInput placeholder="E-mail address" prefix="email"
+                              isChecked={this.props.fields.isChecked.email}/>
+                <DefinedInput placeholder="Phone number" prefix="phone"
+                              isChecked={this.props.fields.isChecked.phone}/>
+                <DefinedInput placeholder="Street address" prefix="streetAddress"
+                              isChecked={this.props.fields.isChecked.streetAddress}/>
+                <DefinedInput placeholder="City" prefix="city" isChecked={this.props.fields.isChecked.city}/>
+                <DefinedInput placeholder="State" prefix="state" isChecked={this.props.fields.isChecked.state}/>
+                <DefinedInput placeholder="ZIP Code" prefix="zip" isChecked={this.props.fields.isChecked.zip}/>
+              </Form.Items>
+            </Col>
+          </Row>
+        </FormItem>
 
 
-        { !this.props.fields.allowDefaults && (
-          <FormItem offset={false}>
-            <Row gutter={8}>
-              <Col span={12}>
-                <Form.Items offset="small">
-                  <OptionDefault placeholder="First name" prefix="firstName"/>
-                  <OptionDefault placeholder="Last name" prefix="lastName"/>
-                </Form.Items>
-              </Col>
-              <Col span={12}>
-                <Form.Items offset="small">
-                  <OptionDefault placeholder="E-mail address" prefix="email"/>
-                  <OptionDefault placeholder="Phone number" prefix="phone"/>
-                  <OptionDefault placeholder="Street address" prefix="address"/>
-                  <OptionDefault placeholder="City" prefix="city"/>
-                  <OptionDefault placeholder="State" prefix="state"/>
-                  <OptionDefault placeholder="ZIP Code" prefix="zip"/>
-                </Form.Items>
-              </Col>
-            </Row>
-          </FormItem>
-        )}
+        <FormItem offset={false} visible={!this.props.fields.allowDefaults}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <OptionDefault placeholder="First name" prefix="firstName"/>
+                <OptionDefault placeholder="Last name" prefix="lastName"/>
+              </Form.Items>
+            </Col>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <OptionDefault placeholder="E-mail address" prefix="email"/>
+                <OptionDefault placeholder="Phone number" prefix="phone"/>
+                <OptionDefault placeholder="Street address" prefix="streetAddress"/>
+                <OptionDefault placeholder="City" prefix="city"/>
+                <OptionDefault placeholder="State" prefix="state"/>
+                <OptionDefault placeholder="ZIP Code" prefix="zip"/>
+              </Form.Items>
+            </Col>
+          </Row>
+        </FormItem>
 
       </div>
     );
