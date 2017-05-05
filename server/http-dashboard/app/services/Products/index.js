@@ -326,10 +326,18 @@ export const prepareProductForSave = (data) => {
 
   if (Array.isArray(data.metadata.fields)) {
     data.metadata.fields.forEach((value) => {
+
+      let values;
+      if (value.type === Metadata.Fields.CONTACT) {
+        values = prepareContactValuesForSave(value.values);
+      } else {
+        values = value.values;
+      }
+
       product.metaFields.push({
         name: value.name,
         type: value.type,
-        ...value.values
+        ...values
       });
     });
   }
@@ -343,4 +351,26 @@ export const prepareProductForSave = (data) => {
   }
 
   return product;
+};
+
+const prepareContactValuesForSave = (values) => {
+
+  const updated = {};
+
+  const isCheckbox = (name) => /Check$/.test(name);
+  const getInput = (checkboxName) => values[checkboxName.replace('Check', 'Input')];
+  const getNativeName = (checkboxName) => checkboxName.replace('Check', '');
+
+  _.forEach(values, (value, key) => {
+    if (isCheckbox(key) && !!value) {
+      if (getInput(key) && getInput(key).trim()) {
+        updated[getNativeName(key)] = getInput(key).trim();
+      } else {
+        updated[getNativeName(key)] = !!value;
+      }
+    }
+  });
+
+  return updated;
+
 };
