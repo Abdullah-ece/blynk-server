@@ -1,6 +1,7 @@
 import React from 'react';
 import {Form as BaseForm} from 'antd';
 import Item from './components/Item';
+import ItemsGroup from './components/ItemsGroup';
 import Field from './components/Field';
 import Input from './components/Input';
 import {reduxForm} from 'redux-form';
@@ -26,6 +27,7 @@ class Form extends React.Component {
 
 Form.Field = Field;
 Form.Item = Item;
+Form.ItemsGroup = ItemsGroup;
 Form.Input = Input;
 
 export default Form;

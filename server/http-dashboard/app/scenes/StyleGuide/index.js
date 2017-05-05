@@ -106,6 +106,22 @@ class StyleGuide extends React.Component {
             </ui.Form.Item>
           </ui.Form>
         </div>
+        <div className="style-guide-element">
+          <h3>Group form</h3>
+          <ui.Form layout="inline" form="style-guide">
+            <ui.Form.ItemsGroup>
+              <ui.Form.Item label="Name">
+                <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
+              </ui.Form.Item>
+              <ui.Form.Item label="Email">
+                <ui.Form.Input icon="user" name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
+              </ui.Form.Item>
+              <ui.Form.Item position="center">
+                <Button size="default">Login</Button>
+              </ui.Form.Item>
+            </ui.Form.ItemsGroup>
+          </ui.Form>
+        </div>
       </div>
     );
   }

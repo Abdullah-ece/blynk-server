@@ -1,0 +1,28 @@
+.ui-form-items-group {
+  display: flex;
+  > div {
+    line-height: 0;
+    margin-right: 0 !important;
+  }
+  > div:not(:last-child):not(:first-child) {
+    input, button {
+      border-radius: 0;
+      border-right: 0;
+    }
+  }
+  > div:last-child {
+    input, button {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+  > div:first-child {
+    input, button {
+      border-radius: 4px 0 0 4px;
+    }
+  }
+  > div:first-child:not(:last-child) {
+    input, button {
+      border-right: 0;
+    }
+  }
+}
