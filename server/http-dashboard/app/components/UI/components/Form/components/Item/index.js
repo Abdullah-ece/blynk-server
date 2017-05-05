@@ -5,24 +5,38 @@ import {Field as ReduxField} from 'redux-form';
 export default class Item extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.object
+    children: React.PropTypes.object,
+    label: React.PropTypes.string
   };
 
-  field(props) {
-    return React.cloneElement(props.element, props);
+  item(props) {
+    const {displayError = true, meta: {touched, error, warning}} = props;
+
+    const validateStatus = () => {
+      return touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success';
+    };
+
+    const help = () => {
+      return touched && displayError ? (error || warning ? error || warning : '' ) : '';
+    };
+
+    return (
+      <BaseForm.Item
+        label={props.label}
+        validateStatus={validateStatus()}
+        help={help()}>
+        { React.cloneElement(props.element, props) }
+      </BaseForm.Item>
+    );
   }
 
   render() {
-    const props = this.props;
-
-    let element = props.children;
-
+    const element = this.props.children;
     return (
-      <BaseForm.Item>
-        {element && (
-          <ReduxField {...element.props} element={element} component={ this.field }/>
-        )}
-      </BaseForm.Item>
+      <ReduxField {...element.props}
+                  element={element}
+                  label={this.props.label}
+                  component={this.item}/>
     );
   }
 }

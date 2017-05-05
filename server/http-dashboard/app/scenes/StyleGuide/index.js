@@ -1,6 +1,7 @@
 import React from 'react';
 
 import UI from 'components/UI';
+import Validation from 'services/Validation';
 
 import {Button, Input, Checkbox, Select, Radio} from 'antd';
 
@@ -77,11 +78,11 @@ class StyleGuide extends React.Component {
         <div className="style-guide-element">
           <UI.Form layout="vertical" form="style-guide">
             <UI.Form.Item>
-              <UI.Form.Input name="name"/>
+              <UI.Form.Input name="something" validate={[Validation.Rules.required]}/>
             </UI.Form.Item>
-            {/*<UI.Form.Item>*/}
-            {/*<UI.Form.Input label="Name"/>*/}
-            {/*</UI.Form.Item>*/}
+            <UI.Form.Item label="Name">
+              <UI.Form.Input name="name" validate={[Validation.Rules.required]}/>
+            </UI.Form.Item>
           </UI.Form>
         </div>
       </div>

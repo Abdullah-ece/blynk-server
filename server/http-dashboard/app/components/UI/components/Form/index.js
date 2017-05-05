@@ -9,7 +9,7 @@ import {reduxForm} from 'redux-form';
 class Form extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.object
+    children: React.PropTypes.any
   };
 
   render() {
