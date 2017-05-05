@@ -6,8 +6,19 @@ class Name extends React.Component {
   };
 
   render() {
+
     return (
-      <div className="product-metadata-item--preview--value">{this.props.children}</div>
+      <div className="product-metadata-item--preview--value">
+        {
+          typeof this.props.children === 'string' ? (
+            this.props.children.split('\n').map((line, key) => (
+              <span key={key}>{line}<br/></span>
+            ))
+          ) : (
+            this.props.children
+          )
+        }
+      </div>
     );
   }
 }

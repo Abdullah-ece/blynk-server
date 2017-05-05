@@ -81,7 +81,7 @@ class MetadataItem extends React.Component {
     }
 
     return (
-      <Preview>
+      <Preview inline={this.props.preview.inline}>
         <Preview.Name>{this.props.preview.name}</Preview.Name>
         <Preview.Value>{this.props.preview.value || 'Empty'}</Preview.Value>
       </Preview>

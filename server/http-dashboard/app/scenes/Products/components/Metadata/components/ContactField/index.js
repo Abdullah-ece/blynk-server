@@ -28,6 +28,16 @@ import './styles.less';
         city: selector(state, 'cityCheck'),
         state: selector(state, 'statCheck'),
         zip: selector(state, 'zipCheck'),
+      },
+      values: {
+        firstName: selector(state, 'firstNameInput'),
+        lastName: selector(state, 'lastNameInput'),
+        email: selector(state, 'emailInput'),
+        phone: selector(state, 'phoneInput'),
+        address: selector(state, 'addressInput'),
+        city: selector(state, 'cityInput'),
+        state: selector(state, 'statInput'),
+        zip: selector(state, 'zipInput'),
       }
     }
   };
@@ -39,11 +49,35 @@ export default class ContactField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
-    const value = this.props.fields.value;
+    let value = [];
+
+    const regex = /^(.*){1,}$/;
+
+    const values = ['email', 'phone', 'address', 'city', 'stat', 'zip'];
+
+    const checkIsFieldValid = (name) => {
+      return this.props.fields.isChecked[name]
+        && regex.test(this.props.fields.values[name])
+        && this.props.fields.values[name]
+        && this.props.fields.values[name].trim();
+    };
+
+    if (checkIsFieldValid('firstName') && checkIsFieldValid('lastName')) {
+      value.push(`${this.props.fields.values.firstName}, ${this.props.fields.values.lastName}`);
+    } else {
+      values.unshift('firstName', 'lastName');
+    }
+
+    values.forEach((field) => {
+      if (checkIsFieldValid(field)) {
+        value.push(this.props.fields.values[field]);
+      }
+    });
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: value && typeof value === 'string' ? value.trim() : null
+      value: this.props.fields.allowDefaults && value.length ? value.join('\n') : null,
+      inline: this.props.fields.allowDefaults && value.length
     };
   }
 
