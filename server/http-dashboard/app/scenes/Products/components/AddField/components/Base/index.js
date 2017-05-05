@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Menu, Dropdown, Icon} from 'antd';
 
-class AddNewMetadataField extends React.Component {
+class AddField extends React.Component {
 
   static propTypes = {
     onFieldAdd: React.PropTypes.func
@@ -54,4 +54,4 @@ class AddNewMetadataField extends React.Component {
   }
 }
 
-export default AddNewMetadataField;
+export default AddField;

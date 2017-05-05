@@ -39,7 +39,7 @@ class ProductCreate extends React.Component {
     this.state = {
       originalName: null,
       submited: false,
-      activeTab: TABS.INFO,
+      activeTab: props.params.tab || TABS.INFO,
       metadataIntroVisible: false
     };
   }

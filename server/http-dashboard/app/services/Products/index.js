@@ -11,6 +11,7 @@ export const TABS = {
 
 export const Metadata = {
   Fields: {
+    ADDRESS: 'Address',
     TEXT: 'Text',
     NUMBER: 'Number',
     COST: 'Cost',

@@ -7,6 +7,10 @@ export default class AddMetadataFields extends Base {
 
   fields = [
     {
+      type: Metadata.Fields.CONTACT,
+      title: 'Contact'
+    },
+    {
       type: Metadata.Fields.TEXT,
       title: 'Text'
     },
@@ -23,7 +27,7 @@ export default class AddMetadataFields extends Base {
       title: 'Time'
     },
     {
-      type: Metadata.Fields.SHIFT,
+      type: Metadata.Fields.RANGE,
       title: 'Shift'
     },
     {
