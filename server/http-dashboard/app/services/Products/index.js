@@ -369,7 +369,7 @@ const prepareContactValuesForSave = (values) => {
 
   _.forEach(values, (value, key) => {
     if (isCheckbox(key) && !!value) {
-      if (getInput(key) && getInput(key).trim()) {
+      if (values.allowDefaults && getInput(key) && getInput(key).trim()) {
         updated[getNativeName(key)] = getInput(key).trim();
       } else {
         updated[getNativeName(key)] = !!value;
