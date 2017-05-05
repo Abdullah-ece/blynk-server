@@ -1,6 +1,6 @@
 import React from 'react';
 
-import UI from 'components/UI';
+import ui from 'components/UI';
 import Validation from 'services/Validation';
 
 import {Button, Input, Checkbox, Select, Radio} from 'antd';
@@ -76,14 +76,35 @@ class StyleGuide extends React.Component {
           <a href="javascript:void(0);">Link</a>
         </div>
         <div className="style-guide-element">
-          <UI.Form layout="vertical" form="style-guide">
-            <UI.Form.Item>
-              <UI.Form.Input name="something" validate={[Validation.Rules.required]}/>
-            </UI.Form.Item>
-            <UI.Form.Item label="Name">
-              <UI.Form.Input name="name" validate={[Validation.Rules.required]}/>
-            </UI.Form.Item>
-          </UI.Form>
+          <h3>Form</h3>
+          <ui.Form form="style-guide">
+            <ui.Form.Item>
+              <ui.Form.Input name="something" validate={[Validation.Rules.required]}/>
+            </ui.Form.Item>
+            <ui.Form.Item label="Name">
+              <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
+            </ui.Form.Item>
+            <ui.Form.Item label="Email">
+              <ui.Form.Input name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
+            </ui.Form.Item>
+            <ui.Form.Item>
+              <Button size="default">Login</Button>
+            </ui.Form.Item>
+          </ui.Form>
+        </div>
+        <div className="style-guide-element">
+          <h3>Inline form</h3>
+          <ui.Form layout="inline" form="style-guide">
+            <ui.Form.Item label="Name">
+              <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
+            </ui.Form.Item>
+            <ui.Form.Item label="Email">
+              <ui.Form.Input name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
+            </ui.Form.Item>
+            <ui.Form.Item position="center">
+              <Button size="default">Login</Button>
+            </ui.Form.Item>
+          </ui.Form>
         </div>
       </div>
     );

@@ -9,6 +9,7 @@ import {reduxForm} from 'redux-form';
 class Form extends React.Component {
 
   static propTypes = {
+    layout: React.PropTypes.string,
     children: React.PropTypes.any
   };
 
@@ -16,7 +17,7 @@ class Form extends React.Component {
     const props = {};
 
     return (
-      <BaseForm {...props}>
+      <BaseForm {...props} layout={this.props.layout}>
         {this.props.children}
       </BaseForm>
     );
