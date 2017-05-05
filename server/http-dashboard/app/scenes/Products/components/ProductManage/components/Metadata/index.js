@@ -180,7 +180,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             role: field.values.role,
-            value: field.values.value
+            allowDefaults: field.values.allowDefaults
           }}
         />
       );

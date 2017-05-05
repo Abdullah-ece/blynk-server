@@ -1,82 +1,131 @@
 import React from 'react';
-import Metadata from '../../index';
 import FormItem from 'components/FormItem';
-import {Input} from 'antd';
-import {MetadataField as MetadataFormField} from 'components/Form';
-import {reduxForm, formValueSelector} from 'redux-form';
+import {Form} from 'components/UI';
+import {Switch, Row, Col} from 'antd';
+import {reduxForm, formValueSelector, Field} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
+import BaseField from '../BaseField';
+import {
+  Default as OptionDefault,
+  Input as DefinedInput
+} from './components/Option';
+import './styles.less';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
     fields: {
       name: selector(state, 'name'),
-      value: selector(state, 'value')
+      allowDefaults: selector(state, 'allowDefaults'),
+      fieldAvailable: selector(state, 'fieldAvailable'),
+      isChecked: {
+        firstName: selector(state, 'firstNameCheck'),
+        lastName: selector(state, 'lastNameCheck'),
+        email: selector(state, 'emailCheck'),
+        phone: selector(state, 'phoneCheck'),
+        address: selector(state, 'addressCheck'),
+        city: selector(state, 'cityCheck'),
+        state: selector(state, 'statCheck'),
+        zip: selector(state, 'zipCheck'),
+      }
     }
   };
 })
 @reduxForm({
   touchOnChange: true
 })
-export default class ContactField extends React.Component {
-
-  static propTypes = {
-    id: React.PropTypes.number,
-    fields: React.PropTypes.object,
-    pristine: React.PropTypes.bool,
-    invalid: React.PropTypes.bool,
-    anyTouched: React.PropTypes.bool,
-    onDelete: React.PropTypes.func,
-    onClone: React.PropTypes.func,
-    isUnique: React.PropTypes.func
-  };
+export default class ContactField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
 
     return {
-      values: {
-        name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-        value: value && typeof value === 'string' ? value.trim() : null
-      },
-      isTouched: this.props.anyTouched,
-      invalid: this.props.invalid
+      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      value: value && typeof value === 'string' ? value.trim() : null
     };
   }
 
-  handleDelete() {
-    if (this.props.onDelete)
-      this.props.onDelete(this.props.id);
+  switch(props) {
+    return (
+      <Switch size="small" className="contact-field-allow-default-values-switch" value={props.input.value}
+              onChange={(value) => {
+                props.input.onChange(value);
+              }}/>
+    );
   }
 
-  handleClone() {
-    if (this.props.onClone)
-      this.props.onClone(this.props.id);
-  }
-
-  render() {
+  component() {
 
     return (
-      <Metadata.Item touched={this.props.anyTouched} preview={this.getPreviewValues()}
-                     onDelete={this.handleDelete.bind(this)}
-                     onClone={this.handleClone.bind(this)}>
-        <FormItem offset={false}>
-          <FormItem.TitleGroup>
-            <FormItem.Title style={{width: '50%'}}>Contact</FormItem.Title>
-            <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
-          </FormItem.TitleGroup>
-          <FormItem.Content>
-            <Input.Group compact>
-              <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
-                Validation.Rules.required
-              ]}/>
-              <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
-            </Input.Group>
-          </FormItem.Content>
-        </FormItem>
-      </Metadata.Item>
+      <div>
+        <Form.Item label="Contact" offset="extra-small">
+          <Form.Input className="metadata-contact-field" name="name" type="text" placeholder="Field Name"
+                      validate={[
+                        Validation.Rules.required
+                      ]}/>
+        </Form.Item>
+        <Form.Item offset="small" checkbox={true}>
+          <div>
+            <Field name="allowDefaults"
+                   component={this.switch}/>
+            <span className="contact-field-allow-default-values-title">Allow default values</span>
+          </div>
+        </Form.Item>
+        { this.props.fields.allowDefaults && (
+          <FormItem offset={false}>
+            <Row gutter={8}>
+              <Col span={12}>
+                <Form.Items offset="small">
+                  <DefinedInput placeholder="First name" prefix="firstName"
+                                isChecked={this.props.fields.isChecked.firstName}/>
+                  <DefinedInput placeholder="Last name" prefix="lastName"
+                                isChecked={this.props.fields.isChecked.lastName}/>
+                </Form.Items>
+              </Col>
+              <Col span={12}>
+                <Form.Items offset="small">
+                  <DefinedInput placeholder="E-mail address" prefix="email"
+                                isChecked={this.props.fields.isChecked.email}/>
+                  <DefinedInput placeholder="Phone number" prefix="phone"
+                                isChecked={this.props.fields.isChecked.phone}/>
+                  <DefinedInput placeholder="Street address" prefix="address"
+                                isChecked={this.props.fields.isChecked.address}/>
+                  <DefinedInput placeholder="City" prefix="city" isChecked={this.props.fields.isChecked.city}/>
+                  <DefinedInput placeholder="State" prefix="state" isChecked={this.props.fields.isChecked.state}/>
+                  <DefinedInput placeholder="ZIP Code" prefix="zip" isChecked={this.props.fields.isChecked.zip}/>
+                </Form.Items>
+              </Col>
+            </Row>
+          </FormItem>
+        )}
+
+
+        { !this.props.fields.allowDefaults && (
+          <FormItem offset={false}>
+            <Row gutter={8}>
+              <Col span={12}>
+                <Form.Items offset="small">
+                  <OptionDefault placeholder="First name" prefix="firstName"/>
+                  <OptionDefault placeholder="Last name" prefix="lastName"/>
+                </Form.Items>
+              </Col>
+              <Col span={12}>
+                <Form.Items offset="small">
+                  <OptionDefault placeholder="E-mail address" prefix="email"/>
+                  <OptionDefault placeholder="Phone number" prefix="phone"/>
+                  <OptionDefault placeholder="Street address" prefix="address"/>
+                  <OptionDefault placeholder="City" prefix="city"/>
+                  <OptionDefault placeholder="State" prefix="state"/>
+                  <OptionDefault placeholder="ZIP Code" prefix="zip"/>
+                </Form.Items>
+              </Col>
+            </Row>
+          </FormItem>
+        )}
+
+      </div>
     );
   }
 }
