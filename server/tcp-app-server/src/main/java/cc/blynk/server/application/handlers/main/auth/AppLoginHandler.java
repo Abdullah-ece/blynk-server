@@ -144,7 +144,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS), ctx.voidPromise());
             return;
         }
 
@@ -174,6 +174,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, ctx.channel().eventLoop());
         user.lastLoggedIP = IPUtils.getIp(ctx.channel());
         user.lastLoggedAt = System.currentTimeMillis();
+        if (user.region == null || user.region.isEmpty()) {
+            user.region = holder.region;
+        }
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());

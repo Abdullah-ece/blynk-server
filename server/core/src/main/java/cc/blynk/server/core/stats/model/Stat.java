@@ -1,5 +1,6 @@
 package cc.blynk.server.core.stats.model;
 
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -26,6 +27,7 @@ public class Stat {
 
     public final CommandStat commands = new CommandStat();
     public final HttpStat http = new HttpStat();
+    public final BlockingIOStat ioStat;
 
     public final int oneMinRate;
     public final int registrations;
@@ -39,24 +41,7 @@ public class Stat {
     public final int totalOnlineHards;
     public final transient long ts;
 
-    //for tests only
-    public Stat(int oneMinRate, int registrations, int active, int activeWeek,
-                int activeMonth, int connected, int onlineApps,
-                int totalOnlineApps, int onlineHards, int totalOnlineHards, long ts) {
-        this.oneMinRate = oneMinRate;
-        this.registrations = registrations;
-        this.active = active;
-        this.activeWeek = activeWeek;
-        this.activeMonth = activeMonth;
-        this.connected = connected;
-        this.onlineApps = onlineApps;
-        this.totalOnlineApps = totalOnlineApps;
-        this.onlineHards = onlineHards;
-        this.totalOnlineHards = totalOnlineHards;
-        this.ts = ts;
-    }
-
-    public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats globalStats, boolean reset) {
+    public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor, GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.valuesName.keySet()) {
@@ -129,6 +114,8 @@ public class Stat {
         this.activeWeek = activeWeek;
         this.activeMonth = activeMonth;
         this.registrations = userDao.users.size();
+
+        this.ioStat = new BlockingIOStat(blockingIOProcessor);
     }
 
     private boolean dashUpdated(User user, long now, long period) {
@@ -140,7 +127,8 @@ public class Stat {
         return false;
     }
 
-    public String toJson() {
+    @Override
+    public String toString() {
         return JsonParser.toJson(this);
     }
 }

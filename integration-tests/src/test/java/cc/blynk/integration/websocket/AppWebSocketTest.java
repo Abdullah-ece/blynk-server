@@ -57,7 +57,8 @@ public class AppWebSocketTest extends IntegrationBase {
         localHolder = new Holder(properties,
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
-                new GCMProperties(Collections.emptyMap())
+                new GCMProperties(Collections.emptyMap()),
+                false
         );
         tcpWebSocketPort = httpPort;
         webSocketServer = new HttpAPIServer(localHolder, true).start();

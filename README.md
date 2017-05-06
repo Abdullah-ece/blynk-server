@@ -73,7 +73,7 @@ For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/d
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.24.2.jar -dataFolder /path
+        java -jar server-0.24.3.jar -dataFolder /path
         
 That's it! 
 
@@ -98,11 +98,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.24.2/server-0.24.2.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.24.3/server-0.24.3.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.24.2.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -115,7 +115,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.24.2.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.24.3.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -123,7 +123,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.24.2.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.24.3.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -135,7 +135,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.24.2.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -152,7 +152,7 @@ Server should be always updated befor you update Blynk App. To update your serve
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.24.2.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.24.3.jar   
         
 + Kill the old process
 
@@ -251,7 +251,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.24.2.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -373,9 +373,9 @@ Available server options:
         admin.email=admin@blynk.cc
         admin.pass=admin
 
-+ Host for reset password redirect. By default current server IP is taken from "eth" network interface. Could be replaced with more friendly hostname. It is recommended to override this property with your server IP to avoid possible problems of host resolving.
++ Host for reset password redirect and certificate generation. By default current server IP is taken from "eth" network interface. Could be replaced with more friendly hostname. It is recommended to override this property with your server IP to avoid possible problems of host resolving.
         
-        reset-pass.host=blynk-cloud.com
+        server.host=blynk-cloud.com
         
         
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.

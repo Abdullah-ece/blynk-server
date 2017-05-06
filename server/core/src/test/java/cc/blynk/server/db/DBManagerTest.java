@@ -227,7 +227,7 @@ public class DBManagerTest {
         users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, Role.STAFF));
         users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false, Role.STAFF));
         dbManager.userDBDao.save(users);
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertEquals(2, dbUsers.size());
     }
 
@@ -241,7 +241,7 @@ public class DBManagerTest {
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
 
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         System.out.println("Records : " + dbUsers.size());
     }
 
@@ -360,7 +360,7 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
 
         assertNotNull(dbUsers);
         assertEquals(1, dbUsers.size());
@@ -398,7 +398,7 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        Map<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        Map<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
 
         assertNotNull(dbUsers);
         assertEquals(1, dbUsers.size());
@@ -419,7 +419,7 @@ public class DBManagerTest {
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
 
         assertTrue(dbManager.userDBDao.deleteUser(new UserKey(user.email, user.appName)));
-        dbUsers = dbManager.userDBDao.getAllUsers();
+        dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertNotNull(dbUsers);
         assertEquals(0, dbUsers.size());
     }
