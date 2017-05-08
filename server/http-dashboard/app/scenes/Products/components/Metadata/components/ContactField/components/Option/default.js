@@ -10,6 +10,10 @@ export default class Default extends React.Component {
     prefix: React.PropTypes.string
   };
 
+  capitalizePrefix(name) {
+    return name[0].toUpperCase() + name.substr(1);
+  }
+
   checkbox(props) {
     return (
       <Checkbox onChange={props.input.onChange} checked={!!props.input.value}>{props.placeholder}</Checkbox>
@@ -20,7 +24,9 @@ export default class Default extends React.Component {
     return (
       <Form.Items offset="small">
         <Form.Item>
-          <Field name={`${this.props.prefix}Check`} placeholder={this.props.placeholder} component={this.checkbox}/>
+          <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`}
+                 placeholder={this.props.placeholder}
+                 component={this.checkbox}/>
         </Form.Item>
       </Form.Items>
     );

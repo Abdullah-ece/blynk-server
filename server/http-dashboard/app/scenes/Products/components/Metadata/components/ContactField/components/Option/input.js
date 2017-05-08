@@ -14,10 +14,10 @@ export default class Input extends Default {
     return (
       <Form.Items layout="inline">
         <Form.Item>
-          <Field name={`${this.props.prefix}Check`} component={this.checkbox}/>
+          <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`} component={this.checkbox}/>
         </Form.Item>
         <Form.Item>
-          <Form.Input disabled={!this.props.isChecked} name={`${this.props.prefix}Input`}
+          <Form.Input disabled={!this.props.isChecked} name={`${this.props.prefix}`}
                       placeholder={this.props.placeholder}/>
         </Form.Item>
       </Form.Items>

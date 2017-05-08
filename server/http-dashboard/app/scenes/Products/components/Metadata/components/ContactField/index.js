@@ -19,25 +19,39 @@ import './styles.less';
       name: selector(state, 'name'),
       allowDefaults: selector(state, 'allowDefaults'),
       fieldAvailable: selector(state, 'fieldAvailable'),
-      isChecked: {
-        firstName: selector(state, 'firstNameCheck'),
-        lastName: selector(state, 'lastNameCheck'),
-        email: selector(state, 'emailCheck'),
-        phone: selector(state, 'phoneCheck'),
-        streetAddress: selector(state, 'streetAddressCheck'),
-        city: selector(state, 'cityCheck'),
-        state: selector(state, 'stateCheck'),
-        zip: selector(state, 'zipCheck'),
-      },
       values: {
-        firstName: selector(state, 'firstNameInput'),
-        lastName: selector(state, 'lastNameInput'),
-        email: selector(state, 'emailInput'),
-        phone: selector(state, 'phoneInput'),
-        streetAddress: selector(state, 'streetAddressInput'),
-        city: selector(state, 'cityInput'),
-        state: selector(state, 'stateInput'),
-        zip: selector(state, 'zipInput'),
+        firstName: {
+          checked: selector(state, 'isFirstNameEnabled'),
+          value: selector(state, 'firstName'),
+        },
+        lastName: {
+          checked: selector(state, 'isLastNameEnabled'),
+          value: selector(state, 'lastName'),
+        },
+        email: {
+          checked: selector(state, 'isEmailEnabled'),
+          value: selector(state, 'email'),
+        },
+        phone: {
+          checked: selector(state, 'phoneInput'),
+          value: selector(state, 'phone'),
+        },
+        streetAddress: {
+          checked: selector(state, 'isStreetAddressEnabled'),
+          value: selector(state, 'streetAddress'),
+        },
+        city: {
+          checked: selector(state, 'isCityEnabled'),
+          value: selector(state, 'city'),
+        },
+        state: {
+          checked: selector(state, 'isStateEnabled'),
+          value: selector(state, 'state'),
+        },
+        zip: {
+          checked: selector(state, 'isZipEnabled'),
+          value: selector(state, 'zip'),
+        }
       }
     }
   };
@@ -53,24 +67,24 @@ export default class ContactField extends BaseField {
 
     const regex = /^(.*){1,}$/;
 
-    const values = ['email', 'phone', 'streetAddress', 'city', 'stat', 'zip'];
+    const values = ['email', 'phone', 'streetAddress', 'city', 'state', 'zip'];
 
     const checkIsFieldValid = (name) => {
-      return this.props.fields.isChecked[name]
-        && regex.test(this.props.fields.values[name])
-        && this.props.fields.values[name]
-        && this.props.fields.values[name].trim();
+      return this.props.fields.values[name].checked
+        && regex.test(this.props.fields.values[name].value)
+        && this.props.fields.values[name].value
+        && this.props.fields.values[name].value.trim();
     };
 
-    if (checkIsFieldValid('firstName') && checkIsFieldValid('lastName')) {
-      value.push(`${this.props.fields.values.firstName}, ${this.props.fields.values.lastName}`);
+    if (['firstName', 'lastName'].every(checkIsFieldValid)) {
+      value.push(`${this.props.fields.values.firstName.value}, ${this.props.fields.values.lastName.value}`);
     } else {
       values.unshift('firstName', 'lastName');
     }
 
     values.forEach((field) => {
       if (checkIsFieldValid(field)) {
-        value.push(this.props.fields.values[field]);
+        value.push(this.props.fields.values[field].value);
       }
     });
 
@@ -83,7 +97,7 @@ export default class ContactField extends BaseField {
 
   switch(props) {
     return (
-      <Switch size="small" className="contact-field-allow-default-values-switch" checked={props.input.value}
+      <Switch size="small" className="contact-field-allow-default-values-switch" checked={!!props.input.value}
               onChange={(value) => {
                 props.input.onChange(value);
               }}/>
@@ -113,22 +127,25 @@ export default class ContactField extends BaseField {
             <Col span={12}>
               <Form.Items offset="small">
                 <DefinedInput placeholder="First name" prefix="firstName"
-                              isChecked={this.props.fields.isChecked.firstName}/>
+                              isChecked={this.props.fields.values.firstName.checked}/>
                 <DefinedInput placeholder="Last name" prefix="lastName"
-                              isChecked={this.props.fields.isChecked.lastName}/>
+                              isChecked={this.props.fields.values.lastName.checked}/>
               </Form.Items>
             </Col>
             <Col span={12}>
               <Form.Items offset="small">
                 <DefinedInput placeholder="E-mail address" prefix="email"
-                              isChecked={this.props.fields.isChecked.email}/>
+                              isChecked={this.props.fields.values.email.checked}/>
                 <DefinedInput placeholder="Phone number" prefix="phone"
-                              isChecked={this.props.fields.isChecked.phone}/>
+                              isChecked={this.props.fields.values.phone.checked}/>
                 <DefinedInput placeholder="Street address" prefix="streetAddress"
-                              isChecked={this.props.fields.isChecked.streetAddress}/>
-                <DefinedInput placeholder="City" prefix="city" isChecked={this.props.fields.isChecked.city}/>
-                <DefinedInput placeholder="State" prefix="state" isChecked={this.props.fields.isChecked.state}/>
-                <DefinedInput placeholder="ZIP Code" prefix="zip" isChecked={this.props.fields.isChecked.zip}/>
+                              isChecked={this.props.fields.values.streetAddress.checked}/>
+                <DefinedInput placeholder="City" prefix="city"
+                              isChecked={this.props.fields.values.city.checked}/>
+                <DefinedInput placeholder="State" prefix="state"
+                              isChecked={this.props.fields.values.state.checked}/>
+                <DefinedInput placeholder="ZIP Code" prefix="zip"
+                              isChecked={this.props.fields.values.zip.checked}/>
               </Form.Items>
             </Col>
           </Row>
