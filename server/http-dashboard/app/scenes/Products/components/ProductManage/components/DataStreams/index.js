@@ -98,7 +98,6 @@ class DataStreams extends React.Component {
       pin++;
       pinExist = false;
       this.props.fields.forEach((field) => {
-        console.log(field.values.pin, pin);
         if (Number(field.values.pin) === Number(pin)) {
           pinExist = true;
         }

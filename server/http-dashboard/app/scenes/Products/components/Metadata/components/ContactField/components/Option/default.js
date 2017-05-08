@@ -2,8 +2,9 @@ import React from 'react';
 import {Form} from 'components/UI';
 import {Field} from 'redux-form';
 import {Checkbox} from 'antd';
+import Static from './default-static';
 
-export default class Default extends React.Component {
+class Default extends React.Component {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
@@ -33,3 +34,6 @@ export default class Default extends React.Component {
   }
 
 }
+
+Default.Static = Static;
+export default Default;

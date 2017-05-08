@@ -29,7 +29,6 @@ export const Rules = {
   latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
   longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
   metafieldName: (value) => {
-    console.log('validate', `"${value}"`, value && !value.trim() ? Messages.metafieldName : 'ok');
     if (value && !value.trim()) return Messages.metafieldName;
   }
 };

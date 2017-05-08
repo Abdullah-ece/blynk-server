@@ -1,7 +1,7 @@
 import React from 'react';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields} from 'services/Products';
-const {ItemsList, Fields: {TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField}} = MetadataComponents;
+const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField}} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -117,6 +117,36 @@ class Metadata extends React.Component {
             lat={field.lat}
             lon={field.lon}
             role={field.role}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.CONTACT) {
+        fields.push(
+          <ContactField.Static
+            {...props}
+            role={field.role}
+            fields={{
+              name: field.name,
+              isDefaultsEnabled: field.isDefaultsEnabled,
+              firstName: field.firstName,
+              lastName: field.lastName,
+              email: field.email,
+              phone: field.phone,
+              streetAddress: field.streetAddress,
+              state: field.state,
+              city: field.city,
+              zip: field.zip,
+
+              isFirstNameEnabled: field.isFirstNameEnabled,
+              isLastNameEnabled: field.isLastNameEnabled,
+              isEmailEnabled: field.isEmailEnabled,
+              isPhoneEnabled: field.isPhoneEnabled,
+              isStreetAddressEnabled: field.isStreetAddressEnabled,
+              isStateEnabled: field.isStateEnabled,
+              isCityEnabled: field.isCityEnabled,
+              isZipEnabled: field.isZipEnabled,
+            }}
           />
         );
       }

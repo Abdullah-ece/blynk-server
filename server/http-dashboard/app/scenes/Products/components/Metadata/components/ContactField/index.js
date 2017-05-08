@@ -11,6 +11,7 @@ import {
   Input as DefinedInput
 } from './components/Option';
 import './styles.less';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -56,7 +57,7 @@ import './styles.less';
     }
   };
 })
-export default class ContactField extends BaseField {
+class ContactField extends BaseField {
 
   getPreviewValues() {
     const name = this.props.fields.name;
@@ -174,3 +175,7 @@ export default class ContactField extends BaseField {
     );
   }
 }
+
+ContactField.Static = Static;
+
+export default ContactField;

@@ -32,7 +32,8 @@ export default class Item extends React.Component {
 
     return (
       <BaseForm.Item
-        className={className}>
+        className={className}
+        label={this.props.label}>
         { this.props.children }
       </BaseForm.Item>
     );
