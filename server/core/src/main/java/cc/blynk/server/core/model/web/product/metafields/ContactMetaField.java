@@ -13,19 +13,35 @@ public class ContactMetaField extends MetaField {
 
     public String firstName;
 
+    public boolean isFirstNameEnabled;
+
     public String lastName;
+
+    public boolean isLastNameEnabled;
 
     public String email;
 
+    public boolean isEmailEnabled;
+
     public String phone;
+
+    public boolean isPhoneEnabled;
 
     public String streetAddress;
 
+    public boolean isStreetAddressEnabled;
+
     public String city;
+
+    public boolean isCityEnabled;
 
     public String state;
 
+    public boolean isStateEnabled;
+
     public String zip;
+
+    public boolean isZipEnabled;
 
     public ContactMetaField() {
     }

@@ -6,13 +6,23 @@ public class AddressMetaField extends MetaField {
 
     public String streetAddress;
 
+    public boolean isStreetAddressEnabled;
+
     public String city;
+
+    public boolean isCityEnabled;
 
     public String state;
 
+    public boolean isStateEnabled;
+
     public String zip;
 
+    public boolean isZipEnabled;
+
     public String country;
+
+    public boolean isCountryEnabled;
 
     public AddressMetaField() {
     }
