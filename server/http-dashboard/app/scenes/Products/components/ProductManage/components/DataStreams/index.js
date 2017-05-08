@@ -89,6 +89,23 @@ class DataStreams extends React.Component {
     this.props.onFieldsChange(this.props.fields.filter((field) => field.id !== key));
   }
 
+  generatePin() {
+    let pin = 0;
+    let pinExist = true;
+
+    while (pinExist) {
+      pin++;
+      pinExist = false;
+      this.props.fields.forEach((field) => {
+        console.log(field.values.pin, pin);
+        if (Number(field.values.pin) === Number(pin)) {
+          pinExist = true;
+        }
+      });
+    }
+    return pin;
+  }
+
   handleCloneField(id) {
 
     const cloned = _.find(this.props.fields, {id: id});
@@ -104,8 +121,8 @@ class DataStreams extends React.Component {
         id: nextId,
         values: {
           ...cloned.values,
-          name: `${cloned.values.name} Copy`,
-          pin: ''
+          name: `${cloned.values.name || ''} Copy`,
+          pin: this.generatePin()
         }
       }
     ];
@@ -122,20 +139,6 @@ class DataStreams extends React.Component {
         acc < value.id ? value.id : acc
       ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
 
-    let pin = 0;
-    let pinExist = true;
-
-    while (pinExist) {
-      pin++;
-      pinExist = false;
-      this.props.fields.forEach((field) => {
-        console.log(field.values.pin, pin);
-        if (Number(field.values.pin) === Number(pin)) {
-          pinExist = true;
-        }
-      });
-    }
-
     this.props.onFieldsChange([
       ...this.props.fields,
       {
@@ -143,7 +146,7 @@ class DataStreams extends React.Component {
         type: params.type,
         values: {
           ...params.values,
-          pin: pin
+          pin: this.generatePin()
         }
       }
     ]);
