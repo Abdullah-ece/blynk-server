@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
-import { Link } from 'react-router';
+import {Link} from 'react-router';
 
 import {OrganizationFetch} from 'data/Organization/actions';
 
@@ -60,7 +60,7 @@ class Header extends React.Component {
         {/*<Menu.Item key="/billing">*/}
         {/*Billing*/}
         {/*</Menu.Item>*/}
-        <Menu.Divider className="user-layout--menu-divider" />
+        <Menu.Divider className="user-layout--menu-divider"/>
         <Menu.Item key="logout">
           <Icon type="login"/> Log out
         </Menu.Item>
@@ -70,6 +70,12 @@ class Header extends React.Component {
 
   handleClick(e) {
     this.context.router.push(e.key);
+  }
+
+  currentActivePage(state) {
+    if (state.indexOf('product') >= 0) {
+      return ['/products'];
+    }
   }
 
   render() {
@@ -91,7 +97,7 @@ class Header extends React.Component {
         <Menu mode="horizontal"
               className="user-layout--header-menu"
               onClick={this.handleClick.bind(this)}
-              selectedKeys={[this.state.current]}>
+              selectedKeys={this.currentActivePage(this.state.current)}>
           {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
           {/*<Menu.Item key="/devices">Devices</Menu.Item>*/}
           <Menu.Item key="/products">Products</Menu.Item>
