@@ -2,8 +2,9 @@ import React from 'react';
 import {Form} from 'components/UI';
 import {Field} from 'redux-form';
 import Default from './default';
+import Static from './input-static';
 
-export default class Input extends Default {
+class Input extends Default {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
@@ -25,3 +26,6 @@ export default class Input extends Default {
   }
 
 }
+
+Input.Static = Static;
+export default Input;

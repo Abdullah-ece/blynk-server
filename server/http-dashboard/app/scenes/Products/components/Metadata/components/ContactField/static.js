@@ -2,12 +2,13 @@ import React from 'react';
 import {Col, Row} from 'antd';
 import {Form} from 'components/UI';
 import {
-  Default as OptionDefault
+  Default as OptionDefault,
+  Input as DefinedInput
 } from './components/Option';
 import BaseField from '../BaseField';
 import FormItem from 'components/FormItem';
 
-class AddressField extends BaseField.Static {
+class ContactField extends BaseField.Static {
 
   DEFAULT_VALUE = 'No Value';
 
@@ -55,40 +56,48 @@ class AddressField extends BaseField.Static {
 
     return (
       <div>
-        <Form.Item label="Contact" offset="extra-small">
+        <Form.Item label="Contact" offset="small">
           <div className="product-metadata-static-field">
             { this.props.fields.name }
           </div>
         </Form.Item>
 
-        {/*<FormItem offset={false} visible={!!this.props.fields.isDefaultsEnabled}>*/}
-        {/*<Row gutter={8}>*/}
-        {/*<Col span={12}>*/}
-        {/*<Form.Items offset="small">*/}
-        {/*<DefinedInput placeholder="First name" prefix="firstName"*/}
-        {/*isChecked={this.props.fields.values.firstName.checked}/>*/}
-        {/*<DefinedInput placeholder="Last name" prefix="lastName"*/}
-        {/*isChecked={this.props.fields.values.lastName.checked}/>*/}
-        {/*</Form.Items>*/}
-        {/*</Col>*/}
-        {/*<Col span={12}>*/}
-        {/*<Form.Items offset="small">*/}
-        {/*<DefinedInput placeholder="E-mail address" prefix="email"*/}
-        {/*isChecked={this.props.fields.values.email.checked}/>*/}
-        {/*<DefinedInput placeholder="Phone number" prefix="phone"*/}
-        {/*isChecked={this.props.fields.values.phone.checked}/>*/}
-        {/*<DefinedInput placeholder="Street address" prefix="streetAddress"*/}
-        {/*isChecked={this.props.fields.values.streetAddress.checked}/>*/}
-        {/*<DefinedInput placeholder="City" prefix="city"*/}
-        {/*isChecked={this.props.fields.values.city.checked}/>*/}
-        {/*<DefinedInput placeholder="State" prefix="state"*/}
-        {/*isChecked={this.props.fields.values.state.checked}/>*/}
-        {/*<DefinedInput placeholder="ZIP Code" prefix="zip"*/}
-        {/*isChecked={this.props.fields.values.zip.checked}/>*/}
-        {/*</Form.Items>*/}
-        {/*</Col>*/}
-        {/*</Row>*/}
-        {/*</FormItem>*/}
+        <FormItem offset={false} visible={!!this.props.fields.isDefaultsEnabled}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <DefinedInput.Static placeholder="First name" prefix="firstName"
+                                     isChecked={this.props.fields.isFirstNameEnabled}
+                                     value={this.props.fields.firstName}/>
+                <DefinedInput.Static placeholder="Last name" prefix="lastName"
+                                     isChecked={this.props.fields.isLastNameEnabled}
+                                     value={this.props.fields.lastName}/>
+              </Form.Items>
+            </Col>
+            <Col span={12}>
+              <Form.Items offset="small">
+                <DefinedInput.Static placeholder="E-mail address" prefix="email"
+                                     isChecked={this.props.fields.isEmailEnabled}
+                                     value={this.props.fields.email}/>
+                <DefinedInput.Static placeholder="Phone number" prefix="phone"
+                                     isChecked={this.props.fields.isPhoneEnabled}
+                                     value={this.props.fields.phone}/>
+                <DefinedInput.Static placeholder="Street address" prefix="streetAddress"
+                                     isChecked={this.props.fields.isStreetAddressEnabled}
+                                     value={this.props.fields.streetAddress}/>
+                <DefinedInput.Static placeholder="City" prefix="city"
+                                     isChecked={this.props.fields.isCityEnabled}
+                                     value={this.props.fields.city}/>
+                <DefinedInput.Static placeholder="State" prefix="state"
+                                     isChecked={this.props.fields.isStateEnabled}
+                                     value={this.props.fields.state}/>
+                <DefinedInput.Static placeholder="ZIP Code" prefix="zip"
+                                     isChecked={this.props.fields.isZipEnabled}
+                                     value={this.props.fields.zip}/>
+              </Form.Items>
+            </Col>
+          </Row>
+        </FormItem>
 
 
         <FormItem offset={false} visible={!this.props.fields.isDefaultsEnabled}>
@@ -130,4 +139,4 @@ class AddressField extends BaseField.Static {
   }
 }
 
-export default AddressField;
+export default ContactField;

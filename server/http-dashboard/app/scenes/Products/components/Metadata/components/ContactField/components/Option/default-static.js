@@ -14,9 +14,15 @@ export default class Default extends React.Component {
   }
 
   checkbox(props) {
-    return (
-      <Checkbox disabled={true} checked={!!props.value}>{props.placeholder}</Checkbox>
-    );
+    if (props.placeholder) {
+      return (
+        <Checkbox disabled={true} checked={!!props.value}>{props.placeholder}</Checkbox>
+      );
+    } else {
+      return (
+        <Checkbox disabled={true} checked={!!props.value}/>
+      );
+    }
   }
 
   render() {
