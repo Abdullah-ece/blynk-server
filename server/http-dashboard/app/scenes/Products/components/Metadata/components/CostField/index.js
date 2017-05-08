@@ -92,7 +92,7 @@ class CostField extends BaseField {
     let value = null;
 
     if (fieldName) {
-      name = fieldName && typeof fieldName === 'string' ? `${fieldName.trim()}:` : null;
+      name = fieldName && typeof fieldName === 'string' ? `${fieldName.trim()}` : null;
     }
 
     if (price) {
@@ -126,7 +126,7 @@ class CostField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>
 

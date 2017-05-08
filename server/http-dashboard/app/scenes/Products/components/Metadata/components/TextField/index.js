@@ -24,7 +24,7 @@ class TextField extends BaseField {
     const value = this.props.fields.value;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: value && typeof value === 'string' ? value.trim() : null
     };
   }
@@ -39,7 +39,7 @@ class TextField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
           </Input.Group>

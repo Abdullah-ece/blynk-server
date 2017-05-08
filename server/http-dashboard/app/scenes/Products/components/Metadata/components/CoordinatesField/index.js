@@ -26,7 +26,7 @@ class CoordinatesField extends BaseField {
     const long = this.props.fields.lon;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: long && lat ? `${lat}, ${long}` : null
     };
   }
@@ -43,7 +43,7 @@ class CoordinatesField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormField name="lat" type="text" placeholder="Latitude" validate={[
               Validation.Rules.latitude

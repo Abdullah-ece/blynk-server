@@ -12,7 +12,7 @@ export default class CoordinatesField extends BaseField.Static {
     const long = this.props.lon;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: long && lat ? `${lat}, ${long}` : null
     };
   }

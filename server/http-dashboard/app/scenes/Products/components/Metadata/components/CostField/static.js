@@ -26,7 +26,7 @@ class CostField extends BaseField.Static {
     let value = null;
 
     if (fieldName) {
-      name = fieldName && typeof fieldName === 'string' ? `${fieldName.trim()}:` : null;
+      name = fieldName && typeof fieldName === 'string' ? `${fieldName.trim()}` : null;
     }
 
     if (price) {

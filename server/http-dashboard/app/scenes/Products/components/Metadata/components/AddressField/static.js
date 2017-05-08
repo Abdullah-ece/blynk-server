@@ -33,7 +33,7 @@ class AddressField extends BaseField.Static {
     }
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: address.length > 0 ? address.join(', ') : null
     };
   }

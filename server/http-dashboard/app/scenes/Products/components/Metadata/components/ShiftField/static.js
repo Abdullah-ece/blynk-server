@@ -13,7 +13,7 @@ class ShiftField extends BaseField.Static {
     const to = this.props.to;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: from && typeof from === 'string' && to && typeof to === 'string' ? `From ${from} to ${to}` : null
     };
   }

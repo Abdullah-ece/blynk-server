@@ -38,7 +38,7 @@ export default class DateField extends React.Component {
 
     return {
       values: {
-        name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+        name: name && typeof name === 'string' ? `${name.trim()}` : null,
         value: value && typeof value === 'string' ? value.trim() : null
       },
       isTouched: this.props.anyTouched,
@@ -70,7 +70,7 @@ export default class DateField extends React.Component {
           <FormItem.Content>
             <Input.Group compact>
               <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
-                Validation.Rules.required
+                Validation.Rules.required, Validation.Rules.metafieldName,
               ]}/>
               <MetadataDateField name="value" type="text" timeFormat="MM-DD-YYYY" placeholder="Default value(optional)"/>
             </Input.Group>

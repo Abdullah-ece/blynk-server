@@ -13,6 +13,7 @@ export const Messages = {
   number: 'Field should contain number',
   latitude: 'Latitude is not correct',
   longitude: 'Longitude is not correct',
+  metafieldName: 'Field is not correct'
 };
 
 export const Rules = {
@@ -26,7 +27,11 @@ export const Rules = {
   imageRequired: (value) => !value ? Messages.imageRequired : undefined,
   number: (value) => value && isNaN(Number(value)) ? Messages.number : undefined,
   latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
-  longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined
+  longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
+  metafieldName: (value) => {
+    console.log('validate', `"${value}"`, value && !value.trim() ? Messages.metafieldName : 'ok');
+    if (value && !value.trim()) return Messages.metafieldName;
+  }
 };
 
 const Validation = {

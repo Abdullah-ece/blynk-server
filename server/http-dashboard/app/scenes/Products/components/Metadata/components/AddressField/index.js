@@ -44,7 +44,7 @@ class TextField extends BaseField {
     }
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: address.length > 0 ? address.join(', ') : null
     };
   }
@@ -59,7 +59,7 @@ class TextField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormField name="streetAddress" type="text" placeholder="Street"/>
           </Input.Group>

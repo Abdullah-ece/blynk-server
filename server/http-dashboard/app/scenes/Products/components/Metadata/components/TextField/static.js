@@ -18,7 +18,7 @@ class TextField extends BaseField.Static {
     const value = this.props.value;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: value && typeof value === 'string' ? value.trim() : null
     };
   }

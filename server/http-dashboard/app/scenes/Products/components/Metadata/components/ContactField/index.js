@@ -2,7 +2,7 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Form} from 'components/UI';
 import {Switch, Row, Col} from 'antd';
-import {reduxForm, formValueSelector, Field} from 'redux-form';
+import {formValueSelector, Field} from 'redux-form';
 import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
@@ -56,9 +56,6 @@ import './styles.less';
     }
   };
 })
-@reduxForm({
-  touchOnChange: true
-})
 export default class ContactField extends BaseField {
 
   getPreviewValues() {
@@ -89,7 +86,7 @@ export default class ContactField extends BaseField {
     });
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: this.props.fields.isDefaultsEnabled && value.length ? value.join('\n') : null,
       inline: !!this.props.fields.isDefaultsEnabled && !!value.length
     };
@@ -111,7 +108,7 @@ export default class ContactField extends BaseField {
         <Form.Item label="Contact" offset="extra-small">
           <Form.Input className="metadata-contact-field" name="name" type="text" placeholder="Field Name"
                       validate={[
-                        Validation.Rules.required
+                        Validation.Rules.required, Validation.Rules.metafieldName,
                       ]}/>
         </Form.Item>
         <Form.Item offset="small" checkbox={true}>

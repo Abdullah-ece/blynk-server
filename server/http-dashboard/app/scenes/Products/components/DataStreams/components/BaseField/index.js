@@ -125,6 +125,7 @@ class BaseField extends React.Component {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
+              Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
             <MetadataFormSelect name="units" type="text" placeholder="Choose"

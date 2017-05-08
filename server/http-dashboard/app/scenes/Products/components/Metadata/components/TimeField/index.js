@@ -24,7 +24,7 @@ class TimeField extends BaseField {
     const time = this.props.fields.time;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: time && typeof time === 'string' ? `${time}` : null
     };
   }
@@ -40,7 +40,7 @@ class TimeField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"/>
           </Input.Group>

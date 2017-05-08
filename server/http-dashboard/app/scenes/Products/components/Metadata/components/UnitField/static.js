@@ -61,7 +61,7 @@ export default class UnitStaticField extends BaseField.Static {
     const units = this.props.units;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: value && typeof value === 'string' && units ? `${value} ${Unit[units].abbreviation}` : null
     };
   }

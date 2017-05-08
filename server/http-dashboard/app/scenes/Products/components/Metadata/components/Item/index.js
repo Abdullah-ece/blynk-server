@@ -72,17 +72,19 @@ class MetadataItem extends React.Component {
 
   preview() {
 
-    if (!this.props.anyTouched && !this.props.preview.name) {
+    const name = this.props.preview.name && this.props.preview.name.trim();
+
+    if (!this.props.anyTouched && !name) {
       return null;
     }
 
-    if (this.props.invalid && !this.props.preview.name) {
+    if (this.props.invalid && !name) {
       return (<Preview> <Preview.Unavailable /> </Preview>);
     }
 
     return (
       <Preview inline={this.props.preview.inline}>
-        <Preview.Name>{this.props.preview.name}</Preview.Name>
+        <Preview.Name>{name}</Preview.Name>
         <Preview.Value>{this.props.preview.value || 'Empty'}</Preview.Value>
       </Preview>
     );

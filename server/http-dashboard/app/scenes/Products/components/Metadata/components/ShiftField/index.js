@@ -26,7 +26,7 @@ class ShiftField extends BaseField {
     const to = this.props.fields.to;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: from && typeof from === 'string' && to && typeof to === 'string' ? `From ${from} to ${to}` : null
     };
   }
@@ -43,7 +43,7 @@ class ShiftField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormTime name="from" type="text" timeFormat="HH:mm" placeholder="06:00"/>
             <MetadataFormTime name="to" type="text" timeFormat="HH:mm" placeholder="07:00"/>

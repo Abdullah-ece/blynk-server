@@ -18,7 +18,7 @@ class TextField extends BaseField.Static {
     const time = this.props.time;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: time && typeof time === 'string' ? `${time}` : null
     };
   }

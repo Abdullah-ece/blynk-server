@@ -73,7 +73,7 @@ class UnitField extends BaseField {
     const units = this.props.fields.units;
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: value && typeof value === 'string' && units ? `${value} ${Unit[units].abbreviation}` : null
     };
   }
@@ -90,7 +90,7 @@ class UnitField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
-              Validation.Rules.required
+              Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormSelect name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>

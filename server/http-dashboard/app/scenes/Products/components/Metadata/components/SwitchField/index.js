@@ -40,7 +40,7 @@ export default class SwitchField extends React.Component {
 
     return {
       values: {
-        name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+        name: name && typeof name === 'string' ? `${name.trim()}` : null,
         value: on && typeof on === 'string' && off && typeof off === 'string' ? `From ${on} to ${off}` : null
       },
       isTouched: this.props.anyTouched,
@@ -73,7 +73,7 @@ export default class SwitchField extends React.Component {
           <FormItem.Content>
             <Input.Group compact>
               <MetadataFormField name="name" type="text" placeholder="Switch Name" style={{width: '200%'}} validate={[
-                Validation.Rules.required
+                Validation.Rules.required, Validation.Rules.metafieldName,
               ]}/>
               <MetadataFormField name="on" type="text" placeholder="ON" validate={[
                 Validation.Rules.required
