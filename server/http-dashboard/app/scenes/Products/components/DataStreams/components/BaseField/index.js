@@ -128,7 +128,9 @@ class BaseField extends React.Component {
               Validation.Rules.required
             ]}/>
             <MetadataFormSelect name="units" type="text" placeholder="Choose"
-                                dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
+                                dropdownClassName="product-metadata-item-unit-dropdown"
+                                values={this.Unit}
+                                validate={[Validation.Rules.required]}/>
 
             <MetadataFormField name="min" type="text" placeholder="Min" validate={[
               Validation.Rules.number
