@@ -108,7 +108,7 @@ export default class ContactField extends BaseField {
           </div>
         </Form.Item>
 
-        <FormItem offset={false} visible={this.props.fields.allowDefaults}>
+        <FormItem offset={false} visible={!!this.props.fields.allowDefaults}>
           <Row gutter={8}>
             <Col span={12}>
               <Form.Items offset="small">
