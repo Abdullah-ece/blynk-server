@@ -1,6 +1,7 @@
 import React from 'react';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
+import {Unit} from "services/Products";
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import _ from 'lodash';
 
@@ -146,7 +147,8 @@ class DataStreams extends React.Component {
         type: params.type,
         values: {
           ...params.values,
-          pin: this.generatePin()
+          pin: this.generatePin(),
+          units: Unit.Inch.key
         }
       }
     ]);
