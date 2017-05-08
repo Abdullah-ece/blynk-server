@@ -24,6 +24,8 @@ public class AddressMetaField extends MetaField {
 
     public boolean isCountryEnabled;
 
+    public boolean isDefaultsEnabled;
+
     public AddressMetaField() {
     }
 

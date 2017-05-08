@@ -43,6 +43,8 @@ public class ContactMetaField extends MetaField {
 
     public boolean isZipEnabled;
 
+    public boolean isDefaultsEnabled;
+
     public ContactMetaField() {
     }
 
