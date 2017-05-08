@@ -33,7 +33,7 @@ import './styles.less';
           value: selector(state, 'email'),
         },
         phone: {
-          checked: selector(state, 'phoneInput'),
+          checked: selector(state, 'isPhoneEnabled'),
           value: selector(state, 'phone'),
         },
         streetAddress: {
