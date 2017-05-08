@@ -104,10 +104,10 @@ class BaseField extends React.Component {
               {this.props.units || '--'}
             </div>
             <div className="product-metadata-static-field">
-              {this.props.min || '--'}
+              {this.props.min !== undefined ? this.props.min : '--'}
             </div>
             <div className="product-metadata-static-field">
-              {this.props.max || '--'}
+              { this.props.max !== undefined ? this.props.max : '--' }
             </div>
           </Input.Group>
         </FormItem.Content>
