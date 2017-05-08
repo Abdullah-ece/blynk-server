@@ -360,56 +360,15 @@ export const prepareProductForSave = (data) => {
 };
 
 const prepareContactValuesForSave = (values) => {
-
-  const updated = {};
-
-  const isCheckbox = (name) => /Check$/.test(name);
-  const getInput = (checkboxName) => values[checkboxName.replace('Check', 'Input')];
-  const getNativeName = (checkboxName) => checkboxName.replace('Check', '');
-
-  _.forEach(values, (value, key) => {
-    if (isCheckbox(key) && !!value) {
-      if (values.allowDefaults && getInput(key) && getInput(key).trim()) {
-        updated[getNativeName(key)] = getInput(key).trim();
-      } else {
-        updated[getNativeName(key)] = !!value;
-      }
-    } else {
-      updated[key] = value;
-    }
-  });
-
-  return updated;
-
+  return values;
 };
 
 const prepareContactValuesForEdit = (fields) => {
 
-  const TYPE = 'type'; //type of metadata field
-  const NAME = 'name'; //name of metadata field
-  const ROLE = 'role'; //name of metadata field
-  const TRUE = 'true'; //checked as required
+  const values = Object.assign({}, fields);
 
-  const values = {};
-
-  const checkbox = (name) => `${name}Check`;
-  const input = (name) => `${name}Input`;
-
-  let anyFilled = false;
-
-  _.forEach(fields, (field, name) => {
-    if (name !== NAME && name !== TYPE && name !== ROLE) {
-      values[checkbox(name)] = true;
-      if (field !== TRUE) {
-        values[input(name)] = field;
-        anyFilled = true;
-      }
-    } else {
-      values[name] = field;
-    }
-  });
-
-  values.allowDefaults = anyFilled;
+  // hardcoded while backend doesn't support
+  values.isDefaultsEnabled = false;
 
   return values;
 

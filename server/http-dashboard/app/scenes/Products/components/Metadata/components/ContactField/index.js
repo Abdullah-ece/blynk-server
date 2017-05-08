@@ -17,7 +17,7 @@ import './styles.less';
   return {
     fields: {
       name: selector(state, 'name'),
-      allowDefaults: selector(state, 'allowDefaults'),
+      isDefaultsEnabled: selector(state, 'isDefaultsEnabled'),
       fieldAvailable: selector(state, 'fieldAvailable'),
       values: {
         firstName: {
@@ -90,8 +90,8 @@ export default class ContactField extends BaseField {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}:` : null,
-      value: this.props.fields.allowDefaults && value.length ? value.join('\n') : null,
-      inline: !!this.props.fields.allowDefaults && !!value.length
+      value: this.props.fields.isDefaultsEnabled && value.length ? value.join('\n') : null,
+      inline: !!this.props.fields.isDefaultsEnabled && !!value.length
     };
   }
 
@@ -116,13 +116,13 @@ export default class ContactField extends BaseField {
         </Form.Item>
         <Form.Item offset="small" checkbox={true}>
           <div>
-            <Field name="allowDefaults"
+            <Field name="isDefaultsEnabled"
                    component={this.switch}/>
             <span className="contact-field-allow-default-values-title">Allow default values</span>
           </div>
         </Form.Item>
 
-        <FormItem offset={false} visible={!!this.props.fields.allowDefaults}>
+        <FormItem offset={false} visible={!!this.props.fields.isDefaultsEnabled}>
           <Row gutter={8}>
             <Col span={12}>
               <Form.Items offset="small">
@@ -152,7 +152,7 @@ export default class ContactField extends BaseField {
         </FormItem>
 
 
-        <FormItem offset={false} visible={!this.props.fields.allowDefaults}>
+        <FormItem offset={false} visible={!this.props.fields.isDefaultsEnabled}>
           <Row gutter={8}>
             <Col span={12}>
               <Form.Items offset="small">
