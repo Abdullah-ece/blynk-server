@@ -48,8 +48,7 @@ class BaseField extends React.Component {
       'Metric': [
         Unit.Milligram,
         Unit.Gram,
-        Unit.Kilogram,
-        Unit.Tonne
+        Unit.Kilogram
       ]
     },
     'Volume': {
@@ -102,13 +101,13 @@ class BaseField extends React.Component {
               {this.props.name}
             </div>
             <div className="product-metadata-static-field">
-              {this.props.units}
+              {this.props.units || '--'}
             </div>
             <div className="product-metadata-static-field">
-              {this.props.min}
+              {this.props.min || '--'}
             </div>
             <div className="product-metadata-static-field">
-              {this.props.max}
+              {this.props.max || '--'}
             </div>
           </Input.Group>
         </FormItem.Content>

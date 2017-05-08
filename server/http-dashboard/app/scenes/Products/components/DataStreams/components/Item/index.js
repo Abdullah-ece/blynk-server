@@ -12,6 +12,7 @@ const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-mov
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Static from './static';
+import Validation from 'services/Validation';
 
 @connect(() => ({}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
@@ -140,8 +141,14 @@ class DataStreamItem extends React.Component {
                 <FormItem.Title>Pin</FormItem.Title>
               </FormItem.TitleGroup>
               <FormItem.Content>
-                <MetadataFormSelect name="pin" type="text" placeholder="Pin"
-                                    dropdownClassName="product-metadata-item-unit-dropdown" values={this.Pins()}/>
+                <MetadataFormSelect name="pin"
+                                    type="text"
+                                    placeholder="Pin"
+                                    dropdownClassName="product-metadata-item-unit-dropdown"
+                                    values={this.Pins()}
+                                    validate={[
+                                      Validation.Rules.required
+                                    ]}/>
               </FormItem.Content>
             </Col>
             <Col span={8}>

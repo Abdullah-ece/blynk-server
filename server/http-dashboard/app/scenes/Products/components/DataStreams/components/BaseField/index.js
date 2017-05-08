@@ -20,6 +20,7 @@ import Static from './static';
       units: selector(state, 'units'),
       min: selector(state, 'min'),
       max: selector(state, 'max'),
+      pin: selector(state, 'pin')
     }
   };
 })
