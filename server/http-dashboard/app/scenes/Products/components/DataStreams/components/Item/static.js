@@ -43,7 +43,7 @@ class ItemStatic extends React.Component {
               <FormItem.Title>Pin</FormItem.Title>
               <FormItem.Content>
                 <div className="product-metadata-static-field">
-                  {this.props.pin}
+                  V{this.props.pin}
                 </div>
               </FormItem.Content>
             </FormItem>
