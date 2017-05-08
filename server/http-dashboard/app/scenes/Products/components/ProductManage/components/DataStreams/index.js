@@ -77,7 +77,7 @@ class DataStreams extends React.Component {
       if (field.values.name === values.name && Number(props.id) !== Number(field.id)) {
         errors.name = 'Name should be unique';
       }
-      if (field.values.pin === values.pin && Number(props.id) !== Number(field.id)) {
+      if (Number(field.values.pin) === Number(values.pin) && Number(props.id) !== Number(field.id)) {
         errors.pin = 'Pin should be unique';
       }
     });
