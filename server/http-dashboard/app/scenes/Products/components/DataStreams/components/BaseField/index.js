@@ -68,8 +68,7 @@ class BaseField extends React.Component {
       'Metric': [
         Unit.Milligram,
         Unit.Gram,
-        Unit.Kilogram,
-        Unit.Tonne
+        Unit.Kilogram
       ]
     },
     'Volume': {
@@ -129,6 +128,7 @@ class BaseField extends React.Component {
             ]}/>
             <MetadataFormSelect name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
+
             <MetadataFormField name="min" type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
