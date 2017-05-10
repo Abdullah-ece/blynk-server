@@ -281,6 +281,7 @@
   // buttons
   &-btn {
     //Button default
+    height: auto;
     line-height: 14px;
     .font-ghost-button;
 
@@ -500,6 +501,13 @@
           border-color: @color-primary-3;
           box-shadow: none;
         }
+      }
+    }
+    .ant-select-selection__choice {
+      background: @color-primary-5;
+      color: @color-white;
+      .ant-select-selection__choice__remove:before {
+        color: @color-white;
       }
     }
   }
