@@ -19,7 +19,11 @@
 
 }
 
-.product-events-event-content, .product-events-event-preview, .product-events-event-tools {
+.product-events-event-tools {
+  margin-top: @style-size-2;
+}
+
+.product-events-event-content, .product-events-event-preview {
   margin-top: @style-size-3-2;
 }
 
@@ -27,5 +31,18 @@
   .ant-form-item-control {
     font-family: Courier, sans-serif;
     font-size: 12px;
+  }
+}
+
+.product-events-event-tools {
+  .cursor-move {
+    cursor: move;
+  }
+  > i {
+    font-size: 16px;
+    margin: 4px;
+  }
+  > * {
+    margin: 4px 0;
   }
 }
