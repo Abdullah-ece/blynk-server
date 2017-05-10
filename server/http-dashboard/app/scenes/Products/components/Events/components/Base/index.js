@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import {Timeline, Row, Col, Switch} from 'antd';
+import {Timeline, Row, Col, Switch, Select} from 'antd';
 import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
@@ -75,8 +75,20 @@ class Base extends React.Component {
             <Row gutter={8}>
               <Col span={14}>
                 { this.getChildrenByType(Content.displayName) }
-                <Item>
+                <Item offset="small">
                   <Switch size="small"/> Notifications
+                </Item>
+                <Item label="E-mail to">
+                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contacts">
+                    <Select.Option value="Location Owner">Location Owner</Select.Option>
+                    <Select.Option value="Product Owner">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 2">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 3">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 4">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 5">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 6">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                  </Select>
                 </Item>
               </Col>
               <Col span={9} offset={1}>
