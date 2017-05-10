@@ -38,7 +38,7 @@ class Base extends React.Component {
       };
     }
 
-    if (type === EVENT_TYPES.ALERT) {
+    if (type === EVENT_TYPES.CRITICAL) {
       return {
         color: 'red'
       };

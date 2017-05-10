@@ -26,6 +26,10 @@ class Event extends React.Component {
     if (EVENT_TYPES.WARNING === type) {
       return "Warning event";
     }
+
+    if (EVENT_TYPES.CRITICAL === type) {
+      return "Critical event";
+    }
   }
 
   render() {

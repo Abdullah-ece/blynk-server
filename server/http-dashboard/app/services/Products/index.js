@@ -14,7 +14,7 @@ export const EVENT_TYPES = {
   OFFLINE: 'offline',
   INFO: 'info',
   WARNING: 'warning',
-  ALERT: 'alert'
+  CRITICAL: 'critical'
 };
 
 export const Metadata = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Base, Online, Offline, Info, Warning} from 'scenes/Products/components/Events';
+import {Online, Offline, Info, Warning, Critical} from 'scenes/Products/components/Events';
 
 class Events extends React.Component {
 
@@ -10,8 +10,7 @@ class Events extends React.Component {
         <Offline/>
         <Info/>
         <Warning/>
-        <Base type="warning"/>
-        <Base type="alert"/>
+        <Critical/>
       </div>
     );
   }
