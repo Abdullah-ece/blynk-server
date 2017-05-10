@@ -1,6 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import {Timeline, Row, Col} from 'antd';
+import Preview from './preview';
+import Content from './content';
 
 class Base extends React.Component {
 
@@ -52,6 +54,18 @@ class Base extends React.Component {
     return {};
   }
 
+  getChildrenByType(type) {
+    if (Array.isArray(this.props.children)) {
+      const element = this.props.children.filter((children) =>
+        children.type.displayName === type
+      );
+
+      if (element.length) return element[0];
+
+      return null;
+    }
+  }
+
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
@@ -64,10 +78,10 @@ class Base extends React.Component {
           <Timeline.Item {...this.getPropsByType(this.props.type)}>
             <Row gutter={8}>
               <Col span={15}>
-                { this.props.children || null}
+                { this.getChildrenByType(Content.displayName) }
               </Col>
               <Col span={9}>
-                Preview layout
+                { this.getChildrenByType(Preview.displayName) }
               </Col>
             </Row>
             <Row gutter={8}>
@@ -82,5 +96,8 @@ class Base extends React.Component {
   }
 
 }
+
+Base.Preview = Preview;
+Base.Content = Content;
 
 export default Base;

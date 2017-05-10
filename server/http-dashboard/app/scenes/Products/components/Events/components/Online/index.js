@@ -6,7 +6,12 @@ class Online extends React.Component {
   render() {
     return (
       <Base type="online">
-        Some content is there
+        <Base.Preview>
+          Preview is there
+        </Base.Preview>
+        <Base.Content>
+          Content is there
+        </Base.Content>
       </Base>
     )
   }
