@@ -74,7 +74,7 @@ class Base extends React.Component {
         <Timeline>
           <Timeline.Item {...this.getPropsByType(this.props.type)}>
             <Row gutter={8}>
-              <Col span={14}>
+              <Col span={13}>
                 { this.getChildrenByType(Content.displayName) }
                 <Item offset="small">
                   <Switch size="small"/> Notifications
@@ -107,10 +107,8 @@ class Base extends React.Component {
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
               </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col span={15}>
-                {/* Notifications there*/}
+              <Col span={1}>
+                { this.getChildrenByType(Tools.displayName) }
               </Col>
             </Row>
           </Timeline.Item>

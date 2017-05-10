@@ -54,6 +54,9 @@ class Event extends React.Component {
             Blynk.logEvent(flush_error);
           </Item>
         </Base.Preview>
+        <Base.Tools>
+          Tools is there
+        </Base.Tools>
       </Base>
     );
   }
