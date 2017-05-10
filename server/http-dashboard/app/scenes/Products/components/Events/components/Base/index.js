@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import {Timeline} from 'antd';
+import {Timeline, Row, Col} from 'antd';
 
 class Base extends React.Component {
 
@@ -61,7 +61,14 @@ class Base extends React.Component {
       <div className={itemClasses}>
         <Timeline>
           <Timeline.Item {...this.getPropsByType(this.props.type)}>
-            Base
+            <Row gutter={8}>
+              <Col span={15}>
+                Content layout
+              </Col>
+              <Col span={9}>
+                Preview layout
+              </Col>
+            </Row>
           </Timeline.Item>
         </Timeline>
       </div>
