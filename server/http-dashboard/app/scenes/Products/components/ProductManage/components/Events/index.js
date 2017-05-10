@@ -15,8 +15,6 @@ class Events extends React.Component {
     if (fields && Array.isArray(fields)) {
       fields.forEach((field, key) => {
 
-        console.log(field);
-
         if (field.type === EVENT_TYPES.ONLINE) {
           elements.push(
             <Online key={key}/>
