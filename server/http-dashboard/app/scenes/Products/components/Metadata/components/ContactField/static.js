@@ -117,10 +117,12 @@ class ContactField extends BaseField.Static {
                                       isChecked={this.props.fields.values.phone.checked}/>
                 <OptionDefault.Static placeholder="Street address" prefix="streetAddress"
                                       isChecked={this.props.fields.values.streetAddress.checked}/>
-                <OptionDefault.Static placeholder="City" prefix="city" value={this.props.fields.values.city.checked}/>
+                <OptionDefault.Static placeholder="City" prefix="city"
+                                      isChecked={this.props.fields.values.city.checked}/>
                 <OptionDefault.Static placeholder="State" prefix="state"
                                       isChecked={this.props.fields.values.state.checked}/>
-                <OptionDefault.Static placeholder="ZIP Code" prefix="zip" value={this.props.fields.values.zip.checked}/>
+                <OptionDefault.Static placeholder="ZIP Code" prefix="zip"
+                                      isChecked={this.props.fields.values.zip.checked}/>
               </Form.Items>
             </Col>
           </Row>
