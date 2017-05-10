@@ -9,6 +9,14 @@ export const TABS = {
   EVENTS: 'events'
 };
 
+export const EVENT_TYPES = {
+  ONLINE: 'online',
+  OFFLINE: 'offline',
+  INFO: 'info',
+  WARNING: 'warning',
+  ALERT: 'alert'
+};
+
 export const Metadata = {
   Fields: {
     ADDRESS: 'Address',
