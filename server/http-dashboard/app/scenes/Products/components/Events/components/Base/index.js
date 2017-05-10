@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import {Timeline, Row, Col, Switch, Select} from 'antd';
+import Tools from './tools';
 import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
@@ -120,6 +121,7 @@ class Base extends React.Component {
 
 }
 
+Base.Tools = Tools;
 Base.Preview = Preview;
 Base.Content = Content;
 
