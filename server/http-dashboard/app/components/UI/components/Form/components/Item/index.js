@@ -12,7 +12,8 @@ export default class Item extends React.Component {
     className: React.PropTypes.string,
     type: React.PropTypes.string,
     position: React.PropTypes.string,
-    offset: React.PropTypes.any
+    offset: React.PropTypes.any,
+    style: React.PropTypes.any
   };
 
   POSITION = {
@@ -32,6 +33,7 @@ export default class Item extends React.Component {
 
     return (
       <BaseForm.Item
+        style={this.props.style}
         className={className}
         label={this.props.label}>
         { this.props.children }
@@ -58,6 +60,7 @@ export default class Item extends React.Component {
 
     return (
       <BaseForm.Item
+        style={this.props.style}
         className={className}
         label={props.label}
         validateStatus={validateStatus()}
