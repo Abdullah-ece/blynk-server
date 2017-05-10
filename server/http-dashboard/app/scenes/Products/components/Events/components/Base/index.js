@@ -72,10 +72,10 @@ class Base extends React.Component {
         <Timeline>
           <Timeline.Item {...this.getPropsByType(this.props.type)}>
             <Row gutter={8}>
-              <Col span={15}>
+              <Col span={14}>
                 { this.getChildrenByType(Content.displayName) }
               </Col>
-              <Col span={9}>
+              <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
               </Col>
             </Row>
