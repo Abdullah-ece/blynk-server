@@ -1,2 +1,3 @@
 import './styles.less';
 export Base from './components/Base'
+export Online from './components/Online'

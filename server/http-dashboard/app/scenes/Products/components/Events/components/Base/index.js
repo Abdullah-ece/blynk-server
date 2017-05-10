@@ -5,6 +5,7 @@ import {Timeline, Row, Col} from 'antd';
 class Base extends React.Component {
 
   static propTypes = {
+    children: React.PropTypes.any,
     type: React.PropTypes.string
   };
 
@@ -63,7 +64,7 @@ class Base extends React.Component {
           <Timeline.Item {...this.getPropsByType(this.props.type)}>
             <Row gutter={8}>
               <Col span={15}>
-                Content layout
+                { this.props.children || null}
               </Col>
               <Col span={9}>
                 Preview layout
