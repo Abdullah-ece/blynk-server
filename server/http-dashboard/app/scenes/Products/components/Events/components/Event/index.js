@@ -39,7 +39,7 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '70%'}}>
-              <Input placeholder="Name"/>
+              <Input placeholder="Event Name"/>
             </Item>
             <Item label="Event Code" offset="normal" style={{width: '30%'}}>
               <Input placeholder="Event code"/>

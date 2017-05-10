@@ -9,7 +9,7 @@ class Online extends React.Component {
       <Base type="online">
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <Input placeholder="Name"/>
+            <Input placeholder="Event Name"/>
           </Item>
         </Base.Content>
       </Base>
