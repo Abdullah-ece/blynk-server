@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Icon, Tooltip, Upload, message} from 'antd';
+import {Icon, Tooltip} from 'antd';
+import ImageUploader from 'components/ImageUploader';
 
 import classnames from 'classnames';
 
@@ -10,13 +11,12 @@ class LogoUploader extends React.Component {
 
   static propTypes = {
     logo: React.PropTypes.string,
+    defaultImage: React.PropTypes.string,
     onChange: React.PropTypes.func
   };
 
   constructor(props) {
     super(props);
-
-    this.hide = null;
   }
 
   tooltip = <span>Recommended 5:1 ratio, 1Mb size</span>;
@@ -29,20 +29,10 @@ class LogoUploader extends React.Component {
   };
 
   onChange(info) {
-    if (info.file.status === 'uploading' && this.hide === null) {
-      this.hide = message.loading('Uploading image...', 0);
-    }
-    if (info.file.status !== 'uploading') {
+    if (info.file.status === 'done') {
       if (this.props.onChange) {
         this.props.onChange(info.file.response);
       }
-    }
-    if (info.file.status === 'done') {
-      this.hide();
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      this.hide();
-      message.error(`${info.file.name} file upload failed.`);
     }
   }
 
@@ -63,18 +53,8 @@ class LogoUploader extends React.Component {
         </div>
 
         <div className={uploaderClass}>
-          <Upload.Dragger {...this.draggerProps} onChange={this.onChange.bind(this)}>
-            { this.props.logo && <img className="logo-uploader-dropdown-zone-logo"
-                                      src={this.props.logo}
-                                      alt=""/> }
-            { !this.props.logo && <div>
-              <p className="ant-upload-drag-icon">
-                <Icon type="cloud-upload-o"/>
-              </p>
-              <p className="ant-upload-text">Add logo</p>
-            </div>
-            }
-          </Upload.Dragger>
+          <ImageUploader text="Add Logo" onChange={this.onChange.bind(this)} logo={this.props.logo}
+                         defaultImage={this.props.defaultImage}/>
         </div>
 
       </div>

@@ -11,9 +11,10 @@ class MetadataItemStatic extends React.Component {
     children: React.PropTypes.any,
     preview: React.PropTypes.shape({
       name: React.PropTypes.string,
-      value: React.PropTypes.any
+      value: React.PropTypes.any,
+      inline: React.PropTypes.any
     }),
-    role: React.PropTypes.string
+    role: React.PropTypes.string,
   };
 
   constructor(props) {

@@ -45,7 +45,7 @@ export default function Account(state = initialState, action) {
     case "ORGANIZATION_UPDATE_LOGO":
       return {
         ...state,
-        logo: action.logo
+        logoUrl: action.logo
       };
 
     case "ORGANIZATION_UPDATE_NAME":

@@ -28,6 +28,8 @@ export default class OrganizationBranding extends React.Component {
     logo: React.PropTypes.string
   };
 
+  DEFAULT_LOGO = '/static/logo.png';
+
   handlePrimaryColorChange(primaryColor) {
     const data = {
       primaryColor: primaryColor,
@@ -47,16 +49,17 @@ export default class OrganizationBranding extends React.Component {
   }
 
   handleLogoChange(logoUrl) {
-    this.props.OrganizationLogoUpdate(logoUrl);
+    this.props.OrganizationLogoUpdate(logoUrl || this.DEFAULT_LOGO);
     this.props.OrganizationSave(Object.assign({}, this.props.Organization, {
-      logoUrl: logoUrl
+      logoUrl: logoUrl || this.DEFAULT_LOGO
     }));
   }
 
   render() {
     return (
       <div className="user-profile--organization-settings--organization-branding">
-        <LogoUploader onChange={this.handleLogoChange.bind(this)} logo={this.props.logo}/>
+        <LogoUploader onChange={this.handleLogoChange.bind(this)} logo={this.props.logo}
+                      defaultImage={this.DEFAULT_LOGO}/>
         <div className="user-profile--organization-settings--organization-branding-colors">
           <BrandingColorPicker title="primary color" color={this.props.primaryColor}
                                onChange={this.handlePrimaryColorChange.bind(this)}/>

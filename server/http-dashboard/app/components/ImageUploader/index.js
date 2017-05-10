@@ -11,7 +11,8 @@ class ImageUploader extends React.Component {
     error: React.PropTypes.any,
     touched: React.PropTypes.any,
     hint: React.PropTypes.any,
-    logo: React.PropTypes.string
+    logo: React.PropTypes.string,
+    defaultImage: React.PropTypes.string
   };
 
   constructor(props) {
@@ -40,7 +41,7 @@ class ImageUploader extends React.Component {
     this.props.onChange({
       file: {
         status: 'done',
-        response: null
+        response: this.props.defaultImage || null
       }
     });
 
@@ -63,13 +64,17 @@ class ImageUploader extends React.Component {
     return (
       <div className={classNames}>
         <Upload.Dragger {...this.fileProps} onChange={this.onChange.bind(this)}>
-          { this.props.logo && <div className="image-uploader-cover">
-            <div className="image-uploader-cover-tools">
-              <Icon type="delete" onClick={this.handleDelete.bind(this)}/>
-            </div>
-            <img src={this.props.logo}
-                 alt=""/>
-          </div> }
+          { this.props.logo && (
+            <div className="image-uploader-cover">
+              { this.props.logo !== this.props.defaultImage && (
+                <div className="image-uploader-cover-tools">
+                  <Icon type="delete" onClick={this.handleDelete.bind(this)}/>
+                </div>
+              )}
+              <img src={this.props.logo}
+                   alt=""/>
+            </div>)
+          }
           { !this.props.logo && <div>
             <p className="ant-upload-drag-icon">
               <Icon type="cloud-upload-o"/>
