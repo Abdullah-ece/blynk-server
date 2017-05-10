@@ -104,22 +104,22 @@ class ContactField extends BaseField.Static {
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault.Static placeholder="First name" prefix="firstName"
-                                      value={this.props.fields.values.isFirstNameEnabled}/>
+                                      isChecked={this.props.fields.values.firstName.checked}/>
                 <OptionDefault.Static placeholder="Last name" prefix="lastName"
-                                      value={this.props.fields.values.isLastNameEnabled}/>
+                                      isChecked={this.props.fields.values.lastName.checked}/>
               </Form.Items>
             </Col>
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault.Static placeholder="E-mail address" prefix="email"
-                                      value={this.props.fields.values.email.checked}/>
+                                      isChecked={this.props.fields.values.email.checked}/>
                 <OptionDefault.Static placeholder="Phone number" prefix="phone"
-                                      value={this.props.fields.values.phone.checked}/>
+                                      isChecked={this.props.fields.values.phone.checked}/>
                 <OptionDefault.Static placeholder="Street address" prefix="streetAddress"
-                                      value={this.props.fields.values.streetAddress.checked}/>
+                                      isChecked={this.props.fields.values.streetAddress.checked}/>
                 <OptionDefault.Static placeholder="City" prefix="city" value={this.props.fields.values.city.checked}/>
                 <OptionDefault.Static placeholder="State" prefix="state"
-                                      value={this.props.fields.values.state.checked}/>
+                                      isChecked={this.props.fields.values.state.checked}/>
                 <OptionDefault.Static placeholder="ZIP Code" prefix="zip" value={this.props.fields.values.zip.checked}/>
               </Form.Items>
             </Col>

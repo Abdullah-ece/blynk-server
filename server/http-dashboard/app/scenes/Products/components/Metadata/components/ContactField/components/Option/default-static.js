@@ -16,11 +16,11 @@ export default class Default extends React.Component {
   checkbox(props) {
     if (props.placeholder) {
       return (
-        <Checkbox disabled={true} checked={!!props.value}>{props.placeholder}</Checkbox>
+        <Checkbox disabled={true} checked={!!props.isChecked}>{props.placeholder}</Checkbox>
       );
     } else {
       return (
-        <Checkbox disabled={true} checked={!!props.value}/>
+        <Checkbox disabled={true} checked={!!props.isChecked}/>
       );
     }
   }
