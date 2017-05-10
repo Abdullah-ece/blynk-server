@@ -1,8 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
-import {Timeline, Row, Col} from 'antd';
+import {Timeline, Row, Col, Switch} from 'antd';
 import Preview from './preview';
 import Content from './content';
+import {Item} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 
 class Base extends React.Component {
@@ -74,6 +75,9 @@ class Base extends React.Component {
             <Row gutter={8}>
               <Col span={14}>
                 { this.getChildrenByType(Content.displayName) }
+                <Item>
+                  <Switch size="small"/> Notifications
+                </Item>
               </Col>
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
