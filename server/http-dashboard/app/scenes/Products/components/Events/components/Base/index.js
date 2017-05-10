@@ -78,8 +78,20 @@ class Base extends React.Component {
                 <Item offset="small">
                   <Switch size="small"/> Notifications
                 </Item>
-                <Item label="E-mail to">
-                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contacts">
+                <Item label="E-mail to" offset="normal">
+                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
+                    <Select.Option value="Location Owner">Location Owner</Select.Option>
+                    <Select.Option value="Product Owner">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 2">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 3">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 4">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 5">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 6">Product Owner</Select.Option>
+                    <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                  </Select>
+                </Item>
+                <Item label="PUSH to">
+                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
                     <Select.Option value="Location Owner">Location Owner</Select.Option>
                     <Select.Option value="Product Owner">Product Owner</Select.Option>
                     <Select.Option value="Product Owner 2">Product Owner</Select.Option>
