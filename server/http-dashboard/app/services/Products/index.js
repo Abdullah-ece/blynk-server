@@ -6,7 +6,7 @@ export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',
   DATA_STREAMS: 'datastreams',
-  // EVENTS: 'events'
+  EVENTS: 'events'
 };
 
 export const Metadata = {
