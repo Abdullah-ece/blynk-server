@@ -23,6 +23,10 @@ const initialState = {
     dataStreams: {
       invalid: true,
       fields: []
+    },
+    events: {
+      invalid: true,
+      fields: []
     }
   },
   products: []
