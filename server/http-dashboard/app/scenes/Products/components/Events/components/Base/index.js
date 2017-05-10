@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import {Timeline, Row, Col} from 'antd';
 import Preview from './preview';
 import Content from './content';
+import {EVENT_TYPES} from 'services/Products';
 
 class Base extends React.Component {
 
@@ -11,41 +12,33 @@ class Base extends React.Component {
     type: React.PropTypes.string
   };
 
-  TYPES = {
-    ONLINE: 'online',
-    OFFLINE: 'offline',
-    INFO: 'info',
-    WARNING: 'warning',
-    ALERT: 'alert'
-  };
-
   getPropsByType(type) {
 
-    if (type === this.TYPES.ONLINE) {
+    if (type === EVENT_TYPES.ONLINE) {
       return {
         color: 'green'
       };
     }
 
-    if (type === this.TYPES.OFFLINE) {
+    if (type === EVENT_TYPES.OFFLINE) {
       return {
         color: 'gray'
       };
     }
 
-    if (type === this.TYPES.INFO) {
+    if (type === EVENT_TYPES.INFO) {
       return {
         color: 'blue'
       };
     }
 
-    if (type === this.TYPES.WARNING) {
+    if (type === EVENT_TYPES.WARNING) {
       return {
         color: 'orange'
       };
     }
 
-    if (type === this.TYPES.ALERT) {
+    if (type === EVENT_TYPES.ALERT) {
       return {
         color: 'red'
       };
