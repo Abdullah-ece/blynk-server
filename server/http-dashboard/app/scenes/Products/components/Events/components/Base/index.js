@@ -6,7 +6,9 @@ import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
+import {reduxForm} from 'redux-form';
 
+@reduxForm()
 class Base extends React.Component {
 
   static propTypes = {

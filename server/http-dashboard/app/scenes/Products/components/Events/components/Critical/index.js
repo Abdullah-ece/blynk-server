@@ -6,7 +6,7 @@ class Critical extends React.Component {
 
   render() {
     return (
-      <Event type={EVENT_TYPES.CRITICAL}/>
+      <Event type={EVENT_TYPES.CRITICAL} form={this.props.form}/>
     );
   }
 

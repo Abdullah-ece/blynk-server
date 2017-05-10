@@ -36,7 +36,7 @@ class Event extends React.Component {
   render() {
 
     return (
-      <Base type={this.props.type}>
+      <Base type={this.props.type} form={this.props.form}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '70%'}}>

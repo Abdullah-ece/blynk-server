@@ -11,7 +11,7 @@ class Offline extends React.Component {
 
     const format = "HH [hrs] mm [min]";
     return (
-      <Base type={EVENT_TYPES.OFFLINE}>
+      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small" style={{width: '70%'}}>

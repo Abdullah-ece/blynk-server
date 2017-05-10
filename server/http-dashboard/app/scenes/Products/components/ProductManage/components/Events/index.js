@@ -17,33 +17,37 @@ class Events extends React.Component {
 
       fields.filter(filterByTypes).forEach((field, key) => {
 
+        const options = {
+          form: `event${field.id}`
+        };
+
         if (field.type === EVENT_TYPES.ONLINE) {
           elements.push(
-            <Online key={key}/>
+            <Online key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.OFFLINE) {
           elements.push(
-            <Offline key={key}/>
+            <Offline key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.INFO) {
           elements.push(
-            <Info key={key}/>
+            <Info key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.WARNING) {
           elements.push(
-            <Warning key={key}/>
+            <Warning key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.CRITICAL) {
           elements.push(
-            <Critical key={key}/>
+            <Critical key={key} {...options}/>
           );
         }
 

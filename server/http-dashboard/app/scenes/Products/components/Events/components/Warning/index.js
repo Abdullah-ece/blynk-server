@@ -6,7 +6,7 @@ class Warning extends React.Component {
 
   render() {
     return (
-      <Event type={EVENT_TYPES.WARNING}/>
+      <Event type={EVENT_TYPES.WARNING} form={this.props.form}/>
     );
   }
 
