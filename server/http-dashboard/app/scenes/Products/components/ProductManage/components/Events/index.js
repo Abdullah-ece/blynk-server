@@ -1,5 +1,5 @@
 import React from 'react';
-import {Base, Online, Offline} from 'scenes/Products/components/Events';
+import {Base, Online, Offline, Event} from 'scenes/Products/components/Events';
 
 class Events extends React.Component {
 
@@ -8,7 +8,7 @@ class Events extends React.Component {
       <div className="product-events-list">
         <Online/>
         <Offline/>
-        <Base type="info"/>
+        <Event/>
         <Base type="warning"/>
         <Base type="alert"/>
       </div>
