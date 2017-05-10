@@ -185,6 +185,11 @@ class Base extends React.Component {
                 </Col>
               )}
             </Row>
+            <Row gutter={8}>
+              <Col span={15}>
+                {/* Notifications there*/}
+              </Col>
+            </Row>
           </Timeline.Item>
         </Timeline>
       </div>
