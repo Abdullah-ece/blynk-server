@@ -1,12 +1,13 @@
 import React from 'react';
 import {Base} from '../../index';
 import {Item, Input} from 'components/UI';
+import {EVENT_TYPES} from 'services/Products';
 
 class Online extends React.Component {
 
   render() {
     return (
-      <Base type="online">
+      <Base type={EVENT_TYPES.ONLINE}>
         <Base.Content>
           <Item label="Online Event" offset="small">
             <Input placeholder="Event Name"/>
