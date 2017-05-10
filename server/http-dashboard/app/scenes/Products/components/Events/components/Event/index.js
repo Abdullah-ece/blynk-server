@@ -1,7 +1,8 @@
 import React from 'react';
 import {Base} from '../../index';
 import {ItemsGroup, Item, Input} from 'components/UI';
-//import {EVENT_TYPES} from 'services/Products';
+import {EVENT_TYPES} from 'services/Products';
+import _ from 'lodash';
 
 class Event extends React.Component {
 
@@ -9,13 +10,27 @@ class Event extends React.Component {
     type: React.PropTypes.string
   };
 
+  constructor(props) {
+    super(props);
+
+    if (_.values(EVENT_TYPES).indexOf(props.type) === -1) {
+      throw Error('Wrong props.type for Event');
+    }
+  }
+
+  getLabelForType(type) {
+    if (EVENT_TYPES.INFO === type) {
+      return "Information event";
+    }
+  }
+
   render() {
 
     return (
-      <Base type="alert">
+      <Base type={this.props.type}>
         <Base.Content>
           <ItemsGroup>
-            <Item label="Offline Event" offset="normal" style={{width: '70%'}}>
+            <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '70%'}}>
               <Input placeholder="Name"/>
             </Item>
             <Item label="Event Code" offset="normal" style={{width: '30%'}}>
