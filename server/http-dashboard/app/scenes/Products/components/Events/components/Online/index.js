@@ -1,19 +1,19 @@
 import React from 'react';
 import {Base} from '../../index';
+import {Item, Input} from 'components/UI';
 
 class Online extends React.Component {
 
   render() {
     return (
       <Base type="online">
-        <Base.Preview>
-          Preview is there
-        </Base.Preview>
         <Base.Content>
-          Content is there
+          <Item label="Online Event" offset="small">
+            <Input placeholder="Name"/>
+          </Item>
         </Base.Content>
       </Base>
-    )
+    );
   }
 
 }

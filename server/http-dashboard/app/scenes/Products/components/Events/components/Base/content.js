@@ -2,10 +2,14 @@ import React from 'react';
 
 class Content extends React.Component {
 
+  static propTypes = {
+    children: React.PropTypes.any
+  };
+
   render() {
     return (
-      <div>{this.props.children}</div>
-    )
+      <div className="product-events-event-content">{this.props.children}</div>
+    );
   }
 
 }

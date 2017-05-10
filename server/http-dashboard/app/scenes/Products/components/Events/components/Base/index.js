@@ -24,31 +24,31 @@ class Base extends React.Component {
     if (type === this.TYPES.ONLINE) {
       return {
         color: 'green'
-      }
+      };
     }
 
     if (type === this.TYPES.OFFLINE) {
       return {
         color: 'gray'
-      }
+      };
     }
 
     if (type === this.TYPES.INFO) {
       return {
         color: 'blue'
-      }
+      };
     }
 
     if (type === this.TYPES.WARNING) {
       return {
         color: 'orange'
-      }
+      };
     }
 
     if (type === this.TYPES.ALERT) {
       return {
         color: 'red'
-      }
+      };
     }
 
     return {};
@@ -94,7 +94,7 @@ class Base extends React.Component {
           </Timeline.Item>
         </Timeline>
       </div>
-    )
+    );
   }
 
 }

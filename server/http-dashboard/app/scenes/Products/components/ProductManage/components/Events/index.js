@@ -12,7 +12,7 @@ class Events extends React.Component {
         <Base type="warning"/>
         <Base type="alert"/>
       </div>
-    )
+    );
   }
 
 }
