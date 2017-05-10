@@ -75,6 +75,15 @@ class Create extends React.Component {
         },
         {
           type: "OFFLINE"
+        },
+        {
+          type: "INFORMATION"
+        },
+        {
+          type: "WARNING"
+        },
+        {
+          type: "CRITICAL"
         }
       ]
     });

@@ -12,7 +12,7 @@ export const TABS = {
 export const EVENT_TYPES = {
   ONLINE: 'ONLINE',
   OFFLINE: 'OFFLINE',
-  INFO: 'INFO',
+  INFO: 'INFORMATION',
   WARNING: 'WARNING',
   CRITICAL: 'CRITICAL'
 };
