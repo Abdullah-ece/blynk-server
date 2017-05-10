@@ -18,7 +18,6 @@ class ContactField extends BaseField.Static {
   };
 
   getPreviewValues() {
-
     const name = this.props.fields.name;
     let value = [];
 
@@ -27,21 +26,21 @@ class ContactField extends BaseField.Static {
     const values = ['email', 'phone', 'streetAddress', 'city', 'state', 'zip'];
 
     const checkIsFieldValid = (name) => {
-      return this.props.fields[name].checked
-        && regex.test(this.props.fields[name].value)
-        && this.props.fields[name].value
-        && this.props.fields[name].value.trim();
+      return this.props.fields.values[name].checked
+        && regex.test(this.props.fields.values[name].value)
+        && this.props.fields.values[name].value
+        && this.props.fields.values[name].value.trim();
     };
 
     if (['firstName', 'lastName'].every(checkIsFieldValid)) {
-      value.push(`${this.props.fields.firstName.value}, ${this.props.fields.lastName.value}`);
+      value.push(`${this.props.fields.values.firstName.value}, ${this.props.fields.values.lastName.value}`);
     } else {
       values.unshift('firstName', 'lastName');
     }
 
     values.forEach((field) => {
       if (checkIsFieldValid(field)) {
-        value.push(this.props.fields[field].value);
+        value.push(this.props.fields.values[field].value);
       }
     });
 
@@ -67,33 +66,33 @@ class ContactField extends BaseField.Static {
             <Col span={12}>
               <Form.Items offset="small">
                 <DefinedInput.Static placeholder="First name" prefix="firstName"
-                                     isChecked={this.props.fields.isFirstNameEnabled}
-                                     value={this.props.fields.firstName}/>
+                                     isChecked={this.props.fields.values.firstName.checked}
+                                     value={this.props.fields.values.firstName.value}/>
                 <DefinedInput.Static placeholder="Last name" prefix="lastName"
-                                     isChecked={this.props.fields.isLastNameEnabled}
-                                     value={this.props.fields.lastName}/>
+                                     isChecked={this.props.fields.values.lastName.checked}
+                                     value={this.props.fields.values.lastName.value}/>
               </Form.Items>
             </Col>
             <Col span={12}>
               <Form.Items offset="small">
                 <DefinedInput.Static placeholder="E-mail address" prefix="email"
-                                     isChecked={this.props.fields.isEmailEnabled}
-                                     value={this.props.fields.email}/>
+                                     isChecked={this.props.fields.values.email.checked}
+                                     value={this.props.fields.values.email.value}/>
                 <DefinedInput.Static placeholder="Phone number" prefix="phone"
-                                     isChecked={this.props.fields.isPhoneEnabled}
-                                     value={this.props.fields.phone}/>
+                                     isChecked={this.props.fields.values.phone.checked}
+                                     value={this.props.fields.values.phone.value}/>
                 <DefinedInput.Static placeholder="Street address" prefix="streetAddress"
-                                     isChecked={this.props.fields.isStreetAddressEnabled}
-                                     value={this.props.fields.streetAddress}/>
+                                     isChecked={this.props.fields.values.streetAddress.checked}
+                                     value={this.props.fields.values.streetAddress.value}/>
                 <DefinedInput.Static placeholder="City" prefix="city"
-                                     isChecked={this.props.fields.isCityEnabled}
-                                     value={this.props.fields.city}/>
+                                     isChecked={this.props.fields.values.city.checked}
+                                     value={this.props.fields.values.city.value}/>
                 <DefinedInput.Static placeholder="State" prefix="state"
-                                     isChecked={this.props.fields.isStateEnabled}
-                                     value={this.props.fields.state}/>
+                                     isChecked={this.props.fields.values.state.checked}
+                                     value={this.props.fields.values.state.value}/>
                 <DefinedInput.Static placeholder="ZIP Code" prefix="zip"
-                                     isChecked={this.props.fields.isZipEnabled}
-                                     value={this.props.fields.zip}/>
+                                     isChecked={this.props.fields.values.zip.checked}
+                                     value={this.props.fields.values.zip.value}/>
               </Form.Items>
             </Col>
           </Row>
@@ -105,22 +104,23 @@ class ContactField extends BaseField.Static {
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault.Static placeholder="First name" prefix="firstName"
-                                      value={this.props.fields.isFirstNameEnabled}/>
+                                      value={this.props.fields.values.isFirstNameEnabled}/>
                 <OptionDefault.Static placeholder="Last name" prefix="lastName"
-                                      value={this.props.fields.isLastNameEnabled}/>
+                                      value={this.props.fields.values.isLastNameEnabled}/>
               </Form.Items>
             </Col>
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault.Static placeholder="E-mail address" prefix="email"
-                                      value={this.props.fields.isEmailEnabled}/>
+                                      value={this.props.fields.values.email.checked}/>
                 <OptionDefault.Static placeholder="Phone number" prefix="phone"
-                                      value={this.props.fields.isPhoneEnabled}/>
+                                      value={this.props.fields.values.phone.checked}/>
                 <OptionDefault.Static placeholder="Street address" prefix="streetAddress"
-                                      value={this.props.fields.isStreetAddressEnabled}/>
-                <OptionDefault.Static placeholder="City" prefix="city" value={this.props.fields.isCityEnabled}/>
-                <OptionDefault.Static placeholder="State" prefix="state" value={this.props.fields.isStateEnabled}/>
-                <OptionDefault.Static placeholder="ZIP Code" prefix="zip" value={this.props.fields.isZipEnabled}/>
+                                      value={this.props.fields.values.streetAddress.checked}/>
+                <OptionDefault.Static placeholder="City" prefix="city" value={this.props.fields.values.city.checked}/>
+                <OptionDefault.Static placeholder="State" prefix="state"
+                                      value={this.props.fields.values.state.checked}/>
+                <OptionDefault.Static placeholder="ZIP Code" prefix="zip" value={this.props.fields.values.zip.checked}/>
               </Form.Items>
             </Col>
           </Row>

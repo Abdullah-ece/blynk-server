@@ -129,23 +129,41 @@ class Metadata extends React.Component {
             fields={{
               name: field.name,
               isDefaultsEnabled: field.isDefaultsEnabled,
-              firstName: field.firstName,
-              lastName: field.lastName,
-              email: field.email,
-              phone: field.phone,
-              streetAddress: field.streetAddress,
-              state: field.state,
-              city: field.city,
-              zip: field.zip,
-
-              isFirstNameEnabled: field.isFirstNameEnabled,
-              isLastNameEnabled: field.isLastNameEnabled,
-              isEmailEnabled: field.isEmailEnabled,
-              isPhoneEnabled: field.isPhoneEnabled,
-              isStreetAddressEnabled: field.isStreetAddressEnabled,
-              isStateEnabled: field.isStateEnabled,
-              isCityEnabled: field.isCityEnabled,
-              isZipEnabled: field.isZipEnabled,
+              fieldAvailable: field.fieldAvailable,
+              values: {
+                firstName: {
+                  checked: field.isFirstNameEnabled,
+                  value: field.firstName,
+                },
+                lastName: {
+                  checked: field.isLastNameEnabled,
+                  value: field.lastName,
+                },
+                email: {
+                  checked: field.isEmailEnabled,
+                  value: field.email,
+                },
+                phone: {
+                  checked: field.isPhoneEnabled,
+                  value: field.phone,
+                },
+                streetAddress: {
+                  checked: field.isStreetAddressEnabled,
+                  value: field.streetAddress,
+                },
+                city: {
+                  checked: field.isCityEnabled,
+                  value: field.city,
+                },
+                state: {
+                  checked: field.isStateEnabled,
+                  value: field.state,
+                },
+                zip: {
+                  checked: field.isZipEnabled,
+                  value: field.zip,
+                }
+              }
             }}
           />
         );
