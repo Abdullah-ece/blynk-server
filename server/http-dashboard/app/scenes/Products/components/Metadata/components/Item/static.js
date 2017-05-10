@@ -23,7 +23,7 @@ class MetadataItemStatic extends React.Component {
   preview() {
 
     return (
-      <Preview>
+      <Preview inline={this.props.preview.inline}>
         <Preview.Name>{this.props.preview.name}</Preview.Name>
         <Preview.Value>{this.props.preview.value || 'Empty'}</Preview.Value>
       </Preview>
