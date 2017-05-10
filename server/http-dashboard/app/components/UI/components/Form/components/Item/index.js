@@ -60,7 +60,7 @@ export default class Item extends React.Component {
 
     return (
       <BaseForm.Item
-        style={this.props.style}
+        style={props.style}
         className={className}
         label={props.label}
         validateStatus={validateStatus()}
