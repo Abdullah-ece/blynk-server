@@ -54,16 +54,18 @@ class Base extends React.Component {
     return {};
   }
 
-  getChildrenByType(type) {
-    if (Array.isArray(this.props.children)) {
-      const element = this.props.children.filter((children) =>
-        children.type.displayName === type
-      );
+  getChildrenByType(type, children = this.props.children) {
 
-      if (element.length) return element[0];
+    if (!children) return null;
 
-      return null;
+    let element;
+    if (Array.isArray(children)) {
+      element = children.filter((child) => !!this.getChildrenByType(type, child));
+    } else if (children.type.displayName === type) {
+      return children;
     }
+
+    return element || null;
   }
 
   render() {
