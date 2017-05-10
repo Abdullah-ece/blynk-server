@@ -367,9 +367,6 @@ const prepareContactValuesForEdit = (fields) => {
 
   const values = Object.assign({}, fields);
 
-  // hardcoded while backend doesn't support
-  values.isDefaultsEnabled = false;
-
   return values;
 
 };
