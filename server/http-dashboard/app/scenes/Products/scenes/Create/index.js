@@ -68,7 +68,15 @@ class Create extends React.Component {
     this.props.ProductSetEdit({
       boardType: HARDWARES["Particle Electron"].key,
       connectionType: CONNECTIONS_TYPES["GSM"].key,
-      metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : []
+      metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : [],
+      events: [
+        {
+          type: "ONLINE"
+        },
+        {
+          type: "OFFLINE"
+        }
+      ]
     });
   }
 

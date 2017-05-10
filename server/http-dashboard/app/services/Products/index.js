@@ -10,11 +10,11 @@ export const TABS = {
 };
 
 export const EVENT_TYPES = {
-  ONLINE: 'online',
-  OFFLINE: 'offline',
-  INFO: 'info',
-  WARNING: 'warning',
-  CRITICAL: 'critical'
+  ONLINE: 'ONLINE',
+  OFFLINE: 'OFFLINE',
+  INFO: 'INFO',
+  WARNING: 'WARNING',
+  CRITICAL: 'CRITICAL'
 };
 
 export const Metadata = {
@@ -283,6 +283,9 @@ export const prepareProductForEdit = (data) => {
     },
     dataStreams: {
       fields: []
+    },
+    events: {
+      fields: []
     }
   };
 
@@ -313,6 +316,19 @@ export const prepareProductForEdit = (data) => {
         return {
           id: ++id,
           values: field
+        };
+      })) || [];
+  }
+
+  id = 1;
+  if (data.events) {
+    edit.events.fields = (data.events && data.events.map((field) => {
+        return {
+          id: ++id,
+          type: field.type,
+          values: {
+            ...field
+          }
         };
       })) || [];
   }
