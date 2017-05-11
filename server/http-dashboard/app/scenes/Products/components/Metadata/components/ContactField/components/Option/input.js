@@ -9,13 +9,14 @@ class Input extends Default {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
-    isChecked: React.PropTypes.bool
+    isChecked: React.PropTypes.bool,
+    value: React.PropTypes.any
   };
 
   shouldComponentUpdate(nextProps) {
     return this.props.isChecked !== nextProps.isChecked ||
       this.props.value !== nextProps.value ||
-      this.props.placeholder !== nextProps.placeholder
+      this.props.placeholder !== nextProps.placeholder;
   }
 
   render() {

@@ -8,18 +8,20 @@ class Default extends React.Component {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
-    prefix: React.PropTypes.string
+    prefix: React.PropTypes.string,
+    isChecked: React.PropTypes.bool,
+    value: React.PropTypes.any,
   };
-
-  capitalizePrefix(name) {
-    return name[0].toUpperCase() + name.substr(1);
-  }
 
   shouldComponentUpdate(nextProps) {
     return this.props.isChecked !== nextProps.isChecked ||
       this.props.value !== nextProps.value ||
       this.props.placeholder !== nextProps.placeholder ||
-      this.props.prefix !== nextProps.prefix
+      this.props.prefix !== nextProps.prefix;
+  }
+
+  capitalizePrefix(name) {
+    return name[0].toUpperCase() + name.substr(1);
   }
 
   render() {
