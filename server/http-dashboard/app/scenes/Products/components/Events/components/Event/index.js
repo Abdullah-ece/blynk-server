@@ -41,10 +41,10 @@ class Event extends React.Component {
       <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <ItemsGroup>
-            <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '70%'}}>
-              <Input name="name" placeholder="Event Name"/>
+            <Item label={this.getLabelForType(this.props.type)} offset="normal">
+              <Input name="name" placeholder="Event Name" style={{width: '55%'}}/>
             </Item>
-            <Item label="Event Code" offset="normal" style={{width: '30%'}}>
+            <Item label="Event Code" offset="normal" style={{width: '45%'}}>
               <Input placeholder="Event code"/>
             </Item>
           </ItemsGroup>

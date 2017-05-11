@@ -33,8 +33,8 @@ class Offline extends React.Component {
       <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <ItemsGroup>
-            <Item label="Offline Event" offset="small" style={{width: '55%'}}>
-              <Input name="name" placeholder="Event Name" style={{width: '100%'}}/>
+            <Item label="Offline Event" offset="small">
+              <Input name="name" placeholder="Event Name" style={{width: '55%'}}/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
               <Field name="ignorePeriod" component={this.ignorePeriod}/>
