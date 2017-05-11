@@ -76,7 +76,7 @@ export default class Item extends React.Component {
       if (Array.isArray(element)) {
         return element.some(hasName);
       } else {
-        return element && element.props && element.props.name !== undefined;
+        return element && element.props && element.props.name !== undefined && element.type && element.type !== ReduxField;
       }
     };
 
