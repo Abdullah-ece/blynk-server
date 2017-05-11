@@ -49,7 +49,7 @@ class Event extends React.Component {
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
-            <Input type="textarea" placeholder="Event Description (optional)" rows="3"/>
+            <Input name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>
         <Base.Preview>

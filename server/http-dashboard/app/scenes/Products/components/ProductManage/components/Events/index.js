@@ -52,7 +52,8 @@ class Events extends React.Component {
             ...options,
             initialValues: {
               ...options.initialValues,
-              eventCode: field.values.eventCode
+              eventCode: field.values.eventCode,
+              description: field.values.description
             }
           };
 
@@ -67,7 +68,8 @@ class Events extends React.Component {
             ...options,
             initialValues: {
               ...options.initialValues,
-              eventCode: field.values.eventCode
+              eventCode: field.values.eventCode,
+              description: field.values.description
             }
           };
 
@@ -82,7 +84,8 @@ class Events extends React.Component {
             ...options,
             initialValues: {
               ...options.initialValues,
-              eventCode: field.values.eventCode
+              eventCode: field.values.eventCode,
+              description: field.values.description
             }
           };
 
