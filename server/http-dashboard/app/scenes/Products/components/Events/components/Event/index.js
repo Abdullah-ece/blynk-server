@@ -8,7 +8,9 @@ import _ from 'lodash';
 class Event extends React.Component {
 
   static propTypes = {
-    type: React.PropTypes.string
+    type: React.PropTypes.string,
+    form: React.PropTypes.string,
+    initialValues: React.PropTypes.object
   };
 
   constructor(props) {
@@ -36,11 +38,11 @@ class Event extends React.Component {
   render() {
 
     return (
-      <Base type={this.props.type} form={this.props.form}>
+      <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '70%'}}>
-              <Input placeholder="Event Name"/>
+              <Input name="name" placeholder="Event Name"/>
             </Item>
             <Item label="Event Code" offset="normal" style={{width: '30%'}}>
               <Input placeholder="Event code"/>

@@ -77,16 +77,23 @@ class Create extends React.Component {
         },
         {
           name: 'Offline name',
-          type: "OFFLINE"
+          type: "OFFLINE",
+          isNotificationsEnabled: true
         },
         {
-          type: "INFORMATION"
+          name: "Info event",
+          type: "INFORMATION",
+          isNotificationsEnabled: true
         },
         {
-          type: "WARNING"
+          name: "Warning event",
+          type: "WARNING",
+          isNotificationsEnabled: true
         },
         {
-          type: "CRITICAL"
+          name: "Critical event",
+          type: "CRITICAL",
+          isNotificationsEnabled: true
         }
       ]
     });
