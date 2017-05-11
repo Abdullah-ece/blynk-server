@@ -7,7 +7,7 @@ class Online extends React.Component {
 
   render() {
     return (
-      <Base type={EVENT_TYPES.ONLINE} form={this.props.form}>
+      <Base type={EVENT_TYPES.ONLINE} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <Item label="Online Event" offset="small">
             <Input placeholder="Event Name"/>

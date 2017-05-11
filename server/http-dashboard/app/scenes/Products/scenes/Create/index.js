@@ -71,7 +71,8 @@ class Create extends React.Component {
       metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : [],
       events: [
         {
-          type: "ONLINE"
+          type: "ONLINE",
+          isNotificationsEnabled: true
         },
         {
           type: "OFFLINE"

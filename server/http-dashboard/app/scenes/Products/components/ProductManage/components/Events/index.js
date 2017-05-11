@@ -18,7 +18,10 @@ class Events extends React.Component {
       fields.filter(filterByTypes).forEach((field, key) => {
 
         const options = {
-          form: `event${field.id}`
+          form: `event${field.id}`,
+          initialValues: {
+            isNotificationsEnabled: field.values.isNotificationsEnabled
+          }
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {

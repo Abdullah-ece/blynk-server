@@ -7,8 +7,17 @@ import Content from './content';
 import {Item} from 'components/UI';
 import FormItem from 'components/FormItem';
 import {EVENT_TYPES} from 'services/Products';
-import {reduxForm, Field} from 'redux-form';
+import {reduxForm, Field, formValueSelector} from 'redux-form';
+import {connect} from 'react-redux';
 
+@connect((state, ownProps) => {
+  const selector = formValueSelector(ownProps.form);
+  return {
+    fields: {
+      isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
+    }
+  }
+})
 @reduxForm()
 class Base extends React.Component {
 
