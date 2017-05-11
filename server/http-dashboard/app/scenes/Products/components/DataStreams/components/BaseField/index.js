@@ -11,6 +11,7 @@ import {Unit} from 'services/Products';
 import {connect} from 'react-redux';
 import {formValueSelector} from 'redux-form';
 import Static from './static';
+import _ from 'lodash';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -87,6 +88,10 @@ class BaseField extends React.Component {
       Unit.Kelvin
     ]
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+  }
 
   handleDelete() {
     this.props.onDelete(this.props.id);
