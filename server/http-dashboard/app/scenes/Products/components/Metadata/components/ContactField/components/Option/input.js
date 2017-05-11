@@ -10,7 +10,8 @@ class Input extends Default {
   static propTypes = {
     placeholder: React.PropTypes.string,
     isChecked: React.PropTypes.bool,
-    value: React.PropTypes.any
+    value: React.PropTypes.any,
+    onChange: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
@@ -20,10 +21,15 @@ class Input extends Default {
   }
 
   render() {
+
+    const props = {
+      ...(this.props.onChange ? {onChange: this.props.onChange} : {})
+    };
+
     return (
       <Form.Items layout="inline">
         <Form.Item>
-          <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`} component={Checkbox}/>
+          <Field {...props} name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`} component={Checkbox}/>
         </Form.Item>
         <Form.Item>
           <Form.Input disabled={!this.props.isChecked} name={`${this.props.prefix}`}

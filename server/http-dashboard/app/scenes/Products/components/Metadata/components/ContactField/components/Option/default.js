@@ -11,6 +11,7 @@ class Default extends React.Component {
     prefix: React.PropTypes.string,
     isChecked: React.PropTypes.bool,
     value: React.PropTypes.any,
+    onChange: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
@@ -25,10 +26,16 @@ class Default extends React.Component {
   }
 
   render() {
+
+    const props = {
+      ...(this.props.onChange ? {onChange: this.props.onChange} : {})
+    };
+
     return (
       <Form.Items offset="small">
         <Form.Item>
           <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`}
+                 {...props}
                  placeholder={this.props.placeholder}
                  component={Checkbox}/>
         </Form.Item>

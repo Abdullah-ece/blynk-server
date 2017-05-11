@@ -16,6 +16,7 @@ import Static from './static';
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
+    events: state.Product.edit.events.fields,
     fields: {
       name: selector(state, 'name') || "",
       isDefaultsEnabled: selector(state, 'isDefaultsEnabled'),
@@ -93,6 +94,12 @@ class ContactField extends BaseField {
     };
   }
 
+  handleEmailCheckboxChange(/*event, value*/) {
+    // event.preventDefault();
+    // console.log('email checkbox change', event, value);
+    // this.props.events
+  }
+
   switch(props) {
     return (
       <Switch size="small" className="contact-field-allow-default-values-switch" checked={!!props.input.value}
@@ -136,6 +143,7 @@ class ContactField extends BaseField {
               <Form.Items offset="small">
                 <DefinedInput placeholder="E-mail address" prefix="email"
                               isChecked={this.props.fields.values.email.checked}
+                              onChange={this.handleEmailCheckboxChange.bind(this)}
                               value={this.props.fields.values.email.value}/>
                 <DefinedInput placeholder="Phone number" prefix="phone"
                               isChecked={this.props.fields.values.phone.checked}
@@ -173,6 +181,7 @@ class ContactField extends BaseField {
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault placeholder="E-mail address" prefix="email"
+                               onChange={this.handleEmailCheckboxChange.bind(this)}
                                isChecked={this.props.fields.values.email.checked}
                                value={this.props.fields.values.email.value}/>
 
