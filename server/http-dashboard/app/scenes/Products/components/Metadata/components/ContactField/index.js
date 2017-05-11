@@ -17,7 +17,7 @@ import Static from './static';
   const selector = formValueSelector(ownProps.form);
   return {
     fields: {
-      name: selector(state, 'name'),
+      name: selector(state, 'name') || "",
       isDefaultsEnabled: selector(state, 'isDefaultsEnabled'),
       fieldAvailable: selector(state, 'fieldAvailable'),
       values: {

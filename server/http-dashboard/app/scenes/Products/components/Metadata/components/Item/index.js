@@ -11,6 +11,7 @@ import {bindActionCreators} from 'redux';
 import {reduxForm, touch, Form} from 'redux-form';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
+import _ from 'lodash';
 
 @connect(() => ({}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
@@ -18,7 +19,7 @@ import Static from './static';
 @reduxForm({
   touchOnChange: true
 })
-class MetadataItem extends React.Component {
+class MetadataItem extends React.PureComponent {
 
   static propTypes = {
     anyTouched: React.PropTypes.bool,
@@ -55,6 +56,10 @@ class MetadataItem extends React.Component {
       });
       this.invalid = props.invalid;
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   handleConfirmDelete() {

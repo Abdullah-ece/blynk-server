@@ -1,8 +1,9 @@
 import React from 'react';
 import Metadata from '../../index';
 import Static from './static';
+import _ from 'lodash';
 
-class BaseField extends React.Component {
+class BaseField extends React.PureComponent {
 
   static propTypes = {
     id: React.PropTypes.number,
@@ -26,6 +27,10 @@ class BaseField extends React.Component {
     if (typeof this.component !== 'function') {
       throw new Error('Object nested from BaseField should have component method');
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   handleDelete() {
