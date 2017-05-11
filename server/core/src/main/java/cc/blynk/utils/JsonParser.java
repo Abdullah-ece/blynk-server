@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -44,11 +45,7 @@ public final class JsonParser {
 
     //it is threadsafe
     public static final ObjectMapper mapper = init();
-    public static final ObjectWriter restrictiveDashWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .writerFor(DashBoard.class);
+
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = mapper.readerFor(User.class);
     private static final ObjectReader organizationReader = mapper.readerFor(Organization.class);
@@ -56,6 +53,7 @@ public final class JsonParser {
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader dashboardSettingsReader = mapper.readerFor(DashboardSettings.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
+    private static final ObjectReader appReader = mapper.readerFor(App.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
     private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
@@ -70,6 +68,14 @@ public final class JsonParser {
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
     private static final ObjectWriter productWriter = mapper.writerFor(Product.class);
+    private static final ObjectWriter appWriter = mapper.writerFor(App.class);
+
+    public static final ObjectWriter restrictiveDashWriter = init()
+            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
+            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
+            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
+            .writerFor(DashBoard.class);
+
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     public static ObjectMapper init() {
@@ -142,6 +148,10 @@ public final class JsonParser {
 
     public static String toJson(Device device) {
         return toJson(deviceWriter, device);
+    }
+
+    public static String toJson(App app) {
+        return toJson(appWriter, app);
     }
 
     public static String toJson(Stat stat) {
@@ -248,6 +258,15 @@ public final class JsonParser {
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing widget.");
+        }
+    }
+
+    public static App parseApp(String reader) {
+        try {
+            return appReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing app.");
         }
     }
 

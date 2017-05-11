@@ -110,8 +110,8 @@ public class ProductHandler extends BaseHttpHandler {
 
         product = organizationDao.addProduct(httpSession.user.orgId, product);
 
-        if (product == null) {
-            log.error("Cannot find org with id {}", httpSession.user.orgId);
+        if (product == null || product.notValid()) {
+            log.error("Cannot find product with id {}", httpSession.user.orgId);
             return badRequest();
         }
 
@@ -132,7 +132,12 @@ public class ProductHandler extends BaseHttpHandler {
         Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
 
         if (existingProduct == null) {
-            log.error("Product with passed is {} not found.", updatedProduct.id);
+            log.error("Product with passed id {} not found.", updatedProduct.id);
+            return badRequest();
+        }
+
+        if (updatedProduct.notValid()) {
+            log.error("Product is not valid.", updatedProduct);
             return badRequest();
         }
 

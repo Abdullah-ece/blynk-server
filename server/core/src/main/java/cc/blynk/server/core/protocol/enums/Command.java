@@ -61,6 +61,8 @@ public final class Command {
 
     public static final short UPDATE_PROJECT_SETTINGS = 38;
 
+    public static final short ASSIGN_TOKEN = 39;
+
     public static final short GET_SERVER = 40;
     public static final short CONNECT_REDIRECT = 41;
 
@@ -83,6 +85,13 @@ public final class Command {
 
     public static final short EVENTOR = 53;
     public static final short WEB_HOOKS = 54;
+
+    public static final short CREATE_APP = 55;
+    public static final short UPDATE_APP = 56;
+    public static final short DELETE_APP = 57;
+    public static final short GET_PROJECT_BY_TOKEN = 58;
+    public static final short EMAIL_QR = 59;
+
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 62;
@@ -109,6 +118,7 @@ public final class Command {
                 put(APP_SYNC, "AppSync");
                 put(SHARING, "Sharing");
                 put(GET_TOKEN, "GetToken");
+                put(ASSIGN_TOKEN, "AssignToken");
                 put(PING, "Ping");
                 put(SMS, "Sms");
                 put(ACTIVATE_DASHBOARD, "Activate");
@@ -151,6 +161,12 @@ public final class Command {
 
                 put(GET_SERVER, "GetServer");
                 put(CONNECT_REDIRECT, "ConnectRedirect");
+
+                put(CREATE_APP, "CreateApp");
+                put(UPDATE_APP, "UpdateApp");
+                put(DELETE_APP, "DeleteApp");
+                put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
+                put(EMAIL_QR, "MailQRs");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

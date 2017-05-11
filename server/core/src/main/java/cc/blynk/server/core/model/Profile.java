@@ -1,10 +1,12 @@
 package cc.blynk.server.core.model;
 
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
 
+import static cc.blynk.utils.ArrayUtil.EMPTY_APPS;
 import static cc.blynk.utils.ArrayUtil.EMPTY_DASHBOARDS;
 
 /**
@@ -15,6 +17,8 @@ import static cc.blynk.utils.ArrayUtil.EMPTY_DASHBOARDS;
 public class Profile {
 
     public volatile DashBoard[] dashBoards = EMPTY_DASHBOARDS;
+
+    public volatile App[] apps = EMPTY_APPS;
 
     /**
      * Check if dashboardId is real and exists in user profile.
@@ -60,6 +64,24 @@ public class Profile {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == id) {
                 return dashBoard;
+            }
+        }
+        return null;
+    }
+
+    public int getAppIndexById(String id) {
+        for (int i = 0; i < apps.length; i++) {
+            if (apps[i].id.equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public App getAppById(String id) {
+        for (App app : apps) {
+            if (app.id.equals(id)) {
+                return app;
             }
         }
         return null;

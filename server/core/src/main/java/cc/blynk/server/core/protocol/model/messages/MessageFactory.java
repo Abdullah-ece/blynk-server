@@ -31,6 +31,8 @@ public class MessageFactory {
                 return new SharingMessage(messageId, body);
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
+            case ASSIGN_TOKEN :
+                return new AssignTokenMessage(messageId, body);
             case PING :
                 return new PingMessage(messageId);
             case ACTIVATE_DASHBOARD :
@@ -125,6 +127,17 @@ public class MessageFactory {
 
             case APP_CONNECTED :
                 return new AppConnectedMessage(messageId);
+
+            case CREATE_APP :
+                return new CreateAppMessage(messageId, body);
+            case UPDATE_APP :
+                return new UpdateAppMessage(messageId, body);
+            case DELETE_APP :
+                return new DeleteAppMessage(messageId, body);
+            case GET_PROJECT_BY_TOKEN :
+                return new GetProjectByTokenMessage(messageId, body);
+            case EMAIL_QR :
+                return new EmailQRsMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

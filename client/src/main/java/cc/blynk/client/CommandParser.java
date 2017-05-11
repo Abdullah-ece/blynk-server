@@ -25,6 +25,8 @@ public class CommandParser {
                 return SHARING;
             case "gettoken" :
                 return GET_TOKEN;
+            case "assigntoken" :
+                return ASSIGN_TOKEN;
             case "refreshtoken" :
                 return REFRESH_TOKEN;
             case "login" :
@@ -109,6 +111,17 @@ public class CommandParser {
                 return GET_SHARED_DASH;
             case "refreshsharetoken" :
                 return REFRESH_SHARE_TOKEN;
+
+            case "createapp" :
+                return CREATE_APP;
+            case "updateapp" :
+                return UPDATE_APP;
+            case "deleteapp" :
+                return DELETE_APP;
+            case "getprojectbytoken" :
+                return GET_PROJECT_BY_TOKEN;
+            case "emailqr" :
+                return EMAIL_QR;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

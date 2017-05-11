@@ -74,6 +74,61 @@ public class ProductAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void createProductWithNoName() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void updateProductWithNoName() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        Product fromApi;
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertEquals(product.boardType, fromApi.boardType);
+            assertEquals(product.connectionType, fromApi.connectionType);
+            assertEquals(0, fromApi.version);
+        }
+
+        product.id = 1;
+        product.name = "";
+
+        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
 
     @Test
     public void createProduct() throws Exception {

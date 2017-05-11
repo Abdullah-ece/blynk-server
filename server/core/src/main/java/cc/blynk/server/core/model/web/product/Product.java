@@ -54,6 +54,10 @@ public class Product {
         this.version++;
     }
 
+    public boolean notValid() {
+        return name == null || name.isEmpty();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

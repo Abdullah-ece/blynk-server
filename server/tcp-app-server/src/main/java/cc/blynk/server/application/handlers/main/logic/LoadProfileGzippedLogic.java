@@ -64,7 +64,7 @@ public class LoadProfileGzippedLogic {
 
             blockingIOProcessor.executeDB(() -> {
                 try {
-                    FlashedToken flashedToken = dbManager.selectFlashedToken(token, state.userKey.appName);
+                    FlashedToken flashedToken = dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
                         User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
@@ -78,7 +78,7 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    private void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
             ByteBuf outputMsg;
             if (data == null) {

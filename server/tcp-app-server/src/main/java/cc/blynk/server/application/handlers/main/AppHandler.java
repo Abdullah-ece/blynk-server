@@ -42,6 +42,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public final AppStateHolder state;
     private final GetTokenLogic token;
+    private final AssignTokenLogic assignTokenLogic;
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
@@ -66,11 +67,17 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
+    private final CreateAppLogic createAppLogic;
+    private final UpdateAppLogic updateAppLogic;
+    private final GetProjectByTokenLogic getProjectByTokenLogic;
+    private final MailQRsLogic mailQRsLogic;
+
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.limits, state);
         this.token = new GetTokenLogic(holder);
+        this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
@@ -102,7 +109,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
 
+        this.createAppLogic = new CreateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
+        this.updateAppLogic = new UpdateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
+
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
+        this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);
+        this.mailQRsLogic = new MailQRsLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -129,6 +141,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);
+                break;
+            case ASSIGN_TOKEN :
+                assignTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_PUSH_TOKEN :
                 AddPushLogic.messageReceived(ctx, state, msg);
@@ -213,6 +228,22 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case APP_SYNC :
                 AppSyncLogic.messageReceived(ctx, state, msg);
+                break;
+            case CREATE_APP :
+                createAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case UPDATE_APP :
+                updateAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case DELETE_APP :
+                DeleteAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case GET_PROJECT_BY_TOKEN :
+                getProjectByTokenLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case EMAIL_QR :
+                mailQRsLogic.messageReceived(ctx, state.user, msg);
+                break;
         }
     }
 

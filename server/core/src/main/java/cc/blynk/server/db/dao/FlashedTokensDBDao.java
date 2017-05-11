@@ -16,9 +16,9 @@ import java.sql.ResultSet;
  */
 public class FlashedTokensDBDao {
 
-    public static final String selectToken = "SELECT * from flashed_tokens where token = ? and app_name = ?";
+    public static final String selectToken = "SELECT * from flashed_tokens where token = ?";
     public static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ? and app_name = ?";
-    public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, device_id) values (?, ?, ?)";
+    public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, project_id, device_id) values (?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(FlashedTokensDBDao.class);
     private final HikariDataSource ds;
@@ -27,27 +27,20 @@ public class FlashedTokensDBDao {
         this.ds = ds;
     }
 
-    private static void insert(PreparedStatement ps, FlashedToken flashedToken) throws Exception {
-        ps.setString(1, flashedToken.token);
-        ps.setString(2, flashedToken.appName);
-        ps.setInt(3, flashedToken.deviceId);
-    }
-
-    public FlashedToken selectFlashedToken(String token, String appName) {
-        log.info("Select flashed {}, app {}", token, appName);
+    public FlashedToken selectFlashedToken(String token) {
+        log.info("Select flashed token {}.", token);
 
         ResultSet rs = null;
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectToken)) {
 
             statement.setString(1, token);
-            statement.setString(2, appName);
             rs = statement.executeQuery();
             connection.commit();
 
             if (rs.next()) {
                 return new FlashedToken(rs.getString("token"), rs.getString("app_name"),
-                        rs.getString("email"), rs.getInt("device_id"),
+                        rs.getString("email"), rs.getInt("project_id"), rs.getInt("device_id"),
                         rs.getBoolean("is_activated"), rs.getDate("ts")
                 );
             }
@@ -92,5 +85,12 @@ public class FlashedTokensDBDao {
             ps.executeBatch();
             connection.commit();
         }
+    }
+
+    private static void insert(PreparedStatement ps, FlashedToken flashedToken) throws Exception {
+        ps.setString(1, flashedToken.token);
+        ps.setString(2, flashedToken.appName);
+        ps.setInt(3, flashedToken.dashId);
+        ps.setInt(4, flashedToken.deviceId);
     }
 }
