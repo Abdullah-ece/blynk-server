@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.MetaField;
 
 import java.util.Date;
 

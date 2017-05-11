@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.DataStream;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.JsonParser;

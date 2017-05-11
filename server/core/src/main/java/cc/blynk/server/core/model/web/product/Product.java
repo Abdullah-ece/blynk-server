@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.device.ConnectionType;
-import cc.blynk.server.core.model.web.product.metafields.MetaField;
 import cc.blynk.utils.JsonParser;
 
 /**
@@ -31,6 +30,8 @@ public class Product {
 
     public volatile DataStream[] dataStreams;
 
+    public volatile Event[] events;
+
     public int deviceCount;
 
     public volatile int version;
@@ -48,6 +49,7 @@ public class Product {
         this.logoUrl = updatedProduct.logoUrl;
         this.metaFields = updatedProduct.metaFields;
         this.dataStreams = updatedProduct.dataStreams;
+        this.events = updatedProduct.events;
         this.updatedAt = System.currentTimeMillis();
         this.version++;
     }

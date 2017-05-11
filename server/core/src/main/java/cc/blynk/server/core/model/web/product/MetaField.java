@@ -1,6 +1,7 @@
-package cc.blynk.server.core.model.web.product.metafields;
+package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.metafields.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -15,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "type")
 @JsonSubTypes({
 
-        //controls
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
         @JsonSubTypes.Type(value = RangeMetaField.class, name = "Range"),

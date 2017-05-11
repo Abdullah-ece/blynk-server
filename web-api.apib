@@ -388,6 +388,48 @@ HOST: https://knight-qa.blynk.cc/
                 "max" : 50.0,
                 "pin" : 0
               } ],
+              "events" : [ {
+                "type" : "ONLINE",
+                "name" : "Your device is online.",
+                "isNotificationsEnabled" : false,
+                "emailNotifications" : [ 1 ],
+                "pushNotifications" : [ 1 ],
+                "smsNotifications" : [ 1 ]
+              }, {
+                "type" : "ONLINE",
+                "name" : "Your device is offline.",
+                "isNotificationsEnabled" : false,
+                "emailNotifications" : [ 1 ],
+                "pushNotifications" : [ 1 ],
+                "smsNotifications" : [ 1 ]
+              }, {
+                "type" : "INFORMATION",
+                "name" : "Door is opened",
+                "isNotificationsEnabled" : false,
+                "emailNotifications" : [ 1 ],
+                "pushNotifications" : [ 1 ],
+                "smsNotifications" : [ 1 ],
+                "eventCode" : "door_opened",
+                "description" : "Kitchen door is opened."
+              }, {
+                "type" : "WARNING",
+                "name" : "Temperature is high!",
+                "isNotificationsEnabled" : false,
+                "emailNotifications" : [ 1 ],
+                "pushNotifications" : [ 1 ],
+                "smsNotifications" : [ 1 ],
+                "eventCode" : "temp_is_high",
+                "description" : "Room temp is high"
+              }, {
+                "type" : "CRITICAL",
+                "name" : "Temperature is super high!",
+                "isNotificationsEnabled" : false,
+                "emailNotifications" : [ 1 ],
+                "pushNotifications" : [ 1 ],
+                "smsNotifications" : [ 1 ],
+                "eventCode" : "temp_is_super_high",
+                "description" : "Room temp is super high"
+              } ],
               "deviceCount" : 0,
               "version" : 0
             }
