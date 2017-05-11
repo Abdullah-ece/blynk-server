@@ -9,7 +9,7 @@ import {Field} from 'redux-form';
 class Offline extends React.Component {
 
   static propTypes = {
-    form: React.PropTypes.object,
+    form: React.PropTypes.string,
     initialValues: React.PropTypes.object
   };
 

@@ -6,7 +6,7 @@ import {EVENT_TYPES} from 'services/Products';
 class Online extends React.Component {
 
   static propTypes = {
-    form: React.PropTypes.object,
+    form: React.PropTypes.string,
     initialValues: React.PropTypes.object
   };
 
