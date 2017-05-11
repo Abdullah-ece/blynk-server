@@ -20,6 +20,7 @@ class Events extends React.Component {
         const options = {
           form: `event${field.id}`,
           initialValues: {
+            name: field.values.name,
             isNotificationsEnabled: field.values.isNotificationsEnabled
           }
         };

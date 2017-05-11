@@ -11,11 +11,11 @@ class Offline extends React.Component {
 
     const format = "HH [hrs] mm [min]";
     return (
-      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form}>
+      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small" style={{width: '70%'}}>
-              <Input placeholder="Event Name"/>
+              <Input name="name" placeholder="Event Name"/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '30%'}}>
               <TimePicker defaultValue={moment('00:00', 'HH:mm')} format={format} style={{width: '100%'}}/>
