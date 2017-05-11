@@ -6,13 +6,14 @@ import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
 import FormItem from 'components/FormItem';
-import {EVENT_TYPES} from 'services/Products';
+import {EVENT_TYPES, Metadata} from 'services/Products';
 import {reduxForm, Field, formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
+    metadata: state.Product.edit.metadata.fields,
     fields: {
       isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
     }
@@ -24,7 +25,8 @@ class Base extends React.Component {
   static propTypes = {
     children: React.PropTypes.any,
     type: React.PropTypes.string,
-    fields: React.PropTypes.object
+    fields: React.PropTypes.object,
+    metadata: React.PropTypes.array
   };
 
   getPropsByType(type) {
@@ -80,11 +82,21 @@ class Base extends React.Component {
     return <Switch size="small" onChange={props.input.onChange} checked={!!props.input.value}/>;
   }
 
+  getMetadataContactFieldsWithEmail() {
+    return this.props.metadata.filter((field) => {
+      return field.type === Metadata.Fields.CONTACT && field.values && field.values.isEmailEnabled;
+    }).map((field) => (
+      <Select.Option key={field.id}>{field.values.name}</Select.Option>
+    ));
+  }
+
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
       'product-metadata-item-active': /*this.state.isActive*/ false,
     });
+
+    let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail();
 
     return (
       <div className={itemClasses}>
@@ -98,27 +110,15 @@ class Base extends React.Component {
                 </Item>
                 <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
                   <Item label="E-mail to" offset="normal">
-                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
-                      <Select.Option value="Location Owner">Location Owner</Select.Option>
-                      <Select.Option value="Product Owner">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 2">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 3">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 4">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 5">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 6">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact"
+                            notFoundContent="No any metadata contact field with Email">
+                      { notificationAvailableMetadataContactFields }
                     </Select>
                   </Item>
                   <Item label="PUSH to">
-                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
-                      <Select.Option value="Location Owner">Location Owner</Select.Option>
-                      <Select.Option value="Product Owner">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 2">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 3">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 4">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 5">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 6">Product Owner</Select.Option>
-                      <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact"
+                            notFoundContent="No any metadata contact field with Email">
+                      { notificationAvailableMetadataContactFields }
                     </Select>
                   </Item>
                 </FormItem>
