@@ -93,10 +93,6 @@ class BaseField extends React.Component {
     ]
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
-  }
-
   handleDelete() {
     this.props.onDelete(this.props.id);
   }
