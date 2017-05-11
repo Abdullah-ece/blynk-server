@@ -5,6 +5,11 @@ import {EVENT_TYPES} from 'services/Products';
 
 class Online extends React.Component {
 
+  static propTypes = {
+    form: React.PropTypes.object,
+    initialValues: React.PropTypes.object
+  };
+
   render() {
     return (
       <Base type={EVENT_TYPES.ONLINE} form={this.props.form} initialValues={this.props.initialValues}>

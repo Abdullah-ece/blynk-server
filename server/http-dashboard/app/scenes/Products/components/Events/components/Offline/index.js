@@ -8,16 +8,23 @@ import {Field} from 'redux-form';
 
 class Offline extends React.Component {
 
+  static propTypes = {
+    form: React.PropTypes.object,
+    initialValues: React.PropTypes.object
+  };
+
   ignorePeriod(props) {
     const format = "HH [hrs] mm [min]";
 
-    return <TimePicker
-      format={format}
-      style={{width: '100%'}}
-      onChange={props.input.onChange}
-      defaultValue={moment('00:00', 'HH:mm')}
-      value={moment(props.input.value, 'HH:mm')}
-    />
+    return (
+      <TimePicker
+        format={format}
+        style={{width: '100%'}}
+        onChange={props.input.onChange}
+        defaultValue={moment('00:00', 'HH:mm')}
+        value={moment(props.input.value, 'HH:mm')}
+      />
+    );
   }
 
   render() {

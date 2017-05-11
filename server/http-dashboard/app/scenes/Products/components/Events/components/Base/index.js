@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
     fields: {
       isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
     }
-  }
+  };
 })
 @reduxForm()
 class Base extends React.Component {
