@@ -6,6 +6,7 @@ import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
 import FormItem from 'components/FormItem';
+import {SimpleMatch} from 'services/Filters';
 import {EVENT_TYPES, Metadata} from 'services/Products';
 import {reduxForm, Field, formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
@@ -91,8 +92,24 @@ class Base extends React.Component {
     return this.props.metadata.filter((field) => {
       return field.type === Metadata.Fields.CONTACT && field.values && field.values.isEmailEnabled;
     }).map((field) => (
-      <Select.Option key={field.id}>{field.values.name}</Select.Option>
+      <Select.Option key={field.values.name} value={(field.id).toString()}>{field.values.name}</Select.Option>
     ));
+  }
+
+  notificationSelect(props) {
+
+    return (
+      <Select mode="multiple"
+              onChange={props.input.onChange}
+              value={props.input.value || []}
+              style={{width: '100%'}}
+              placeholder="Select contact"
+              allowClear={true}
+              filterOption={(value, option) => SimpleMatch(value, option.key)}
+              notFoundContent={!props.options.length ? 'No any metadata Contact field with Email' : 'No any field matches your request'}>
+        { props.options }
+      </Select>
+    );
   }
 
   render() {
@@ -115,16 +132,14 @@ class Base extends React.Component {
                 </Item>
                 <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
                   <Item label="E-mail to" offset="normal">
-                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact"
-                            notFoundContent="No any metadata contact field with Email">
-                      { notificationAvailableMetadataContactFields }
-                    </Select>
+                    <Field name="emailNotifications"
+                           component={this.notificationSelect}
+                           options={notificationAvailableMetadataContactFields}/>
                   </Item>
                   <Item label="PUSH to">
-                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact"
-                            notFoundContent="No any metadata contact field with Email">
-                      { notificationAvailableMetadataContactFields }
-                    </Select>
+                    <Field name="pushNotifications"
+                           component={this.notificationSelect}
+                           options={notificationAvailableMetadataContactFields}/>
                   </Item>
                 </FormItem>
               </Col>
