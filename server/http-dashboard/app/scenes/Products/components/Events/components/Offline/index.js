@@ -14,10 +14,10 @@ class Offline extends React.Component {
       <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}>
         <Base.Content>
           <ItemsGroup>
-            <Item label="Offline Event" offset="small" style={{width: '70%'}}>
-              <Input name="name" placeholder="Event Name"/>
+            <Item label="Offline Event" offset="small" style={{width: '55%'}}>
+              <Input name="name" placeholder="Event Name" style={{width: '100%'}}/>
             </Item>
-            <Item label="Ignore Period" offset="small" style={{width: '30%'}}>
+            <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
               <TimePicker defaultValue={moment('00:00', 'HH:mm')} format={format} style={{width: '100%'}}/>
             </Item>
           </ItemsGroup>
