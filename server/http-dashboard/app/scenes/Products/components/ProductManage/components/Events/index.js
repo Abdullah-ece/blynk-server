@@ -21,7 +21,9 @@ class Events extends React.Component {
           form: `event${field.id}`,
           initialValues: {
             name: field.values.name,
-            isNotificationsEnabled: field.values.isNotificationsEnabled
+            isNotificationsEnabled: field.values.isNotificationsEnabled,
+            emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
+            pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
           }
         };
 
