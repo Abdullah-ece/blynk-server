@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form} from 'components/UI';
 import {Field} from 'redux-form';
-import {Checkbox} from 'antd';
+import Checkbox from './checkbox';
 import Static from './default-static';
 
 class Default extends React.Component {
@@ -15,10 +15,11 @@ class Default extends React.Component {
     return name[0].toUpperCase() + name.substr(1);
   }
 
-  checkbox(props) {
-    return (
-      <Checkbox onChange={props.input.onChange} checked={!!props.input.value}>{props.placeholder}</Checkbox>
-    );
+  shouldComponentUpdate(nextProps) {
+    return this.props.isChecked !== nextProps.isChecked ||
+      this.props.value !== nextProps.value ||
+      this.props.placeholder !== nextProps.placeholder ||
+      this.props.prefix !== nextProps.prefix
   }
 
   render() {
@@ -27,7 +28,7 @@ class Default extends React.Component {
         <Form.Item>
           <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`}
                  placeholder={this.props.placeholder}
-                 component={this.checkbox}/>
+                 component={Checkbox}/>
         </Form.Item>
       </Form.Items>
     );

@@ -43,6 +43,10 @@ class BaseField extends React.Component {
     field: React.PropTypes.object,
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+  }
+
   Unit = {
     'Length, Distance': {
       'Imperial': [
@@ -88,10 +92,6 @@ class BaseField extends React.Component {
       Unit.Kelvin
     ]
   };
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
-  }
 
   handleDelete() {
     this.props.onDelete(this.props.id);
