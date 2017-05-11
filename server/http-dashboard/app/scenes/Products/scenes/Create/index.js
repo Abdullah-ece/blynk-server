@@ -78,7 +78,8 @@ class Create extends React.Component {
         {
           name: 'Offline name',
           type: "OFFLINE",
-          isNotificationsEnabled: true
+          isNotificationsEnabled: true,
+          ignorePeriod: '12 hrs 5 min'
         },
         {
           name: "Info event",

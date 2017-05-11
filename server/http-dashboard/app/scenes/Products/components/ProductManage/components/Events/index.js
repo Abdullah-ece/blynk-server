@@ -17,7 +17,7 @@ class Events extends React.Component {
 
       fields.filter(filterByTypes).forEach((field, key) => {
 
-        const options = {
+        let options = {
           form: `event${field.id}`,
           initialValues: {
             name: field.values.name,
@@ -32,6 +32,15 @@ class Events extends React.Component {
         }
 
         if (field.type === EVENT_TYPES.OFFLINE) {
+
+          options = {
+            ...options,
+            initialValues: {
+              ...options.initialValues,
+              ignorePeriod: field.values.ignorePeriod
+            }
+          };
+
           elements.push(
             <Offline key={key} {...options}/>
           );
