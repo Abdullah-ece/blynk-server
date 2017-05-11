@@ -47,18 +47,45 @@ class Events extends React.Component {
         }
 
         if (field.type === EVENT_TYPES.INFO) {
+
+          options = {
+            ...options,
+            initialValues: {
+              ...options.initialValues,
+              eventCode: field.values.eventCode
+            }
+          };
+
           elements.push(
             <Info key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.WARNING) {
+
+          options = {
+            ...options,
+            initialValues: {
+              ...options.initialValues,
+              eventCode: field.values.eventCode
+            }
+          };
+
           elements.push(
             <Warning key={key} {...options}/>
           );
         }
 
         if (field.type === EVENT_TYPES.CRITICAL) {
+
+          options = {
+            ...options,
+            initialValues: {
+              ...options.initialValues,
+              eventCode: field.values.eventCode
+            }
+          };
+
           elements.push(
             <Critical key={key} {...options}/>
           );

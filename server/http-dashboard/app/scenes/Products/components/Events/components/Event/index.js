@@ -44,8 +44,8 @@ class Event extends React.Component {
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
               <Input name="name" placeholder="Event Name" style={{width: '55%'}}/>
             </Item>
-            <Item label="Event Code" offset="normal" style={{width: '45%'}}>
-              <Input placeholder="Event code"/>
+            <Item label="Event Code" offset="normal">
+              <Input name="eventCode" placeholder="Event code" style={{width: '45%'}}/>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">

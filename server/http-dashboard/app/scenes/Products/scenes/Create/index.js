@@ -84,17 +84,20 @@ class Create extends React.Component {
         {
           name: "Info event",
           type: "INFORMATION",
-          isNotificationsEnabled: true
+          isNotificationsEnabled: true,
+          eventCode: 'flush_info'
         },
         {
           name: "Warning event",
           type: "WARNING",
-          isNotificationsEnabled: true
+          isNotificationsEnabled: true,
+          eventCode: 'flush_warning'
         },
         {
           name: "Critical event",
           type: "CRITICAL",
-          isNotificationsEnabled: true
+          isNotificationsEnabled: true,
+          eventCode: 'flush_error'
         }
       ]
     });
