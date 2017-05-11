@@ -9,6 +9,7 @@ import FormItem from 'components/FormItem';
 import {EVENT_TYPES, Metadata} from 'services/Products';
 import {reduxForm, Field, formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
+import _ from 'lodash';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -28,6 +29,10 @@ class Base extends React.Component {
     fields: React.PropTypes.object,
     metadata: React.PropTypes.array
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
+  }
 
   getPropsByType(type) {
 
