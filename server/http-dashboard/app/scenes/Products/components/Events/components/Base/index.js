@@ -5,15 +5,17 @@ import Tools from './tools';
 import Preview from './preview';
 import Content from './content';
 import {Item} from 'components/UI';
+import FormItem from 'components/FormItem';
 import {EVENT_TYPES} from 'services/Products';
-import {reduxForm} from 'redux-form';
+import {reduxForm, Field} from 'redux-form';
 
 @reduxForm()
 class Base extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.any,
-    type: React.PropTypes.string
+    type: React.PropTypes.string,
+    fields: React.PropTypes.object
   };
 
   getPropsByType(type) {
@@ -65,6 +67,10 @@ class Base extends React.Component {
     return element || null;
   }
 
+  switch(props) {
+    return <Switch size="small" onChange={props.input.onChange} checked={!!props.input.value}/>;
+  }
+
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
@@ -79,32 +85,34 @@ class Base extends React.Component {
               <Col span={13}>
                 { this.getChildrenByType(Content.displayName) }
                 <Item offset="small">
-                  <Switch size="small"/> Notifications
+                  <Field name="isNotificationsEnabled" component={this.switch}/> Notifications
                 </Item>
-                <Item label="E-mail to" offset="normal">
-                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
-                    <Select.Option value="Location Owner">Location Owner</Select.Option>
-                    <Select.Option value="Product Owner">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 2">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 3">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 4">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 5">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 6">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 7">Product Owner</Select.Option>
-                  </Select>
-                </Item>
-                <Item label="PUSH to">
-                  <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
-                    <Select.Option value="Location Owner">Location Owner</Select.Option>
-                    <Select.Option value="Product Owner">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 2">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 3">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 4">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 5">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 6">Product Owner</Select.Option>
-                    <Select.Option value="Product Owner 7">Product Owner</Select.Option>
-                  </Select>
-                </Item>
+                <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
+                  <Item label="E-mail to" offset="normal">
+                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
+                      <Select.Option value="Location Owner">Location Owner</Select.Option>
+                      <Select.Option value="Product Owner">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 2">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 3">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 4">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 5">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 6">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                    </Select>
+                  </Item>
+                  <Item label="PUSH to">
+                    <Select mode="tags" style={{width: '100%'}} placeholder="Select contact">
+                      <Select.Option value="Location Owner">Location Owner</Select.Option>
+                      <Select.Option value="Product Owner">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 2">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 3">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 4">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 5">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 6">Product Owner</Select.Option>
+                      <Select.Option value="Product Owner 7">Product Owner</Select.Option>
+                    </Select>
+                  </Item>
+                </FormItem>
               </Col>
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
