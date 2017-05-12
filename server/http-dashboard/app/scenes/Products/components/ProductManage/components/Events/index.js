@@ -38,8 +38,8 @@ class Events extends React.Component {
   handleFieldDelete(values) {
     if (values.id) {
 
-      let fields = this.props.fields.remove(
-        (field) => Number(field.id) === Number(values.id) || Number(field.values.id) === Number(values.id)
+      let fields = this.props.fields.filter(
+        (field) => Number(field.id) !== Number(values.id)
       );
 
       this.props.onFieldsChange(fields);
@@ -56,10 +56,11 @@ class Events extends React.Component {
 
     if (fields && Array.isArray(fields)) {
 
-      fields.filter(filterByTypes).forEach((field, key) => {
+      fields.filter(filterByTypes).forEach((field) => {
 
         let options = {
           form: `event${field.id}`,
+          key: `event${field.id}`,
           initialValues: {
             id: field.id,
             name: field.values.name,
@@ -73,7 +74,7 @@ class Events extends React.Component {
 
         if (field.type === EVENT_TYPES.ONLINE) {
           elements.push(
-            <Online key={key} {...options}/>
+            <Online {...options}/>
           );
         }
 
@@ -88,7 +89,7 @@ class Events extends React.Component {
           };
 
           elements.push(
-            <Offline key={key} {...options}/>
+            <Offline {...options}/>
           );
         }
 
@@ -104,7 +105,7 @@ class Events extends React.Component {
           };
 
           elements.push(
-            <Info key={key} {...options}/>
+            <Info {...options}/>
           );
         }
 
@@ -120,7 +121,7 @@ class Events extends React.Component {
           };
 
           elements.push(
-            <Warning key={key} {...options}/>
+            <Warning {...options}/>
           );
         }
 
@@ -136,7 +137,7 @@ class Events extends React.Component {
           };
 
           elements.push(
-            <Critical key={key} {...options}/>
+            <Critical {...options}/>
           );
         }
 

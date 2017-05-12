@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import {Timeline, Row, Col, Switch, Select} from 'antd';
+import {Timeline, Row, Col, Switch, Select, Button, Popconfirm, Icon} from 'antd';
 import Tools from './tools';
 import Preview from './preview';
 import Content from './content';
@@ -17,6 +17,7 @@ import _ from 'lodash';
   return {
     metadata: state.Product.edit.metadata.fields,
     fields: {
+      id: selector(state, 'id'),
       isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
     }
   };
@@ -28,7 +29,10 @@ class Base extends React.Component {
     children: React.PropTypes.any,
     type: React.PropTypes.string,
     fields: React.PropTypes.object,
-    metadata: React.PropTypes.array
+    metadata: React.PropTypes.array,
+    onDelete: React.PropTypes.func,
+    tools: React.PropTypes.bool,
+    anyTouched: React.PropTypes.bool
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -112,6 +116,32 @@ class Base extends React.Component {
     );
   }
 
+  handleConfirmDelete() {
+    this.props.onDelete(this.props.fields);
+  }
+
+  toolsPopconfirmDeleteButton() {
+    return (
+      <Popconfirm title="Are you sure?" overlayClassName="danger"
+                  onConfirm={this.handleConfirmDelete.bind(this)}
+        // onCancel={this.handleCancelDelete.bind(this)}
+                  okText="Yes, Delete"
+                  cancelText="Cancel">
+        <Button icon="delete" size="small"
+          // onClick={this.markAsActive.bind(this)}
+        />
+      </Popconfirm>
+    );
+  }
+
+  toolsDeleteButton() {
+    return (
+      <Button size="small" icon="delete"
+              onClick={this.handleConfirmDelete.bind(this)}
+      />
+    );
+  }
+
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
@@ -146,9 +176,15 @@ class Base extends React.Component {
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
               </Col>
-              <Col span={1}>
-                { this.getChildrenByType(Tools.displayName) }
-              </Col>
+              { this.props.tools && (
+                <Col span={1} className="product-events-event-tools">
+                  <Icon type="bars" className="cursor-move"/>
+
+                  { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
+
+                  <Button icon="copy" size="small"/>
+                </Col>
+              )}
             </Row>
           </Timeline.Item>
         </Timeline>

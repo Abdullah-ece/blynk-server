@@ -1,7 +1,6 @@
 import React from 'react';
 import {Base} from '../../index';
 import {ItemsGroup, Item, Input} from 'components/UI';
-import {Button, Icon} from 'antd';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
 
@@ -12,7 +11,8 @@ class Event extends React.Component {
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
     onChange: React.PropTypes.func,
-    onDelete: React.PropTypes.func
+    onDelete: React.PropTypes.func,
+    anyTouched: React.PropTypes.bool
   };
 
   constructor(props) {
@@ -41,6 +41,7 @@ class Event extends React.Component {
 
     return (
       <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}
+            tools={true}
             onChange={this.props.onChange}
             onDelete={this.props.onDelete}>
         <Base.Content>
@@ -61,11 +62,6 @@ class Event extends React.Component {
             Blynk.logEvent(flush_error);
           </Item>
         </Base.Preview>
-        <Base.Tools>
-          <Icon type="bars" className="cursor-move"/>
-          <Button icon="delete" size="small"/>
-          <Button icon="copy" size="small"/>
-        </Base.Tools>
       </Base>
     );
   }
