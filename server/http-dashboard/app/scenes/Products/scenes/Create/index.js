@@ -11,11 +11,12 @@ import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
   ProductEditClearFields,
+  ProductEditEventsFieldsUpdate,
   ProductEditMetadataFieldUpdate,
   ProductEditMetadataFieldsUpdate,
   ProductEditDataStreamsFieldUpdate,
   ProductEditDataStreamsFieldsUpdate,
-  ProductEditInfoValuesUpdate
+  ProductEditInfoValuesUpdate,
 } from 'data/Product/actions';
 import ProductCreate from 'scenes/Products/components/ProductCreate';
 
@@ -32,6 +33,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
+  ProductEditEventsFieldsUpdate: bindActionCreators(ProductEditEventsFieldsUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
   ProductEditMetadataFieldsUpdate: bindActionCreators(ProductEditMetadataFieldsUpdate, dispatch),
   ProductEditDataStreamsFieldUpdate: bindActionCreators(ProductEditDataStreamsFieldUpdate, dispatch),
@@ -54,6 +56,7 @@ class Create extends React.Component {
     ProductEditClearFields: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
+    ProductEditEventsFieldsUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
     ProductEditMetadataFieldsUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
@@ -180,6 +183,10 @@ class Create extends React.Component {
     this.props.ProductEditMetadataFieldsUpdate(values);
   }
 
+  onEventsFieldsChange(field) {
+    this.props.ProductEditEventsFieldsUpdate(field);
+  }
+
   onDataStreamsFieldChange(field) {
     this.props.ProductEditDataStreamsFieldUpdate(field);
   }
@@ -201,6 +208,7 @@ class Create extends React.Component {
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
                      onInfoValuesChange={this.onInfoValuesChange.bind(this)}
+                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
                      onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                      onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
                      onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}

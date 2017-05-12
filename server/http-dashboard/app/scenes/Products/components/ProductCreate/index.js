@@ -19,6 +19,7 @@ class ProductCreate extends React.Component {
     handleCancel: React.PropTypes.func,
     handleSubmit: React.PropTypes.func,
     onInfoValuesChange: React.PropTypes.func,
+    onEventsFieldsChange: React.PropTypes.func,
     onMetadataFieldChange: React.PropTypes.func,
     onMetadataFieldsChange: React.PropTypes.func,
     onDataStreamsFieldChange: React.PropTypes.func,
@@ -166,8 +167,8 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Events</span>} key={TABS.EVENTS}>
-              <EventsTab fields={this.props.product.events.fields} /*
-               onFieldChange={this.props.onDataStreamsFieldChange}
+              <EventsTab fields={this.props.product.events.fields}
+                         onFieldsChange={this.props.onEventsFieldsChange}/*
                onFieldsChange={this.props.onDataStreamsFieldsChange}*//>
             </Tabs.TabPane>
 

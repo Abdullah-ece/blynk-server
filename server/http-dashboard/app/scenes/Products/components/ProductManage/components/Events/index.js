@@ -5,7 +5,9 @@ import {EVENT_TYPES} from 'services/Products';
 class Events extends React.Component {
 
   static propTypes = {
-    fields: React.PropTypes.array
+    fields: React.PropTypes.array,
+
+    onEventsFieldsChange: React.PropTypes.func
   };
 
   getFieldsForTypes(fields, types) {
