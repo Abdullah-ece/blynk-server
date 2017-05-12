@@ -351,8 +351,52 @@ export const prepareProductForSave = (data) => {
   const product = {
     ...data.info.values,
     metaFields: [],
-    dataStreams: []
+    dataStreams: [],
+    events: []
   };
+
+  if (Array.isArray(data.events.fields) && Array.isArray(data.metadata.fields)) {
+    data.events.fields.forEach((event) => {
+
+      const transformIgnorePeriod = (event) => {
+        if (event.ignorePeriod) {
+          delete event.ignorePeriod;
+        }
+        return {...event};
+      };
+
+      const transformNotifications = (event, type) => {
+
+        if (event[type]) {
+          event[type] = event[type].map((contactId) => {
+            const metadata = _.find(data.metadata.fields, {id: Number(contactId)});
+            return {
+              type: 'Contact',
+              value: metadata.values.name
+            }
+          });
+        }
+
+        delete event.id;
+
+        return {
+          ...event
+        }
+      };
+
+      let transformed = {
+        type: event.type,
+        ...event.values
+      };
+
+      transformed = transformNotifications(transformed, 'pushNotifications');
+      transformed = transformNotifications(transformed, 'emailNotifications');
+      transformed = transformIgnorePeriod(transformed, 'emailNotifications');
+
+      product.events.push(transformed);
+
+    });
+  }
 
   if (Array.isArray(data.metadata.fields)) {
     data.metadata.fields.forEach((value) => {
