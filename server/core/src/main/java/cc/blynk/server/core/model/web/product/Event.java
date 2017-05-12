@@ -28,10 +28,10 @@ public abstract class Event {
 
     public boolean isNotificationsEnabled;
 
-    public int[] emailNotifications;
+    public EventReceiver[] emailNotifications;
 
-    public int[] pushNotifications;
+    public EventReceiver[] pushNotifications;
 
-    public int[] smsNotifications;
+    public EventReceiver[] smsNotifications;
 
 }

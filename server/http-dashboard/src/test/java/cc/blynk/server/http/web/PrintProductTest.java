@@ -2,10 +2,7 @@ package cc.blynk.server.http.web;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.DataStream;
-import cc.blynk.server.core.model.web.product.Event;
-import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.InformationEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
@@ -56,41 +53,44 @@ public class PrintProductTest {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
+        EventReceiver eventReceiver = new EventReceiver(1, "META_FIELD", "Farm Owner");
+
         OnlineEvent onlineEvent = new OnlineEvent();
         onlineEvent.name = "Your device is online.";
-        onlineEvent.emailNotifications = new int[]{1};
-        onlineEvent.pushNotifications = new int[]{1};
-        onlineEvent.smsNotifications = new int[]{1};
+        onlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
+        onlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
+        onlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
+
 
         OnlineEvent offlineEvent = new OnlineEvent();
         offlineEvent.name = "Your device is offline.";
-        offlineEvent.emailNotifications = new int[]{1};
-        offlineEvent.pushNotifications = new int[]{1};
-        offlineEvent.smsNotifications = new int[]{1};
+        offlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
+        offlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
+        offlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
 
         InformationEvent infoEvent = new InformationEvent();
         infoEvent.name = "Door is opened";
         infoEvent.eventCode = "door_opened";
         infoEvent.description = "Kitchen door is opened.";
-        infoEvent.emailNotifications = new int[]{1};
-        infoEvent.pushNotifications = new int[]{1};
-        infoEvent.smsNotifications = new int[]{1};
+        infoEvent.emailNotifications = new EventReceiver[]{eventReceiver};
+        infoEvent.pushNotifications = new EventReceiver[]{eventReceiver};
+        infoEvent.smsNotifications = new EventReceiver[]{eventReceiver};
 
         WarningEvent warningEvent = new WarningEvent();
         warningEvent.name = "Temperature is high!";
         warningEvent.eventCode = "temp_is_high";
         warningEvent.description = "Room temp is high";
-        warningEvent.emailNotifications = new int[]{1};
-        warningEvent.pushNotifications = new int[]{1};
-        warningEvent.smsNotifications = new int[]{1};
+        warningEvent.emailNotifications = new EventReceiver[]{eventReceiver};
+        warningEvent.pushNotifications = new EventReceiver[]{eventReceiver};
+        warningEvent.smsNotifications = new EventReceiver[]{eventReceiver};
 
         CriticalEvent criticalEvent = new CriticalEvent();
         criticalEvent.name = "Temperature is super high!";
         criticalEvent.eventCode = "temp_is_super_high";
         criticalEvent.description = "Room temp is super high";
-        criticalEvent.emailNotifications = new int[]{1};
-        criticalEvent.pushNotifications = new int[]{1};
-        criticalEvent.smsNotifications = new int[]{1};
+        criticalEvent.emailNotifications = new EventReceiver[]{eventReceiver};
+        criticalEvent.pushNotifications = new EventReceiver[]{eventReceiver};
+        criticalEvent.smsNotifications = new EventReceiver[]{eventReceiver};
 
 
         product.events = new Event[] {
