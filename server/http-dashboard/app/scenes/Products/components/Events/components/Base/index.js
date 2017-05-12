@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import {Timeline, Row, Col, Button, Popconfirm, Icon} from 'antd';
 import Preview from './preview';
 import Content from './content';
+import Static from './static';
 import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
 import {reduxForm, formValueSelector, getFormValues, getFormSyncErrors} from 'redux-form';
@@ -172,6 +173,7 @@ class Base extends React.Component {
 
 }
 
+Base.Static = Static;
 Base.Preview = Preview;
 Base.Content = Content;
 

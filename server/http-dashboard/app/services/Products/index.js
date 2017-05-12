@@ -373,7 +373,7 @@ export const prepareProductForSave = (data) => {
             return {
               type: 'Contact',
               value: metadata.values.name
-            }
+            };
           });
         }
 
@@ -381,7 +381,7 @@ export const prepareProductForSave = (data) => {
 
         return {
           ...event
-        }
+        };
       };
 
       let transformed = {

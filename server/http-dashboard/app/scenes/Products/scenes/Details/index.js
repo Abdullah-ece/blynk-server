@@ -4,6 +4,7 @@ import './styles.less';
 import Info from './scenes/Info';
 import Metadata from './scenes/Metadata';
 import DataStreams from './scenes/DataStreams';
+import Events from './scenes/Events';
 import * as API from 'data/Product/api';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -137,6 +138,9 @@ class ProductDetails extends React.Component {
             </Tabs.TabPane>
             <Tabs.TabPane tab="Data Streams" key={TABS.DATA_STREAMS}>
               <DataStreams product={this.state.product}/>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Events" key={TABS.EVENTS}>
+              <Events fields={this.state.product.events}/>
             </Tabs.TabPane>
           </Tabs>
           <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}

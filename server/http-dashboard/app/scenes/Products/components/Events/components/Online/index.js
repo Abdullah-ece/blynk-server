@@ -2,6 +2,7 @@ import React from 'react';
 import {Base} from '../../index';
 import {Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
+import Static from './static';
 
 class Online extends React.Component {
 
@@ -30,4 +31,5 @@ class Online extends React.Component {
 
 }
 
+Online.Static = Static;
 export default Online;
