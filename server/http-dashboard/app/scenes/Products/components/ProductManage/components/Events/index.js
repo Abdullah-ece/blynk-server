@@ -43,7 +43,7 @@ class Events extends React.Component {
       if (values.name && field.values.name === values.name && Number(props.fields.id) !== Number(field.id)) {
         errors.name = 'Name should be unique';
       }
-      if (field.values.eventCode === values.eventCode && Number(props.fields.id) !== Number(field.id)) {
+      if (values.eventCode && field.values.eventCode === values.eventCode && Number(props.fields.id) !== Number(field.id)) {
         errors.eventCode = 'Code should be unique';
       }
     });

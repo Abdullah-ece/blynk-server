@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.less';
 import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {connect} from 'react-redux';
-import {submit} from 'redux-form';
+import {submit, getFormSyncErrors} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
@@ -20,12 +20,26 @@ import {
 } from 'data/Product/actions';
 import ProductCreate from 'scenes/Products/components/ProductCreate';
 
-@connect((state) => ({
-  product: state.Product.edit,
-  products: state.Product.products,
-  isProductInfoInvalid: state.Product.edit.info.invalid,
-  isMetadataFirstTime: state.Storage.products.metadataFirstTime,
-}), (dispatch) => ({
+@connect((state) => {
+
+  let eventsForms = [];
+
+  if (state.Product.edit.events && Array.isArray(state.Product.edit.events.fields)) {
+    eventsForms = state.Product.edit.events.fields.map((field) => {
+      return {
+        syncErrors: getFormSyncErrors(`event${field.id}`)(state)
+      };
+    });
+  }
+
+  return {
+    product: state.Product.edit,
+    products: state.Product.products,
+    eventsForms: eventsForms,
+    isProductInfoInvalid: state.Product.edit.info.invalid,
+    isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+  }
+}, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
@@ -91,6 +105,15 @@ class Create extends React.Component {
   }
 
   isMetadataFormInvalid() {
+    if (Array.isArray(this.props.product.metadata.fields)) {
+      return this.props.product.metadata.fields.some((field) => {
+        return field.invalid;
+      });
+    }
+    return false;
+  }
+
+  isEventsFormInvalid() {
     if (Array.isArray(this.props.product.metadata.fields)) {
       return this.props.product.metadata.fields.some((field) => {
         return field.invalid;
