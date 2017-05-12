@@ -23,7 +23,6 @@ class Events extends React.Component {
       fields[fieldIndex] = {
         ...fields[fieldIndex],
         values: {
-          ...fields[fieldIndex].values,
           ...values
         }
       };
