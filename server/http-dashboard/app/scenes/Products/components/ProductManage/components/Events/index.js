@@ -1,6 +1,7 @@
 import React from 'react';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
+import {getNextId} from 'services/Entity';
 import _ from 'lodash';
 
 class Events extends React.Component {
@@ -155,6 +156,18 @@ class Events extends React.Component {
     return this.getFieldsForTypes(fields, [EVENT_TYPES.INFO, EVENT_TYPES.WARNING, EVENT_TYPES.CRITICAL]);
   }
 
+  handleAddField(type) {
+
+    this.props.onFieldsChange([
+      ...this.props.fields,
+      {
+        id: getNextId(this.props.fields),
+        type: type,
+        values: {}
+      }
+    ]);
+  }
+
   render() {
 
     const staticFields = this.getStaticFields(this.props.fields);
@@ -164,7 +177,7 @@ class Events extends React.Component {
       <div className="product-events-list">
         { staticFields }
         { dynamicFields }
-        <Add />
+        <Add handleSubmit={this.handleAddField.bind(this)}/>
       </div>
     );
   }
