@@ -13,7 +13,8 @@ export const Messages = {
   number: 'Field should contain number',
   latitude: 'Latitude is not correct',
   longitude: 'Longitude is not correct',
-  metafieldName: 'Field is not correct'
+  metafieldName: 'Field is not correct',
+  eventsEventCode: 'Event code is not correct'
 };
 
 export const Rules = {
@@ -30,6 +31,9 @@ export const Rules = {
   longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
   metafieldName: (value) => {
     if (value && !value.trim()) return Messages.metafieldName;
+  },
+  eventsEventCode: (value) => {
+    if (!/^[a-zA-Z0-9_]{1,}$/.test(value)) return Messages.eventsEventCode
   }
 };
 

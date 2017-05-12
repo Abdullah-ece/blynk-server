@@ -54,7 +54,8 @@ class Event extends React.Component {
                      validate={[Validation.Rules.required]}/>
             </Item>
             <Item label="Event Code" offset="normal">
-              <Input name="eventCode" placeholder="Event code" style={{width: '45%'}}/>
+              <Input name="eventCode" placeholder="Event code" style={{width: '45%'}}
+                     validate={[Validation.Rules.required, Validation.Rules.eventsEventCode]}/>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
