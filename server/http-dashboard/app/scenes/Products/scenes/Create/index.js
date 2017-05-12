@@ -72,40 +72,7 @@ class Create extends React.Component {
       boardType: HARDWARES["Particle Electron"].key,
       connectionType: CONNECTIONS_TYPES["GSM"].key,
       metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : [],
-      events: [
-        {
-          name: 'Online name',
-          type: "ONLINE",
-          isNotificationsEnabled: true
-        },
-        {
-          name: 'Offline name',
-          type: "OFFLINE",
-          isNotificationsEnabled: true,
-          ignorePeriod: '12 hrs 5 min'
-        },
-        {
-          name: "Info event",
-          type: "INFORMATION",
-          isNotificationsEnabled: true,
-          eventCode: 'flush_info',
-          description: 'Info description'
-        },
-        {
-          name: "Warning event",
-          type: "WARNING",
-          isNotificationsEnabled: true,
-          eventCode: 'flush_warning',
-          description: 'Warning description'
-        },
-        {
-          name: "Critical event",
-          type: "CRITICAL",
-          isNotificationsEnabled: true,
-          eventCode: 'flush_error',
-          description: 'Critical description'
-        }
-      ]
+      events: []
     });
   }
 
