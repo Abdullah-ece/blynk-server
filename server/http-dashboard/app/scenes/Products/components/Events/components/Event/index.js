@@ -3,6 +3,7 @@ import {Base} from '../../index';
 import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
+import Validation from 'services/Validation';
 
 class Event extends React.Component {
 
@@ -49,7 +50,8 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
-              <Input name="name" placeholder="Event Name" style={{width: '55%'}}/>
+              <Input name="name" placeholder="Event Name" style={{width: '55%'}}
+                     validate={[Validation.Rules.required]}/>
             </Item>
             <Item label="Event Code" offset="normal">
               <Input name="eventCode" placeholder="Event code" style={{width: '45%'}}/>

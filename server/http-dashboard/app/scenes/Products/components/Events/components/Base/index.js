@@ -21,7 +21,9 @@ import _ from 'lodash';
     }
   };
 })
-@reduxForm()
+@reduxForm({
+  touchOnChange: true
+})
 class Base extends React.Component {
 
   static propTypes = {
