@@ -77,6 +77,7 @@ class Events extends React.Component {
         values: {
           ...original.values,
           name: original.values.name ? `${original.values.name} Copy` : '',
+          eventCode: original.values.eventCode ? `${original.values.eventCode}_copy` : '',
         },
         id: getNextId(this.props.fields)
       };
