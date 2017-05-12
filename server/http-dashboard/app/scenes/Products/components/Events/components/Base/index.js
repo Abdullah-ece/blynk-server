@@ -1,13 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
-import {Timeline, Row, Col, Switch, Select, Button, Popconfirm, Icon} from 'antd';
+import {Timeline, Row, Col, Button, Popconfirm, Icon} from 'antd';
 import Preview from './preview';
 import Content from './content';
-import {Item} from 'components/UI';
-import FormItem from 'components/FormItem';
-import {SimpleMatch} from 'services/Filters';
-import {EVENT_TYPES, Metadata} from 'services/Products';
-import {reduxForm, Field, formValueSelector} from 'redux-form';
+import Notifications from './notifications';
+import {EVENT_TYPES} from 'services/Products';
+import {reduxForm, formValueSelector, getFormValues} from 'redux-form';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
@@ -18,7 +16,8 @@ import _ from 'lodash';
     fields: {
       id: selector(state, 'id'),
       isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
-    }
+    },
+    formValues: getFormValues(ownProps.form)(state)
   };
 })
 @reduxForm({
@@ -34,11 +33,12 @@ class Base extends React.Component {
     onClone: React.PropTypes.func,
     onDelete: React.PropTypes.func,
     tools: React.PropTypes.bool,
-    anyTouched: React.PropTypes.bool
+    anyTouched: React.PropTypes.bool,
+    formValues: React.PropTypes.any
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
+    return !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
   getPropsByType(type) {
@@ -90,34 +90,6 @@ class Base extends React.Component {
     return element || null;
   }
 
-  switch(props) {
-    return <Switch size="small" onChange={props.input.onChange} checked={!!props.input.value}/>;
-  }
-
-  getMetadataContactFieldsWithEmail() {
-    return this.props.metadata.filter((field) => {
-      return field.type === Metadata.Fields.CONTACT && field.values && field.values.isEmailEnabled;
-    }).map((field) => (
-      <Select.Option key={field.values.name} value={(field.id).toString()}>{field.values.name}</Select.Option>
-    ));
-  }
-
-  notificationSelect(props) {
-
-    return (
-      <Select mode="multiple"
-              onChange={props.input.onChange}
-              value={props.input.value || []}
-              style={{width: '100%'}}
-              placeholder="Select contact"
-              allowClear={true}
-              filterOption={(value, option) => SimpleMatch(value, option.key)}
-              notFoundContent={!props.options.length ? 'No any metadata Contact field with Email' : 'No any field matches your request'}>
-        { props.options }
-      </Select>
-    );
-  }
-
   handleConfirmDelete() {
     this.props.onDelete(this.props.fields);
   }
@@ -161,8 +133,6 @@ class Base extends React.Component {
       'product-metadata-item-active': /*this.state.isActive*/ false,
     });
 
-    let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail();
-
     return (
       <div className={itemClasses}>
         <Timeline>
@@ -170,21 +140,7 @@ class Base extends React.Component {
             <Row gutter={8}>
               <Col span={13}>
                 { this.getChildrenByType(Content.displayName) }
-                <Item offset="small">
-                  <Field name="isNotificationsEnabled" component={this.switch}/> Notifications
-                </Item>
-                <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
-                  <Item label="E-mail to" offset="normal">
-                    <Field name="emailNotifications"
-                           component={this.notificationSelect}
-                           options={notificationAvailableMetadataContactFields}/>
-                  </Item>
-                  <Item label="PUSH to">
-                    <Field name="pushNotifications"
-                           component={this.notificationSelect}
-                           options={notificationAvailableMetadataContactFields}/>
-                  </Item>
-                </FormItem>
+                <Notifications metadata={this.props.metadata} fields={this.props.fields}/>
               </Col>
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }
