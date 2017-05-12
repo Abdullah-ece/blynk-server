@@ -1,5 +1,5 @@
 import React from 'react';
-import {Online, Offline, Info, Warning, Critical} from 'scenes/Products/components/Events';
+import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
 
@@ -164,6 +164,7 @@ class Events extends React.Component {
       <div className="product-events-list">
         { staticFields }
         { dynamicFields }
+        <Add />
       </div>
     );
   }

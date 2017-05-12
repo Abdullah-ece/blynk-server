@@ -6,3 +6,4 @@ export Event from './components/Event';
 export Info from './components/Info';
 export Warning from './components/Warning';
 export Critical from './components/Critical';
+export Add from './components/Add';

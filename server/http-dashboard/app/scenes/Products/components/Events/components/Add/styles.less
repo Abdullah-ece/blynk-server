@@ -1,0 +1,35 @@
+@import 'components/Layout/style-guide';
+
+.add-info-event-button {
+
+}
+
+.add-warning-event-button {
+  color: @color-warning;
+  border-color: @color-warning;
+  &:hover {
+    color: @color-warning;
+    border-color: @color-warning;
+  }
+  &:active {
+    background-color: @color-warning-25;
+    box-shadow: 0 0 0 2px @color-warning-25;
+  }
+}
+
+.add-critical-event-button {
+  color: @color-critical;
+  border-color: @color-critical;
+  &:hover {
+    color: @color-critical;
+    border-color: @color-critical;
+  }
+  &:active {
+    background-color: @color-critical-25;
+    box-shadow: 0 0 0 2px @color-critical-25;
+  }
+}
+
+.add-info-event-button, .add-critical-event-button, .add-warning-event-button {
+  min-width: 100px;
+}
