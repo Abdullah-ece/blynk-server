@@ -35,6 +35,20 @@ class Events extends React.Component {
     }
   }
 
+  handleFieldDelete(values) {
+    if (values.id) {
+
+      let fields = this.props.fields.remove(
+        (field) => Number(field.id) === Number(values.id) || Number(field.values.id) === Number(values.id)
+      );
+
+      this.props.onFieldsChange(fields);
+
+    } else {
+      throw Error('Missing id parameter for handleFieldDelete');
+    }
+  }
+
   getFieldsForTypes(fields, types) {
     const elements = [];
 
@@ -53,7 +67,8 @@ class Events extends React.Component {
             emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
             pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
           },
-          onChange: this.handleFieldChange.bind(this)
+          onChange: this.handleFieldChange.bind(this),
+          onDelete: this.handleFieldDelete.bind(this)
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {

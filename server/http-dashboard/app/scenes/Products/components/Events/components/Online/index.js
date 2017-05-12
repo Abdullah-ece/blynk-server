@@ -8,13 +8,15 @@ class Online extends React.Component {
   static propTypes = {
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onDelete: React.PropTypes.func
   };
 
   render() {
     return (
       <Base type={EVENT_TYPES.ONLINE} form={this.props.form} initialValues={this.props.initialValues}
-            onChange={this.props.onChange}>
+            onChange={this.props.onChange}
+            onDelete={this.props.onDelete}>
         <Base.Content>
           <Item label="Online Event" offset="small">
             <Input name="name" placeholder="Event Name"/>
