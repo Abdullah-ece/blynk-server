@@ -1,7 +1,6 @@
 import React from 'react';
 import {Base} from '../../index';
 import {ItemsGroup, Item, Input} from 'components/UI';
-import {Button, Icon} from 'antd';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
 
@@ -63,11 +62,6 @@ class Event extends React.Component {
             Blynk.logEvent(flush_error);
           </Item>
         </Base.Preview>
-        <Base.Tools>
-          <Icon type="bars" className="cursor-move"/>
-          <Button icon="delete" size="small"/>
-          <Button icon="copy" size="small"/>
-        </Base.Tools>
       </Base>
     );
   }
