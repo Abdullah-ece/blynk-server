@@ -47,6 +47,18 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_EDIT_EVENTS_FIELDS_UPDATE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          events: {
+            ...state.edit.events,
+            fields: action.data
+          }
+        }
+      };
+
     case "PRODUCT_EDIT_DATA_STREAMS_FIELDS_UPDATE":
       return {
         ...state,
