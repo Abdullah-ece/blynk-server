@@ -9,7 +9,8 @@ class Warning extends React.Component {
     initialValues: React.PropTypes.object,
     onChange: React.PropTypes.func,
     onClone: React.PropTypes.func,
-    onDelete: React.PropTypes.func
+    onDelete: React.PropTypes.func,
+    validate: React.PropTypes.func
   };
 
   render() {
@@ -17,6 +18,7 @@ class Warning extends React.Component {
       <Event type={EVENT_TYPES.WARNING} form={this.props.form} initialValues={this.props.initialValues}
              onChange={this.props.onChange}
              onClone={this.props.onClone}
+             validate={this.props.validate}
              onDelete={this.props.onDelete}/>
     );
   }

@@ -33,7 +33,7 @@ export const Rules = {
     if (value && !value.trim()) return Messages.metafieldName;
   },
   eventsEventCode: (value) => {
-    if (!/^[a-zA-Z0-9_]{1,}$/.test(value)) return Messages.eventsEventCode
+    if (!/^[a-zA-Z0-9_]{1,}$/.test(value)) return Messages.eventsEventCode;
   }
 };
 

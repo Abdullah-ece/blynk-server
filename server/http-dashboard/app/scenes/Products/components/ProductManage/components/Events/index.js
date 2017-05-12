@@ -37,6 +37,21 @@ class Events extends React.Component {
     }
   }
 
+  handleFieldValidation(values, props) {
+    const errors = {};
+
+    this.props.fields.forEach((field) => {
+      if (field.values.name === values.name && Number(props.fields.id) !== Number(field.id)) {
+        errors.name = 'Name should be unique';
+      }
+      if (field.values.eventCode === values.eventCode && Number(props.fields.id) !== Number(field.id)) {
+        errors.eventCode = 'Code should be unique';
+      }
+    });
+
+    return errors;
+  }
+
   handleFieldDelete(values) {
     if (values.id) {
 
@@ -97,7 +112,8 @@ class Events extends React.Component {
           },
           onChange: this.handleFieldChange.bind(this),
           onDelete: this.handleFieldDelete.bind(this),
-          onClone: this.handleFieldClone.bind(this)
+          onClone: this.handleFieldClone.bind(this),
+          validate: this.handleFieldValidation.bind(this),
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {

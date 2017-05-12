@@ -13,7 +13,8 @@ class Offline extends React.Component {
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
     onChange: React.PropTypes.func,
-    onDelete: React.PropTypes.func
+    onDelete: React.PropTypes.func,
+    validate: React.PropTypes.func
   };
 
   ignorePeriod(props) {
@@ -39,6 +40,7 @@ class Offline extends React.Component {
     return (
       <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}
             onChange={this.props.onChange}
+            validate={this.props.validate}
             onDelete={this.props.onDelete}>
         <Base.Content>
           <ItemsGroup>

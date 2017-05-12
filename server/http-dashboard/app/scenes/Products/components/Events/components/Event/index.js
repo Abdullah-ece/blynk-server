@@ -14,6 +14,7 @@ class Event extends React.Component {
     onChange: React.PropTypes.func,
     onDelete: React.PropTypes.func,
     onClone: React.PropTypes.func,
+    validate: React.PropTypes.func,
     anyTouched: React.PropTypes.bool
   };
 
@@ -46,6 +47,7 @@ class Event extends React.Component {
             tools={true}
             onChange={this.props.onChange}
             onClone={this.props.onClone}
+            validate={this.props.validate}
             onDelete={this.props.onDelete}>
         <Base.Content>
           <ItemsGroup>
