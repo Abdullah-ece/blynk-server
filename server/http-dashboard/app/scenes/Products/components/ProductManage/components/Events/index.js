@@ -10,6 +10,10 @@ class Events extends React.Component {
     onEventsFieldsChange: React.PropTypes.func
   };
 
+  handleFieldChange(values, dispatch, props) {
+    console.log(values, dispatch, props);
+  }
+
   getFieldsForTypes(fields, types) {
     const elements = [];
 
@@ -22,11 +26,13 @@ class Events extends React.Component {
         let options = {
           form: `event${field.id}`,
           initialValues: {
+            id: field.id,
             name: field.values.name,
             isNotificationsEnabled: field.values.isNotificationsEnabled,
             emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
             pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
-          }
+          },
+          onChange: this.handleFieldChange.bind(this)
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {

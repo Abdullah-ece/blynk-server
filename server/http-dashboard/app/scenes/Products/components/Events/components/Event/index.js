@@ -10,7 +10,8 @@ class Event extends React.Component {
   static propTypes = {
     type: React.PropTypes.string,
     form: React.PropTypes.string,
-    initialValues: React.PropTypes.object
+    initialValues: React.PropTypes.object,
+    onChange: React.PropTypes.func
   };
 
   constructor(props) {
@@ -38,7 +39,8 @@ class Event extends React.Component {
   render() {
 
     return (
-      <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}>
+      <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}
+            onChange={this.props.onChange}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">

@@ -10,7 +10,8 @@ class Offline extends React.Component {
 
   static propTypes = {
     form: React.PropTypes.string,
-    initialValues: React.PropTypes.object
+    initialValues: React.PropTypes.object,
+    onChange: React.PropTypes.func
   };
 
   ignorePeriod(props) {
@@ -30,7 +31,8 @@ class Offline extends React.Component {
   render() {
 
     return (
-      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}>
+      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}
+            onChange={this.props.onChange}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
