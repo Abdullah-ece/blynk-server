@@ -2,6 +2,7 @@ import React from 'react';
 import {Base} from '../../index';
 import {Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
+import Validation from 'services/Validation';
 
 class Online extends React.Component {
 
@@ -19,7 +20,7 @@ class Online extends React.Component {
             onDelete={this.props.onDelete}>
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <Input name="name" placeholder="Event Name"/>
+            <Input name="name" placeholder="Event Name" validate={[Validation.Rules.required]}/>
           </Item>
         </Base.Content>
       </Base>

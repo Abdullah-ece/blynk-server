@@ -5,6 +5,7 @@ import {TimePicker} from 'antd';
 import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import {Field} from 'redux-form';
+import Validation from 'services/Validation';
 
 class Offline extends React.Component {
 
@@ -42,7 +43,8 @@ class Offline extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
-              <Input name="name" placeholder="Event Name" style={{width: '55%'}}/>
+              <Input name="name" placeholder="Event Name" validate={[Validation.Rules.required]}
+                     style={{width: '55%'}}/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
               <Field name="ignorePeriod" component={this.ignorePeriod}/>
