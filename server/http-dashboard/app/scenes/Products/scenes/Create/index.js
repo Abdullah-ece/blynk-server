@@ -72,7 +72,17 @@ class Create extends React.Component {
       boardType: HARDWARES["Particle Electron"].key,
       connectionType: CONNECTIONS_TYPES["GSM"].key,
       metaFields: this.props.isMetadataFirstTime ? [exampleMetadataField] : [],
-      events: []
+      events: [
+        {
+          name: '',
+          type: "ONLINE"
+        },
+        {
+          name: '',
+          type: "OFFLINE",
+          ignorePeriod: '0 hrs 0 min'
+        }
+      ]
     });
   }
 
