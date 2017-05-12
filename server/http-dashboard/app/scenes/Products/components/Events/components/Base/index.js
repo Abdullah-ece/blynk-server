@@ -29,6 +29,7 @@ class Base extends React.Component {
     type: React.PropTypes.string,
     fields: React.PropTypes.object,
     metadata: React.PropTypes.array,
+    onClone: React.PropTypes.func,
     onDelete: React.PropTypes.func,
     tools: React.PropTypes.bool,
     anyTouched: React.PropTypes.bool
@@ -119,6 +120,10 @@ class Base extends React.Component {
     this.props.onDelete(this.props.fields);
   }
 
+  handleClone() {
+    this.props.onClone(this.props.fields);
+  }
+
   toolsPopconfirmDeleteButton() {
     return (
       <Popconfirm title="Are you sure?" overlayClassName="danger"
@@ -138,6 +143,13 @@ class Base extends React.Component {
       <Button size="small" icon="delete"
               onClick={this.handleConfirmDelete.bind(this)}
       />
+    );
+  }
+
+  toolsCloneButton() {
+    return (
+      <Button icon="copy" size="small"
+              onClick={this.handleClone.bind(this)}/>
     );
   }
 
@@ -181,7 +193,7 @@ class Base extends React.Component {
 
                   { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
 
-                  <Button icon="copy" size="small"/>
+                  { this.toolsCloneButton() }
                 </Col>
               )}
             </Row>

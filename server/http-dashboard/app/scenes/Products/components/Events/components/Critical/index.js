@@ -8,6 +8,7 @@ class Critical extends React.Component {
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
     onChange: React.PropTypes.func,
+    onClone: React.PropTypes.func,
     onDelete: React.PropTypes.func
   };
 
@@ -15,6 +16,7 @@ class Critical extends React.Component {
     return (
       <Event type={EVENT_TYPES.CRITICAL} form={this.props.form} initialValues={this.props.initialValues}
              onChange={this.props.onChange}
+             onClone={this.props.onClone}
              onDelete={this.props.onDelete}/>
     );
   }

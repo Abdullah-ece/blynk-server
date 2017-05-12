@@ -2,6 +2,7 @@ import React from 'react';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 import {getNextId} from 'services/Entity';
+import {arrayMove} from 'react-sortable-hoc';
 import _ from 'lodash';
 
 class Events extends React.Component {
@@ -50,6 +51,31 @@ class Events extends React.Component {
     }
   }
 
+  handleFieldClone(values) {
+    if (values.id) {
+
+      const originalIndex = _.findIndex(this.props.fields, {id: values.id});
+      const original = this.props.fields[originalIndex];
+
+      const copy = {
+        ...original,
+        values: {
+          ...original.values,
+          name: original.values.name ? `${original.values.name} Copy` : '',
+        },
+        id: getNextId(this.props.fields)
+      };
+
+      this.props.onFieldsChange(arrayMove([
+        ...this.props.fields,
+        copy
+      ], this.props.fields.length, originalIndex + 1));
+
+    } else {
+      throw Error('Missing id parameter for handleFieldClone');
+    }
+  }
+
   getFieldsForTypes(fields, types) {
     const elements = [];
 
@@ -70,7 +96,8 @@ class Events extends React.Component {
             pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
           },
           onChange: this.handleFieldChange.bind(this),
-          onDelete: this.handleFieldDelete.bind(this)
+          onDelete: this.handleFieldDelete.bind(this),
+          onClone: this.handleFieldClone.bind(this)
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {
