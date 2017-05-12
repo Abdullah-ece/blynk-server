@@ -4,7 +4,19 @@ import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
 import Validation from 'services/Validation';
+import {formValueSelector, getFormSyncErrors, getFormMeta} from 'redux-form';
+import {connect} from 'react-redux';
 
+@connect((state, ownProps) => {
+  const selector = formValueSelector(ownProps.form);
+  return {
+    fields: {
+      eventCode: selector(state, 'eventCode')
+    },
+    fieldsErrors: getFormSyncErrors(ownProps.form)(state),
+    values: getFormMeta(ownProps.form)(state)
+  };
+})
 class Event extends React.Component {
 
   static propTypes = {
@@ -15,7 +27,10 @@ class Event extends React.Component {
     onDelete: React.PropTypes.func,
     onClone: React.PropTypes.func,
     validate: React.PropTypes.func,
-    anyTouched: React.PropTypes.bool
+    anyTouched: React.PropTypes.bool,
+    fields: React.PropTypes.any,
+    fieldsErrors: React.PropTypes.any,
+    values: React.PropTypes.any
   };
 
   constructor(props) {
@@ -38,6 +53,15 @@ class Event extends React.Component {
     if (EVENT_TYPES.CRITICAL === type) {
       return "Critical event";
     }
+  }
+
+  getPreviewProps() {
+    const values = this.props.values;
+    return {
+      isValid: !(this.props.fieldsErrors && this.props.fieldsErrors.eventCode),
+      isEmpty: !(this.props.fields.eventCode),
+      isTouched: ( values && values.eventCode && values.eventCode.touched)
+    };
   }
 
   render() {
@@ -64,11 +88,15 @@ class Event extends React.Component {
             <Input name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>
-        <Base.Preview>
+        <Base.Preview {...this.getPreviewProps()} valid={
           <Item label="Code Preview" offset="small">
-            Blynk.logEvent(flush_error);
+            Blynk.logEvent({ this.props.fields.eventCode })
           </Item>
-        </Base.Preview>
+        } invalid={
+          <Item label="Code Preview" offset="small">
+            <div className="product-metadata-item--preview--unavailable">No Preview available</div>
+          </Item>
+        }/>
       </Base>
     );
   }
