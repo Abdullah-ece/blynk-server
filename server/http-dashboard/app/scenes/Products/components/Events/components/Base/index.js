@@ -5,7 +5,7 @@ import Preview from './preview';
 import Content from './content';
 import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
-import {reduxForm, formValueSelector, getFormValues} from 'redux-form';
+import {reduxForm, formValueSelector, getFormValues, getFormSyncErrors} from 'redux-form';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
@@ -17,7 +17,8 @@ import _ from 'lodash';
       id: selector(state, 'id'),
       isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
     },
-    formValues: getFormValues(ownProps.form)(state)
+    formValues: getFormValues(ownProps.form)(state),
+    fieldsErrors: getFormSyncErrors(ownProps.form)(state),
   };
 })
 @reduxForm({
@@ -34,11 +35,12 @@ class Base extends React.Component {
     onDelete: React.PropTypes.func,
     tools: React.PropTypes.bool,
     anyTouched: React.PropTypes.bool,
-    formValues: React.PropTypes.any
+    formValues: React.PropTypes.any,
+    fieldsErrors: React.PropTypes.any,
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
+    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
   getPropsByType(type) {

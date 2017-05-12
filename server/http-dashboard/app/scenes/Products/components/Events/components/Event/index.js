@@ -4,7 +4,7 @@ import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
 import Validation from 'services/Validation';
-import {formValueSelector, getFormSyncErrors, getFormMeta} from 'redux-form';
+import {formValueSelector, getFormSyncErrors, getFormMeta, getFormValues} from 'redux-form';
 import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
@@ -14,6 +14,7 @@ import {connect} from 'react-redux';
       eventCode: selector(state, 'eventCode')
     },
     fieldsErrors: getFormSyncErrors(ownProps.form)(state),
+    formValues: getFormValues(ownProps.form)(state),
     values: getFormMeta(ownProps.form)(state)
   };
 })
@@ -28,9 +29,10 @@ class Event extends React.Component {
     onClone: React.PropTypes.func,
     validate: React.PropTypes.func,
     anyTouched: React.PropTypes.bool,
+    formValues: React.PropTypes.any,
     fields: React.PropTypes.any,
     fieldsErrors: React.PropTypes.any,
-    values: React.PropTypes.any
+    values: React.PropTypes.any,
   };
 
   constructor(props) {
@@ -39,6 +41,10 @@ class Event extends React.Component {
     if (_.values(EVENT_TYPES).indexOf(props.type) === -1) {
       throw Error('Wrong props.type for Event');
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
   }
 
   getLabelForType(type) {
