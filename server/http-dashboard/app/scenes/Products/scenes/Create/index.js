@@ -38,7 +38,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     eventsForms: eventsForms,
     isProductInfoInvalid: state.Product.edit.info.invalid,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
-  }
+  };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
@@ -78,6 +78,7 @@ class Create extends React.Component {
 
     params: React.PropTypes.object,
     products: React.PropTypes.array,
+    eventsForms: React.PropTypes.array,
     product: React.PropTypes.object,
   };
 
@@ -114,10 +115,8 @@ class Create extends React.Component {
   }
 
   isEventsFormInvalid() {
-    if (Array.isArray(this.props.product.metadata.fields)) {
-      return this.props.product.metadata.fields.some((field) => {
-        return field.invalid;
-      });
+    if (Array.isArray(this.props.eventsForms)) {
+      return this.props.eventsForms.some((form) => !!form.syncErrors);
     }
     return false;
   }
@@ -147,6 +146,12 @@ class Create extends React.Component {
       });
     }
 
+    if (Array.isArray(this.props.product.events.fields)) {
+      this.props.product.events.fields.forEach((field) => {
+        this.props.submitFormById(`event${field.id}`);
+      });
+    }
+
     if (Array.isArray(this.props.product.dataStreams.fields)) {
       this.props.product.dataStreams.fields.forEach((field) => {
         this.props.submitFormById(`datastreamfield${field.id}`);
@@ -159,7 +164,7 @@ class Create extends React.Component {
       submited: true
     });
 
-    if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
+    if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
 
       this.props.Create(prepareProductForSave(this.props.product)).then(() => {
         this.context.router.push(`/products/?success=true`);
@@ -203,6 +208,7 @@ class Create extends React.Component {
     return (
       <ProductCreate product={this.props.product}
                      isInfoFormInvalid={this.props.isProductInfoInvalid}
+                     isEventsFormInvalid={this.isEventsFormInvalid()}
                      isMetadataFormInvalid={this.isMetadataFormInvalid()}
                      isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}

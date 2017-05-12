@@ -22,7 +22,9 @@ import _ from 'lodash';
   };
 })
 @reduxForm({
-  touchOnChange: true
+  touchOnChange: true,
+  onSubmit: () => {
+  }
 })
 class Base extends React.Component {
 

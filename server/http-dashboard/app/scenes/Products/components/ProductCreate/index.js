@@ -28,6 +28,7 @@ class ProductCreate extends React.Component {
 
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
+    isEventsFormInvalid: React.PropTypes.bool,
     isMetadataFormInvalid: React.PropTypes.bool,
     isDataStreamsFormInvalid: React.PropTypes.bool,
 
@@ -107,6 +108,11 @@ class ProductCreate extends React.Component {
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   }
 
+  productEventsInvalidIcon() {
+    return this.state.submited && this.props.isEventsFormInvalid &&
+      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  }
+
   handleSubmit() {
 
     this.setState({
@@ -166,7 +172,7 @@ class ProductCreate extends React.Component {
                               onFieldsChange={this.props.onDataStreamsFieldsChange}/>
             </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Events</span>} key={TABS.EVENTS}>
+            <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS}>
               <EventsTab fields={this.props.product.events.fields}
                          onFieldsChange={this.props.onEventsFieldsChange}/*
                onFieldsChange={this.props.onDataStreamsFieldsChange}*//>
