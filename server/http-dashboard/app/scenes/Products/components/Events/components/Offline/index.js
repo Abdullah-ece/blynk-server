@@ -18,11 +18,15 @@ class Offline extends React.Component {
   ignorePeriod(props) {
     const format = "HH [hrs] mm [min]";
 
+    const onChange = (value) => {
+      props.input.onChange(value.format('HH [hrs] mm [min]'));
+    };
+
     return (
       <TimePicker
         format={format}
         style={{width: '100%'}}
-        onChange={props.input.onChange}
+        onChange={onChange}
         defaultValue={moment('00:00', 'HH:mm')}
         value={moment(props.input.value, 'HH:mm')}
       />
