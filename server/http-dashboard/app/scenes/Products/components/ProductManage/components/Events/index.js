@@ -1,17 +1,38 @@
 import React from 'react';
 import {Online, Offline, Info, Warning, Critical} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
+import _ from 'lodash';
 
 class Events extends React.Component {
 
   static propTypes = {
     fields: React.PropTypes.array,
 
-    onEventsFieldsChange: React.PropTypes.func
+    onFieldsChange: React.PropTypes.func
   };
 
-  handleFieldChange(values, dispatch, props) {
-    console.log(values, dispatch, props);
+  handleFieldChange(values, /*dispatch, props*/) {
+    if (values.id) {
+
+      let fields = [...this.props.fields];
+
+      const fieldIndex = _.findIndex(this.props.fields, {id: values.id});
+
+      fields[fieldIndex] = {
+        ...fields[fieldIndex],
+        values: {
+          ...fields[fieldIndex].values,
+          ...values
+        }
+      };
+
+      this.props.onFieldsChange(
+        fields
+      );
+
+    } else {
+      throw Error('Missing id parameter for handleFieldChange');
+    }
   }
 
   getFieldsForTypes(fields, types) {
