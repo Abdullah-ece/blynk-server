@@ -9,6 +9,6 @@ import cc.blynk.server.core.model.web.product.Event;
  */
 public class OnlineEvent extends Event {
 
-
+    public int ignorePeriod;
 
 }

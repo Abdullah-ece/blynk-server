@@ -3,10 +3,7 @@ package cc.blynk.server.http.web;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.*;
-import cc.blynk.server.core.model.web.product.events.CriticalEvent;
-import cc.blynk.server.core.model.web.product.events.InformationEvent;
-import cc.blynk.server.core.model.web.product.events.OnlineEvent;
-import cc.blynk.server.core.model.web.product.events.WarningEvent;
+import cc.blynk.server.core.model.web.product.events.*;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.JsonParser;
 import org.junit.Test;
@@ -57,13 +54,15 @@ public class PrintProductTest {
 
         OnlineEvent onlineEvent = new OnlineEvent();
         onlineEvent.name = "Your device is online.";
+        onlineEvent.ignorePeriod = 1000;
         onlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
         onlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
         onlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
 
 
-        OnlineEvent offlineEvent = new OnlineEvent();
+        OfflineEvent offlineEvent = new OfflineEvent();
         offlineEvent.name = "Your device is offline.";
+        offlineEvent.ignorePeriod = 1000;
         offlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
         offlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
         offlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};

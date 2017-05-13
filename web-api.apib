@@ -391,6 +391,7 @@ HOST: https://knight-qa.blynk.cc/
               "events" : [ {
                 "type" : "ONLINE",
                 "name" : "Your device is online.",
+                "ignorePeriod" : 1000,
                 "isNotificationsEnabled" : false,
                 "emailNotifications" : [ {
                   "id" : 1,
@@ -408,8 +409,9 @@ HOST: https://knight-qa.blynk.cc/
                   "value" : "Farm Owner"
                 } ]
               }, {
-                "type" : "ONLINE",
+                "type" : "OFFLINE",
                 "name" : "Your device is offline.",
+                "ignorePeriod" : 1000,
                 "isNotificationsEnabled" : false,
                 "emailNotifications" : [ {
                   "id" : 1,
