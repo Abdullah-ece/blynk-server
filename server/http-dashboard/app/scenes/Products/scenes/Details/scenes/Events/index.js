@@ -1,5 +1,5 @@
 import React from 'react';
-import {Online, Offline, Info/*, Warning, Critical*/} from 'scenes/Products/components/Events';
+import {Online, Offline, Info, Warning/*, Critical*/} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 
 class Events extends React.Component {
@@ -61,22 +61,22 @@ class Events extends React.Component {
             <Info.Static {...options}/>
           );
         }
-        //
-        // if (field.type === EVENT_TYPES.WARNING) {
-        //
-        //   options = {
-        //     ...options,
-        //     values: {
-        //       ...options.values,
-        //       eventCode: field.values.eventCode,
-        //       description: field.values.description
-        //     }
-        //   };
-        //
-        //   elements.push(
-        //     <Warning.Static {...options}/>
-        //   );
-        // }
+
+        if (field.type === EVENT_TYPES.WARNING) {
+
+          options = {
+            ...options,
+            fields: {
+              ...options.fields,
+              eventCode: field.eventCode,
+              description: field.description
+            }
+          };
+
+          elements.push(
+            <Warning.Static {...options}/>
+          );
+        }
         //
         // if (field.type === EVENT_TYPES.CRITICAL) {
         //

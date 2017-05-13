@@ -1,6 +1,7 @@
 import React from 'react';
 import Event from './../Event';
 import {EVENT_TYPES} from 'services/Products';
+import Static from './static';
 
 class Warning extends React.Component {
 
@@ -25,4 +26,5 @@ class Warning extends React.Component {
 
 }
 
+Warning.Static = Static;
 export default Warning;
