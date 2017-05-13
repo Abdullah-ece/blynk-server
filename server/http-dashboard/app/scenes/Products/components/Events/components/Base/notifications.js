@@ -6,6 +6,7 @@ import FormItem from 'components/FormItem';
 import {Item} from 'components/UI';
 import {SimpleMatch} from 'services/Filters';
 import _ from 'lodash';
+import Static from './notifications-static';
 
 class Notifications extends React.Component {
 
@@ -73,4 +74,5 @@ class Notifications extends React.Component {
 
 }
 
+Notifications.Static = Static;
 export default Notifications;

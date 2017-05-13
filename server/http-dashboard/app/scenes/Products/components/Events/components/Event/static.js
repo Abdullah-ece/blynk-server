@@ -42,7 +42,7 @@ class Event extends React.Component {
   render() {
 
     return (
-      <Base.Static type={this.props.type}>
+      <Base.Static type={this.props.type} fields={this.props.fields}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '55%'}}>

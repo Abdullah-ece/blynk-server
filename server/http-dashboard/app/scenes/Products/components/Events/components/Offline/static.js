@@ -24,7 +24,7 @@ class Static extends React.Component {
   render() {
 
     return (
-      <Base.Static type={EVENT_TYPES.OFFLINE}>
+      <Base.Static type={EVENT_TYPES.OFFLINE} fields={this.props.fields}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small" style={{width: '65%'}}>

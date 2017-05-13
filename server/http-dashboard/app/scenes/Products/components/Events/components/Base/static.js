@@ -4,9 +4,13 @@ import {Timeline, Row, Col} from 'antd';
 import Preview from './preview';
 import Content from './content';
 import Static from './static';
-// import Notifications from './notifications';
+import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
+import {connect} from 'react-redux';
 
+@connect((state) => ({
+  metadata: state.Product.edit.metadata.fields
+}))
 class Base extends React.Component {
 
   static propTypes = {
@@ -83,7 +87,7 @@ class Base extends React.Component {
             <Row gutter={8}>
               <Col span={13}>
                 { this.getChildrenByType(Content.displayName) }
-                {/*<Notifications metadata={this.props.metadata} fields={this.props.fields}/>*/}
+                <Notifications.Static fields={this.props.fields}/>
               </Col>
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }

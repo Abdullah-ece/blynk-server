@@ -12,7 +12,7 @@ class Static extends React.Component {
   render() {
 
     return (
-      <Base.Static type={EVENT_TYPES.ONLINE}>
+      <Base.Static type={EVENT_TYPES.ONLINE} fields={this.props.fields}>
         <Base.Content>
           <Item label="Online Event" offset="small">
             <div className={`product-metadata-static-field ${!this.props.fields.name && 'no-value'}`}>

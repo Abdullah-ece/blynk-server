@@ -21,7 +21,9 @@ class Events extends React.Component {
           key: `event${field.name}${field.type}`,
           fields: {
             name: field.name,
-            isNotificationsEnabled: field.isNotificationsEnabled
+            isNotificationsEnabled: field.isNotificationsEnabled,
+            pushNotifications: field.pushNotifications,
+            emailNotifications: field.emailNotifications
           }
         };
 

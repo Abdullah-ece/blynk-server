@@ -334,7 +334,7 @@ export const prepareProductForEdit = (data) => {
           field = {
             ...field,
             ignorePeriod: moment().hours(hours || 0).minutes(minutes || 0).format()
-          }
+          };
         }
 
         const prepareNotifications = (event, type) => {
