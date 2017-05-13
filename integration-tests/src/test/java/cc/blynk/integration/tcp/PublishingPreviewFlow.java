@@ -117,6 +117,14 @@ public class PublishingPreviewFlow extends IntegrationBase {
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        FlashedToken flashedToken = holder.dbManager.selectFlashedToken(qrHolders[0].token);
+        assertNotNull(flashedToken);
+        assertEquals(flashedToken.appId, app.id);
+        assertEquals(1, flashedToken.dashId);
+        assertEquals(0, flashedToken.deviceId);
+        assertEquals(qrHolders[0].token, flashedToken.token);
+        assertEquals(false, flashedToken.isActivated);
     }
 
     @Test
@@ -181,7 +189,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("createDash " + dashBoard.toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("deleteDash 1" + "\0" + "child");
+        clientPair.appClient.send("deleteDash 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("loadProfileGzipped 1");
@@ -240,10 +248,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Profile profile = JsonParser.parseProfileFromString(clientPair.appClient.getBody(6));
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
-        assertEquals(0, profile.dashBoards.length);
+        assertEquals(1, profile.dashBoards.length);
 
         clientPair.appClient.send("loadProfileGzipped 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
+        response = clientPair.appClient.getBody(7);
+        assertNotNull(response);
     }
 
     private QrHolder[] makeQRs(String to, Device[] devices, int dashId, boolean onlyFirst) throws Exception {

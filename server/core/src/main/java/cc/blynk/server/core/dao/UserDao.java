@@ -284,11 +284,12 @@ public class UserDao {
         return newUser;
     }
 
-    public void add(String email, String pass, String appName) {
+    public User add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, Role.STAFF);
         newUser.status = UserStatus.Active;
         add(newUser);
+        return newUser;
     }
 
     public void add(String email, String pass, String appName, Role role) {

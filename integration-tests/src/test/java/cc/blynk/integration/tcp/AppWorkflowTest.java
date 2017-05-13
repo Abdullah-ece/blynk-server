@@ -70,7 +70,7 @@ public class AppWorkflowTest extends IntegrationBase {
         App app = JsonParser.parseApp(clientPair.appClient.getBody());
         assertNotNull(app);
         assertNotNull(app.id);
-        assertEquals(8, app.id.length());
+        assertEquals(13, app.id.length());
         assertEquals(Theme.Blynk, app.theme);
         assertEquals(ProvisionType.STATIC, app.provisionType);
         assertEquals(0, app.color);
@@ -91,6 +91,15 @@ public class AppWorkflowTest extends IntegrationBase {
         app = JsonParser.parseApp(clientPair.appClient.getBody(2));
         assertNotNull(app);
         assertNotNull(app.id);
+    }
+
+    @Test
+    public void testUnicodeName() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"Моя апка\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        assertEquals("Моя апка", app.name);
     }
 
     @Test
