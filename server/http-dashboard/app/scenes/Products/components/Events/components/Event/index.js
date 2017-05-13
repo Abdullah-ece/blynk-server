@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Validation from 'services/Validation';
 import {formValueSelector, getFormSyncErrors, getFormMeta, getFormValues} from 'redux-form';
 import {connect} from 'react-redux';
+import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -108,5 +109,7 @@ class Event extends React.Component {
   }
 
 }
+
+Event.Static = Static;
 
 export default Event;

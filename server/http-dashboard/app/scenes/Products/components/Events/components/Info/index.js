@@ -1,6 +1,7 @@
 import React from 'react';
 import Event from './../Event';
 import {EVENT_TYPES} from 'services/Products';
+import Static from './static';
 
 class Info extends React.Component {
 
@@ -24,5 +25,7 @@ class Info extends React.Component {
   }
 
 }
+
+Info.Static = Static;
 
 export default Info;
