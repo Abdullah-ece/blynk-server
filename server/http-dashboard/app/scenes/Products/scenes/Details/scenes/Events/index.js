@@ -1,5 +1,5 @@
 import React from 'react';
-import {Online, /*Offline, Info, Warning, Critical*/} from 'scenes/Products/components/Events';
+import {Online, Offline/*, Info, Warning, Critical*/} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 
 class Events extends React.Component {
@@ -18,7 +18,7 @@ class Events extends React.Component {
       fields.filter(filterByTypes).forEach((field) => {
 
         let options = {
-          key: `event${field.name}`,
+          key: `event${field.name}${field.type}`,
           fields: {
             name: field.name,
             isNotificationsEnabled: field.isNotificationsEnabled
@@ -31,20 +31,20 @@ class Events extends React.Component {
           );
         }
 
-        // if (field.type === EVENT_TYPES.OFFLINE) {
-        //
-        //   options = {
-        //     ...options,
-        //     values: {
-        //       ...options.values,
-        //       ignorePeriod: field.values.ignorePeriod
-        //     }
-        //   };
-        //
-        //   elements.push(
-        //     <Offline.Static {...options}/>
-        //   );
-        // }
+        if (field.type === EVENT_TYPES.OFFLINE) {
+
+          options = {
+            ...options,
+            fields: {
+              ...options.fields,
+              ignorePeriod: field.ignorePeriod
+            }
+          };
+
+          elements.push(
+            <Offline.Static {...options}/>
+          );
+        }
         //
         // if (field.type === EVENT_TYPES.INFO) {
         //

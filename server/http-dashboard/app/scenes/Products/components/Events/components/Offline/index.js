@@ -5,6 +5,7 @@ import {TimePicker} from 'antd';
 import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import {Field} from 'redux-form';
+import Static from './static';
 
 class Offline extends React.Component {
 
@@ -20,7 +21,7 @@ class Offline extends React.Component {
     const format = "HH [hrs] mm [min]";
 
     const onChange = (value) => {
-      props.input.onChange(value.format('HH [hrs] mm [min]'));
+      props.input.onChange(value);
     };
 
     return (
@@ -57,5 +58,8 @@ class Offline extends React.Component {
   }
 
 }
+
+
+Offline.Static = Static;
 
 export default Offline;

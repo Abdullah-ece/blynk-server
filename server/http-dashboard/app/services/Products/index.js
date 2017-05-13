@@ -359,10 +359,8 @@ export const prepareProductForSave = (data) => {
     data.events.fields.forEach((event) => {
 
       const transformIgnorePeriod = (event) => {
-        if (event.ignorePeriod) {
-          delete event.ignorePeriod;
-        }
-        return {...event};
+        event.ignorePeriod = moment.duration(moment(event.ignorePeriod).format('HH:mm')).asSeconds();
+        return event;
       };
 
       const transformNotifications = (event, type) => {
@@ -391,7 +389,7 @@ export const prepareProductForSave = (data) => {
 
       transformed = transformNotifications(transformed, 'pushNotifications');
       transformed = transformNotifications(transformed, 'emailNotifications');
-      transformed = transformIgnorePeriod(transformed, 'emailNotifications');
+      transformed = transformIgnorePeriod(transformed, 'pushNotifications');
 
       product.events.push(transformed);
 
