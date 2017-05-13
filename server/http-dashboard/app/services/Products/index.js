@@ -337,12 +337,34 @@ export const prepareProductForEdit = (data) => {
           }
         }
 
+        const prepareNotifications = (event, type) => {
+          if (event && Array.isArray(event[type])) {
+            return event[type].map((notification) => {
+              const metadata = _.find(edit.metadata.fields, {values: {name: notification.value}});
+              return metadata.id;
+            });
+          }
+          return [];
+        };
+
+        let pushNotifications = [];
+        if (Array.isArray(field.pushNotifications)) {
+          pushNotifications = prepareNotifications(field, 'pushNotifications');
+        }
+
+        let emailNotifications = [];
+        if (Array.isArray(field.emailNotifications)) {
+          emailNotifications = prepareNotifications(field, 'emailNotifications');
+        }
+
         return {
           id: id,
           type: field.type,
           values: {
             id: id,
-            ...field
+            ...field,
+            emailNotifications: emailNotifications,
+            pushNotifications: pushNotifications
           }
         };
       })) || [];
