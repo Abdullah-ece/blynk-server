@@ -4,6 +4,7 @@ import MetadataIntroductionMessage from "../MetadataIntroductionMessage";
 import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
 import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
 import DataStreamsTab from 'scenes/Products/components/ProductManage/components/DataStreams';
+import EventsTab from 'scenes/Products/components/ProductManage/components/Events';
 import ProductHeader from 'scenes/Products/components/ProductHeader';
 import ProductContent from 'scenes/Products/components/ProductContent';
 import {TABS} from 'services/Products';
@@ -19,6 +20,7 @@ class ProductEdit extends React.Component {
     handleCancel: React.PropTypes.func,
     handleSubmit: React.PropTypes.func,
     onInfoValuesChange: React.PropTypes.func,
+    onEventsFieldsChange: React.PropTypes.func,
     onMetadataFieldChange: React.PropTypes.func,
     onMetadataFieldsChange: React.PropTypes.func,
     onDataStreamsFieldChange: React.PropTypes.func,
@@ -27,6 +29,7 @@ class ProductEdit extends React.Component {
 
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
+    isEventsFormInvalid: React.PropTypes.bool,
     isMetadataFormInvalid: React.PropTypes.bool,
     isDataStreamsFormInvalid: React.PropTypes.bool,
 
@@ -103,6 +106,11 @@ class ProductEdit extends React.Component {
       <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   }
 
+  productEventsInvalidIcon() {
+    return this.state.submited && this.props.isEventsFormInvalid &&
+      <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
+  }
+
   handleSubmit() {
 
     this.setState({
@@ -161,6 +169,11 @@ class ProductEdit extends React.Component {
               <DataStreamsTab fields={this.props.product.dataStreams.fields}
                               onFieldChange={this.props.onDataStreamsFieldChange}
                               onFieldsChange={this.props.onDataStreamsFieldsChange}/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS}>
+              <EventsTab fields={this.props.product.events.fields}
+                         onFieldsChange={this.props.onEventsFieldsChange}/>
             </Tabs.TabPane>
 
           </Tabs>

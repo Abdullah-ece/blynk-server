@@ -26,13 +26,6 @@ export function ProductEditEventsFieldsUpdate(data = {}) {
   };
 }
 
-export function ProductEditEventsFieldsUpdate(data = {}) {
-  return {
-    type: 'PRODUCT_EDIT_EVENTS_FIELDS_UPDATE',
-    data: data
-  };
-}
-
 export function ProductEditDataStreamsFieldUpdate(data = {}) {
   return {
     type: 'PRODUCT_EDIT_DATA_STREAMS_FIELD_UPDATE',

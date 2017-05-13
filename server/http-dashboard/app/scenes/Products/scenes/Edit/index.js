@@ -10,6 +10,7 @@ import {prepareProductForSave, TABS} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
+  ProductEditEventsFieldsUpdate,
   ProductEditMetadataFieldUpdate,
   ProductEditMetadataFieldsUpdate,
   ProductEditDataStreamsFieldUpdate,
@@ -34,6 +35,7 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
   ProductEditMetadataFieldUpdate: bindActionCreators(ProductEditMetadataFieldUpdate, dispatch),
+  ProductEditEventsFieldsUpdate: bindActionCreators(ProductEditEventsFieldsUpdate, dispatch),
   ProductEditMetadataFieldsUpdate: bindActionCreators(ProductEditMetadataFieldsUpdate, dispatch),
   ProductEditDataStreamsFieldUpdate: bindActionCreators(ProductEditDataStreamsFieldUpdate, dispatch),
   ProductEditDataStreamsFieldsUpdate: bindActionCreators(ProductEditDataStreamsFieldsUpdate, dispatch),
@@ -58,6 +60,7 @@ class ProductCreate extends React.Component {
     ProductEditClearFields: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
+    ProductEditEventsFieldsUpdate: React.PropTypes.func,
     ProductEditMetadataFieldUpdate: React.PropTypes.func,
     ProductEditMetadataFieldsUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
@@ -66,6 +69,7 @@ class ProductCreate extends React.Component {
     params: React.PropTypes.object,
     products: React.PropTypes.array,
     product: React.PropTypes.object,
+    eventsForms: React.PropTypes.array,
   };
 
   constructor(props) {
@@ -91,6 +95,13 @@ class ProductCreate extends React.Component {
 
   getProduct() {
     return _.find(this.props.products, {id: Number(this.props.params.id)});
+  }
+
+  isEventsFormInvalid() {
+    if (Array.isArray(this.props.eventsForms)) {
+      return this.props.eventsForms.some((form) => !!form.syncErrors);
+    }
+    return false;
   }
 
   isMetadataFormInvalid() {
@@ -143,7 +154,7 @@ class ProductCreate extends React.Component {
       submited: true
     });
 
-    if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid()) {
+    if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
 
       this.props.Update(prepareProductForSave(this.props.product)).then(() => {
         if (this.state.activeTab) {
@@ -187,6 +198,10 @@ class ProductCreate extends React.Component {
     this.props.ProductEditMetadataFieldsUpdate(values);
   }
 
+  onEventsFieldsChange(field) {
+    this.props.ProductEditEventsFieldsUpdate(field);
+  }
+
   render() {
     if (!this.props.product.info.values.id)
       return null;
@@ -194,6 +209,7 @@ class ProductCreate extends React.Component {
     return (
       <ProductEdit product={this.props.product}
                    isInfoFormInvalid={this.props.isProductInfoInvalid}
+                   isEventsFormInvalid={this.isEventsFormInvalid()}
                    isMetadataFormInvalid={this.isMetadataFormInvalid()}
                    isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                    isMetadataInfoRead={!this.props.isMetadataFirstTime}
@@ -201,6 +217,7 @@ class ProductCreate extends React.Component {
                    onInfoValuesChange={this.onInfoValuesChange.bind(this)}
                    onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                    onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
+                   onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
                    onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
                    onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
                    handleSubmit={this.handleSubmit.bind(this)}
