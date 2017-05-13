@@ -30,7 +30,7 @@ class Offline extends React.Component {
         style={{width: '100%'}}
         onChange={onChange}
         defaultValue={moment('00:00', 'HH:mm')}
-        value={moment(props.input.value, 'HH:mm')}
+        value={moment(props.input.value)}
       />
     );
   }

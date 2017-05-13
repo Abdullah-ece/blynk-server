@@ -323,10 +323,25 @@ export const prepareProductForEdit = (data) => {
   id = 1;
   if (data.events) {
     edit.events.fields = (data.events && data.events.map((field) => {
+        ++id;
+
+        if (field.type === EVENT_TYPES.OFFLINE) {
+          let hours, minutes;
+          if (!isNaN(Number(field.ignorePeriod))) {
+            hours = moment.duration(field.ignorePeriod, 'seconds').hours();
+            minutes = moment.duration(field.ignorePeriod, 'seconds').minutes();
+          }
+          field = {
+            ...field,
+            ignorePeriod: moment().hours(hours || 0).minutes(minutes || 0).format()
+          }
+        }
+
         return {
-          id: ++id,
+          id: id,
           type: field.type,
           values: {
+            id: id,
             ...field
           }
         };
