@@ -9,6 +9,7 @@ import {EVENT_TYPES} from 'services/Products';
 import {reduxForm, formValueSelector, getFormValues, getFormSyncErrors} from 'redux-form';
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import {SortableHandle} from 'react-sortable-hoc';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -132,6 +133,8 @@ class Base extends React.Component {
     );
   }
 
+  toolsDragAndDropButton = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
+
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
@@ -152,7 +155,7 @@ class Base extends React.Component {
               </Col>
               { this.props.tools && (
                 <Col span={1} className="product-events-event-tools">
-                  <Icon type="bars" className="cursor-move"/>
+                  <this.toolsDragAndDropButton />
 
                   { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
 

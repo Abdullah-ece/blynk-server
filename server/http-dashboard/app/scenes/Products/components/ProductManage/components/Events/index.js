@@ -2,7 +2,7 @@ import React from 'react';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 import {getNextId} from 'services/Entity';
-import {arrayMove} from 'react-sortable-hoc';
+import {arrayMove, SortableContainer, SortableElement} from 'react-sortable-hoc';
 import _ from 'lodash';
 
 class Events extends React.Component {
@@ -137,54 +137,6 @@ class Events extends React.Component {
           );
         }
 
-        if (field.type === EVENT_TYPES.INFO) {
-
-          options = {
-            ...options,
-            initialValues: {
-              ...options.initialValues,
-              eventCode: field.values.eventCode,
-              description: field.values.description
-            }
-          };
-
-          elements.push(
-            <Info {...options}/>
-          );
-        }
-
-        if (field.type === EVENT_TYPES.WARNING) {
-
-          options = {
-            ...options,
-            initialValues: {
-              ...options.initialValues,
-              eventCode: field.values.eventCode,
-              description: field.values.description
-            }
-          };
-
-          elements.push(
-            <Warning {...options}/>
-          );
-        }
-
-        if (field.type === EVENT_TYPES.CRITICAL) {
-
-          options = {
-            ...options,
-            initialValues: {
-              ...options.initialValues,
-              eventCode: field.values.eventCode,
-              description: field.values.description
-            }
-          };
-
-          elements.push(
-            <Critical {...options}/>
-          );
-        }
-
       });
     }
 
@@ -196,7 +148,9 @@ class Events extends React.Component {
   }
 
   getDynamicFields(fields) {
-    return this.getFieldsForTypes(fields, [EVENT_TYPES.INFO, EVENT_TYPES.WARNING, EVENT_TYPES.CRITICAL]);
+    return fields.filter((field) => (
+      [EVENT_TYPES.INFO, EVENT_TYPES.WARNING, EVENT_TYPES.CRITICAL].indexOf(field.type) !== -1
+    ));
   }
 
   handleAddField(type) {
@@ -211,15 +165,109 @@ class Events extends React.Component {
     ]);
   }
 
+  SortableItem = SortableElement(({value}) => {
+
+    const field = value;
+
+    let options = {
+      form: `event${field.id}`,
+      key: `event${field.id}`,
+      initialValues: {
+        id: field.id,
+        name: field.values.name,
+        isNotificationsEnabled: field.values.isNotificationsEnabled,
+        emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
+        pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
+      },
+      onChange: this.handleFieldChange.bind(this),
+      onDelete: this.handleFieldDelete.bind(this),
+      onClone: this.handleFieldClone.bind(this),
+      validate: this.handleFieldValidation.bind(this),
+    };
+
+    if (field.type === EVENT_TYPES.INFO) {
+
+      options = {
+        ...options,
+        initialValues: {
+          ...options.initialValues,
+          eventCode: field.values.eventCode,
+          description: field.values.description
+        }
+      };
+
+      return (
+        <Info {...options}/>
+      );
+    }
+
+    if (field.type === EVENT_TYPES.WARNING) {
+
+      options = {
+        ...options,
+        initialValues: {
+          ...options.initialValues,
+          eventCode: field.values.eventCode,
+          description: field.values.description
+        }
+      };
+
+      return (
+        <Warning {...options}/>
+      );
+    }
+
+    if (field.type === EVENT_TYPES.CRITICAL) {
+
+      options = {
+        ...options,
+        initialValues: {
+          ...options.initialValues,
+          eventCode: field.values.eventCode,
+          description: field.values.description
+        }
+      };
+
+      return (
+        <Critical {...options}/>
+      );
+    }
+
+  });
+
+  SortableList = SortableContainer(({items}) => {
+    return (
+      <div>
+        {items.map((value, index) => {
+          return (
+            <this.SortableItem key={`item-${value.id}`} index={index} value={value}/>
+          );
+        })}
+      </div>
+    );
+  });
+
+  onSortEnd({oldIndex, newIndex}) {
+    const COUNT_OF_STATIC_FIELDS = 2;
+    this.props.onFieldsChange(
+      arrayMove(this.props.fields, oldIndex + COUNT_OF_STATIC_FIELDS, newIndex + COUNT_OF_STATIC_FIELDS)
+    );
+  }
+
   render() {
 
     const staticFields = this.getStaticFields(this.props.fields);
-    const dynamicFields = this.getDynamicFields(this.props.fields);
 
     return (
       <div className="product-events-list">
         { staticFields }
-        { dynamicFields }
+
+        <this.SortableList items={this.getDynamicFields(this.props.fields)} /*onSortEnd={this.onSortEnd.bind(this)}*/
+                           useDragHandle={true}
+                           onSortEnd={this.onSortEnd.bind(this)}
+                           lockAxis="y"
+                           helperClass="product-events-item-drag-active"/>
+
         <Add handleSubmit={this.handleAddField.bind(this)}/>
       </div>
     );
