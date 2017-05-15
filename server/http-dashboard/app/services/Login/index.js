@@ -20,7 +20,7 @@ export const RouteAuthorizedOnly = (store) => {
 export const RouteGuestOnly = (store) => {
   return (nextState, replaceWith, callback) => {
     if (isLoggedIn(store)) {
-      replaceWith('/account');
+      replaceWith('/products');
     }
     callback();
   };
