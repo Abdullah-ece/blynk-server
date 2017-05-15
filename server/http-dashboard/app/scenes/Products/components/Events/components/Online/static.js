@@ -15,7 +15,7 @@ class Static extends React.Component {
     return (
       <Base.Static type={EVENT_TYPES.ONLINE} fields={this.props.fields}>
         <Base.Content>
-          <Item label="Online Event" offset="small">
+          <Item label="Online Event" offset="normal">
             <FieldStub>{ this.props.fields.name }</FieldStub>
           </Item>
         </Base.Content>

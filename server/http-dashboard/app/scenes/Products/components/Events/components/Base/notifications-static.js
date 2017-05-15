@@ -33,7 +33,7 @@ class Notifications extends React.Component {
       <FormItem>
         <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
           {!!emailNotifications.length && (
-            <Item label="E-mail to" offset="normal">
+            <Item label="E-mail to" offset="extra-small">
               {emailNotifications}
             </Item>
           )}

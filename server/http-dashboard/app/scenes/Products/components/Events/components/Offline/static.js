@@ -31,7 +31,7 @@ class Static extends React.Component {
             <Item label="Offline Event" offset="small" style={{width: '65%'}}>
               <FieldStub>{this.props.fields.name}</FieldStub>
             </Item>
-            <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
+            <Item label="Ignore Period" offset="normal" style={{width: '45%'}}>
               <FieldStub>{ this.ignorePeriod() || '0 hrs 0 min' }</FieldStub>
             </Item>
           </ItemsGroup>

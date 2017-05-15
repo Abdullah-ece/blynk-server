@@ -57,7 +57,7 @@ class Event extends React.Component {
               </FieldStub>
             </Item>
           </ItemsGroup>
-          <Item label="Description" offset="small">
+          <Item label="Description" offset="normal">
             <FieldStub multipleLines={true}>
               { this.props.fields.description}
             </FieldStub>
