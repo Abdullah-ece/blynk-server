@@ -2,8 +2,9 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Form} from 'components/UI';
 import {Switch, Row, Col} from 'antd';
-import {formValueSelector, Field} from 'redux-form';
+import {formValueSelector, Field, change} from 'redux-form';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import {
@@ -58,7 +59,9 @@ import _ from 'lodash';
       }
     }
   };
-})
+}, (dispatch) => ({
+  updateFormField: bindActionCreators(change, dispatch)
+}))
 class ContactField extends BaseField {
 
   shouldComponentUpdate(nextProps) {
@@ -116,12 +119,26 @@ class ContactField extends BaseField {
     let events = [...this.props.events];
 
     const updated = events.map((event) => {
+
+      let emailNotifications = event.values.emailNotifications &&
+        event.values.emailNotifications.filter(
+          (id) => !(Number(id) === Number(this.props.id))
+        );
+
+      let pushNotifications = event.values.pushNotifications &&
+        event.values.pushNotifications.filter(
+          (id) => !(Number(id) === Number(this.props.id))
+        );
+
+      this.props.updateFormField(`event${event.id}`, `emailNotifications`, emailNotifications);
+      this.props.updateFormField(`event${event.id}`, `pushNotifications`, pushNotifications);
+
       const updated = {
         ...event,
         values: {
           ...event.values,
-          emailNotifications: event.values.emailNotifications && event.values.emailNotifications.filter((id) => !(Number(id) === Number(this.props.id))),
-          pushNotifications: event.values.pushNotifications && event.values.pushNotifications.filter((id) => !(Number(id) === Number(this.props.id)))
+          emailNotifications: emailNotifications,
+          pushNotifications: pushNotifications
         }
       };
       return updated;
