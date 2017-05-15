@@ -39,6 +39,7 @@
           }
         ],
         "transform-react-remove-prop-types",
+        "add-react-displayname",
         "transform-decorators-legacy",
         "transform-class-properties"
       ]
