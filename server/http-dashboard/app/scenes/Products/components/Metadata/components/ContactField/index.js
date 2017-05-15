@@ -161,7 +161,7 @@ class ContactField extends BaseField {
     if (this.isContactUsedOnEvents()) {
       popconfirmOptions = {
         onUncheck: true,
-        message: 'Are you sure mm..metadata..mm?',
+        message: <div>This contact is used on some<br/> Events Notifications.<br/> Are you sure?</div>,
         onConfirm: this.onUncheckEmail.bind(this)
       };
     }

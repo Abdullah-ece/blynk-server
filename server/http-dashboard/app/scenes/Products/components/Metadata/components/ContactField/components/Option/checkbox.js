@@ -9,7 +9,7 @@ class Checkbox extends React.Component {
     popconfirm: React.PropTypes.shape({
       onCheck: React.PropTypes.bool,
       onUncheck: React.PropTypes.bool,
-      message: React.PropTypes.string,
+      message: React.PropTypes.any,
       onCancel: React.PropTypes.func,
       onConfirm: React.PropTypes.func,
     }),
