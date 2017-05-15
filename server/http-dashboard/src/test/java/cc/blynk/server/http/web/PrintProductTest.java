@@ -54,7 +54,6 @@ public class PrintProductTest {
 
         OnlineEvent onlineEvent = new OnlineEvent();
         onlineEvent.name = "Your device is online.";
-        onlineEvent.ignorePeriod = 1000;
         onlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
         onlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
         onlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
