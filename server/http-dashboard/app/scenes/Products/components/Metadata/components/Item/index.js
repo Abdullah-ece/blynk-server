@@ -13,7 +13,9 @@ const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-mov
 import Static from './static';
 import _ from 'lodash';
 
-@connect(() => ({}), (dispatch) => ({
+@connect((state) => ({
+  events: state.Product.edit.events.fields
+}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
 }))
 @reduxForm({
@@ -22,6 +24,7 @@ import _ from 'lodash';
 class MetadataItem extends React.PureComponent {
 
   static propTypes = {
+    events: React.PropTypes.any,
     anyTouched: React.PropTypes.bool,
     invalid: React.PropTypes.bool,
     preview: React.PropTypes.object,
@@ -59,7 +62,7 @@ class MetadataItem extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
   }
 
   handleConfirmDelete() {

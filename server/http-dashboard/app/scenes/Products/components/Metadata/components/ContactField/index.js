@@ -12,6 +12,7 @@ import {
 } from './components/Option';
 import './styles.less';
 import Static from './static';
+import _ from 'lodash';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -60,6 +61,10 @@ import Static from './static';
 })
 class ContactField extends BaseField {
 
+  shouldComponentUpdate(nextProps) {
+    return !_.isEqual(this.props, nextProps);
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     let value = [];
@@ -94,12 +99,6 @@ class ContactField extends BaseField {
     };
   }
 
-  handleEmailCheckboxChange(/*event, value*/) {
-    // event.preventDefault();
-    // console.log('email checkbox change', event, value);
-    // this.props.events
-  }
-
   switch(props) {
     return (
       <Switch size="small" className="contact-field-allow-default-values-switch" checked={!!props.input.value}
@@ -109,7 +108,34 @@ class ContactField extends BaseField {
     );
   }
 
+  onUncheckEmail() {
+    this.removeContactFromEvents();
+  }
+
+  removeContactFromEvents() {
+    console.log('remove contact');
+  }
+
+  isContactUsedOnEvents() {
+    return this.props.events.some((event) => {
+      return (event.values.emailNotifications && event.values.emailNotifications.some((id) => (Number(id) === Number(this.props.id)))) || (
+          event.values.pushNotifications && event.values.pushNotifications.some((id) => (Number(id) === Number(this.props.id)))
+        );
+    });
+  }
+
   component() {
+
+    let popconfirmOptions = {};
+    if (this.isContactUsedOnEvents()) {
+      popconfirmOptions = {
+        onUncheck: true,
+        message: 'Are you sure mm..metadata..mm?',
+        onConfirm: this.onUncheckEmail.bind(this)
+      };
+    }
+
+    console.log(popconfirmOptions);
 
     return (
       <div>
@@ -143,8 +169,8 @@ class ContactField extends BaseField {
               <Form.Items offset="small">
                 <DefinedInput placeholder="E-mail address" prefix="email"
                               isChecked={this.props.fields.values.email.checked}
-                              onChange={this.handleEmailCheckboxChange.bind(this)}
-                              value={this.props.fields.values.email.value}/>
+                              value={this.props.fields.values.email.value}
+                              popconfirm={popconfirmOptions}/>
                 <DefinedInput placeholder="Phone number" prefix="phone"
                               isChecked={this.props.fields.values.phone.checked}
                               value={this.props.fields.values.phone.value}/>
@@ -181,13 +207,14 @@ class ContactField extends BaseField {
             <Col span={12}>
               <Form.Items offset="small">
                 <OptionDefault placeholder="E-mail address" prefix="email"
-                               onChange={this.handleEmailCheckboxChange.bind(this)}
                                isChecked={this.props.fields.values.email.checked}
-                               value={this.props.fields.values.email.value}/>
+                               value={this.props.fields.values.email.value}
+                               popconfirm={popconfirmOptions}
+                />
 
-                <OptionDefault placeholder="Phone number" prefix="phone"
-                               isChecked={this.props.fields.values.phone.checked}
-                               value={this.props.fields.values.phone.value}/>
+                < OptionDefault placeholder="Phone number" prefix="phone"
+                                isChecked={this.props.fields.values.phone.checked}
+                                value={this.props.fields.values.phone.value}/>
 
                 <OptionDefault placeholder="Street address" prefix="streetAddress"
                                isChecked={this.props.fields.values.streetAddress.checked}

@@ -11,12 +11,14 @@ class Input extends Default {
     placeholder: React.PropTypes.string,
     isChecked: React.PropTypes.any,
     value: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    popconfirm: React.PropTypes.object,
   };
 
   shouldComponentUpdate(nextProps) {
     return this.props.isChecked !== nextProps.isChecked ||
       this.props.value !== nextProps.value ||
+      this.props.popconfirm !== nextProps.popconfirm ||
       this.props.placeholder !== nextProps.placeholder;
   }
 
@@ -29,7 +31,9 @@ class Input extends Default {
     return (
       <Form.Items layout="inline">
         <Form.Item>
-          <Field {...props} name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`} component={Checkbox}/>
+          <Field {...props} name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`}
+                 popconfirm={this.props.popconfirm}
+                 component={Checkbox}/>
         </Form.Item>
         <Form.Item>
           <Form.Input disabled={!this.props.isChecked} name={`${this.props.prefix}`}

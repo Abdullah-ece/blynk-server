@@ -11,13 +11,15 @@ class Default extends React.Component {
     prefix: React.PropTypes.string,
     isChecked: React.PropTypes.any,
     value: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    popconfirm: React.PropTypes.object
   };
 
   shouldComponentUpdate(nextProps) {
     return this.props.isChecked !== nextProps.isChecked ||
       this.props.value !== nextProps.value ||
       this.props.placeholder !== nextProps.placeholder ||
+      this.props.popconfirm !== nextProps.popconfirm ||
       this.props.prefix !== nextProps.prefix;
   }
 
@@ -37,6 +39,7 @@ class Default extends React.Component {
           <Field name={`is${this.capitalizePrefix(this.props.prefix)}Enabled`}
                  {...props}
                  placeholder={this.props.placeholder}
+                 popconfirm={this.props.popconfirm}
                  component={Checkbox}/>
         </Form.Item>
       </Form.Items>
