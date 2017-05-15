@@ -1,12 +1,13 @@
 import React from 'react';
-import {Form} from 'components/UI';
 import {Checkbox} from 'antd';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 export default class Default extends React.Component {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
-    prefix: React.PropTypes.string
+    prefix: React.PropTypes.string,
+    isChecked: React.PropTypes.any,
   };
 
   capitalizePrefix(name) {
@@ -26,12 +27,9 @@ export default class Default extends React.Component {
   }
 
   render() {
+    if (!this.props.isChecked) return null;
     return (
-      <Form.Items offset="small">
-        <Form.Item className="contact-field-static">
-          {this.checkbox(this.props)}
-        </Form.Item>
-      </Form.Items>
+      <FieldStub inline={true}>{ this.props.placeholder }</FieldStub>
     );
   }
 

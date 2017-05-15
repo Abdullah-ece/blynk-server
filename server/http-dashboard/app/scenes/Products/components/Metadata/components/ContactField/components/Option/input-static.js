@@ -1,28 +1,19 @@
 import React from 'react';
-import {Form} from 'components/UI';
 import Default from './default';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 export default class Input extends Default.Static {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
-    isChecked: React.PropTypes.bool
+    isChecked: React.PropTypes.any
   };
 
-  DEFAULT_VALUE = 'No Value';
-
   render() {
+
+    if (!this.props.isChecked) return null;
     return (
-      <Form.Items layout="inline">
-        <Form.Item className="contact-field-static">
-          {this.checkbox(Object.assign({}, this.props, {placeholder: ''}))}
-        </Form.Item>
-        <Form.Item className="contact-field-static">
-          <div className={`product-metadata-static-field ${!this.props.value && 'no-value'}`}>
-            { this.props.value || this.DEFAULT_VALUE }
-          </div>
-        </Form.Item>
-      </Form.Items>
+      <FieldStub inline={true}>{ this.props.value || this.props.placeholder }</FieldStub>
     );
   }
 

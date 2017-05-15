@@ -9,7 +9,7 @@ class Input extends Default {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
-    isChecked: React.PropTypes.bool,
+    isChecked: React.PropTypes.any,
     value: React.PropTypes.any,
     onChange: React.PropTypes.func
   };
