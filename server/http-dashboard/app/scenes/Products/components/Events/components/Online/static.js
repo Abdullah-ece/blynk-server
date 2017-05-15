@@ -2,6 +2,7 @@ import React from 'react';
 import {EVENT_TYPES} from 'services/Products';
 import Base from '../Base';
 import {Item} from 'components/UI';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class Static extends React.Component {
 
@@ -15,9 +16,7 @@ class Static extends React.Component {
       <Base.Static type={EVENT_TYPES.ONLINE} fields={this.props.fields}>
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <div className={`product-metadata-static-field ${!this.props.fields.name && 'no-value'}`}>
-              { this.props.fields.name || 'No Value' }
-            </div>
+            <FieldStub>{ this.props.fields.name }</FieldStub>
           </Item>
         </Base.Content>
       </Base.Static>
