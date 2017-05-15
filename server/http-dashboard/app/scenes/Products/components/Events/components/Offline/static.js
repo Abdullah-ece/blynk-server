@@ -3,6 +3,7 @@ import {EVENT_TYPES} from 'services/Products';
 import Base from '../Base';
 import {Item, ItemsGroup} from 'components/UI';
 import moment from 'moment';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class Static extends React.Component {
 
@@ -28,14 +29,10 @@ class Static extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small" style={{width: '65%'}}>
-              <div className={`product-metadata-static-field ${!this.props.fields.name && 'no-value'}`}>
-                { this.props.fields.name || 'No Value' }
-              </div>
+              <FieldStub>{this.props.fields.name}</FieldStub>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
-              <div className="product-metadata-static-field">
-                { this.ignorePeriod() || '0 hrs 0 min' }
-              </div>
+              <FieldStub>{ this.ignorePeriod() || '0 hrs 0 min' }</FieldStub>
             </Item>
           </ItemsGroup>
         </Base.Content>
