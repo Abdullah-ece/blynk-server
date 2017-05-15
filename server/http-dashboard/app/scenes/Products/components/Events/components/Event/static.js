@@ -3,6 +3,7 @@ import {Base} from '../../index';
 import {ItemsGroup, Item} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import _ from 'lodash';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class Event extends React.Component {
 
@@ -46,20 +47,20 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal" style={{width: '55%'}}>
-              <div className={`product-metadata-static-field ${!this.props.fields.name && 'no-value'}`}>
-                { this.props.fields.name || 'No Value' }
-              </div>
+              <FieldStub>
+                { this.props.fields.name}
+              </FieldStub>
             </Item>
             <Item label="Event Code" offset="normal" style={{width: '45%'}}>
-              <div className={`product-metadata-static-field ${!this.props.fields.eventCode && 'no-value'}`}>
-                { this.props.fields.eventCode || 'No Value' }
-              </div>
+              <FieldStub>
+                { this.props.fields.eventCode }
+              </FieldStub>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
-            <div className={`product-metadata-static-field ${!this.props.fields.description && 'no-value'}`}>
-              { this.props.fields.description || 'No Value' }
-            </div>
+            <FieldStub multipleLines={true}>
+              { this.props.fields.description}
+            </FieldStub>
           </Item>
         </Base.Content>
         <Base.Preview {...this.getPreviewProps()} valid={
