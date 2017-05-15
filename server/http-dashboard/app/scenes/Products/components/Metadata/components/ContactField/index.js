@@ -113,7 +113,21 @@ class ContactField extends BaseField {
   }
 
   removeContactFromEvents() {
-    console.log('remove contact');
+    let events = [...this.props.events];
+
+    const updated = events.map((event) => {
+      const updated = {
+        ...event,
+        values: {
+          ...event.values,
+          emailNotifications: event.values.emailNotifications && event.values.emailNotifications.filter((id) => !(Number(id) === Number(this.props.id))),
+          pushNotifications: event.values.pushNotifications && event.values.pushNotifications.filter((id) => !(Number(id) === Number(this.props.id)))
+        }
+      };
+      return updated;
+    });
+
+    this.props.onEventsChange(updated);
   }
 
   isContactUsedOnEvents() {
@@ -134,8 +148,6 @@ class ContactField extends BaseField {
         onConfirm: this.onUncheckEmail.bind(this)
       };
     }
-
-    console.log(popconfirmOptions);
 
     return (
       <div>

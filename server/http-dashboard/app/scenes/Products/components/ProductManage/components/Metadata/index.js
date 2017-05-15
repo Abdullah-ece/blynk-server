@@ -12,6 +12,7 @@ class ProductMetadata extends React.Component {
 
     fields: React.PropTypes.array,
 
+    onEventsChange: React.PropTypes.func,
     onFieldChange: React.PropTypes.func,
     onFieldsChange: React.PropTypes.func
   };
@@ -177,6 +178,7 @@ class ProductMetadata extends React.Component {
       return (
         <MetadataFields.ContactField
           {...props}
+          onEventsChange={this.props.onEventsChange}
           initialValues={{
             name: field.values.name,
             role: field.values.role,

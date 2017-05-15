@@ -163,6 +163,7 @@ class ProductCreate extends React.Component {
             <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA}>
               <MetadataTab fields={this.props.product.metadata.fields}
                            onFieldChange={this.props.onMetadataFieldChange}
+                           onEventsChange={this.props.onEventsFieldsChange}
                            onFieldsChange={this.props.onMetadataFieldsChange}/>
             </Tabs.TabPane>
 
