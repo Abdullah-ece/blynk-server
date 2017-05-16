@@ -33,6 +33,7 @@ class Event extends React.Component {
     onDelete: React.PropTypes.func,
     onClone: React.PropTypes.func,
     validate: React.PropTypes.func,
+    changeField: React.PropTypes.func,
     anyTouched: React.PropTypes.bool,
     formValues: React.PropTypes.any,
     fields: React.PropTypes.any,
