@@ -2,7 +2,7 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
-import classnames from 'classnames';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 export default class CoordinatesField extends BaseField.Static {
 
@@ -19,16 +19,6 @@ export default class CoordinatesField extends BaseField.Static {
 
   component() {
 
-    const longClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.value
-    });
-
-    const latClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.value
-    });
-
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
@@ -39,15 +29,15 @@ export default class CoordinatesField extends BaseField.Static {
         <FormItem.Content>
           <Input.Group compact>
             <Input.Group compact>
-              <div className="product-metadata-static-field" style={{width: '200%'}}>
+              <FieldStub style={{width: '50%'}}>
                 {this.props.name}
-              </div>
-              <div className={latClassNames}>
-                {this.props.lat || this.DEFAULT_VALUE}
-              </div>
-              <div className={longClassNames}>
-                {this.props.lon || this.DEFAULT_VALUE}
-              </div>
+              </FieldStub>
+              <FieldStub style={{width: '25%'}}>
+                {this.props.lat}
+              </FieldStub>
+              <FieldStub style={{width: '25%'}}>
+                {this.props.lon}
+              </FieldStub>
             </Input.Group>
           </Input.Group>
         </FormItem.Content>
