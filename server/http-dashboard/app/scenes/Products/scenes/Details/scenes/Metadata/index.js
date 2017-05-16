@@ -176,6 +176,11 @@ class Metadata extends React.Component {
   }
 
   render() {
+
+    if (!this.getFields().length) return (
+      <div className="product-no-fields">No metadata fields</div>
+    );
+
     return (
       <ItemsList static={true}>
         { this.getFields() }

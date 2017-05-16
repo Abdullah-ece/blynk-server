@@ -210,6 +210,11 @@ class DataStreams extends React.Component {
   }
 
   render() {
+
+    if (!this.getFields().length) return (
+      <div className="product-no-fields">No Data Streams fields</div>
+    );
+
     return (
       <DataStreamsItemsList static={true}>
         { this.getFields() }
