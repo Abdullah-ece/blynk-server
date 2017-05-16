@@ -29,7 +29,7 @@ class Notifications extends React.Component {
               placeholder="Select contact"
               allowClear={true}
               filterOption={(value, option) => SimpleMatch(value, option.key)}
-              notFoundContent={!props.options.length ? 'No any metadata Contact field with Email' : 'No any field matches your request'}>
+              notFoundContent={!props.options.length ? 'Add a "Contact" type Metadata to enable notifications' : 'No any field matches your request'}>
         { props.options }
       </Select>
     );
