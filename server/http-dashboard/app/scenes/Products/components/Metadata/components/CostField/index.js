@@ -78,6 +78,9 @@ class CostField extends BaseField {
       Unit.Celsius,
       Unit.Fahrenheit,
       Unit.Kelvin
+    ],
+    'Other': [
+      Unit.Percentage
     ]
   };
 

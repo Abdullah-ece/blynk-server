@@ -90,6 +90,9 @@ class BaseField extends React.Component {
       Unit.Celsius,
       Unit.Fahrenheit,
       Unit.Kelvin
+    ],
+    'Other': [
+      Unit.Percentage
     ]
   };
 

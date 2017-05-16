@@ -154,6 +154,11 @@ export const Unit = {
     abbreviation: '°K',
     key: 'Kelvin',
     value: 'Kelvin'
+  },
+  Percentage: {
+    abbreviation: '%',
+    key: 'Percentage',
+    value: 'Percentage'
   }
 };
 
