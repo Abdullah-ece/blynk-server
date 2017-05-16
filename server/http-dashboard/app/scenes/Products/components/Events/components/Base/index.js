@@ -47,6 +47,22 @@ class Base extends React.Component {
     return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isActive: false
+    };
+  }
+
+  handleCancelDelete() {
+    this.setState({isActive: false});
+  }
+
+  markAsActive() {
+    this.setState({isActive: true});
+  }
+
   getPropsByType(type) {
 
     if (type === EVENT_TYPES.ONLINE) {
@@ -108,11 +124,11 @@ class Base extends React.Component {
     return (
       <Popconfirm title="Are you sure?" overlayClassName="danger"
                   onConfirm={this.handleConfirmDelete.bind(this)}
-        // onCancel={this.handleCancelDelete.bind(this)}
+                  onCancel={this.handleCancelDelete.bind(this)}
                   okText="Yes, Delete"
                   cancelText="Cancel">
         <Button icon="delete" size="small"
-          // onClick={this.markAsActive.bind(this)}
+                onClick={this.markAsActive.bind(this)}
         />
       </Popconfirm>
     );
@@ -138,7 +154,7 @@ class Base extends React.Component {
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
-      'product-metadata-item-active': /*this.state.isActive*/ false,
+      'product-metadata-item-active': this.state.isActive,
     });
 
     return (
