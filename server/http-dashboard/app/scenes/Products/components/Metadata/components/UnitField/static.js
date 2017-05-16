@@ -3,11 +3,9 @@ import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
 import {Unit} from 'services/Products';
-import classnames from 'classnames';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 export default class UnitStaticField extends BaseField.Static {
-
-  DEFAULT_VALUE = 'No Value';
 
   Unit = {
     'Length, Distance': {
@@ -68,11 +66,6 @@ export default class UnitStaticField extends BaseField.Static {
 
   component() {
 
-    const valueClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.value
-    });
-
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
@@ -83,15 +76,15 @@ export default class UnitStaticField extends BaseField.Static {
         <FormItem.Content>
           <Input.Group compact>
 
-            <div className="product-metadata-static-field" style={{width: '200%'}}>
+            <FieldStub style={{width: '50%'}}>
               {this.props.name}
-            </div>
-            <div className="product-metadata-static-field">
+            </FieldStub>
+            <FieldStub style={{width: '25%'}}>
               {this.props.units}
-            </div>
-            <div className={valueClassNames}>
-              {this.props.value || this.DEFAULT_VALUE}
-            </div>
+            </FieldStub>
+            <FieldStub style={{width: '25%'}}>
+              {this.props.value}
+            </FieldStub>
 
           </Input.Group>
         </FormItem.Content>
