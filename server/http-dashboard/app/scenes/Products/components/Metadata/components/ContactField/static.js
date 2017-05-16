@@ -20,33 +20,46 @@ class ContactField extends BaseField.Static {
     const name = this.props.fields.name;
     let value = [];
 
-    const regex = /^(.*){1,}$/;
-
     const values = ['email', 'phone', 'streetAddress', 'city', 'state', 'zip'];
 
+    const placeholders = {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'mail@example.com',
+      phone: '+1 555 55 55',
+      streetAddress: 'Street Address',
+      city: 'City',
+      state: 'State',
+      zip: 'ZIP'
+    };
+
     const checkIsFieldValid = (name) => {
-      return this.props.fields.values[name].checked
-        && regex.test(this.props.fields.values[name].value)
-        && this.props.fields.values[name].value
-        && this.props.fields.values[name].value.trim();
+      return this.props.fields.values[name].checked;
     };
 
     if (['firstName', 'lastName'].every(checkIsFieldValid)) {
-      value.push(`${this.props.fields.values.firstName.value}, ${this.props.fields.values.lastName.value}`);
+      const firstName = this.props.fields.values.firstName.value || placeholders.firstName;
+      const lastName = this.props.fields.values.lastName.value || placeholders.lastName;
+      value.push(`${firstName}, ${lastName}`);
     } else {
       values.unshift('firstName', 'lastName');
     }
 
     values.forEach((field) => {
       if (checkIsFieldValid(field)) {
-        value.push(this.props.fields.values[field].value);
+        if (this.props.fields.isDefaultsEnabled && this.props.fields.values[field].value) {
+          value.push(this.props.fields.values[field].value);
+        } else {
+          value.push(placeholders[field]);
+        }
       }
     });
 
+
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: this.props.fields.isDefaultsEnabled && value.length ? value.join('\n') : null,
-      inline: !!this.props.fields.isDefaultsEnabled && !!value.length
+      value: value.length ? value.join('\n') : null,
+      inline: !!value.length
     };
   }
 
