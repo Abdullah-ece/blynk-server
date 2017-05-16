@@ -35,6 +35,8 @@ public enum MeasurementUnit {
 
     Celsius,
     Fahrenheit,
-    Kelvin
+    Kelvin,
+
+    Percentage
 
 }
