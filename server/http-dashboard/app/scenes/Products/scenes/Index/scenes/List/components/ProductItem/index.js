@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import './styles.less';
+import Dotdotdot from 'react-dotdotdot';
 
 export default class ProductItem extends React.Component {
 
@@ -23,7 +24,7 @@ export default class ProductItem extends React.Component {
           </div>
           <div className="details">
             <div className="name">
-              { item.name }
+              <Dotdotdot clamp={1}>{ item.name }</Dotdotdot>
             </div>
             <div className="amount">
               { 0 } Devices
