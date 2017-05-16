@@ -8,7 +8,8 @@ class FieldStub extends React.Component {
   static propTypes = {
     multipleLines: React.PropTypes.bool,
     inline: React.PropTypes.bool,
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    noValueMessage: React.PropTypes.string
   };
 
   render() {
@@ -24,10 +25,10 @@ class FieldStub extends React.Component {
            style={{wordWrap: 'break-word'}}>
         { !this.props.multipleLines && (
           <Dotdotdot clamp={1}>
-            { this.props.children || 'No Value' }
+            { this.props.children || this.props.noValueMessage || 'No Value' }
           </Dotdotdot>
         ) || (
-          <p>{ this.props.children || 'No Value' }</p>
+          <p>{ this.props.children || this.props.noValueMessage || 'No Value' }</p>
         )}
       </div>
     );
