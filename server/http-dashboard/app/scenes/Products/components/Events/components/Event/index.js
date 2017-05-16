@@ -1,24 +1,28 @@
 import React from 'react';
 import {Base} from '../../index';
 import {ItemsGroup, Item, Input} from 'components/UI';
-import {EVENT_TYPES} from 'services/Products';
+import {EVENT_TYPES, convertUserFriendlyEventCode} from 'services/Products';
 import _ from 'lodash';
 import Validation from 'services/Validation';
-import {formValueSelector, getFormSyncErrors, getFormMeta, getFormValues} from 'redux-form';
+import {formValueSelector, getFormSyncErrors, getFormMeta, getFormValues, change} from 'redux-form';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import Static from './static';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
   return {
     fields: {
+      name: selector(state, 'name'),
       eventCode: selector(state, 'eventCode')
     },
     fieldsErrors: getFormSyncErrors(ownProps.form)(state),
     formValues: getFormValues(ownProps.form)(state),
     values: getFormMeta(ownProps.form)(state)
   };
-})
+}, (dispatch) => ({
+  changeField: bindActionCreators(change, dispatch)
+}))
 class Event extends React.Component {
 
   static propTypes = {
@@ -71,6 +75,13 @@ class Event extends React.Component {
     };
   }
 
+  onNameChange(event, newValue, oldValue) {
+    const eventCode = this.props.fields.eventCode;
+    if (!eventCode || convertUserFriendlyEventCode(oldValue) === eventCode) {
+      this.props.changeField(this.props.form, 'eventCode', convertUserFriendlyEventCode(newValue));
+    }
+  }
+
   render() {
 
     return (
@@ -83,7 +94,7 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
-              <Input name="name" placeholder="Event Name" style={{width: '55%'}}
+              <Input onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name" style={{width: '55%'}}
                      validate={[Validation.Rules.required]}/>
             </Item>
             <Item label="Event Code" offset="normal">

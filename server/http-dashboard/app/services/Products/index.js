@@ -9,6 +9,12 @@ export const TABS = {
   EVENTS: 'events'
 };
 
+export const convertUserFriendlyEventCode = (userFriendlyCode) => {
+  if (!userFriendlyCode) return null;
+
+  return String(userFriendlyCode).toLowerCase().replace(/ /g, '_');
+};
+
 export const EVENT_TYPES = {
   ONLINE: 'ONLINE',
   OFFLINE: 'OFFLINE',
