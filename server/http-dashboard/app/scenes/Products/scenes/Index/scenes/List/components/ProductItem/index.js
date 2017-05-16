@@ -15,7 +15,11 @@ export default class ProductItem extends React.Component {
       <div className="product-item">
         <Link to={`/product/${item.id}`}>
           <div className="preview">
-            <img src={item.logoUrl}/>
+            { item.logoUrl && (
+              <img src={item.logoUrl}/>
+            ) || (
+              <div className="product-item-no-image">No Product Image</div>
+            )}
           </div>
           <div className="details">
             <div className="name">
