@@ -6,6 +6,7 @@ import {
 } from './components/Option';
 import BaseField from '../BaseField';
 import FormItem from 'components/FormItem';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class ContactField extends BaseField.Static {
 
@@ -68,9 +69,9 @@ class ContactField extends BaseField.Static {
     return (
       <div>
         <Form.Item label="Contact" offset="normal">
-          <div className="product-metadata-static-field">
+          <FieldStub>
             { this.props.fields.name }
-          </div>
+          </FieldStub>
         </Form.Item>
 
         <FormItem offset={false} visible={!!this.props.fields.isDefaultsEnabled}>
