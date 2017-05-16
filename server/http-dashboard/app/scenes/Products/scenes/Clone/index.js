@@ -42,7 +42,7 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
     isProductInfoInvalid: state.Product.edit.info.invalid,
     eventsForms: eventsForms,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
-  }
+  };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
@@ -83,6 +83,7 @@ class Clone extends React.Component {
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldsUpdate: React.PropTypes.func,
 
+    eventsForms: React.PropTypes.object,
     params: React.PropTypes.object,
     products: React.PropTypes.array,
     product: React.PropTypes.object,
@@ -173,7 +174,6 @@ class Clone extends React.Component {
 
     if (Array.isArray(this.props.product.events.fields)) {
       this.props.product.events.fields.forEach((field) => {
-        console.log('submit event', field.id)
         this.props.submitFormById(`event${field.id}`);
       });
     }

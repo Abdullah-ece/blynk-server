@@ -43,16 +43,16 @@ class Base extends React.Component {
     fieldsErrors: React.PropTypes.any,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
-  }
-
   constructor(props) {
     super(props);
 
     this.state = {
       isActive: false
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
   handleCancelDelete() {
