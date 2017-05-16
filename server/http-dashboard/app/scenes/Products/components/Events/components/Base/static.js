@@ -77,7 +77,8 @@ class Base extends React.Component {
 
   render() {
     const itemClasses = classnames({
-      'product-metadata-item': true
+      'product-metadata-item': true,
+      'static': true
     });
 
     return (
