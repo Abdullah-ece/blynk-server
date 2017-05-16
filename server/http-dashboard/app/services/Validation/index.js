@@ -27,8 +27,10 @@ export const Rules = {
   required: (value) => !value ? Messages.required : undefined,
   imageRequired: (value) => !value ? Messages.imageRequired : undefined,
   number: (value) => value && isNaN(Number(value)) ? Messages.number : undefined,
-  latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
-  longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
+  // latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
+  // longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
+  latitude: (value) => value && isNaN(Number(value)) ? Messages.latitude : undefined,
+  longitude: (value) => value && isNaN(Number(value)) ? Messages.longitude : undefined,
   metafieldName: (value) => {
     if (value && !value.trim()) return Messages.metafieldName;
   },
