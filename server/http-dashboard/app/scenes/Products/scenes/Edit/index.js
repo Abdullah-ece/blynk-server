@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.less';
 
 import {connect} from 'react-redux';
-import {submit} from 'redux-form';
+import {submit, getFormSyncErrors} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
@@ -21,12 +21,26 @@ import {
 import _ from 'lodash';
 import ProductEdit from 'scenes/Products/components/ProductEdit';
 
-@connect((state) => ({
-  product: state.Product.edit,
-  products: state.Product.products,
-  isProductInfoInvalid: state.Product.edit.info.invalid,
-  isMetadataFirstTime: state.Storage.products.metadataFirstTime,
-}), (dispatch) => ({
+@connect((state) => {
+
+  let eventsForms = [];
+
+  if (state.Product.edit.events && Array.isArray(state.Product.edit.events.fields)) {
+    eventsForms = state.Product.edit.events.fields.map((field) => {
+      return {
+        syncErrors: getFormSyncErrors(`event${field.id}`)(state)
+      };
+    });
+  }
+
+  return {
+    product: state.Product.edit,
+    products: state.Product.products,
+    isProductInfoInvalid: state.Product.edit.info.invalid,
+    eventsForms: eventsForms,
+    isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+  }
+}, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
@@ -139,6 +153,13 @@ class ProductCreate extends React.Component {
     if (Array.isArray(this.props.product.metadata.fields)) {
       this.props.product.metadata.fields.forEach((field) => {
         this.props.submitFormById(`metadatafield${field.id}`);
+      });
+    }
+
+    if (Array.isArray(this.props.product.events.fields)) {
+      this.props.product.events.fields.forEach((field) => {
+        console.log('submit event', field.id)
+        this.props.submitFormById(`event${field.id}`);
       });
     }
 
