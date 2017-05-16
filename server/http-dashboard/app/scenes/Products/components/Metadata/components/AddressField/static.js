@@ -2,11 +2,9 @@ import React from 'react';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
 import FormItem from 'components/FormItem';
-import classnames from 'classnames';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class AddressField extends BaseField.Static {
-
-  DEFAULT_VALUE = 'No Value';
 
   static propTypes = {
     name: React.PropTypes.string,
@@ -40,11 +38,6 @@ class AddressField extends BaseField.Static {
 
   component() {
 
-    const streetAddressClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.streetAddress
-    });
-
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
@@ -53,26 +46,34 @@ class AddressField extends BaseField.Static {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <div className="product-metadata-static-field">
+            <FieldStub style={{width: '50%'}}>
               {this.props.name}
-            </div>
-            <div className={streetAddressClassNames}>
+            </FieldStub>
+            <FieldStub style={{width: '50%'}}>
               {this.props.streetAddress || this.DEFAULT_VALUE}
-            </div>
+            </FieldStub>
           </Input.Group>
           <Input.Group compact className="address-group">
-            {this.props.city && <div className="product-metadata-static-field">
-              {this.props.city}
-            </div>}
-            {this.props.zip && <div className="product-metadata-static-field">
-              {this.props.zip}
-            </div>}
-            {this.props.state && <div className="product-metadata-static-field">
-              {this.props.state}
-            </div>}
-            {this.props.country && <div className="product-metadata-static-field">
-              {this.props.country}
-            </div>}
+            {this.props.city && (
+              <FieldStub>
+                {this.props.city}
+              </FieldStub>
+            )}
+            {this.props.zip && (
+              <FieldStub>
+                {this.props.zip}
+              </FieldStub>
+            )}
+            {this.props.state && (
+              <FieldStub>
+                {this.props.state}
+              </FieldStub>
+            )}
+            {this.props.country && (
+              <FieldStub>
+                {this.props.country}
+              </FieldStub>
+            )}
           </Input.Group>
         </FormItem.Content>
       </FormItem>
