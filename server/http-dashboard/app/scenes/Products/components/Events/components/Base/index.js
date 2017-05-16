@@ -67,7 +67,7 @@ class Base extends React.Component {
 
     if (type === EVENT_TYPES.ONLINE) {
       return {
-        color: 'green'
+        color: 'gray'
       };
     }
 
