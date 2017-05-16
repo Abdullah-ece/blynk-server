@@ -3,7 +3,7 @@ import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
 import Static from './static';
-import classnames from 'classnames';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class ShiftField extends BaseField.Static {
 
@@ -20,11 +20,6 @@ class ShiftField extends BaseField.Static {
 
   component() {
 
-    const valueClassNames = classnames({
-      'product-metadata-static-field': true,
-      'no-value': !this.props.from && !this.props.to
-    });
-
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
@@ -34,15 +29,15 @@ class ShiftField extends BaseField.Static {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <div className="product-metadata-static-field" style={{width: '200%'}}>
+            <FieldStub style={{width: '50%'}}>
               {this.props.name}
-            </div>
-            <div className={valueClassNames}>
-              {this.props.from || this.DEFAULT_VALUE}
-            </div>
-            <div className={valueClassNames}>
-              {this.props.to || this.DEFAULT_VALUE}
-            </div>
+            </FieldStub>
+            <FieldStub style={{width: '25%'}}>
+              {this.props.from}
+            </FieldStub>
+            <FieldStub style={{width: '25%'}}>
+              {this.props.to}
+            </FieldStub>
           </Input.Group>
         </FormItem.Content>
       </FormItem>
