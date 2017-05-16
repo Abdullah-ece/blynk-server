@@ -9,12 +9,14 @@ class FieldStub extends React.Component {
     multipleLines: React.PropTypes.bool,
     inline: React.PropTypes.bool,
     children: React.PropTypes.any,
-    noValueMessage: React.PropTypes.string
+    noValueMessage: React.PropTypes.string,
+    style: React.PropTypes.any
   };
 
   render() {
 
     const className = classnames({
+      'product-stub-field': true,
       'product-metadata-static-field': !this.props.inline,
       'no-value': !this.props.children,
       'product-metadata-static-field-inline': this.props.inline
@@ -22,7 +24,7 @@ class FieldStub extends React.Component {
 
     return (
       <div className={className}
-           style={{wordWrap: 'break-word'}}>
+           style={{wordWrap: 'break-word', ...this.props.style}}>
         { !this.props.multipleLines && (
           <Dotdotdot clamp={1}>
             { this.props.children || this.props.noValueMessage || 'No Value' }
