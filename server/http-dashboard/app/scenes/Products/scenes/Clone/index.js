@@ -98,10 +98,16 @@ class Clone extends React.Component {
 
   componentWillMount() {
     this.props.Fetch().then(() => {
-      if (!this.getProduct())
+      let product = this.getProduct();
+      if (!product)
         this.context.router.push('/products?notFound=true');
 
-      this.props.ProductSetEdit(this.getProduct());
+      product = {
+        ...product,
+        name: `${product.name} Copy`
+      };
+
+      this.props.ProductSetEdit(product);
     });
   }
 
