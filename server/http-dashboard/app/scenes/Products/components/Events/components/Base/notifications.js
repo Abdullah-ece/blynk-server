@@ -62,7 +62,7 @@ class Notifications extends React.Component {
                    component={this.notificationSelect}
                    options={notificationAvailableMetadataContactFields}/>
           </Item>
-          <Item label="PUSH to">
+          <Item label="PUSH Notifications to">
             <Field name="pushNotifications"
                    component={this.notificationSelect}
                    options={notificationAvailableMetadataContactFields}/>

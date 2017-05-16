@@ -38,7 +38,7 @@ class Notifications extends React.Component {
             </Item>
           )}
           {!!pushNotifications.length && (
-            <Item label="PUSH to">
+            <Item label="PUSH notifications to">
               {pushNotifications}
             </Item>
           )}
