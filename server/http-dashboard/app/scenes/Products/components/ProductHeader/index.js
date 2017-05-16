@@ -1,4 +1,5 @@
 import React from 'react';
+import Dotdotdot from 'react-dotdotdot';
 
 class ProductHeader extends React.Component {
 
@@ -14,7 +15,9 @@ class ProductHeader extends React.Component {
     return (
       <div className="products-header">
         <div className="products-header-name">
-          {this.props.title}
+          <Dotdotdot clamp={1}>
+            {this.props.title}
+          </Dotdotdot>
         </div>
         <div className="products-header-options">
           {this.props.options}

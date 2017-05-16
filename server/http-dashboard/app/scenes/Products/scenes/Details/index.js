@@ -11,6 +11,7 @@ import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import DeleteModal from './components/Delete';
 import {TABS} from 'services/Products';
+import ProductHeader from 'scenes/Products/components/ProductHeader';
 
 @connect((state) => ({
   Product: state.Product.products
@@ -117,14 +118,14 @@ class ProductDetails extends React.Component {
 
     return (
       <div className="products-create">
-        <div className="products-header">
-          <div className="products-header-name">{this.state.product.name}</div>
-          <div className="products-header-options">
-            <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
-            <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
-            <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
-          </div>
-        </div>
+        <ProductHeader title={this.state.product.name}
+                       options={(
+                         <div>
+                           <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
+                           <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
+                           <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
+                         </div>
+                       )}/>
         <div className="products-content">
           <Tabs className="products-tabs"
                 defaultActiveKey={TABS.INFO}

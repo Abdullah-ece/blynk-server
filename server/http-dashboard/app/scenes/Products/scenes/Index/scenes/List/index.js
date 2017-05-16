@@ -3,6 +3,7 @@ import './styles.less';
 import {Link} from 'react-router';
 import {Button} from 'antd';
 import ProductItem from './components/ProductItem';
+import ProductHeader from 'scenes/Products/components/ProductHeader';
 
 export default class ProductsList extends React.Component {
 
@@ -15,14 +16,14 @@ export default class ProductsList extends React.Component {
 
     return (
       <div className="product-list">
-        <div className="products-header">
-          <div className="products-header-name">Products</div>
-          <div className="products-header-options">
-            <Link to="/products/create">
-              <Button icon="plus" type="primary">Create New Product</Button>
-            </Link>
-          </div>
-        </div>
+        <ProductHeader title="Products"
+                       options={(
+                         <div>
+                           <Link to="/products/create">
+                             <Button icon="plus" type="primary">Create New Product</Button>
+                           </Link>
+                         </div>
+                       )}/>
         <div className="products-list-content">
           { items }
         </div>
