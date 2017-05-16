@@ -22,11 +22,19 @@
         box-shadow: none;
       }
     }
+    &:hover {
+      .product-events-event-tools {
+        opacity: 1;
+      }
+    }
   }
 
 }
 
 .product-events-event-tools {
+  transition: 0.5s;
+  transition-property: opacity;
+  opacity: 0;
   margin-top: @style-size-2;
 }
 
@@ -68,4 +76,8 @@
   transition-property: box-shadow;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.20);
   z-index: 20;
+
+  .product-events-event-tools {
+    opacity: 1;
+  }
 }
