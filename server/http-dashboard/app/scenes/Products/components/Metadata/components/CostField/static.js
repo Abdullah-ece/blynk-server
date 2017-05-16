@@ -3,7 +3,7 @@ import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import BaseField from '../BaseField';
 import {Currency, Unit} from 'services/Products';
-import Static from './static';
+import FieldStub from 'scenes/Products/components/FieldStub';
 
 class CostField extends BaseField.Static {
 
@@ -52,29 +52,29 @@ class CostField extends BaseField.Static {
       <FormItem offset={false}>
         <FormItem.TitleGroup>
           <FormItem.Title style={{width: '50%'}}>Cost of</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>CCY</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Price</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Per</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Unit</FormItem.Title>
+          <FormItem.Title style={{width: '12.5%'}}>CCY</FormItem.Title>
+          <FormItem.Title style={{width: '12.5%'}}>Price</FormItem.Title>
+          <FormItem.Title style={{width: '12.5%'}}>Per</FormItem.Title>
+          <FormItem.Title style={{width: '12.5%'}}>Unit</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
 
           <Input.Group compact>
-            <div className="product-metadata-static-field" style={{width: '200%'}}>
+            <FieldStub style={{width: '50%'}}>
               {this.props.name}
-            </div>
-            <div className="product-metadata-static-field">
+            </FieldStub>
+            <FieldStub style={{width: '12.5%'}}>
               {this.props.currency}
-            </div>
-            <div className={`product-metadata-static-field ${ !this.props.price && 'no-value' }`}>
+            </FieldStub>
+            <FieldStub style={{width: '12.5%'}}>
               {this.props.price || '--'}
-            </div>
-            <div className={`product-metadata-static-field ${ !this.props.perValue && 'no-value' }`}>
+            </FieldStub>
+            <FieldStub style={{width: '12.5%'}}>
               {this.props.perValue || '--'}
-            </div>
-            <div className={`product-metadata-static-field ${ !this.props.units && 'no-value' }`}>
+            </FieldStub>
+            <FieldStub style={{width: '12.5%'}}>
               {this.props.units || '--'}
-            </div>
+            </FieldStub>
           </Input.Group>
 
         </FormItem.Content>
@@ -82,7 +82,5 @@ class CostField extends BaseField.Static {
     );
   }
 }
-
-CostField.Static = Static;
 
 export default CostField;
