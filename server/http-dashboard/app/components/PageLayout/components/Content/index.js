@@ -1,4 +1,5 @@
 import React from 'react';
+import {Header} from './components';
 
 class Content extends React.Component {
 
@@ -13,5 +14,7 @@ class Content extends React.Component {
   }
 
 }
+
+Content.Header = Header;
 
 export default Content;

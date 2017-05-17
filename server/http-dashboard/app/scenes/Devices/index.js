@@ -1,6 +1,6 @@
 import React from 'react';
 import PageLayout from 'components/PageLayout';
-import {DevicesSearch, DevicesList} from './components';
+import {DevicesSearch, DevicesList, Device} from './components';
 
 class Devices extends React.Component {
 
@@ -55,7 +55,8 @@ class Devices extends React.Component {
           <DevicesList devices={devices} active={1} deviceKey="id"/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          Content
+          <PageLayout.Content.Header title="Trenton Farm Equipment"/>
+          <Device />
         </PageLayout.Content>
       </PageLayout>
     );

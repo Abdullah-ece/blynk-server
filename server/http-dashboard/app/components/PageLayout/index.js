@@ -1,8 +1,7 @@
 import React from 'react';
 import {Layout} from 'antd';
-import PageLayoutContent from './components/Content';
-import PageLayoutNavigation from './components/Navigation';
 import {getChildrenByType} from 'services/Layout';
+import {Content as PageLayoutContent, Navigation as PageLayoutNavigation} from './components';
 
 const {Sider, Content} = Layout;
 
