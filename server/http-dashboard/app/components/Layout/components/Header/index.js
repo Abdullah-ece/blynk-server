@@ -76,6 +76,9 @@ class Header extends React.Component {
     if (state.indexOf('product') >= 0) {
       return ['/products'];
     }
+    if (state.indexOf('devices') >= 0) {
+      return ['/devices'];
+    }
   }
 
   render() {
