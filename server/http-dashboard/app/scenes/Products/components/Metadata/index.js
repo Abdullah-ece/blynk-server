@@ -14,6 +14,8 @@ import UnitField from './components/UnitField';
 import ContactField from './components/ContactField';
 import AddressField from './components/AddressField';
 import DeviceNameField from './components/DeviceNameField';
+import LocationField from './components/LocationField';
+import DeviceOwnerField from './components/DeviceOwnerField';
 
 const Metadata = {
   Item: Item,
@@ -30,7 +32,9 @@ const Metadata = {
     SwitchField,
     ContactField,
     AddressField,
-    DeviceNameField
+    DeviceNameField,
+    LocationField,
+    DeviceOwnerField
   }
 };
 

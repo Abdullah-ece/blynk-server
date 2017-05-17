@@ -342,17 +342,17 @@ class ProductMetadata extends React.Component {
         }
       };
 
-      // if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
-      //   elements.push(
-      //     <MetadataFields.Location {...props}/>
-      //   );
-      // }
-      //
-      // if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
-      //   elements.push(
-      //     <MetadataFields.DeviceOwner {...props}/>
-      //   );
-      // }
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
+        elements.push(
+          <MetadataFields.LocationField {...props}/>
+        );
+      }
+
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
+        elements.push(
+          <MetadataFields.DeviceOwnerField {...props}/>
+        );
+      }
 
       if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceName) {
         elements.push(
