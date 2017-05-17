@@ -8,6 +8,7 @@ import LoginLayout from './components/LoginLayout';
 
 /* scenes */
 import Login from './scenes/Login';
+import Devices from './scenes/Devices';
 import ForgotPass from './scenes/ForgotPass';
 import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
@@ -39,6 +40,7 @@ Store().then((store) => {
                 <Route path="/account" component={MyAccount}/>
                 <Route path="/organization-settings" component={OrganizationSettings}/>
               </Route>
+              <Route path="/devices" components={Devices}/>
               <Route path="/products" component={ProductsIndex}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
