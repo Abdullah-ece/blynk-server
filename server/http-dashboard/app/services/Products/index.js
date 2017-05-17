@@ -46,15 +46,7 @@ export const hardcodedRequiredMetadataFieldsNames = {
 };
 
 export const filterMetadataFields = (fields, filterHardcoded = true) => {
-  const hardcodedNames = [
-    hardcodedRequiredMetadataFieldsNames.DeviceName,
-    hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-    hardcodedRequiredMetadataFieldsNames.LocationName,
-  ];
-
-  return fields.filter((field) => (
-    filterHardcoded ? hardcodedNames.indexOf(field.values.name) !== -1 : hardcodedNames.indexOf(field.values.name) === -1)
-  );
+  return fields.filter((field) => filterHardcoded ? field.values.hardcoded : !field.values.hardcoded);
 };
 
 export const filterHardcodedMetadataFields = (fields) => {
@@ -69,17 +61,20 @@ export const hardcodedRequiredMetadataFields = [
   {
     type: Metadata.Fields.TEXT,
     name: 'Device Name',
-    role: 'ADMIN'
+    role: 'ADMIN',
+    hardcoded: true
   },
   {
     type: Metadata.Fields.TEXT,
     name: 'Device Owner',
-    role: 'ADMIN'
+    role: 'ADMIN',
+    hardcoded: true
   },
   {
     type: Metadata.Fields.TEXT,
     name: 'Location Name',
-    role: 'ADMIN'
+    role: 'ADMIN',
+    hardcoded: true
   }
 ];
 
@@ -353,14 +348,27 @@ export const prepareProductForEdit = (data) => {
     edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
         let values = _.pickBy(field, (value, key) => key !== 'type');
 
+        const hardcodedFields = [
+          hardcodedRequiredMetadataFieldsNames.DeviceName,
+          hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+          hardcodedRequiredMetadataFieldsNames.LocationName,
+        ];
+
         if (field.type === Metadata.Fields.CONTACT) {
           values = prepareContactValuesForEdit(values);
+        }
+
+        if (hardcodedFields.indexOf(values.name) !== -1) {
+          values = {
+            ...values,
+            hardcoded: true
+          }
         }
 
         return {
           id: ++id,
           type: field.type,
-          values: values
+          values: values,
         };
       })) || [];
   }
