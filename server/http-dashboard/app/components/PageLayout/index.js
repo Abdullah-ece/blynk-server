@@ -18,7 +18,7 @@ class PageLayout extends React.Component {
     return (
       <Layout className="page-layout">
         <Layout>
-          <Sider width={300} className="page-layout-navigation">
+          <Sider width={400} className="page-layout-navigation">
             {getChildrenByType(PageLayoutContent.displayName, this.props.children)}
           </Sider>
           <Content className="page-layout-content">
