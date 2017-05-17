@@ -39,6 +39,24 @@ export const Metadata = {
   }
 };
 
+export const hardcodedRequiredMetadataFields = [
+  {
+    type: Metadata.Fields.TEXT,
+    name: 'Device Name',
+    role: 'ADMIN'
+  },
+  {
+    type: Metadata.Fields.TEXT,
+    name: 'Device Owner',
+    role: 'ADMIN'
+  },
+  {
+    type: Metadata.Fields.TEXT,
+    name: 'Location Name',
+    role: 'ADMIN'
+  }
+];
+
 export const exampleMetadataField = {
   type: Metadata.Fields.TEXT,
   name: 'Example: Serial Number',
