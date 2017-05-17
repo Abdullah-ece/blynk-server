@@ -1,7 +1,7 @@
 import React from 'react';
 import MetadataComponents from 'scenes/Products/components/Metadata';
-import {Metadata as MetadataFields} from 'services/Products';
-const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField}} = MetadataComponents;
+import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
+const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField, LocationField, DeviceOwnerField, DeviceNameField}} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -10,6 +10,24 @@ class Metadata extends React.Component {
     }),
   };
 
+  filterStaticFields(field) {
+    const hardcodedNames = [
+      hardcodedRequiredMetadataFieldsNames.DeviceName,
+      hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+      hardcodedRequiredMetadataFieldsNames.LocationName,
+    ];
+    return hardcodedNames.indexOf(field.name) !== -1;
+  }
+
+  filterDynamicFields(field) {
+    const hardcodedNames = [
+      hardcodedRequiredMetadataFieldsNames.DeviceName,
+      hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+      hardcodedRequiredMetadataFieldsNames.LocationName,
+    ];
+    return hardcodedNames.indexOf(field.name) === -1;
+  }
+
   getFields() {
 
     const fields = [];
@@ -17,7 +35,7 @@ class Metadata extends React.Component {
     if (!this.props.product.metaFields)
       return fields;
 
-    this.props.product.metaFields.forEach((field, key) => {
+    this.props.product.metaFields.filter(this.filterDynamicFields).forEach((field, key) => {
 
       const props = {
         key: key
@@ -175,14 +193,54 @@ class Metadata extends React.Component {
 
   }
 
+  getStaticFields() {
+
+    const elements = [];
+
+    this.props.product.metaFields.filter(this.filterStaticFields).forEach((field) => {
+
+      if (!field.name) return false;
+
+      const props = {
+        key: field.id,
+        name: field.name,
+        value: field.value,
+        role: field.role
+      };
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
+        elements.push(
+          <LocationField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
+        elements.push(
+          <DeviceOwnerField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.DeviceName) {
+        elements.push(
+          <DeviceNameField.Static {...props}/>
+        );
+      }
+
+    });
+
+    return elements;
+
+  }
+
   render() {
 
-    if (!this.getFields().length) return (
+    if (!this.getFields().length && !this.getStaticFields().length) return (
       <div className="product-no-fields">No metadata fields</div>
     );
 
     return (
       <ItemsList static={true}>
+        { this.getStaticFields() }
         { this.getFields() }
       </ItemsList>
     );
