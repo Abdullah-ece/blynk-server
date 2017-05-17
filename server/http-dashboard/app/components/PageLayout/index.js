@@ -19,10 +19,10 @@ class PageLayout extends React.Component {
       <Layout className="page-layout">
         <Layout>
           <Sider width={400} className="page-layout-navigation">
-            {getChildrenByType(PageLayoutContent.displayName, this.props.children)}
+            {getChildrenByType(PageLayoutNavigation.displayName, this.props.children)}
           </Sider>
           <Content className="page-layout-content">
-            {getChildrenByType(PageLayoutNavigation.displayName, this.props.children)}
+            {getChildrenByType(PageLayoutContent.displayName, this.props.children)}
           </Content>
         </Layout>
       </Layout>

@@ -1,5 +1,6 @@
 import React from 'react';
 import PageLayout from 'components/PageLayout';
+import {DevicesSearch} from './components';
 
 class Devices extends React.Component {
 
@@ -7,7 +8,7 @@ class Devices extends React.Component {
     return (
       <PageLayout>
         <PageLayout.Navigation>
-          Navigation
+          <DevicesSearch />
         </PageLayout.Navigation>
         <PageLayout.Content>
           Content
