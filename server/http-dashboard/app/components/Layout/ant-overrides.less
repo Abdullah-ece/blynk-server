@@ -739,6 +739,23 @@
     padding-bottom: 0;
   }
 
+  &-badge {
+    font-size: 12px;
+    p {
+      font-size: 12px;
+    }
+    &.warning {
+      sup {
+        background-color: @color-warning;
+      }
+    }
+    &.critical {
+      sup {
+        background-color: @color-critical;
+      }
+    }
+  }
+
   //&-btn {
   //  padding: 8px 16px !important;
   //  border: 0;
