@@ -3,7 +3,6 @@ import FormItem from 'components/FormItem';
 import {MetadataField as MetadataFormField} from 'components/Form';
 import {formValueSelector} from 'redux-form';
 import {connect} from 'react-redux';
-import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
 import Static from './static';
 
@@ -35,9 +34,7 @@ class TextField extends BaseField {
           <FormItem.Title style={{width: '100%'}}>Device Name</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataFormField name="value" type="text" placeholder="Default value(optional)" validate={[
-            Validation.Rules.required
-          ]}/>
+          <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
         </FormItem.Content>
       </FormItem>
     );

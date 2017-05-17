@@ -1,12 +1,9 @@
 import React from 'react';
-import {Input} from 'antd';
 import BaseField from '../BaseField';
 import FormItem from 'components/FormItem';
 import FieldStub from 'scenes/Products/components/FieldStub';
 
 class TextField extends BaseField.Static {
-
-  DEFAULT_VALUE = 'No Value';
 
   static propTypes = {
     name: React.PropTypes.string,
@@ -27,19 +24,11 @@ class TextField extends BaseField.Static {
 
     return (
       <FormItem offset={false}>
-        <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Value</FormItem.Title>
-        </FormItem.TitleGroup>
+        <FormItem.Title>Location Name</FormItem.Title>
         <FormItem.Content input>
-          <Input.Group compact>
-            <FieldStub style={{width: '50%'}}>
-              {this.props.name}
-            </FieldStub>
-            <FieldStub style={{width: '50%'}}>
-              {this.props.value}
-            </FieldStub>
-          </Input.Group>
+          <FieldStub>
+            {this.props.value}
+          </FieldStub>
         </FormItem.Content>
       </FormItem>
     );
