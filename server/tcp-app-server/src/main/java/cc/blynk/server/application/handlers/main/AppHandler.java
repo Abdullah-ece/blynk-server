@@ -25,6 +25,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogi
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
@@ -64,7 +65,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final RedeemLogic redeemLogic;
     private final AddEnergyLogic addEnergyLogic;
     private final CreateDeviceLogic createDeviceLogic;
-    private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final CreateAppLogic createAppLogic;
@@ -75,15 +75,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
-        super(holder.limits, state);
+        super(StringMessage.class, holder.limits);
         this.token = new GetTokenLogic(holder);
         this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,
-                holder.currentIp,
-                holder.props.getIntProperty("http.port"));
+        this.exportGraphData = new ExportGraphDataLogic(holder);
         this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
@@ -102,7 +100,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder);
-        this.updateDeviceLogic = new UpdateDeviceLogic();
         this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
@@ -206,7 +203,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 createDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case UPDATE_DEVICE :
-                updateDeviceLogic.messageReceived(ctx, state.user, msg);
+                UpdateDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE :
                 deleteDeviceLogic.messageReceived(ctx, state, msg);
@@ -247,4 +244,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         }
     }
 
+    @Override
+    public StateHolderBase getState() {
+        return state;
+    }
 }

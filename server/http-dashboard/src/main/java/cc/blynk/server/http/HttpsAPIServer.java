@@ -13,7 +13,6 @@ import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.UrlMapper;
 import cc.blynk.utils.UrlStartWithMapper;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -51,18 +50,18 @@ public class HttpsAPIServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                final ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()));
-                pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
-                pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
-                pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true));
-                pipeline.addLast(letsEncryptHandler);
-                pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(favIconUrlRewriter);
-                pipeline.addLast(staticFileHandler);
-                pipeline.addLast(new HttpContentCompressor());
-                pipeline.addLast(httpAPILogic);
-                pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
+                ch.pipeline()
+                .addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
+                .addLast("HttpsServerCodec", new HttpServerCodec())
+                .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
+                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
+                .addLast(letsEncryptHandler)
+                .addLast(new ChunkedWriteHandler())
+                .addLast(favIconUrlRewriter)
+                .addLast(staticFileHandler)
+                .addLast(new HttpContentCompressor())
+                .addLast(httpAPILogic)
+                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
     }

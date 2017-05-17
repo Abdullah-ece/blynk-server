@@ -13,6 +13,7 @@ import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.util.ResourceLeakDetector;
@@ -70,7 +71,9 @@ public class Holder implements Closeable {
 
     public final Limits limits;
 
-    public final String currentIp;
+    public final String csvDownloadUrl;
+
+    public final String host;
 
     public final SslContextHolder sslContextHolder;
 
@@ -81,7 +84,7 @@ public class Holder implements Closeable {
 
         this.region = serverProperties.getProperty("region", "local");
         String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.currentIp = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
+        this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
 
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), region);
 
@@ -108,7 +111,7 @@ public class Holder implements Closeable {
             this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
         }
 
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
@@ -133,6 +136,8 @@ public class Holder implements Closeable {
         this.limits = new Limits(props);
         this.tokensPool = new TokensPool(60 * 60 * 1000);
 
+        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
+
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getProperty("mail.smtp.username"));
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
     }
@@ -144,7 +149,7 @@ public class Holder implements Closeable {
 
         this.region = "local";
         String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.currentIp = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
+        this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), "real");
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -156,7 +161,7 @@ public class Holder implements Closeable {
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
@@ -181,6 +186,8 @@ public class Holder implements Closeable {
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
         this.tokensPool = new TokensPool(60 * 60 * 1000);
+
+        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
     }

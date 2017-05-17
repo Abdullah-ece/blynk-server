@@ -36,7 +36,8 @@ If you need more information, please follow these links:
 - [Enabling mail on Local server](https://github.com/blynkkk/blynk-server#enabling-mail-on-local-server)
 - [Enabling sms on local server](https://github.com/blynkkk/blynk-server#enabling-sms-on-local-server)
 - [Enabling raw data storage](https://github.com/blynkkk/blynk-server#enabling-raw-data-storage)
-- [Generate Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#generate-lets-encrypt-ssltls-certificates)
+- [Automatic Let's Encrypt Certificates](https://github.com/blynkkk/blynk-server#automatic-lets-encrypt-certificates-generation)
+- [Manual Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#manual-lets-encrypt-ssltls-certificates)
 - [Generate own SSL certificates](https://github.com/blynkkk/blynk-server#generate-own-ssl-certificates)
 - [Install java for Ubuntu](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu)
 - [How Blynk Works?](https://github.com/blynkkk/blynk-server#how-blynk-works)
@@ -73,7 +74,7 @@ For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/d
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.24.3.jar -dataFolder /path
+        java -jar server-0.24.4.jar -dataFolder /path
         
 That's it! 
 
@@ -98,11 +99,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.24.3/server-0.24.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.24.4/server-0.24.4.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.24.4.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -115,7 +116,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.24.3.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.24.4.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -123,7 +124,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.24.3.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.24.4.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -135,7 +136,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.24.4.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -152,7 +153,7 @@ Server should be always updated befor you update Blynk App. To update your serve
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.24.3.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.24.4.jar   
         
 + Kill the old process
 
@@ -251,7 +252,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.24.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.24.4.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -331,38 +332,29 @@ Available server options:
 
 + Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
         
-        notifications.queue.limit=10000
+        notifications.queue.limit=5000
         
         
 + Number of threads for performing blocking operations - push, twits, emails, db queries. Recommended to hold this value low unless you have to perform a lot of blocking operations.
 
-        blocking.processor.thread.pool.limit=5
+        blocking.processor.thread.pool.limit=6
         
 
 + Period for flushing all user DB to disk. In millis
 
         profile.save.worker.period=60000
-        
-
-+ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
-
-        app.socket.idle.timeout=600
-        
 
 + Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
 
         hard.socket.idle.timeout=15
         
-        
 + Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
         
         enable.raw.data.store=true
         
-        
 + Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://127.0.0.1:9443/admin". 
 
         admin.rootPath=/admin
-        
         
 + Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. You may set it for 0.0.0.0/0 to allow access for all. You may use CIDR notation. For instance, 192.168.0.53/24.
         
@@ -377,6 +369,9 @@ Available server options:
         
         server.host=blynk-cloud.com
         
++ Email used for certificate registration, could be omitted in case you already specified it in mail.properties.
+        
+        contact.email=pupkin@gmail.com
         
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
         
@@ -558,8 +553,28 @@ Where 10 - value of pin, and 1438022081332 - the difference, measured in millise
 To display the date/time in excel you may use formula:
 
         =((COLUMN/(60*60*24)/1000+25569))
+        
+### Automatic Let's Encrypt certificates generation
 
-### Generate Let's Encrypt SSL/TLS Certificates
+Latest Blynk server has super cool feature - automatic Let's Encrypt certificates generation. 
+However, it has few requirements: 
+ 
++ Add ```server.host``` property in ```server.properties``` file. For example (IP is not supported, this is the limitation of Let's Encrypt) : 
+ 
+        server.host=myhost.com
+        
++ Add ```contact.email``` property in ```server.properties```. For example : 
+ 
+        contact.email=test@gmail.com
+        
++ You need to start server on port 80 (requires root or admin rights) or 
+make [port forwarding](https://github.com/blynkkk/blynk-server#port-forwarding-for-https-api) to default Blynk HTTP port - 8080.
+
+That's it! Run server as regular and certificates will be generated automatically.
+
+![](https://gifyu.com/images/certs.gif)
+
+### Manual Let's Encrypt SSL/TLS Certificates
 
 + First install [certbot](https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
 

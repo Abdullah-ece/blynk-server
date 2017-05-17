@@ -10,7 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
-import io.netty.util.internal.TypeParameterMatcher;
 
 /**
  * The Blynk Project.
@@ -19,19 +18,23 @@ import io.netty.util.internal.TypeParameterMatcher;
  */
 public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    public final StateHolderBase state;
-    private final int USER_QUOTA_LIMIT_WARN_PERIOD;
+    /*
+     * in case of consistent quota limit exceed during long term, sending warning response back to exceeding channel
+     * for performance reason sending only 1 message within interval. In millis
+     *
+     * this property was never changed, so moving it to static field
+     */
+    private final static int USER_QUOTA_LIMIT_WARN_PERIOD = 60_000;
+
     private final int USER_QUOTA_LIMIT;
-    private final TypeParameterMatcher matcher;
+    private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    protected BaseSimpleChannelInboundHandler(Limits limits, StateHolderBase state) {
-        this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
+    protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
+        this.type = type;
         this.USER_QUOTA_LIMIT = limits.USER_QUOTA_LIMIT;
-        this.USER_QUOTA_LIMIT_WARN_PERIOD = limits.USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS;
         this.quotaMeter = new InstanceLoadMeter();
-        this.state = state;
     }
 
     private static int getMsgId(Object o) {
@@ -44,15 +47,14 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     @Override
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (matcher.match(msg)) {
-            final I typedMsg = (I) msg;
+        if (type.isInstance(msg)) {
             try {
                 if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     sendErrorResponseIfTicked();
                     return;
                 }
                 quotaMeter.mark();
-                messageReceived(ctx, typedMsg);
+                messageReceived(ctx, (I) msg);
             } catch (Exception e) {
                 handleGeneralException(ctx, e, getMsgId(msg));
             } finally {
@@ -81,6 +83,8 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      * @param msg           the message to handle
      */
     public abstract void messageReceived(ChannelHandlerContext ctx, I msg);
+
+    public abstract StateHolderBase getState();
 
     public InstanceLoadMeter getQuotaMeter() {
         return quotaMeter;
