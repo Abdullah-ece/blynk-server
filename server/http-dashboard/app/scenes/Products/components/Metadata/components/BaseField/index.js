@@ -31,7 +31,7 @@ class BaseField extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+    return !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   handleDelete() {

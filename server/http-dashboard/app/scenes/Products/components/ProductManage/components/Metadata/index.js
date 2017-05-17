@@ -307,7 +307,7 @@ class ProductMetadata extends React.Component {
 
   onSortEnd({oldIndex, newIndex}) {
 
-    const staticMetadataFieldsCount = filterDynamicMetadataFields(this.props.fields).length;
+    const staticMetadataFieldsCount = filterHardcodedMetadataFields(this.props.fields).length;
 
     this.props.onFieldsChange(
       arrayMove(this.props.fields, oldIndex + staticMetadataFieldsCount, newIndex + staticMetadataFieldsCount)

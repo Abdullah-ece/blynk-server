@@ -362,7 +362,7 @@ export const prepareProductForEdit = (data) => {
           values = {
             ...values,
             hardcoded: true
-          }
+          };
         }
 
         return {

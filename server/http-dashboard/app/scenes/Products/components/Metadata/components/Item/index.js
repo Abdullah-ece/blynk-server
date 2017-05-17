@@ -8,13 +8,14 @@ import {MetadataRoles} from 'services/Roles';
 import classnames from 'classnames';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {reduxForm, touch, Form} from 'redux-form';
+import {reduxForm, touch, Form, getFormSyncErrors} from 'redux-form';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
 import _ from 'lodash';
 
-@connect((state) => ({
-  events: state.Product.edit.events.fields
+@connect((state, ownProps) => ({
+  events: state.Product.edit.events.fields,
+  fieldsErrors: getFormSyncErrors(ownProps.form)(state)
 }), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
 }))
@@ -28,6 +29,7 @@ class MetadataItem extends React.PureComponent {
     anyTouched: React.PropTypes.bool,
     invalid: React.PropTypes.bool,
     preview: React.PropTypes.object,
+    fieldsErrors: React.PropTypes.any,
     form: React.PropTypes.string,
     fields: React.PropTypes.object,
     children: React.PropTypes.any,
@@ -39,7 +41,7 @@ class MetadataItem extends React.PureComponent {
     field: React.PropTypes.object,
     touched: React.PropTypes.bool,
     tools: React.PropTypes.bool,
-    updateMetadataFieldInvalidFlag: React.PropTypes.func
+    updateMetadataFieldInvalidFlag: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -55,7 +57,7 @@ class MetadataItem extends React.PureComponent {
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
       this.props.onChange({
-        ...this.props.field,
+        ...props.field,
         invalid: props.invalid
       });
       this.invalid = props.invalid;
@@ -63,7 +65,7 @@ class MetadataItem extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
+    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
   }
 
   handleConfirmDelete() {
