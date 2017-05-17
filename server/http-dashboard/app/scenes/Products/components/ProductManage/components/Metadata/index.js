@@ -338,7 +338,8 @@ class ProductMetadata extends React.Component {
         initialValues: {
           name: field.values.name,
           value: field.values.value,
-          role: field.values.role
+          role: field.values.role,
+          hardcoded: field.values.hardcoded
         }
       };
 
