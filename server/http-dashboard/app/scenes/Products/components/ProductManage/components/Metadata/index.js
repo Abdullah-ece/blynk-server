@@ -1,11 +1,16 @@
 import React from 'react';
 import {AddMetadataFields} from 'scenes/Products/components/AddField';
-import {Metadata as MetadataService} from 'services/Products';
+import {
+  Metadata as MetadataService,
+  filterDynamicMetadataFields,
+  filterHardcodedMetadataFields,
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
-const MetadataFields = Metadata.Fields;
 import _ from 'lodash';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+const MetadataFields = Metadata.Fields;
 class ProductMetadata extends React.Component {
 
   static propTypes = {
@@ -225,13 +230,13 @@ class ProductMetadata extends React.Component {
 
   SortableList = SortableContainer(({items}) => {
     return (
-      <Metadata.ItemsList>
+      <div>
         {items.map((value, index) => {
           return (
             <this.SortableItem key={`item-${value.id}`} index={index} value={value}/>
           );
         })}
-      </Metadata.ItemsList>
+      </div>
     );
   });
 
@@ -302,9 +307,62 @@ class ProductMetadata extends React.Component {
 
   onSortEnd({oldIndex, newIndex}) {
 
+    const staticMetadataFieldsCount = filterDynamicMetadataFields(this.props.fields).length;
+
     this.props.onFieldsChange(
-      arrayMove(this.props.fields, oldIndex, newIndex)
+      arrayMove(this.props.fields, oldIndex + staticMetadataFieldsCount, newIndex + staticMetadataFieldsCount)
     );
+
+  }
+
+  getStaticFields() {
+
+    const fields = filterHardcodedMetadataFields(this.props.fields);
+
+    const elements = [];
+
+    fields.forEach((field) => {
+
+      if (!field.values.name) return false;
+
+      const props = {
+        id: field.id,
+        key: field.id,
+        form: `metadatafield${field.id}`,
+        onChange: this.handleChangeField.bind(this),
+        validate: this.metadataFieldValidation.bind(this),
+        onDelete: this.handleDeleteField.bind(this),
+        onClone: this.handleCloneField.bind(this),
+        field: field,
+        tools: false,
+        initialValues: {
+          name: field.values.name,
+          value: field.values.value,
+          role: field.values.role
+        }
+      };
+
+      // if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
+      //   elements.push(
+      //     <MetadataFields.Location {...props}/>
+      //   );
+      // }
+      //
+      // if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
+      //   elements.push(
+      //     <MetadataFields.DeviceOwner {...props}/>
+      //   );
+      // }
+
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceName) {
+        elements.push(
+          <MetadataFields.DeviceNameField {...props}/>
+        );
+      }
+
+    });
+
+    return elements;
 
   }
 
@@ -312,13 +370,18 @@ class ProductMetadata extends React.Component {
 
     return (
       <div>
-        { this.props.fields && this.props.fields.length && (
-          <this.SortableList items={this.props.fields} onSortEnd={this.onSortEnd.bind(this)}
-                             useDragHandle={true}
-                             lockAxis="y"
-                             helperClass="product-metadata-item-drag-active"/>) || null
-        }
+        <Metadata.ItemsList>
+          { this.getStaticFields()}
 
+          { this.props.fields && this.props.fields.length && (
+            <this.SortableList items={filterDynamicMetadataFields(this.props.fields)}
+                               onSortEnd={this.onSortEnd.bind(this)}
+                               useDragHandle={true}
+                               lockAxis="y"
+                               helperClass="product-metadata-item-drag-active"/>) || null
+          }
+
+        </Metadata.ItemsList>
         <AddMetadataFields onFieldAdd={this.addMetadataField.bind(this)}/>
       </div>
     );

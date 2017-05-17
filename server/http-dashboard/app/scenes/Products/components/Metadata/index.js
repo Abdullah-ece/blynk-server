@@ -13,6 +13,7 @@ import CoordinatesField from './components/CoordinatesField';
 import UnitField from './components/UnitField';
 import ContactField from './components/ContactField';
 import AddressField from './components/AddressField';
+import DeviceNameField from './components/DeviceNameField';
 
 const Metadata = {
   Item: Item,
@@ -28,7 +29,8 @@ const Metadata = {
     UnitField,
     SwitchField,
     ContactField,
-    AddressField
+    AddressField,
+    DeviceNameField
   }
 };
 

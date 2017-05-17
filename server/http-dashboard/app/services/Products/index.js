@@ -39,6 +39,32 @@ export const Metadata = {
   }
 };
 
+export const hardcodedRequiredMetadataFieldsNames = {
+  DeviceName: 'Device Name',
+  DeviceOwner: 'Device Owner',
+  LocationName: 'Location Name'
+};
+
+export const filterMetadataFields = (fields, filterHardcoded = true) => {
+  const hardcodedNames = [
+    hardcodedRequiredMetadataFieldsNames.DeviceName,
+    hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+    hardcodedRequiredMetadataFieldsNames.LocationName,
+  ];
+
+  return fields.filter((field) => (
+    filterHardcoded ? hardcodedNames.indexOf(field.values.name) !== -1 : hardcodedNames.indexOf(field.values.name) === -1)
+  );
+};
+
+export const filterHardcodedMetadataFields = (fields) => {
+  return filterMetadataFields(fields, true);
+};
+
+export const filterDynamicMetadataFields = (fields) => {
+  return filterMetadataFields(fields, false);
+};
+
 export const hardcodedRequiredMetadataFields = [
   {
     type: Metadata.Fields.TEXT,

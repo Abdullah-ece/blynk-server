@@ -11,6 +11,7 @@ class BaseField extends React.PureComponent {
     field: React.PropTypes.object,
     form: React.PropTypes.string,
     initialValues: React.PropTypes.object,
+    tools: React.PropTypes.bool,
     pristine: React.PropTypes.bool,
     invalid: React.PropTypes.bool,
     anyTouched: React.PropTypes.bool,
@@ -52,6 +53,7 @@ class BaseField extends React.PureComponent {
                      onClone={this.handleClone.bind(this)}
                      validate={this.props.validate.bind(this)}
                      initialValues={this.props.initialValues}
+                     tools={this.props.tools !== false}
                      fields={this.props.fields}
                      field={this.props.field}
                      id={this.props.id}

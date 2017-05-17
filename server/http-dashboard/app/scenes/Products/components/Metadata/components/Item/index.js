@@ -38,6 +38,7 @@ class MetadataItem extends React.PureComponent {
     onChange: React.PropTypes.func,
     field: React.PropTypes.object,
     touched: React.PropTypes.bool,
+    tools: React.PropTypes.bool,
     updateMetadataFieldInvalidFlag: React.PropTypes.func
   };
 
@@ -141,11 +142,13 @@ class MetadataItem extends React.PureComponent {
               { this.preview() }
             </Col>
           </Row>
-          <div className="product-metadata-item-tools">
-            <DragHandler/>
-            {deleteButton}
-            <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
-          </div>
+          { this.props.tools && (
+            <div className="product-metadata-item-tools">
+              <DragHandler/>
+              {deleteButton}
+              <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+            </div>
+          )}
         </Form>
       </div>
     );
