@@ -26,11 +26,11 @@ class Delete extends React.Component {
           </div>
           <div className="delete-confirmation-modal-content">
             <div className="delete-confirmation-modal-content-notice">
-              This will remove Info, Meta Data, Data Streams<br/>
+              This will remove Info, Metadata, Data Streams<br/>
               from <span>{this.props.deviceCount}</span> devices. It cannot be undone.
             </div>
             <div className="delete-confirmation-modal-content-sub-notice">
-              Actual sensor data (logs, sensor data, etc) will not be deleted
+              Sensor data and devices logs will not be deleted
             </div>
             <DeleteForm onCancel={this.props.onCancel} onSubmit={this.props.handleSubmit.bind(this)}
                         productName={this.props.productName}/>

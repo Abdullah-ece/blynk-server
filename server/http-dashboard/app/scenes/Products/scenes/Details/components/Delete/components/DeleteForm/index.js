@@ -33,7 +33,7 @@ class DeleteForm extends React.Component {
     return (
       <Form onSubmit={this.props.handleSubmit}>
         <div className="delete-confirmation-modal-input">
-          <Field name="productName" displayError={false} placeholder="Type product name to confirm" validate={[
+          <Field name="productName" displayError={false} placeholder={`Type in ${this.props.productName}`} validate={[
             Validation.Rules.required
           ]}/>
         </div>
