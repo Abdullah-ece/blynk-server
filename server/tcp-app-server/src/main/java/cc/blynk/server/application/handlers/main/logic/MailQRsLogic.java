@@ -87,7 +87,9 @@ public class MailQRsLogic {
             try {
                 QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, true);
 
-                mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
+                String finalBody = body.replace("{project_name}", dash.name);
+
+                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
@@ -104,7 +106,11 @@ public class MailQRsLogic {
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
                 }
-                mailWrapper.sendWithAttachment(to, subj, body.replace("{device_section}", sb.toString()), qrHolders);
+
+                String finalBody = body.replace("{project_name}", dash.name)
+                                       .replace("{device_section}", sb.toString());
+
+                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending static email from application. For user {}. Error:", to, e);
@@ -114,17 +120,18 @@ public class MailQRsLogic {
     }
 
     private QrHolder[] makeQRs(String username, String appId, DashBoard dash, boolean onlyFirst) throws Exception {
-        QrHolder[] qrHolders = new QrHolder[dash.devices.length];
-        FlashedToken[] flashedTokens = new FlashedToken[onlyFirst ? 1: dash.devices.length];
+        int tokensCount = onlyFirst ? 1 : dash.devices.length;
+        QrHolder[] qrHolders = new QrHolder[tokensCount];
+        FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
 
         int i = 0;
         for (Device device : dash.devices) {
-            if (onlyFirst && i > 0) {
-                break;
-            }
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(username, newToken, appId, dash.id, device.id);
+            if (onlyFirst) {
+                break;
+            }
             i++;
         }
 
