@@ -1,8 +1,17 @@
 import React from 'react';
 import {Button} from 'antd';
+import {Widgets} from 'components';
 import './styles.less';
 
 class Dashboard extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      filter: this.FILTERS.HOUR
+    };
+  }
 
   FILTERS = {
     HOUR: 'hour',
@@ -29,14 +38,6 @@ class Dashboard extends React.Component {
     value: 'Custom Range'
   }];
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      filter: this.FILTERS.HOUR
-    };
-  }
-
   filterBy(key) {
     this.setState({
       filter: key
@@ -56,6 +57,8 @@ class Dashboard extends React.Component {
             </Button>
           ))}
         </Button.Group>
+
+        <Widgets />
 
       </div>
     );
