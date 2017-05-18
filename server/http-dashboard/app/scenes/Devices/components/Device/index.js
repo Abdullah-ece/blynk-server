@@ -1,5 +1,7 @@
 import React from 'react';
 import {Tabs} from 'antd';
+import {Dashboard} from './components';
+import './styles.less';
 
 class Device extends React.Component {
 
@@ -8,7 +10,9 @@ class Device extends React.Component {
     return (
       <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
         <TabPane tab="Dashboard" key="1">
-          <div style={{padding: '12px 0'}}>Dashboard</div>
+          <div className="devices-device-tab-inner">
+            <Dashboard />
+          </div>
         </TabPane>
         <TabPane tab="Events Log" key="2">
           <div style={{padding: '12px 0'}}>Events Log</div>
