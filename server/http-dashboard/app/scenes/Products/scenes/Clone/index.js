@@ -46,7 +46,7 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
-  Create: bindActionCreators(API.ProductUpdate, dispatch),
+  Create: bindActionCreators(API.ProductCreate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
@@ -83,7 +83,7 @@ class Clone extends React.Component {
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldsUpdate: React.PropTypes.func,
 
-    eventsForms: React.PropTypes.object,
+    eventsForms: React.PropTypes.array,
     params: React.PropTypes.object,
     products: React.PropTypes.array,
     product: React.PropTypes.object,
