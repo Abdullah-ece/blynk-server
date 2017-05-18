@@ -9,7 +9,8 @@ class Dashboard extends React.Component {
     super(props);
 
     this.state = {
-      filter: this.FILTERS.HOUR
+      filter: this.FILTERS.HOUR,
+      editable: false
     };
   }
 
@@ -44,21 +45,44 @@ class Dashboard extends React.Component {
     });
   }
 
+  startEditDashboard() {
+    this.setState({
+      editable: true
+    });
+  }
+
+  finishEditDashboard() {
+    this.setState({
+      editable: false
+    });
+  }
+
   render() {
     return (
       <div>
 
-        <Button.Group size="default" className="devices-device-dashboard-time-filter">
-          { this.FILTER_BUTTONS.map((button, key) => (
-            <Button key={key}
-                    onClick={this.filterBy.bind(this, button.key)}
-                    type={button.key === this.state.filter && 'primary' || 'default'}>
-              {button.value}
-            </Button>
-          ))}
-        </Button.Group>
+        <div>
+          <Button.Group size="default" className="devices-device-dashboard-time-filter">
+            { this.FILTER_BUTTONS.map((button, key) => (
+              <Button key={key}
+                      onClick={this.filterBy.bind(this, button.key)}
+                      type={button.key === this.state.filter && 'primary' || 'default'}>
+                {button.value}
+              </Button>
+            ))}
+          </Button.Group>
+          <Button.Group className="dashboard-tools">
+            { this.state.editable && (
+              <Button icon="check" onClick={this.finishEditDashboard.bind(this)}/>
+            )}
+            { !this.state.editable && (
+              <Button icon="tool" className="transparent" onClick={this.startEditDashboard.bind(this)}/>
+            )}
 
-        <Widgets />
+          </Button.Group>
+        </div>
+
+        <Widgets editable={this.state.editable}/>
 
       </div>
     );

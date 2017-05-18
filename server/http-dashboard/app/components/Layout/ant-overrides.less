@@ -96,7 +96,7 @@
 @btn-primary-bg: @color-primary-5;
 
 @btn-default-color: @color-primary-5;
-@btn-default-bg: @color-white;
+@btn-default-bg: transparent;
 @btn-default-border: @color-primary-5;
 
 @btn-danger-color: @color-critical;
@@ -374,6 +374,12 @@
       padding: 0 !important;
       i {
         .font-button-sm-icon;
+      }
+    }
+    &.transparent {
+      background-color: transparent;
+      &:hover {
+        background-color: @color-primary-1;
       }
     }
   }
