@@ -46,7 +46,9 @@ class Info extends React.Component {
                     <FormItem>
                       <FormItem.Title>Description</FormItem.Title>
                       <FormItem.Content>
-                        { this.props.product.description }
+                        { this.props.product.description.split('\n').map((item, key) => {
+                          return <span key={key}>{item}<br/></span>
+                        })}
                       </FormItem.Content>
                     </FormItem>
                   )}
