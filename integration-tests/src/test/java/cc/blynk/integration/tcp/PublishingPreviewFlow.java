@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
@@ -10,6 +11,8 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
@@ -83,7 +86,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
@@ -113,7 +116,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
@@ -144,7 +147,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY.replace("{project_name}", "My Dashboard")), eq(qrHolders));
     }
@@ -172,11 +175,139 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(2, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, true);
 
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY.replace("{project_name}", "My Dashboard")), eq(qrHolders));
+    }
+
+    @Test
+    public void testFaceEditNotAllowedHasNoChild() throws Exception {
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+    }
+
+    @Test
+    public void testFaceEdit() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody(2);
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("emailQr 1\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.send("register test@blynk.cc a " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = parseProfile(appClient2.getBody(3));
+        assertEquals(1, profile.dashBoards.length);
+        DashBoard dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(16, dashBoard.widgets.length);
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        appClient2.send("loadProfileGzipped");
+        profile = parseProfile(appClient2.getBody(4));
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(17, dashBoard.widgets.length);
+    }
+
+    @Test
+    public void testFaceEditForRestrictiveFields() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody(2);
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("emailQr 1\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.send("register test@blynk.cc a " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = parseProfile(appClient2.getBody(3));
+        assertEquals(1, profile.dashBoards.length);
+        DashBoard dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(16, dashBoard.widgets.length);
+
+        clientPair.appClient.send("addPushToken 1\0uid1\0token1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+
+        appClient2.send("loadProfileGzipped");
+        profile = parseProfile(appClient2.getBody(4));
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(16, dashBoard.widgets.length);
+        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        assertEquals(0, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+        Twitter twitter = dashBoard.getWidgetByType(Twitter.class);
+        assertNull(twitter.username);
+        assertNull(twitter.token);
+        assertNull(twitter.secret);
+        assertEquals(22, twitter.x);
+        assertEquals(23, twitter.y);
     }
 
     @Test
@@ -196,7 +327,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
@@ -248,7 +379,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
@@ -285,8 +416,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(response);
     }
 
-    private QrHolder[] makeQRs(String to, Device[] devices, int dashId, boolean onlyFirst) throws Exception {
-        QrHolder[] qrHolders = new QrHolder[devices.length];
+
+
+    private QrHolder[] makeQRs(Device[] devices, int dashId, boolean onlyFirst) throws Exception {
+        QrHolder[] qrHolders;
+        if (onlyFirst) {
+            qrHolders = new QrHolder[1];
+        } else {
+            qrHolders = new QrHolder[devices.length];
+        }
 
         List<FlashedToken> flashedTokens = getAllTokens();
 
@@ -296,7 +434,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
                 break;
             }
             String newToken = flashedTokens.get(i).token;
-            qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(dashId, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             i++;
         }
 

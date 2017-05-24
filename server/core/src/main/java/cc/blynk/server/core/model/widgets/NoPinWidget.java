@@ -15,6 +15,11 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
+    public void updateIfSame(Widget widget) {
+        //do nothing
+    }
+
+    @Override
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
@@ -32,11 +37,6 @@ public abstract class NoPinWidget extends Widget {
     @Override
     public String getValue(byte pin, PinType type) {
         return null;
-    }
-
-    @Override
-    public boolean hasValue(String searchValue) {
-        return false;
     }
 
     @Override

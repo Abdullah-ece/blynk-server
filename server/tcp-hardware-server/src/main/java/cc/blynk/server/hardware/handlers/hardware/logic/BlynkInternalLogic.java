@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
@@ -42,7 +41,7 @@ public class BlynkInternalLogic {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length == 0 || messageParts[0].length() == 0) {
-            ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -66,7 +65,7 @@ public class BlynkInternalLogic {
     private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
-        if (rtc != null) {
+        if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()), ctx.voidPromise());
         }
     }
@@ -80,8 +79,7 @@ public class BlynkInternalLogic {
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
             final int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
-            ctx.pipeline().remove(ReadTimeoutHandler.class);
-            ctx.pipeline().addFirst(new ReadTimeoutHandler(newReadTimeout));
+            ctx.pipeline().replace(ReadTimeoutHandler.class, "H_ReadTimeout", new ReadTimeoutHandler(newReadTimeout));
         }
 
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);

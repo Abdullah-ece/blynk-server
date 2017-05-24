@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -18,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -45,14 +44,14 @@ public class HardwareSyncLogic {
         //return all widgets state
         for (Widget widget : dash.widgets) {
             //one exclusion, no need to sync RTC
-            if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC)) {
+            if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC) && ctx.channel().isWritable()) {
                 ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
             }
         }
         //return all static server holders
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
-            if (deviceId == key.deviceId) {
+            if (deviceId == key.deviceId && ctx.channel().isWritable()) {
                 String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
                 ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
             }
@@ -67,7 +66,7 @@ public class HardwareSyncLogic {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {
-            ctx.writeAndFlush(makeResponse(msgId, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
             return;
         }
 
@@ -77,14 +76,16 @@ public class HardwareSyncLogic {
             for (int i = 1; i < bodyParts.length; i++) {
                 byte pin = ParseUtil.parseByte(bodyParts[i]);
                 Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-                if (widget == null) {
-                    String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
-                    if (value != null) {
-                        String body = Pin.makeHardwareBody(pinType, pin, value);
-                        ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                if (ctx.channel().isWritable()) {
+                    if (widget == null) {
+                        String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+                        if (value != null) {
+                            String body = Pin.makeHardwareBody(pinType, pin, value);
+                            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                        }
+                    } else if (widget instanceof HardwareSyncWidget) {
+                        ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
                     }
-                } else if (widget instanceof HardwareSyncWidget) {
-                    ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
                 }
             }
             ctx.flush();

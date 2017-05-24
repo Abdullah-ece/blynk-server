@@ -79,6 +79,14 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     @Override
+    public void updateIfSame(Widget widget) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            updateIfSame(onePinWidget.deviceId, onePinWidget.pin, onePinWidget.pinType, onePinWidget.value);
+        }
+    }
+
+    @Override
     public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
             String body = makeHardwareBody();
@@ -100,11 +108,6 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     @Override
     public String getValue(byte pin, PinType type) {
         return value;
-    }
-
-    @Override
-    public boolean hasValue(String searchValue) {
-        return searchValue.equals(value);
     }
 
     @Override

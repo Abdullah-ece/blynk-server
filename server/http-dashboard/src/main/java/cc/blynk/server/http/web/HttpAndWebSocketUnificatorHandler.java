@@ -39,6 +39,9 @@ import static cc.blynk.core.http.Response.redirect;
 @ChannelHandler.Sharable
 public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
+    private final static String BLYNK_LANDING = "https://www.blynk.cc";
+
+    private final String region;
     private final GlobalStats stats;
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;

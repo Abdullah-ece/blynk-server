@@ -21,8 +21,8 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
         boolean isSame = false;
-        if (pins != null && this.deviceId == deviceId) {
-            for (Pin pin : pins) {
+        if (this.pins != null && this.deviceId == deviceId) {
+            for (Pin pin : this.pins) {
                 if (pin.isSame(pinIn, type)) {
                     pin.value = value;
                     isSame = true;
@@ -30,6 +30,18 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
             }
         }
         return isSame;
+    }
+
+    @Override
+    public void updateIfSame(Widget widget) {
+        if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            if (multiPinWidget.pins != null && multiPinWidget.deviceId == this.deviceId) {
+                for (Pin pin : multiPinWidget.pins) {
+                    updateIfSame(multiPinWidget.deviceId, pin.pin, pin.pinType, pin.value);
+                }
+            }
+        }
     }
 
     @Override
@@ -78,18 +90,6 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean hasValue(String searchValue) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (searchValue.equals(pin.value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override

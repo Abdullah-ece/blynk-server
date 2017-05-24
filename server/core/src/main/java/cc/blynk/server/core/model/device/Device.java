@@ -54,6 +54,11 @@ public class Device implements Target {
         return new int[] {id};
     }
 
+    @Override
+    public int getDeviceId() {
+        return id;
+    }
+
     public void update(Device newDevice) {
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
