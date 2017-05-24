@@ -80,6 +80,8 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Empty email or password field.");
         }
 
+        email = email.toLowerCase();
+
         User user = userDao.getByName(email, AppName.BLYNK);
 
         if (user == null) {
