@@ -24,7 +24,7 @@ class Info extends React.Component {
                 <Col span={12}>
                   <FormItem>
                     <FormItem.Title>hardware</FormItem.Title>
-                    <FormItem.Content>
+                    <FormItem.Content offset="sm">
                       { boardType }
                     </FormItem.Content>
                   </FormItem>
@@ -32,7 +32,7 @@ class Info extends React.Component {
                 <Col span={12}>
                   <FormItem>
                     <FormItem.Title>connection type</FormItem.Title>
-                    <FormItem.Content>
+                    <FormItem.Content offset="sm">
                       { connectionType }
                     </FormItem.Content>
                   </FormItem>
@@ -45,7 +45,7 @@ class Info extends React.Component {
                   { this.props.product.description && (
                     <FormItem>
                       <FormItem.Title>Description</FormItem.Title>
-                      <FormItem.Content>
+                      <FormItem.Content offset="sm">
                         { this.props.product.description.split('\n').map((item, key) => {
                           return <span key={key}>{item}<br/></span>
                         })}
