@@ -53,6 +53,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final HardwareStatsLogic hardwareStatsLogic;
     private final WebLoginHandler webLoginHandler;
     private final AccountHandler accountHandler;
+    private final DevicesHandler devicesHandler;
     private final ProductHandler productHandler;
     private final OrganizationHandler organizationHandler;
 
@@ -72,6 +73,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
+        this.devicesHandler = new DevicesHandler(holder, rootPath);
         this.productHandler = new ProductHandler(holder, rootPath);
         this.organizationHandler = new OrganizationHandler(holder, rootPath);
     }
@@ -105,6 +107,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         pipeline.addLast(new UploadHandler(rootPath + "/upload"));
         pipeline.addLast(accountHandler);
+        pipeline.addLast(devicesHandler);
         pipeline.addLast(productHandler);
         pipeline.addLast(organizationHandler);
         pipeline.addLast(usersLogic);

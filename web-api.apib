@@ -568,3 +568,25 @@ HOST: https://knight-qa.blynk.cc/
 + Response 400 (application/json)
 
         Something went wrong during upload.
+
+
+# Devices API
+
+## Get All devices for user [GET] [/devices]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        [
+        {
+          "id" : 1,
+          "productId" : 1,
+          "name" : "My Device 0",
+          "boardType" : "Particle Photon",
+          "token" : "auth_123",
+          "connectionType" : "GSM",
+          "status" : "OFFLINE",
+          "disconnectTime" : 0
+        }
+        ]
