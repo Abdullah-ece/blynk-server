@@ -44,7 +44,7 @@ class DeleteForm extends React.Component {
                   htmlType="submit"
                   loading={this.props.submitting}
                   disabled={this.props.invalid || this.props.submitting}>
-            Yes, Delete {this.props.productName}
+            Yes, Delete Product
           </Button>
         </div>
       </Form>
