@@ -74,12 +74,21 @@ class BaseField extends React.Component {
     const units = this.props.units;
 
     let value = null;
-    if (!isNaN(Number(min)) && !isNaN(Number(max)) && units) {
-      value = `from ${min} to ${max} ${Unit[units].abbreviation}`;
+
+    if (units) {
+      value = `0 ${Unit[units].abbreviation}`;
+    }
+
+    if (!isNaN(Number(max)) && units) {
+      value = `${max} ${Unit[units].abbreviation}`;
+    }
+
+    if (!isNaN(Number(min)) && units) {
+      value = `${min} ${Unit[units].abbreviation}`;
     }
 
     return {
-      name: name && typeof name === 'string' ? `${name.trim()}:` : null,
+      name: name && typeof name === 'string' ? `${name.trim()}` : null,
       value: value
     };
   }
