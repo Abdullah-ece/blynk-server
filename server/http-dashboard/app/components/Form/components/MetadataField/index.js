@@ -38,7 +38,7 @@ export default class Field extends React.Component {
   render() {
     let props = this.props;
 
-    if (props && props.validateOnBlur) {
+    if (props && props.validateOnBlur && !props.onFocus) {
       props = {
         ...props,
         onFocus: () => (true)
