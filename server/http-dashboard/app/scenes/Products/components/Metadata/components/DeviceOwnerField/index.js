@@ -36,7 +36,9 @@ class DeviceOwnerField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <MetadataFormField name="value" type="text" placeholder="device-owner@example.com (optional)"
-                             validate={[Validation.Rules.email]}/>
+                             validate={[Validation.Rules.email]}
+                             validateOnBlur={true}
+          />
         </FormItem.Content>
       </FormItem>
     );

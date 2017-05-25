@@ -5,7 +5,7 @@ import {Form, Input, Icon} from 'antd';
 import {Field as FormField} from 'redux-form';
 
 export default class Field extends React.Component {
-  renderField({className, disabled = false, displayError = true, style, placeholder, input, type, icon, meta: {touched, error, warning}}) {
+  renderField({validateOnBlur = false, className, disabled = false, displayError = true, style, placeholder, input, type, icon, meta: {active, touched, error, warning}}) {
 
     let validateStatus = 'success';
     let help = '';
@@ -17,6 +17,11 @@ export default class Field extends React.Component {
     if (!touched && input.value && error) {
       validateStatus = 'error';
       help = error || warning || '';
+    }
+
+    if (validateOnBlur && active) {
+      validateStatus = 'success';
+      help = '';
     }
 
     return (
@@ -31,7 +36,15 @@ export default class Field extends React.Component {
   }
 
   render() {
-    const props = this.props;
+    let props = this.props;
+
+    if (props && props.validateOnBlur) {
+      props = {
+        ...props,
+        onFocus: () => (true)
+      };
+    }
+
     return (
       <FormField {...props} component={this.renderField}/>
     );
