@@ -117,7 +117,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.error("User not found.");
-            return badRequest("Token does not exists.");
+            return badRequest("Token does not exist.");
         }
 
         user.pass = password;
@@ -146,7 +146,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.error("User not found.");
-            return badRequest("Token does not exists.");
+            return badRequest("Token does not exist.");
         }
 
         user.pass = password;
