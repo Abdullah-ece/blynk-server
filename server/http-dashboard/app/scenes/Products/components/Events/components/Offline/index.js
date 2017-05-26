@@ -45,7 +45,7 @@ class Offline extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
-              <Input name="name" placeholder="Event Name"
+              <Input validateOnBlur={true} name="name" placeholder="Event Name"
                      style={{width: '55%'}}/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>

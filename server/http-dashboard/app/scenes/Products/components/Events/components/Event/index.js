@@ -95,11 +95,12 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
-              <Input onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name" style={{width: '55%'}}
+              <Input validateOnBlur={true} onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name"
+                     style={{width: '55%'}}
                      validate={[Validation.Rules.required]}/>
             </Item>
             <Item label="Event Code" offset="normal">
-              <Input name="eventCode" placeholder="Event code" style={{width: '45%'}}
+              <Input validateOnBlur={true} name="eventCode" placeholder="Event code" style={{width: '45%'}}
                      validate={[Validation.Rules.required, Validation.Rules.eventsEventCode]}/>
             </Item>
           </ItemsGroup>

@@ -22,7 +22,7 @@ class Online extends React.Component {
             onDelete={this.props.onDelete}>
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <Input name="name" placeholder="Event Name"/>
+            <Input validateOnBlur={true} name="name" placeholder="Event Name"/>
           </Item>
         </Base.Content>
       </Base>

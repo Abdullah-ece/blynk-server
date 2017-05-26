@@ -42,14 +42,38 @@ export default class Item extends React.Component {
   }
 
   reduxItem(props) {
-    const {displayError = true, meta: {touched, error, warning}} = props;
+    const {displayError = true, input, validateOnBlur = false, meta: {touched, error, warning, active}} = props;
 
     const validateStatus = () => {
-      return touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success';
+      let validateStatus = 'success';
+      if (touched && displayError && error) {
+        validateStatus = 'error';
+      }
+
+      if (!touched && input.value && error) {
+        validateStatus = 'error';
+      }
+
+      if (validateOnBlur && active) {
+        validateStatus = 'success';
+      }
+      return validateStatus;
     };
 
     const help = () => {
-      return touched && displayError ? (error || warning ? error || warning : '' ) : '';
+      let help = '';
+      if (touched && displayError && error) {
+        help = error || warning || '';
+      }
+
+      if (!touched && input.value && error) {
+        help = error || warning || '';
+      }
+
+      if (validateOnBlur && active) {
+        help = '';
+      }
+      return help;
     };
 
     const className = classNames({
