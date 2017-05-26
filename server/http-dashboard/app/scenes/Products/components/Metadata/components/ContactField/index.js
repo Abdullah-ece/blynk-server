@@ -182,7 +182,8 @@ class ContactField extends BaseField {
     return (
       <div>
         <Form.Item label="Contact" offset="extra-small">
-          <Form.Input className="metadata-contact-field" name="name" type="text" placeholder="Field Name"
+          <Form.Input validateOnBlur={true} className="metadata-contact-field" name="name" type="text"
+                      placeholder="Field Name"
                       validate={[
                         Validation.Rules.required, Validation.Rules.metafieldName,
                       ]}/>
