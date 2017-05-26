@@ -30,11 +30,12 @@ export default class Field extends React.Component {
     );
   }
 
-  simpleField({displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  simpleField({displayError = true, validateStatus = false, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
     return (
-      <Form.Item validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
-                 className="form-field"
-                 help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
+      <Form.Item
+        validateStatus={validateStatus || (touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success')}
+        className="form-field"
+        help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
         <Input {...input} rows={rows} type={type} placeholder={placeholder}
                prefix={icon ? <Icon type={icon} className="form--field-icon"/> : null}/>
       </Form.Item>

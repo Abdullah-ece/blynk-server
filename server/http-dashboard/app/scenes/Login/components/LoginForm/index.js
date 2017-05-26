@@ -41,6 +41,7 @@ export default class LoginForm extends React.Component {
       <div className="login-error">{ error && error }</div>
 
       <FormField type="text" name="email"
+                 validateStatus={!error ? 'success' : 'error'}
                  icon="user"
                  placeholder="Email"
                  displayError={false}
@@ -50,6 +51,7 @@ export default class LoginForm extends React.Component {
                  ]}/>
 
       <FormField type="password" name="password"
+                 validateStatus={!error ? 'success' : 'error'}
                  icon="lock"
                  placeholder="Password"
                  displayError={false}
