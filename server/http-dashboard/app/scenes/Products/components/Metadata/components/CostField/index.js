@@ -128,7 +128,8 @@ class CostField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField name="name" type="text" placeholder="Field Name" style={{width: '200%'}} validate={[
+            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+                               style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>

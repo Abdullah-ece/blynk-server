@@ -38,7 +38,7 @@ class TextField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField name="name" type="text" placeholder="Field Name" validate={[
+            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
