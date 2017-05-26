@@ -20,7 +20,7 @@ export const Messages = {
 export const Rules = {
   username: (value) => !/^[a-z0-9]+$/.test(value) ? Messages.username : undefined,
   /** @todo find best correct regex for fullname */
-  fullname: (value) => !/^[a-zA-Z ]+$/.test(value) ? Messages.fullname : undefined,
+  fullname: (value) => !/^[a-zA-Z. -]+$/.test(value) ? Messages.fullname : undefined,
   password: (value) => !/^[a-z0-9]+$/.test(value) ? Messages.password : undefined,
   email: (value) => {
     if (!value) return undefined;
