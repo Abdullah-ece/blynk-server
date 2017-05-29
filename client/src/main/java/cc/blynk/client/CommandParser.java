@@ -15,6 +15,8 @@ public class CommandParser {
         switch (stringCommand.toLowerCase()) {
             case "hardware" :
                 return HARDWARE;
+            case "logevent" :
+                return HARDWARE_LOG_EVENT;
             case "ping" :
                 return PING;
             case "loadprofilegzipped" :

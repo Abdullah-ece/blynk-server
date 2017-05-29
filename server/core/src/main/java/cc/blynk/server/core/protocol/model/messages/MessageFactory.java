@@ -69,6 +69,8 @@ public class MessageFactory {
                 return new GetSharedDashMessage(messageId, body);
             case HARDWARE :
                 return new HardwareMessage(messageId, body);
+            case HARDWARE_LOG_EVENT :
+                return new HardwareLogEventMessage(messageId, body);
             case HARDWARE_CONNECTED :
                 return new HardwareConnectedMessage(messageId, body);
             case REDEEM :

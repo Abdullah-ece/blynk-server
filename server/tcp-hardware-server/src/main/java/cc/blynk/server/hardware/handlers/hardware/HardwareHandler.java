@@ -49,6 +49,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);
                 break;
+            case HARDWARE_LOG_EVENT:
+                HardwareLogEventLogic.messageReceived(ctx, state, msg);
+                break;
             case PING:
                 PingLogic.messageReceived(ctx, msg.id);
                 break;

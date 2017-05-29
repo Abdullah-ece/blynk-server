@@ -94,6 +94,7 @@ public final class Command {
     public static final short GET_PROJECT_BY_TOKEN = 58;
     public static final short EMAIL_QR = 59;
 
+    public static final short HARDWARE_LOG_EVENT = 60;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 62;
@@ -170,6 +171,8 @@ public final class Command {
                 put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
                 put(EMAIL_QR, "MailQRs");
                 put(UPDATE_FACE, "UpdateFace");
+
+                put(HARDWARE_LOG_EVENT, "LogEvent");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

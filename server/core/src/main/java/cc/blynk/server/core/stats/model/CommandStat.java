@@ -27,6 +27,7 @@ public class CommandStat {
     public int setWidgetProperty;
     public int bridge;
     public int hardware;
+    public int hardwareLogEvent;
     public int getSharedDash;
     public int getShareToken;
     public int refreshShareToken;
@@ -129,6 +130,9 @@ public class CommandStat {
                 break;
             case HARDWARE :
                 this.hardware = val;
+                break;
+            case HARDWARE_LOG_EVENT :
+                this.hardwareLogEvent = val;
                 break;
             case GET_SHARED_DASH :
                 this.getSharedDash = val;
