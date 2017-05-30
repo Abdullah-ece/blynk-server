@@ -29,8 +29,6 @@ class ProductsIndex extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.props.ProductsFetch();
   }
 
   componentWillMount() {

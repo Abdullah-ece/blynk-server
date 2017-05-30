@@ -23,6 +23,11 @@ import Store from './store';
 
 /* services */
 import {RouteGuestOnly, RouteAuthorizedOnly} from './services/Login';
+import {
+  Products as ProductsPreloader,
+  Account as AccountPreloader,
+  Organization as OrganizationPreloader
+} from './services/Preloaders';
 
 /* vendor */
 import {LocaleProvider} from 'antd';
@@ -37,19 +42,21 @@ Store().then((store) => {
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
               <Route component={UserProfileLayout}>
-                <Route path="/account" component={MyAccount}/>
-                <Route path="/organization-settings" component={OrganizationSettings}/>
+                <Route path="/account" component={MyAccount}
+                       onEnter={AccountPreloader(store)}/>
+                <Route path="/organization-settings" component={OrganizationSettings}
+                       onEnter={OrganizationPreloader(store)}/>
               </Route>
               <Route path="/devices" components={Devices}/>
-              <Route path="/products" component={ProductsIndex}/>
+              <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
-              <Route path="/products/edit/:id" component={ProductEdit}/>
-              <Route path="/products/edit/:id/:tab" component={ProductEdit}/>
-              <Route path="/products/clone/:id" component={ProductClone}/>
-              <Route path="/products/clone/:id/:tab" component={ProductClone}/>
-              <Route path="/product/:id" component={ProductDetails}/>
-              <Route path="/product/:id/:tab" component={ProductDetails}/>
+              <Route path="/products/edit/:id" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
+              <Route path="/products/edit/:id/:tab" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
+              <Route path="/products/clone/:id" component={ProductClone} onEnter={ProductsPreloader(store)}/>
+              <Route path="/products/clone/:id/:tab" component={ProductClone} onEnter={ProductsPreloader(store)}/>
+              <Route path="/product/:id" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
+              <Route path="/product/:id/:tab" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
             </Route>
             <Route path="/logout" component={Logout}/>
             <Route component={LoginLayout}>

@@ -39,7 +39,6 @@ class MyAccount extends React.Component {
     this.state = {
       resetPasswordProcessing: false
     };
-    props.AccountFetch();
   }
 
   handleNameSave(name) {

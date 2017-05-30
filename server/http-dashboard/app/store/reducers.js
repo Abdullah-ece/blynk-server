@@ -11,6 +11,7 @@ import Account from '../data/Account/reducers';
 import Organization from '../data/Organization/reducers';
 import Product from '../data/Product/reducers';
 import Storage from '../data/Storage/reducers';
+import PageLoading from '../data/PageLoading/reducers';
 
 const reducers = {
   form: formReducer,
@@ -18,7 +19,8 @@ const reducers = {
   Account,
   Organization,
   Product,
-  Storage
+  Storage,
+  PageLoading
 };
 
 export default combineReducers(reducers);

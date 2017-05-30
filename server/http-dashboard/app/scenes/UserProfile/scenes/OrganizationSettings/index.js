@@ -49,11 +49,6 @@ class OrganizationSettings extends React.Component {
 
   constructor(props) {
     super(props);
-
-    props.OrganizationFetch({
-      id: this.props.Account.orgId
-    });
-
   }
 
   handleInviteSubmit(values) {
