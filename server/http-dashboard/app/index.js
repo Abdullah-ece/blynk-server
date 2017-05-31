@@ -8,6 +8,7 @@ import LoginLayout from './components/LoginLayout';
 
 /* scenes */
 import Login from './scenes/Login';
+import Book from './scenes/Book';
 import Devices from './scenes/Devices';
 import ForgotPass from './scenes/ForgotPass';
 import ResetPass from './scenes/ResetPass';
@@ -39,6 +40,10 @@ Store().then((store) => {
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
         <Router history={hashHistory}>
+          <Route component={Book}>
+            <Route path="/book" component={Book.Index}/>
+            <Route path="/book/fieldset" component={Book.Fieldset}/>
+          </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
               <Route component={UserProfileLayout}>
