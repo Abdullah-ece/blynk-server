@@ -160,6 +160,57 @@ public class TableCommandsTest extends IntegrationBase {
     }
 
     @Test
+    public void testTableUpdateExistingRow() throws Exception {
+        Table table = new Table();
+        table.pin = 123;
+        table.pinType = PinType.VIRTUAL;
+        table.isClickableRows = true;
+        table.isReoderingAllowed = true;
+        table.height = 2;
+        table.width = 2;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 clr");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+
+        clientPair.hardwareClient.send("hardware vw 123 add 0 Row0 row0");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 123 add 0 Row0 row0"))));
+
+        table = loadTable();
+        Row row;
+
+        assertNotNull(table);
+        assertNotNull(table.rows);
+        assertEquals(1, table.rows.size());
+        row = table.rows.get(0);
+        assertNotNull(row);
+        assertEquals(0, row.id);
+        assertEquals("Row0", row.name);
+        assertEquals("row0", row.value);
+        assertTrue(row.isSelected);
+        assertEquals(0, table.currentRowIndex);
+
+        clientPair.hardwareClient.send("hardware vw 123 update 0 Row0Updated row0Updated");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 123 update 0 Row0Updated row0Updated"))));
+
+        table = loadTable();
+
+        assertNotNull(table);
+        assertNotNull(table.rows);
+        assertEquals(1, table.rows.size());
+        row = table.rows.get(0);
+        assertNotNull(row);
+        assertEquals(0, row.id);
+        assertEquals("Row0Updated", row.name);
+        assertEquals("row0Updated", row.value);
+        assertTrue(row.isSelected);
+        assertEquals(0, table.currentRowIndex);
+    }
+
+    @Test
     public void testTableRowLimit() throws Exception {
         System.setProperty("table.rows.pool.size", "5");
 
