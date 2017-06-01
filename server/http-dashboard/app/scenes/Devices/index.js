@@ -1,58 +1,24 @@
 import React from 'react';
 import PageLayout from 'components/PageLayout';
 import {DevicesSearch, DevicesList, Device} from './components';
+import {connect} from 'react-redux';
 
+@connect((state) => ({
+  devices: state.Devices.devices
+}))
 class Devices extends React.Component {
 
-  render() {
+  static propTypes = {
+    devices: React.PropTypes.array
+  };
 
-    const devices = [{
-      id: 1,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564',
-      warning: 3
-    }, {
-      id: 2,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564',
-      critical: 5
-    }, {
-      id: 3,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }, {
-      id: 4,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }, {
-      id: 5,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564',
-      critical: 3,
-      warning: 2
-    }, {
-      id: 6,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }, {
-      id: 7,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }, {
-      id: 8,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }, {
-      id: 9,
-      name: 'Trenton Farm Equipment',
-      productName: 'MultiFlow FX564'
-    }];
+  render() {
 
     return (
       <PageLayout>
         <PageLayout.Navigation>
           <DevicesSearch />
-          <DevicesList devices={devices} active={1} deviceKey="id"/>
+          <DevicesList devices={this.props.devices} active={0} deviceKey="id"/>
         </PageLayout.Navigation>
         <PageLayout.Content>
           <PageLayout.Content.Header title="Trenton Farm Equipment"/>

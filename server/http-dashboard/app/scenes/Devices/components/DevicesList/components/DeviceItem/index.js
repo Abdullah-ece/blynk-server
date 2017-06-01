@@ -7,7 +7,7 @@ class DeviceItem extends React.Component {
 
   static propTypes = {
     name: React.PropTypes.string,
-    productName: React.PropTypes.string,
+    product: React.PropTypes.object,
     critical: React.PropTypes.number,
     warning: React.PropTypes.number,
     active: React.PropTypes.bool
@@ -26,7 +26,7 @@ class DeviceItem extends React.Component {
           <Dotdotdot clamp={1}>{this.props.name}</Dotdotdot>
         </div>
         <div className="navigation-devices-list-item-product-name">
-          <Dotdotdot clamp={1}>{this.props.productName}</Dotdotdot>
+          <Dotdotdot clamp={1}>{this.props.product && this.props.product.name || (<i>No Product Name</i>) }</Dotdotdot>
         </div>
         <div className="navigation-devices-list-item-events">
           { !!this.props.critical && (

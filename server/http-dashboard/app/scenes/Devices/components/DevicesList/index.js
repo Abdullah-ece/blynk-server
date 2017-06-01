@@ -27,7 +27,7 @@ class DevicesList extends React.Component {
         { Array.isArray(this.props.devices) && this.props.devices.map((device, key) => (
           <DeviceItem key={device.id}
                       name={device.name}
-                      productName={device.productName}
+                      product={device.product}
                       critical={device.critical}
                       warning={device.warning}
                       active={isActive(key, device)}/>

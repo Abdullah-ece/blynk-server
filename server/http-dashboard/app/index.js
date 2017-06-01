@@ -27,7 +27,8 @@ import {RouteGuestOnly, RouteAuthorizedOnly} from './services/Login';
 import {
   Products as ProductsPreloader,
   Account as AccountPreloader,
-  Organization as OrganizationPreloader
+  Organization as OrganizationPreloader,
+  Devices as DevicesPreloader,
 } from './services/Preloaders';
 
 /* vendor */
@@ -54,7 +55,7 @@ Store().then((store) => {
                 <Route path="/organization-settings" component={OrganizationSettings}
                        onEnter={OrganizationPreloader(store)}/>
               </Route>
-              <Route path="/devices" components={Devices}/>
+              <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
