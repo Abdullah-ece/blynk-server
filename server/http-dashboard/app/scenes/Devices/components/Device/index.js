@@ -27,7 +27,7 @@ class Device extends React.Component {
           <div style={{padding: '12px 0'}}>Events Log</div>
         </TabPane>
         <TabPane tab="Device Info" key="3">
-          <DeviceInfo />
+          <DeviceInfo device={this.props.device}/>
         </TabPane>
         <TabPane tab="Labels" key="4">
           <div style={{padding: '12px 0'}}>Labels</div>
