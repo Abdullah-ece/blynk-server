@@ -1,6 +1,6 @@
 import React from 'react';
 import {Tabs} from 'antd';
-import {Dashboard} from './components';
+import {Dashboard, DeviceInfo} from './components';
 import './styles.less';
 
 class Device extends React.Component {
@@ -18,7 +18,7 @@ class Device extends React.Component {
           <div style={{padding: '12px 0'}}>Events Log</div>
         </TabPane>
         <TabPane tab="Device Info" key="3">
-          <div style={{padding: '12px 0'}}>Device Info</div>
+          <DeviceInfo />
         </TabPane>
         <TabPane tab="Labels" key="4">
           <div style={{padding: '12px 0'}}>Labels</div>
