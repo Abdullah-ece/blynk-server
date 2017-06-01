@@ -8,8 +8,16 @@ class DevicesList extends React.Component {
   static propTypes = {
     devices: React.PropTypes.array,
     active: React.PropTypes.number,
-    deviceKey: React.PropTypes.string
+    deviceKey: React.PropTypes.string,
+
+    onDeviceSelect: React.PropTypes.func,
   };
+
+  handleDeviceSelect(device) {
+    if (typeof this.props.onDeviceSelect === 'function') {
+      this.props.onDeviceSelect(device);
+    }
+  }
 
   render() {
 
@@ -26,6 +34,7 @@ class DevicesList extends React.Component {
       <div className="navigation-devices-list">
         { Array.isArray(this.props.devices) && this.props.devices.map((device, key) => (
           <DeviceItem key={device.id}
+                      onClick={this.handleDeviceSelect.bind(this, device)}
                       name={device.name}
                       product={device.product}
                       critical={device.critical}

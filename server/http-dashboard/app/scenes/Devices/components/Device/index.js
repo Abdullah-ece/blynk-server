@@ -1,9 +1,18 @@
 import React from 'react';
 import {Tabs} from 'antd';
 import {Dashboard, DeviceInfo} from './components';
+import _ from 'lodash';
 import './styles.less';
 
 class Device extends React.Component {
+
+  static propTypes = {
+    device: React.PropTypes.object
+  };
+
+  shouldComponentUpdate(nextProps) {
+    return !(_.isEqual(nextProps.device, this.props.device));
+  }
 
   render() {
     const TabPane = Tabs.TabPane;

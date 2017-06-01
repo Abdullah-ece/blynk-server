@@ -10,18 +10,18 @@ class DeviceItem extends React.Component {
     product: React.PropTypes.object,
     critical: React.PropTypes.number,
     warning: React.PropTypes.number,
-    active: React.PropTypes.bool
+    active: React.PropTypes.bool,
+    onClick: React.PropTypes.func
   };
 
   render() {
-
     const className = classnames({
       'navigation-devices-list-item': true,
       'navigation-devices-list-item-active': this.props.active
     });
 
     return (
-      <div className={className}>
+      <div className={className} onClick={this.props.onClick}>
         <div className="navigation-devices-list-item-name">
           <Dotdotdot clamp={1}>{this.props.name}</Dotdotdot>
         </div>

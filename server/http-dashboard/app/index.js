@@ -56,6 +56,7 @@ Store().then((store) => {
                        onEnter={OrganizationPreloader(store)}/>
               </Route>
               <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
+              <Route path="/devices/:id" components={Devices} onEnter={DevicesPreloader(store)}/>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
