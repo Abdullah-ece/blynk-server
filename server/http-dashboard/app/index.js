@@ -43,6 +43,7 @@ Store().then((store) => {
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>
+            <Route path="/book/device-status" component={Book.DeviceStatus}/>
           </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>

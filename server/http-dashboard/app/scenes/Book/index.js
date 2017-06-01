@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu} from 'antd';
-import {Index, Fieldset} from './scenes/index';
+import {Index, Fieldset, DeviceStatus} from './scenes/index';
 import _ from 'lodash';
 import './styles.less';
 import 'highlightjs/styles/atom-one-light.css';
@@ -31,6 +31,9 @@ class Book extends React.Component {
     'Data Display': {
       'Fieldset': {
         path: '/book/fieldset'
+      },
+      'Device Status': {
+        path: '/book/device-status'
       }
     }
   };
@@ -72,6 +75,7 @@ class Book extends React.Component {
 
 }
 
+Book.DeviceStatus = DeviceStatus;
 Book.Fieldset = Fieldset;
 Book.Index = Index;
 

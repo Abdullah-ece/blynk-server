@@ -1,0 +1,37 @@
+@import "components/Layout/style-guide";
+
+.device-status {
+  .font-body-text;
+  font-size: 16px;
+  line-height: 20px;
+  color: #212227;
+  font-weight: 300;
+  display: inline;
+  position: relative;
+  &:before {
+    content: " ";
+    display: inline;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: transparent;
+    left: 0;
+    top: 50%;
+    margin-top: -4px;
+  }
+}
+
+.device-status-online {
+  padding-left: 12px;
+  &:before {
+    background: @color-positive;
+  }
+}
+
+.device-status-offline {
+  padding-left: 12px;
+  &:before {
+    background: @color-dark-grey-25;
+  }
+}
