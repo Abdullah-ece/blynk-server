@@ -24,6 +24,22 @@ class FieldsetBook extends React.Component {
 </Fieldset>`}
         </Highlight>
 
+        <h4>Example</h4>
+
+        <Fieldset>
+          <Fieldset.Legend type="dark">User</Fieldset.Legend>
+          Some text is there
+        </Fieldset>
+
+        <h4>Code</h4>
+
+        <Highlight>
+          {`<Fieldset>
+ <Fieldset.Legend type="dark">User</Fieldset.Legend>
+ Some text is there
+</Fieldset>`}
+        </Highlight>
+
       </div>
     );
   }
