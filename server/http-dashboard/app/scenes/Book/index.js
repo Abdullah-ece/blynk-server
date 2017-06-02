@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu} from 'antd';
-import {Index, Fieldset, DeviceStatus, DeviceAuthToken} from './scenes/index';
+import {Index, Fieldset, DeviceStatus, DeviceAuthToken, Section} from './scenes/index';
 import _ from 'lodash';
 import './styles.less';
 import 'highlightjs/styles/atom-one-light.css';
@@ -37,6 +37,9 @@ class Book extends React.Component {
       },
       'DeviceAuthToken': {
         path: '/book/device-auth-token'
+      },
+      'Section': {
+        path: '/book/section'
       }
     }
   };
@@ -78,6 +81,7 @@ class Book extends React.Component {
 
 }
 
+Book.Section = Section;
 Book.DeviceAuthToken = DeviceAuthToken;
 Book.DeviceStatus = DeviceStatus;
 Book.Fieldset = Fieldset;
