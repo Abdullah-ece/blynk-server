@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken} from 'components';
+import {Fieldset, DeviceStatus, DeviceAuthToken, Section} from 'components';
 import _ from 'lodash';
 import './styles.less';
 
@@ -25,7 +25,7 @@ class DeviceInfo extends React.Component {
   render() {
     return (
       <div className="device--device-info">
-        <Row>
+        <Row className="device--device-info-details">
           <Col span={8}>
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
@@ -50,6 +50,13 @@ class DeviceInfo extends React.Component {
             <div className="device--device-info-logo">
               <img src="http://www.knightequip.com/images/product_warewash_nav/ump-hospitality.jpg"/>
             </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Section title="Metadata">
+              Some metadata is there
+            </Section>
           </Col>
         </Row>
       </div>
