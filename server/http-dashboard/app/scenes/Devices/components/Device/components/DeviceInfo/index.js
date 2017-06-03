@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, Section} from 'components';
+import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata} from 'components';
 import _ from 'lodash';
 import './styles.less';
 
@@ -55,7 +55,9 @@ class DeviceInfo extends React.Component {
         <Row>
           <Col span={24}>
             <Section title="Metadata">
-              Some metadata is there
+              <div className="device--device-info-metadata-list">
+                <DeviceMetadata.Text />
+              </div>
             </Section>
           </Col>
         </Row>

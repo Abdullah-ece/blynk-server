@@ -1,7 +1,9 @@
 import {
-  Item
+  Item,
+  Text
 } from './components';
 
 export default {
-  Item
+  Item,
+  Text
 };
