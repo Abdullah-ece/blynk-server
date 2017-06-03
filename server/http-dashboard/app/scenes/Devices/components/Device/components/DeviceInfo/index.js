@@ -23,6 +23,28 @@ class DeviceInfo extends React.Component {
   }
 
   render() {
+
+    const metaFields = [
+      {
+        type: "Text",
+        name: "Device Name",
+        role: "ADMIN",
+        value: "My Device 0"
+      },
+      {
+        type: "Text",
+        name: "Device Owner",
+        role: "ADMIN",
+        value: "ihor.bra@gmail.com"
+      },
+      {
+        type: "Text",
+        name: "Location Name",
+        role: "ADMIN",
+        value: "Trenton New York Farm"
+      }
+    ];
+
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">
@@ -56,7 +78,12 @@ class DeviceInfo extends React.Component {
           <Col span={24}>
             <Section title="Metadata">
               <div className="device--device-info-metadata-list">
-                <DeviceMetadata.Text />
+                {
+                  metaFields.map((field, key) => {
+                    if (field.type === 'Text')
+                      return (<DeviceMetadata.Text data={field} key={key}/>);
+                  })
+                }
               </div>
             </Section>
           </Col>

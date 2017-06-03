@@ -3,14 +3,19 @@ import {Fieldset, DeviceMetadata} from 'components';
 
 class Text extends React.Component {
 
+  static propTypes = {
+    data: React.PropTypes.object
+  };
+
   render() {
+
+    const field = this.props.data;
+
     return (
       <DeviceMetadata.Item>
         <Fieldset>
-          <Fieldset.Legend type="dark">Device Owner</Fieldset.Legend>
-          ihor.bra@gmail.com<br/>
-          ihor.bra@gmail.com<br/>
-          ihor.bra@gmail.com
+          <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+          {field.value}
         </Fieldset>
       </DeviceMetadata.Item>
     );
