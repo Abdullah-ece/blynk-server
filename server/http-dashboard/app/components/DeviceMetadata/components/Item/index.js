@@ -5,8 +5,14 @@ import './styles.less';
 class Item extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.any
+    children: React.PropTypes.any,
+    onEditClick: React.PropTypes.func
   };
+
+  onEditClick() {
+    if (typeof this.props.onEditClick === 'function')
+      this.props.onEditClick();
+  }
 
   render() {
     return (
@@ -16,7 +22,9 @@ class Item extends React.Component {
             {this.props.children}
           </Col>
           <Col span={10} className="device-metadata--item-edit">
-            <Button type="primary"><Icon type="edit"/>Edit</Button>
+            <Button type="primary" onClick={this.onEditClick.bind(this)}>
+              <Icon type="edit"/>Edit
+            </Button>
             {/*<div className="device-metadata--item-edit-no-permission">No permissions to edit</div>*/}
           </Col>
         </Row>

@@ -1,9 +1,11 @@
 import {
+  Base,
   Item,
-  Text
+  Text,
 } from './components';
 
 export default {
+  Base,
   Item,
-  Text
+  Text,
 };
