@@ -1,0 +1,37 @@
+@import "components/Layout/style-guide";
+
+.modal-window {
+  .ant-modal {
+
+    .ant-modal-header {
+      border-bottom: 0;
+      .ant-modal-title {
+        .font-h2;
+      }
+    }
+
+    .ant-modal-footer {
+      border-top: 0;
+      background: @color-dark-grey-05;
+
+    }
+
+    .ant-modal-header + .ant-modal-body {
+      padding-top: 0;
+    }
+
+    .ant-modal-header, .ant-modal-body {
+      padding: 32px;
+    }
+    .ant-modal-footer {
+      padding: 24px;
+
+      button {
+        padding: @style-size-2 @style-size-3;
+        &.ant-btn-loading {
+          padding-left: @style-size-4 - 4;
+        }
+      }
+    }
+  }
+}
