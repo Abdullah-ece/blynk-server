@@ -2,13 +2,13 @@ import React from 'react';
 import {DeviceItem} from './components';
 
 import './styles.less';
+import {List} from "immutable";
 
 class DevicesList extends React.Component {
 
   static propTypes = {
-    devices: React.PropTypes.array,
-    active: React.PropTypes.number,
-    deviceKey: React.PropTypes.string,
+    devices: React.PropTypes.instanceOf(List),
+    activeId: React.PropTypes.number,
 
     onDeviceSelect: React.PropTypes.func,
   };
@@ -21,25 +21,17 @@ class DevicesList extends React.Component {
 
   render() {
 
-    const isActive = (key, device) => {
-      if (this.props.deviceKey && device[this.props.deviceKey] === this.props.active) {
-        return true;
-      } else if (!this.props.deviceKey && this.props.active && key === this.props.active) {
-        return true;
-      }
-      return false;
+    const isActive = (device) => {
+      return device.get('id') === this.props.activeId;
     };
 
     return (
       <div className="navigation-devices-list">
-        { Array.isArray(this.props.devices) && this.props.devices.map((device, key) => (
-          <DeviceItem key={device.id}
+        { this.props.devices && this.props.devices.map((device) => (
+          <DeviceItem key={device.get('id')}
                       onClick={this.handleDeviceSelect.bind(this, device)}
-                      name={device.name}
-                      product={device.product}
-                      critical={device.critical}
-                      warning={device.warning}
-                      active={isActive(key, device)}/>
+                      device={device}
+                      active={isActive(device)}/>
         ))}
       </div>
     );

@@ -3,9 +3,14 @@ import PageLayout from 'components/PageLayout';
 import {DevicesSearch, DevicesList, Device} from './components';
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import {List} from "immutable";
+import {DevicesUpdate} from 'data/Devices/api';
+import {bindActionCreators} from 'redux';
 
 @connect((state) => ({
-  devices: state.Devices.devices
+  devices: state.Devices.get('devices'),
+}), (dispatch) => ({
+  updateDevices: bindActionCreators(DevicesUpdate, dispatch)
 }))
 class Devices extends React.Component {
 
@@ -14,18 +19,15 @@ class Devices extends React.Component {
   };
 
   static propTypes = {
-    devices: React.PropTypes.array,
+    devices: React.PropTypes.instanceOf(List),
+    updateDevices: React.PropTypes.func,
     params: React.PropTypes.object
   };
 
   componentWillMount() {
 
-    const getFirstDeviceId = () => {
-      return this.props.devices.length && this.props.devices[0].id;
-    };
-
-    if (isNaN(this.props.params.id) && this.props.devices.length) {
-      this.context.router.push('/devices/' + getFirstDeviceId());
+    if (isNaN(this.props.params.id) && this.props.devices.size) {
+      this.context.router.push('/devices/' + this.props.devices.first().get('id'));
     }
   }
 
@@ -34,11 +36,22 @@ class Devices extends React.Component {
   }
 
   handleDeviceSelect(device) {
-    this.context.router.push(`/devices/${device.id}`);
+    this.context.router.push(`/devices/${device.get('id')}`);
   }
 
   getDeviceById(id) {
-    return _.find(this.props.devices, {id: Number(id)});
+    return this.props.devices.find(device => Number(device.get('id')) === Number(id));
+  }
+
+  onDeviceChange(updatedDevice) {
+
+    const devices = this.props.devices.map((device) => {
+      if (Number(updatedDevice.get('id')) === Number(device.get('id')))
+        return updatedDevice;
+      return device;
+    });
+
+    return this.props.updateDevices(devices);
   }
 
   render() {
@@ -49,12 +62,12 @@ class Devices extends React.Component {
       <PageLayout>
         <PageLayout.Navigation>
           <DevicesSearch />
-          <DevicesList devices={this.props.devices} active={Number(this.props.params.id)} deviceKey="id"
+          <DevicesList devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <PageLayout.Content.Header title={selectedDevice && selectedDevice.name}/>
-          <Device device={selectedDevice}/>
+          <PageLayout.Content.Header title={selectedDevice && selectedDevice.get('name')}/>
+          <Device device={selectedDevice} onChange={this.onDeviceChange.bind(this)}/>
         </PageLayout.Content>
       </PageLayout>
     );

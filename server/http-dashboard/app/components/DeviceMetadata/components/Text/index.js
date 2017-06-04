@@ -1,18 +1,20 @@
 import React from 'react';
 import Base from '../Base';
 import {Fieldset} from 'components';
-import {reset} from 'redux-form';
 import TextModal from './modal';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {reset, getFormValues} from 'redux-form';
 
-@connect(() => ({}), (dispatch) => ({
+@connect((state, ownProps) => ({
+  values: getFormValues(ownProps.form)(state)
+}), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch)
 }))
 class Text extends Base {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
   getPreviewComponent() {
@@ -21,20 +23,16 @@ class Text extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        {field.value}
+        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
+        {field.get('value')}
       </Fieldset>
     );
-  }
-
-  onCancel() {
-    this.props.resetForm(this.getFormName());
   }
 
   getEditableComponent() {
     return (
       <div>
-        <TextModal form={this.getFormName()} initialValues={this.props.data}/>
+        <TextModal form={this.props.form} initialValues={this.props.data.toJS()}/>
       </div>
     );
   }

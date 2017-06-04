@@ -7,7 +7,8 @@ import './styles.less';
 class DeviceInfo extends React.Component {
 
   static propTypes = {
-    device: React.PropTypes.object
+    device: React.PropTypes.object,
+    onChange: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
@@ -15,35 +16,25 @@ class DeviceInfo extends React.Component {
   }
 
   getDeviceStatus() {
-    if (this.props.device && this.props.device.status === 'OFFLINE') {
+    if (this.props.device && this.props.device.get('status') === 'OFFLINE') {
       return 'offline';
-    } else if (this.props.device && this.props.device.status === 'ONLINE') {
+    } else if (this.props.device && this.props.device.get('status') === 'ONLINE') {
       return 'online';
     }
   }
 
-  render() {
+  onChange(metafield) {
 
-    const metaFields = [
-      {
-        type: "Text",
-        name: "Device Name",
-        role: "ADMIN",
-        value: "My Device 0"
-      },
-      {
-        type: "Text",
-        name: "Device Owner",
-        role: "ADMIN",
-        value: "ihor.bra@gmail.com"
-      },
-      {
-        type: "Text",
-        name: "Location Name",
-        role: "ADMIN",
-        value: "Trenton New York Farm"
-      }
-    ];
+    const device = this.props.device.update('metaFields', (metafields) => metafields.map((value) => {
+      if (metafield.get('name') === value.get('name'))
+        return metafield;
+      return value;
+    }));
+
+    return this.props.onChange(device);
+  }
+
+  render() {
 
     return (
       <div className="device--device-info">
@@ -55,7 +46,7 @@ class DeviceInfo extends React.Component {
             </Fieldset>
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
-              <DeviceAuthToken authToken={this.props.device.token}/>
+              <DeviceAuthToken authToken={this.props.device.get('token')}/>
             </Fieldset>
           </Col>
           <Col span={8}>
@@ -79,9 +70,19 @@ class DeviceInfo extends React.Component {
             <Section title="Metadata">
               <div className="device--device-info-metadata-list">
                 {
-                  metaFields.map((field, key) => {
-                    if (field.type === 'Text')
-                      return (<DeviceMetadata.Text data={field} key={key}/>);
+                  this.props.device.get('metaFields').map((field, key) => {
+
+                    const form = `devicemetadataedit${field.get('name')}`;
+
+                    const props = {
+                      data: field,
+                      key: key,
+                      form: form,
+                      onChange: this.onChange.bind(this)
+                    };
+
+                    if (field.get('type') === 'Text')
+                      return (<DeviceMetadata.Text {...props}/>);
                   })
                 }
               </div>

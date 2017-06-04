@@ -2,11 +2,16 @@ import React from 'react';
 import {Modal} from 'components';
 import {Button} from 'antd';
 import Item from '../Item';
+import {fromJS} from 'immutable';
 
 class Base extends React.Component {
 
   static propTypes = {
-    data: React.PropTypes.object
+    form: React.PropTypes.string,
+    data: React.PropTypes.object,
+    onChange: React.PropTypes.func,
+    resetForm: React.PropTypes.func,
+    values: React.PropTypes.array
   };
 
   state = {
@@ -19,12 +24,36 @@ class Base extends React.Component {
     });
   }
 
-  handleOkClick() {
-
+  startLoading() {
+    this.setState({
+      loading: true
+    });
   }
 
-  getFormName() {
-    return `DeviceMetadataEdit${this.props.data.name}`;
+  stopLoading() {
+    this.setState({
+      loading: false
+    });
+  }
+
+  onOk(metafield) {
+    this.props.onChange(metafield);
+  }
+
+  onCancel() {
+    this.props.resetForm(this.props.form);
+  }
+
+  closeModal() {
+    this.setState({
+      editVisible: false
+    });
+  }
+
+  handleOkClick() {
+    if (this.onOk) {
+      this.onOk(fromJS(this.props.values));
+    }
   }
 
   handleCancelClick() {
@@ -45,12 +74,12 @@ class Base extends React.Component {
       <Item onEditClick={this.handleEdit.bind(this)}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
-               title={field.name}
+               title={field.get('name')}
                onCancel={this.handleCancelClick.bind(this)}
                footer={[
                  <Button key="cancel" type="primary" size="default"
                          onClick={this.handleCancelClick.bind(this)}>Cancel</Button>,
-                 <Button key="save" size="default" onClick={this.handleOkClick.bind(this)}>
+                 <Button key="save" size="default" loading={this.state.loading} onClick={this.handleOkClick.bind(this)}>
                    Save
                  </Button>,
                ]}

@@ -7,11 +7,17 @@ import './styles.less';
 class Device extends React.Component {
 
   static propTypes = {
-    device: React.PropTypes.object
+    device: React.PropTypes.object,
+    onChange: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
     return !(_.isEqual(nextProps.device, this.props.device));
+  }
+
+  onDeviceChange(device) {
+    if (this.props.onChange)
+      return this.props.onChange(device);
   }
 
   render() {
@@ -27,7 +33,7 @@ class Device extends React.Component {
           <div style={{padding: '12px 0'}}>Events Log</div>
         </TabPane>
         <TabPane tab="Device Info" key="3">
-          <DeviceInfo device={this.props.device}/>
+          <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
         </TabPane>
         <TabPane tab="Labels" key="4">
           <div style={{padding: '12px 0'}}>Labels</div>
