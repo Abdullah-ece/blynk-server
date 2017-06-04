@@ -9,3 +9,16 @@ export const DevicesFetch = () => {
     }
   };
 };
+
+export const DevicesUpdate = (devices) => {
+  return {
+    type: 'API_DEVICES_UPDATE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/devices`,
+        data: devices
+      }
+    }
+  };
+};
