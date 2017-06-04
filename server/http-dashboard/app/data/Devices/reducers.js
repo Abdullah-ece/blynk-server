@@ -27,6 +27,12 @@ export default function Devices(state = initialState, action) {
               name: "Location Name",
               role: "ADMIN",
               value: "Trenton New York Farm"
+            },
+          {
+            type: "Number",
+            name: "Cost of Pump 1",
+            role: "ADMIN",
+            value: 10.23
             }
           ]))
         )

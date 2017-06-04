@@ -83,6 +83,9 @@ class DeviceInfo extends React.Component {
 
                     if (field.get('type') === 'Text')
                       return (<DeviceMetadata.Text {...props}/>);
+
+                    if (field.get('type') === 'Number')
+                      return (<DeviceMetadata.Number {...props}/>);
                   })
                 }
               </div>

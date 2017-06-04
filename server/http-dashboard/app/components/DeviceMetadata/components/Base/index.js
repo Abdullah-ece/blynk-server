@@ -11,7 +11,8 @@ class Base extends React.Component {
     data: React.PropTypes.object,
     onChange: React.PropTypes.func,
     resetForm: React.PropTypes.func,
-    values: React.PropTypes.array
+    values: React.PropTypes.object,
+    errors: React.PropTypes.object
   };
 
   state = {
@@ -79,7 +80,8 @@ class Base extends React.Component {
                footer={[
                  <Button key="cancel" type="primary" size="default"
                          onClick={this.handleCancelClick.bind(this)}>Cancel</Button>,
-                 <Button key="save" size="default" loading={this.state.loading} onClick={this.handleOkClick.bind(this)}>
+                 <Button key="save" size="default" disabled={!!this.props.errors} loading={this.state.loading}
+                         onClick={this.handleOkClick.bind(this)}>
                    Save
                  </Button>,
                ]}
