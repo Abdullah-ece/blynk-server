@@ -23,7 +23,7 @@ class Device extends React.Component {
   render() {
     const TabPane = Tabs.TabPane;
     return (
-      <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
+      <Tabs defaultActiveKey="3" className="page-layout-tabs-navigation">
         <TabPane tab="Dashboard" key="1">
           <div className="devices-device-tab-inner">
             <Dashboard />
