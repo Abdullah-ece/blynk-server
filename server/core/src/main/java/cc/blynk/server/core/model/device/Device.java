@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
 
@@ -27,6 +28,8 @@ public class Device implements Target {
     public volatile long disconnectTime;
 
     public volatile String lastLoggedIP;
+
+    public volatile MetaField[] metaFields;
 
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
