@@ -1,5 +1,6 @@
 package cc.blynk.integration.tools;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectTokenGenerator {
 
     public static void main(String[] args) throws Exception {
-        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, null, "");
+        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, new DeviceDao(new ConcurrentHashMap<>()), null, "");
         String email = "dmitriy@blynk.cc";
         String pass = "b";
         String appName = AppName.BLYNK;

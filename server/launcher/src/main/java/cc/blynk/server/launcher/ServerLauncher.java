@@ -4,6 +4,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
@@ -122,8 +124,13 @@ public class ServerLauncher {
             holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
             holder.organizationDao.add(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png"));
 
+            User user = holder.userDao.getByName(email, AppName.BLYNK);
+            user.profile.dashBoards = new DashBoard[] {
+                    new DashBoard()
+            };
+
             for (int i = 0; i < 20; i++) {
-                holder.deviceDao.add("admin@blynk.cc", 0, new Device(i, "My Device " + i, "Particle Photon", "auth_123", ConnectionType.GSM));
+                holder.deviceDao.add("admin@blynk.cc", 0, 0, new Device(i, "My Device " + i, "Particle Photon", "auth_123", ConnectionType.GSM));
             }
         }
 

@@ -20,8 +20,10 @@ class RegularTokenManager {
     private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
     private final ConcurrentMap<String, TokenValue> cache;
+    private final DeviceDao deviceDao;
 
-    public RegularTokenManager(Iterable<User> users) {
+    public RegularTokenManager(Iterable<User> users, DeviceDao deviceDao) {
+        this.deviceDao = deviceDao;
         this.cache = new ConcurrentHashMap<String, TokenValue>() {{
             for (User user : users) {
                 if (user.profile != null) {
@@ -47,6 +49,8 @@ class RegularTokenManager {
         //assign new token
         device.token = newToken;
         cache.put(newToken, new TokenValue(user, dashId, deviceId));
+
+        deviceDao.add(user.email, user.orgId, dashId, device);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

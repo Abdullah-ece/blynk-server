@@ -113,7 +113,7 @@ public class Holder implements Closeable {
         }
 
         this.deviceDao = new DeviceDao(userDao.users);
-        this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, redisClient, host);
+        this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, deviceDao, redisClient, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
@@ -165,7 +165,7 @@ public class Holder implements Closeable {
         );
 
         this.deviceDao = new DeviceDao(userDao.users);
-        this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, redisClient, host);
+        this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, deviceDao, redisClient, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
