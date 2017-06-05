@@ -522,16 +522,19 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void loadGzippedProfile() throws Exception{
-        String expected = readTestUserProfile();
+        Profile expectedProfile = JsonParser.parseProfileFromString(readTestUserProfile());
 
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
         Profile profile = parseProfile(clientPair.appClient.getBody());
+
         profile.dashBoards[0].updatedAt = 0;
-        //todo fix
+
+        expectedProfile.dashBoards[0].devices = null;
         profile.dashBoards[0].devices = null;
-        assertEquals(expected, profile.toString());
+
+        assertEquals(expectedProfile.toString(), profile.toString());
     }
 
     @Test
@@ -985,6 +988,20 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient2.send("login dima@mail.ua 1 Android 1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
+    }
+
+    @Test
+    public void testRefreshTokenClosesExistingConnections() throws Exception {
+        clientPair.appClient.send("refreshToken 1");
+        String newToken = clientPair.appClient.getBody();
+        assertNotNull(newToken);
+        assertEquals(32, newToken.length());
+        assertTrue(clientPair.hardwareClient.isClosed());
+
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        hardClient.start();
+        hardClient.send("login " + newToken);
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
     @Test

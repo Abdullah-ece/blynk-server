@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import org.apache.logging.log4j.LogManager;
@@ -135,9 +136,10 @@ public class UserDao {
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                String type = dashBoard.boardType == null ? "Not Selected" : dashBoard.boardType;
-                Integer i = boards.getOrDefault(type, 0);
-                boards.put(type, ++i);
+                for (Device device : dashBoard.devices) {
+                    Integer i = boards.getOrDefault(device.boardType, 0);
+                    boards.put(device.boardType, ++i);
+                }
             }
         }
         return boards;
