@@ -5,6 +5,7 @@ import UnitModal from './modal';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {reset, getFormValues, getFormSyncErrors} from 'redux-form';
+import {Unit as Units} from 'services/Products';
 
 @connect((state, ownProps) => ({
   values: getFormValues(ownProps.form)(state),
@@ -25,7 +26,7 @@ class Unit extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('value')}
+        {field.get('value')} {Units[field.get('units')].abbreviation}
       </Fieldset>
     );
   }
