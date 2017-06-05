@@ -10,6 +10,13 @@ export default function Devices(state = initialState, action) {
     case "API_DEVICES_FETCH_SUCCESS":
       return state.set('devices',
         fromJS(action.payload.data).map((device) => device.set('metaFields', fromJS([
+          {
+            type: "Measurement",
+            name: "Farm of Smith",
+            role: "ADMIN",
+            units: "Celsius",
+            value: 36
+          },
             {
               type: "Text",
               name: "Device Name",
