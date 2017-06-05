@@ -1,6 +1,7 @@
 import React from 'react';
 import {Row, Col} from 'antd';
 import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata} from 'components';
+import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import './styles.less';
 
@@ -81,11 +82,14 @@ class DeviceInfo extends React.Component {
                       onChange: this.onChange.bind(this)
                     };
 
-                    if (field.get('type') === 'Text')
+                    if (field.get('type') === Metadata.Fields.TEXT)
                       return (<DeviceMetadata.Text {...props}/>);
 
-                    if (field.get('type') === 'Number')
+                    if (field.get('type') === Metadata.Fields.NUMBER)
                       return (<DeviceMetadata.Number {...props}/>);
+
+                    if (field.get('type') === Metadata.Fields.UNIT)
+                      return (<DeviceMetadata.Unit {...props}/>);
                   })
                 }
               </div>

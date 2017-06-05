@@ -3,6 +3,7 @@ import {
   Item,
   Number,
   Text,
+  Unit
 } from './components';
 
 export default {
@@ -10,4 +11,5 @@ export default {
   Item,
   Number,
   Text,
+  Unit
 };
