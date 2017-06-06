@@ -4,6 +4,7 @@ import {Input} from 'antd';
 import BaseField from '../BaseField';
 import Static from './static';
 import FieldStub from 'scenes/Products/components/FieldStub';
+import {TimeRange} from 'services/Metadata';
 
 class ShiftField extends BaseField.Static {
 
@@ -33,10 +34,10 @@ class ShiftField extends BaseField.Static {
               {this.props.name}
             </FieldStub>
             <FieldStub style={{width: '25%'}}>
-              {this.props.from}
+              {this.props.from > 0 ? TimeRange.fromMinutes(this.props.from) : null}
             </FieldStub>
             <FieldStub style={{width: '25%'}}>
-              {this.props.to}
+              {this.props.to > 0 ? TimeRange.fromMinutes(this.props.to) : null}
             </FieldStub>
           </Input.Group>
         </FormItem.Content>

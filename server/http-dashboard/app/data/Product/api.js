@@ -1,9 +1,7 @@
 import {applyRequestTransformers, applyResponseTransformers} from 'services/API';
 import {
   transformTimeToTimestamp,
-  transformRangeToMinutes,
-  transformTimestampToTime,
-  transformMinutesToShift
+  transformTimestampToTime
 } from 'services/Products';
 
 export function ProductsFetch() {
@@ -13,7 +11,7 @@ export function ProductsFetch() {
       request: {
         method: 'get',
         url: `/product`,
-        transformResponse: applyResponseTransformers([transformTimestampToTime, transformMinutesToShift])
+        transformResponse: applyResponseTransformers([transformTimestampToTime])
       }
     }
   };
@@ -27,7 +25,7 @@ export function ProductUpdate(data) {
         method: 'post',
         url: '/product',
         data: data,
-        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformRangeToMinutes])
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp])
       }
     }
   };
@@ -57,7 +55,7 @@ export function ProductCreate(data = false) {
         method: 'put',
         url: '/product',
         data: data,
-        transformRequest: applyRequestTransformers([transformTimeToTimestamp, transformRangeToMinutes])
+        transformRequest: applyRequestTransformers([transformTimeToTimestamp])
       }
     }
   };

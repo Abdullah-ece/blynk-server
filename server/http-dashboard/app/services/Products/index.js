@@ -273,55 +273,6 @@ export const transformTimestampToTime = (data) => {
   return data;
 };
 
-export const transformMinutesToShift = (data) => {
-
-  if (Array.isArray(data)) {
-
-    data.forEach((product) => {
-      if (product.metaFields) {
-        product.metaFields = product.metaFields.map((field) => {
-          if (field.type === Metadata.Fields.RANGE && !isNaN(Number(field.from))) {
-            field = {
-              ...field,
-              from: !field.from ? '00:00' : (moment.duration(field.from, 'minutes').format('HH:mm'))
-            };
-          }
-          if (field.type === Metadata.Fields.RANGE && !isNaN(Number(field.to))) {
-            field = {
-              ...field,
-              to: !field.to ? '00:00' : (moment.duration(field.to, 'minutes').format('HH:mm'))
-            };
-          }
-          return field;
-        });
-      }
-    });
-
-  }
-  return data;
-};
-
-export const transformRangeToMinutes = (data) => {
-  if (data.metaFields) {
-    data.metaFields = data.metaFields.map((field) => {
-      if (field.type === Metadata.Fields.RANGE && field.from) {
-        field = {
-          ...field,
-          from: (moment.duration(field.from).asMinutes())
-        };
-      }
-      if (field.type === Metadata.Fields.RANGE && field.to) {
-        field = {
-          ...field,
-          to: (moment.duration(field.to).asMinutes())
-        };
-      }
-      return field;
-    });
-  }
-  return data;
-};
-
 export const prepareProductForEdit = (data) => {
 
   const edit = {

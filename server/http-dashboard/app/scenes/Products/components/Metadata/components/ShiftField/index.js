@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import Static from './static';
+import {TimeRange} from 'services/Metadata';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -27,7 +28,7 @@ class ShiftField extends BaseField {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: from && typeof from === 'string' && to && typeof to === 'string' ? `From ${from} to ${to}` : null
+      value: !isNaN(Number(to)) && !isNaN(Number(from)) ? `From ${TimeRange.fromMinutes(from)} to ${TimeRange.fromMinutes(to)}` : null
     };
   }
 

@@ -3,6 +3,7 @@ import React from 'react';
 import {Form, TimePicker} from 'antd';
 import {Field as FormField} from 'redux-form';
 import moment from 'moment';
+import {TimeRange} from 'services/Metadata';
 
 export default class Field extends React.Component {
   renderField({displayError = true, timeFormat, defaultValue, style, placeholder, input, meta: {touched, error, warning}}) {
@@ -27,9 +28,9 @@ export default class Field extends React.Component {
         <TimePicker
           format={timeFormat}
           style={{width: '100%'}}
-          onChange={(moment, timeString) => input.onChange(timeString)}
+          onChange={(moment, timeString) => input.onChange(TimeRange.toMinutes(timeString))}
           placeholder={placeholder}
-          value={input.value ? moment(input.value, timeFormat) : defaultValue ? moment(defaultValue, timeFormat) : moment('00:00', timeFormat)}
+          value={input.value ? moment(TimeRange.fromMinutes(input.value), timeFormat) : defaultValue ? moment(TimeRange.fromMinutes(defaultValue), timeFormat) : moment('00:00', timeFormat)}
         />
       </Form.Item>
     );
