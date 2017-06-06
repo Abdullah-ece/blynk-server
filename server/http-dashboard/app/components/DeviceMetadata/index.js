@@ -3,7 +3,8 @@ import {
   Item,
   Number,
   Text,
-  Unit
+  Unit,
+  Range
 } from './components';
 
 export default {
@@ -11,5 +12,6 @@ export default {
   Item,
   Number,
   Text,
-  Unit
+  Unit,
+  Range
 };

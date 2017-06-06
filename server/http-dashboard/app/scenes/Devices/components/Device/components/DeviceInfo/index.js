@@ -90,6 +90,10 @@ class DeviceInfo extends React.Component {
 
                     if (field.get('type') === Metadata.Fields.UNIT)
                       return (<DeviceMetadata.Unit {...props}/>);
+
+                    if (field.get('type') === Metadata.Fields.RANGE)
+                      return (<DeviceMetadata.Range {...props}/>);
+
                   })
                 }
               </div>
