@@ -189,9 +189,6 @@ public class FileManager {
     }
 
     public static void makeProfileChanges(User user) {
-        if (user.email == null) {
-            user.email = user.name;
-        }
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.devices != null) {
                 for (Device device : dashBoard.devices) {
