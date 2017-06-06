@@ -49,7 +49,7 @@ public class DashSerializationPerfTest {
         dash.hardwareInfo = new HardwareInfo();
         dash.devices = new Device[10];
         for (int i = 0; i < 10; i++) {
-            dash.devices[i] = new Device(1, "sdaasdas", "12321321321321321321321321", "@!3213", ConnectionType.ETHERNET);
+            dash.devices[i] = new Device("sdaasdas", "12321321321321321321321321", "@!3213", ConnectionType.ETHERNET);
         }
         dash.widgets = new Widget[40];
         for (int i = 0; i < 40; i++) {

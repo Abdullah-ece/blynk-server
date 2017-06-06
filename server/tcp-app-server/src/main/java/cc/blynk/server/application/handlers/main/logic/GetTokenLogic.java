@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -22,9 +23,11 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 public class GetTokenLogic {
 
     private final TokenManager tokenManager;
+    private final DeviceDao deviceDao;
 
     public GetTokenLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
+        this.deviceDao = holder.deviceDao;
     }
 
     //todo this old and outdated handle just for back compatibility
@@ -41,11 +44,11 @@ public class GetTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
-            //todo back compatibility code. remove in future
+            device = new Device(deviceId, "ESP8266", "ESP8266");
+            deviceDao.add(user.orgId, device);
             dash.devices = new Device[] {
-                    new Device(deviceId, "ESP8266", "ESP8266")
+                    device
             };
-            //
 
             token = TokenGeneratorUtil.generateNewToken();
             tokenManager.assignToken(user, dashId, deviceId, token);

@@ -16,8 +16,6 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Collection;
-
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 
@@ -53,36 +51,82 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        final int deviceId = dash.devices.length;
-        newDevice.id = deviceId;
-
-        for (Device device : dash.devices) {
-            if (device.id == newDevice.id) {
-                log.error("Device with same id already exists.");
-                return badRequest();
-            }
-        }
-
+        deviceDao.add(user.orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, 0, deviceId, newToken);
+        tokenManager.assignToken(user, dashId, newDevice.id, newToken);
 
-        dash.updatedAt = System.currentTimeMillis();
-        user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         return ok(newDevice);
+    }
 
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("")
+    public Response updateDevice(@Context ChannelHandlerContext ctx, Device newDevice) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        User user = httpSession.user;
+
+        //default dash for all devices...
+        final int dashId = 0;
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        if (dash == null) {
+            log.error("Dash with id = {} not exists.", dashId);
+            return badRequest();
+        }
+
+        if (newDevice.globalId == 0) {
+            log.error("Cannot find device with id 0.");
+            return badRequest();
+        }
+
+        Device existingDevice = deviceDao.getById(newDevice.globalId);
+        existingDevice.update(newDevice);
+
+        user.lastModifiedTs = System.currentTimeMillis();
+
+        return ok(newDevice);
     }
 
     @GET
     @Path("")
-    public Response get(@Context ChannelHandlerContext ctx) {
+    public Response getAll(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
-        Collection<Device> devices  = deviceDao.getAllByUser(user);
-        return ok(devices);
+
+        if (user.isAdmin()) {
+            return ok(deviceDao.getAll());
+        }
+
+        return ok(deviceDao.getAllByUser(user));
     }
 
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int globalId) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        User user = httpSession.user;
+
+        Device device = deviceDao.delete(user.orgId, globalId);
+        final int dashId = 0;
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        if (dash == null) {
+            log.error("Dash with id = {} not exists.", dashId);
+            return badRequest();
+        }
+
+        int existingDeviceIndex = dash.getDeviceIndexById(globalId);
+        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
+
+        tokenManager.deleteDevice(device);
+
+        user.lastModifiedTs = System.currentTimeMillis();
+
+        return ok();
+    }
 
 }

@@ -130,7 +130,7 @@ public class ServerLauncher {
             };
 
             for (int i = 0; i < 20; i++) {
-                holder.deviceDao.add("admin@blynk.cc", 0, 0, new Device(i, "My Device " + i, "Particle Photon", "auth_123", ConnectionType.GSM));
+                holder.deviceDao.add(0, new Device("My Device " + i, "Particle Photon", "auth_123", ConnectionType.GSM));
             }
         }
 

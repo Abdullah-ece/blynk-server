@@ -7,18 +7,12 @@ package cc.blynk.server.core.dao;
  */
 public class DeviceKey {
 
-    public final String email;
-
     public final int orgId;
-
-    public final int dashId;
 
     public final int deviceId;
 
-    public DeviceKey(String email, int orgId, int dashId, int deviceId) {
-        this.email = email;
+    public DeviceKey(int orgId, int deviceId) {
         this.orgId = orgId;
-        this.dashId = dashId;
         this.deviceId = deviceId;
     }
 
@@ -30,17 +24,13 @@ public class DeviceKey {
         DeviceKey deviceKey = (DeviceKey) o;
 
         if (orgId != deviceKey.orgId) return false;
-        if (dashId != deviceKey.dashId) return false;
-        if (deviceId != deviceKey.deviceId) return false;
-        return !(email != null ? !email.equals(deviceKey.email) : deviceKey.email != null);
+        return deviceId == deviceKey.deviceId;
 
     }
 
     @Override
     public int hashCode() {
-        int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + orgId;
-        result = 31 * result + dashId;
+        int result = orgId;
         result = 31 * result + deviceId;
         return result;
     }

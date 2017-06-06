@@ -11,9 +11,15 @@ import cc.blynk.utils.JsonParser;
  */
 public class Device implements Target {
 
+    public int globalId;
+
+    //this id is left for back compatibility. Replacing it will require a lot of work
+    //on mobile clients and on server side, so for now leave as it is.
+    //todo refactor someday
+    @Deprecated
     public int id;
 
-    public int productId = -1;
+    public volatile int productId = -1;
 
     public volatile String name;
 
@@ -38,8 +44,7 @@ public class Device implements Target {
     public Device() {
     }
 
-    public Device(int id, String name, String boardType, String token, ConnectionType connectionType) {
-        this.id = id;
+    public Device(String name, String boardType, String token, ConnectionType connectionType) {
         this.name = name;
         this.boardType = boardType;
         this.token = token;
@@ -63,9 +68,11 @@ public class Device implements Target {
     }
 
     public void update(Device newDevice) {
+        this.productId = newDevice.productId;
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+        this.metaFields = newDevice.metaFields;
     }
 
     public void disconnected() {

@@ -44,7 +44,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(response);
             Device device = JsonParser.parseDevice(responseString);
             assertEquals("My New Device", device.name);
-            assertEquals(0, device.id);
+            assertEquals(1, device.id);
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
@@ -61,7 +61,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(response);
             Device device = JsonParser.parseDevice(responseString);
             assertEquals("My New Device", device.name);
-            assertEquals(1, device.id);
+            assertEquals(2, device.id);
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
@@ -75,7 +75,7 @@ public class DevicesAPITest extends APIBaseTest {
             String responseString = consumeText(response);
             Device[] devices = JsonParser.readAny(responseString, Device[].class);
             assertNotNull(devices);
-            assertEquals(2, devices.length);
+            assertEquals(3, devices.length);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
@@ -91,7 +91,7 @@ public class DevicesAPITest extends APIBaseTest {
             String responseString = consumeText(response);
             Device[] devices = JsonParser.readAny(responseString, Device[].class);
             assertNotNull(devices);
-            assertEquals(5, devices.length);
+            assertEquals(1, devices.length);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
