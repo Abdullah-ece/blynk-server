@@ -1,8 +1,7 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
 import {Input} from 'antd';
-import {MetadataField} from 'components/Form';
-import Validation from 'services/Validation';
+import {MetadataTime} from 'components/Form';
 
 @reduxForm({
   form: 'deviceMetadataEdit'
@@ -13,9 +12,8 @@ class RangeModal extends React.Component {
     return (
       <div>
         <Input.Group compact>
-          <MetadataField name="value" type="text" placeholder="Value" validate={[
-            Validation.Rules.number
-          ]}/>
+          <MetadataTime name="from" type="text" timeFormat="HH:mm" placeholder="00:00"/>
+          <MetadataTime name="to" type="text" timeFormat="HH:mm" placeholder="00:00"/>
         </Input.Group>
       </div>
     );
