@@ -11,4 +11,9 @@ public class OfflineEvent extends Event {
 
     public int ignorePeriod;
 
+    @Override
+    public boolean isSame(String eventCode) {
+        return false;
+    }
+
 }

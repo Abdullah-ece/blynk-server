@@ -11,12 +11,6 @@ import cc.blynk.utils.JsonParser;
  */
 public class Device implements Target {
 
-    public int globalId;
-
-    //this id is left for back compatibility. Replacing it will require a lot of work
-    //on mobile clients and on server side, so for now leave as it is.
-    //todo refactor someday
-    @Deprecated
     public int id;
 
     public volatile int productId = -1;

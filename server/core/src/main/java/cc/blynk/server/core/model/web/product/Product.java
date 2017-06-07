@@ -54,6 +54,15 @@ public class Product {
         this.version++;
     }
 
+    public Event findEventByCode(String code) {
+        for (Event event : events) {
+            if (event.isSame(code)) {
+                return event;
+            }
+        }
+        return null;
+    }
+
     public boolean notValid() {
         return name == null || name.isEmpty();
     }

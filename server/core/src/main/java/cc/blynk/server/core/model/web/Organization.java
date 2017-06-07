@@ -29,6 +29,7 @@ public class Organization {
 
     public volatile long lastModifiedTs;
 
+    //todo make array
     public volatile List<Product> products = new ArrayList<>();
 
     public Organization() {

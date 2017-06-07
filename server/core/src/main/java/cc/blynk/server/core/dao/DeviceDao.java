@@ -33,8 +33,8 @@ public class DeviceDao {
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    maxDeviceId = Math.max(maxDeviceId, device.globalId);
-                    devices.put(new DeviceKey(user.orgId, device.globalId), device);
+                    maxDeviceId = Math.max(maxDeviceId, device.id);
+                    devices.put(new DeviceKey(user.orgId, device.id), device);
                 }
             }
 
@@ -45,22 +45,16 @@ public class DeviceDao {
     }
 
     public void add(int orgId, Device device) {
-        device.globalId = deviceSequence.incrementAndGet();
-        device.id = device.globalId;
-        devices.put(new DeviceKey(orgId, device.globalId), device);
+        device.id = deviceSequence.incrementAndGet();
+        devices.put(new DeviceKey(orgId, device.id), device);
     }
 
-    public Device delete(int orgId, int globalId) {
-        return devices.remove(new DeviceKey(orgId, globalId));
+    public Device delete(int orgId, int deviceId) {
+        return devices.remove(new DeviceKey(orgId, deviceId));
     }
 
-    public Device getById(int globalId) {
-        for (Device device : devices.values()) {
-            if (device.globalId == globalId) {
-                return device;
-            }
-        }
-        return null;
+    public Device getById(int deviceId) {
+        return devices.get(new DeviceKey(0, deviceId));
     }
 
     public Collection<Device> getAllByUser(User user) {

@@ -16,6 +16,7 @@ public class DeviceKey {
         this.deviceId = deviceId;
     }
 
+    //orgId is not used by purpose!!!
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -23,15 +24,12 @@ public class DeviceKey {
 
         DeviceKey deviceKey = (DeviceKey) o;
 
-        if (orgId != deviceKey.orgId) return false;
         return deviceId == deviceKey.deviceId;
 
     }
 
     @Override
     public int hashCode() {
-        int result = orgId;
-        result = 31 * result + deviceId;
-        return result;
+        return deviceId;
     }
 }

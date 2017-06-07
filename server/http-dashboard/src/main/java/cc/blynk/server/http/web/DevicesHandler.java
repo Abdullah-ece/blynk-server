@@ -78,12 +78,12 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        if (newDevice.globalId == 0) {
+        if (newDevice.id == 0) {
             log.error("Cannot find device with id 0.");
             return badRequest();
         }
 
-        Device existingDevice = deviceDao.getById(newDevice.globalId);
+        Device existingDevice = deviceDao.getById(newDevice.id);
         existingDevice.update(newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
