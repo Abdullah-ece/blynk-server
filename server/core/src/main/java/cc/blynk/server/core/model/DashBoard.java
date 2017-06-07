@@ -187,7 +187,7 @@ public class DashBoard {
     public void updateDeviceTs(int id, long now) {
         for (Device device : devices) {
             if (device.id == id) {
-                device.updatedAt = now;
+                device.dataReceivedAt = now;
             }
         }
     }

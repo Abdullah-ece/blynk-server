@@ -29,7 +29,7 @@ public class Device implements Target {
 
     public volatile String lastLoggedIP;
 
-    public volatile long updatedAt;
+    public volatile long dataReceivedAt;
 
     public volatile MetaField[] metaFields;
 
