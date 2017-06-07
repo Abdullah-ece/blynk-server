@@ -94,6 +94,9 @@ class DeviceInfo extends React.Component {
                     if (field.get('type') === Metadata.Fields.RANGE)
                       return (<DeviceMetadata.Range {...props}/>);
 
+                    if (field.get('type') === Metadata.Fields.CONTACT)
+                      return (<DeviceMetadata.Contact {...props}/>);
+
                   })
                 }
               </div>

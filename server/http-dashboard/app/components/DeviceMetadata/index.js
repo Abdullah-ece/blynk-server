@@ -4,7 +4,8 @@ import {
   Number,
   Text,
   Unit,
-  Range
+  Range,
+  Contact
 } from './components';
 
 export default {
@@ -13,5 +14,6 @@ export default {
   Number,
   Text,
   Unit,
-  Range
+  Range,
+  Contact
 };
