@@ -29,6 +29,8 @@ public class Device implements Target {
 
     public volatile String lastLoggedIP;
 
+    public volatile long updatedAt;
+
     public volatile MetaField[] metaFields;
 
     public boolean isNotValid() {

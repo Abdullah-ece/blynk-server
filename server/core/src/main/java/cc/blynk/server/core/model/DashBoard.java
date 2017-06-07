@@ -85,6 +85,7 @@ public class DashBoard {
         }
 
         this.updatedAt = now;
+        updateDeviceTs(deviceId, now);
     }
 
     public void activate() {
@@ -181,6 +182,14 @@ public class DashBoard {
         }
 
         return null;
+    }
+
+    public void updateDeviceTs(int id, long now) {
+        for (Device device : devices) {
+            if (device.id == id) {
+                device.updatedAt = now;
+            }
+        }
     }
 
     public Device getDeviceById(int id) {
