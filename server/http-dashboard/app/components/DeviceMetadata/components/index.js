@@ -6,3 +6,4 @@ export Range from './Range';
 export Base from './Base';
 export Contact from './Contact';
 export Time from './Time';
+export Cost from './Cost';

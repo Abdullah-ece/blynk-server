@@ -6,7 +6,8 @@ import {
   Unit,
   Range,
   Contact,
-  Time
+  Time,
+  Cost
 } from './components';
 
 export default {
@@ -17,5 +18,6 @@ export default {
   Unit,
   Range,
   Contact,
-  Time
+  Time,
+  Cost
 };

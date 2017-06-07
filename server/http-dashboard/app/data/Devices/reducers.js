@@ -12,11 +12,11 @@ export default function Devices(state = initialState, action) {
         fromJS(action.payload.data).map((device) => device.set('metaFields', fromJS([
           {
             type: "Cost",
-            name: "Farm of Smith",
+            name: "Water Cost",
             role: "ADMIN",
             currency: "USD",
-            price: 9.99,
-            perValue: 1.0,
+            price: 9.00,
+            perValue: 2.5,
             units: "Gallon"
           },
           {
