@@ -235,43 +235,6 @@ export const Currency = {
   }
 };
 
-export const transformTimeToTimestamp = (data) => {
-  if (data.metaFields) {
-    data.metaFields = data.metaFields.map((field) => {
-      if (field.type === Metadata.Fields.TIME && field.time) {
-        return {
-          ...field,
-          time: Math.round((moment().hours(field.time.split(':')[0]).minutes(field.time.split(':')[1]).valueOf()) / 1000)
-        };
-      }
-      return field;
-    });
-  }
-  return data;
-};
-
-export const transformTimestampToTime = (data) => {
-
-  if (Array.isArray(data)) {
-
-    data.forEach((product) => {
-      if (product.metaFields) {
-        product.metaFields = product.metaFields.map((field) => {
-          if (field.type === Metadata.Fields.TIME && field.time) {
-            const time = moment(field.time * 1000);
-            return {
-              ...field,
-              time: `${time.format('HH:mm')}`
-            };
-          }
-          return field;
-        });
-      }
-    });
-
-  }
-  return data;
-};
 
 export const prepareProductForEdit = (data) => {
 
