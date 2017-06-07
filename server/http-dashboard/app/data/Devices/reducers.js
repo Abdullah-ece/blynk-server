@@ -12,7 +12,7 @@ export default function Devices(state = initialState, action) {
         fromJS(action.payload.data).map((device) => device.set('metaFields', fromJS([
           {
             type: "Contact",
-            name: "Farm of Smith",
+            name: "Smith Contacts",
             role: "ADMIN",
             contact: "Tech Support",
             firstName: "Dmitriy",
