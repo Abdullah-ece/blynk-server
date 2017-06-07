@@ -5,7 +5,8 @@ import {
   Text,
   Unit,
   Range,
-  Contact
+  Contact,
+  Time
 } from './components';
 
 export default {
@@ -15,5 +16,6 @@ export default {
   Text,
   Unit,
   Range,
-  Contact
+  Contact,
+  Time
 };

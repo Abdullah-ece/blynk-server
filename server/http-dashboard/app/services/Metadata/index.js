@@ -12,3 +12,15 @@ export const TimeRange = {
   )
 
 };
+
+export const Time = {
+
+  fromTimestamp: (time) => (
+    moment(time * 1000).format('HH:mm')
+  ),
+
+  toTimestamp: (time) => (
+    Math.round((moment().hours(time.split(':')[0]).minutes(time.split(':')[1]).valueOf()) / 1000)
+  )
+
+};

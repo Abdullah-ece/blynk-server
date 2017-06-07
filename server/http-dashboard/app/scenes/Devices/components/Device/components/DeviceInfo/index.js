@@ -97,6 +97,10 @@ class DeviceInfo extends React.Component {
                     if (field.get('type') === Metadata.Fields.CONTACT)
                       return (<DeviceMetadata.Contact {...props}/>);
 
+                    if (field.get('type') === Metadata.Fields.TIME)
+                      return (<DeviceMetadata.Time {...props}/>);
+
+
                   })
                 }
               </div>
