@@ -3,10 +3,10 @@ import React from 'react';
 import {Form, TimePicker} from 'antd';
 import {Field as FormField} from 'redux-form';
 import moment from 'moment';
-import {TimeRange} from 'services/Metadata';
+import {TimeRange, Time} from 'services/Metadata';
 
 export default class Field extends React.Component {
-  renderField({displayError = true, timeFormat, defaultValue, style, placeholder, input, meta: {touched, error, warning}}) {
+  renderField({timestampPicker = false, displayError = true, timeFormat, defaultValue, style, placeholder, input, meta: {touched, error, warning}}) {
 
     let validateStatus = 'success';
     let help = '';
@@ -25,13 +25,23 @@ export default class Field extends React.Component {
                  help={help}
                  style={style}>
 
-        <TimePicker
-          format={timeFormat}
-          style={{width: '100%'}}
-          onChange={(moment, timeString) => input.onChange(TimeRange.toMinutes(timeString))}
-          placeholder={placeholder}
-          value={input.value ? moment(TimeRange.fromMinutes(input.value), timeFormat) : defaultValue ? moment(TimeRange.fromMinutes(defaultValue), timeFormat) : moment('00:00', timeFormat)}
-        />
+        { timestampPicker ? (
+          <TimePicker
+            format={timeFormat}
+            style={{width: '100%'}}
+            onChange={(moment, timeString) => input.onChange(Time.toTimestamp(timeString))}
+            placeholder={placeholder}
+            value={input.value ? moment(Time.fromTimestamp(input.value), timeFormat) : defaultValue ? moment(Time.fromTimestamp(defaultValue), timeFormat) : moment('00:00', timeFormat)}
+          />
+        ) : (
+          <TimePicker
+            format={timeFormat}
+            style={{width: '100%'}}
+            onChange={(moment, timeString) => input.onChange(TimeRange.toMinutes(timeString))}
+            placeholder={placeholder}
+            value={input.value ? moment(TimeRange.fromMinutes(input.value), timeFormat) : defaultValue ? moment(TimeRange.fromMinutes(defaultValue), timeFormat) : moment('00:00', timeFormat)}
+          />
+        )}
       </Form.Item>
     );
   }
