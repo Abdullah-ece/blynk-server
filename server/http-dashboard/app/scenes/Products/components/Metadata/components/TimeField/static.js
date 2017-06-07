@@ -3,6 +3,7 @@ import {Input} from 'antd';
 import BaseField from '../BaseField';
 import FormItem from 'components/FormItem';
 import FieldStub from 'scenes/Products/components/FieldStub';
+import {Time} from 'services/Metadata';
 
 class TextField extends BaseField.Static {
 
@@ -17,7 +18,7 @@ class TextField extends BaseField.Static {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: time && typeof time === 'string' ? `${time}` : null
+      value: !isNaN(Number(time)) ? `${Time.fromTimestamp(time)}` : null
     };
   }
 
@@ -35,7 +36,7 @@ class TextField extends BaseField.Static {
               {this.props.name}
             </FieldStub>
             <FieldStub style={{width: '50%'}}>
-              {this.props.time}
+              {!isNaN(Number(this.props.time)) ? Time.fromTimestamp(this.props.time || 0) : null}
             </FieldStub>
           </Input.Group>
         </FormItem.Content>

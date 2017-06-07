@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import Static from './static';
+import {Time} from 'services/Metadata';
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -25,7 +26,7 @@ class TimeField extends BaseField {
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: time && typeof time === 'string' ? `${time}` : null
+      value: !isNaN(Number(time)) ? `${Time.fromTimestamp(time)}` : null
     };
   }
 
@@ -42,7 +43,8 @@ class TimeField extends BaseField {
             <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"/>
+            <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"
+                              timestampPicker={true}/>
           </Input.Group>
         </FormItem.Content>
       </FormItem>
