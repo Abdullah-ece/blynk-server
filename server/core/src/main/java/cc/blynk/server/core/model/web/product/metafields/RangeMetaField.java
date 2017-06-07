@@ -15,8 +15,6 @@ public class RangeMetaField extends MetaField {
     public int to;
 
     public RangeMetaField() {
-        this.from = -1;
-        this.to = -1;
     }
 
     public RangeMetaField(String name, Role role, int from, int to) {

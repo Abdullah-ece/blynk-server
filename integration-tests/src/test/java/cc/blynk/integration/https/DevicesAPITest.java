@@ -97,5 +97,28 @@ public class DevicesAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void getDeviceByIdNotFound() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/11111");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void getDeviceById() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/0");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(device);;
+        }
+    }
+
 
 }

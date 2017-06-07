@@ -615,6 +615,28 @@ HOST: https://knight-qa.blynk.cc/
         }
     ]
 
+## Get device by id [GET] [/devices/{id}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+
+        {
+          "id" : 1,
+          "productId" : -1,
+          "name" : "My New Device",
+          "token" : "18aaf2a2a2ae4c9e9ba0cf9c0e1ef339",
+          "status" : "OFFLINE",
+          "disconnectTime" : 0,
+          "metaFields" : [ {
+            "type" : "Number",
+            "name" : "Jopa",
+            "role" : "STAFF",
+            "value" : 123.0
+          } ]
+        }
+
 ## Create New Device [PUT] [/devices]
 
 + Request (application/json)

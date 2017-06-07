@@ -16,8 +16,7 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.core.http.Response.badRequest;
-import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.*;
 
 /**
  * The Blynk Project.
@@ -104,13 +103,31 @@ public class DevicesHandler extends BaseHttpHandler {
         return ok(deviceDao.getAllByUser(user));
     }
 
-    @DELETE
+    @GET
     @Path("/{id}")
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int globalId) {
+    public Response getAll(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
-        Device device = deviceDao.delete(user.orgId, globalId);
+        //todo security checks
+        Device device = deviceDao.getById(id);
+
+        if (device == null) {
+            log.error("Device with id = {} not exists.", id);
+            return notFound();
+        }
+
+        return ok(device);
+    }
+
+
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        User user = httpSession.user;
+
+        Device device = deviceDao.delete(user.orgId, id);
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -119,7 +136,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        int existingDeviceIndex = dash.getDeviceIndexById(globalId);
+        int existingDeviceIndex = dash.getDeviceIndexById(id);
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
 
         tokenManager.deleteDevice(device);
