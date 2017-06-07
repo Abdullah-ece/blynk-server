@@ -7,6 +7,7 @@ import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.HttpSession;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -28,10 +29,12 @@ import static cc.blynk.core.http.Response.*;
 public class DevicesHandler extends BaseHttpHandler {
 
     private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
 
     public DevicesHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     @PUT
@@ -58,7 +61,9 @@ public class DevicesHandler extends BaseHttpHandler {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        return ok(newDevice);
+        String orgName = organizationDao.getOrganizationNameByProductId(newDevice.productId);
+
+        return ok(newDevice, "orgName", orgName);
     }
 
     @POST
@@ -87,7 +92,9 @@ public class DevicesHandler extends BaseHttpHandler {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        return ok(newDevice);
+        String orgName = organizationDao.getOrganizationNameByProductId(existingDevice.productId);
+
+        return ok(newDevice, "orgName", orgName);
     }
 
     @GET
@@ -105,7 +112,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{id}")
-    public Response getAll(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
+    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -117,7 +124,9 @@ public class DevicesHandler extends BaseHttpHandler {
             return notFound();
         }
 
-        return ok(device);
+        String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
+
+        return ok(device, "orgName", orgName);
     }
 
 

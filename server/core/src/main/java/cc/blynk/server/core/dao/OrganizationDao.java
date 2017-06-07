@@ -94,6 +94,17 @@ public class OrganizationDao {
         return product;
     }
 
+    public String getOrganizationNameByProductId(int productId) {
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.id == productId) {
+                    return org.name;
+                }
+            }
+        }
+        return null;
+    }
+
     public Product getProductById(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
