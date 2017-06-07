@@ -1,8 +1,10 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -118,6 +120,59 @@ public class DevicesAPITest extends APIBaseTest {
             Device device = JsonParser.readAny(responseString, Device.class);
             assertNotNull(device);;
         }
+    }
+
+    @Test
+    public void checkDeviceOrgName() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+        newDevice.metaFields = new MetaField[] {
+                new NumberMetaField("Jopa", Role.STAFF, 123D)
+        };
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            TestDevice device = JsonParser.mapper.readValue(responseString, TestDevice.class);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals("Blynk Inc.", device.orgName);
+        }
+
+    }
+
+    public static class TestDevice extends Device {
+
+        public String orgName;
+
     }
 
 
