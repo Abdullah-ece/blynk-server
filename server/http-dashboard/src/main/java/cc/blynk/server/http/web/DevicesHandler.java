@@ -62,8 +62,9 @@ public class DevicesHandler extends BaseHttpHandler {
         user.lastModifiedTs = System.currentTimeMillis();
 
         String orgName = organizationDao.getOrganizationNameByProductId(newDevice.productId);
+        newDevice.setOrgName(orgName);
 
-        return ok(newDevice, "orgName", orgName);
+        return ok(newDevice);
     }
 
     @POST
@@ -92,9 +93,10 @@ public class DevicesHandler extends BaseHttpHandler {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        String orgName = organizationDao.getOrganizationNameByProductId(existingDevice.productId);
+        String orgName = organizationDao.getOrganizationNameByProductId(newDevice.productId);
+        newDevice.setOrgName(orgName);
 
-        return ok(newDevice, "orgName", orgName);
+        return ok(newDevice);
     }
 
     @GET
@@ -125,8 +127,9 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
+        device.setOrgName(orgName);
 
-        return ok(device, "orgName", orgName);
+        return ok(device);
     }
 
 

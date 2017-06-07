@@ -3,6 +3,10 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * The Blynk Project.
@@ -32,6 +36,17 @@ public class Device implements Target {
     public volatile long dataReceivedAt;
 
     public volatile MetaField[] metaFields;
+
+    private transient Map<String, String> dynamicFields;
+
+    public void setOrgName(String value) {
+        this.dynamicFields = Collections.singletonMap("orgName", value);
+    }
+
+    @JsonAnyGetter
+    public Map<String, String> getDynamicFields() {
+        return dynamicFields;
+    }
 
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
