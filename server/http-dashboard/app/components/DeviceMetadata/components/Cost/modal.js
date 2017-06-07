@@ -1,14 +1,22 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
 import {Input} from 'antd';
-import {MetadataField, MetadataSelect} from 'components/Form';
+import {MetadataSelect, Number} from 'components/Form';
 import Validation from 'services/Validation';
-import {Unit} from 'services/Products';
+import {Unit, Currency} from 'services/Products';
 
 @reduxForm({
   form: 'deviceMetadataEdit'
 })
 class CostModal extends React.Component {
+
+  Currency = [
+    Currency.USD,
+    Currency.EUR,
+    Currency.GBP,
+    Currency.CNY,
+    Currency.RUB
+  ];
 
   Unit = {
     'Length, Distance': {
@@ -63,11 +71,19 @@ class CostModal extends React.Component {
     return (
       <div>
         <Input.Group compact>
-          <MetadataSelect name="units" type="text" placeholder="Choose"
-                          dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-          <MetadataField name="value" type="text" placeholder="Value" validate={[
+          <MetadataSelect name="currency" type="text" placeholder="Currency" values={this.Currency}/>
+
+          <Number name="price" type="text" placeholder="Price" validate={[
             Validation.Rules.number
           ]}/>
+
+          <Number name="perValue" type="text" placeholder="Per Value" validate={[
+            Validation.Rules.number
+          ]}/>
+
+          <MetadataSelect name="units" type="text" placeholder="Units"
+                          dropdownClassName="product-metadata-item-unit-dropdown"
+                          values={this.Unit}/>
         </Input.Group>
       </div>
     );
