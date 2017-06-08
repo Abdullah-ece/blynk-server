@@ -8,8 +8,29 @@ export default function Devices(state = initialState, action) {
 
   switch (action.type) {
     case "API_DEVICES_FETCH_SUCCESS":
+
+      //@todo remove when backend be fixed
+
+      const devices = [{
+        "id": 0,
+        "product": {
+          name: "My Product"
+        },
+        "orgName": "Blynk Inc.",
+        "name": "My New Device",
+        "token": "18aaf2a2a2ae4c9e9ba0cf9c0e1ef339",
+        "status": "OFFLINE",
+        "disconnectTime": 0,
+        "metaFields": [{
+          "type": "Number",
+          "name": "Jopa",
+          "role": "STAFF",
+          "value": 123.0
+        }]
+      }];
+
       return state.set('devices',
-        fromJS(action.payload.data).map((device) => device.set('metaFields', fromJS([
+        fromJS(devices).map((device) => device.set('metaFields', fromJS([
           {
             type: "Coordinates",
             name: "Farm Location",

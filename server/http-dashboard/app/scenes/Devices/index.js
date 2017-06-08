@@ -26,7 +26,7 @@ class Devices extends React.Component {
 
   componentWillMount() {
 
-    if (isNaN(this.props.params.id) && this.props.devices.size) {
+    if (isNaN(Number(this.props.params.id)) || !this.getDeviceById(this.props.params.id)) {
       this.context.router.push('/devices/' + this.props.devices.first().get('id'));
     }
   }
@@ -57,6 +57,9 @@ class Devices extends React.Component {
   render() {
 
     const selectedDevice = this.getDeviceById(this.props.params.id);
+
+    if (!this.props.params.id || !selectedDevice)
+      return null;
 
     return (
       <PageLayout>
