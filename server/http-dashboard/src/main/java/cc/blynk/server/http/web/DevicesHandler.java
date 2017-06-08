@@ -175,6 +175,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
                                       @PathParam("id") int deviceId,
                                       @QueryParam("eventType") EventType eventType,
+                                      @QueryParam("isResolved") boolean isResolved,
                                       @QueryParam("from") long from,
                                       @QueryParam("to") long to,
                                       @QueryParam("offset") int offset,
@@ -199,7 +200,11 @@ public class DevicesHandler extends BaseHttpHandler {
             try {
                 List<LogEvent> eventList;
                 if (eventType == null) {
-                    eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
+                    if (isResolved) {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, true);
+                    } else {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
+                    }
                 } else {
                     eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
                 }

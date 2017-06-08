@@ -104,6 +104,23 @@ public class EventLogDBTest {
     }
 
     @Test
+    public void selectBasicQueryForSingleEntryThatIsResolved() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+
+        LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null, true);
+        dbManager.eventDBDao.insert(logEvent);
+
+        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, now, now, 0, 1, true);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+
+        logEvents = dbManager.eventDBDao.getEvents(1, now, now, 0, 1, false);
+        assertNotNull(logEvents);
+        assertEquals(0, logEvents.size());
+    }
+
+    @Test
     public void selectBasicQueryFor100Entries() throws Exception {
         long now = System.currentTimeMillis();
         String eventCode = "something";
