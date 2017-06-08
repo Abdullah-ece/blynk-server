@@ -21,6 +21,7 @@ public abstract class Param {
 
     public abstract Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder);
 
+    @SuppressWarnings("unchecked")
     Object convertTo(String value) {
         if (type == long.class) {
             return Long.valueOf(value);
@@ -33,6 +34,9 @@ public abstract class Param {
         }
         if (type == boolean.class) {
             return Boolean.valueOf(value);
+        }
+        if (type.isEnum()) {
+            return Enum.valueOf((Class<Enum>) type, value);
         }
         return value;
     }

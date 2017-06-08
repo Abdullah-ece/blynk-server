@@ -5,6 +5,7 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -12,10 +13,15 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.List;
 
 import static cc.blynk.core.http.Response.*;
 
@@ -30,11 +36,15 @@ public class DevicesHandler extends BaseHttpHandler {
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
 
     public DevicesHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
     }
 
     @PUT
@@ -156,6 +166,37 @@ public class DevicesHandler extends BaseHttpHandler {
         user.lastModifiedTs = System.currentTimeMillis();
 
         return ok();
+    }
+
+    @GET
+    @Path("/timeline/{id}")
+    public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
+                                      @PathParam("id") int deviceId,
+                                      @QueryParam("eventType") EventType eventType,
+                                      @QueryParam("from") long from,
+                                      @QueryParam("to") long to,
+                                      @QueryParam("offset") int offset,
+                                      @QueryParam("limit") int limit) {
+
+
+        blockingIOProcessor.executeDB(() -> {
+            Response response;
+            try {
+                List<LogEvent> eventList;
+                if (eventType == null) {
+                    eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
+                } else {
+                    eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
+                }
+                response = ok(eventList);
+            } catch (Exception e) {
+                log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.", deviceId, limit, offset, e);
+                response = serverError("Error retrieving timeline for device.");
+            }
+            ctx.writeAndFlush(response, ctx.voidPromise());
+        });
+
+        return null;
     }
 
 }

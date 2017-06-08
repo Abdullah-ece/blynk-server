@@ -194,6 +194,17 @@ CREATE TABLE invitation_tokens (
   PRIMARY KEY(token, email)
 );
 
+CREATE TABLE reporting_events (
+  device_id int4,
+  type smallint,
+  ts timestamp,
+  event_hashcode int4,
+  description text,
+  is_resolved boolean DEFAULT FALSE
+);
+CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
+
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

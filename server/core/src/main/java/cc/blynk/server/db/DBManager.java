@@ -4,6 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
@@ -45,6 +46,7 @@ public class DBManager implements Closeable {
     protected RedeemDBDao redeemDBDao;
     protected PurchaseDBDao purchaseDBDao;
     protected FlashedTokensDBDao flashedTokensDBDao;
+    public EventDBDao eventDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
@@ -96,6 +98,7 @@ public class DBManager implements Closeable {
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.invitationTokensDBDao = new InvitationTokensDBDao(hikariDataSource);
+        this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         checkDBVersion();
@@ -210,6 +213,12 @@ public class DBManager implements Closeable {
     public void insertInvitation(InvitationToken invitationToken) throws Exception {
         if (isDBEnabled()) {
             invitationTokensDBDao.insert(invitationToken);
+        }
+    }
+
+    public void insertEvent(int deviceId, EventType eventType, long ts, int eventHashcode, String description) throws Exception {
+        if (isDBEnabled()) {
+            eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description);
         }
     }
 

@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
@@ -8,12 +9,12 @@ import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.DBManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -28,10 +29,14 @@ public class HardwareLogEventLogic {
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -66,15 +71,17 @@ public class HardwareLogEventLogic {
             return;
         }
 
-        String description = split.length > 1 ? split[1] : event.description;
+        String description = split.length > 1 ? split[1] : null;
 
-
-
-
-
-        if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
-        }
+        blockingIOProcessor.executeDB(() -> {
+            try {
+                dbManager.insertEvent(device.id, event.getType(), System.currentTimeMillis(), eventCode.hashCode(), description);
+                ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            } catch (Exception e) {
+                log.error("Error inserting log event.", e);
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            }
+        });
     }
 
 

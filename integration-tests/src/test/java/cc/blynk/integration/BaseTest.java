@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -28,6 +29,7 @@ import java.security.Security;
 import java.util.Collections;
 import java.util.List;
 
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -91,6 +93,10 @@ public abstract class BaseTest {
         httpsPort = properties.getIntProperty("https.port");
 
         staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), "no-db.properties");
+    }
+
+    public static ResponseMessage ok(int msgId) {
+        return new ResponseMessage(msgId, OK);
     }
 
     @Before

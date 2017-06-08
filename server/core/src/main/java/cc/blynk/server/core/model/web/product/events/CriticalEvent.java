@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.Event;
+import cc.blynk.server.core.model.web.product.EventType;
 
 /**
  * The Blynk Project.
@@ -16,4 +17,8 @@ public class CriticalEvent extends Event {
         return this.eventCode.equals(eventCode);
     }
 
+    @Override
+    public EventType getType() {
+        return EventType.CRITICAL;
+    }
 }

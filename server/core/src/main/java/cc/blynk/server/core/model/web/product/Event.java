@@ -38,4 +38,6 @@ public abstract class Event {
 
     public abstract boolean isSame(String eventCode);
 
+    public abstract EventType getType();
+
 }

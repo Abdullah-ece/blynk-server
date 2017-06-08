@@ -86,10 +86,6 @@ public abstract class IntegrationBase extends BaseTest {
         return new ResponseMessage(msgId, ILLEGAL_COMMAND);
     }
 
-    public static ResponseMessage ok(int msgId) {
-        return new ResponseMessage(msgId, OK);
-    }
-
     public static ResponseMessage notAllowed(int msgId) {
         return new ResponseMessage(msgId, NOT_ALLOWED);
     }
