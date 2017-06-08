@@ -11,6 +11,13 @@ export default function Devices(state = initialState, action) {
       return state.set('devices',
         fromJS(action.payload.data).map((device) => device.set('metaFields', fromJS([
           {
+            type: "Coordinates",
+            name: "Farm Location",
+            role: "ADMIN",
+            lat: 22.222,
+            lon: 23.333
+          },
+          {
             type: "Cost",
             name: "Water Cost",
             role: "ADMIN",
