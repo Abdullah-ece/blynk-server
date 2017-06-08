@@ -49,6 +49,7 @@ public class User {
 
     public String lastLoggedIP;
     public long lastLoggedAt;
+    public long lastViewTs;
 
     public Profile profile;
 

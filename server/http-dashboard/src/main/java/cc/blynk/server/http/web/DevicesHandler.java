@@ -130,7 +130,7 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                joinEventsCountSinceLastView(devices);
+                joinEventsCountSinceLastView(devices, user.lastViewTs);
                 response = ok(devices);
             } catch (Exception e){
                 log.error("Error getting counters for devices.", e);
@@ -139,11 +139,13 @@ public class DevicesHandler extends BaseHttpHandler {
             ctx.writeAndFlush(response, ctx.voidPromise());
         });
 
+        user.lastViewTs = System.currentTimeMillis();
+
         return null;
     }
 
-    private void joinEventsCountSinceLastView(Collection<Device> devices) throws Exception {
-        Map<LogEventsSinceLastView, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(0L);
+    private void joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
+        Map<LogEventsSinceLastView, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
         for (Device device : devices) {
             device.setEventsCounterSinceLastView(
                     counters.get(new LogEventsSinceLastView(device.id, EventType.CRITICAL)),
