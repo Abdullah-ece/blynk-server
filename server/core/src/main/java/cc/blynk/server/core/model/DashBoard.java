@@ -52,9 +52,6 @@ public class DashBoard {
 
     public volatile Tag[] tags = EMPTY_TAGS;
 
-    //todo should be removed after migration
-    public String boardType;
-
     public volatile Theme theme = Theme.Blynk;
 
     public volatile boolean keepScreenOn;
@@ -88,6 +85,7 @@ public class DashBoard {
         }
 
         this.updatedAt = now;
+        updateDeviceTs(deviceId, now);
     }
 
     public void activate() {
@@ -184,6 +182,14 @@ public class DashBoard {
         }
 
         return null;
+    }
+
+    public void updateDeviceTs(int id, long now) {
+        for (Device device : devices) {
+            if (device.id == id) {
+                device.dataReceivedAt = now;
+            }
+        }
     }
 
     public Device getDeviceById(int id) {
@@ -307,8 +313,6 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
 
-        this.boardType = updatedDashboard.boardType;
-
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
         if (newNotification != null) {
             Notification oldNotification = this.getWidgetByType(Notification.class);
@@ -333,7 +337,6 @@ public class DashBoard {
         this.theme = parent.theme;
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
-        this.boardType = parent.boardType;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;
@@ -341,19 +344,25 @@ public class DashBoard {
     }
 
     private Widget[] copyWidgets(Widget[] widgetsToCopy) {
-        if (widgets.length == 0) {
-            return widgets;
+        if (widgetsToCopy.length == 0) {
+            return widgetsToCopy;
         }
         ArrayList<Widget> copy = new ArrayList<>(widgetsToCopy.length);
         for (Widget newWidget : widgetsToCopy) {
             Widget oldWidget = getWidgetById(newWidget.id);
 
-            //todo safe copy for notifications, twits, emails, sms
             String copyWidgetString = JsonParser.toJson(newWidget);
             Widget copyWidget = JsonParser.parseWidget(copyWidgetString);
 
             if (oldWidget != null) {
-                copyWidget.updateIfSame(oldWidget);
+                if (oldWidget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
+                    if (onePinWidget.value != null) {
+                        copyWidget.updateIfSame(oldWidget);
+                    }
+                } else {
+                    copyWidget.updateIfSame(oldWidget);
+                }
             }
             copy.add(copyWidget);
         }

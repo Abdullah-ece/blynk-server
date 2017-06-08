@@ -84,23 +84,6 @@ public class FileManager {
         log.info("Using data dir '{}'", dataDir);
     }
 
-    public static void migrateOldProfile(User user) {
-        if (user.email == null) {
-            user.email = user.name;
-        }
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            if (dashBoard.devices != null) {
-                for (Device device : dashBoard.devices) {
-                    device.status = null;
-                }
-            }
-
-            for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget);
-            }
-        }
-    }
-
     public Path getDataDir() {
         return dataDir;
     }
@@ -188,8 +171,7 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
-                            //todo this is migration code. remove during next deploy.
-                            migrateOldProfile(user);
+                            makeProfileChanges(user);
 
                             return Stream.of(user);
                         } catch (IOException ioe) {
@@ -204,6 +186,20 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return temp;
+    }
+
+    public static void makeProfileChanges(User user) {
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (dashBoard.devices != null) {
+                for (Device device : dashBoard.devices) {
+                    device.status = null;
+                }
+            }
+
+            for (Widget widget : dashBoard.widgets) {
+                dashBoard.cleanPinStorage(widget);
+            }
+        }
     }
 
     public Map<String, Integer> getUserProfilesSize() {

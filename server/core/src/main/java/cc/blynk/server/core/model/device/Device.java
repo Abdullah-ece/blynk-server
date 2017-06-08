@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
 
@@ -12,7 +13,7 @@ public class Device implements Target {
 
     public int id;
 
-    public int productId = -1;
+    public volatile int productId = -1;
 
     public volatile String name;
 
@@ -28,6 +29,10 @@ public class Device implements Target {
 
     public volatile String lastLoggedIP;
 
+    public volatile long dataReceivedAt;
+
+    public volatile MetaField[] metaFields;
+
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
     }
@@ -35,8 +40,7 @@ public class Device implements Target {
     public Device() {
     }
 
-    public Device(int id, String name, String boardType, String token, ConnectionType connectionType) {
-        this.id = id;
+    public Device(String name, String boardType, String token, ConnectionType connectionType) {
         this.name = name;
         this.boardType = boardType;
         this.token = token;
@@ -60,9 +64,11 @@ public class Device implements Target {
     }
 
     public void update(Device newDevice) {
+        this.productId = newDevice.productId;
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+        this.metaFields = newDevice.metaFields;
     }
 
     public void disconnected() {

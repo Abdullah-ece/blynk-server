@@ -11,13 +11,12 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.InputStream;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.*;
@@ -94,18 +93,12 @@ public class BlynkInternalTest extends IntegrationBase {
         hardwareInfo.cpuType = "ATmega328P";
         hardwareInfo.connectionType = "W5100";
 
-        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/user_profile_json.txt");
-        Profile expectedProfile = parseProfile(is);
-        expectedProfile.dashBoards[0].hardwareInfo = hardwareInfo;
-
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
         Profile profile = parseProfile(clientPair.appClient.getBody());
-        profile.dashBoards[0].updatedAt = 0;
-        //todo fix
-        profile.dashBoards[0].devices = null;
-        assertEquals(expectedProfile.toString(), profile.toString());
+
+        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].hardwareInfo));
 
 
         hardClient2.stop().awaitUninterruptibly();

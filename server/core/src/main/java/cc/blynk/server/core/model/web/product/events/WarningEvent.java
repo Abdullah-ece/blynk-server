@@ -11,6 +11,9 @@ public class WarningEvent extends Event {
 
     public String eventCode;
 
-    public String description;
+    @Override
+    public boolean isSame(String eventCode) {
+        return this.eventCode.equals(eventCode);
+    }
 
 }

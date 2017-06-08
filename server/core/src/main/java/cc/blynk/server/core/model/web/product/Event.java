@@ -26,6 +26,8 @@ public abstract class Event {
 
     public String name;
 
+    public String description;
+
     public boolean isNotificationsEnabled;
 
     public EventReceiver[] emailNotifications;
@@ -33,5 +35,7 @@ public abstract class Event {
     public EventReceiver[] pushNotifications;
 
     public EventReceiver[] smsNotifications;
+
+    public abstract boolean isSame(String eventCode);
 
 }

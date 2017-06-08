@@ -20,6 +20,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     public final HardwareStateHolder state;
     private final HardwareLogic hardware;
+    private final HardwareLogEventLogic hardwareLogEventLogic;
     private final MailLogic email;
     private final BridgeLogic bridge;
     private final PushLogic push;
@@ -31,6 +32,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(StringMessage.class, holder.limits);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
+        this.hardwareLogEventLogic = new HardwareLogEventLogic(holder);
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
@@ -50,7 +52,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 hardware.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_LOG_EVENT:
-                HardwareLogEventLogic.messageReceived(ctx, state, msg);
+                hardwareLogEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING:
                 PingLogic.messageReceived(ctx, msg.id);

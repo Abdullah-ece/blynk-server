@@ -4,6 +4,7 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
@@ -76,18 +77,27 @@ public abstract class APIBaseTest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        admin.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
         admin.status = UserStatus.Active;
         holder.userDao.add(admin);
 
         name = "admin2@blynk.cc";
         pass = "admin2";
         regularAdmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.ADMIN);
+        regularAdmin.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
         regularAdmin.status = UserStatus.Active;
         holder.userDao.add(regularAdmin);
 
         name = "user@blynk.cc";
         pass = "user";
         regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
+        regularUser.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
         regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 

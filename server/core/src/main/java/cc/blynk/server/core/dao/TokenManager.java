@@ -23,9 +23,9 @@ public class TokenManager {
     private final RedisClient redisClient;
     private final String currentIp;
 
-    public TokenManager(ConcurrentMap<UserKey, User> users, BlockingIOProcessor blockingIOProcessor, RedisClient redisClient, String currentIp) {
+    public TokenManager(ConcurrentMap<UserKey, User> users, BlockingIOProcessor blockingIOProcessor, DeviceDao deviceDao, RedisClient redisClient, String currentIp) {
         Collection<User> allUsers = users.values();
-        this.regularTokenManager = new RegularTokenManager(allUsers);
+        this.regularTokenManager = new RegularTokenManager(allUsers, deviceDao);
         this.sharedTokenManager = new SharedTokenManager(allUsers);
         this.blockingIOProcessor = blockingIOProcessor;
         this.redisClient = redisClient;

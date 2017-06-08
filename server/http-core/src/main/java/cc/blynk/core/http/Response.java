@@ -2,11 +2,13 @@ package cc.blynk.core.http;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.response.ErrorMessage;
 import cc.blynk.server.core.model.web.response.OkMessage;
 import cc.blynk.utils.JsonParser;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -143,6 +145,15 @@ public class Response extends DefaultFullHttpResponse {
 
     public static Response ok(Organization org) {
         return ok(JsonParser.toJson(org));
+    }
+
+    public static Response ok(Device device) {
+        return ok(JsonParser.toJson(device));
+    }
+
+    public static Response ok(Object obj, String field, String value) {
+        String json = ((ObjectNode) JsonParser.mapper.valueToTree(obj)).put(field, value).toString();
+        return ok(json);
     }
 
     public static Response ok(DashBoard dashBoard) {

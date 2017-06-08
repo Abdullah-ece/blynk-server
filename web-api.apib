@@ -578,15 +578,91 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 200 (application/json)
 
-        [
+    [
         {
           "id" : 1,
-          "productId" : 1,
-          "name" : "My Device 0",
-          "boardType" : "Particle Photon",
-          "token" : "auth_123",
-          "connectionType" : "GSM",
+          "productId" : -1,
+          "name" : "My New Device",
+          "token" : "18aaf2a2a2ae4c9e9ba0cf9c0e1ef339",
           "status" : "OFFLINE",
-          "disconnectTime" : 0
+          "disconnectTime" : 0,
+          "updatedAt" : 0,
+          "metaFields" : [ {
+            "type" : "Number",
+            "name" : "Jopa",
+            "role" : "STAFF",
+            "value" : 123.0
+          } ]
+        }, {
+          "id" : 2,
+          "productId" : -1,
+          "name" : "My New Device",
+          "token" : "d3a1b712802a490f9e95edce53f0091c",
+          "status" : "OFFLINE",
+          "disconnectTime" : 0,
+          "updatedAt" : 0,
+          "metaFields" : [ {
+            "type" : "Number",
+            "name" : "Jopa",
+            "role" : "STAFF",
+            "value" : 123.0
+          } ]
+        }, {
+          "id" : 0,
+          "productId" : -1,
+          "boardType" : "ESP8266",
+          "token" : "7b0a3a61322e41a5b50589cf52d775d1",
+          "status" : "OFFLINE",
+          "disconnectTime" : 0,
+          "updatedAt" : 0
         }
-        ]
+    ]
+
+## Get device by id [GET] [/devices/{id}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        {
+          "id" : 1,
+          "productId" : -1,
+          "orgName" : "Blynk Inc.",
+          "name" : "My New Device",
+          "token" : "18aaf2a2a2ae4c9e9ba0cf9c0e1ef339",
+          "status" : "OFFLINE",
+          "disconnectTime" : 0,
+          "updatedAt" : 0,
+          "metaFields" : [ {
+            "type" : "Number",
+            "name" : "Jopa",
+            "role" : "STAFF",
+            "value" : 123.0
+          } ]
+        }
+
+## Create New Device [PUT] [/devices]
+
++ Request (application/json)
+
+        Full device json (without id field, but with metafields)
+
++ Response 200 (application/json)
+
+        Full device json
+
+## Update Device [POST] [/devices]
+
++ Request (application/json)
+
+        Full product json (with id field)
+
++ Response 200 (application/json)
+
+        Full device json
+
+## Delete Device [DELETE] [/devices/{id}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
