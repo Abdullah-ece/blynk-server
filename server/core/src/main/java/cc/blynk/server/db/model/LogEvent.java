@@ -1,6 +1,7 @@
 package cc.blynk.server.db.model;
 
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.UserEvent;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,9 +20,10 @@ public class LogEvent {
 
     public final int eventHashcode;
 
-    public final String description;
-
     public final boolean isResolved;
+
+    public String name;
+    public String description;
 
     public LogEvent(int deviceId, EventType eventType, long ts, int eventHashCode, String description) {
         this.deviceId = deviceId;
@@ -46,5 +48,12 @@ public class LogEvent {
         this.eventHashcode = eventHashcode;
         this.description = description;
         this.isResolved = isResolved;
+    }
+
+    public void update(UserEvent event) {
+        if (description == null || description.isEmpty()) {
+            this.description = event.description;
+        }
+        this.name = event.name;
     }
 }

@@ -36,7 +36,7 @@ public abstract class Event {
 
     public EventReceiver[] smsNotifications;
 
-    public abstract boolean isSame(String eventCode);
+    public abstract boolean isSame(int hashcode);
 
     public abstract EventType getType();
 

@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.Event;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
@@ -27,8 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -79,13 +79,49 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0");
-        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+
+            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(logEvents));
+        }
+    }
+
+    @Test
+    public void testBasicLogEventWithOverrideDescriptionFlow() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high\0" + "MyNewDescription");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("MyNewDescription", logEvents[0].description);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(logEvents));
         }
@@ -102,6 +138,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         CriticalEvent event = new CriticalEvent();
         event.name = "Temp is super high";
         event.eventCode = "temp_is_high";
+        event.description = "This is my description";
         product.events = new Event[] {
                 event
         };

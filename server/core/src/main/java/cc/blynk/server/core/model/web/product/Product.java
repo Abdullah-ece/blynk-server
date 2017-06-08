@@ -54,9 +54,9 @@ public class Product {
         this.version++;
     }
 
-    public Event findEventByCode(String code) {
+    public Event findEventByCode(int hashcode) {
         for (Event event : events) {
-            if (event.isSame(code)) {
+            if (event.isSame(hashcode)) {
                 return event;
             }
         }

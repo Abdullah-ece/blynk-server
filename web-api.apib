@@ -666,3 +666,24 @@ HOST: https://knight-qa.blynk.cc/
 + Request (application/json)
 
 + Response 200 (application/json)
+
+## Get device timeline [GET] [/devices/timeline/{id}?eventType=CRITICAL&from=1&to=1496949455462&limit=10&offset=0]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+
+        [
+            {
+              "deviceId" : 1,
+              "eventType" : "CRITICAL",
+              "ts" : 1496949455443,
+              "eventHashcode" : 613812780,
+              "description" : "MyNewDescription",
+              "isResolved" : false,
+              "name" : "Temp is super high"
+            }
+        ]
+
++ Response 500 (application/json)

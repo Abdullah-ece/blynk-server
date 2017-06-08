@@ -14,6 +14,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.events.UserEvent;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.utils.ArrayUtil;
@@ -124,15 +126,15 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{id}")
-    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
+    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("id") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
         //todo security checks
-        Device device = deviceDao.getById(id);
+        Device device = deviceDao.getById(deviceId);
 
         if (device == null) {
-            log.error("Device with id = {} not exists.", id);
+            log.error("Device with id = {} not exists.", deviceId);
             return notFound();
         }
 
@@ -145,11 +147,11 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @DELETE
     @Path("/{id}")
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int id) {
+    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
-        Device device = deviceDao.delete(user.orgId, id);
+        Device device = deviceDao.delete(user.orgId, deviceId);
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -158,7 +160,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        int existingDeviceIndex = dash.getDeviceIndexById(id);
+        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
 
         tokenManager.deleteDevice(device);
@@ -178,6 +180,19 @@ public class DevicesHandler extends BaseHttpHandler {
                                       @QueryParam("offset") int offset,
                                       @QueryParam("limit") int limit) {
 
+        Device device = deviceDao.getById(deviceId);
+
+        if (device == null) {
+            log.error("Device with id = {} not exists.", deviceId);
+            return notFound();
+        }
+
+        Product product = organizationDao.getProductById(device.productId);
+
+        if (product == null) {
+            log.error("Product with id {} not exists.", device.productId);
+            return notFound();
+        }
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
@@ -188,6 +203,9 @@ public class DevicesHandler extends BaseHttpHandler {
                 } else {
                     eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
                 }
+
+                joinAdditionalInfo(product, eventList);
+
                 response = ok(eventList);
             } catch (Exception e) {
                 log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.", deviceId, limit, offset, e);
@@ -197,6 +215,15 @@ public class DevicesHandler extends BaseHttpHandler {
         });
 
         return null;
+    }
+
+    private void joinAdditionalInfo(Product product, List<LogEvent> logEvents) {
+        for (LogEvent logEvent : logEvents) {
+            if (logEvent.eventType.isUserEvent) {
+                UserEvent event = (UserEvent) product.findEventByCode(logEvent.eventHashcode);
+                logEvent.update(event);
+            }
+        }
     }
 
 }

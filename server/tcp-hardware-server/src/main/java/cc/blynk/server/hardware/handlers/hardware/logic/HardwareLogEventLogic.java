@@ -63,7 +63,7 @@ public class HardwareLogEventLogic {
         }
 
         String eventCode = split[0];
-        Event event = product.findEventByCode(eventCode);
+        Event event = product.findEventByCode(eventCode.hashCode());
 
         if (event == null) {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
