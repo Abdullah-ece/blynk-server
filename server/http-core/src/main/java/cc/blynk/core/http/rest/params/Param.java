@@ -32,7 +32,7 @@ public abstract class Param {
         if (type == short.class || type == Short.class) {
             return Short.valueOf(value);
         }
-        if (type == boolean.class) {
+        if (type == boolean.class || type == Boolean.class) {
             return Boolean.valueOf(value);
         }
         if (type.isEnum()) {

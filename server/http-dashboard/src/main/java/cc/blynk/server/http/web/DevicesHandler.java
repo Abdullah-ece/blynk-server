@@ -132,14 +132,13 @@ public class DevicesHandler extends BaseHttpHandler {
             try {
                 joinEventsCountSinceLastView(devices, user.lastViewTs);
                 response = ok(devices);
+                user.lastViewTs = System.currentTimeMillis();
             } catch (Exception e){
                 log.error("Error getting counters for devices.", e);
                 response = serverError("Error getting counters for devices.");
             }
             ctx.writeAndFlush(response, ctx.voidPromise());
         });
-
-        user.lastViewTs = System.currentTimeMillis();
 
         return null;
     }
@@ -205,7 +204,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
                                       @PathParam("id") int deviceId,
                                       @QueryParam("eventType") EventType eventType,
-                                      @QueryParam("isResolved") boolean isResolved,
+                                      @QueryParam("isResolved") Boolean isResolved,
                                       @QueryParam("from") long from,
                                       @QueryParam("to") long to,
                                       @QueryParam("offset") int offset,
@@ -230,7 +229,7 @@ public class DevicesHandler extends BaseHttpHandler {
             try {
                 List<LogEvent> eventList;
                 if (eventType == null) {
-                    if (isResolved) {
+                    if (isResolved != null && isResolved) {
                         eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, true);
                     } else {
                         eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
