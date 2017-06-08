@@ -7,7 +7,8 @@ import {
   Range,
   Contact,
   Time,
-  Cost
+  Cost,
+  Coordinates
 } from './components';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   Range,
   Contact,
   Time,
-  Cost
+  Cost,
+  Coordinates
 };
