@@ -122,8 +122,30 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertFalse(logEvents[0].isResolved);
             assertEquals("Temp is super high", logEvents[0].name);
             assertEquals("MyNewDescription", logEvents[0].description);
+        }
+    }
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(logEvents));
+    @Test
+    public void testBasicLogEventWithIsResolvedFlow() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high\0" + "MyNewDescription");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            assertNotNull(logEvents);
+            assertEquals(0, logEvents.length);
         }
     }
 
