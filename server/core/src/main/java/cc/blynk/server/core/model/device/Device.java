@@ -6,6 +6,7 @@ import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,14 +38,24 @@ public class Device implements Target {
 
     public volatile MetaField[] metaFields;
 
-    private transient Map<String, String> dynamicFields;
+    private transient Map<String, Object> dynamicFields;
 
     public void setOrgName(String value) {
         this.dynamicFields = Collections.singletonMap("orgName", value);
     }
 
+    public void setEventsCounterSinceLastView(Integer criticalCounter, Integer warningCounter) {
+        this.dynamicFields = new HashMap<>();
+        if (criticalCounter != null) {
+            this.dynamicFields.put("CRITICAL", criticalCounter);
+        }
+        if (warningCounter != null) {
+            this.dynamicFields.put("WARNING", warningCounter);
+        }
+    }
+
     @JsonAnyGetter
-    public Map<String, String> getDynamicFields() {
+    public Map<String, Object> getDynamicFields() {
         return dynamicFields;
     }
 

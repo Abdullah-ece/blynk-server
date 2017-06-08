@@ -18,12 +18,15 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.UserEvent;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.model.LogEventsSinceLastView;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.core.http.Response.*;
 
@@ -117,11 +120,36 @@ public class DevicesHandler extends BaseHttpHandler {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
+        Collection<Device> devices;
         if (user.isAdmin()) {
-            return ok(deviceDao.getAll());
+            devices = deviceDao.getAll();
+        } else {
+            devices = deviceDao.getAllByUser(user);
         }
 
-        return ok(deviceDao.getAllByUser(user));
+        blockingIOProcessor.executeDB(() -> {
+            Response response;
+            try {
+                joinEventsCountSinceLastView(devices);
+                response = ok(devices);
+            } catch (Exception e){
+                log.error("Error getting counters for devices.", e);
+                response = serverError("Error getting counters for devices.");
+            }
+            ctx.writeAndFlush(response, ctx.voidPromise());
+        });
+
+        return null;
+    }
+
+    private void joinEventsCountSinceLastView(Collection<Device> devices) throws Exception {
+        Map<LogEventsSinceLastView, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(0L);
+        for (Device device : devices) {
+            device.setEventsCounterSinceLastView(
+                    counters.get(new LogEventsSinceLastView(device.id, EventType.CRITICAL)),
+                    counters.get(new LogEventsSinceLastView(device.id, EventType.WARNING))
+            );
+        }
     }
 
     @GET
@@ -209,7 +237,7 @@ public class DevicesHandler extends BaseHttpHandler {
                     eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
                 }
 
-                joinAdditionalInfo(product, eventList);
+                joinLogEventName(product, eventList);
 
                 response = ok(eventList);
             } catch (Exception e) {
@@ -222,7 +250,7 @@ public class DevicesHandler extends BaseHttpHandler {
         return null;
     }
 
-    private void joinAdditionalInfo(Product product, List<LogEvent> logEvents) {
+    private void joinLogEventName(Product product, List<LogEvent> logEvents) {
         for (LogEvent logEvent : logEvents) {
             if (logEvent.eventType.isUserEvent) {
                 UserEvent event = (UserEvent) product.findEventByCode(logEvent.eventHashcode);

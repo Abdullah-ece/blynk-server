@@ -149,6 +149,36 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void testBasicLogEventFlowWithEventCounters() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            DeviceTest[] devices = JsonParser.readAny(responseString, DeviceTest[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+            for (DeviceTest deviceTest : devices) {
+                if (deviceTest.id == 1) {
+                    assertEquals(Integer.valueOf(1), deviceTest.CRITICAL);
+                    assertNull(deviceTest.WARNING);
+                }
+            }
+
+            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+        }
+    }
+
     private String createProductAndDevice() throws Exception {
         login(admin.email, admin.pass);
 
@@ -205,6 +235,11 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         return device.token;
+    }
+
+    public static class DeviceTest extends Device {
+        Integer CRITICAL;
+        Integer WARNING;
     }
 
 }

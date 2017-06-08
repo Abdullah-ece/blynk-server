@@ -3,6 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.model.LogEventsSinceLastView;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -12,6 +13,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -145,10 +147,47 @@ public class EventLogDBTest {
                 assertFalse(logEvent.isResolved);
             }
         }
-
-
     }
 
+    @Test
+    public void selectEventsSinceLastLogin() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+        LogEvent logEvent;
+
+        logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
+        dbManager.eventDBDao.insert(logEvent);
+        logEvent = new LogEvent(1, EventType.INFORMATION, now + 1, eventCode.hashCode(), null);
+        dbManager.eventDBDao.insert(logEvent);
+
+        logEvent = new LogEvent(2, EventType.INFORMATION, now + 2, eventCode.hashCode(), null);
+        dbManager.eventDBDao.insert(logEvent);
+
+
+        Map<LogEventsSinceLastView, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now - 1);
+        assertEquals(2, lastViewEvents.size());
+
+        Integer lastView = lastViewEvents.get(new LogEventsSinceLastView(1, EventType.INFORMATION));
+        assertEquals(2, lastView.intValue());
+
+        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        assertEquals(1, lastView.intValue());
+
+        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now);
+        assertEquals(2, lastViewEvents.size());
+
+        lastView = lastViewEvents.get(new LogEventsSinceLastView(1, EventType.INFORMATION));
+        assertEquals(1, lastView.intValue());
+
+        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        assertEquals(1, lastView.intValue());
+
+        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now + 1);
+        assertEquals(1, lastViewEvents.size());
+
+        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        assertEquals(1, lastView.intValue());
+    }
 
 
 }

@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.db.model.LogEvent;
+import cc.blynk.server.db.model.LogEventsSinceLastView;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 
@@ -29,10 +32,38 @@ public class EventDBDao {
     public static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
     public static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
 
+    public static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? group by device_id, type";
+
     private final HikariDataSource ds;
 
     public EventDBDao(HikariDataSource ds) {
         this.ds = ds;
+    }
+
+    public Map<LogEventsSinceLastView, Integer> getEventsSinceLastLogin(long lastViewTs) throws Exception {
+        ResultSet rs = null;
+        Map<LogEventsSinceLastView, Integer> events = new HashMap<>();
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectEventsCountSinceLastView)) {
+
+            statement.setTimestamp(1, new Timestamp(lastViewTs), UTC_CALENDAR);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                LogEventsSinceLastView logEvent = readSinceLastViewEvent(rs);
+                events.put(logEvent, rs.getInt("count"));
+            }
+
+            connection.commit();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+
+        return events;
     }
 
     public List<LogEvent> getEvents(int deviceId, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
@@ -125,6 +156,13 @@ public class EventDBDao {
         }
 
         return events;
+    }
+
+    public LogEventsSinceLastView readSinceLastViewEvent(ResultSet rs) throws Exception {
+        return new LogEventsSinceLastView(
+                rs.getInt("device_id"),
+                EventType.values()[rs.getInt("type")]
+        );
     }
 
     public LogEvent readEvent(ResultSet rs) throws Exception {
