@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {Row, Col} from 'antd';
 import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata} from 'components';
 import {Metadata} from 'services/Products';
@@ -37,6 +38,15 @@ class DeviceInfo extends React.Component {
 
   render() {
 
+    let time = this.props.device.get('dataReceivedAt');
+
+    let lastReported = time ? moment(time * 1000).calendar(null, {
+      sameDay: '[Today], hh:mm A',
+      lastDay: '[Yesterday], hh:mm A',
+      lastWeek: 'dddd, hh:mm A',
+      sameElse: 'hh:mm A, YYYY.MM.DD'
+    }) : 'Not reported yet';
+
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">
@@ -53,12 +63,14 @@ class DeviceInfo extends React.Component {
           <Col span={8}>
             <Fieldset>
               <Fieldset.Legend>Last Reported</Fieldset.Legend>
-              Today, 12:35 AM
+              { lastReported }
             </Fieldset>
-            <Fieldset>
-              <Fieldset.Legend>Organization</Fieldset.Legend>
-              Blynk
-            </Fieldset>
+            { this.props.device.has('orgName') && (
+              <Fieldset>
+                <Fieldset.Legend>Organization</Fieldset.Legend>
+                { this.props.device.get('orgName') }
+              </Fieldset>
+            )}
           </Col>
           <Col span={8}>
             <div className="device--device-info-logo">
