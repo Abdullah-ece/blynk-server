@@ -14,7 +14,8 @@ class Device extends React.Component {
 
   static propTypes = {
     device: React.PropTypes.object,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    updateDevice: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
