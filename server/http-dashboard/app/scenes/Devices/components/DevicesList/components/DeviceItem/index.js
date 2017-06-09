@@ -25,7 +25,7 @@ class DeviceItem extends React.Component {
             <Dotdotdot clamp={1}>{this.props.device.get('name')}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-product-name">
-            <Dotdotdot clamp={1}>{this.props.device.has('product.name') && this.props.device.getIn('product.name') || (
+            <Dotdotdot clamp={1}>{this.props.device.has('productName') && this.props.device.get('productName') || (
               <i>No Product Name</i>) }</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-events">
