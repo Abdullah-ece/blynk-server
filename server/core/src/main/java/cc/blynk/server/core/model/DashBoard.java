@@ -364,6 +364,7 @@ public class DashBoard {
                     copyWidget.updateIfSame(oldWidget);
                 }
             }
+            copyWidget.isDefaultColor = false;
             copy.add(copyWidget);
         }
 
