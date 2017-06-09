@@ -12,7 +12,7 @@ CREATE TABLE users (
   last_logged timestamp,
   last_logged_ip text,
   is_facebook_user bool,
-  is_super_admin bool DEFAULT FALSE,
+  role int2,
   energy int,
   json text,
   PRIMARY KEY(email, appName)

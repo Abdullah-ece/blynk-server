@@ -75,7 +75,9 @@ public class HardwareLogEventLogic {
 
         blockingIOProcessor.executeDB(() -> {
             try {
-                dbManager.insertEvent(device.id, event.getType(), System.currentTimeMillis(), eventCode.hashCode(), description, false);
+                long now = System.currentTimeMillis();
+                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description, false);
+                device.dataReceivedAt = now;
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error inserting log event.", e);

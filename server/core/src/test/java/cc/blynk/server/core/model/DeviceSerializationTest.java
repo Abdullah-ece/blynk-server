@@ -20,7 +20,7 @@ public class DeviceSerializationTest {
         Device device = new Device();
 
         String json = ((ObjectNode) JsonParser.mapper.valueToTree(device)).put("orgName", "OrgName").toString();
-        assertEquals("{\"id\":0,\"productId\":-1,\"status\":\"OFFLINE\",\"disconnectTime\":0,\"orgName\":\"OrgName\"}", json);
+        assertEquals("{\"id\":0,\"productId\":-1,\"status\":\"OFFLINE\",\"disconnectTime\":0,\"dataReceivedAt\":0,\"orgName\":\"OrgName\"}", json);
         System.out.println(json);
     }
 
