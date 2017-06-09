@@ -1,6 +1,6 @@
 import React from 'react';
 import PageLayout from 'components/PageLayout';
-import {DevicesSearch, DevicesList, Device} from './components';
+import {DevicesSearch, DevicesList, Device, DevicesToolbar} from './components';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import {List} from "immutable";
@@ -49,6 +49,7 @@ class Devices extends React.Component {
       <PageLayout>
         <PageLayout.Navigation>
           <DevicesSearch />
+          <DevicesToolbar />
           <DevicesList devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
