@@ -62,7 +62,9 @@ class DeviceInfo extends React.Component {
           </Col>
           <Col span={8}>
             <div className="device--device-info-logo">
-              <img src="http://www.knightequip.com/images/product_warewash_nav/ump-hospitality.jpg"/>
+              { this.props.device.has('productLogoUrl') && (
+                <img src={this.props.device.get('productLogoUrl')}/>
+              )}
             </div>
           </Col>
         </Row>
