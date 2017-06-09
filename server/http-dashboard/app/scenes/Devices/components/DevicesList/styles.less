@@ -10,75 +10,33 @@
   }
 }
 
-.clear-shadow-overlap-top {
-  &:before {
-    display: block;
-    content: " ";
-    transition: 0.4s;
-    height: 9px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    z-index: 1;
-  }
-}
-
-.clear-shadow-overlap-bottom {
-  &:before {
-    display: block;
-    content: " ";
-    transition: 0.4s;
-    height: 9px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    z-index: 1;
-    border-radius: 0 0 5px 0;
-  }
-}
-
-.clear-shadow-overlap-between {
-  &:before {
-    display: block;
-    content: " ";
-    transition: 0.4s;
-    height: 18px;
-    position: absolute;
-    top: -9px;
-    left: 0;
-    right: 0;
-    background: #fff;
-  }
+.navigation-devices-list-item-state-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  z-index: 1;
 }
 
 .navigation-devices-list-item {
-  &:after {
-    display: block;
-    content: " ";
-    height: 1px;
-    background-color: #f1f1f1;
-    bottom: 0;
-    right: 4px;
-    left: 0;
-    position: absolute;
-    transition: 0.4s;
-  }
+  height: 56px;
+  margin: 2px 0;
   border-radius: 5px;
   cursor: pointer;
   position: relative;
-  padding: 8px 16px;
+  transition: box-shadow 0.4s;
+  border-bottom: 1px solid @color-dark-grey-03;
   border-left: 4px solid transparent;
-  transition: 0.4s;
   &:hover {
     box-shadow: 0 0 15px @color-dark-grey-25;
+    .navigation-devices-list-item-inner {
+      .navigation-devices-list-item-state-active;
+    }
     &:after {
       opacity: 1;
     }
-    .clear-shadow-overlap-bottom;
   }
   &:last-child {
     &:after {
@@ -87,17 +45,26 @@
   }
 }
 
+.navigation-devices-list-item-inner {
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+
 .navigation-devices-list-item-active {
   box-shadow: 0 0 15px @color-dark-grey-25;
   border-left: 4px solid @color-primary-5;
 }
 
 .navigation-devices-list-item-active + .navigation-devices-list-item:hover {
-  .clear-shadow-overlap-between;
+  .navigation-devices-list-item-inner {
+    .navigation-devices-list-item-state-active;
+  }
 }
 
 .navigation-devices-list-item:hover + .navigation-devices-list-item-active {
-  .clear-shadow-overlap-top;
+  .navigation-devices-list-item-inner {
+    .navigation-devices-list-item-state-active;
+  }
 }
 
 .navigation-devices-list-item-name {
