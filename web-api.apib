@@ -651,7 +651,14 @@ HOST: https://knight-qa.blynk.cc/
 
 + Request (application/json)
 
-        Full device json (without id field, but with metafields)
+       Device json with 4 fields :
+C
+       {
+           "name" : "My New Device",
+           "boardType" : "ESP8266",
+           "connectionType" : "WI_FI",
+           "productId" : 1
+       }
 
 + Response 200 (application/json)
 

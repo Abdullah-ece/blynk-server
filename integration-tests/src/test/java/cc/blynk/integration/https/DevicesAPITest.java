@@ -33,9 +33,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D)
-        };
+        newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
@@ -126,29 +124,9 @@ public class DevicesAPITest extends APIBaseTest {
     public void checkDeviceOrgName() throws Exception {
         login(admin.email, admin.pass);
 
-        Product product = new Product();
-        product.name = "My product";
-        product.description = "Description";
-        product.boardType = "ESP8266";
-        product.logoUrl = "/logoUrl";
-        product.connectionType = ConnectionType.WI_FI;
-
-        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            Product fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(fromApi);
-            assertEquals(1, fromApi.id);
-        }
-
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
-        newDevice.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D)
-        };
+        newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
@@ -184,6 +162,30 @@ public class DevicesAPITest extends APIBaseTest {
             }
         }
 
+    }
+
+    private int createProduct() throws Exception {
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.logoUrl = "/logoUrl";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new NumberMetaField("Jopa", Role.STAFF, 123D)
+        };
+
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            return fromApi.id;
+        }
     }
 
     public static class TestDevice extends Device {

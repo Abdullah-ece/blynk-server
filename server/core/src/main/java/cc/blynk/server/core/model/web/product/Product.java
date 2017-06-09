@@ -63,6 +63,11 @@ public class Product {
         return null;
     }
 
+    public MetaField[] copyMetaFields() {
+        //a bit ugly, but fine for now
+        return JsonParser.readAny(JsonParser.toJson(metaFields), MetaField[].class);
+    }
+
     public boolean notValid() {
         return name == null || name.isEmpty();
     }

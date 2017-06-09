@@ -57,6 +57,11 @@ public class DevicesHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response createDevice(@Context ChannelHandlerContext ctx, Device newDevice) {
+        if (newDevice == null || newDevice.productId < 1) {
+            log.error("No data or product id is wrong. {}", newDevice);
+            return badRequest();
+        }
+
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -68,6 +73,15 @@ public class DevicesHandler extends BaseHttpHandler {
             log.error("Dash with id = {} not exists.", dashId);
             return badRequest();
         }
+
+        Product product = organizationDao.getProductById(newDevice.productId);
+
+        if (product == null) {
+            log.error("Product with passed id {} not exists.", newDevice.productId);
+            return badRequest();
+        }
+
+        newDevice.metaFields = product.copyMetaFields();
 
         deviceDao.add(user.orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
