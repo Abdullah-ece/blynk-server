@@ -68,10 +68,9 @@ class DeviceInfo extends React.Component {
         </Row>
         <Row>
           <Col span={24}>
-            <Section title="Metadata">
+            { this.props.device.has('metaFields') && (<Section title="Metadata">
               <div className="device--device-info-metadata-list">
-                {
-                  this.props.device.get('metaFields').map((field, key) => {
+                { this.props.device.get('metaFields').map((field, key) => {
 
                     const form = `devicemetadataedit${field.get('name')}`;
 
@@ -109,7 +108,7 @@ class DeviceInfo extends React.Component {
                   })
                 }
               </div>
-            </Section>
+            </Section>) }
           </Col>
         </Row>
       </div>
