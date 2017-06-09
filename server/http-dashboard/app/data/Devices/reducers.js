@@ -21,6 +21,14 @@ export default function Devices(state = initialState, action) {
     case "API_DEVICES_UPDATE_SUCCESS":
       return state.set('devices', fromJS(action.payload.data));
 
+    case "API_DEVICE_UPDATE_SUCCESS":
+      return state.update('devices', (devices) => {
+        return devices.map((device) => (
+          device.get('id') === action.payload.data.id ?
+            fromJS(action.payload.data) : device
+        ));
+      });
+
     default:
       return state;
   }

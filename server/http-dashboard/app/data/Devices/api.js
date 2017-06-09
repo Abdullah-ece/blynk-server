@@ -23,6 +23,19 @@ export const DeviceFetch = (params) => {
   };
 };
 
+export const DeviceUpdate = (device) => {
+  return {
+    type: 'API_DEVICE_UPDATE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/devices`,
+        data: device
+      }
+    }
+  };
+};
+
 export const DevicesUpdate = (devices) => {
   return {
     type: 'API_DEVICES_UPDATE',
