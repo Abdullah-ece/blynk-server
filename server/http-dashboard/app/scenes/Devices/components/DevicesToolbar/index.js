@@ -5,20 +5,44 @@ import './styles.less';
 
 class DevicesToolbar extends React.Component {
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.location.pathname !== nextProps.location.pathname ||
+      this.state.isDeviceCreateModalVisible !== nextState.isDeviceCreateModalVisible
+    )
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object,
+  };
+
+  static propTypes = {
+    location: React.PropTypes.object,
+    params: React.PropTypes.object
+  };
+
   state = {
     isDeviceCreateModalVisible: false
   };
 
   onDeviceCreateModalClose() {
-    this.setState({
-      isDeviceCreateModalVisible: false
-    });
+    this.context.router.push(`/devices/${this.props.params.id}`);
   }
 
   handleDeviceCreateClick() {
-    this.setState({
-      isDeviceCreateModalVisible: true
-    });
+    this.context.router.push(`/devices/${this.props.params.id}/create`);
+  }
+
+  componentDidUpdate() {
+    if (this.props.location.pathname.indexOf('create') !== -1 && !this.state.isDeviceCreateModalVisible) {
+      this.setState({
+        isDeviceCreateModalVisible: true
+      });
+    } else if (this.props.location.pathname.indexOf('create') === -1 && this.state.isDeviceCreateModalVisible) {
+      this.setState({
+        isDeviceCreateModalVisible: false
+      });
+    }
   }
 
   render() {

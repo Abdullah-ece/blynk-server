@@ -1,4 +1,5 @@
 import {DevicesFetch, DeviceFetch} from 'data/Devices/api';
+import {ProductsFetch} from 'data/Product/api';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 import {bindActionCreators} from 'redux';
 
@@ -33,6 +34,28 @@ export const Device = (store) => {
     }).then(() => {
       callback();
       finish();
+    });
+
+  };
+};
+
+export const DeviceCreate = (store) => {
+  return (nextState, replaceWith, callback) => {
+
+    const start = bindActionCreators(StartLoading, store.dispatch);
+    const finish = bindActionCreators(FinishLoading, store.dispatch);
+    const deviceFetch = bindActionCreators(DeviceFetch, store.dispatch);
+    const productsFetch = bindActionCreators(ProductsFetch, store.dispatch);
+
+    start();
+
+    deviceFetch({
+      id: nextState.params.id
+    }).then(() => {
+      productsFetch().then(() => {
+        callback();
+        finish();
+      })
     });
 
   };

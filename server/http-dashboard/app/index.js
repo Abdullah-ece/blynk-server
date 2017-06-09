@@ -30,6 +30,7 @@ import {
   Organization as OrganizationPreloader,
   Devices as DevicesPreloader,
   Device as DevicePreloader,
+  DeviceCreate as DeviceCreatePreload
 } from './services/Preloaders';
 
 /* vendor */
@@ -61,6 +62,7 @@ Store().then((store) => {
               <Route onEnter={DevicesPreloader(store)}>
                 <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
                 <Route path="/devices/:id" components={Devices} onEnter={DevicePreloader(store)}/>
+                <Route path="/devices/:id/create" components={Devices} onEnter={DeviceCreatePreload(store)}/>
               </Route>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>

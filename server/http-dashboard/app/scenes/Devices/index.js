@@ -27,7 +27,7 @@ class Devices extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id;
+    return !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
   }
 
   handleDeviceSelect(device) {
@@ -49,7 +49,7 @@ class Devices extends React.Component {
       <PageLayout>
         <PageLayout.Navigation>
           <DevicesSearch />
-          <DevicesToolbar />
+          <DevicesToolbar location={this.props.location} params={this.props.params}/>
           <DevicesList devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>

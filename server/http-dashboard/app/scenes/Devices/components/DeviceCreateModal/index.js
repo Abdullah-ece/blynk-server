@@ -8,7 +8,7 @@ import {reduxForm} from 'redux-form';
 @reduxForm({
   form: "DeviceCreate"
 })
-class DeviceCreateModal extends React {
+class DeviceCreateModal extends React.Component {
 
   static propTypes = {
     visible: React.PropTypes.bool,
@@ -63,7 +63,7 @@ class DeviceCreateModal extends React {
         <Row>
           <Col span={24}>
             <Form.Item label="Product Template" offset="large">
-              <MetadataSelect values={this.products} placeholder="Choose product"/>
+              <MetadataSelect name="product" values={this.products} placeholder="Choose product"/>
             </Form.Item>
           </Col>
         </Row>
