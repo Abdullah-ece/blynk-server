@@ -27,6 +27,7 @@ public class EventDBDao {
 
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
+    public static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE where id = ?";
     public static final String insertEvent= "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
     public static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
     public static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
@@ -167,6 +168,7 @@ public class EventDBDao {
 
     public LogEvent readEvent(ResultSet rs) throws Exception {
         return new LogEvent(
+                rs.getInt("id"),
                 rs.getInt("device_id"),
                 EventType.values()[rs.getInt("type")],
                 rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
@@ -186,6 +188,17 @@ public class EventDBDao {
             ps.setInt(4, eventHashcode);
             ps.setString(5, description);
             ps.setBoolean(6, isResolved);
+
+            ps.executeUpdate();
+            connection.commit();
+        }
+    }
+
+    public void resolveEvent(int id) throws Exception {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
+
+            ps.setInt(1, id);
 
             ps.executeUpdate();
             connection.commit();

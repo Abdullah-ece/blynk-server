@@ -82,6 +82,32 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{deviceId}/resolveEvent/{logEventId}")
+    public Response resolveLogEvent(@Context ChannelHandlerContext ctx,
+                                    @PathParam("deviceId") int deviceId,
+                                    @PathParam("logEventId") int logEventId) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+        User user = httpSession.user;
+
+        //todo check user has access to device
+
+        blockingIOProcessor.executeDB(() -> {
+            Response response;
+            try {
+                dbManager.eventDBDao.resolveEvent(logEventId);
+                response = ok();
+            } catch (Exception e) {
+                log.error("Error marking event as resolved.", e);
+                response = serverError("Error marking event as resolved.");
+            }
+            ctx.writeAndFlush(response, ctx.voidPromise());
+        });
+
+        return null;
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response updateDevice(@Context ChannelHandlerContext ctx, Device newDevice) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
@@ -175,8 +201,8 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/{id}")
-    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("id") int deviceId) {
+    @Path("/{deviceId}")
+    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("deviceId") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -193,8 +219,8 @@ public class DevicesHandler extends BaseHttpHandler {
 
 
     @DELETE
-    @Path("/{id}")
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int deviceId) {
+    @Path("/{deviceId}")
+    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("deviceId") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -218,9 +244,9 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/timeline/{id}")
+    @Path("/timeline/{deviceId}")
     public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
-                                      @PathParam("id") int deviceId,
+                                      @PathParam("deviceId") int deviceId,
                                       @QueryParam("eventType") EventType eventType,
                                       @QueryParam("isResolved") Boolean isResolved,
                                       @QueryParam("from") long from,

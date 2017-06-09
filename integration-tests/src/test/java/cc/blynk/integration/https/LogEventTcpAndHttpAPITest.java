@@ -19,6 +19,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -146,6 +147,49 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
             assertNotNull(logEvents);
             assertEquals(0, logEvents.length);
+        }
+    }
+
+    @Test
+    public void testResolveLogEventFlow() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        int logEventId;
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            logEventId = logEvents[0].id;
+            assertTrue(logEventId > 1);
+        }
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/resolveEvent/" + logEventId);
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            logEventId = logEvents[0].id;
+            assertTrue(logEventId > 1);
         }
     }
 

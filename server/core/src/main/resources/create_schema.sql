@@ -195,6 +195,7 @@ CREATE TABLE invitation_tokens (
 );
 
 CREATE TABLE reporting_events (
+  id SERIAL,
   device_id int4,
   type smallint,
   ts timestamp,
