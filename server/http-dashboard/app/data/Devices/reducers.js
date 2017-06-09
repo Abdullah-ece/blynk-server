@@ -12,7 +12,10 @@ export default function Devices(state = initialState, action) {
 
     case "API_DEVICE_FETCH_SUCCESS":
       return state.update('devices', (devices) => {
-        return devices.push(fromJS(action.payload.data));
+        return devices.map((device) => (
+          device.get('id') === action.payload.data.id ?
+            fromJS(action.payload.data) : device
+        ));
       });
 
     case "API_DEVICES_UPDATE_SUCCESS":
