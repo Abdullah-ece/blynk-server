@@ -25,6 +25,14 @@ class DevicesToolbar extends React.Component {
     isDeviceCreateModalVisible: false
   };
 
+  componentWillMount() {
+    this.checkModalVisibility();
+  }
+
+  componentDidUpdate() {
+    this.checkModalVisibility();
+  }
+
   onDeviceCreateModalClose() {
     this.context.router.push(`/devices/${this.props.params.id}`);
   }
@@ -33,7 +41,7 @@ class DevicesToolbar extends React.Component {
     this.context.router.push(`/devices/${this.props.params.id}/create`);
   }
 
-  componentDidUpdate() {
+  checkModalVisibility() {
     if (this.props.location.pathname.indexOf('create') !== -1 && !this.state.isDeviceCreateModalVisible) {
       this.setState({
         isDeviceCreateModalVisible: true

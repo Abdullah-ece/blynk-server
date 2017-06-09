@@ -36,6 +36,19 @@ export const DeviceUpdate = (device) => {
   };
 };
 
+export const DeviceCreate = (device) => {
+  return {
+    type: 'API_DEVICE_CREATE',
+    payload: {
+      request: {
+        method: 'put',
+        url: `/devices`,
+        data: device
+      }
+    }
+  };
+};
+
 export const DevicesUpdate = (devices) => {
   return {
     type: 'API_DEVICES_UPDATE',
