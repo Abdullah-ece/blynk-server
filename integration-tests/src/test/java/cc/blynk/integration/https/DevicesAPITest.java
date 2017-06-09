@@ -130,6 +130,7 @@ public class DevicesAPITest extends APIBaseTest {
         product.name = "My product";
         product.description = "Description";
         product.boardType = "ESP8266";
+        product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -159,12 +160,28 @@ public class DevicesAPITest extends APIBaseTest {
             TestDevice device = JsonParser.mapper.readValue(responseString, TestDevice.class);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
+            assertEquals(1, device.productId);
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals("Blynk Inc.", device.orgName);
+            assertEquals("My product", device.productName);
+            assertEquals("/logoUrl", device.productLogoUrl);
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TestDevice[] devices = JsonParser.readAny(responseString, TestDevice[].class);
+            assertNotNull(devices);
+            for (TestDevice testDevice : devices) {
+                if (testDevice.id == 1) {
+                    assertEquals("My product", testDevice.productName);
+                }
+            }
         }
 
     }
@@ -172,6 +189,10 @@ public class DevicesAPITest extends APIBaseTest {
     public static class TestDevice extends Device {
 
         public String orgName;
+
+        public String productName;
+
+        public String productLogoUrl;
 
     }
 

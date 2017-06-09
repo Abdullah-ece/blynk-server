@@ -25,6 +25,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,10 +77,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        String orgName = organizationDao.getOrganizationNameByProductId(newDevice.productId);
-        newDevice.setOrgName(orgName);
-
-        return ok(newDevice);
+        return ok(joinProductAndOrgInfo(newDevice));
     }
 
     @POST
@@ -108,10 +106,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        String orgName = organizationDao.getOrganizationNameByProductId(newDevice.productId);
-        newDevice.setOrgName(orgName);
-
-        return ok(newDevice);
+        return ok(joinProductAndOrgInfo(newDevice));
     }
 
     @GET
@@ -143,12 +138,38 @@ public class DevicesHandler extends BaseHttpHandler {
         return null;
     }
 
+    private Device joinProductAndOrgInfo(Device device) {
+        Map<String, Object> props = new HashMap<>();
+        Product product = organizationDao.getProductById(device.productId);
+
+        if (product != null) {
+            if (product.name != null) {
+                props.put("productName", product.name);
+            }
+            if (product.logoUrl != null) {
+                props.put("productLogoUrl", product.logoUrl);
+            }
+        }
+
+        String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
+        if (orgName != null) {
+            props.put("orgName", orgName);
+        }
+
+        device.dynamicFields = props;
+
+        return device;
+    }
+
     private void joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
         Map<LogEventsSinceLastView, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
         for (Device device : devices) {
+            Product product = organizationDao.getProductById(device.productId);
+            String productName = product == null ? null : product.name;
             device.setEventsCounterSinceLastView(
                     counters.get(new LogEventsSinceLastView(device.id, EventType.CRITICAL)),
-                    counters.get(new LogEventsSinceLastView(device.id, EventType.WARNING))
+                    counters.get(new LogEventsSinceLastView(device.id, EventType.WARNING)),
+                    productName
             );
         }
     }
@@ -167,10 +188,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return notFound();
         }
 
-        String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
-        device.setOrgName(orgName);
-
-        return ok(device);
+        return ok(joinProductAndOrgInfo(device));
     }
 
 
