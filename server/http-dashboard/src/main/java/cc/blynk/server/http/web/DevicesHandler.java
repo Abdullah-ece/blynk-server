@@ -244,7 +244,7 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/timeline/{deviceId}")
+    @Path("/{deviceId}/timeline")
     public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
                                       @PathParam("deviceId") int deviceId,
                                       @QueryParam("eventType") EventType eventType,

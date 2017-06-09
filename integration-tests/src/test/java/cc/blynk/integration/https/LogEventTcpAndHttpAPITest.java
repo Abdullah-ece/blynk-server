@@ -80,7 +80,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -111,7 +111,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -140,7 +140,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -164,7 +164,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
         int logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -181,7 +181,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/timeline/1?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
