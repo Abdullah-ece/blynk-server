@@ -3,7 +3,13 @@ import {Tabs} from 'antd';
 import {Dashboard, DeviceInfo} from './components';
 import _ from 'lodash';
 import './styles.less';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {DeviceUpdate} from 'data/Devices/api';
 
+@connect(() => ({}), (dispatch) => ({
+  updateDevice: bindActionCreators(DeviceUpdate, dispatch)
+}))
 class Device extends React.Component {
 
   static propTypes = {
@@ -16,8 +22,7 @@ class Device extends React.Component {
   }
 
   onDeviceChange(device) {
-    if (this.props.onChange)
-      return this.props.onChange(device);
+    return this.props.updateDevice(device);
   }
 
   render() {

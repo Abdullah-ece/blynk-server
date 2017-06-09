@@ -38,7 +38,9 @@ class Base extends React.Component {
   }
 
   onOk(metafield) {
-    this.props.onChange(metafield);
+    this.props.onChange(metafield).then(() => {
+      this.closeModal();
+    });
   }
 
   onCancel() {
