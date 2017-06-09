@@ -4,13 +4,9 @@ import {DevicesSearch, DevicesList, Device} from './components';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import {List} from "immutable";
-import {DevicesUpdate} from 'data/Devices/api';
-import {bindActionCreators} from 'redux';
 
 @connect((state) => ({
   devices: state.Devices.get('devices'),
-}), (dispatch) => ({
-  updateDevices: bindActionCreators(DevicesUpdate, dispatch)
 }))
 class Devices extends React.Component {
 
@@ -20,7 +16,6 @@ class Devices extends React.Component {
 
   static propTypes = {
     devices: React.PropTypes.instanceOf(List),
-    updateDevices: React.PropTypes.func,
     params: React.PropTypes.object
   };
 
@@ -43,17 +38,6 @@ class Devices extends React.Component {
     return this.props.devices.find(device => Number(device.get('id')) === Number(id));
   }
 
-  onDeviceChange(updatedDevice) {
-
-    const devices = this.props.devices.map((device) => {
-      if (Number(updatedDevice.get('id')) === Number(device.get('id')))
-        return updatedDevice;
-      return device;
-    });
-
-    return this.props.updateDevices(devices);
-  }
-
   render() {
 
     const selectedDevice = this.getDeviceById(this.props.params.id);
@@ -70,7 +54,7 @@ class Devices extends React.Component {
         </PageLayout.Navigation>
         <PageLayout.Content>
           <PageLayout.Content.Header title={selectedDevice && selectedDevice.get('name')}/>
-          <Device device={selectedDevice} onChange={this.onDeviceChange.bind(this)}/>
+          <Device device={selectedDevice}/>
         </PageLayout.Content>
       </PageLayout>
     );
