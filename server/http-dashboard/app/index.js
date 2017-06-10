@@ -42,7 +42,7 @@ Store().then((store) => {
   ReactDOM.render(
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
-        <Router history={hashHistory}>
+        <Router history={hashHistory} onUpdate={() => window.scrollTo(0, 0)}>
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>
