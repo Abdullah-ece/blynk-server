@@ -24,31 +24,31 @@ class Contact extends Base {
 
     const data = [];
 
-    if (field.get('firstName') && field.get('lastName') && field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
+    if (field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
       data.push(`${field.get('firstName')}, ${field.get('lastName')}`);
 
-    if (field.get('firstName') && !field.get('lastName') && !field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
+    if (!field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
       data.push(`${field.get('firstName')}`);
 
-    if (field.get('lastName') && !field.get('firstName') && field.get('isLastNameEnabled') && !field.get('isFirstNameEnabled'))
+    if (field.get('isLastNameEnabled') && !field.get('isFirstNameEnabled'))
       data.push(`${field.get('lastName')}`);
 
-    if (field.get('email') && field.get('isEmailEnabled'))
+    if (field.get('isEmailEnabled'))
       data.push(`${field.get('email')}`);
 
-    if (field.get('phone') && field.get('isPhoneEnabled'))
+    if (field.get('isPhoneEnabled'))
       data.push(`${field.get('phone')}`);
 
-    if (field.get('streetAddress') && field.get('isStreetAddressEnabled'))
+    if (field.get('isStreetAddressEnabled'))
       data.push(`${field.get('streetAddress')}`);
 
-    if (field.get('city') && field.get('isCityEnabled'))
+    if (field.get('isCityEnabled'))
       data.push(`${field.get('city')}`);
 
-    if (field.get('state') && field.get('isStateEnabled'))
+    if (field.get('isStateEnabled'))
       data.push(`${field.get('state')}`);
 
-    if (field.get('zip') && field.get('isZipEnabled'))
+    if (field.get('isZipEnabled'))
       data.push(`${field.get('zip')}`);
 
     return (
