@@ -30,7 +30,7 @@ class Text extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('value')}
+        {field.get('value') || <i>No Value</i>}
       </Fieldset>
     );
   }

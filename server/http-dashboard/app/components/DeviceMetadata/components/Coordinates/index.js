@@ -25,7 +25,7 @@ class Coordinates extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('lat')}, {field.get('lon')}
+        {field.get('lat') || <i>No Value</i>}, {field.get('lon') || <i>No Value</i>}
       </Fieldset>
     );
   }

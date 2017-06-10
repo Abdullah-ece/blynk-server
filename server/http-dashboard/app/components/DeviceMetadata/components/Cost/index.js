@@ -31,11 +31,15 @@ class Cost extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        { Number(field.get('perValue')) === 1 ? (
-          <p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>
-        ) : (
-          <p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>
-        )}
+        { !price && !units ? <i>No Value</i> : (
+          <div>
+            { Number(field.get('perValue')) === 1 ? (
+              <p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>
+            ) : (
+              <p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>
+            )}
+          </div>
+        ) }
       </Fieldset>
     );
   }
