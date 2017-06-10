@@ -12,7 +12,7 @@ class Base extends React.Component {
     form: React.PropTypes.string,
     data: React.PropTypes.object,
     onChange: React.PropTypes.func,
-    resetForm: React.PropTypes.func,
+    initialize: React.PropTypes.func,
     values: React.PropTypes.object,
     errors: React.PropTypes.object
   };
@@ -41,6 +41,7 @@ class Base extends React.Component {
 
   onOk(metafield) {
     this.props.onChange(metafield).then(() => {
+      this.props.initialize(this.props.form, this.props.data.toJS());
       this.closeModal();
     });
   }

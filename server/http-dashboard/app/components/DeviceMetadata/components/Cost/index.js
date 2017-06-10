@@ -4,14 +4,15 @@ import {Fieldset} from 'components';
 import CostModal from './modal';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {reset, getFormValues, getFormSyncErrors} from 'redux-form';
 import {Currency, Unit} from 'services/Products';
+import {reset, initialize, getFormValues, getFormSyncErrors} from 'redux-form';
 
 @connect((state, ownProps) => ({
   values: getFormValues(ownProps.form)(state),
   errors: getFormSyncErrors(ownProps.form)(state)
 }), (dispatch) => ({
-  resetForm: bindActionCreators(reset, dispatch)
+  resetForm: bindActionCreators(reset, dispatch),
+  initialize: bindActionCreators(initialize, dispatch)
 }))
 class Cost extends Base {
 
