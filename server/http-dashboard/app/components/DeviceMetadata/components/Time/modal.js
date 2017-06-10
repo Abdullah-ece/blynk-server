@@ -1,5 +1,6 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
+import {Item} from 'components/UI';
 import {MetadataTime} from 'components/Form';
 
 @reduxForm({
@@ -10,7 +11,11 @@ class TimeModal extends React.Component {
   render() {
     return (
       <div>
-        <MetadataTime name="time" type="text" timeFormat="HH:mm" placeholder="00:00" timestampPicker={true}/>
+        <Item label="Time" offset="normal">
+          <MetadataTime name="time" type="text" timeFormat="HH:mm" placeholder="00:00" timestampPicker={true}
+                        style={{width: '100%'}}/>
+        </Item>
+
       </div>
     );
   }
