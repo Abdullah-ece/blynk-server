@@ -1,6 +1,6 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
-import {Input} from 'antd';
+import {ItemsGroup, Item} from 'components/UI';
 import {MetadataField, MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit} from 'services/Products';
@@ -62,13 +62,19 @@ class UnitModal extends React.Component {
   render() {
     return (
       <div>
-        <Input.Group compact>
-          <MetadataSelect name="units" type="text" placeholder="Choose"
-                          dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-          <MetadataField name="value" type="text" placeholder="Value" validate={[
-            Validation.Rules.number
-          ]}/>
-        </Input.Group>
+        <ItemsGroup>
+          <Item label="Units" offset="normal">
+            <MetadataSelect name="units" type="text" placeholder="Units"
+                            dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}
+                            style={{width: '100%'}}/>
+          </Item>
+          <Item label="Value" offset="normal">
+            <MetadataField name="value" type="text" placeholder="Value" validate={[
+              Validation.Rules.number,
+              Validation.Rules.required
+            ]} style={{width: '100%'}}/>
+          </Item>
+        </ItemsGroup>
       </div>
     );
   }
