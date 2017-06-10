@@ -12,11 +12,11 @@ class CoordinatesModal extends React.Component {
     return (
       <div>
         <ItemsGroup>
-          <Item label="Latitude" offset="normal">
+          <Item label="Latitude">
             <Input placeholder="Latitude" name="lat" validate={[Validation.Rules.latitude, Validation.Rules.required]}
                    style={{width: '100%'}}/>
           </Item>
-          <Item label="Longitude" offset="normal">
+          <Item label="Longitude">
             <Input placeholder="Longitude" name="lon" validate={[Validation.Rules.longitude, Validation.Rules.required]}
                    style={{width: '100%'}}/>
           </Item>

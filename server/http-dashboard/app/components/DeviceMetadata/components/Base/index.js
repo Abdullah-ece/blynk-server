@@ -4,6 +4,8 @@ import {Button} from 'antd';
 import Item from '../Item';
 import {fromJS} from 'immutable';
 
+import './styles.less';
+
 class Base extends React.Component {
 
   static propTypes = {
@@ -77,6 +79,7 @@ class Base extends React.Component {
       <Item onEditClick={this.handleEdit.bind(this)}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
+               wrapClassName="device-metadata-modal"
                title={field.get('name')}
                onCancel={this.handleCancelClick.bind(this)}
                footer={[

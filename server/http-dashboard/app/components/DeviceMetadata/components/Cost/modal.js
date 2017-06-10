@@ -1,7 +1,7 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
-import {ItemsGroup, Item} from 'components/UI';
-import {MetadataSelect, Number} from 'components/Form';
+import {ItemsGroup, Item, Number} from 'components/UI';
+import {MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit, Currency} from 'services/Products';
 
@@ -72,23 +72,23 @@ class CostModal extends React.Component {
       <div>
 
         <ItemsGroup>
-          <Item label="Currency" offset="normal">
+          <Item label="Currency">
             <MetadataSelect name="currency" type="text" placeholder="Currency" values={this.Currency}
                             style={{width: '100%'}}/>
           </Item>
-          <Item label="Price" offset="normal">
+          <Item label="Price">
             <Number name="price" type="text" placeholder="Price" validate={[
               Validation.Rules.number,
               Validation.Rules.required
             ]} style={{width: '100%'}}/>
           </Item>
-          <Item label="Per Value" offset="normal">
+          <Item label="Per Value">
             <Number name="perValue" type="text" placeholder="Per Value" validate={[
               Validation.Rules.number,
               Validation.Rules.required
             ]} style={{width: '100%'}}/>
           </Item>
-          <Item label="Units" offset="normal">
+          <Item label="Units">
             <MetadataSelect name="units" type="text" placeholder="Units"
                             dropdownClassName="product-metadata-item-unit-dropdown"
                             values={this.Unit}

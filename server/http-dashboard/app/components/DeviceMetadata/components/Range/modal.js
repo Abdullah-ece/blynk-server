@@ -12,10 +12,10 @@ class RangeModal extends React.Component {
     return (
       <div>
         <ItemsGroup>
-          <Item label="From" offset="normal">
+          <Item label="From">
             <MetadataTime name="from" type="text" timeFormat="HH:mm" placeholder="00:00" style={{width: '100%'}}/>
           </Item>
-          <Item label="To" offset="normal">
+          <Item label="To">
             <MetadataTime name="to" type="text" timeFormat="HH:mm" placeholder="00:00" style={{width: '100%'}}/>
           </Item>
         </ItemsGroup>

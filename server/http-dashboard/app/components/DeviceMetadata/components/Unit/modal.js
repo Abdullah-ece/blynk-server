@@ -1,7 +1,7 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
-import {ItemsGroup, Item} from 'components/UI';
-import {MetadataField, MetadataSelect} from 'components/Form';
+import {ItemsGroup, Item, Input} from 'components/UI';
+import {MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit} from 'services/Products';
 
@@ -63,13 +63,13 @@ class UnitModal extends React.Component {
     return (
       <div>
         <ItemsGroup>
-          <Item label="Units" offset="normal">
+          <Item label="Units">
             <MetadataSelect name="units" type="text" placeholder="Units"
                             dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}
                             style={{width: '100%'}}/>
           </Item>
-          <Item label="Value" offset="normal">
-            <MetadataField name="value" type="text" placeholder="Value" validate={[
+          <Item label="Value">
+            <Input name="value" type="text" placeholder="Value" validate={[
               Validation.Rules.number,
               Validation.Rules.required
             ]} style={{width: '100%'}}/>
