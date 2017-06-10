@@ -1,6 +1,6 @@
 import React from 'react';
 import {reduxForm} from 'redux-form';
-import {Input} from 'antd';
+import {ItemsGroup, Item} from 'components/UI';
 import {MetadataSelect, Number} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit, Currency} from 'services/Products';
@@ -70,21 +70,31 @@ class CostModal extends React.Component {
   render() {
     return (
       <div>
-        <Input.Group compact>
-          <MetadataSelect name="currency" type="text" placeholder="Currency" values={this.Currency}/>
 
-          <Number name="price" type="text" placeholder="Price" validate={[
-            Validation.Rules.number
-          ]}/>
-
-          <Number name="perValue" type="text" placeholder="Per Value" validate={[
-            Validation.Rules.number
-          ]}/>
-
-          <MetadataSelect name="units" type="text" placeholder="Units"
-                          dropdownClassName="product-metadata-item-unit-dropdown"
-                          values={this.Unit}/>
-        </Input.Group>
+        <ItemsGroup>
+          <Item label="Currency" offset="normal">
+            <MetadataSelect name="currency" type="text" placeholder="Currency" values={this.Currency}
+                            style={{width: '100%'}}/>
+          </Item>
+          <Item label="Price" offset="normal">
+            <Number name="price" type="text" placeholder="Price" validate={[
+              Validation.Rules.number,
+              Validation.Rules.required
+            ]} style={{width: '100%'}}/>
+          </Item>
+          <Item label="Per Value" offset="normal">
+            <Number name="perValue" type="text" placeholder="Per Value" validate={[
+              Validation.Rules.number,
+              Validation.Rules.required
+            ]} style={{width: '100%'}}/>
+          </Item>
+          <Item label="Units" offset="normal">
+            <MetadataSelect name="units" type="text" placeholder="Units"
+                            dropdownClassName="product-metadata-item-unit-dropdown"
+                            values={this.Unit}
+                            style={{width: '100%'}}/>
+          </Item>
+        </ItemsGroup>
       </div>
     );
   }
