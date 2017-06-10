@@ -23,31 +23,31 @@ class Contact extends Base {
 
     const data = [];
 
-    if (field.get('firstName') && field.get('lastName'))
+    if (field.get('firstName') && field.get('lastName') && field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
       data.push(`${field.get('firstName')}, ${field.get('lastName')}`);
 
-    if (field.get('firstName') && !field.get('lastName'))
+    if (field.get('firstName') && !field.get('lastName') && !field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
       data.push(`${field.get('firstName')}`);
 
-    if (field.get('lastName') && !field.get('firstName'))
+    if (field.get('lastName') && !field.get('firstName') && field.get('isLastNameEnabled') && !field.get('isFirstNameEnabled'))
       data.push(`${field.get('lastName')}`);
 
-    if (field.get('email'))
+    if (field.get('email') && field.get('isEmailEnabled'))
       data.push(`${field.get('email')}`);
 
-    if (field.get('phone'))
+    if (field.get('phone') && field.get('isPhoneEnabled'))
       data.push(`${field.get('phone')}`);
 
-    if (field.get('streetAddress'))
+    if (field.get('streetAddress') && field.get('isStreetAddressEnabled'))
       data.push(`${field.get('streetAddress')}`);
 
-    if (field.get('city'))
+    if (field.get('city') && field.get('isCityEnabled'))
       data.push(`${field.get('city')}`);
 
-    if (field.get('state'))
+    if (field.get('state') && field.get('isStateEnabled'))
       data.push(`${field.get('state')}`);
 
-    if (field.get('zip'))
+    if (field.get('zip') && field.get('isZipEnabled'))
       data.push(`${field.get('zip')}`);
 
     return (
@@ -65,7 +65,7 @@ class Contact extends Base {
   getEditableComponent() {
     return (
       <div>
-        <ContactModal form={this.props.form} initialValues={this.props.data.toJS()}/>
+        <ContactModal form={this.props.form} initialValues={this.props.data.toJS()} data={this.props.data}/>
       </div>
     );
   }

@@ -11,58 +11,97 @@ import './styles.less';
 })
 class ContactModal extends React.Component {
 
+  static propTypes = {
+    data: React.PropTypes.object
+  };
+
   render() {
+
+    const fields = [
+      {
+        name: 'firstName',
+        label: 'First Name',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isFirstNameEnabled')
+      },
+      {
+        name: 'lastName',
+        label: 'Last Name',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isLastNameEnabled')
+      },
+      {
+        name: 'streetAddress',
+        label: 'Street Address',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isStreetAddressEnabled')
+      },
+      {
+        name: 'city',
+        label: 'City',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isCityEnabled')
+      },
+      {
+        name: 'email',
+        label: 'E-mail',
+        validate: [Validation.Rules.required, Validation.Rules.email],
+        isEnabled: this.props.data.get('isEmailEnabled'),
+        validateOnBlur: true
+      },
+      {
+        name: 'state',
+        label: 'State',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isStateEnabled')
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isPhoneEnabled')
+      },
+      {
+        name: 'zip',
+        label: 'ZIP',
+        validate: [Validation.Rules.required],
+        isEnabled: this.props.data.get('isZipEnabled')
+      }
+    ].filter((field) => {
+      return !!field.isEnabled;
+    });
+
+    const form = [];
+
+    const rows = Math.ceil(fields.length / 2);
+
+    for (let i = 0; i < rows; i++) {
+      const getFields = (i) => {
+        return [fields[i * 2] || null, fields[i * 2 + 1] || null];
+      };
+
+      form.push(
+        <Row key={i}>
+          { getFields(i).map((item, key) => {
+            if (item)
+              return (
+                <Col span={12} key={key}>
+                  <Item label={item.label} offset={rows - i === 1 ? `none` : `normal`}>
+                    <Input name={item.name} placeholder={item.label} validate={item.validate}
+                           validateOnBlur={item.validateOnBlur || false}/>
+                  </Item>
+                </Col>
+              );
+            return null;
+          })}
+        </Row>
+      );
+
+    }
+
     return (
       <div className="device-metadata--contact-modal">
-        <Row>
-          <Col span={12}>
-            <Item label="First Name" offset="normal">
-              <Input name="firstName" placeholder="First name" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-          <Col span={12}>
-            <Item label="Street Address" offset="normal">
-              <Input name="streetAddress" placeholder="Street Address" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Item label="Last name" offset="normal">
-              <Input name="lastName" placeholder="Last name" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-          <Col span={12}>
-            <Item label="City" offset="normal">
-              <Input name="city" placeholder="City" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Item label="E-mail" offset="normal">
-              <Input name="email" placeholder="E-mail" validate={[Validation.Rules.required, Validation.Rules.email]}
-                     validateOnBlur={true}/>
-            </Item>
-          </Col>
-          <Col span={12}>
-            <Item label="State" offset="normal">
-              <Input name="state" placeholder="State" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Item label="Phone" offset="normal">
-              <Input name="phone" placeholder="Phone" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-          <Col span={12}>
-            <Item label="ZIP" offset="normal">
-              <Input name="zip" placeholder="ZIP" validate={[Validation.Rules.required]}/>
-            </Item>
-          </Col>
-        </Row>
+        { form }
       </div>
     );
   }

@@ -4,6 +4,10 @@ import './styles.less';
 
 class Modal extends React.Component {
 
+  static propTypes = {
+    wrapClassName: React.PropTypes.string
+  };
+
   render() {
 
     return (
