@@ -16,7 +16,8 @@ class Devices extends React.Component {
 
   static propTypes = {
     devices: React.PropTypes.instanceOf(List),
-    params: React.PropTypes.object
+    location: React.PropTypes.object,
+    params: React.PropTypes.object,
   };
 
   componentWillMount() {

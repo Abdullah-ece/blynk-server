@@ -3,11 +3,10 @@ import {Modal} from 'components';
 import {Row, Col, Button} from 'antd';
 import {Item, Input} from 'components/UI';
 import {MetadataSelect} from 'components/Form';
-import {reduxForm} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
-import {getFormSyncErrors, getFormValues, reset} from 'redux-form';
+import {reduxForm, getFormSyncErrors, getFormValues, reset} from 'redux-form';
 import {DeviceCreate, DevicesFetch} from 'data/Devices/api';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
 import './styles.less';
@@ -30,8 +29,12 @@ class DeviceCreateModal extends React.Component {
     visible: React.PropTypes.bool,
     onClose: React.PropTypes.func,
     errors: React.PropTypes.object,
-    values: React.PropTypes.object,
-    products: React.PropTypes.array
+    formValues: React.PropTypes.object,
+    products: React.PropTypes.array,
+    reduxForm: React.PropTypes.func,
+    resetForm: React.PropTypes.func,
+    createDevice: React.PropTypes.func,
+    fetchDevices: React.PropTypes.func,
   };
 
   state = {

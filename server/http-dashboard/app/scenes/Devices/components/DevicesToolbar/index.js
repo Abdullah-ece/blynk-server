@@ -5,13 +5,6 @@ import './styles.less';
 
 class DevicesToolbar extends React.Component {
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.location.pathname !== nextProps.location.pathname ||
-      this.state.isDeviceCreateModalVisible !== nextState.isDeviceCreateModalVisible
-    )
-  }
-
   static contextTypes = {
     router: React.PropTypes.object,
   };
@@ -27,6 +20,13 @@ class DevicesToolbar extends React.Component {
 
   componentWillMount() {
     this.checkModalVisibility();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.location.pathname !== nextProps.location.pathname ||
+      this.state.isDeviceCreateModalVisible !== nextState.isDeviceCreateModalVisible
+    );
   }
 
   componentDidUpdate() {

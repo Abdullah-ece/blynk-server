@@ -55,7 +55,7 @@ export const DeviceCreate = (store) => {
       productsFetch().then(() => {
         callback();
         finish();
-      })
+      });
     });
 
   };
