@@ -78,14 +78,26 @@ public class DashBoard {
         }
         //special case. #237 if no widget - storing without widget.
         if (!hasWidget) {
-            if (pinsStorage == Collections.EMPTY_MAP) {
-                pinsStorage = new HashMap<>();
-            }
-            pinsStorage.put(new PinStorageKey(deviceId, type, pin), value);
+            putPinStorageValue(deviceId, type, pin, value);
         }
 
         this.updatedAt = now;
         updateDeviceTs(deviceId, now);
+    }
+
+    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
+        puntPingStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
+    }
+
+    private void putPinStorageValue(int deviceId, PinType type, byte pin, String value) {
+        puntPingStorageValue(new PinStorageKey(deviceId, type, pin), value);
+    }
+
+    private void puntPingStorageValue(PinStorageKey key, String value) {
+        if (pinsStorage == Collections.EMPTY_MAP) {
+            pinsStorage = new HashMap<>();
+        }
+        pinsStorage.put(key, value);
     }
 
     public void activate() {
@@ -207,7 +219,7 @@ public class DashBoard {
         return widgets[getWidgetIndexByIdOrThrow(id)];
     }
 
-    public Widget getWidgetById(long id) {
+    private Widget getWidgetById(long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
                 return widget;
@@ -285,12 +297,14 @@ public class DashBoard {
     public void cleanPinStorage(Widget widget) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
-            pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+            if (onePinWidget.pinType != null) {
+                pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+            }
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
             if (multiPinWidget.pins != null) {
                 for (Pin pin : multiPinWidget.pins) {
-                    if (pin != null) {
+                    if (pin != null && pin.pinType != null) {
                         pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, pin.pinType, pin.pin));
                     }
                 }

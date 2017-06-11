@@ -130,7 +130,7 @@ public class Holder implements Closeable {
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
@@ -174,7 +174,7 @@ public class Holder implements Closeable {
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setEventLoopGroup(transportTypeHolder.workerGroup)

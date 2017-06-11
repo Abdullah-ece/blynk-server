@@ -30,8 +30,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class MailLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(MailLogic.class);
-    private static final int EMAIL_DAY_LIMIT = 100;
-    private static final int MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
+
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
 
@@ -42,7 +41,9 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        final User user = state.user;
+
+        DashBoard dash = user.profile.getDashByIdOrThrow(state.dashId);
 
         Mail mail = dash.getWidgetByType(Mail.class);
 
@@ -54,7 +55,7 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail notification body.");
         }
 
-        checkDailyEmailLimit(state.user);
+        user.checkDailyEmailLimit();
 
         String[] bodyParts = message.body.split("\0");
 
@@ -71,11 +72,7 @@ public class MailLogic extends NotificationBase {
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {
-            if (mail.to == null || mail.to.isEmpty()) {
-                to = state.user.email;
-            } else {
-                to = mail.to;
-            }
+            to = (mail.to == null || mail.to.isEmpty()) ? user.email : mail.to;
             subj = bodyParts[0];
             body = bodyParts[1];
         }
@@ -87,22 +84,9 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", state.user.email, message.body);
-        mail(ctx.channel(), state.user.email, to, subj, body, message.id);
-        state.user.emailMessages++;
-    }
-
-    //todo add test for it.
-    private void checkDailyEmailLimit(User user) {
-        long now = System.currentTimeMillis();
-        if (now - user.emailSentTs < MILLIS_IN_DAY) {
-            if (user.emailMessages > EMAIL_DAY_LIMIT) {
-                throw EXCEPTION_CACHE;
-            }
-        } else {
-            user.emailMessages = 0;
-            user.emailSentTs = now;
-        }
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
+        mail(ctx.channel(), user.email, to, subj, body, message.id);
+        user.emailMessages++;
     }
 
     private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
