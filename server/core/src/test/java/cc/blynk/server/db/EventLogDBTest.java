@@ -118,7 +118,7 @@ public class EventLogDBTest {
         assertEquals(1, logEvents.size());
         assertFalse(logEvents.get(0).isResolved);
 
-        dbManager.eventDBDao.resolveEvent(logEvents.get(0).id);
+        dbManager.eventDBDao.resolveEvent(logEvents.get(0).id, "Pupkin Vasya");
 
         logEvents = dbManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
         assertNotNull(logEvents);
@@ -132,7 +132,7 @@ public class EventLogDBTest {
         long now = System.currentTimeMillis();
         String eventCode = "something";
 
-        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true);
+        LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya");
         dbManager.eventDBDao.insert(logEvent);
 
         List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, now, now, 0, 1, true);

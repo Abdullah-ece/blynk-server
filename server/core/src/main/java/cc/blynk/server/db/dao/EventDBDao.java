@@ -27,13 +27,13 @@ public class EventDBDao {
 
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
-    public static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE where id = ?";
-    public static final String insertEvent= "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
-    public static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
-    public static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
-    public static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
+    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ? where id = ?";
+    private static final String insertEvent= "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
+    private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
+    private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
+    private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
 
-    public static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? group by device_id, type";
+    private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? group by device_id, type";
 
     private final HikariDataSource ds;
 
@@ -159,7 +159,7 @@ public class EventDBDao {
         return events;
     }
 
-    public LogEventsSinceLastView readSinceLastViewEvent(ResultSet rs) throws Exception {
+    private LogEventsSinceLastView readSinceLastViewEvent(ResultSet rs) throws Exception {
         return new LogEventsSinceLastView(
                 rs.getInt("device_id"),
                 EventType.values()[rs.getInt("type")]
@@ -174,7 +174,8 @@ public class EventDBDao {
                 rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
                 rs.getInt("event_hashcode"),
                 rs.getString("description"),
-                rs.getBoolean("is_resolved")
+                rs.getBoolean("is_resolved"),
+                rs.getString("resolved_by")
         );
     }
 
@@ -194,11 +195,12 @@ public class EventDBDao {
         }
     }
 
-    public void resolveEvent(int id) throws Exception {
+    public void resolveEvent(int id, String name) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
 
-            ps.setInt(1, id);
+            ps.setString(1, name);
+            ps.setInt(2, id);
 
             ps.executeUpdate();
             connection.commit();

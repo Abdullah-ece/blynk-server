@@ -108,7 +108,7 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                dbManager.eventDBDao.resolveEvent(logEventId);
+                dbManager.eventDBDao.resolveEvent(logEventId, user.name);
                 response = ok();
             } catch (Exception e) {
                 log.error("Error marking event as resolved.", e);
