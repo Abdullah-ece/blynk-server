@@ -1,11 +1,11 @@
-import React from 'react';
-import {Tabs} from 'antd';
-import {Dashboard, DeviceInfo} from './components';
-import _ from 'lodash';
-import './styles.less';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {DeviceUpdate} from 'data/Devices/api';
+import React from "react";
+import {Tabs} from "antd";
+import {Dashboard, DeviceInfo} from "./components";
+import _ from "lodash";
+import "./styles.less";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {DeviceUpdate} from "data/Devices/api";
 
 @connect(() => ({}), (dispatch) => ({
   updateDevice: bindActionCreators(DeviceUpdate, dispatch)
@@ -35,8 +35,8 @@ class Device extends React.Component {
             <Dashboard />
           </div>
         </TabPane>
-        <TabPane tab="Events Log" key="2">
-          <div style={{padding: '12px 0'}}>Events Log</div>
+        <TabPane tab="Timeline" key="2">
+          <div style={{padding: '12px 0'}}>Timeline</div>
         </TabPane>
         <TabPane tab="Device Info" key="3">
           <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
