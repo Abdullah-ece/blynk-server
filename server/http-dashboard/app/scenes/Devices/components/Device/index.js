@@ -1,6 +1,6 @@
 import React from "react";
 import {Tabs} from "antd";
-import {Dashboard, DeviceInfo} from "./components";
+import {Dashboard, DeviceInfo, Timeline} from "./components";
 import _ from "lodash";
 import "./styles.less";
 import {connect} from "react-redux";
@@ -38,14 +38,14 @@ class Device extends React.Component {
         <div className="devices--device-name">
           <ContentEditable value={this.props.device.get('name')} onChange={this.handleDeviceNameChange.bind(this)}/>
         </div>
-        <Tabs defaultActiveKey="3" className="page-layout-tabs-navigation">
+        <Tabs defaultActiveKey="2" className="page-layout-tabs-navigation">
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
               <Dashboard />
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
-            <div style={{padding: '12px 0'}}>Timeline</div>
+            <Timeline />
           </TabPane>
           <TabPane tab="Device Info" key="3">
             <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
