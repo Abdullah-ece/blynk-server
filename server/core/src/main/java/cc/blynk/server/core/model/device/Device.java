@@ -64,10 +64,11 @@ public class Device implements Target {
     public Device() {
     }
 
-    public Device(String name, String boardType, String token, ConnectionType connectionType) {
+    public Device(String name, String boardType, String token, int productId, ConnectionType connectionType) {
         this.name = name;
         this.boardType = boardType;
         this.token = token;
+        this.productId = productId;
         this.connectionType = connectionType;
     }
 
