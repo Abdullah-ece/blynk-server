@@ -47,8 +47,6 @@ class DeviceInfo extends React.Component {
       sameElse: 'hh:mm A, YYYY.MM.DD'
     }) : 'Not reported yet';
 
-    console.log('Rerender');
-
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">

@@ -29,18 +29,16 @@ class Editable extends React.Component {
     };
   }
 
-  validate() {
-    if (!this.props.validate) return true;
-
-    console.log(new RegExp(this.props.validate), this.prepareForSave(this.state.html));
-
-    return new RegExp(this.props.validate).test(this.prepareForSave(this.state.html));
-  }
-
   componentWillReceiveProps(props) {
     this.setState({
       html: props.value
     });
+  }
+
+  validate() {
+    if (!this.props.validate) return true;
+
+    return new RegExp(this.props.validate).test(this.prepareForSave(this.state.html));
   }
 
   startToEdit() {

@@ -37,12 +37,28 @@ class DeviceCreateModal extends React.Component {
     resetForm: React.PropTypes.func,
     createDevice: React.PropTypes.func,
     fetchDevices: React.PropTypes.func,
+    change: React.PropTypes.func,
   };
 
   state = {
     loading: false,
     productId: null
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
+      this.setState({
+        productId: nextProps.formValues.productId
+      });
+
+      const product = _.find(this.props.products, (product) => {
+        return Number(product.id) === Number(nextProps.formValues.productId);
+      });
+
+      this.props.change('boardType', product.boardType);
+      this.props.change('connectionType', product.connectionType);
+    }
+  }
 
   handleCancelClick() {
     this.props.resetForm('DeviceCreate');
@@ -61,21 +77,6 @@ class DeviceCreateModal extends React.Component {
         this.handleCancelClick();
       });
     });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
-      this.setState({
-        productId: nextProps.formValues.productId
-      });
-
-      const product = _.find(this.props.products, (product) => {
-        return Number(product.id) === Number(nextProps.formValues.productId)
-      });
-
-      this.props.change('boardType', product.boardType);
-      this.props.change('connectionType', product.connectionType);
-    }
   }
 
   render() {

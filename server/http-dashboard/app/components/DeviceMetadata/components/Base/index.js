@@ -13,6 +13,7 @@ class Base extends React.Component {
     data: React.PropTypes.object,
     onChange: React.PropTypes.func,
     initialize: React.PropTypes.func,
+    resetForm: React.PropTypes.func,
     values: React.PropTypes.object,
     errors: React.PropTypes.object
   };
