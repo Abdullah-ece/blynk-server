@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -10,13 +12,18 @@ import cc.blynk.server.core.model.web.product.MetaField;
  */
 public class NumberMetaField extends MetaField {
 
-    public double value;
+    public final double value;
 
-    public NumberMetaField() {
-    }
-
-    public NumberMetaField(String name, Role role, double value) {
+    @JsonCreator
+    public NumberMetaField(@JsonProperty("name") String name,
+                           @JsonProperty("role") Role role,
+                           @JsonProperty("value") double value) {
         super(name, role);
         this.value = value;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new NumberMetaField(name, role, value);
     }
 }

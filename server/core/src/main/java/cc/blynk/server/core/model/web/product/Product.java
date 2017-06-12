@@ -1,7 +1,11 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -64,8 +68,17 @@ public class Product {
     }
 
     public MetaField[] copyMetaFields() {
-        //a bit ugly, but fine for now
-        return JsonParser.readAny(JsonParser.toJson(metaFields), MetaField[].class);
+        if (metaFields == null || metaFields.length == 0) {
+            return ArrayUtil.EMPTY_META_FIELDS;
+        }
+
+        List<MetaField> result = new ArrayList<>(metaFields.length);
+        for (MetaField metaField : metaFields) {
+            if (!metaField.isDefault()) {
+                result.add(metaField.copy());
+            }
+        }
+        return result.toArray(new MetaField[result.size()]);
     }
 
     public boolean notValid() {

@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
@@ -12,13 +14,18 @@ import java.util.Date;
  */
 public class TimeMetaField extends MetaField {
 
-    public Date time;
+    public final Date time;
 
-    public TimeMetaField() {
-    }
-
-    public TimeMetaField(String name, Role role, Date time) {
+    @JsonCreator
+    public TimeMetaField(@JsonProperty("name") String name,
+                         @JsonProperty("role") Role role,
+                         @JsonProperty("time") Date time) {
         super(name, role);
         this.time = time;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new TimeMetaField(name, role, (Date) time.clone());
     }
 }

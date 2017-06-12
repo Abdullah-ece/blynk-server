@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -10,13 +12,19 @@ import cc.blynk.server.core.model.web.product.MetaField;
  */
 public class TextMetaField extends MetaField {
 
-    public String value;
+    public final String value;
 
-    public TextMetaField() {
-    }
-
-    public TextMetaField(String name, Role role, String value) {
+    @JsonCreator
+    public TextMetaField(@JsonProperty("name") String name,
+                         @JsonProperty("role") Role role,
+                         @JsonProperty("value") String value) {
         super(name, role);
         this.value = value;
     }
+
+    @Override
+    public MetaField copy() {
+        return new TextMetaField(name, role, value);
+    }
+
 }

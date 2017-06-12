@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -10,16 +12,22 @@ import cc.blynk.server.core.model.web.product.MetaField;
  */
 public class RangeMetaField extends MetaField {
 
-    public int from;
+    public final int from;
 
-    public int to;
+    public final int to;
 
-    public RangeMetaField() {
-    }
-
-    public RangeMetaField(String name, Role role, int from, int to) {
+    @JsonCreator
+    public RangeMetaField(@JsonProperty("name") String name,
+                          @JsonProperty("role") Role role,
+                          @JsonProperty("from") int from,
+                          @JsonProperty("to") int to) {
         super(name, role);
         this.from = from;
         this.to = to;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new RangeMetaField(name ,role, from, to);
     }
 }

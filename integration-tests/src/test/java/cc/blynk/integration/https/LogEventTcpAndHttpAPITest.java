@@ -231,6 +231,9 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.description = "Description";
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new NumberMetaField("Jopa", Role.STAFF, 123D)
+        };
         CriticalEvent event = new CriticalEvent();
         event.name = "Temp is super high";
         event.eventCode = "temp_is_high";
@@ -254,9 +257,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         Device device = new Device();
         device.name = "My New Device";
         device.productId = 1;
-        device.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D)
-        };
 
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");

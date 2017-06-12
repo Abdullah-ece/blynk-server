@@ -2,40 +2,71 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AddressMetaField extends MetaField {
 
-    public String streetAddress;
+    public final String streetAddress;
 
-    public boolean isStreetAddressEnabled;
+    public final boolean isStreetAddressEnabled;
 
-    public String city;
+    public final String city;
 
-    public boolean isCityEnabled;
+    public final boolean isCityEnabled;
 
-    public String state;
+    public final String state;
 
-    public boolean isStateEnabled;
+    public final boolean isStateEnabled;
 
-    public String zip;
+    public final String zip;
 
-    public boolean isZipEnabled;
+    public final boolean isZipEnabled;
 
-    public String country;
+    public final String country;
 
-    public boolean isCountryEnabled;
+    public final boolean isCountryEnabled;
 
-    public boolean isDefaultsEnabled;
+    public final boolean isDefaultsEnabled;
 
-    public AddressMetaField() {
-    }
-
-    public AddressMetaField(String name, Role role, String streetAddress, String city, String state, String zip, String country) {
+    @JsonCreator
+    public AddressMetaField(@JsonProperty("name") String name,
+                             @JsonProperty("role") Role role,
+                             @JsonProperty("streetAddress") String streetAddress,
+                             @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
+                             @JsonProperty("city") String city,
+                             @JsonProperty("isCityEnabled") boolean isCityEnabled,
+                             @JsonProperty("state") String state,
+                             @JsonProperty("isStateEnabled") boolean isStateEnabled,
+                             @JsonProperty("zip") String zip,
+                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
+                             @JsonProperty("country") String country,
+                             @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
+                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
         super(name, role);
         this.streetAddress = streetAddress;
+        this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
+        this.isCityEnabled = isCityEnabled;
         this.state = state;
+        this.isStateEnabled = isStateEnabled;
         this.zip = zip;
+        this.isZipEnabled = isZipEnabled;
         this.country = country;
+        this.isCountryEnabled = isCountryEnabled;
+        this.isDefaultsEnabled = isDefaultsEnabled;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new AddressMetaField(
+                name, role,
+                streetAddress, isStreetAddressEnabled,
+                city, isCityEnabled,
+                state, isStateEnabled,
+                zip, isZipEnabled,
+                country, isCountryEnabled,
+                isDefaultsEnabled
+        );
     }
 }

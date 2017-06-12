@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Currency;
 
@@ -12,22 +14,30 @@ import java.util.Currency;
  */
 public class CostMetaField extends MetaField {
 
-    public Currency currency;
+    public final Currency currency;
 
-    public double price;
+    public final double price;
 
-    public double perValue;
+    public final double perValue;
 
-    public MeasurementUnit units;
+    public final MeasurementUnit units;
 
-    public CostMetaField() {
-    }
-
-    public CostMetaField(String name, Role role, Currency currency, double price, double perValue, MeasurementUnit units) {
+    @JsonCreator
+    public CostMetaField(@JsonProperty("name") String name,
+                         @JsonProperty("role") Role role,
+                         @JsonProperty("currency") Currency currency,
+                         @JsonProperty("price") double price,
+                         @JsonProperty("perValue") double perValue,
+                         @JsonProperty("units") MeasurementUnit units) {
         super(name, role);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
         this.units = units;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new CostMetaField(name, role, currency, price, perValue, units);
     }
 }

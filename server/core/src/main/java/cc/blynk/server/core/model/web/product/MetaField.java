@@ -29,15 +29,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class MetaField {
 
-    public String name;
+    private static final String DEFAULT_DEVICE_NAME_FIELD = "Device Name";
 
-    public Role role;
+    public final String name;
 
-    public MetaField() {
-    }
+    public final Role role;
 
     public MetaField(String name, Role role) {
         this.name = name;
         this.role = role;
+    }
+
+    public abstract MetaField copy();
+
+    public boolean isDefault() {
+        return DEFAULT_DEVICE_NAME_FIELD.equals(name);
     }
 }

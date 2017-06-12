@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -10,55 +12,95 @@ import cc.blynk.server.core.model.web.product.MetaField;
  */
 public class ContactMetaField extends MetaField {
 
-    public String contact;
+    public final String contact;
 
-    public String firstName;
+    public final String firstName;
 
-    public boolean isFirstNameEnabled;
+    public final boolean isFirstNameEnabled;
 
-    public String lastName;
+    public final String lastName;
 
-    public boolean isLastNameEnabled;
+    public final boolean isLastNameEnabled;
 
-    public String email;
+    public final String email;
 
-    public boolean isEmailEnabled;
+    public final boolean isEmailEnabled;
 
-    public String phone;
+    public final String phone;
 
-    public boolean isPhoneEnabled;
+    public final boolean isPhoneEnabled;
 
-    public String streetAddress;
+    public final String streetAddress;
 
-    public boolean isStreetAddressEnabled;
+    public final boolean isStreetAddressEnabled;
 
-    public String city;
+    public final String city;
 
-    public boolean isCityEnabled;
+    public final boolean isCityEnabled;
 
-    public String state;
+    public final String state;
 
-    public boolean isStateEnabled;
+    public final boolean isStateEnabled;
 
-    public String zip;
+    public final String zip;
 
-    public boolean isZipEnabled;
+    public final boolean isZipEnabled;
 
-    public boolean isDefaultsEnabled;
+    public final boolean isDefaultsEnabled;
 
-    public ContactMetaField() {
-    }
-
-    public ContactMetaField(String name, Role role, String contact, String firstName, String lastName, String email, String phone, String streetAddress, String city, String state, String zip) {
+    @JsonCreator
+    public ContactMetaField(@JsonProperty("name") String name,
+                            @JsonProperty("role") Role role,
+                            @JsonProperty("contact") String contact,
+                            @JsonProperty("firstName") String firstName,
+                            @JsonProperty("isFirstNameEnabled") boolean isFirstNameEnabled,
+                            @JsonProperty("lastName") String lastName,
+                            @JsonProperty("isLastNameEnabled") boolean isLastNameEnabled,
+                            @JsonProperty("email") String email,
+                            @JsonProperty("isEmailEnabled") boolean isEmailEnabled,
+                            @JsonProperty("phone") String phone,
+                            @JsonProperty("isPhoneEnabled") boolean isPhoneEnabled,
+                            @JsonProperty("streetAddress") String streetAddress,
+                            @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
+                            @JsonProperty("city") String city,
+                            @JsonProperty("isCityEnabled") boolean isCityEnabled,
+                            @JsonProperty("state") String state,
+                            @JsonProperty("isStateEnabled") boolean isStateEnabled,
+                            @JsonProperty("zip") String zip,
+                            @JsonProperty("isZipEnabled") boolean isZipEnabled,
+                            @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
         super(name, role);
         this.contact = contact;
         this.firstName = firstName;
+        this.isFirstNameEnabled = isFirstNameEnabled;
         this.lastName = lastName;
+        this.isLastNameEnabled = isLastNameEnabled;
         this.email = email;
+        this.isEmailEnabled = isEmailEnabled;
         this.phone = phone;
+        this.isPhoneEnabled = isPhoneEnabled;
         this.streetAddress = streetAddress;
+        this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
+        this.isCityEnabled = isCityEnabled;
         this.state = state;
+        this.isStateEnabled = isStateEnabled;
         this.zip = zip;
+        this.isZipEnabled = isZipEnabled;
+        this.isDefaultsEnabled = isDefaultsEnabled;
+    }
+
+    @Override
+    public MetaField copy() {
+        return new ContactMetaField(name, role, contact,
+                firstName, isFirstNameEnabled,
+                lastName, isLastNameEnabled,
+                email, isEmailEnabled,
+                phone, isPhoneEnabled,
+                streetAddress, isStreetAddressEnabled,
+                city, isCityEnabled,
+                state, isStateEnabled,
+                zip, isZipEnabled,
+                isDefaultsEnabled);
     }
 }

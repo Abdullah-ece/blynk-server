@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -46,6 +47,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
@@ -172,9 +174,9 @@ public class DevicesAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D)
+                new NumberMetaField("Jopa", Role.STAFF, 123D),
+                new TextMetaField("Device Name", Role.ADMIN, "My Default device Name")
         };
-
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
         req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
