@@ -1,0 +1,94 @@
+@import "components/Layout/style-guide";
+
+.event-type-generator(@color) {
+  .ant-timeline-item-tail {
+    border-left: 2px dotted #8D8D90;
+  }
+  .ant-timeline-item-head {
+    border-color: @color;
+    color: @color;
+  }
+  .ant-timeline-item-content:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 19px;
+    left: 7px;
+    bottom: 0;
+    border-left: 2px solid @color;
+  }
+}
+
+.event-name-generator(@color) {
+  .devices--device-timeline--event-header-name {
+    color: @color;
+  }
+}
+
+.devices--device-timeline--event {
+  max-width: 560px;
+  padding-bottom: 32px;
+  .ant-timeline-item-tail {
+    margin-left: 2px;
+  }
+  .ant-timeline-item-head {
+    width: 16px;
+    height: 16px;
+    margin-left: 0;
+  }
+  .ant-timeline-item-content {
+    padding-top: 1px;
+    padding-bottom: 0;
+    padding-left: 30px;
+  }
+
+  &:last-child {
+    .ant-timeline-item-tail {
+      height: 0;
+    }
+  }
+}
+
+.devices--device-timeline--event-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.devices--device-timeline--event-header-name {
+  .font-body-text;
+  font-weight: 400;
+}
+
+.devices--device-timeline--event-header-time {
+  .font-field-name-label;
+  margin-left: 16px;
+}
+
+.devices--device-timeline--event-content {
+  .font-simple-gray;
+}
+
+.devices--device-timeline--event-default {
+  .event-type-generator(#8D8D90);
+  .event-name-generator(@color-dark-grey);
+  .devices--device-timeline--event-header-name {
+    font-weight: 300;
+  }
+}
+
+.devices--device-timeline--event-critical {
+  .event-type-generator(@color-critical);
+  .event-name-generator(@color-critical);
+}
+
+.devices--device-timeline--event-warning {
+  .event-type-generator(@color-warning);
+  .event-name-generator(@color-warning);
+}
+
+.devices--device-timeline--event-info {
+  .event-type-generator(@color-primary-5);
+  .event-name-generator(@color-primary-5);
+}
