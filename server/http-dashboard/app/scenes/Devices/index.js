@@ -55,7 +55,6 @@ class Devices extends React.Component {
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <PageLayout.Content.Header title={selectedDevice && selectedDevice.get('name')}/>
           <Device device={selectedDevice}/>
         </PageLayout.Content>
       </PageLayout>
