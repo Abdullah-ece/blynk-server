@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import {Modal} from 'components';
 import {Row, Col, Button} from 'antd';
 import {Item, Input} from 'components/UI';
@@ -6,7 +7,7 @@ import {MetadataSelect} from 'components/Form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
-import {reduxForm, getFormSyncErrors, getFormValues, reset} from 'redux-form';
+import {reduxForm, getFormSyncErrors, getFormValues, reset, change} from 'redux-form';
 import {DeviceCreate, DevicesFetch} from 'data/Devices/api';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
 import './styles.less';
@@ -16,6 +17,7 @@ import './styles.less';
   errors: getFormSyncErrors('DeviceCreate')(state),
   formValues: getFormValues('DeviceCreate')(state)
 }), (dispatch) => ({
+  change: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   createDevice: bindActionCreators(DeviceCreate, dispatch)
@@ -38,7 +40,8 @@ class DeviceCreateModal extends React.Component {
   };
 
   state = {
-    loading: false
+    loading: false,
+    productId: null
   };
 
   handleCancelClick() {
@@ -58,6 +61,21 @@ class DeviceCreateModal extends React.Component {
         this.handleCancelClick();
       });
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
+      this.setState({
+        productId: nextProps.formValues.productId
+      });
+
+      const product = _.find(this.props.products, (product) => {
+        return Number(product.id) === Number(nextProps.formValues.productId)
+      });
+
+      this.props.change('boardType', product.boardType);
+      this.props.change('connectionType', product.connectionType);
+    }
   }
 
   render() {
