@@ -1,7 +1,7 @@
 import React from 'react';
 import {Timeline as Timelines} from 'antd';
 import {fromJS} from 'immutable';
-import {Event, TypeFiltering} from './components';
+import {Event, TypeFiltering, TimeFiltering} from './components';
 import './styles.less';
 
 class Timeline extends React.Component {
@@ -68,6 +68,7 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
+        <TimeFiltering />
         <TypeFiltering />
         <Timelines className="devices--device-timeline-events">
           { timeline.map((event, key) => (
