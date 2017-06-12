@@ -207,8 +207,8 @@ public class DevicesHandler extends BaseHttpHandler {
             Product product = organizationDao.getProductById(device.productId);
             String productName = product == null ? null : product.name;
             device.setEventsCounterSinceLastView(
-                    counters.get(new LogEventCountKey(device.id, EventType.CRITICAL)),
-                    counters.get(new LogEventCountKey(device.id, EventType.WARNING)),
+                    counters.get(new LogEventCountKey(device.id, EventType.CRITICAL, false)),
+                    counters.get(new LogEventCountKey(device.id, EventType.WARNING, false)),
                     productName
             );
         }
@@ -298,7 +298,16 @@ public class DevicesHandler extends BaseHttpHandler {
 
                 joinLogEventName(product, eventList);
 
-                response = ok(eventList);
+                Map<LogEventCountKey, Integer> totalCounters = dbManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
+
+                response = ok(new HashMap<String, Object>() {
+                    {
+                        put("totalCritical", totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.CRITICAL, false), 0));
+                        put("totalWarning", totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.WARNING, false), 0));
+                        put("totalResolved", totalResolved(totalCounters));
+                        put("logEvents", eventList);
+                    }
+                });
             } catch (Exception e) {
                 log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.", deviceId, limit, offset, e);
                 response = serverError("Error retrieving timeline for device.");
@@ -309,7 +318,17 @@ public class DevicesHandler extends BaseHttpHandler {
         return null;
     }
 
-    private void joinLogEventName(Product product, List<LogEvent> logEvents) {
+    private int totalResolved(Map<LogEventCountKey, Integer> totalCounters) {
+        int totalResolved = 0;
+        for (Map.Entry<LogEventCountKey, Integer> entry : totalCounters.entrySet()) {
+            if (entry.getKey().isResolved) {
+                totalResolved += entry.getValue();
+            }
+        }
+        return totalResolved;
+    }
+
+    private List<LogEvent> joinLogEventName(Product product, List<LogEvent> logEvents) {
         for (LogEvent logEvent : logEvents) {
             if (logEvent.eventType.isUserEvent) {
                 Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
@@ -320,6 +339,7 @@ public class DevicesHandler extends BaseHttpHandler {
                 }
             }
         }
+        return logEvents;
     }
 
 }

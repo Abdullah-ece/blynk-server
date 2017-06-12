@@ -13,9 +13,12 @@ public class LogEventCountKey {
 
     public final EventType eventType;
 
-    public LogEventCountKey(int deviceId, EventType eventType) {
+    public final boolean isResolved;
+
+    public LogEventCountKey(int deviceId, EventType eventType, boolean isResolved) {
         this.deviceId = deviceId;
         this.eventType = eventType;
+        this.isResolved = isResolved;
     }
 
     @Override
@@ -26,14 +29,15 @@ public class LogEventCountKey {
         LogEventCountKey that = (LogEventCountKey) o;
 
         if (deviceId != that.deviceId) return false;
+        if (isResolved != that.isResolved) return false;
         return eventType == that.eventType;
-
     }
 
     @Override
     public int hashCode() {
         int result = deviceId;
         result = 31 * result + (eventType != null ? eventType.hashCode() : 0);
+        result = 31 * result + (isResolved ? 1 : 0);
         return result;
     }
 }

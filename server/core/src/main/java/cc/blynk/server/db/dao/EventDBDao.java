@@ -33,8 +33,8 @@ public class EventDBDao {
     private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
     private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
 
-    private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? group by device_id, type";
-    private static final String selectEventsCountTotalForPeriod = "select device_id, type, count(*) from reporting_events where ts > ? and device_id = ? group by device_id, type";
+    private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? and is_resolved = false group by device_id, type";
+    private static final String selectEventsCountTotalForPeriod = "select type, is_resolved, count(*) from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
 
     private final HikariDataSource ds;
 
@@ -54,7 +54,43 @@ public class EventDBDao {
             rs = statement.executeQuery();
 
             while (rs.next()) {
-                LogEventCountKey logEvent = readSinceLastViewEvent(rs);
+                LogEventCountKey logEvent = new LogEventCountKey(
+                        rs.getInt("device_id"),
+                        EventType.values()[rs.getInt("type")],
+                        false
+                );
+                events.put(logEvent, rs.getInt("count"));
+            }
+
+            connection.commit();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+
+        return events;
+    }
+
+    public Map<LogEventCountKey, Integer> getEventsTotalCounters(long from, long to, int deviceId) throws Exception {
+        ResultSet rs = null;
+        Map<LogEventCountKey, Integer> events = new HashMap<>();
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectEventsCountTotalForPeriod)) {
+
+            statement.setTimestamp(1, new Timestamp(from), UTC_CALENDAR);
+            statement.setTimestamp(2, new Timestamp(to), UTC_CALENDAR);
+            statement.setInt(3, deviceId);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                LogEventCountKey logEvent = new LogEventCountKey(
+                        deviceId,
+                        EventType.values()[rs.getInt("type")],
+                        rs.getBoolean("is_resolved")
+                );
                 events.put(logEvent, rs.getInt("count"));
             }
 
@@ -158,13 +194,6 @@ public class EventDBDao {
         }
 
         return events;
-    }
-
-    private LogEventCountKey readSinceLastViewEvent(ResultSet rs) throws Exception {
-        return new LogEventCountKey(
-                rs.getInt("device_id"),
-                EventType.values()[rs.getInt("type")]
-        );
     }
 
     public LogEvent readEvent(ResultSet rs) throws Exception {

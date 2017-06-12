@@ -84,8 +84,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
-            assertNotNull(logEvents);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
             assertEquals(1, logEvents.length);
             assertEquals(1, logEvents[0].deviceId);
             assertEquals(EventType.CRITICAL, logEvents[0].eventType);
@@ -93,7 +98,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("Temp is super high", logEvents[0].name);
             assertEquals("This is my description", logEvents[0].description);
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(logEvents));
+            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(timeLineResponse));
         }
     }
 
@@ -115,7 +120,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
             assertEquals(1, logEvents[0].deviceId);
@@ -144,7 +155,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(0, logEvents.length);
         }
@@ -169,7 +186,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
             logEventId = logEvents[0].id;
@@ -185,7 +208,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            LogEvent[] logEvents = JsonParser.readAny(responseString, LogEvent[].class);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(1, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
             logEventId = logEvents[0].id;
@@ -279,6 +308,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         return device.token;
+    }
+
+    public static class TimeLineResponse {
+        public int totalCritical;
+        public int totalWarning;
+        public int totalResolved;
+        public LogEvent[] logEvents;
     }
 
     public static class DeviceTest extends Device {

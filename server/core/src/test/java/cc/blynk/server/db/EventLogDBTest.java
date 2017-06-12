@@ -189,25 +189,25 @@ public class EventLogDBTest {
         Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now - 1);
         assertEquals(2, lastViewEvents.size());
 
-        Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION));
+        Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
         assertEquals(2, lastView.intValue());
 
-        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
 
         lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now);
         assertEquals(2, lastViewEvents.size());
 
-        lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
 
-        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
 
         lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now + 1);
         assertEquals(1, lastViewEvents.size());
 
-        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
     }
 

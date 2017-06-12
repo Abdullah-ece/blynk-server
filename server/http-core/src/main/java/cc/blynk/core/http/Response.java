@@ -133,6 +133,10 @@ public class Response extends DefaultFullHttpResponse {
         return ok(JsonParser.toJson(product));
     }
 
+    public static Response ok(Object eventsResponse) {
+        return ok(JsonParser.toJson(eventsResponse));
+    }
+
     public static Response ok(User user) {
         return ok(JsonParser.toJsonWeb(user));
     }

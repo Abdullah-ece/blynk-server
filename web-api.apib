@@ -687,19 +687,25 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
 
-        [
-            {
-              "id" : 1,
-              "deviceId" : 1,
-              "eventType" : "CRITICAL",
-              "ts" : 1496949455443,
-              "eventHashcode" : 613812780,
-              "description" : "MyNewDescription",
-              "isResolved" : true,
-              "resolvedBy" : "Vasya Pupkin",
-              "name" : "Temp is super high"
-            }
-        ]
+        {
+          "totalCritical" : 0,
+          "totalWarning" : 0,
+          "totalResolved" : 1,
+          "logEvents" :
+          [
+              {
+                "id" : 554,
+                "deviceId" : 1,
+                "eventType" : "CRITICAL",
+                "ts" : 1497290276606,
+                "eventHashcode" : 613812780,
+                "description" : "This is my description",
+                "isResolved" : true,
+                "resolvedBy" : "Vasya Pupkin",
+                "name" : "Temp is super high"
+              }
+          ]
+        }
 
 + Response 500 (application/json)
 
