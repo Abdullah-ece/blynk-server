@@ -278,6 +278,37 @@
 
 .@{ant-prefix} {
 
+  &-badge {
+    &.small {
+      > sup {
+        padding: 0 4px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 100px;
+      }
+      p {
+        font-size: 10px;
+        line-height: 15px;
+        height: 20px;
+      }
+      &.warning {
+        sup {
+          background-color: @color-warning;
+        }
+      }
+      &.critical {
+        sup {
+          background-color: @color-critical;
+        }
+      }
+      &.positive {
+        sup {
+          background-color: @color-positive;
+        }
+      }
+    }
+  }
+
   // buttons
   &-btn {
     //Button default
@@ -400,6 +431,26 @@
     }
     &:active {
       box-shadow: 0 0 0 2px @color-primary-5;
+    }
+  }
+
+  &-radio-button-wrapper-checked {
+    .font-primary-button;
+    font-size: 14px;
+    background-color: @color-primary-5;
+    &:hover {
+      color: #fff;
+      background-color: @color-primary-5-30;
+    }
+    &:active {
+      color: #fff;
+      background-color: @color-primary-5;
+    }
+    &[disabled], &[disabled]:hover, &[disabled]:active {
+      .font-primary-button;
+      font-size: 14px;
+      opacity: 0.4;
+      background-color: @color-primary-5;
     }
   }
 
