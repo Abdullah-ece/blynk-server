@@ -48,6 +48,7 @@ Store().then((store) => {
             <Route path="/book/fieldset" component={Book.Fieldset}/>
             <Route path="/book/device-status" component={Book.DeviceStatus}/>
             <Route path="/book/device-auth-token" component={Book.DeviceAuthToken}/>
+            <Route path="/book/content-editable" component={Book.ContentEditable}/>
             <Route path="/book/section" component={Book.Section}/>
             <Route path="/book/modal" component={Book.Modal}/>
           </Route>

@@ -5,4 +5,5 @@ export Fieldset from './Fieldset';
 export DeviceStatus from './DeviceStatus';
 export DeviceAuthToken from './DeviceAuthToken';
 export DeviceMetadata from './DeviceMetadata';
+export ContentEditable from './ContentEditable';
 export Modal from './Modal';

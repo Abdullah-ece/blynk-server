@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu} from 'antd';
-import {Index, Fieldset, DeviceStatus, DeviceAuthToken, Section, Modal} from './scenes/index';
+import {Index, Fieldset, DeviceStatus, DeviceAuthToken, Section, Modal, ContentEditable} from './scenes/index';
 import _ from 'lodash';
 import './styles.less';
 import 'highlightjs/styles/atom-one-light.css';
@@ -43,6 +43,9 @@ class Book extends React.Component {
       },
       'Modal': {
         path: '/book/modal'
+      },
+      'ContentEditable': {
+        path: '/book/content-editable'
       }
     }
   };
@@ -85,6 +88,7 @@ class Book extends React.Component {
 }
 
 Book.Section = Section;
+Book.ContentEditable = ContentEditable;
 Book.DeviceAuthToken = DeviceAuthToken;
 Book.DeviceStatus = DeviceStatus;
 Book.Fieldset = Fieldset;
