@@ -1,5 +1,5 @@
 import React from 'react';
-import {Timeline as TimeLines} from 'antd';
+import {Timeline as Timelines} from 'antd';
 import {fromJS} from 'immutable';
 import {Event} from './components';
 import './styles.less';
@@ -68,11 +68,12 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
-        <TimeLines className="devices--device-timeline-events">
+
+        <Timelines className="devices--device-timeline-events">
           { timeline.map((event, key) => (
             <Event event={event} key={key}/>
           ))}
-        </TimeLines>
+        </Timelines>
       </div>
     );
   }
