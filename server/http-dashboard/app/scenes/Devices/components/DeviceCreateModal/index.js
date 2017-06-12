@@ -73,9 +73,10 @@ class DeviceCreateModal extends React.Component {
              confirmLoading={this.state.loading}
              onCancel={this.handleCancelClick.bind(this)}
              footer={[
-               <Button key="cancel" type="primary" size="default"
+               <Button key="cancel" type="default" size="default"
                        onClick={this.handleCancelClick.bind(this)}>Cancel</Button>,
-               <Button key="save" size="default" disabled={!!this.props.errors} loading={this.state.loading}
+               <Button key="save" type="primary" size="default" disabled={!!this.props.errors}
+                       loading={this.state.loading}
                        onClick={this.handleOkClick.bind(this)}>
                  Create
                </Button>,
