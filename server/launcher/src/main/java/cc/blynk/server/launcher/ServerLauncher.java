@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
@@ -143,7 +144,15 @@ public class ServerLauncher {
             };
 
             for (int i = 0; i < 20; i++) {
-                holder.deviceDao.add(mainOrg.id, new Device("My Device " + i, "Particle Photon", "auth_123", product.id, ConnectionType.WI_FI));
+                Device device = new Device("My Device " + i, "Particle Photon", "auth_123", product.id, ConnectionType.WI_FI);
+                holder.deviceDao.add(mainOrg.id, device);
+                for (EventType eventType : EventType.values()) {
+                    try {
+                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), 0, null, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 

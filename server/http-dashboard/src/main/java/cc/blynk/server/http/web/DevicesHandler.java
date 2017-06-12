@@ -13,9 +13,9 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.events.UserEvent;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventsSinceLastView;
@@ -312,8 +312,12 @@ public class DevicesHandler extends BaseHttpHandler {
     private void joinLogEventName(Product product, List<LogEvent> logEvents) {
         for (LogEvent logEvent : logEvents) {
             if (logEvent.eventType.isUserEvent) {
-                UserEvent event = (UserEvent) product.findEventByCode(logEvent.eventHashcode);
-                logEvent.update(event);
+                Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
+                if (templateEvent == null) {
+                    log.warn("Can't find template for event: {}", logEvent);
+                } else {
+                    logEvent.update(templateEvent);
+                }
             }
         }
     }
