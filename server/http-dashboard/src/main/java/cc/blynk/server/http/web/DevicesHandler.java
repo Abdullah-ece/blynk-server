@@ -18,7 +18,7 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
-import cc.blynk.server.db.model.LogEventsSinceLastView;
+import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
@@ -202,13 +202,13 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     private void joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
-        Map<LogEventsSinceLastView, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
+        Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
         for (Device device : devices) {
             Product product = organizationDao.getProductById(device.productId);
             String productName = product == null ? null : product.name;
             device.setEventsCounterSinceLastView(
-                    counters.get(new LogEventsSinceLastView(device.id, EventType.CRITICAL)),
-                    counters.get(new LogEventsSinceLastView(device.id, EventType.WARNING)),
+                    counters.get(new LogEventCountKey(device.id, EventType.CRITICAL)),
+                    counters.get(new LogEventCountKey(device.id, EventType.WARNING)),
                     productName
             );
         }

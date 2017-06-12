@@ -2,7 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.db.model.LogEvent;
-import cc.blynk.server.db.model.LogEventsSinceLastView;
+import cc.blynk.server.db.model.LogEventCountKey;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +34,7 @@ public class EventDBDao {
     private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
 
     private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? group by device_id, type";
+    private static final String selectEventsCountTotalForPeriod = "select device_id, type, count(*) from reporting_events where ts > ? and device_id = ? group by device_id, type";
 
     private final HikariDataSource ds;
 
@@ -41,9 +42,9 @@ public class EventDBDao {
         this.ds = ds;
     }
 
-    public Map<LogEventsSinceLastView, Integer> getEventsSinceLastLogin(long lastViewTs) throws Exception {
+    public Map<LogEventCountKey, Integer> getEventsSinceLastLogin(long lastViewTs) throws Exception {
         ResultSet rs = null;
-        Map<LogEventsSinceLastView, Integer> events = new HashMap<>();
+        Map<LogEventCountKey, Integer> events = new HashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectEventsCountSinceLastView)) {
@@ -53,7 +54,7 @@ public class EventDBDao {
             rs = statement.executeQuery();
 
             while (rs.next()) {
-                LogEventsSinceLastView logEvent = readSinceLastViewEvent(rs);
+                LogEventCountKey logEvent = readSinceLastViewEvent(rs);
                 events.put(logEvent, rs.getInt("count"));
             }
 
@@ -159,8 +160,8 @@ public class EventDBDao {
         return events;
     }
 
-    private LogEventsSinceLastView readSinceLastViewEvent(ResultSet rs) throws Exception {
-        return new LogEventsSinceLastView(
+    private LogEventCountKey readSinceLastViewEvent(ResultSet rs) throws Exception {
+        return new LogEventCountKey(
                 rs.getInt("device_id"),
                 EventType.values()[rs.getInt("type")]
         );

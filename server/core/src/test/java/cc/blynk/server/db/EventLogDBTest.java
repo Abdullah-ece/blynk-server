@@ -3,7 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.db.model.LogEvent;
-import cc.blynk.server.db.model.LogEventsSinceLastView;
+import cc.blynk.server.db.model.LogEventCountKey;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -186,28 +186,28 @@ public class EventLogDBTest {
         dbManager.eventDBDao.insert(logEvent);
 
 
-        Map<LogEventsSinceLastView, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now - 1);
+        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now - 1);
         assertEquals(2, lastViewEvents.size());
 
-        Integer lastView = lastViewEvents.get(new LogEventsSinceLastView(1, EventType.INFORMATION));
+        Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION));
         assertEquals(2, lastView.intValue());
 
-        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
         assertEquals(1, lastView.intValue());
 
         lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now);
         assertEquals(2, lastViewEvents.size());
 
-        lastView = lastViewEvents.get(new LogEventsSinceLastView(1, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION));
         assertEquals(1, lastView.intValue());
 
-        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
         assertEquals(1, lastView.intValue());
 
         lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now + 1);
         assertEquals(1, lastViewEvents.size());
 
-        lastView = lastViewEvents.get(new LogEventsSinceLastView(2, EventType.INFORMATION));
+        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION));
         assertEquals(1, lastView.intValue());
     }
 

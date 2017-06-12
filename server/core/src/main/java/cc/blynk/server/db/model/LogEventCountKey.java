@@ -7,13 +7,13 @@ import cc.blynk.server.core.model.web.product.EventType;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.06.17.
  */
-public class LogEventsSinceLastView {
+public class LogEventCountKey {
 
     public final int deviceId;
 
     public final EventType eventType;
 
-    public LogEventsSinceLastView(int deviceId, EventType eventType) {
+    public LogEventCountKey(int deviceId, EventType eventType) {
         this.deviceId = deviceId;
         this.eventType = eventType;
     }
@@ -21,9 +21,9 @@ public class LogEventsSinceLastView {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LogEventsSinceLastView)) return false;
+        if (!(o instanceof LogEventCountKey)) return false;
 
-        LogEventsSinceLastView that = (LogEventsSinceLastView) o;
+        LogEventCountKey that = (LogEventCountKey) o;
 
         if (deviceId != that.deviceId) return false;
         return eventType == that.eventType;
