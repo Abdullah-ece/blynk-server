@@ -1,9 +1,9 @@
-import React from 'react';
-import {Base} from '../../index';
-import {ItemsGroup, Item} from 'components/UI';
-import {EVENT_TYPES} from 'services/Products';
-import _ from 'lodash';
-import FieldStub from 'scenes/Products/components/FieldStub';
+import React from "react";
+import {Base} from "../../index";
+import {Item, ItemsGroup} from "components/UI";
+import {EVENT_TYPES} from "services/Products";
+import _ from "lodash";
+import FieldStub from "scenes/Products/components/FieldStub";
 
 class Event extends React.Component {
 
@@ -65,7 +65,7 @@ class Event extends React.Component {
         </Base.Content>
         <Base.Preview {...this.getPreviewProps()} valid={
           <Item label="Code Preview" offset="small">
-            Blynk.logEvent({ this.props.fields.eventCode })
+            Blynk.logEvent({ this.props.fields.eventCode });
           </Item>
         } invalid={
           <Item label="Code Preview" offset="small">

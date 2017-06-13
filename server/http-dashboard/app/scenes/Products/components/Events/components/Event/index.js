@@ -1,13 +1,13 @@
-import React from 'react';
-import {Base} from '../../index';
-import {ItemsGroup, Item, Input} from 'components/UI';
-import {EVENT_TYPES, convertUserFriendlyEventCode} from 'services/Products';
-import _ from 'lodash';
-import Validation from 'services/Validation';
-import {formValueSelector, getFormSyncErrors, getFormMeta, getFormValues, change} from 'redux-form';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import Static from './static';
+import React from "react";
+import {Base} from "../../index";
+import {Input, Item, ItemsGroup} from "components/UI";
+import {convertUserFriendlyEventCode, EVENT_TYPES} from "services/Products";
+import _ from "lodash";
+import Validation from "services/Validation";
+import {change, formValueSelector, getFormMeta, getFormSyncErrors, getFormValues} from "redux-form";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import Static from "./static";
 
 @connect((state, ownProps) => {
   const selector = formValueSelector(ownProps.form);
@@ -110,7 +110,7 @@ class Event extends React.Component {
         </Base.Content>
         <Base.Preview {...this.getPreviewProps()} valid={
           <Item label="Code Preview" offset="small">
-            Blynk.logEvent({ this.props.fields.eventCode })
+            Blynk.logEvent({ this.props.fields.eventCode });
           </Item>
         } invalid={
           <Item label="Code Preview" offset="small">
