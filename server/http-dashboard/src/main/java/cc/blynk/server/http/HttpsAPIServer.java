@@ -35,7 +35,7 @@ public class HttpsAPIServer extends BaseServer {
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port, rootPath);
+                new HttpAndWebSocketUnificatorHandler(holder, rootPath);
         final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"),

@@ -57,9 +57,9 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ProductHandler productHandler;
     private final OrganizationHandler organizationHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, String rootPath) {
         this.stats = holder.stats;
-        this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
+        this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder);
         this.rootPath = rootPath;
 
         //http API handlers

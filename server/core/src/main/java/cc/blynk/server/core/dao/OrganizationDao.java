@@ -73,7 +73,7 @@ public class OrganizationDao {
 
         for (int i = 0; i < org.products.length; i++) {
             if (org.products[i].id == product.id) {
-                remove(org.products, i, Product.class);
+                org.products = remove(org.products, i, Product.class);
                 org.lastModifiedTs = System.currentTimeMillis();
                 return;
             }
