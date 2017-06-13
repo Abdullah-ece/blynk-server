@@ -148,7 +148,7 @@ public class ServerLauncher {
                 holder.deviceDao.add(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {
-                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), 0, null, false);
+                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), 0, null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -76,7 +76,7 @@ public class HardwareLogEventLogic {
         blockingIOProcessor.executeDB(() -> {
             try {
                 long now = System.currentTimeMillis();
-                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description, false);
+                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
                 device.dataReceivedAt = now;
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             } catch (Exception e) {
