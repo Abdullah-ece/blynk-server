@@ -73,4 +73,15 @@ public class DeviceDao {
         return devices.values();
     }
 
+    public List<Device> getAllByProductId(int productId) {
+        List<Device> result = new ArrayList<>();
+        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
+            Device device = entry.getValue();
+            if (device.productId == productId) {
+                result.add(device);
+            }
+        }
+        return result;
+    }
+
 }

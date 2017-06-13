@@ -113,7 +113,7 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response update(@Context ChannelHandlerContext ctx, Product updatedProduct) {
+    public Response updateProduct(@Context ChannelHandlerContext ctx, Product updatedProduct) {
         if (updatedProduct == null) {
             log.error("No product for update.");
             return badRequest();
@@ -137,6 +137,42 @@ public class ProductHandler extends BaseHttpHandler {
 
         return ok(existingProduct);
     }
+
+    //todo cover with test
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/updateDevices")
+    public Response updateProductAndDevices(@Context ChannelHandlerContext ctx, Product updatedProduct) {
+        if (updatedProduct == null) {
+            log.error("No product for update.");
+            return badRequest();
+        }
+
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
+
+        if (existingProduct == null) {
+            log.error("Product with passed id {} for org {} not found.", httpSession.user.orgId, updatedProduct.id);
+            return badRequest();
+        }
+
+        if (updatedProduct.notValid()) {
+            log.error("Product is not valid.", updatedProduct);
+            return badRequest();
+        }
+
+        existingProduct.update(updatedProduct);
+
+        //todo persist?
+        List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
+        for (Device device : devices) {
+            device.metaFields = updatedProduct.copyMetaFields();
+        }
+
+        return ok(existingProduct);
+    }
+
 
     @DELETE
     @Consumes(value = MediaType.APPLICATION_JSON)
