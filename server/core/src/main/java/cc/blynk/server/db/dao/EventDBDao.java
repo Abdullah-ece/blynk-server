@@ -210,7 +210,7 @@ public class EventDBDao {
         );
     }
 
-    public void insertSystemEvent(int deviceId, EventType eventType) throws Exception {
+    public void insertSystemEvent(int deviceId, EventType eventType) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertSystemEvent)) {
 
@@ -219,6 +219,8 @@ public class EventDBDao {
 
             ps.executeUpdate();
             connection.commit();
+        } catch (Exception e){
+            log.error("Error insert system event. Reason: {}", e.getMessage());
         }
     }
 

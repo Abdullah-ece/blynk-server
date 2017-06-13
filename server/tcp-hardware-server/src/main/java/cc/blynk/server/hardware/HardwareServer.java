@@ -26,7 +26,7 @@ public class HardwareServer extends BaseServer {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("hardware.default.port"), holder.transportTypeHolder);
 
         final int hardTimeoutSecs = holder.limits.HARDWARE_IDLE_TIMEOUT;
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
         final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 

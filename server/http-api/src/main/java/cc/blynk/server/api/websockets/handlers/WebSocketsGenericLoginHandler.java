@@ -38,9 +38,9 @@ public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<L
     private final UserNotLoggedHandler userNotLoggedHandler;
     private final GetServerHandler getServerHandler;
 
-    public WebSocketsGenericLoginHandler(Holder holder, int port) {
+    public WebSocketsGenericLoginHandler(Holder holder) {
         this.hardTimeoutSecs = holder.limits.HARDWARE_IDLE_TIMEOUT;
-        this.hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        this.hardwareLoginHandler = new HardwareLoginHandler(holder);
         this.hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
 
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");

@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -15,9 +14,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
-import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.IPUtils;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,7 +22,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 
@@ -46,16 +44,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
 
     private final Holder holder;
-    private final RedisClient redisClient;
-    private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
-    private final String listenPort;
 
-    public HardwareLoginHandler(Holder holder, int listenPort) {
+    public HardwareLoginHandler(Holder holder) {
         this.holder = holder;
-        this.redisClient = holder.redisClient;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.listenPort = String.valueOf(listenPort);
         this.dbManager = holder.dbManager;
     }
 
@@ -70,8 +62,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
-        blockingIOProcessor.executeDB(() ->
-                dbManager.insertSystemEvent(deviceId, EventType.ONLINE));
+        dbManager.insertSystemEvent(deviceId, EventType.ONLINE);
 
         channel.flush();
 
@@ -123,20 +114,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         } else {
             completeLogin(ctx.channel(), session, user, dash, deviceId, message.id);
         }
-    }
-
-    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
-        blockingIOProcessor.executeDB(() -> {
-            String server = redisClient.getServerByToken(token);
-            // no server found, that's means token is wrong.
-            if (server == null || server.equals(holder.host)) {
-                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-                ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
-            } else {
-                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
-                ctx.writeAndFlush(makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort), ctx.voidPromise());
-            }
-        });
     }
 
     @Override

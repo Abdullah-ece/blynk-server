@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -39,14 +38,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
-    private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
     private final OrganizationDao organizationDao;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.organizationDao = holder.organizationDao;
     }
@@ -108,7 +105,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             int ignorePeriod = product.getIgnorePeriod();
             //means no ignore period
             if (ignorePeriod == 0) {
-                blockingIOProcessor.executeDB(() -> dbManager.insertSystemEvent(device.id, EventType.OFFLINE));
+                dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
             } else {
                 ctx.executor().schedule(new DelayedSystemEvent(device, ignorePeriod),
                         ignorePeriod, TimeUnit.MILLISECONDS);
@@ -147,7 +144,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         public void run() {
             final long now = System.currentTimeMillis();
             if (device.status == Status.OFFLINE && now - device.disconnectTime > ignorePeriod) {
-                blockingIOProcessor.executeDB(() -> dbManager.insertSystemEvent(device.id, EventType.OFFLINE));
+                dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
             }
         }
     }
