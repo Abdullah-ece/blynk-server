@@ -77,7 +77,7 @@ public class ProductHandler extends BaseHttpHandler {
 
 
     //todo make sure performance is ok
-    private List<Product> calcDeviceCount(Organization org) {
+    private Product[] calcDeviceCount(Organization org) {
         Map<Integer, Integer> productIdCount = productDeviceCount();
         for (Product product : org.products) {
             product.deviceCount = productIdCount.getOrDefault(product.id, 0);

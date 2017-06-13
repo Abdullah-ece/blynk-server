@@ -1,10 +1,8 @@
 package cc.blynk.server.core.model.web;
 
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The Blynk Project.
@@ -29,8 +27,7 @@ public class Organization {
 
     public volatile long lastModifiedTs;
 
-    //todo make array
-    public volatile List<Product> products = new ArrayList<>();
+    public volatile Product[] products = ArrayUtil.EMPTY_PRODUCTS;
 
     public Organization() {
         this.lastModifiedTs = System.currentTimeMillis();

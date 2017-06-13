@@ -2,11 +2,14 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static cc.blynk.utils.ArrayUtil.remove;
 
 /**
  * The Blynk Project.
@@ -62,16 +65,19 @@ public class OrganizationDao {
         return organizations.get(id);
     }
 
-    public boolean deleteProduct(int orgId, Product product) {
+    public void deleteProduct(int orgId, Product product) {
         Organization org = getOrgById(orgId);
         if (org == null) {
-            return false;
+            return;
         }
-        if (org.products.remove(product)) {
-            org.lastModifiedTs = System.currentTimeMillis();
-            return true;
+
+        for (int i = 0; i < org.products.length; i++) {
+            if (org.products[i].id == product.id) {
+                remove(org.products, i, Product.class);
+                org.lastModifiedTs = System.currentTimeMillis();
+                return;
+            }
         }
-        return false;
     }
 
     public boolean delete(int id) {
@@ -89,7 +95,7 @@ public class OrganizationDao {
             return null;
         }
         product.id = productSequence.incrementAndGet();
-        organization.products.add(product);
+        organization.products = ArrayUtil.add(organization.products, product, Product.class);
         organization.lastModifiedTs = System.currentTimeMillis();
         return product;
     }
