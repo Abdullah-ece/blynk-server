@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
@@ -80,7 +81,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -116,7 +117,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -181,7 +182,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
         int logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -263,6 +264,11 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.metaFields = new MetaField[] {
                 new NumberMetaField("Jopa", Role.STAFF, 123D)
         };
+        OfflineEvent offlineEvent = new OfflineEvent();
+        offlineEvent.ignorePeriod = 1000;
+        product.events = new Event[] {
+                offlineEvent
+        };
         CriticalEvent event = new CriticalEvent();
         event.name = "Temp is super high";
         event.eventCode = "temp_is_high";
@@ -310,11 +316,60 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         return device.token;
     }
 
+    @Test
+    public void testSystemEventsCreated() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + System.currentTimeMillis() + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.ONLINE, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+        }
+
+        newHardClient.stop();
+        //we have to wait until DB query will be executed and ignore period will pass. it is 1000 millis.
+        sleep(1100);
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" +
+                System.currentTimeMillis() + "&limit=10&offset=0" + "&eventType=OFFLINE");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.OFFLINE, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+        }
+    }
+
     public static class TimeLineResponse {
-        public int totalCritical;
-        public int totalWarning;
-        public int totalResolved;
-        public LogEvent[] logEvents;
+        private int totalCritical;
+        private int totalWarning;
+        private int totalResolved;
+        private LogEvent[] logEvents;
     }
 
     public static class DeviceTest extends Device {

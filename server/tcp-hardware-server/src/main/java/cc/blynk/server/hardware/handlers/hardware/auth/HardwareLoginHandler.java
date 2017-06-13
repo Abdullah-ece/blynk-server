@@ -7,9 +7,11 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
@@ -46,6 +48,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final Holder holder;
     private final RedisClient redisClient;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
     private final String listenPort;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
@@ -53,9 +56,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.redisClient = holder.redisClient;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.listenPort = String.valueOf(listenPort);
+        this.dbManager = holder.dbManager;
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
+    private void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
@@ -65,6 +69,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         if (dash.isActive && body.length() > 2) {
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
+
+        blockingIOProcessor.executeDB(() ->
+                dbManager.insertSystemEvent(deviceId, EventType.ONLINE));
 
         channel.flush();
 

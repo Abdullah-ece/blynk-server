@@ -106,6 +106,16 @@ public class EventLogDBTest {
     }
 
     @Test
+    public void insertSingleSystemEvent() throws Exception {
+        dbManager.eventDBDao.insertSystemEvent(1, EventType.ONLINE);
+
+        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, EventType.ONLINE, 0, System.currentTimeMillis(), 0, 1);
+        assertNotNull(logEvents);
+        assertEquals(1, logEvents.size());
+        assertEquals(EventType.ONLINE, logEvents.get(0).eventType);
+    }
+
+    @Test
     public void testResolveEvent() throws Exception {
         long now = System.currentTimeMillis();
         String eventCode = "something";

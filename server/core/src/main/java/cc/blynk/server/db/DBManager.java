@@ -216,6 +216,16 @@ public class DBManager implements Closeable {
         }
     }
 
+    public void insertSystemEvent(int deviceId, EventType eventType) {
+        if (isDBEnabled()) {
+            try {
+                eventDBDao.insertSystemEvent(deviceId, eventType);
+            } catch (Exception e){
+                log.error("Error insert system event. Reason: {}", e.getMessage());
+            }
+        }
+    }
+
     public void insertEvent(int deviceId, EventType eventType, long ts, int eventHashcode, String description, boolean isResolved) throws Exception {
         if (isDBEnabled()) {
             eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description, isResolved);

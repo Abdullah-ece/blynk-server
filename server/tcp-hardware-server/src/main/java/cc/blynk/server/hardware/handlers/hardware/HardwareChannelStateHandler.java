@@ -1,12 +1,18 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,10 +39,16 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
+    private final OrganizationDao organizationDao;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, GCMWrapper gcmWrapper) {
-        this.sessionDao = sessionDao;
-        this.gcmWrapper = gcmWrapper;
+    public HardwareChannelStateHandler(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.gcmWrapper = holder.gcmWrapper;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
+        this.organizationDao = holder.organizationDao;
     }
 
     @Override
@@ -71,8 +83,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(state.dashId, state.deviceId);
         if (device != null && !isHardwareConnected) {
-            log.trace("Disconnected device id {}, dash id {}", state.deviceId, state.dashId);
-            device.disconnected();
+            disconnect(ctx, device, state);
         }
 
         if (!dashBoard.isActive) {
@@ -85,6 +96,23 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             sendPushNotification(ctx, dashBoard, notification, state.dashId, device);
         } else {
             session.sendOfflineMessageToApps(state.dashId);
+        }
+    }
+
+    private void disconnect(ChannelHandlerContext ctx, Device device, HardwareStateHolder state) {
+        log.trace("Disconnected device: {}", state);
+        device.disconnected();
+
+        Product product = organizationDao.getProductById(device.productId);
+        if (product != null) {
+            int ignorePeriod = product.getIgnorePeriod();
+            //means no ignore period
+            if (ignorePeriod == 0) {
+                blockingIOProcessor.executeDB(() -> dbManager.insertSystemEvent(device.id, EventType.OFFLINE));
+            } else {
+                ctx.executor().schedule(new DelayedSystemEvent(device, ignorePeriod),
+                        ignorePeriod, TimeUnit.MILLISECONDS);
+            }
         }
     }
 
@@ -105,6 +133,25 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    private final class DelayedSystemEvent implements Runnable {
+
+        private final Device device;
+        private final int ignorePeriod;
+
+        DelayedSystemEvent(Device device, int ignorePeriod) {
+            this.device = device;
+            this.ignorePeriod = ignorePeriod;
+        }
+
+        @Override
+        public void run() {
+            final long now = System.currentTimeMillis();
+            if (device.status == Status.OFFLINE && now - device.disconnectTime > ignorePeriod) {
+                blockingIOProcessor.executeDB(() -> dbManager.insertSystemEvent(device.id, EventType.OFFLINE));
+            }
+        }
+    }
+
     private final class DelayedPush implements Runnable {
 
         private final Device device;
@@ -112,7 +159,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         private final String message;
         private final int dashId;
 
-        public DelayedPush(Device device, Notification notification, String message, int dashId) {
+        DelayedPush(Device device, Notification notification, String message, int dashId) {
             this.device = device;
             this.notification = notification;
             this.message = message;

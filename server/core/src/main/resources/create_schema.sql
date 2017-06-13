@@ -198,8 +198,8 @@ CREATE TABLE reporting_events (
   id SERIAL,
   device_id int4,
   type smallint,
-  ts timestamp,
-  event_hashcode int4,
+  ts timestamp without time zone default (now() at time zone 'utc'),
+  event_hashcode int4 DEFAULT 0,
   description text,
   is_resolved boolean DEFAULT FALSE,
   resolved_by text

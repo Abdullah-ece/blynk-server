@@ -28,7 +28,8 @@ public class EventDBDao {
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
     private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ? where id = ?";
-    private static final String insertEvent= "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
+    private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
+    private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
     private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
     private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
     private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
@@ -207,6 +208,18 @@ public class EventDBDao {
                 rs.getBoolean("is_resolved"),
                 rs.getString("resolved_by")
         );
+    }
+
+    public void insertSystemEvent(int deviceId, EventType eventType) throws Exception {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertSystemEvent)) {
+
+            ps.setInt(1, deviceId);
+            ps.setInt(2, eventType.ordinal());
+
+            ps.executeUpdate();
+            connection.commit();
+        }
     }
 
     public void insert(int deviceId, EventType eventType, long ts, int eventHashcode, String description, boolean isResolved) throws Exception {

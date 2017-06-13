@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
@@ -65,6 +66,15 @@ public class Product {
             }
         }
         return null;
+    }
+
+    public int getIgnorePeriod() {
+        for (Event event : events) {
+            if (event instanceof OfflineEvent) {
+                return ((OfflineEvent) event).ignorePeriod;
+            }
+        }
+        return 0;
     }
 
     public MetaField[] copyMetaFields() {

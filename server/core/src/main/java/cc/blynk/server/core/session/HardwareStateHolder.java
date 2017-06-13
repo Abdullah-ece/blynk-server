@@ -24,4 +24,13 @@ public final class HardwareStateHolder extends StateHolderBase {
     public boolean contains(String sharedToken) {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "HardwareStateHolder{" +
+                "dashId=" + dashId +
+                ", deviceId=" + deviceId +
+                ", token='" + token + '\'' +
+                '}';
+    }
 }
