@@ -8,6 +8,8 @@ import cc.blynk.utils.JsonParser;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.utils.ArrayUtil.*;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -31,11 +33,11 @@ public class Product {
 
     public long createdAt;
 
-    public volatile MetaField[] metaFields;
+    public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
 
-    public volatile DataStream[] dataStreams;
+    public volatile DataStream[] dataStreams = EMPTY_DATA_STREAMS;
 
-    public volatile Event[] events;
+    public volatile Event[] events = EMPTY_EVENTS;
 
     public int deviceCount;
 
