@@ -6,6 +6,10 @@ import './styles.less';
 
 class Timeline extends React.Component {
 
+  handleValuesChange() {
+    // console.log(props, dispatch);
+  }
+
   render() {
 
     const timeline = fromJS({
@@ -65,7 +69,8 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
-        <Timelines timeline={timeline} initialValues={initialValues} form="Timeline"/>
+        <Timelines timeline={timeline} initialValues={initialValues} form="Timeline"
+                   onChange={this.handleValuesChange.bind(this)}/>
       </div>
     );
   }
