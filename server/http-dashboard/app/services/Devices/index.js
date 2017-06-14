@@ -300,9 +300,5 @@ export const TIMELINE_TIME_FILTERS = {
     'key': 'MONTH',
     'value': 'Month',
     'time': 30 * 24 * 60 * 60 * 1000,
-  },
-  'CUSTOM': {
-    'key': 'CUSTOM',
-    'value': 'Custom Range'
-  },
+  }
 };

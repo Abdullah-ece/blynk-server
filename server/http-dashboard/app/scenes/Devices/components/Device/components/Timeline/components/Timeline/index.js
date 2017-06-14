@@ -16,7 +16,7 @@ class Timeline extends React.Component {
   render() {
 
     return (
-      <div className="devices--device-timeline">
+      <div className="devices--device-timeline-timeline">
         <TimeFiltering name="time"/>
         <TypeFiltering name="type"
                        totalCritical={this.props.timeline.get('totalCritical')}
