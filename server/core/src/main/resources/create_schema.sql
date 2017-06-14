@@ -210,3 +210,4 @@ CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts)
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;
+GRANT ALL ON sequence reporting_events_id_seq to test;
