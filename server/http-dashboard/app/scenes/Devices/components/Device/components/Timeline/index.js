@@ -1,64 +1,65 @@
 import React from 'react';
-import {fromJS} from 'immutable';
+import {Map} from 'immutable';
 import {Timeline as Timelines} from './components';
 import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {TimelineFetch} from 'data/Devices/api';
 import './styles.less';
 
+@connect((state) => ({
+  timeline: state.Devices.get('timeline')
+}), (dispatch) => ({
+  fetchTimeline: bindActionCreators(TimelineFetch, dispatch)
+}))
 class Timeline extends React.Component {
 
-  handleValuesChange() {
-    // console.log(props, dispatch);
+  static propTypes = {
+    timeline: React.PropTypes.instanceOf(Map),
+    fetchTimeline: React.PropTypes.func,
+    params: React.PropTypes.object
+  };
+
+  state = {
+    loading: false,
+  };
+
+  componentDidMount() {
+    this.fetchTimeline();
+  }
+
+  fetchTimeline(params = {}) {
+    this.setState({
+      loading: true
+    });
+    this.props.fetchTimeline({
+      ...params,
+      deviceId: this.props.params.id
+    }).then(() => {
+      this.setState({
+        loading: false
+      });
+    });
+  }
+
+  handleValuesChange(values) {
+
+    const params = {};
+
+    if ([TIMELINE_TYPE_FILTERS.CRITICAL.key, TIMELINE_TYPE_FILTERS.WARNING.key].indexOf(values.type) >= 0) {
+      params.eventType = values.type;
+    }
+
+    if (TIMELINE_TYPE_FILTERS.RESOLVED.key === values.type) {
+      params.isResolved = true;
+    }
+
+    params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+
+    this.fetchTimeline(params);
   }
 
   render() {
-
-    const timeline = fromJS({
-      "totalWarning": 1,
-      "logEvents": [
-        {
-          "id": 5,
-          "deviceId": 1,
-          "eventType": "CRITICAL",
-          "ts": 1497433678865,
-          "eventHashcode": 0,
-          "isResolved": false
-        },
-        {
-          "id": 4,
-          "deviceId": 1,
-          "eventType": "WARNING",
-          "ts": 1497433678864,
-          "eventHashcode": 0,
-          "isResolved": false
-        },
-        {
-          "id": 3,
-          "deviceId": 1,
-          "eventType": "INFORMATION",
-          "ts": 1497433678863,
-          "eventHashcode": 0,
-          "isResolved": false
-        },
-        {
-          "id": 2,
-          "deviceId": 1,
-          "eventType": "OFFLINE",
-          "ts": 1497433678856,
-          "eventHashcode": 0,
-          "isResolved": false
-        },
-        {
-          "id": 1,
-          "deviceId": 1,
-          "eventType": "ONLINE",
-          "ts": 1497433678835,
-          "eventHashcode": 0,
-          "isResolved": false
-        }
-      ],
-      "totalResolved": 0,
-      "totalCritical": 1
-    });
 
     const initialValues = {
       type: TIMELINE_TYPE_FILTERS.ALL.key,
@@ -69,7 +70,10 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
-        <Timelines timeline={timeline} initialValues={initialValues} form="Timeline"
+        <Timelines form="Timeline"
+                   timeline={this.props.timeline}
+                   loading={this.state.loading}
+                   initialValues={initialValues}
                    onChange={this.handleValuesChange.bind(this)}/>
       </div>
     );

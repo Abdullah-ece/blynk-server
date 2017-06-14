@@ -61,3 +61,30 @@ export const DevicesUpdate = (devices) => {
     }
   };
 };
+
+export const TimelineFetch = (params = {}) => {
+
+  if (!params.deviceId) {
+    throw new Error('Required parameter deviceId is missed');
+  }
+
+  // default parameters
+
+  params = Object.assign({}, {
+    from: 0,
+    to: new Date().getTime(),
+    limit: 50,
+    offset: 0
+  }, params);
+
+  return {
+    type: 'API_TIMELINE_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/devices/${params.deviceId}/timeline`,
+        params: params
+      }
+    }
+  };
+};

@@ -15,6 +15,7 @@ class Device extends React.Component {
 
   static propTypes = {
     device: React.PropTypes.object,
+    params: React.PropTypes.object,
     onChange: React.PropTypes.func,
     updateDevice: React.PropTypes.func
   };
@@ -45,7 +46,7 @@ class Device extends React.Component {
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
-            <Timeline />
+            <Timeline params={this.props.params}/>
           </TabPane>
           <TabPane tab="Device Info" key="3">
             <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>

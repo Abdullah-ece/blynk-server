@@ -55,7 +55,7 @@ class Devices extends React.Component {
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <Device device={selectedDevice}/>
+          <Device device={selectedDevice} params={this.props.params}/>
         </PageLayout.Content>
       </PageLayout>
     );
