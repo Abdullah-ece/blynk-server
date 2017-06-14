@@ -17,8 +17,11 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
-        <TimeFiltering/>
-        <TypeFiltering name="type"/>
+        <TimeFiltering name="time"/>
+        <TypeFiltering name="type"
+                       totalCritical={this.props.timeline.get('totalCritical')}
+                       totalWarning={this.props.timeline.get('totalWarning')}
+                       totalResolved={this.props.timeline.get('totalResolved')}/>
         <Timelines className="devices--device-timeline-events">
           { this.props.timeline.get('logEvents').map((event, key) => (
             <Event event={event} key={key}/>

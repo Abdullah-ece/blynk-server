@@ -279,3 +279,30 @@ export const TIMELINE_TYPE_FILTERS = {
     'value': 'Resolved'
   },
 };
+
+export const TIMELINE_TIME_FILTERS = {
+  'HOUR': {
+    'key': 'HOUR',
+    'value': '1 hour',
+    'time': 60 * 60 * 1000
+  },
+  'DAY': {
+    'key': 'DAY',
+    'value': '1 day',
+    'time': 24 * 60 * 60 * 1000
+  },
+  'WEEK': {
+    'key': 'WEEK',
+    'value': '1 week',
+    'time': 7 * 24 * 60 * 60 * 1000
+  },
+  'MONTH': {
+    'key': 'MONTH',
+    'value': 'Month',
+    'time': 30 * 24 * 60 * 60 * 1000,
+  },
+  'CUSTOM': {
+    'key': 'CUSTOM',
+    'value': 'Custom Range'
+  },
+};

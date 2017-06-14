@@ -6,7 +6,13 @@ import {TIMELINE_TYPE_FILTERS} from 'services/Devices';
 
 class TypeFiltering extends React.Component {
 
-  component({input}) {
+  static propTypes = {
+    totalCritical: React.PropTypes.number,
+    totalWarning: React.PropTypes.number,
+    totalResolved: React.PropTypes.number,
+  };
+
+  component({input, totalCritical, totalWarning, totalResolved}) {
 
     return (
       <div className="devices--device-timeline--type-filtering">
@@ -15,13 +21,14 @@ class TypeFiltering extends React.Component {
             { TIMELINE_TYPE_FILTERS.ALL.value }
           </Radio.Button>
           <Radio.Button value={TIMELINE_TYPE_FILTERS.CRITICAL.value}>
-            {TIMELINE_TYPE_FILTERS.CRITICAL.value} <Badge count={2} className="small critical"/>
+            {TIMELINE_TYPE_FILTERS.CRITICAL.value} <Badge count={totalCritical} className="small critical"/>
           </Radio.Button>
           <Radio.Button value={TIMELINE_TYPE_FILTERS.WARNING.value}>
-            {TIMELINE_TYPE_FILTERS.WARNING.value} <Badge count={25} className="small warning"/>
+            {TIMELINE_TYPE_FILTERS.WARNING.value} <Badge count={totalWarning} className="small warning"/>
           </Radio.Button>
           <Radio.Button value={TIMELINE_TYPE_FILTERS.RESOLVED.value}>
-            {TIMELINE_TYPE_FILTERS.RESOLVED.value} <Badge count={234} className="small positive" overflowCount={999}/>
+            {TIMELINE_TYPE_FILTERS.RESOLVED.value} <Badge count={totalResolved} className="small positive"
+                                                          overflowCount={999}/>
           </Radio.Button>
         </Radio.Group>
       </div>

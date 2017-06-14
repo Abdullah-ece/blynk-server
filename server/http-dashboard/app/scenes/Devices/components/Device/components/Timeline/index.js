@@ -1,7 +1,7 @@
 import React from 'react';
 import {fromJS} from 'immutable';
 import {Timeline as Timelines} from './components';
-import {TIMELINE_TYPE_FILTERS} from 'services/Devices';
+import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
 import './styles.less';
 
 class Timeline extends React.Component {
@@ -62,7 +62,7 @@ class Timeline extends React.Component {
 
     const initialValues = {
       type: TIMELINE_TYPE_FILTERS.ALL.key,
-      time: 'DAY',
+      time: TIMELINE_TIME_FILTERS.HOUR.key,
       customFrom: 0,
       customTo: 0
     };
