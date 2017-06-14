@@ -259,3 +259,23 @@ export const AVAILABLE_CONNECTION_TYPES = [
   CONNECTIONS_TYPES.BLE,
   CONNECTIONS_TYPES.GSM,
 ];
+
+
+export const TIMELINE_TYPE_FILTERS = {
+  'ALL': {
+    'key': 'ALL',
+    'value': 'All events'
+  },
+  'CRITICAL': {
+    'key': 'CRITICAL',
+    'value': 'Critical'
+  },
+  'WARNING': {
+    'key': 'WARNING',
+    'value': 'Warning'
+  },
+  'RESOLVED': {
+    'key': 'RESOLVED',
+    'value': 'Resolved'
+  },
+};

@@ -1,80 +1,71 @@
 import React from 'react';
-import {Timeline as Timelines} from 'antd';
 import {fromJS} from 'immutable';
-import {Event, TypeFiltering, TimeFiltering} from './components';
+import {Timeline as Timelines} from './components';
+import {TIMELINE_TYPE_FILTERS} from 'services/Devices';
 import './styles.less';
 
 class Timeline extends React.Component {
 
   render() {
 
-    const timeline = fromJS([
-      {
-        "id": 1,
-        "deviceId": 1,
-        "eventType": "ONLINE",
-        "ts": 1496949455443,
-        "eventHashcode": 613812780,
-        "description": "MyNewDescription",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      },
-      {
-        "id": 1,
-        "deviceId": 1,
-        "eventType": "OFFLINE",
-        "ts": 1496949455443,
-        "eventHashcode": 613812780,
-        "description": "MyNewDescription",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      },
-      {
-        "id": 1,
-        "deviceId": 1,
-        "eventType": "CRITICAL",
-        "ts": 1496949455443,
-        "eventHashcode": 613812780,
-        "description": "MyNewDescription",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      },
-      {
-        "id": 1,
-        "deviceId": 1,
-        "eventType": "WARNING",
-        "ts": 1496949455443,
-        "eventHashcode": 613812780,
-        "description": "MyNewDescription",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      },
-      {
-        "id": 1,
-        "deviceId": 1,
-        "eventType": "INFORMATION",
-        "ts": 1496949455443,
-        "eventHashcode": 613812780,
-        "description": "MyNewDescription",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      }
-    ]);
+    const timeline = fromJS({
+      "totalWarning": 1,
+      "logEvents": [
+        {
+          "id": 5,
+          "deviceId": 1,
+          "eventType": "CRITICAL",
+          "ts": 1497433678865,
+          "eventHashcode": 0,
+          "isResolved": false
+        },
+        {
+          "id": 4,
+          "deviceId": 1,
+          "eventType": "WARNING",
+          "ts": 1497433678864,
+          "eventHashcode": 0,
+          "isResolved": false
+        },
+        {
+          "id": 3,
+          "deviceId": 1,
+          "eventType": "INFORMATION",
+          "ts": 1497433678863,
+          "eventHashcode": 0,
+          "isResolved": false
+        },
+        {
+          "id": 2,
+          "deviceId": 1,
+          "eventType": "OFFLINE",
+          "ts": 1497433678856,
+          "eventHashcode": 0,
+          "isResolved": false
+        },
+        {
+          "id": 1,
+          "deviceId": 1,
+          "eventType": "ONLINE",
+          "ts": 1497433678835,
+          "eventHashcode": 0,
+          "isResolved": false
+        }
+      ],
+      "totalResolved": 0,
+      "totalCritical": 1
+    });
+
+    const initialValues = {
+      type: TIMELINE_TYPE_FILTERS.ALL.key,
+      time: 'DAY',
+      customFrom: 0,
+      customTo: 0
+    };
 
     return (
       <div className="devices--device-timeline">
-        <TimeFiltering />
-        <TypeFiltering />
-        <Timelines className="devices--device-timeline-events">
-          { timeline.map((event, key) => (
-            <Event event={event} key={key}/>
-          ))}
-        </Timelines>
+        <Timelines timeline={timeline} initialValues={initialValues} form="Timeline"/>
       </div>
     );
   }
