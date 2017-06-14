@@ -61,6 +61,15 @@ public class Product {
         this.version++;
     }
 
+    public Event findEventByType(EventType eventType) {
+        for (Event event : events) {
+            if (event.getType() == eventType) {
+                return event;
+            }
+        }
+        return null;
+    }
+
     public Event findEventByCode(int hashcode) {
         for (Event event : events) {
             if (event.isSame(hashcode)) {

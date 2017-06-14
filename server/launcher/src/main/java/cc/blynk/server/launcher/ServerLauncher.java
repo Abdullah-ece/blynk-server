@@ -10,9 +10,11 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.events.*;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
@@ -135,6 +137,7 @@ public class ServerLauncher {
             product.metaFields = new MetaField[] {
                     new TextMetaField("Device Name", Role.ADMIN, "Default device")
             };
+            product.events = createDefaultEvents();
 
             holder.organizationDao.addProduct(mainOrg.id, product);
 
@@ -148,7 +151,8 @@ public class ServerLauncher {
                 holder.deviceDao.add(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {
-                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), 0, null);
+                        Event event = product.findEventByType(eventType);
+                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), event.hashCode(), null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -166,6 +170,38 @@ public class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.STAFF);
         }
+    }
+
+    private static Event[] createDefaultEvents() {
+        OnlineEvent onlineEvent = new OnlineEvent();
+        onlineEvent.name = "Your device is online.";
+
+        OfflineEvent offlineEvent = new OfflineEvent();
+        offlineEvent.name = "Your device is offline.";
+        offlineEvent.ignorePeriod = 1000;
+
+        InformationEvent infoEvent = new InformationEvent();
+        infoEvent.name = "Door is opened";
+        infoEvent.eventCode = "door_opened";
+        infoEvent.description = "Kitchen door is opened.";
+
+        WarningEvent warningEvent = new WarningEvent();
+        warningEvent.name = "Temperature is high!";
+        warningEvent.eventCode = "temp_is_high";
+        warningEvent.description = "Room temp is high";
+
+        CriticalEvent criticalEvent = new CriticalEvent();
+        criticalEvent.name = "Temperature is super high!";
+        criticalEvent.eventCode = "temp_is_super_high";
+        criticalEvent.description = "Room temp is super high";
+
+        return new Event[] {
+                onlineEvent,
+                offlineEvent,
+                infoEvent,
+                warningEvent,
+                criticalEvent
+        };
     }
 
     private static boolean startServers(BaseServer[] servers) {
