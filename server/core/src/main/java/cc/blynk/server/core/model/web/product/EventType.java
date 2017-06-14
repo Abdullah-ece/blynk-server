@@ -7,16 +7,10 @@ package cc.blynk.server.core.model.web.product;
  */
 public enum EventType {
 
-    ONLINE(false),
-    OFFLINE(false),
-    INFORMATION(true),
-    WARNING(true),
-    CRITICAL(true);
-
-    EventType(boolean isUserEvent) {
-        this.isUserEvent = isUserEvent;
-    }
-
-    public final boolean isUserEvent;
+    ONLINE,
+    OFFLINE,
+    INFORMATION,
+    WARNING,
+    CRITICAL;
 
 }

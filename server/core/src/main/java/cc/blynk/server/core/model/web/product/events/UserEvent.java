@@ -16,4 +16,8 @@ public abstract class UserEvent extends Event {
         return this.eventCode.hashCode() == hashcode;
     }
 
+    @Override
+    public int hashCode() {
+        return eventCode == null ? 0 : eventCode.hashCode();
+    }
 }

@@ -152,11 +152,7 @@ public class ServerLauncher {
                 for (EventType eventType : EventType.values()) {
                     try {
                         Event event = product.findEventByType(eventType);
-                        int hashcode = 0;
-                        if (event instanceof UserEvent) {
-                            hashcode = ((UserEvent) event).eventCode.hashCode();
-                        }
-                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), hashcode, null);
+                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), event.hashCode(), null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

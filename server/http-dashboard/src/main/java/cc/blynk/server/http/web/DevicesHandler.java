@@ -330,13 +330,11 @@ public class DevicesHandler extends BaseHttpHandler {
 
     private List<LogEvent> joinLogEventName(Product product, List<LogEvent> logEvents) {
         for (LogEvent logEvent : logEvents) {
-            if (logEvent.eventType.isUserEvent) {
-                Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
-                if (templateEvent == null) {
-                    log.warn("Can't find template for event: {}", logEvent);
-                } else {
-                    logEvent.update(templateEvent);
-                }
+            Event templateEvent = product.findEventByCode(logEvent.eventHashcode);
+            if (templateEvent == null) {
+                log.warn("Can't find template for event: {}", logEvent);
+            } else {
+                logEvent.update(templateEvent);
             }
         }
         return logEvents;

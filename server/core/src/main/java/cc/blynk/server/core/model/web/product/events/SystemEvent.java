@@ -11,7 +11,11 @@ public abstract class SystemEvent extends Event {
 
     @Override
     public boolean isSame(int hashcode) {
-        return false;
+        return this.name.hashCode() == hashcode;
     }
 
+    @Override
+    public int hashCode() {
+        return name == null ? 0 : name.hashCode();
+    }
 }
