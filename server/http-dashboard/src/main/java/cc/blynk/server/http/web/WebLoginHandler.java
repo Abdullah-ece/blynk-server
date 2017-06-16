@@ -117,7 +117,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.error("User not found.");
-            return badRequest("Token does not exist.");
+            return badRequest("Look like your invitation is expired or is used already. Please request the invitation again.");
         }
 
         user.pass = password;

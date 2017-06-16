@@ -134,7 +134,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
@@ -186,7 +186,7 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
