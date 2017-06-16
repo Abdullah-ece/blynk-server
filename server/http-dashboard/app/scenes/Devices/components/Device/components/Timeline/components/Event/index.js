@@ -1,4 +1,5 @@
 import React          from 'react';
+import moment         from 'moment';
 import classnames     from 'classnames';
 import {Timeline}     from 'antd';
 import {EVENT_TYPES}  from 'services/Products';
@@ -47,6 +48,13 @@ class Event extends React.Component {
 
   render() {
 
+    const time = moment(this.props.event.get('ts')).calendar(null, {
+      sameDay: '[Today], hh:mm A',
+      lastDay: '[Yesterday], hh:mm A',
+      lastWeek: 'dddd, hh:mm A',
+      sameElse: 'MMM D, YYYY hh:mm A'
+    });
+
     const className = classnames({
       "devices--device-timeline--event": true,
       "devices--device-timeline--event-default": [EVENT_TYPES.OFFLINE, EVENT_TYPES.ONLINE].indexOf(this.props.event.get('eventType')) >= 0,
@@ -62,7 +70,7 @@ class Event extends React.Component {
             { this.props.event.get('name') }
           </div>
           <div className="devices--device-timeline--event-header-time">
-            Yesterday, 03:20 PM
+            {time}
           </div>
         </div>
         <div className="devices--device-timeline--event-content">
