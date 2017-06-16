@@ -27,7 +27,7 @@ export default class ProductItem extends React.Component {
               <Dotdotdot clamp={1}>{ item.name }</Dotdotdot>
             </div>
             <div className="amount">
-              { 0 } Devices
+              { item.deviceCount || 0 } Devices
             </div>
           </div>
         </Link>
