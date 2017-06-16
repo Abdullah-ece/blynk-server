@@ -4,11 +4,13 @@ import {Timeline as Timelines} from './components';
 import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {getFormValues} from 'redux-form';
 import {TimelineFetch} from 'data/Devices/api';
 import './styles.less';
 
 @connect((state) => ({
-  timeline: state.Devices.get('timeline')
+  timeline: state.Devices.get('timeline'),
+  formValues: getFormValues('Timeline')(state)
 }), (dispatch) => ({
   fetchTimeline: bindActionCreators(TimelineFetch, dispatch)
 }))
@@ -17,7 +19,8 @@ class Timeline extends React.Component {
   static propTypes = {
     timeline: React.PropTypes.instanceOf(Map),
     fetchTimeline: React.PropTypes.func,
-    params: React.PropTypes.object
+    formValues: React.PropTypes.object,
+    params: React.PropTypes.object,
   };
 
   state = {
@@ -59,11 +62,13 @@ class Timeline extends React.Component {
       params.isResolved = true;
     }
 
-    if (values.time !== 'NONE') {
-      params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+    if (values.time === TIMELINE_TIME_FILTERS.CUSTOM.key) {
+      if (!values.customTime.length)
+        return false;
+      params.from = values.customTime[0];
+      params.to = values.customTime[1];
     } else {
-      params.from = values.customFrom;
-      params.to = values.customTo;
+      params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
     }
 
     this.fetchTimeline(params);
@@ -74,8 +79,7 @@ class Timeline extends React.Component {
     const initialValues = {
       type: TIMELINE_TYPE_FILTERS.ALL.key,
       time: TIMELINE_TIME_FILTERS.HOUR.key,
-      customFrom: 0,
-      customTo: 0
+      customTime: []
     };
 
     return (
@@ -84,6 +88,7 @@ class Timeline extends React.Component {
                    timeline={this.props.timeline}
                    loading={this.state.loading}
                    initialValues={initialValues}
+                   formValues={this.props.formValues}
                    onChange={this.handleValuesChange.bind(this)}/>
       </div>
     );

@@ -12,13 +12,15 @@ class Timeline extends React.Component {
   static propTypes = {
     timeline: React.PropTypes.instanceOf(Map),
     loading: React.PropTypes.bool,
+    formValues: React.PropTypes.object,
   };
 
   render() {
 
     return (
       <div className="devices--device-timeline-timeline">
-        <TimeFiltering name="time"/>
+        <TimeFiltering name="time"
+                       formValues={this.props.formValues}/>
         <TypeFiltering name="type"
                        totalCritical={(this.props.timeline.has('totalCritical') && this.props.timeline.get('totalCritical')) || 0}
                        totalWarning={(this.props.timeline.has('totalWarning') && this.props.timeline.get('totalWarning')) || 0}
