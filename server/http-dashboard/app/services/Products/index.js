@@ -279,6 +279,11 @@ export const prepareProductForEdit = (data) => {
           };
         }
 
+        values = {
+          ...values,
+          isSavedBefore: true
+        };
+
         return {
           id: ++id,
           type: field.type,

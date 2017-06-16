@@ -54,6 +54,12 @@ class MetadataItem extends React.PureComponent {
     };
   }
 
+  componentWillMount() {
+    if (this.props.field.values.isSavedBefore) {
+      this.props.touchFormById(this.props.form, ...Object.keys(this.props.field.values));
+    }
+  }
+
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
       this.props.onChange({

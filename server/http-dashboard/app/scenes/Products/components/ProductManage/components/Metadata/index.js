@@ -267,7 +267,8 @@ class ProductMetadata extends React.Component {
         id: nextId,
         values: {
           ...cloned.values,
-          name: `${cloned.values.name} Copy`
+          name: `${cloned.values.name} Copy`,
+          isSavedBefore: false
         }
       }
     ];
