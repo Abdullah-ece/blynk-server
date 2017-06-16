@@ -55,8 +55,11 @@ class DeviceCreateModal extends React.Component {
         return Number(product.id) === Number(nextProps.formValues.productId);
       });
 
-      this.props.change('boardType', product.boardType);
-      this.props.change('connectionType', product.connectionType);
+      if (product) {
+        this.props.change('boardType', product.boardType);
+        this.props.change('connectionType', product.connectionType);
+      }
+
     }
   }
 

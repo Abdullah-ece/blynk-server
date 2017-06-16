@@ -8,13 +8,16 @@ export const Devices = (store) => {
 
     const start = bindActionCreators(StartLoading, store.dispatch);
     const finish = bindActionCreators(FinishLoading, store.dispatch);
-    const fetch = bindActionCreators(DevicesFetch, store.dispatch);
+    const devicesFetch = bindActionCreators(DevicesFetch, store.dispatch);
+    const productsFetch = bindActionCreators(ProductsFetch, store.dispatch);
 
     start();
 
-    fetch().then(() => {
-      callback();
-      finish();
+    devicesFetch().then(() => {
+      productsFetch().then(() => {
+        callback();
+        finish();
+      });
     });
 
   };
@@ -40,6 +43,26 @@ export const Device = (store) => {
 };
 
 export const DeviceCreate = (store) => {
+  return (nextState, replaceWith, callback) => {
+
+    const start = bindActionCreators(StartLoading, store.dispatch);
+    const finish = bindActionCreators(FinishLoading, store.dispatch);
+    const devicesFetch = bindActionCreators(DevicesFetch, store.dispatch);
+    const productsFetch = bindActionCreators(ProductsFetch, store.dispatch);
+
+    start();
+
+    devicesFetch().then(() => {
+      productsFetch().then(() => {
+        callback();
+        finish();
+      });
+    });
+
+  };
+};
+
+export const DeviceByIdCreate = (store) => {
   return (nextState, replaceWith, callback) => {
 
     const start = bindActionCreators(StartLoading, store.dispatch);
