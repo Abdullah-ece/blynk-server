@@ -74,8 +74,7 @@ class Event extends React.Component {
           </div>
         </div>
         <div className="devices--device-timeline--event-content">
-          A flush error happens when no contact is detected (switch or jumper) at the flow switch terminals while only
-          the Flush Pump runs. Flush errors are indicated by the Remote Control flashing and F in the pump window.
+          { this.props.event.get('description') }
         </div>
       </Timeline.Item>
     );
