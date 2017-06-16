@@ -25,7 +25,12 @@ class Timeline extends React.Component {
   };
 
   componentDidMount() {
-    this.fetchTimeline();
+
+    const params = {};
+
+    params.from = new Date().getTime() - TIMELINE_TIME_FILTERS.HOUR.time;
+
+    this.fetchTimeline(params);
   }
 
   fetchTimeline(params = {}) {
