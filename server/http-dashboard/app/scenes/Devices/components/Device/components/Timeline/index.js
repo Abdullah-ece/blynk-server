@@ -59,7 +59,12 @@ class Timeline extends React.Component {
       params.isResolved = true;
     }
 
-    params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+    if (values.time !== 'NONE') {
+      params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+    } else {
+      params.from = values.customFrom;
+      params.to = values.customTo;
+    }
 
     this.fetchTimeline(params);
   }

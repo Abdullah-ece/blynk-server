@@ -1,6 +1,5 @@
 import React from 'react';
-import {Modal} from 'components';
-import {Button, DatePicker} from 'antd';
+import {DatePicker} from 'antd';
 
 class SpecificTimeSelect extends React.Component {
 
@@ -14,25 +13,23 @@ class SpecificTimeSelect extends React.Component {
     this.props.onCancel();
   }
 
-  handleOkClick() {
-    this.props.onCancel();
+  handleChange(time) {
+    if (!time.length) {
+      this.props.onChange([]);
+    }
+  }
+
+  handleOkClick(value) {
+    this.props.onChange([
+      value[0].unix() * 1000,
+      value[1].unix() * 1000,
+    ]);
   }
 
   render() {
     return (
-      <Modal title="Select Time Range"
-             visible={this.props.visible}
-             onCancel={this.handleCancelClick.bind(this)}
-             footer={[
-               <Button key="cancel" type="default" size="small"
-                       onClick={this.handleCancelClick.bind(this)}>Cancel</Button>,
-               <Button key="save" type="primary" size="small"
-                       onClick={this.handleOkClick.bind(this)}>
-                 Select Range
-               </Button>,
-             ]}>
-        <DatePicker.RangePicker format="YYYY-MM-DD HH:mm:ss" showTime={true} style={{width: '100%'}}/>
-      </Modal>
+      <DatePicker.RangePicker onChange={this.handleChange.bind(this)} format="MMM D, YYYY hh:mm A" showTime={true}
+                              style={{width: '100%'}} onOk={this.handleOkClick.bind(this)}/>
     );
   }
 
