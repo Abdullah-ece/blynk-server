@@ -1,28 +1,28 @@
-export const isLoggedIn = (store) => {
-  if (!store.getState) {
-    throw new Error('isLoggedIn wrong parameter store');
-  }
+import axios from 'axios';
 
-  const state = store.getState();
-
-  return state && state.Login && state.Login.isLoggedIn;
+export const isLoggedIn = () => {
+  return axios.get('/dashboard/account');
 };
 
-export const RouteAuthorizedOnly = (store) => {
+export const RouteAuthorizedOnly = () => {
   return (nextState, replaceWith, callback) => {
-    if (!isLoggedIn(store)) {
-      replaceWith('/');
-    }
-    callback();
+    isLoggedIn().then(() => {
+      callback();
+    }).catch(() => {
+      replaceWith('/login');
+      callback();
+    });
   };
 };
 
-export const RouteGuestOnly = (store) => {
+export const RouteGuestOnly = () => {
   return (nextState, replaceWith, callback) => {
-    if (isLoggedIn(store)) {
+    isLoggedIn().then(() => {
       replaceWith('/products');
-    }
-    callback();
+      callback();
+    }).catch(() => {
+      callback();
+    });
   };
 };
 
