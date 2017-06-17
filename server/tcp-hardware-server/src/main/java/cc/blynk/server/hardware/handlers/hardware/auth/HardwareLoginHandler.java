@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -45,10 +46,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private final Holder holder;
     private final DBManager dbManager;
+    private final DeviceDao deviceDao;
 
     public HardwareLoginHandler(Holder holder) {
         this.holder = holder;
         this.dbManager = holder.dbManager;
+        this.deviceDao = holder.deviceDao;
     }
 
     private void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
@@ -67,7 +70,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.flush();
 
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
-        Device device = dash.getDeviceById(deviceId);
+        Device device = deviceDao.getById(deviceId);
         if (device != null) {
             log.trace("Connected device id {}, dash id {}", deviceId, dash.id);
             device.connected();
