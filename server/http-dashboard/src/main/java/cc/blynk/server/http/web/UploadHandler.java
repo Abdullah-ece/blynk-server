@@ -64,7 +64,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
             }
 
             try {
-                log.debug("Incoming {}", req);
+                log.debug("Incoming {} {}", req.method(), req.uri());
                 decoder = new HttpPostRequestDecoder(factory, req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
