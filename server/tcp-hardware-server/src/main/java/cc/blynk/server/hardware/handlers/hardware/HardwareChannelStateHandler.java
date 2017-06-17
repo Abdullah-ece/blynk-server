@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -40,12 +41,14 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private final GCMWrapper gcmWrapper;
     private final DBManager dbManager;
     private final OrganizationDao organizationDao;
+    private final DeviceDao deviceDao;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
         this.dbManager = holder.dbManager;
         this.organizationDao = holder.organizationDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, HardwareStateHolder state) {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
-        Device device = dashBoard.getDeviceById(state.deviceId);
+        Device device = deviceDao.getById(state.deviceId);
 
         //this is special case.
         //in case hardware quickly reconnects we do not mark it as disconnected
