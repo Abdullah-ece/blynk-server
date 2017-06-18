@@ -10,6 +10,7 @@ import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
 import _ from 'lodash';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import Scroll from 'react-scroll';
 const MetadataFields = Metadata.Fields;
 class ProductMetadata extends React.Component {
 
@@ -24,6 +25,26 @@ class ProductMetadata extends React.Component {
 
   constructor(props) {
     super(props);
+  }
+
+  componentDidUpdate() {
+    this.props.fields.forEach((field) => {
+      if (field && field.values && field.values.isRecentlyCreated) {
+
+        Scroll.scroller.scrollTo(`${field.name}`, {
+          duration: 1000,
+          smooth: "easeInOutQuint",
+        });
+
+        this.handleChangeField({
+          ...field,
+          values: {
+            ...field.values,
+            isRecentlyCreated: false
+          }
+        });
+      }
+    })
   }
 
   handleChangeField(values, dispatch, props) {
@@ -46,6 +67,8 @@ class ProductMetadata extends React.Component {
 
     const field = value;
 
+    let element;
+
     const props = {
       id: field.id,
       key: field.id,
@@ -58,7 +81,7 @@ class ProductMetadata extends React.Component {
     };
 
     if (field.type === MetadataService.Fields.TEXT) {
-      return (
+      element = (
         <MetadataFields.TextField
           {...props}
           initialValues={{
@@ -71,7 +94,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.NUMBER) {
-      return (
+      element = (
         <MetadataFields.NumberField
           {...props}
           initialValues={{
@@ -84,7 +107,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.COST) {
-      return (
+      element = (
         <MetadataFields.CostField
           {...props}
           initialValues={{
@@ -100,7 +123,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.TIME) {
-      return (
+      element = (
         <MetadataFields.TimeField
           {...props}
           initialValues={{
@@ -113,7 +136,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.RANGE) {
-      return (
+      element = (
         <MetadataFields.ShiftField
           {...props}
           initialValues={{
@@ -127,7 +150,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.SWITCH) {
-      return (
+      element = (
         <MetadataFields.SwitchField
           {...props}
           initialValues={{
@@ -140,7 +163,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.DATE) {
-      return (
+      element = (
         <MetadataFields.DateField
           {...props}
           initialValues={{
@@ -152,7 +175,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.COORDINATES) {
-      return (
+      element = (
         <MetadataFields.CoordinatesField
           {...props}
           initialValues={{
@@ -166,7 +189,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.UNIT) {
-      return (
+      element = (
         <MetadataFields.UnitField
           {...props}
           initialValues={{
@@ -180,7 +203,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.CONTACT) {
-      return (
+      element = (
         <MetadataFields.ContactField
           {...props}
           onEventsChange={this.props.onEventsChange}
@@ -210,7 +233,7 @@ class ProductMetadata extends React.Component {
     }
 
     if (field.type === MetadataService.Fields.ADDRESS) {
-      return (
+      element = (
         <MetadataFields.AddressField
           {...props}
           initialValues={{
@@ -225,6 +248,16 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+
+    if (field.values.isRecentlyCreated) {
+      return (
+        <Scroll.Element name={field.name}>
+          { element }
+        </Scroll.Element>
+      );
+    }
+
+    return element;
 
   });
 
@@ -268,7 +301,8 @@ class ProductMetadata extends React.Component {
         values: {
           ...cloned.values,
           name: `${cloned.values.name} Copy`,
-          isSavedBefore: false
+          isSavedBefore: false,
+          isRecentlyCreated: true
         }
       }
     ];
@@ -296,7 +330,8 @@ class ProductMetadata extends React.Component {
           role: MetadataRolesDefault,
           name: '',
           value: '',
-          ...params.values
+          ...params.values,
+          isRecentlyCreated: true
         }
       }
     ]);
