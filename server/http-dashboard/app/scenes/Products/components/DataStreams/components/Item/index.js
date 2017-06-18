@@ -51,7 +51,7 @@ class DataStreamItem extends React.Component {
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
       this.props.onChange({
-        ...this.props.field,
+        ...props.field,
         invalid: props.invalid
       });
       this.invalid = props.invalid;

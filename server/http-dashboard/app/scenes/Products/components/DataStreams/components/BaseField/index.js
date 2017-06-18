@@ -48,7 +48,7 @@ class BaseField extends React.Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   onFocus() {
