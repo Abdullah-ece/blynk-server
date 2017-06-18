@@ -44,7 +44,7 @@ class ProductMetadata extends React.Component {
           }
         });
       }
-    })
+    });
   }
 
   handleChangeField(values, dispatch, props) {
