@@ -1,4 +1,5 @@
 import React from 'react';
+import Scroll from 'react-scroll';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
 import {Unit} from "services/Products";
@@ -12,6 +13,26 @@ class DataStreams extends React.Component {
     onFieldChange: React.PropTypes.func,
     onFieldsChange: React.PropTypes.func,
   };
+
+  componentDidUpdate() {
+    this.props.fields.forEach((field) => {
+      if (field && field.values && field.values.isRecentlyCreated) {
+
+        Scroll.scroller.scrollTo(`${field.name}`, {
+          duration: 1000,
+          smooth: "easeInOutQuint",
+        });
+
+        this.handleChangeField({
+          ...field,
+          values: {
+            ...field.values,
+            isRecentlyCreated: false
+          }
+        });
+      }
+    });
+  }
 
   SortableItem = SortableElement(({value}) => {
 
@@ -35,12 +56,17 @@ class DataStreams extends React.Component {
       }
     };
 
-    return (
-      <DataStreamsBaseField
-        {...props}
-      />
-    );
+    let element = (<DataStreamsBaseField {...props} />);
 
+    if (field.values.isRecentlyCreated) {
+      return (
+        <Scroll.Element name={field.name}>
+          { element }
+        </Scroll.Element>
+      );
+    }
+
+    return element;
 
   });
 
@@ -122,7 +148,8 @@ class DataStreams extends React.Component {
         values: {
           ...cloned.values,
           name: `${cloned.values.name || ''} Copy`,
-          pin: this.generatePin()
+          pin: this.generatePin(),
+          isRecentlyCreated: true
         }
       }
     ];
@@ -147,7 +174,8 @@ class DataStreams extends React.Component {
         values: {
           ...params.values,
           pin: this.generatePin(),
-          units: Unit.Inch.key
+          units: Unit.Inch.key,
+          isRecentlyCreated: true
         }
       }
     ]);
