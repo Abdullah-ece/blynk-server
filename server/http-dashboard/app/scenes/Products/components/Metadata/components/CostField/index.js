@@ -129,15 +129,18 @@ class CostField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>
 
-            <MetadataFormNumber name="price" type="text" placeholder="--" validate={[
+            <MetadataFormNumber onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="price" type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormNumber name="perValue" type="text" placeholder="--" validate={[
+            <MetadataFormNumber onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="perValue" type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
             <MetadataFormSelect name="units" type="text" placeholder="--"
