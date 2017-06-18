@@ -1,4 +1,5 @@
 import React from 'react';
+import Scroll from 'react-scroll';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 import {getNextId} from 'services/Entity';
@@ -12,6 +13,24 @@ class Events extends React.Component {
 
     onFieldsChange: React.PropTypes.func
   };
+
+  componentDidUpdate() {
+    this.props.fields.forEach((field) => {
+      if (field && field.values && field.values.isRecentlyCreated) {
+
+        Scroll.scroller.scrollTo(`${field.name}`, {
+          duration: 1000,
+          smooth: "easeInOutQuint",
+        });
+
+        this.handleFieldChange({
+          ...field.values,
+          id: field.id,
+          isRecentlyCreated: false
+        });
+      }
+    });
+  }
 
   handleFieldChange(values, /*dispatch, props*/) {
     if (values.id) {
@@ -77,6 +96,7 @@ class Events extends React.Component {
           ...original.values,
           name: original.values.name ? `${original.values.name} Copy` : '',
           eventCode: original.values.eventCode ? `${original.values.eventCode}_copy` : '',
+          isRecentlyCreated: true
         },
         id: getNextId(this.props.fields)
       };
@@ -160,7 +180,9 @@ class Events extends React.Component {
       {
         id: getNextId(this.props.fields),
         type: type,
-        values: {}
+        values: {
+          isRecentlyCreated: true
+        }
       }
     ]);
   }
@@ -168,6 +190,8 @@ class Events extends React.Component {
   SortableItem = SortableElement(({value}) => {
 
     const field = value;
+
+    let element;
 
     let options = {
       form: `event${field.id}`,
@@ -196,7 +220,7 @@ class Events extends React.Component {
         }
       };
 
-      return (
+      element = (
         <Info {...options}/>
       );
     }
@@ -212,7 +236,7 @@ class Events extends React.Component {
         }
       };
 
-      return (
+      element = (
         <Warning {...options}/>
       );
     }
@@ -228,10 +252,20 @@ class Events extends React.Component {
         }
       };
 
-      return (
+      element = (
         <Critical {...options}/>
       );
     }
+
+    if (field.values.isRecentlyCreated) {
+      return (
+        <Scroll.Element name={field.name}>
+          { element }
+        </Scroll.Element>
+      );
+    }
+
+    return element;
 
   });
 
