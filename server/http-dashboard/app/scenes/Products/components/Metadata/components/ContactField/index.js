@@ -182,7 +182,9 @@ class ContactField extends BaseField {
     return (
       <div>
         <Form.Item label="Contact" offset="extra-small">
-          <Form.Input validateOnBlur={true} className="metadata-contact-field" name="name" type="text"
+          <Form.Input validateOnBlur={true}
+                      className={`metadata-name-field-${this.props.field.id} metadata-contact-field`}
+                      name="name" type="text"
                       onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                       placeholder="Field Name"
                       validate={[

@@ -43,7 +43,8 @@ class ShiftField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
+                               validateOnBlur={true} name="name" type="text" placeholder="Field Name"
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>

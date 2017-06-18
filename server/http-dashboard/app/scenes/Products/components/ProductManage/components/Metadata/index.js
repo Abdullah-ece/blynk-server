@@ -335,6 +335,9 @@ class ProductMetadata extends React.Component {
         }
       }
     ]);
+
+    /** @todo dirty hack, remove it after refactoring */
+    setTimeout(() => document.querySelector(`.metadata-name-field-${nextId}  input`).focus(), 100);
   }
 
   handleDeleteField(key) {

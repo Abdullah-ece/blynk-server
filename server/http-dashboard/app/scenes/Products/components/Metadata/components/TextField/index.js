@@ -38,7 +38,8 @@ class TextField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
+                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                                validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>

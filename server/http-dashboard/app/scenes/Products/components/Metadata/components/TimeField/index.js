@@ -40,7 +40,8 @@ class TimeField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
+            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
+                               validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"
