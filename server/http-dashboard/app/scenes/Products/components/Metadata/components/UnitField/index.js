@@ -92,13 +92,16 @@ class UnitField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               validateOnBlur={true} name="name" type="text" placeholder="Field Name"
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect name="units" type="text" placeholder="Choose"
+            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-            <MetadataFormField name="value" type="text" placeholder="Default val..." validate={[
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               name="value" type="text" placeholder="Default val..." validate={[
               Validation.Rules.number
             ]}/>
           </Input.Group>
