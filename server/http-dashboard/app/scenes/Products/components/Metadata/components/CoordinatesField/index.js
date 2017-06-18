@@ -43,13 +43,16 @@ class CoordinatesField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField name="lat" type="text" placeholder="Latitude" validate={[
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               name="lat" type="text" placeholder="Latitude" validate={[
               Validation.Rules.latitude
             ]}/>
-            <MetadataFormField name="lon" type="text" placeholder="Longitude" validate={[
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               name="lon" type="text" placeholder="Longitude" validate={[
               Validation.Rules.longitude
             ]}/>
           </Input.Group>
