@@ -71,7 +71,7 @@ class MetadataItem extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
+    return this.props.isActive !== nextProps.isActive || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
   }
 
   handleConfirmDelete() {
@@ -128,7 +128,7 @@ class MetadataItem extends React.PureComponent {
 
     const itemClasses = classnames({
       'product-metadata-item': true,
-      'product-metadata-item-active': this.state.isActive,
+      'product-metadata-item-active': this.props.isActive || this.state.isActive,
     });
 
     return (

@@ -5,6 +5,10 @@ import _ from 'lodash';
 
 class BaseField extends React.PureComponent {
 
+  state = {
+    isFocused: false
+  };
+
   static propTypes = {
     id: React.PropTypes.number,
     fields: React.PropTypes.object,
@@ -22,6 +26,18 @@ class BaseField extends React.PureComponent {
     isUnique: React.PropTypes.func,
   };
 
+  onFocus() {
+    this.setState({
+      isFocused: true
+    });
+  }
+
+  onBlur() {
+    this.setState({
+      isFocused: false
+    });
+  }
+
   constructor(props) {
     super(props);
 
@@ -31,7 +47,7 @@ class BaseField extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+    return this.state.isFocused !== nextState.isFocused && !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   handleDelete() {
@@ -57,7 +73,8 @@ class BaseField extends React.PureComponent {
                      fields={this.props.fields}
                      field={this.props.field}
                      id={this.props.id}
-                     form={this.props.form}>
+                     form={this.props.form}
+                     isActive={this.state.isFocused}>
         { this.component() }
       </Metadata.Item>
     );
