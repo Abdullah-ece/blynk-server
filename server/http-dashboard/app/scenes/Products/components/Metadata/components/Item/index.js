@@ -40,6 +40,7 @@ class MetadataItem extends React.PureComponent {
     onChange: React.PropTypes.func,
     field: React.PropTypes.object,
     touched: React.PropTypes.bool,
+    isActive: React.PropTypes.bool,
     tools: React.PropTypes.bool,
     updateMetadataFieldInvalidFlag: React.PropTypes.func,
   };

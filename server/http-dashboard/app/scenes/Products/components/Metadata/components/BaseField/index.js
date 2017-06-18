@@ -5,10 +5,6 @@ import _ from 'lodash';
 
 class BaseField extends React.PureComponent {
 
-  state = {
-    isFocused: false
-  };
-
   static propTypes = {
     id: React.PropTypes.number,
     fields: React.PropTypes.object,
@@ -26,6 +22,22 @@ class BaseField extends React.PureComponent {
     isUnique: React.PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+
+    if (typeof this.component !== 'function') {
+      throw new Error('Object nested from BaseField should have component method');
+    }
+  }
+
+  state = {
+    isFocused: false
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.isFocused !== nextState.isFocused && !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+  }
+
   onFocus() {
     this.setState({
       isFocused: true
@@ -36,18 +48,6 @@ class BaseField extends React.PureComponent {
     this.setState({
       isFocused: false
     });
-  }
-
-  constructor(props) {
-    super(props);
-
-    if (typeof this.component !== 'function') {
-      throw new Error('Object nested from BaseField should have component method');
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.isFocused !== nextState.isFocused && !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
   }
 
   handleDelete() {

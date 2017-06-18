@@ -10,15 +10,20 @@ class NoDevices extends React.Component {
     router: React.PropTypes.object
   };
 
+  static propTypes = {
+    location: React.PropTypes.object,
+    isAnyProductExist: React.PropTypes.bool,
+  };
+
   state = {
     isDeviceCreateModalVisible: false
   };
 
-  componentDidUpdate() {
+  componentWillMount() {
     this.checkModalVisibility();
   }
 
-  componentWillMount() {
+  componentDidUpdate() {
     this.checkModalVisibility();
   }
 

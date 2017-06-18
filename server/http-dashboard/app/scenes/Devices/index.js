@@ -23,14 +23,15 @@ class Devices extends React.Component {
   render() {
 
     if (!this.props.devices.size) {
-      return <NoDevices isAnyProductExist={!!this.props.products.length}
-                        location={this.props.location}
-                        params={this.props.params}/>
+      return (
+        <NoDevices isAnyProductExist={!!this.props.products.length}
+                   location={this.props.location}
+                   params={this.props.params}/>);
     } else {
-      return <Index devices={this.props.devices}
-                    location={this.props.location}
-                    products={this.props.products}
-                    params={this.props.params}/>
+      return (<Index devices={this.props.devices}
+                     location={this.props.location}
+                     products={this.props.products}
+                     params={this.props.params}/>);
     }
 
 
