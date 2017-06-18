@@ -76,6 +76,7 @@ export default class SelectField extends React.Component {
                  help={help}
                  style={style}>
         <Select
+          {...input}
           dropdownClassName={dropdownClassName}
           dropdownStyle={dropdownStyle}
           showSearch

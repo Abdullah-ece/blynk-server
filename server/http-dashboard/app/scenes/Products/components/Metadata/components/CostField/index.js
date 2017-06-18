@@ -133,7 +133,8 @@ class CostField extends BaseField {
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect name="currency" type="text" placeholder="Choose" values={this.Currency}/>
+            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="currency" type="text" placeholder="Choose" values={this.Currency}/>
 
             <MetadataFormNumber onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                                 name="price" type="text" placeholder="--" validate={[
@@ -143,7 +144,8 @@ class CostField extends BaseField {
                                 name="perValue" type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormSelect name="units" type="text" placeholder="--"
+            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="units" type="text" placeholder="--"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}/>
           </Input.Group>
