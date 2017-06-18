@@ -159,7 +159,8 @@ class BaseField extends React.Component {
           <Input.Group compact>
             <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} validateOnBlur={true}
                                name="name" type="text" placeholder="Field Name"
-                               style={{width: '200%'}} validate={[
+                               style={{width: '200%'}} className={`datastream-name-field-${this.props.field.id}`}
+                               validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>

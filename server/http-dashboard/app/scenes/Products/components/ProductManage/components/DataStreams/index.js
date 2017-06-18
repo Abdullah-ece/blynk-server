@@ -179,6 +179,9 @@ class DataStreams extends React.Component {
         }
       }
     ]);
+
+    /** @todo dirty hack, remove it after refactoring */
+    setTimeout(() => document.querySelector(`.datastream-name-field-${nextId}  input`).focus(), 100);
   }
 
   onSortEnd({oldIndex, newIndex}) {
