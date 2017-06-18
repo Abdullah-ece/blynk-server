@@ -13,6 +13,8 @@ class Input extends Default {
     value: React.PropTypes.any,
     onChange: React.PropTypes.func,
     popconfirm: React.PropTypes.object,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
   };
 
   shouldComponentUpdate(nextProps) {
@@ -36,7 +38,8 @@ class Input extends Default {
                  component={Checkbox}/>
         </Form.Item>
         <Form.Item>
-          <Form.Input disabled={!this.props.isChecked} name={`${this.props.prefix}`}
+          <Form.Input onFocus={this.props.onFocus} onBlur={this.props.onBlur} disabled={!this.props.isChecked}
+                      name={`${this.props.prefix}`}
                       placeholder={this.props.placeholder}/>
         </Form.Item>
       </Form.Items>
