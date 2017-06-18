@@ -17,4 +17,10 @@ class Modal extends React.Component {
 
 }
 
+Modal.info = AntModal.info;
+Modal.error = AntModal.error;
+Modal.success = AntModal.success;
+Modal.warning = AntModal.warning;
+Modal.confirm = AntModal.confirm;
+
 export default Modal;
