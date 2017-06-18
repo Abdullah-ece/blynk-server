@@ -21,11 +21,19 @@ class Index extends React.Component {
   };
 
   componentWillMount() {
+    this.redirectToFirstDeviceIfIdParameterMissed();
+  }
 
+  componentDidUpdate() {
+    this.redirectToFirstDeviceIfIdParameterMissed();
+  }
+
+  redirectToFirstDeviceIfIdParameterMissed() {
     if (isNaN(Number(this.props.params.id)) || !this.getDeviceById(this.props.params.id)) {
       this.context.router.push('/devices/' + this.props.devices.first().get('id'));
     }
   }
+
 
   shouldComponentUpdate(nextProps) {
     return !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
