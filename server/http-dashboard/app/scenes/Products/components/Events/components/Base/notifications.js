@@ -12,7 +12,9 @@ class Notifications extends React.Component {
 
   static propTypes = {
     metadata: React.PropTypes.any,
-    fields: React.PropTypes.object
+    fields: React.PropTypes.object,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -23,6 +25,8 @@ class Notifications extends React.Component {
 
     return (
       <Select mode="multiple"
+              onFocus={props.input.onFocus}
+              onBlur={props.input.onBlur}
               onChange={props.input.onChange}
               value={props.input.value || []}
               style={{width: '100%'}}
@@ -60,11 +64,13 @@ class Notifications extends React.Component {
           <Item label="E-mail to" offset="normal">
             <Field name="emailNotifications"
                    component={this.notificationSelect}
+                   onFocus={this.props.onFocus.bind(this)} onBlur={this.props.onBlur.bind(this)}
                    options={notificationAvailableMetadataContactFields}/>
           </Item>
           <Item label="PUSH Notifications to">
             <Field name="pushNotifications"
                    component={this.notificationSelect}
+                   onFocus={this.props.onFocus.bind(this)} onBlur={this.props.onBlur.bind(this)}
                    options={notificationAvailableMetadataContactFields}/>
           </Item>
         </FormItem>

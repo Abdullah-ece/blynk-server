@@ -17,6 +17,22 @@ class Offline extends React.Component {
     validate: React.PropTypes.func
   };
 
+  state = {
+    isFocused: false
+  };
+
+  onFocus() {
+    this.setState({
+      isFocused: true
+    });
+  }
+
+  onBlur() {
+    this.setState({
+      isFocused: false
+    });
+  }
+
   ignorePeriod(props) {
     const format = "HH [hrs] mm [min]";
 
@@ -41,11 +57,13 @@ class Offline extends React.Component {
       <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}
             onChange={this.props.onChange}
             validate={this.props.validate}
-            onDelete={this.props.onDelete}>
+            onDelete={this.props.onDelete}
+            isActive={this.state.isFocused}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
-              <Input validateOnBlur={true} name="name" placeholder="Event Name"
+              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                     validateOnBlur={true} name="name" placeholder="Event Name"
                      style={{width: '55%'}}/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>

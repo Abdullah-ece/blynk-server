@@ -49,8 +49,24 @@ class Event extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
+  state = {
+    isFocused: false
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
+  }
+
+  onFocus() {
+    this.setState({
+      isFocused: true
+    });
+  }
+
+  onBlur() {
+    this.setState({
+      isFocused: false
+    });
   }
 
   getLabelForType(type) {
@@ -91,21 +107,25 @@ class Event extends React.Component {
             onChange={this.props.onChange}
             onClone={this.props.onClone}
             validate={this.props.validate}
-            onDelete={this.props.onDelete}>
+            onDelete={this.props.onDelete}
+            isActive={this.state.isFocused}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
-              <Input validateOnBlur={true} onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name"
+              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                     validateOnBlur={true} onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name"
                      style={{width: '55%'}}
                      validate={[Validation.Rules.required]}/>
             </Item>
             <Item label="Event Code" offset="normal">
-              <Input validateOnBlur={true} name="eventCode" placeholder="Event code" style={{width: '45%'}}
+              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                     validateOnBlur={true} name="eventCode" placeholder="Event code" style={{width: '45%'}}
                      validate={[Validation.Rules.required, Validation.Rules.eventsEventCode]}/>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
-            <Input name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
+            <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                   name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>
         <Base.Preview {...this.getPreviewProps()} valid={

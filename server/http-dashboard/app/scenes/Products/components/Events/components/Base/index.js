@@ -39,6 +39,7 @@ class Base extends React.Component {
     onDelete: React.PropTypes.func,
     tools: React.PropTypes.bool,
     anyTouched: React.PropTypes.bool,
+    isActive: React.PropTypes.bool,
     formValues: React.PropTypes.any,
     fieldsErrors: React.PropTypes.any,
   };
@@ -52,7 +53,7 @@ class Base extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
+    return this.props.isActive !== nextProps.isActive || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
   handleCancelDelete() {
@@ -154,7 +155,7 @@ class Base extends React.Component {
   render() {
     const itemClasses = classnames({
       'product-metadata-item': true,
-      'product-metadata-item-active': this.state.isActive,
+      'product-metadata-item-active': this.props.isActive || this.state.isActive,
     });
 
     return (
@@ -164,7 +165,8 @@ class Base extends React.Component {
             <Row gutter={8}>
               <Col span={13}>
                 { this.getChildrenByType(Content.displayName) }
-                <Notifications metadata={this.props.metadata} fields={this.props.fields}/>
+                <Notifications onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                               metadata={this.props.metadata} fields={this.props.fields}/>
               </Col>
               <Col span={9} offset={1}>
                 { this.getChildrenByType(Preview.displayName) }

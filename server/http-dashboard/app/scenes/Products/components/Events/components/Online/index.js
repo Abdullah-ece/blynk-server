@@ -14,15 +14,33 @@ class Online extends React.Component {
     validate: React.PropTypes.func
   };
 
+  state = {
+    isFocused: false
+  };
+
+  onFocus() {
+    this.setState({
+      isFocused: true
+    });
+  }
+
+  onBlur() {
+    this.setState({
+      isFocused: false
+    });
+  }
+
   render() {
     return (
       <Base type={EVENT_TYPES.ONLINE} form={this.props.form} initialValues={this.props.initialValues}
             onChange={this.props.onChange}
             validate={this.props.validate}
-            onDelete={this.props.onDelete}>
+            onDelete={this.props.onDelete}
+            isActive={this.state.isFocused}>
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <Input validateOnBlur={true} name="name" placeholder="Event Name"/>
+            <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                   validateOnBlur={true} name="name" placeholder="Event Name"/>
           </Item>
         </Base.Content>
       </Base>
