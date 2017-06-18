@@ -43,8 +43,24 @@ class BaseField extends React.Component {
     field: React.PropTypes.object,
   };
 
+  state = {
+    isFocused: false
+  };
+
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+  }
+
+  onFocus() {
+    this.setState({
+      isFocused: true
+    });
+  }
+
+  onBlur() {
+    this.setState({
+      isFocused: false
+    });
   }
 
   Unit = {
@@ -141,20 +157,24 @@ class BaseField extends React.Component {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} validateOnBlur={true}
+                               name="name" type="text" placeholder="Field Name"
                                style={{width: '200%'}} validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
-            <MetadataFormSelect name="units" type="text" placeholder="Choose"
+            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                                name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}
                                 validate={[Validation.Rules.required]}/>
 
-            <MetadataFormField name="min" type="text" placeholder="Min" validate={[
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               name="min" type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormField name="max" type="text" placeholder="Max" validate={[
+            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               name="max" type="text" placeholder="Max" validate={[
               Validation.Rules.number
             ]}/>
           </Input.Group>
@@ -176,6 +196,7 @@ class BaseField extends React.Component {
         field={this.props.field}
         id={this.props.id}
         form={this.props.form}
+        isActive={this.state.isFocused}
       >
         { this.component() }
       </DataStreamsItem>

@@ -34,6 +34,7 @@ class DataStreamItem extends React.Component {
     onClone: React.PropTypes.func,
     onChange: React.PropTypes.func,
     touched: React.PropTypes.bool,
+    isActive: React.PropTypes.bool,
     updateMetadataFieldInvalidFlag: React.PropTypes.func
   };
 
@@ -125,7 +126,7 @@ class DataStreamItem extends React.Component {
 
     const itemClasses = classnames({
       'product-metadata-item': true,
-      'product-metadata-item-active': this.state.isActive,
+      'product-metadata-item-active': this.props.isActive || this.state.isActive,
     });
 
     return (
@@ -142,6 +143,8 @@ class DataStreamItem extends React.Component {
               </FormItem.TitleGroup>
               <FormItem.Content>
                 <MetadataFormSelect name="pin"
+                                    onFocus={this.markAsActive.bind(this)}
+                                    onBlur={this.handleCancelDelete.bind(this)}
                                     type="text"
                                     placeholder="Pin"
                                     dropdownClassName="product-metadata-item-unit-dropdown"
