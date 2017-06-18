@@ -175,16 +175,21 @@ class Events extends React.Component {
 
   handleAddField(type) {
 
+    const nextId = getNextId(this.props.fields);
+
     this.props.onFieldsChange([
       ...this.props.fields,
       {
-        id: getNextId(this.props.fields),
+        id: nextId,
         type: type,
         values: {
           isRecentlyCreated: true
         }
       }
     ]);
+
+    /** @todo dirty hack, remove it after refactoring */
+    setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
   }
 
   SortableItem = SortableElement(({value}) => {

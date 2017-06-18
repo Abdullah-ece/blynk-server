@@ -115,7 +115,8 @@ class Event extends React.Component {
               <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
                      validateOnBlur={true} onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name"
                      style={{width: '55%'}}
-                     validate={[Validation.Rules.required]}/>
+                     validate={[Validation.Rules.required]}
+                     className={`event-name-field-${this.props.initialValues.id}`}/>
             </Item>
             <Item label="Event Code" offset="normal">
               <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
