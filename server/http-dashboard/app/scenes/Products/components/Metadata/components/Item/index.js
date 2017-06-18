@@ -142,7 +142,8 @@ class MetadataItem extends React.PureComponent {
               <FormItem offset={false}>
                 <FormItem.Title>Who can edit</FormItem.Title>
                 <FormItem.Content>
-                  <MetadataSelect name="role" style={{width: '100%'}} values={MetadataRoles}/>
+                  <MetadataSelect onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                                  name="role" style={{width: '100%'}} values={MetadataRoles}/>
                 </FormItem.Content>
               </FormItem>
             </Col>
