@@ -35,7 +35,8 @@ class DeviceOwnerField extends BaseField {
           <FormItem.Title style={{width: '50%'}}>Device Owner</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataFormField name="value" type="text" placeholder="device-owner@example.com (optional)"
+          <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                             name="value" type="text" placeholder="device-owner@example.com (optional)"
                              validate={[Validation.Rules.email]}
                              validateOnBlur={true}
           />

@@ -34,7 +34,8 @@ class LocationField extends BaseField {
           <FormItem.Title style={{width: '50%'}}>Location Name</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataFormField name="value" type="text" placeholder="Default value(optional)"/>
+          <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                             name="value" type="text" placeholder="Default value(optional)"/>
         </FormItem.Content>
       </FormItem>
     );
