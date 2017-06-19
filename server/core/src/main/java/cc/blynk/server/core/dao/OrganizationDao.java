@@ -2,7 +2,6 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,8 +94,7 @@ public class OrganizationDao {
             return null;
         }
         product.id = productSequence.incrementAndGet();
-        organization.products = ArrayUtil.add(organization.products, product, Product.class);
-        organization.lastModifiedTs = System.currentTimeMillis();
+        organization.addProduct(product);
         return product;
     }
 

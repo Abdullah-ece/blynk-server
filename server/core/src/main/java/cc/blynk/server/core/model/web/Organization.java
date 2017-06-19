@@ -50,6 +50,11 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public void addProduct(Product product) {
+        this.products = ArrayUtil.add(products, product, Product.class);
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     public Product getProduct(int id)  {
         for (Product product : products) {
             if (product.id == id) {

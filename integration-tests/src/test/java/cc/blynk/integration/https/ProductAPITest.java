@@ -175,7 +175,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(product.connectionType, fromApi.connectionType);
             assertEquals(product.logoUrl, fromApi.logoUrl);
             assertEquals(0, fromApi.version);
-            assertNotEquals(0, fromApi.updatedAt);
+            assertNotEquals(0, fromApi.lastModifiedTs);
             assertNotNull(fromApi.dataStreams);
             assertNotNull(fromApi.metaFields);
             assertEquals(9, fromApi.metaFields.length);

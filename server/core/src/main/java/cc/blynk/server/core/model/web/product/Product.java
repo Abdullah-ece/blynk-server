@@ -29,7 +29,7 @@ public class Product {
 
     public volatile String logoUrl;
 
-    public volatile long updatedAt;
+    public volatile long lastModifiedTs;
 
     public long createdAt;
 
@@ -45,7 +45,7 @@ public class Product {
 
     public Product() {
         this.createdAt = System.currentTimeMillis();
-        this.updatedAt = createdAt;
+        this.lastModifiedTs = createdAt;
     }
 
     public void update(Product updatedProduct) {
@@ -57,8 +57,13 @@ public class Product {
         this.metaFields = updatedProduct.metaFields;
         this.dataStreams = updatedProduct.dataStreams;
         this.events = updatedProduct.events;
-        this.updatedAt = System.currentTimeMillis();
+        this.lastModifiedTs = System.currentTimeMillis();
         this.version++;
+    }
+
+    public void addMetafield(MetaField metafield) {
+        this.metaFields = ArrayUtil.add(metaFields, metafield, MetaField.class);
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public Event findEventByType(EventType eventType) {
