@@ -23,13 +23,14 @@ public class CostMetaField extends MetaField {
     public final MeasurementUnit units;
 
     @JsonCreator
-    public CostMetaField(@JsonProperty("name") String name,
+    public CostMetaField(@JsonProperty("id") int id,
+                         @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("currency") Currency currency,
                          @JsonProperty("price") double price,
                          @JsonProperty("perValue") double perValue,
                          @JsonProperty("units") MeasurementUnit units) {
-        super(name, role);
+        super(id, name, role);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
@@ -38,6 +39,6 @@ public class CostMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new CostMetaField(name, role, currency, price, perValue, units);
+        return new CostMetaField(id, name, role, currency, price, perValue, units);
     }
 }

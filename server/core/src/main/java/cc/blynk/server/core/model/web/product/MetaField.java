@@ -31,11 +31,14 @@ public abstract class MetaField {
 
     private static final String DEFAULT_DEVICE_NAME_FIELD = "Device Name";
 
+    public final int id;
+
     public final String name;
 
     public final Role role;
 
-    public MetaField(String name, Role role) {
+    public MetaField(int id, String name, Role role) {
+        this.id = id;
         this.name = name;
         this.role = role;
     }

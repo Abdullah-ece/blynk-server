@@ -174,8 +174,8 @@ public class DevicesAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D),
-                new TextMetaField("Device Name", Role.ADMIN, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, "My Default device Name")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

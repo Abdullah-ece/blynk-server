@@ -32,19 +32,19 @@ public class PrintProductTest {
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField("My Farm", Role.ADMIN, "Farm of Smith"),
-                new RangeMetaField("Farm of Smith", Role.ADMIN, 60, 120),
-                new NumberMetaField("Farm of Smith", Role.ADMIN, 10.222),
-                new MeasurementUnitMetaField("Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
-                new CostMetaField("Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
-                new ContactMetaField("Farm of Smith", Role.ADMIN, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith"),
+                new RangeMetaField(2, "Farm of Smith", Role.ADMIN, 60, 120),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField("Farm of Smith", Role.ADMIN, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField("Farm Location", Role.ADMIN, 22.222, 23.333),
-                new TimeMetaField("Some Time", Role.ADMIN, new Date())
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, 22.222, 23.333),
+                new TimeMetaField(9,"Some Time", Role.ADMIN, new Date())
         };
 
         product.dataStreams = new DataStream[] {

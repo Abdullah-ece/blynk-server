@@ -17,17 +17,18 @@ public class CoordinatesMetaField extends MetaField {
     public final double lon;
 
     @JsonCreator
-    public CoordinatesMetaField(@JsonProperty("name") String name,
+    public CoordinatesMetaField(@JsonProperty("id") int id,
+                                @JsonProperty("name") String name,
                                 @JsonProperty("role") Role role,
                                 @JsonProperty("lat") double lat,
                                 @JsonProperty("lon") double lon) {
-        super(name, role);
+        super(id, name, role);
         this.lat = lat;
         this.lon = lon;
     }
 
     @Override
     public MetaField copy() {
-        return new CoordinatesMetaField(name, role, lat, lon);
+        return new CoordinatesMetaField(id, name, role, lat, lon);
     }
 }

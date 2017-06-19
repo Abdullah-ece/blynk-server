@@ -262,7 +262,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField("Jopa", Role.STAFF, 123D)
+                new NumberMetaField(1, "Jopa", Role.STAFF, 123D)
         };
         OfflineEvent offlineEvent = new OfflineEvent();
         offlineEvent.ignorePeriod = 1000;

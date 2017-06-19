@@ -304,28 +304,33 @@ HOST: https://knight-qa.blynk.cc/
               "createdAt" : 1493801505645,
               "metaFields" : [ {
                 "type" : "Text",
+                "id" : 1,
                 "name" : "My Farm",
                 "role" : "ADMIN",
                 "value" : "Farm of Smith"
               }, {
                 "type" : "Range",
+                "id" : 2,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "from" : 60,
                 "to" : 120
               }, {
                 "type" : "Number",
+                "id" : 3,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "value" : 10.222
               }, {
                 "type" : "Measurement",
+                "id" : 4,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "units" : "Celsius",
                 "value" : "36"
               }, {
                 "type" : "Cost",
+                "id" : 5,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "currency" : "USD",
@@ -334,6 +339,7 @@ HOST: https://knight-qa.blynk.cc/
                 "units" : "Gallon"
               }, {
                 "type" : "Contact",
+                "id" : 6,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "contact" : "Tech Support",
@@ -356,6 +362,7 @@ HOST: https://knight-qa.blynk.cc/
                 "isDefaultsEnabled" : false
               }, {
                 "type" : "Address",
+                "id" : 7,
                 "name" : "Farm of Smith",
                 "role" : "ADMIN",
                 "streetAddress" : "My street",
@@ -371,12 +378,14 @@ HOST: https://knight-qa.blynk.cc/
                 "isDefaultsEnabled" : false
               }, {
                 "type" : "Coordinates",
+                "id" : 8,
                 "name" : "Farm Location",
                 "role" : "ADMIN",
                 "lat" : 22.222,
                 "lon" : 23.333
               }, {
                 "type" : "Time",
+                "id" : 9,
                 "name" : "Some Time",
                 "role" : "ADMIN",
                 "time" : 1492697668006
@@ -430,6 +439,7 @@ HOST: https://knight-qa.blynk.cc/
               }, {
                 "type" : "INFORMATION",
                 "name" : "Door is opened",
+                "description" : "Kitchen door is opened.",
                 "isNotificationsEnabled" : false,
                 "emailNotifications" : [ {
                   "id" : 1,
@@ -446,11 +456,11 @@ HOST: https://knight-qa.blynk.cc/
                   "type" : "META_FIELD",
                   "value" : "Farm Owner"
                 } ],
-                "eventCode" : "door_opened",
-                "description" : "Kitchen door is opened."
+                "eventCode" : "door_opened"
               }, {
                 "type" : "WARNING",
                 "name" : "Temperature is high!",
+                "description" : "Room temp is high",
                 "isNotificationsEnabled" : false,
                 "emailNotifications" : [ {
                   "id" : 1,
@@ -467,11 +477,11 @@ HOST: https://knight-qa.blynk.cc/
                   "type" : "META_FIELD",
                   "value" : "Farm Owner"
                 } ],
-                "eventCode" : "temp_is_high",
-                "description" : "Room temp is high"
+                "eventCode" : "temp_is_high"
               }, {
                 "type" : "CRITICAL",
                 "name" : "Temperature is super high!",
+                "description" : "Room temp is super high",
                 "isNotificationsEnabled" : false,
                 "emailNotifications" : [ {
                   "id" : 1,
@@ -488,8 +498,7 @@ HOST: https://knight-qa.blynk.cc/
                   "type" : "META_FIELD",
                   "value" : "Farm Owner"
                 } ],
-                "eventCode" : "temp_is_super_high",
-                "description" : "Room temp is super high"
+                "eventCode" : "temp_is_super_high"
               } ],
               "deviceCount" : 0,
               "version" : 0

@@ -17,17 +17,18 @@ public class RangeMetaField extends MetaField {
     public final int to;
 
     @JsonCreator
-    public RangeMetaField(@JsonProperty("name") String name,
+    public RangeMetaField(@JsonProperty("id") int id,
+                          @JsonProperty("name") String name,
                           @JsonProperty("role") Role role,
                           @JsonProperty("from") int from,
                           @JsonProperty("to") int to) {
-        super(name, role);
+        super(id, name, role);
         this.from = from;
         this.to = to;
     }
 
     @Override
     public MetaField copy() {
-        return new RangeMetaField(name ,role, from, to);
+        return new RangeMetaField(id, name ,role, from, to);
     }
 }

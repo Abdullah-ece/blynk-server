@@ -17,17 +17,18 @@ public class MeasurementUnitMetaField extends MetaField {
     public final String value;
 
     @JsonCreator
-    public MeasurementUnitMetaField(@JsonProperty("name") String name,
+    public MeasurementUnitMetaField(@JsonProperty("id") int id,
+                                    @JsonProperty("name") String name,
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("units") MeasurementUnit units,
                                     @JsonProperty("value") String value) {
-        super(name, role);
+        super(id, name, role);
         this.units = units;
         this.value = value;
     }
 
     @Override
     public MetaField copy() {
-        return new MeasurementUnitMetaField(name, role, units, value);
+        return new MeasurementUnitMetaField(id, name, role, units, value);
     }
 }

@@ -17,15 +17,16 @@ public class TimeMetaField extends MetaField {
     public final Date time;
 
     @JsonCreator
-    public TimeMetaField(@JsonProperty("name") String name,
+    public TimeMetaField(@JsonProperty("id") int id,
+                         @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("time") Date time) {
-        super(name, role);
+        super(id, name, role);
         this.time = time;
     }
 
     @Override
     public MetaField copy() {
-        return new TimeMetaField(name, role, (Date) time.clone());
+        return new TimeMetaField(id, name, role, (Date) time.clone());
     }
 }

@@ -15,16 +15,17 @@ public class TextMetaField extends MetaField {
     public final String value;
 
     @JsonCreator
-    public TextMetaField(@JsonProperty("name") String name,
+    public TextMetaField(@JsonProperty("id") int id,
+                         @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("value") String value) {
-        super(name, role);
+        super(id, name, role);
         this.value = value;
     }
 
     @Override
     public MetaField copy() {
-        return new TextMetaField(name, role, value);
+        return new TextMetaField(id, name, role, value);
     }
 
 }
