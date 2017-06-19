@@ -275,7 +275,9 @@ public class DevicesHandler extends BaseHttpHandler {
                     eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
                 }
 
-                joinLogEventName(product, eventList);
+                if (product != null) {
+                    joinLogEventName(product, eventList);
+                }
 
                 Map<LogEventCountKey, Integer> totalCounters = dbManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
 

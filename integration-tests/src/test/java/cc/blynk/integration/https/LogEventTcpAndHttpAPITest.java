@@ -18,10 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
@@ -134,6 +131,66 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(EventType.CRITICAL, logEvents[0].eventType);
             assertFalse(logEvents[0].isResolved);
             assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("MyNewDescription", logEvents[0].description);
+        }
+    }
+
+    @Test
+    public void testTimneLineIsFetchedEventProductWasRemoved() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high\0" + "MyNewDescription");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("MyNewDescription", logEvents[0].description);
+        }
+
+        HttpDelete deleteReq = new HttpDelete(httpsAdminServerUrl + "/product/1");
+        try (CloseableHttpResponse response = httpclient.execute(deleteReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertNull(logEvents[0].name);
             assertEquals("MyNewDescription", logEvents[0].description);
         }
     }

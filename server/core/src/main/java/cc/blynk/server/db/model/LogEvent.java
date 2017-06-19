@@ -29,18 +29,11 @@ public class LogEvent {
     public String name;
     public String description;
 
+    //for tests mostly
     public LogEvent(int deviceId, EventType eventType, long ts, int eventHashCode, String description) {
-        this.id = -1;
-        this.deviceId = deviceId;
-        this.eventType = eventType;
-        this.ts = ts;
-        this.eventHashcode = eventHashCode;
-        this.description = description;
-        this.isResolved = false;
-        this.resolvedBy = null;
+        this(-1, deviceId, eventType, ts, eventHashCode, description, false, null);
     }
 
-    //for tests mostly
     @JsonCreator
     public LogEvent(@JsonProperty("id") int id,
                     @JsonProperty("deviceId") int deviceId,
