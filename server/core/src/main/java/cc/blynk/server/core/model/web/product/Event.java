@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.web.product.events.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import static cc.blynk.utils.ArrayUtil.EMPTY_RECEIVERS;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -30,11 +32,11 @@ public abstract class Event {
 
     public boolean isNotificationsEnabled;
 
-    public EventReceiver[] emailNotifications;
+    public EventReceiver[] emailNotifications = EMPTY_RECEIVERS;
 
-    public EventReceiver[] pushNotifications;
+    public EventReceiver[] pushNotifications = EMPTY_RECEIVERS;
 
-    public EventReceiver[] smsNotifications;
+    public EventReceiver[] smsNotifications = EMPTY_RECEIVERS;
 
     public abstract boolean isSame(int hashcode);
 

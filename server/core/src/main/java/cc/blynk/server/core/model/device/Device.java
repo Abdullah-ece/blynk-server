@@ -78,6 +78,15 @@ public class Device implements Target {
         this.boardType = boardType;
     }
 
+    public MetaField findMetaFieldById(int id) {
+        for (MetaField metaField : metaFields) {
+            if (metaField.id == id) {
+                return metaField;
+            }
+        }
+        return null;
+    }
+
     @Override
     public int[] getDeviceIds() {
         return new int[] {id};

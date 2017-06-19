@@ -8,12 +8,9 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.Event;
-import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
-import cc.blynk.server.core.model.web.product.events.OfflineEvent;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
@@ -196,6 +193,43 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testEmailNotificationWorkWithEvent() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high\0" + "MyNewDescription");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("MyNewDescription", logEvents[0].description);
+        }
+
+        verify(mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("You received event."), eq("Temp is super high"));
+    }
+
+    @Test
     public void testBasicLogEventWithIsResolvedFlow() throws Exception {
         String token = createProductAndDevice();
 
@@ -319,17 +353,19 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, 123D)
-        };
-        OfflineEvent offlineEvent = new OfflineEvent();
-        offlineEvent.ignorePeriod = 1000;
-        product.events = new Event[] {
-                offlineEvent
+                new NumberMetaField(1, "Jopa", Role.STAFF, 123D),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
+                        "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                        "+38063673333",  false, "My street", false,
+                        "Kyiv", false, "Ukraine", false, "03322", false, false)
         };
         CriticalEvent event = new CriticalEvent();
         event.name = "Temp is super high";
         event.eventCode = "temp_is_high";
         event.description = "This is my description";
+        event.emailNotifications = new EventReceiver[] {
+                new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+        };
         product.events = new Event[] {
                 event
         };

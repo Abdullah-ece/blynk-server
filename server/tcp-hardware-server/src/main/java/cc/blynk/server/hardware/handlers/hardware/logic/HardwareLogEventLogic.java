@@ -4,12 +4,19 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Event;
+import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,12 +38,16 @@ public class HardwareLogEventLogic {
     private final DeviceDao deviceDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private final GCMWrapper gcmWrapper;
+    private final MailWrapper mailWrapper;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
+        this.gcmWrapper = holder.gcmWrapper;
+        this.mailWrapper = holder.mailWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -82,6 +93,46 @@ public class HardwareLogEventLogic {
             } catch (Exception e) {
                 log.error("Error inserting log event.", e);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            }
+        });
+
+        for (EventReceiver mailReceiver : event.emailNotifications) {
+            MetaField metaField = device.findMetaFieldById(mailReceiver.id);
+            if (metaField != null && metaField instanceof ContactMetaField) {
+                ContactMetaField contactMetaField = (ContactMetaField) metaField;
+                mail(contactMetaField.email, "You received event.", event.name);
+            }
+        }
+
+        for (EventReceiver pushReceiver : event.pushNotifications) {
+            MetaField metaField = device.findMetaFieldById(pushReceiver.id);
+            if (metaField != null && metaField instanceof ContactMetaField) {
+                push(state, "You received new event : " + event.name);
+            }
+        }
+    }
+
+    private void push(HardwareStateHolder state, String message) {
+        DashBoard dash = state.user.profile.getDashById(state.dashId);
+        if (dash == null) {
+            log.debug("User has no access dashboard for pushes for event log");
+            return;
+        }
+        Notification widget = dash.getWidgetByType(Notification.class);
+
+        if (widget == null || widget.hasNoToken()) {
+            log.debug("User has no access token provided for push widget for event log.");
+            return;
+        }
+        widget.push(gcmWrapper, message, state.dashId);
+    }
+
+    private void mail(String to, String subj, String body) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                mailWrapper.sendHtml(to, subj, body);
+            } catch (Exception e) {
+                log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}", to, e.getMessage());
             }
         });
     }

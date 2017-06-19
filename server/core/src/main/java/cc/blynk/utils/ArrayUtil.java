@@ -4,10 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.web.product.DataStream;
-import cc.blynk.server.core.model.web.product.Event;
-import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.widgets.Widget;
 
 import java.lang.reflect.Array;
@@ -30,6 +27,7 @@ public class ArrayUtil {
     public static final Product[] EMPTY_PRODUCTS = {};
     public static final Event[] EMPTY_EVENTS = {};
     public static final DataStream[] EMPTY_DATA_STREAMS = {};
+    public static final EventReceiver[] EMPTY_RECEIVERS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
