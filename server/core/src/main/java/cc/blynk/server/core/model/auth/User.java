@@ -86,6 +86,10 @@ public class User {
         return email + "-" + appName;
     }
 
+    public boolean hasAccess(int orgId) {
+        return isSuperAdmin() || this.orgId == orgId;
+    }
+
     public void subtractEnergy(int price) {
         if (AppName.BLYNK.equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.");

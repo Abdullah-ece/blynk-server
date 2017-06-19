@@ -163,22 +163,17 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(existingProduct);
     }
 
-
     @DELETE
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
+    @Admin
     public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int productId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        if (!httpSession.user.isAdmin()) {
-            log.error("Only admins can delete products. User {} not admin.", httpSession.user.email);
-            return forbidden();
+        if (organizationDao.deleteProduct(httpSession.user, productId)) {
+            return ok();
+        } else {
+            return notFound();
         }
-
-        int orgId = httpSession.user.orgId;
-        Product existingProduct = organizationDao.getProduct(orgId, productId);
-
-        organizationDao.deleteProduct(orgId, existingProduct);
-        return ok();
     }
 }

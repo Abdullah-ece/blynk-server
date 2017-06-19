@@ -330,4 +330,49 @@ public class ProductAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void createProductAndDeleteRegularUserCanrtDelete() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        HttpGet req2 = new HttpGet(httpsAdminServerUrl + "/product");
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+        }
+
+        HttpDelete req3 = new HttpDelete(httpsAdminServerUrl + "/product/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(req3)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req4 = new HttpGet(httpsAdminServerUrl + "/product");
+
+        try (CloseableHttpResponse response = httpclient.execute(req4)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+        }
+    }
+
 }

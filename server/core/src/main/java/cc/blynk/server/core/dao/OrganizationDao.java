@@ -1,5 +1,7 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
 import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
@@ -9,8 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static cc.blynk.utils.ArrayUtil.remove;
 
 /**
  * The Blynk Project.
@@ -69,16 +69,19 @@ public class OrganizationDao {
         return org;
     }
 
-    public void deleteProduct(int orgId, Product product) {
-        Organization org = getOrgById(orgId);
-
-        for (int i = 0; i < org.products.length; i++) {
-            if (org.products[i].id == product.id) {
-                org.products = remove(org.products, i, Product.class);
-                org.lastModifiedTs = System.currentTimeMillis();
-                return;
+    public boolean deleteProduct(User user, int productId) {
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.id == productId) {
+                    if (!user.hasAccess(org.id)) {
+                        throw new NotAllowedWebException("User has no rights for product removal.");
+                    }
+                    org.deleteProduct(productId);
+                    return true;
+                }
             }
         }
+        return false;
     }
 
     public boolean delete(int id) {

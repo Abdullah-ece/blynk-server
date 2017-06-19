@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
+import static cc.blynk.utils.ArrayUtil.remove;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -53,6 +55,16 @@ public class Organization {
     public void addProduct(Product product) {
         this.products = ArrayUtil.add(products, product, Product.class);
         this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void deleteProduct(int productId) {
+        for (int i = 0; i < products.length; i++) {
+            if (products[i].id == productId) {
+                products = remove(products, i, Product.class);
+                lastModifiedTs = System.currentTimeMillis();
+                return;
+            }
+        }
     }
 
     public Product getProduct(int id)  {

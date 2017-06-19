@@ -3,6 +3,7 @@ package cc.blynk.core.http.rest;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.rest.params.Param;
+import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
 import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Role;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 
-import static cc.blynk.core.http.Response.badRequest;
-import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.core.http.Response.*;
 
 /**
  * The Blynk Project.
@@ -75,8 +75,13 @@ public class Handler {
         try {
             return (FullHttpResponse) classMethod.invoke(handler, params);
         } catch (Exception e) {
-            if (e.getCause() instanceof WebException) {
-                return badRequest(e.getCause().getMessage());
+            Throwable cause = e.getCause();
+            if (cause instanceof WebException) {
+                if (cause instanceof NotAllowedWebException) {
+                    return forbidden(cause.getMessage());
+                } else {
+                    return badRequest(cause.getMessage());
+                }
             } else {
                 log.error("Error invoking handler. Reason : {}.", e.getMessage());
                 return serverError(e.getMessage());
