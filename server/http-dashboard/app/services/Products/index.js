@@ -425,11 +425,21 @@ export const prepareProductForSave = (data) => {
         values = value.values;
       }
 
-      product.metaFields.push({
+
+      const field = {
         name: value.name,
         type: value.type,
         ...values
-      });
+      };
+
+      field.id = Math.ceil(Math.random() * 1000);
+
+      if (values.isSavedBefore) {
+        delete field.id;
+        delete field.isSavedBefore;
+      }
+
+      product.metaFields.push(field);
     });
   }
 
