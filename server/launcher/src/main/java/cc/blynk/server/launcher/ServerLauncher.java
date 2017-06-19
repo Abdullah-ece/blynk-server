@@ -127,8 +127,8 @@ public class ServerLauncher {
 
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
-            Organization mainOrg = holder.organizationDao.add(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
-            holder.organizationDao.add(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png"));
+            Organization mainOrg = holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
+            holder.organizationDao.create(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png"));
             Product product = new Product();
             product.boardType = "Particle Photon";
             product.connectionType = ConnectionType.WI_FI;
@@ -139,7 +139,7 @@ public class ServerLauncher {
             };
             product.events = createDefaultEvents();
 
-            holder.organizationDao.addProduct(mainOrg.id, product);
+            holder.organizationDao.createProduct(mainOrg.id, product);
 
             User user = holder.userDao.getByName(email, AppName.BLYNK);
             user.profile.dashBoards = new DashBoard[] {
@@ -148,7 +148,7 @@ public class ServerLauncher {
 
             for (int i = 0; i < 20; i++) {
                 Device device = new Device("My Device " + i, "Particle Photon", "auth_123", product.id, ConnectionType.WI_FI);
-                holder.deviceDao.add(mainOrg.id, device);
+                holder.deviceDao.create(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {
                         Event event = product.findEventByType(eventType);

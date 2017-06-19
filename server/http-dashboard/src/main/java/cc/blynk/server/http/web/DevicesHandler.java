@@ -83,7 +83,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         newDevice.metaFields = product.copyMetaFields();
 
-        deviceDao.add(user.orgId, newDevice);
+        deviceDao.create(user.orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();

@@ -45,7 +45,7 @@ public class GetTokenLogic {
         //if token not exists. generate new one
         if (token == null) {
             device = new Device(deviceId, "ESP8266", "ESP8266");
-            deviceDao.add(user.orgId, device);
+            deviceDao.create(user.orgId, device);
             dash.devices = new Device[] {
                     device
             };

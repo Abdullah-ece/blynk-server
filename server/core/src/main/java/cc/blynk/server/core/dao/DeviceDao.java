@@ -44,7 +44,7 @@ public class DeviceDao {
         log.info("Devices number is {}", devices.size());
     }
 
-    public Device add(int orgId, Device device) {
+    public Device create(int orgId, Device device) {
         device.id = deviceSequence.incrementAndGet();
         devices.put(new DeviceKey(orgId, device.id), device);
         return device;

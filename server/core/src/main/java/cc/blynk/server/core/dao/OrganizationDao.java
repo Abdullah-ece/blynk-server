@@ -41,7 +41,7 @@ public class OrganizationDao {
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
-    public Organization add(Organization organization) {
+    public Organization create(Organization organization) {
         organization.id = orgSequence.incrementAndGet();
         organizations.putIfAbsent(organization.id, organization);
         return organization;
@@ -88,7 +88,7 @@ public class OrganizationDao {
         return false;
     }
 
-    public Product addProduct(int orgId, Product product) {
+    public Product createProduct(int orgId, Product product) {
         Organization organization = getOrgById(orgId);
         if (organization == null) {
             return null;

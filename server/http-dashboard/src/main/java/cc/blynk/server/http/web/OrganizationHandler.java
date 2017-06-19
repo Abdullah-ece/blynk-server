@@ -196,7 +196,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        return ok(organizationDao.add(newOrganization));
+        return ok(organizationDao.create(newOrganization));
     }
 
     @POST

@@ -100,7 +100,7 @@ public class ProductHandler extends BaseHttpHandler {
     public Response create(@Context ChannelHandlerContext ctx, Product product) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        product = organizationDao.addProduct(httpSession.user.orgId, product);
+        product = organizationDao.createProduct(httpSession.user.orgId, product);
 
         if (product == null || product.notValid()) {
             log.error("Cannot find product with id {}", httpSession.user.orgId);
