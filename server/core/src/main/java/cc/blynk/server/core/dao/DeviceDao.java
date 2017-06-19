@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +56,12 @@ public class DeviceDao {
     }
 
     public Device getById(int deviceId) {
-        return devices.get(new DeviceKey(0, deviceId));
+        Device device = devices.get(new DeviceKey(0, deviceId));
+        if (device == null) {
+            log.error("Device with id {} not found.", deviceId);
+            throw new DeviceNotFoundException("Requested device not exists.");
+        }
+        return device;
     }
 
     public Collection<Device> getAllByUser(User user) {

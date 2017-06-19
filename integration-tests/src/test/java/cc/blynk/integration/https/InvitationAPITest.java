@@ -68,7 +68,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Wrong organization id.\"}}", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Cannot find organization with passed id.\"}}", consumeText(response));
         }
     }
 

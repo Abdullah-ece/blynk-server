@@ -1,5 +1,7 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
+import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import org.apache.logging.log4j.LogManager;
@@ -49,26 +51,26 @@ public class OrganizationDao {
 
     public Product getProduct(int orgId, int productId) {
         Organization org = getOrgById(orgId);
-        if (org == null) {
-            return null;
-        }
         for (Product product : org.products) {
             if (product.id == productId) {
                 return product;
             }
         }
-        return null;
+        log.error("Product with passed id {} not found in organization with id {}.", productId, orgId);
+        throw new ProductNotFoundException("Product with passed id " + productId + " not found in organization with id " + orgId);
     }
 
     public Organization getOrgById(int id) {
-        return organizations.get(id);
+        Organization org = organizations.get(id);
+        if (org == null) {
+            log.error("Cannot find org with id {}.", id);
+            throw new OrgNotFoundException("Cannot find organization with passed id.");
+        }
+        return org;
     }
 
     public void deleteProduct(int orgId, Product product) {
         Organization org = getOrgById(orgId);
-        if (org == null) {
-            return;
-        }
 
         for (int i = 0; i < org.products.length; i++) {
             if (org.products[i].id == product.id) {
@@ -90,9 +92,6 @@ public class OrganizationDao {
 
     public Product createProduct(int orgId, Product product) {
         Organization organization = getOrgById(orgId);
-        if (organization == null) {
-            return null;
-        }
         product.id = productSequence.incrementAndGet();
         organization.addProduct(product);
         return product;
@@ -110,6 +109,15 @@ public class OrganizationDao {
     }
 
     public Product getProductById(int productId) {
+        Product product = getProductByIdOrNull(productId);
+        if (product == null) {
+            log.error("Product with passed id {} not exists.", productId);
+            throw new ProductNotFoundException("Product with passed id " + productId + " not found.");
+        }
+        return product;
+    }
+
+    public Product getProductByIdOrNull(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
                 if (product.id == productId) {

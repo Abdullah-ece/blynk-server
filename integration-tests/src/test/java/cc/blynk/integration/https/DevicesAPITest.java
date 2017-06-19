@@ -105,7 +105,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/11111");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 

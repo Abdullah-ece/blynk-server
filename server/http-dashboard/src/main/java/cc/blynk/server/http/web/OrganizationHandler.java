@@ -66,11 +66,6 @@ public class OrganizationHandler extends BaseHttpHandler {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
 
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
-            return badRequest("Cannot find organization with passed id.");
-        }
-
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
                 log.error("User {} tries to access organization he has no access.");
@@ -87,11 +82,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
-            return badRequest("Cannot find organization with passed id.");
-        }
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -115,11 +105,6 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
-            return badRequest("Cannot find organization with passed id.");
-        }
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -150,11 +135,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, String[] emailsToDelete) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}.", httpSession.user.orgId, httpSession.user.email);
-            return badRequest("Cannot find organization with passed id.");
-        }
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -211,11 +191,6 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         Organization existingOrganization = organizationDao.getOrgById(orgId);
 
-        if (existingOrganization == null) {
-            log.error("Organization with passed is {} not found.", newOrganization.id);
-            return badRequest();
-        }
-
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -240,11 +215,6 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         Organization existingOrganization = organizationDao.getOrgById(orgId);
 
-        if (existingOrganization == null) {
-            log.error("Organization with passed is {} not found.", orgId);
-            return badRequest();
-        }
-
         if (!organizationDao.delete(orgId)) {
             log.error("Wasn't able to remove organization with id {}.", orgId);
             return badRequest();
@@ -264,10 +234,6 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         Organization org = organizationDao.getOrgById(orgId);
-        if (org == null) {
-            log.error("Organization with passed id {} not exists.", orgId);
-            return badRequest("Wrong organization id.");
-        }
 
         userInvite.email = userInvite.email.toLowerCase();
 

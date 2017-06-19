@@ -100,12 +100,12 @@ public class ProductHandler extends BaseHttpHandler {
     public Response create(@Context ChannelHandlerContext ctx, Product product) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
-        product = organizationDao.createProduct(httpSession.user.orgId, product);
-
         if (product == null || product.notValid()) {
-            log.error("Cannot find product with id {}", httpSession.user.orgId);
-            return badRequest();
+            log.error("Product is empty or has not name. {}", product);
+            return badRequest("Product is empty or has not name.");
         }
+
+        product = organizationDao.createProduct(httpSession.user.orgId, product);
 
         return ok(product);
     }
@@ -122,11 +122,6 @@ public class ProductHandler extends BaseHttpHandler {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
         Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
-
-        if (existingProduct == null) {
-            log.error("Product with passed id {} not found.", updatedProduct.id);
-            return badRequest();
-        }
 
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);
@@ -151,11 +146,6 @@ public class ProductHandler extends BaseHttpHandler {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
         Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
-
-        if (existingProduct == null) {
-            log.error("Product with passed id {} for org {} not found.", httpSession.user.orgId, updatedProduct.id);
-            return badRequest();
-        }
 
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);
@@ -187,11 +177,6 @@ public class ProductHandler extends BaseHttpHandler {
 
         int orgId = httpSession.user.orgId;
         Product existingProduct = organizationDao.getProduct(orgId, productId);
-
-        if (existingProduct == null) {
-          log.error("Product with passed is {} not found in organization with id {}.", productId, orgId);
-          return badRequest();
-        }
 
         organizationDao.deleteProduct(orgId, existingProduct);
         return ok();

@@ -75,12 +75,6 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         Product product = organizationDao.getProductById(newDevice.productId);
-
-        if (product == null) {
-            log.error("Product with passed id {} not exists.", newDevice.productId);
-            return badRequest();
-        }
-
         newDevice.metaFields = product.copyMetaFields();
 
         deviceDao.create(user.orgId, newDevice);
@@ -180,7 +174,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
     private Device joinProductAndOrgInfo(Device device) {
         Map<String, Object> props = new HashMap<>();
-        Product product = organizationDao.getProductById(device.productId);
+        Product product = organizationDao.getProductByIdOrNull(device.productId);
 
         if (product != null) {
             if (product.name != null) {
@@ -204,7 +198,7 @@ public class DevicesHandler extends BaseHttpHandler {
     private void joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
         Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
         for (Device device : devices) {
-            Product product = organizationDao.getProductById(device.productId);
+            Product product = organizationDao.getProductByIdOrNull(device.productId);
             String productName = product == null ? null : product.name;
             device.setEventsCounterSinceLastView(
                     counters.get(new LogEventCountKey(device.id, EventType.CRITICAL, false)),
@@ -222,11 +216,6 @@ public class DevicesHandler extends BaseHttpHandler {
 
         //todo security checks
         Device device = deviceDao.getById(deviceId);
-
-        if (device == null) {
-            log.error("Device with id = {} not exists.", deviceId);
-            return notFound();
-        }
 
         return ok(joinProductAndOrgInfo(device));
     }
@@ -270,17 +259,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
 
-        if (device == null) {
-            log.error("Device with id = {} not exists.", deviceId);
-            return notFound();
-        }
-
-        Product product = organizationDao.getProductById(device.productId);
-
-        if (product == null) {
-            log.error("Product with id {} not exists.", device.productId);
-            return notFound();
-        }
+        Product product = organizationDao.getProductByIdOrNull(device.productId);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;

@@ -103,7 +103,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         log.trace("Disconnected device: {}", state);
         device.disconnected();
 
-        Product product = organizationDao.getProductById(device.productId);
+        Product product = organizationDao.getProductByIdOrNull(device.productId);
         if (product != null) {
             int ignorePeriod = product.getIgnorePeriod();
             //means no ignore period
