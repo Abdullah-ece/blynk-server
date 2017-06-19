@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.web.product;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,16 +10,16 @@ package cc.blynk.server.core.model.web.product;
  */
 public class EventReceiver {
 
-    public int id;
+    public final int id;
 
-    public String type;
+    public final MetadataType type;
 
-    public String value;
+    public final String value;
 
-    public EventReceiver() {
-    }
-
-    public EventReceiver(int id, String type, String value) {
+    @JsonCreator
+    public EventReceiver(@JsonProperty("id") int id,
+                         @JsonProperty("type") MetadataType type,
+                         @JsonProperty("value") String value) {
         this.id = id;
         this.type = type;
         this.value = value;

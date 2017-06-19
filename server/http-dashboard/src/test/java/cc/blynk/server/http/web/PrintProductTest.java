@@ -51,7 +51,7 @@ public class PrintProductTest {
                 new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
-        EventReceiver eventReceiver = new EventReceiver(1, "META_FIELD", "Farm Owner");
+        EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");
 
         OnlineEvent onlineEvent = new OnlineEvent();
         onlineEvent.name = "Your device is online.";
