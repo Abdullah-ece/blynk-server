@@ -1,5 +1,41 @@
 @import "components/Layout/style-guide";
 
+.event-resolved-type-generator(@color) {
+
+  color: @color;
+
+  padding-left: 23px;
+
+  &:before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid @color;
+    border-radius: 10px;
+    position: absolute;
+    margin-top: 2px;
+    margin-left: -23px;
+  }
+
+  .ant-timeline-item-tail {
+    border-left: 2px dotted #8D8D90;
+  }
+  .ant-timeline-item-head {
+    border-color: @color;
+    color: @color;
+  }
+  .ant-timeline-item-content:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 19px;
+    left: 7px;
+    bottom: -2px;
+    border-left: 2px solid @color;
+  }
+}
+
 .event-type-generator(@color) {
   .ant-timeline-item-tail {
     border-left: 2px dotted #8D8D90;
@@ -68,6 +104,7 @@
 
 .devices--device-timeline--event-content {
   .font-simple-gray;
+  color: @color-dark-grey-75;
 }
 
 .devices--device-timeline--event-default {
@@ -91,4 +128,60 @@
 .devices--device-timeline--event-info {
   .event-type-generator(@color-primary-5);
   .event-name-generator(@color-primary-5);
+}
+
+.devices--device-timeline--event-success {
+  .event-type-generator(@color-positive);
+  .event-name-generator(@color-positive);
+}
+
+.devices--device-timeline--event-header-resolved-by,
+.devices--device-timeline--event-header-resolved-time {
+  font-size: 12px;
+  color: @color-dark-grey-75;
+}
+
+.devices--device-timeline--event-header-name-resolved-icon {
+  font-size: 10px;
+  display: inline-block;
+  background: @color-positive;
+  color: @color-white;
+  border-radius: 10px;
+  text-transform: uppercase;
+  padding: 0 8px;
+  height: 16px;
+  line-height: 16px;
+  margin-right: 8px;
+  font-weight: 400;
+}
+
+.devices--device-timeline--event-resolved-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.devices--device-timeline--event-resolved-content-time {
+  margin-left: 12px;
+  font-size: 12px;
+  color: @color-dark-grey-50;
+}
+
+.devices--device-timeline--event-resolved-description {
+  margin-top: 12px;
+  margin-left: 24px;
+  color: @color-dark-grey-75;
+}
+
+.devices--device-timeline--event-resolved-content-name {
+  .font-body-text;
+  font-weight: 400;
+}
+
+.devices--device-timeline--event-resolved-content-name-critical {
+  .event-resolved-type-generator(@color-critical);
+}
+
+.devices--device-timeline--event-resolved-content-name-warning {
+  .event-resolved-type-generator(@color-warning);
 }
