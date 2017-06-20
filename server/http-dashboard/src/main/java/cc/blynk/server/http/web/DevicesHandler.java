@@ -93,7 +93,8 @@ public class DevicesHandler extends BaseHttpHandler {
     @Path("/{deviceId}/resolveEvent/{logEventId}")
     public Response resolveLogEvent(@Context ChannelHandlerContext ctx,
                                     @PathParam("deviceId") int deviceId,
-                                    @PathParam("logEventId") int logEventId) {
+                                    @PathParam("logEventId") int logEventId,
+                                    Comment comment) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -102,7 +103,8 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                dbManager.eventDBDao.resolveEvent(logEventId, user.name);
+                String userComment = comment == null ? "" : comment.comment;
+                dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment);
                 response = ok();
             } catch (Exception e) {
                 log.error("Error marking event as resolved.", e);

@@ -28,12 +28,14 @@ public class LogEvent {
 
     public final long resolvedAt;
 
+    public final String resolvedComment;
+
     public String name;
     public String description;
 
     //for tests mostly
     public LogEvent(int deviceId, EventType eventType, long ts, int eventHashCode, String description) {
-        this(-1, deviceId, eventType, ts, eventHashCode, description, false, null, 0);
+        this(-1, deviceId, eventType, ts, eventHashCode, description, false, null, 0, null);
     }
 
     @JsonCreator
@@ -45,7 +47,8 @@ public class LogEvent {
                     @JsonProperty("description") String description,
                     @JsonProperty("isResolved") boolean isResolved,
                     @JsonProperty("resolvedBy") String resolvedBy,
-                    @JsonProperty("resolvedAt") long resolvedAt) {
+                    @JsonProperty("resolvedAt") long resolvedAt,
+                    @JsonProperty("resolvedComment") String resolvedComment) {
         this.id = id;
         this.deviceId = deviceId;
         this.eventType = eventType;
@@ -55,6 +58,7 @@ public class LogEvent {
         this.isResolved = isResolved;
         this.resolvedBy = resolvedBy;
         this.resolvedAt = resolvedAt;
+        this.resolvedComment = resolvedComment;
     }
 
     public void update(Event event) {

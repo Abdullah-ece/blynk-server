@@ -203,7 +203,8 @@ CREATE TABLE reporting_events (
   description text,
   is_resolved boolean DEFAULT FALSE,
   resolved_by text,
-  resolved_at timestamp
+  resolved_at timestamp,
+  resolved_comment text
 );
 CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
 

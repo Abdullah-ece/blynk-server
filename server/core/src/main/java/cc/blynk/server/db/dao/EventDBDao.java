@@ -27,7 +27,7 @@ public class EventDBDao {
 
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
-    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ? where id = ?";
+    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ?, resolved_comment = ? where id = ?";
     private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
     private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
     private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
@@ -208,7 +208,8 @@ public class EventDBDao {
                 rs.getString("description"),
                 rs.getBoolean("is_resolved"),
                 rs.getString("resolved_by"),
-                resolvedAt == null ? 0 : resolvedAt.getTime()
+                resolvedAt == null ? 0 : resolvedAt.getTime(),
+                rs.getString("resolved_comment")
         );
     }
 
@@ -242,13 +243,14 @@ public class EventDBDao {
         }
     }
 
-    public void resolveEvent(int id, String name) throws Exception {
+    public void resolveEvent(int id, String name, String comment) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
 
             ps.setString(1, name);
             ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()), UTC_CALENDAR);
-            ps.setInt(3, id);
+            ps.setString(3, comment);
+            ps.setInt(4, id);
 
             ps.executeUpdate();
             connection.commit();

@@ -725,6 +725,8 @@ HOST: https://knight-qa.blynk.cc/
                 "description" : "This is my description",
                 "isResolved" : true,
                 "resolvedBy" : "Vasya Pupkin",
+                "resolvedAt" : 1497290276606,
+                "resolveComment" : "My resolve comment",
                 "name" : "Temp is super high"
               }
           ]
@@ -735,6 +737,10 @@ HOST: https://knight-qa.blynk.cc/
 ## Resolve Log Event [POST] [/devices/{deviceId}/resolveEvent/{logEventId}]
 
 + Request (application/json)
+
+        {
+            "comment" : "My resolve comment"
+        }
 
 + Response 200 (application/json)
 
