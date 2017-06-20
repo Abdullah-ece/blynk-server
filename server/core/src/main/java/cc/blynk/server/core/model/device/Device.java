@@ -42,10 +42,10 @@ public class Device implements Target {
     public void setEventsCounterSinceLastView(Integer criticalCounter, Integer warningCounter, String productName) {
         this.dynamicFields = new HashMap<>();
         if (criticalCounter != null) {
-            this.dynamicFields.put("CRITICAL", criticalCounter);
+            this.dynamicFields.put("criticalSinceLastView", criticalCounter);
         }
         if (warningCounter != null) {
-            this.dynamicFields.put("WARNING", warningCounter);
+            this.dynamicFields.put("warningSinceLastView", warningCounter);
         }
         if (productName != null) {
             this.dynamicFields.put("productName", productName);

@@ -335,8 +335,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(2, devices.length);
             for (DeviceTest deviceTest : devices) {
                 if (deviceTest.id == 1) {
-                    assertEquals(Integer.valueOf(1), deviceTest.CRITICAL);
-                    assertNull(deviceTest.WARNING);
+                    assertEquals(Integer.valueOf(1), deviceTest.criticalSinceLastView);
+                    assertNull(deviceTest.warningSinceLastView);
                 }
             }
 
@@ -466,8 +466,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     }
 
     public static class DeviceTest extends Device {
-        Integer CRITICAL;
-        Integer WARNING;
+        Integer criticalSinceLastView;
+        Integer warningSinceLastView;
     }
 
 }
