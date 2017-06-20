@@ -29,11 +29,11 @@ class DeviceItem extends React.Component {
               <i>No Product Name</i>) }</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-events">
-            { this.props.device.has('critical') && (
-              <Badge count={this.props.device.get('critical')} className="critical"/>
+            { this.props.device.has('criticalSinceLastView') && (
+              <Badge count={this.props.device.get('criticalSinceLastView')} className="criticalSinceLastView"/>
             )}
-            { !this.props.device.has('critical') && this.props.device.has('warning') && (
-              <Badge count={this.props.device.get('warning')} className="warning"/>
+            { !this.props.device.has('criticalSinceLastView') && this.props.device.has('warningSinceLastView') && (
+              <Badge count={this.props.device.get('warningSinceLastView')} className="warning"/>
             )}
           </div>
         </div>
