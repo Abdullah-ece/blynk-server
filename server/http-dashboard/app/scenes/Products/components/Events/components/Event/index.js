@@ -131,7 +131,7 @@ class Event extends React.Component {
         </Base.Content>
         <Base.Preview {...this.getPreviewProps()} valid={
           <Item label="Code Preview" offset="small">
-            Blynk.logEvent({ this.props.fields.eventCode });
+            Blynk.logEvent("{ this.props.fields.eventCode }");
           </Item>
         } invalid={
           <Item label="Code Preview" offset="small">
