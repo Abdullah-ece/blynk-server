@@ -24,14 +24,16 @@ public class LogEvent {
 
     public final boolean isResolved;
 
-    private final String resolvedBy;
+    public final String resolvedBy;
+
+    public final long resolvedAt;
 
     public String name;
     public String description;
 
     //for tests mostly
     public LogEvent(int deviceId, EventType eventType, long ts, int eventHashCode, String description) {
-        this(-1, deviceId, eventType, ts, eventHashCode, description, false, null);
+        this(-1, deviceId, eventType, ts, eventHashCode, description, false, null, 0);
     }
 
     @JsonCreator
@@ -42,7 +44,8 @@ public class LogEvent {
                     @JsonProperty("eventHashcode") int eventHashcode,
                     @JsonProperty("description") String description,
                     @JsonProperty("isResolved") boolean isResolved,
-                    @JsonProperty("resolvedBy") String resolvedBy) {
+                    @JsonProperty("resolvedBy") String resolvedBy,
+                    @JsonProperty("resolvedAt") long resolvedAt) {
         this.id = id;
         this.deviceId = deviceId;
         this.eventType = eventType;
@@ -51,6 +54,7 @@ public class LogEvent {
         this.description = description;
         this.isResolved = isResolved;
         this.resolvedBy = resolvedBy;
+        this.resolvedAt = resolvedAt;
     }
 
     public void update(Event event) {
@@ -70,6 +74,7 @@ public class LogEvent {
                 ", eventHashcode=" + eventHashcode +
                 ", isResolved=" + isResolved +
                 ", resolvedBy='" + resolvedBy + '\'' +
+                ", resolvedAt=" + resolvedAt +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';

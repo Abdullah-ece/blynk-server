@@ -311,6 +311,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(1, logEvents.length);
             logEventId = logEvents[0].id;
             assertTrue(logEventId > 1);
+            assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);
         }
     }
 

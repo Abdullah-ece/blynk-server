@@ -27,7 +27,7 @@ public class EventDBDao {
 
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
-    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ? where id = ?";
+    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ? where id = ?";
     private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
     private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
     private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
@@ -198,6 +198,7 @@ public class EventDBDao {
     }
 
     public LogEvent readEvent(ResultSet rs) throws Exception {
+        Timestamp resolvedAt = rs.getTimestamp("resolved_at", UTC_CALENDAR);
         return new LogEvent(
                 rs.getInt("id"),
                 rs.getInt("device_id"),
@@ -206,7 +207,8 @@ public class EventDBDao {
                 rs.getInt("event_hashcode"),
                 rs.getString("description"),
                 rs.getBoolean("is_resolved"),
-                rs.getString("resolved_by")
+                rs.getString("resolved_by"),
+                resolvedAt == null ? 0 : resolvedAt.getTime()
         );
     }
 
@@ -245,7 +247,8 @@ public class EventDBDao {
              PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
 
             ps.setString(1, name);
-            ps.setInt(2, id);
+            ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()), UTC_CALENDAR);
+            ps.setInt(3, id);
 
             ps.executeUpdate();
             connection.commit();

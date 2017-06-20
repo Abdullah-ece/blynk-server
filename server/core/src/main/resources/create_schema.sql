@@ -202,7 +202,8 @@ CREATE TABLE reporting_events (
   event_hashcode int4 DEFAULT 0,
   description text,
   is_resolved boolean DEFAULT FALSE,
-  resolved_by text
+  resolved_by text,
+  resolved_at timestamp
 );
 CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
 
