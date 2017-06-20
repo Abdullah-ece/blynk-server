@@ -1,7 +1,7 @@
 import React                     from 'react';
 import classnames                from 'classnames';
 import moment                    from 'moment';
-import {Timeline}                from 'antd';
+import {Button, Timeline}        from 'antd';
 import {EVENT_TYPES}             from 'services/Products';
 
 class Resolved extends React.Component {
@@ -48,10 +48,19 @@ class Resolved extends React.Component {
               {time}
             </div>
           </div>
-          <div className="devices--device-timeline--event-resolved-description">
-            { this.props.event.get('description') }
-          </div>
+          { this.props.event.has('description') && (
+            <div className="devices--device-timeline--event-resolved-description">
+              { this.props.event.get('description') }
+            </div>
+          )}
         </div>
+        <Button icon="check-circle-o"
+                className="devices--device-timeline--event-mark-as-resolved-lg">
+          Mark as resolved
+        </Button>
+        <Button icon="check-circle-o"
+                type="default"
+                className="devices--device-timeline--event-mark-as-resolved-sm"/>
       </Timeline.Item>
     );
   }

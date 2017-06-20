@@ -38,9 +38,11 @@ class Simple extends React.Component {
             {time}
           </div>
         </div>
-        <div className="devices--device-timeline--event-content">
-          { this.props.event.get('description') }
-        </div>
+        { this.props.event.has('description') && (
+          <div className="devices--device-timeline--event-content">
+            { this.props.event.get('description') }
+          </div>
+        )}
       </Timeline.Item>
     );
   }
