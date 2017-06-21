@@ -86,7 +86,11 @@ class Timeline extends React.Component {
       isResolveModalVisible: true,
       eventId: eventId
     });
+  }
 
+  handleMarkAsResolvesSuccess() {
+    this.handleCancel();
+    this.handleValuesChange(this.props.formValues);
   }
 
   render() {
@@ -102,7 +106,9 @@ class Timeline extends React.Component {
         { this.props.timeline.has('logEvents') && (
           <MarkAsResolvedModal isModalVisible={this.state.isResolveModalVisible}
                                onCancel={this.handleCancel.bind(this)}
-                               event={this.props.timeline.get('logEvents').find(event => event.get('id') === this.state.eventId)}/>
+                               deviceId={Number(this.props.params.id)}
+                               event={this.props.timeline.get('logEvents').find(event => event.get('id') === this.state.eventId)}
+                               onSuccess={this.handleMarkAsResolvesSuccess.bind(this)}/>
         )}
         <Timelines form="Timeline"
                    timeline={this.props.timeline}

@@ -13,10 +13,10 @@ class Event extends React.Component {
 
   render() {
     if (this.props.event.get('isResolved'))
-      return <Resolved event={this.props.event}/>;
+      return (<Resolved event={this.props.event}/>);
 
-    return <Simple event={this.props.event} params={this.props.params}
-                   onMarkAsResolved={this.props.onMarkAsResolved.bind(this)}/>;
+    return (<Simple event={this.props.event} params={this.props.params}
+                    onMarkAsResolved={this.props.onMarkAsResolved.bind(this)}/>);
   }
 
 }

@@ -6,13 +6,30 @@ import classnames       from 'classnames';
 import moment           from 'moment';
 import {EVENT_TYPES}    from 'services/Products';
 import './styles.less';
+import {reduxForm, reset, getFormValues} from 'redux-form';
+import {bindActionCreators} from 'redux';
+import {TimelineResolve} from 'data/Devices/api';
+import {connect} from 'react-redux';
 
+@connect((state) => ({
+  formValues: getFormValues('ResolveModal')(state)
+}), (dispatch) => ({
+  resetForm: bindActionCreators(reset, dispatch),
+  resolve: bindActionCreators(TimelineResolve, dispatch)
+}))
+@reduxForm({
+  form: 'ResolveModal'
+})
 class MarkAsResolvedModal extends React.Component {
 
   static propTypes = {
     onCancel: React.PropTypes.func,
     onMarkAsResolved: React.PropTypes.func,
+    resetForm: React.PropTypes.func,
+    resolve: React.PropTypes.func,
+    onSuccess: React.PropTypes.func,
     event: React.PropTypes.object,
+    formValues: React.PropTypes.object,
     deviceId: React.PropTypes.number,
     isModalVisible: React.PropTypes.bool,
   };
@@ -21,8 +38,32 @@ class MarkAsResolvedModal extends React.Component {
     loading: false
   };
 
+  componentWillUpdate(nextProps) {
+    if (this.props.isModalVisible && !nextProps.isModalVisible) {
+      this.props.resetForm('ResolveModal');
+    }
+  }
+
   handleOk() {
 
+    this.setState({
+      loading: true
+    });
+    this.props.resolve({
+      deviceId: this.props.deviceId,
+      eventId: this.props.event.get('id'),
+      comment: this.props.formValues && this.props.formValues.comment || ''
+    }).then(() => {
+      this.setState({
+        loading: false
+      });
+      this.props.onSuccess();
+    }).catch((err) => {
+      Modal.error({
+        title: 'Sorry, something went wrong',
+        message: err && err.error && err.error.response.message
+      });
+    });
   }
 
   handleCancel() {
@@ -67,7 +108,7 @@ class MarkAsResolvedModal extends React.Component {
         </div>
         <div className="event-resolve-modal-content">
           <Item label="Add comments(optional)">
-            <Input type="textarea" rows="10"/>
+            <Input type="textarea" name="comment" rows="10"/>
           </Item>
         </div>
       </Modal>

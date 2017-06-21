@@ -88,3 +88,22 @@ export const TimelineFetch = (params = {}) => {
     }
   };
 };
+
+export const TimelineResolve = (params) => {
+
+  if (!params.eventId || !params.deviceId)
+    throw new Error('Required parameter is missed');
+
+  return {
+    type: 'API_TIMELINE_RESOLVE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/devices/${params.deviceId}/resolveEvent/${params.eventId}`,
+        data: {
+          comment: params.comment
+        }
+      }
+    }
+  };
+};
