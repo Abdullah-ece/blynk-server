@@ -13,6 +13,8 @@ class Timeline extends React.Component {
     timeline: React.PropTypes.instanceOf(Map),
     loading: React.PropTypes.bool,
     formValues: React.PropTypes.object,
+    params: React.PropTypes.object,
+    onMarkAsResolved: React.PropTypes.func
   };
 
   render() {
@@ -30,7 +32,8 @@ class Timeline extends React.Component {
         ) || this.props.timeline.has('logEvents') && (
           <Timelines className="devices--device-timeline-events">
             { this.props.timeline.get('logEvents').map((event, key) => (
-              <Event event={event} key={key}/>
+              <Event params={this.props.params} event={event} key={key}
+                     onMarkAsResolved={this.props.onMarkAsResolved.bind(this)}/>
             ))}
           </Timelines>
         )}

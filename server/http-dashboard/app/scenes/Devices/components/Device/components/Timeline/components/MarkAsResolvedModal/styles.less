@@ -28,7 +28,6 @@
 
 .event-resolve-modal-header-name {
   position: relative;
-  .event-resolved-type-generator(@color-critical);
   font-size: 24px;
   line-height: 24px;
 }
@@ -45,5 +44,17 @@
   margin-top: 32px;
   textarea {
     height: 128px;
+  }
+}
+
+.event-resolve-modal--critical {
+  .event-resolve-modal-header-name {
+    .event-resolved-type-generator(@color-critical);
+  }
+}
+
+.event-resolve-modal--warning {
+  .event-resolve-modal-header-name {
+    .event-resolved-type-generator(@color-warning);
   }
 }

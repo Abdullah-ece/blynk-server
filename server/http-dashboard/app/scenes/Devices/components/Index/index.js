@@ -63,7 +63,7 @@ class Index extends React.Component {
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <Device device={selectedDevice} params={this.props.params}/>
+          <Device device={selectedDevice} params={this.props.params} location={this.props.location}/>
         </PageLayout.Content>
       </PageLayout>
     );

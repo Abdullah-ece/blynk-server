@@ -1,6 +1,6 @@
 import React from 'react';
 import {Map} from 'immutable';
-import {Timeline as Timelines} from './components';
+import {Timeline as Timelines, MarkAsResolvedModal} from './components';
 import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -25,6 +25,7 @@ class Timeline extends React.Component {
 
   state = {
     loading: false,
+    isResolveModalVisible: false
   };
 
   componentDidMount() {
@@ -74,6 +75,20 @@ class Timeline extends React.Component {
     this.fetchTimeline(params);
   }
 
+  handleCancel() {
+    this.setState({
+      isResolveModalVisible: false,
+    });
+  }
+
+  handleMarkAsResolved(eventId) {
+    this.setState({
+      isResolveModalVisible: true,
+      eventId: eventId
+    });
+
+  }
+
   render() {
 
     const initialValues = {
@@ -84,12 +99,19 @@ class Timeline extends React.Component {
 
     return (
       <div className="devices--device-timeline">
+        { this.props.timeline.has('logEvents') && (
+          <MarkAsResolvedModal isModalVisible={this.state.isResolveModalVisible}
+                               onCancel={this.handleCancel.bind(this)}
+                               event={this.props.timeline.get('logEvents').find(event => event.get('id') === this.state.eventId)}/>
+        )}
         <Timelines form="Timeline"
                    timeline={this.props.timeline}
                    loading={this.state.loading}
                    initialValues={initialValues}
                    formValues={this.props.formValues}
-                   onChange={this.handleValuesChange.bind(this)}/>
+                   params={this.props.params}
+                   onChange={this.handleValuesChange.bind(this)}
+                   onMarkAsResolved={this.handleMarkAsResolved.bind(this)}/>
       </div>
     );
   }

@@ -3,28 +3,16 @@ import classnames             from 'classnames';
 import moment                 from 'moment';
 import {Timeline, Button}     from 'antd';
 import {EVENT_TYPES}          from 'services/Products';
-import {MarkAsResolvedModal}  from './components';
 
 class Simple extends React.Component {
 
   static propTypes = {
-    event: React.PropTypes.object
+    event: React.PropTypes.object,
+    onMarkAsResolved: React.PropTypes.func,
   };
 
-  state = {
-    isModalVisible: false
-  };
-
-  handleModalClose() {
-    this.setState({
-      isModalVisible: false
-    });
-  }
-
-  handleResolveClick() {
-    this.setState({
-      isModalVisible: true
-    });
+  handleOk() {
+    this.props.onMarkAsResolved(this.props.event.get('id'));
   }
 
   render() {
@@ -45,6 +33,8 @@ class Simple extends React.Component {
       "devices--device-timeline--event-success": this.props.event.get('isResolved') === true,
     });
 
+    const canBeResolved = this.props.event.get('eventType') === EVENT_TYPES.CRITICAL || this.props.event.get('eventType') === EVENT_TYPES.WARNING;
+
     return (
       <Timeline.Item className={className}>
         <div className="devices--device-timeline--event-header">
@@ -60,16 +50,21 @@ class Simple extends React.Component {
             { this.props.event.get('description') }
           </div>
         )}
-        <Button icon="check-circle-o"
-                className="devices--device-timeline--event-mark-as-resolved-lg"
-                onClick={this.handleResolveClick.bind(this)}>
-          Mark as resolved
-        </Button>
-        <Button icon="check-circle-o"
-                type="default"
-                className="devices--device-timeline--event-mark-as-resolved-sm"
-                onClick={this.handleResolveClick.bind(this)}/>
-        <MarkAsResolvedModal isModalVisible={this.state.isModalVisible} onCancel={this.handleModalClose.bind(this)}/>
+
+        {canBeResolved && (
+          <Button icon="check-circle-o"
+                  className="devices--device-timeline--event-mark-as-resolved-lg"
+                  onClick={this.handleOk.bind(this)}>
+            Mark as resolved
+          </Button>
+        )}
+
+        {canBeResolved && (
+          <Button icon="check-circle-o"
+                  type="default"
+                  className="devices--device-timeline--event-mark-as-resolved-sm"
+                  onClick={this.handleOk.bind(this)}/>
+        )}
       </Timeline.Item>
     );
   }

@@ -16,12 +16,14 @@ class Device extends React.Component {
   static propTypes = {
     device: React.PropTypes.object,
     params: React.PropTypes.object,
+    location: React.PropTypes.object,
     onChange: React.PropTypes.func,
     updateDevice: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.device, this.props.device));
+    return !(_.isEqual(nextProps.device, this.props.device)) ||
+      !(_.isEqual(nextProps.location, this.props.location));
   }
 
   onDeviceChange(device) {
@@ -46,7 +48,7 @@ class Device extends React.Component {
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
-            <Timeline params={this.props.params}/>
+            <Timeline params={this.props.params} location={this.props.location}/>
           </TabPane>
           <TabPane tab="Device Info" key="3">
             <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
