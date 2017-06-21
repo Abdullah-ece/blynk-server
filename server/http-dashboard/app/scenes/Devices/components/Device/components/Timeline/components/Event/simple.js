@@ -1,8 +1,8 @@
-import React          from 'react';
-import classnames     from 'classnames';
-import moment         from 'moment';
-import {Timeline}     from 'antd';
-import {EVENT_TYPES}  from 'services/Products';
+import React                  from 'react';
+import classnames             from 'classnames';
+import moment                 from 'moment';
+import {Timeline, Button}     from 'antd';
+import {EVENT_TYPES}          from 'services/Products';
 
 class Simple extends React.Component {
 
@@ -43,6 +43,13 @@ class Simple extends React.Component {
             { this.props.event.get('description') }
           </div>
         )}
+        <Button icon="check-circle-o"
+                className="devices--device-timeline--event-mark-as-resolved-lg">
+          Mark as resolved
+        </Button>
+        <Button icon="check-circle-o"
+                type="default"
+                className="devices--device-timeline--event-mark-as-resolved-sm"/>
       </Timeline.Item>
     );
   }

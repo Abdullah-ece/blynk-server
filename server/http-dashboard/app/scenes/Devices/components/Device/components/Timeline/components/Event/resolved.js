@@ -1,7 +1,7 @@
 import React                     from 'react';
 import classnames                from 'classnames';
 import moment                    from 'moment';
-import {Button, Timeline}        from 'antd';
+import {Timeline}                from 'antd';
 import {EVENT_TYPES}             from 'services/Products';
 
 class Resolved extends React.Component {
@@ -54,13 +54,6 @@ class Resolved extends React.Component {
             </div>
           )}
         </div>
-        <Button icon="check-circle-o"
-                className="devices--device-timeline--event-mark-as-resolved-lg">
-          Mark as resolved
-        </Button>
-        <Button icon="check-circle-o"
-                type="default"
-                className="devices--device-timeline--event-mark-as-resolved-sm"/>
       </Timeline.Item>
     );
   }
