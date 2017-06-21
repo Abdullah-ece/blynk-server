@@ -195,6 +195,7 @@
 
 @mark-as-resolved-offset-lg: 190px;
 @mark-as-resolved-offset-sm: 40px;
+@mark-as-resolved-top-offset: -15px;
 
 .devices--device-timeline--event {
   .block-idle-state;
@@ -223,7 +224,7 @@
   position: absolute;
   top: 50%;
   right: -@mark-as-resolved-offset-lg;
-  margin-top: -19px;
+  margin-top: @mark-as-resolved-top-offset;
   opacity: 0;
   @media (max-width: 999px) {
     display: none;
@@ -233,7 +234,7 @@
 .devices--device-timeline--event-mark-as-resolved-sm {
   position: absolute;
   top: 50%;
-  margin-top: -19px;
+  margin-top: @mark-as-resolved-top-offset;
   opacity: 0;
   right: -@mark-as-resolved-offset-sm;
   @media (min-width: 1000px) {
