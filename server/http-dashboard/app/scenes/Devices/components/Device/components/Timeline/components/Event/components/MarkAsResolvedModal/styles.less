@@ -1,0 +1,49 @@
+@import "components/Layout/style-guide";
+
+.event-resolved-type-generator(@color) {
+
+  color: @color;
+
+  padding-left: 23px;
+
+  &:before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid @color;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    margin-top: -9px;
+    margin-left: -23px;
+  }
+}
+
+.event-resolve-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-resolve-modal-header-name {
+  position: relative;
+  .event-resolved-type-generator(@color-critical);
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.event-resolve-modal-header-date {
+  font-size: 16px;
+}
+
+.event-resolve-modal button.positive {
+  .button-positive-generator();
+}
+
+.event-resolve-modal-content {
+  margin-top: 32px;
+  textarea {
+    height: 128px;
+  }
+}

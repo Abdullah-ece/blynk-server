@@ -3,12 +3,29 @@ import classnames             from 'classnames';
 import moment                 from 'moment';
 import {Timeline, Button}     from 'antd';
 import {EVENT_TYPES}          from 'services/Products';
+import {MarkAsResolvedModal}  from './components';
 
 class Simple extends React.Component {
 
   static propTypes = {
     event: React.PropTypes.object
   };
+
+  state = {
+    isModalVisible: false
+  };
+
+  handleModalClose() {
+    this.setState({
+      isModalVisible: false
+    });
+  }
+
+  handleResolveClick() {
+    this.setState({
+      isModalVisible: true
+    });
+  }
 
   render() {
 
@@ -44,12 +61,15 @@ class Simple extends React.Component {
           </div>
         )}
         <Button icon="check-circle-o"
-                className="devices--device-timeline--event-mark-as-resolved-lg">
+                className="devices--device-timeline--event-mark-as-resolved-lg"
+                onClick={this.handleResolveClick.bind(this)}>
           Mark as resolved
         </Button>
         <Button icon="check-circle-o"
                 type="default"
-                className="devices--device-timeline--event-mark-as-resolved-sm"/>
+                className="devices--device-timeline--event-mark-as-resolved-sm"
+                onClick={this.handleResolveClick.bind(this)}/>
+        <MarkAsResolvedModal isModalVisible={this.state.isModalVisible} onCancel={this.handleModalClose.bind(this)}/>
       </Timeline.Item>
     );
   }

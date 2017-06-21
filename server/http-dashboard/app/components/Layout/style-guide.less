@@ -12,7 +12,9 @@
 @color-primary-9: #023870;
 @color-primary-10: #022658;
 
-@color-positive: #24c48e;
+@color-positive: rgba(36, 196, 142, 1);
+@color-positive-25: rgba(36, 196, 142, .25);
+@color-positive-75: rgba(36, 196, 142, .75);
 @color-warning: #ed9d00;
 @color-warning-25: rgba(237, 157, 0, 0.25);
 @color-critical: rgba(211, 67, 92, 1);
@@ -201,4 +203,16 @@
 
 .block-hover-state {
   box-shadow: 0 0 30px 0 @color-dark-grey-25;
+}
+
+.button-positive-generator() {
+  background: @color-positive;
+  border-color: @color-positive;
+  &:hover {
+    border-color: @color-positive-75;
+    background: @color-positive-75;
+  }
+  &:active {
+    box-shadow: 0 0 0 2px @color-positive-25;
+  }
 }
