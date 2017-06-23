@@ -3,7 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -149,9 +149,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
+    public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
         if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphType));
+            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphGranularityType));
         }
     }
 
@@ -238,6 +238,24 @@ public class DBManager implements Closeable {
             statement.execute(sql);
             connection.commit();
         }
+    }
+
+    //todo
+    //not implemented methods section. not used for now. for GEO DNS fix
+    public String getServerByUser(String email) {
+        return null;
+    }
+    public void assignServerToUser(String email, String ip) {
+        //do nothing
+    }
+    public String getServerByToken(String token) {
+        return null;
+    }
+    public void assignServerToToken(String token, String serverIp) {
+        //do nothing
+    }
+    public void removeToken(String... token) {
+        //do nothing
     }
 
     public Connection getConnection() throws Exception {

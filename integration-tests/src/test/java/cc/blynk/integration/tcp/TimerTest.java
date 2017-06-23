@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -93,11 +94,8 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 1;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };
@@ -129,11 +127,8 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 1;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };
@@ -176,16 +171,13 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 1;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
-        SetPinAction setPinAction2 = new SetPinAction();
-        setPinAction2.pin = new Pin();
-        setPinAction2.pin.pin = 2;
-        setPinAction2.pin.pinType = PinType.VIRTUAL;
-        setPinAction2.value = "2";
+
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+
+        Pin pin2 = new Pin((byte)2,PinType.VIRTUAL);
+        SetPinAction setPinAction2 = new SetPinAction(pin2, "2", SetPinActionType.CUSTOM);
+
         rule.actions = new BaseAction[] {
                 setPinAction,
                 setPinAction2
@@ -219,11 +211,10 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 1;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
+
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+
         NotifyAction notifyAction = new NotifyAction("Hello");
         rule.actions = new BaseAction[] {
                 setPinAction,
@@ -276,11 +267,10 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 1;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
+
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+
         rule.actions = new BaseAction[] {
                 setPinAction
         };

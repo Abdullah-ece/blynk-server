@@ -2,7 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -45,6 +45,23 @@ public class CSVGenerator {
     public CSVGenerator(ReportingDao reportingDao) {
         this.reportingDao = reportingDao;
         this.FETCH_COUNT = 60 * 24 * 30;
+    }
+
+    public Path createCSV(User user, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
+        if (pinType == null || pin == Pin.NO_PIN) {
+            throw new IllegalCommandBodyException("Wrong pin format.");
+        }
+
+        //data for 1 month
+        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
+        if (onePinData == null) {
+            throw new NoDataException();
+        }
+
+        onePinData.flip();
+        Path path = generateExportCSVPath(user.email, dashId, pinType, pin);
+        makeGzippedCSVFile(onePinData, path);
+        return path;
     }
 
     /**

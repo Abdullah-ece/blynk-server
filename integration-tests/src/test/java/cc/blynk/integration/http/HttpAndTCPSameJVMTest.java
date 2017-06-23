@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -216,11 +217,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        SetPinAction setPinAction = new SetPinAction();
-        setPinAction.pin = new Pin();
-        setPinAction.pin.pin = 4;
-        setPinAction.pin.pinType = PinType.VIRTUAL;
-        setPinAction.value = "1";
+        Pin pin = new Pin((byte) 4, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };

@@ -119,6 +119,20 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
     }
 
+    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
+        blockingIOProcessor.executeDB(() -> {
+            String server = dbManager.getServerByToken(token);
+            // no server found, that's means token is wrong.
+            if (server == null || server.equals(holder.host)) {
+                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+                ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
+            } else {
+                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
+                ctx.writeAndFlush(makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort), ctx.voidPromise());
+            }
+        });
+    }
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         handleGeneralException(ctx, cause);
