@@ -2,12 +2,13 @@ package cc.blynk.utils;
 
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.UriTemplate;
-import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.Context;
-import cc.blynk.core.http.annotation.CookieHeader;
-import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.params.*;
+import cc.blynk.core.http.rest.params.FormParam;
+import cc.blynk.core.http.rest.params.PathParam;
+import cc.blynk.core.http.rest.params.QueryParam;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.lang.annotation.Annotation;
@@ -75,13 +76,18 @@ public class AnnotationsUtil {
                         handlerHolder.params[i] = new ContextParam(ChannelHandlerContext.class);
                     }
 
+                    Annotation contextUserAnnotation = parameter.getAnnotation(ContextUser.class);
+                    if (contextUserAnnotation != null) {
+                        handlerHolder.params[i] = new ContextUserParam(User.class);
+                    }
+
                     Annotation cookieAnnotation = parameter.getAnnotation(CookieHeader.class);
                     if (cookieAnnotation != null) {
                         handlerHolder.params[i] = new CookieRequestParam(((cc.blynk.core.http.annotation.CookieHeader) cookieAnnotation).value());
                     }
 
                     if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&
-                            contextAnnotation == null && cookieAnnotation == null) {
+                            contextAnnotation == null && cookieAnnotation == null && contextUserAnnotation == null) {
                         handlerHolder.params[i] = new BodyParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }

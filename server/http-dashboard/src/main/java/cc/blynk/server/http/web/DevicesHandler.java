@@ -56,13 +56,11 @@ public class DevicesHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}")
-    public Response createDevice(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, Device newDevice) {
+    public Response createDevice(@ContextUser User user, @PathParam("orgId") int orgId, Device newDevice) {
         if (newDevice == null || newDevice.productId < 1) {
             log.error("No data or product id is wrong. {}", newDevice);
             return badRequest();
         }
-
-        User user = getUser(ctx);
 
         //default dash for all devices...
         final int dashId = 0;
@@ -118,10 +116,9 @@ public class DevicesHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}")
-    public Response updateDevice(@Context ChannelHandlerContext ctx,
+    public Response updateDevice(@ContextUser User user,
                                  @PathParam("orgId") int orgId,
                                  Device newDevice) {
-        User user = getUser(ctx);
 
         //default dash for all devices...
         final int dashId = 0;
@@ -138,7 +135,7 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         Device existingDevice = deviceDao.getById(newDevice.id);
-        verifyUserAccessToDevice(getUser(ctx), existingDevice);
+        verifyUserAccessToDevice(user, existingDevice);
 
         existingDevice.update(newDevice);
 
@@ -214,11 +211,11 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{orgId}/{deviceId}")
-    public Response getDeviceById(@Context ChannelHandlerContext ctx,
+    public Response getDeviceById(@ContextUser User user,
                                   @PathParam("orgId") int userOrgId,
                                   @PathParam("deviceId") int deviceId) {
         Device device = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(getUser(ctx), device);
+        verifyUserAccessToDevice(user, device);
 
         return ok(joinProductAndOrgInfo(device));
     }
@@ -235,10 +232,9 @@ public class DevicesHandler extends BaseHttpHandler {
     @DELETE
     @Path("/{orgId}/{deviceId}")
     @Admin
-    public Response delete(@Context ChannelHandlerContext ctx,
+    public Response delete(@ContextUser User user,
                            @PathParam("orgId") int userOrgId,
                            @PathParam("deviceId") int deviceId) {
-        User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);
         verifyUserAccessToDevice(user, device);
 
