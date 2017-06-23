@@ -36,7 +36,7 @@ public class DevicesAPITest extends APIBaseTest {
         newDevice.name = "My New Device";
         newDevice.productId = createProduct();
 
-        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
@@ -54,7 +54,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(123D, numberMetaField.value, 0.1);
         }
 
-        httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
@@ -71,7 +71,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(123D, numberMetaField.value, 0.1);
         }
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -87,7 +87,7 @@ public class DevicesAPITest extends APIBaseTest {
     public void getAllDevices() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -103,7 +103,7 @@ public class DevicesAPITest extends APIBaseTest {
     public void getDeviceByIdNotFound() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/11111");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/11111");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
         }
@@ -113,7 +113,7 @@ public class DevicesAPITest extends APIBaseTest {
     public void getDeviceById() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/0");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/0");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -130,7 +130,7 @@ public class DevicesAPITest extends APIBaseTest {
         newDevice.name = "My New Device";
         newDevice.productId = createProduct();
 
-        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
@@ -151,7 +151,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("/logoUrl", device.productLogoUrl);
         }
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);

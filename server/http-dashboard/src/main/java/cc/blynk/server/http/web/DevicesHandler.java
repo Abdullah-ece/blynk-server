@@ -55,8 +55,8 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("")
-    public Response createDevice(@Context ChannelHandlerContext ctx, Device newDevice) {
+    @Path("/{orgId}")
+    public Response createDevice(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, Device newDevice) {
         if (newDevice == null || newDevice.productId < 1) {
             log.error("No data or product id is wrong. {}", newDevice);
             return badRequest();
@@ -90,8 +90,9 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{deviceId}/resolveEvent/{logEventId}")
+    @Path("/{orgId}/{deviceId}/resolveEvent/{logEventId}")
     public Response resolveLogEvent(@Context ChannelHandlerContext ctx,
+                                    @PathParam("orgId") int orgId,
                                     @PathParam("deviceId") int deviceId,
                                     @PathParam("logEventId") int logEventId,
                                     Comment comment) {
@@ -118,8 +119,10 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("")
-    public Response updateDevice(@Context ChannelHandlerContext ctx, Device newDevice) {
+    @Path("/{orgId}")
+    public Response updateDevice(@Context ChannelHandlerContext ctx,
+                                 @PathParam("orgId") int orgId,
+                                 Device newDevice) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -146,8 +149,9 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("")
-    public Response getAll(@Context ChannelHandlerContext ctx) {
+    @Path("/{orgId}")
+    public Response getAll(@Context ChannelHandlerContext ctx,
+                           @PathParam("orgId") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
@@ -211,25 +215,45 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/{deviceId}")
-    public Response getDeviceById(@Context ChannelHandlerContext ctx, @PathParam("deviceId") int deviceId) {
+    @Path("/{orgId}/{deviceId}")
+    public Response getDeviceById(@Context ChannelHandlerContext ctx,
+                                  @PathParam("orgId") int userOrgId,
+                                  @PathParam("deviceId") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
-        //todo security checks
         Device device = deviceDao.getById(deviceId);
+
+        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
+
+        if (!user.hasAccess(orgId)) {
+            log.error("User {} tries to access device he has no access.", httpSession.user.email);
+            return forbidden("User has not access to this device.");
+        }
 
         return ok(joinProductAndOrgInfo(device));
     }
 
 
     @DELETE
-    @Path("/{deviceId}")
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("deviceId") int deviceId) {
+    @Path("/{orgId}/{deviceId}")
+    @Admin
+    public Response delete(@Context ChannelHandlerContext ctx,
+                           @PathParam("orgId") int userOrgId,
+                           @PathParam("deviceId") int deviceId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         User user = httpSession.user;
 
-        Device device = deviceDao.delete(user.orgId, deviceId);
+        Device device = deviceDao.getById(deviceId);
+
+        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
+        if (!user.hasAccess(orgId)) {
+            log.error("User {} tries to delete device he has no access.", httpSession.user.email);
+            return forbidden("User has not access to this device.");
+        }
+
+        deviceDao.delete(user.orgId, deviceId);
+
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -249,8 +273,9 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/{deviceId}/timeline")
+    @Path("/{orgId}/{deviceId}/timeline")
     public Response getDeviceTimeline(@Context ChannelHandlerContext ctx,
+                                      @PathParam("orgId") int orgId,
                                       @PathParam("deviceId") int deviceId,
                                       @QueryParam("eventType") EventType eventType,
                                       @QueryParam("isResolved") Boolean isResolved,

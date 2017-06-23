@@ -100,6 +100,17 @@ public class OrganizationDao {
         return product;
     }
 
+    public int getOrganizationIdByProductId(int productId) {
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.id == productId) {
+                    return org.id;
+                }
+            }
+        }
+        return -1;
+    }
+
     public String getOrganizationNameByProductId(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {

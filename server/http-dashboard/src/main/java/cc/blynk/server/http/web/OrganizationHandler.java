@@ -68,7 +68,7 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
-                log.error("User {} tries to access organization he has no access.");
+                log.error("User {} tries to access organization he has no access.", httpSession.user.email);
                 return forbidden("You are not allowed to access this organization.");
             }
         }

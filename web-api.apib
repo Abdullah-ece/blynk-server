@@ -595,7 +595,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Devices API
 
-## Get All devices for user [GET] [/devices]
+## Get All devices for user [GET] [/devices/{orgId}]
 
 + Request (application/json)
 
@@ -645,7 +645,7 @@ HOST: https://knight-qa.blynk.cc/
         }
     ]
 
-## Get device by id [GET] [/devices/{deviceId}]
+## Get device by id [GET] [/devices/{orgId}/{deviceId}]
 
 + Request (application/json)
 
@@ -670,7 +670,7 @@ HOST: https://knight-qa.blynk.cc/
           } ]
         }
 
-## Create New Device [PUT] [/devices]
+## Create New Device [PUT] [/devices/{orgId}]
 
 + Request (application/json)
 
@@ -687,7 +687,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full device json
 
-## Update Device [POST] [/devices]
+## Update Device [POST] [/devices/{orgId}]
 
 + Request (application/json)
 
@@ -697,13 +697,13 @@ HOST: https://knight-qa.blynk.cc/
 
         Full device json
 
-## Delete Device [DELETE] [/devices/{deviceId}]
+## Delete Device [DELETE] [/devices/{orgId}/{deviceId}]
 
 + Request (application/json)
 
 + Response 200 (application/json)
 
-## Get device timeline [GET] [/devices/{deviceId}/timeline?eventType=CRITICAL&from=1&to=1496949455462&limit=10&offset=0&isResolved=true]
+## Get device timeline [GET] [/devices/{orgId}/{deviceId}/timeline?eventType=CRITICAL&from=1&to=1496949455462&limit=10&offset=0&isResolved=true]
 
 + Request (application/json)
 
@@ -734,7 +734,7 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 500 (application/json)
 
-## Resolve Log Event [POST] [/devices/{deviceId}/resolveEvent/{logEventId}]
+## Resolve Log Event [POST] [/devices/{orgId}/{deviceId}/resolveEvent/{logEventId}]
 
 + Request (application/json)
 
