@@ -85,17 +85,38 @@ class Events extends React.Component {
   }
 
   handleFieldClone(values) {
+
+    const isNameAlreadyExists = (name) => {
+      return this.props.fields.some((field) => {
+        return field.values.name.trim() === name.trim();
+      });
+    };
+
     if (values.id) {
 
       const originalIndex = _.findIndex(this.props.fields, {id: values.id});
       const original = this.props.fields[originalIndex];
 
+      let name = '';
+      let eventCode = '';
+      let nameUnique = false;
+      let i = 0;
+
+      while (!nameUnique) {
+        name = `${original.values.name} Copy ${!i ? '' : i}`;
+        eventCode = `${original.values.eventCode}_copy${!i ? '' : '_' + i}`;
+        if (!isNameAlreadyExists(name)) {
+          nameUnique = true;
+        }
+        i++;
+      }
+
       const copy = {
         ...original,
         values: {
           ...original.values,
-          name: original.values.name ? `${original.values.name} Copy` : '',
-          eventCode: original.values.eventCode ? `${original.values.eventCode}_copy` : '',
+          name: original.values.name ? name : '',
+          eventCode: original.values.eventCode ? eventCode : '',
           isRecentlyCreated: true
         },
         id: getNextId(this.props.fields)
