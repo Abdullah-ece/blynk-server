@@ -35,7 +35,7 @@ public class Product {
 
     public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
 
-    public volatile DataStream[] dataStreams = EMPTY_DATA_STREAMS;
+    public volatile WebDataStream[] dataStreams = EMPTY_WEB_DATA_STREAMS;
 
     public volatile Event[] events = EMPTY_EVENTS;
 

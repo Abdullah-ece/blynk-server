@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 20.04.17.
  */
-public class DataStream {
+public class WebDataStream {
 
     public String name;
 
@@ -19,10 +19,10 @@ public class DataStream {
 
     public byte pin;
 
-    public DataStream() {
+    public WebDataStream() {
     }
 
-    public DataStream(String name, MeasurementUnit units, double min, double max, byte pin) {
+    public WebDataStream(String name, MeasurementUnit units, double min, double max, byte pin) {
         this.name = name;
         this.units = units;
         this.min = min;

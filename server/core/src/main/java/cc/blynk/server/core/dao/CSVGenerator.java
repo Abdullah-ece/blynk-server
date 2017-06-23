@@ -47,23 +47,6 @@ public class CSVGenerator {
         this.FETCH_COUNT = 60 * 24 * 30;
     }
 
-    public Path createCSV(User user, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
-        if (pinType == null || pin == Pin.NO_PIN) {
-            throw new IllegalCommandBodyException("Wrong pin format.");
-        }
-
-        //data for 1 month
-        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
-        if (onePinData == null) {
-            throw new NoDataException();
-        }
-
-        onePinData.flip();
-        Path path = generateExportCSVPath(user.email, dashId, pinType, pin);
-        makeGzippedCSVFile(onePinData, path);
-        return path;
-    }
-
     /**
      * Writes ByteBuffer with value (double 8 bytes),
      * timestamp (long 8 bytes) data to disk as csv file and gzips it.
@@ -103,7 +86,7 @@ public class CSVGenerator {
         }
 
         //data for 1 month
-        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, FETCH_COUNT, GraphType.MINUTE);
+        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
         if (onePinData == null) {
             throw new NoDataException();
         }

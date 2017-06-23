@@ -2,9 +2,9 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.DataStream;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
@@ -157,8 +157,8 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField(9, "Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataStreams = new DataStream[] {
-                new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        product.dataStreams = new WebDataStream[] {
+                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

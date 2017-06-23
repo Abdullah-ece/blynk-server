@@ -27,8 +27,9 @@ public class ArrayUtil {
     public static final MetaField[] EMPTY_META_FIELDS = {};
     public static final Product[] EMPTY_PRODUCTS = {};
     public static final Event[] EMPTY_EVENTS = {};
-    public static final DataStream[] EMPTY_DATA_STREAMS = {};
+    public static final WebDataStream[] EMPTY_WEB_DATA_STREAMS = {};
     public static final EventReceiver[] EMPTY_RECEIVERS = {};
+    public static final DataStream[] EMPTY_DATA_STREAMS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);

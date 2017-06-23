@@ -47,8 +47,8 @@ public class PrintProductTest {
                 new TimeMetaField(9,"Some Time", Role.ADMIN, new Date())
         };
 
-        product.dataStreams = new DataStream[] {
-                new DataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        product.dataStreams = new WebDataStream[] {
+                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");
