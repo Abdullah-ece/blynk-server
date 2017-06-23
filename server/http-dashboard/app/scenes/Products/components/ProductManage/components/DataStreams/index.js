@@ -134,11 +134,29 @@ class DataStreams extends React.Component {
 
   handleCloneField(id) {
 
+    const isNameAlreadyExists = (name) => {
+      return this.props.fields.some((field) => {
+        return field.values.name.trim() === name.trim();
+      });
+    };
+
     const cloned = _.find(this.props.fields, {id: id});
 
     const nextId = this.props.fields.reduce((acc, value) => (
         acc < value.id ? value.id : acc
       ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
+
+    let name = '';
+    let nameUnique = false;
+    let i = 0;
+
+    while (!nameUnique) {
+      name = `${cloned.values.name} Copy ${!i ? '' : i}`;
+      if (!isNameAlreadyExists(name)) {
+        nameUnique = true;
+      }
+      i++;
+    }
 
     const fields = [
       ...this.props.fields,
@@ -147,7 +165,7 @@ class DataStreams extends React.Component {
         id: nextId,
         values: {
           ...cloned.values,
-          name: `${cloned.values.name || ''} Copy`,
+          name: `${name}`,
           pin: this.generatePin(),
           isRecentlyCreated: true
         }
