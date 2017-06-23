@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, hashHistory, Redirect} from 'react-router';
+import Scroll from 'react-scroll';
 
 /* components */
 import Layout, {UserLayout, UserProfileLayout} from './components/Layout';
@@ -40,10 +41,22 @@ import enUS from 'antd/lib/locale-provider/en_US';
 
 Store().then((store) => {
 
+  hashHistory.listen(location => {
+
+    setTimeout(() => {
+      if (location.action === 'POP') {
+        return;
+      }
+      Scroll.animateScroll.scrollToTop({
+        duration: 250
+      });
+    });
+  });
+
   ReactDOM.render(
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
-        <Router history={hashHistory} onUpdate={() => window.scrollTo(0, 0)}>
+        <Router history={hashHistory}>
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>

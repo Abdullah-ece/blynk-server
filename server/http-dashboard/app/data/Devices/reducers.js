@@ -23,19 +23,6 @@ export default function Devices(state = initialState, action) {
       return state.set('devices', fromJS(action.payload.data));
 
     case "API_TIMELINE_FETCH_SUCCESS":
-
-      action.payload.data.logEvents.unshift({
-        "id": 554,
-        "deviceId": 1,
-        "eventType": "CRITICAL",
-        "ts": 1497290276606,
-        "eventHashcode": 613812780,
-        "description": "This is my description",
-        "isResolved": true,
-        "resolvedBy": "Vasya Pupkin",
-        "name": "Temp is super high"
-      });
-
       return state.set('timeline', fromJS(action.payload.data));
 
     case "API_DEVICE_UPDATE_SUCCESS":
