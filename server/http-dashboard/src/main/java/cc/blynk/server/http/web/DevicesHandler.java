@@ -7,12 +7,12 @@ import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
 import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
@@ -62,8 +62,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
+        User user = getUser(ctx);
 
         //default dash for all devices...
         final int dashId = 0;
@@ -96,10 +95,9 @@ public class DevicesHandler extends BaseHttpHandler {
                                     @PathParam("deviceId") int deviceId,
                                     @PathParam("logEventId") int logEventId,
                                     Comment comment) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
-
-        //todo check user has access to device
+        User user = getUser(ctx);
+        Device device = deviceDao.getById(deviceId);
+        verifyUserAccessToDevice(user, device);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
@@ -123,8 +121,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response updateDevice(@Context ChannelHandlerContext ctx,
                                  @PathParam("orgId") int orgId,
                                  Device newDevice) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
+        User user = getUser(ctx);
 
         //default dash for all devices...
         final int dashId = 0;
@@ -141,6 +138,8 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         Device existingDevice = deviceDao.getById(newDevice.id);
+        verifyUserAccessToDevice(getUser(ctx), existingDevice);
+
         existingDevice.update(newDevice);
 
         user.lastModifiedTs = System.currentTimeMillis();
@@ -152,8 +151,7 @@ public class DevicesHandler extends BaseHttpHandler {
     @Path("/{orgId}")
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @PathParam("orgId") int orgId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
+        User user = getUser(ctx);
 
         Collection<Device> devices;
         if (user.isAdmin()) {
@@ -219,21 +217,20 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response getDeviceById(@Context ChannelHandlerContext ctx,
                                   @PathParam("orgId") int userOrgId,
                                   @PathParam("deviceId") int deviceId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
-
         Device device = deviceDao.getById(deviceId);
-
-        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-
-        if (!user.hasAccess(orgId)) {
-            log.error("User {} tries to access device he has no access.", httpSession.user.email);
-            return forbidden("User has not access to this device.");
-        }
+        verifyUserAccessToDevice(getUser(ctx), device);
 
         return ok(joinProductAndOrgInfo(device));
     }
 
+    private void verifyUserAccessToDevice(User user, Device device) {
+        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
+
+        if (!user.hasAccess(orgId)) {
+            log.error("User {} tries to access device he has no access.", user.email);
+            throw new NotAllowedWebException("You have no access to this device.");
+        }
+    }
 
     @DELETE
     @Path("/{orgId}/{deviceId}")
@@ -241,16 +238,9 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response delete(@Context ChannelHandlerContext ctx,
                            @PathParam("orgId") int userOrgId,
                            @PathParam("deviceId") int deviceId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        User user = httpSession.user;
-
+        User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);
-
-        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-        if (!user.hasAccess(orgId)) {
-            log.error("User {} tries to delete device he has no access.", httpSession.user.email);
-            return forbidden("User has not access to this device.");
-        }
+        verifyUserAccessToDevice(user, device);
 
         deviceDao.delete(user.orgId, deviceId);
 
@@ -285,6 +275,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                       @QueryParam("limit") int limit) {
 
         Device device = deviceDao.getById(deviceId);
+        verifyUserAccessToDevice(getUser(ctx), device);
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);
 
@@ -351,4 +342,7 @@ public class DevicesHandler extends BaseHttpHandler {
         return logEvents;
     }
 
+    private static User getUser(ChannelHandlerContext ctx) {
+        return ctx.channel().attr(SessionDao.userSessionAttributeKey).get().user;
+    }
 }

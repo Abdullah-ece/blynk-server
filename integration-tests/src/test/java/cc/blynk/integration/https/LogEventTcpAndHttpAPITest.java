@@ -76,7 +76,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -112,7 +112,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -147,7 +147,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -172,7 +172,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -207,7 +207,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -244,7 +244,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -274,7 +274,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         int logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -291,13 +291,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertTrue(logEventId > 1);
         }
 
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/resolveEvent/" + logEventId);
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/1/resolveEvent/" + logEventId);
         post.setEntity(new StringEntity(new Comment("123").toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -317,7 +317,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("123", logEvents[0].resolvedComment);
         }
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -344,7 +344,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         newHardClient.send("logEvent temp_is_high");
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices");
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -405,7 +405,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         device.productId = 1;
 
 
-        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices");
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(device.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
@@ -436,7 +436,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         newHardClient.send("login " + token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + System.currentTimeMillis() + "&limit=10&offset=0");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?from=0&to=" + System.currentTimeMillis() + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -457,7 +457,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         //we have to wait until DB query will be executed and ignore period will pass. it is 1000 millis.
         sleep(1100);
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" +
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?from=0&to=" +
                 System.currentTimeMillis() + "&limit=10&offset=0" + "&eventType=OFFLINE");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
