@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.DataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 
 import java.lang.reflect.Array;
 
@@ -29,7 +29,7 @@ public class ArrayUtil {
     public static final Event[] EMPTY_EVENTS = {};
     public static final WebDataStream[] EMPTY_WEB_DATA_STREAMS = {};
     public static final EventReceiver[] EMPTY_RECEIVERS = {};
-    public static final DataStream[] EMPTY_DATA_STREAMS = {};
+    public static final GraphDataStream[] EMPTY_DATA_STREAMS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
