@@ -174,6 +174,10 @@ export const HARDWARES = {
   "WiPy": {
     "key": "WiPy",
     "value": "WiPy"
+  },
+  "Other": {
+    "key": "Other",
+    "value": "Other"
   }
 };
 
@@ -248,7 +252,8 @@ export const AVAILABLE_HARDWARE_TYPES = [
   HARDWARES['Wildfire v2'],
   HARDWARES['Wildfire v3'],
   HARDWARES['Wildfire v4'],
-  HARDWARES['WiPy']
+  HARDWARES['WiPy'],
+  HARDWARES['Other'],
 ];
 
 export const AVAILABLE_CONNECTION_TYPES = [
