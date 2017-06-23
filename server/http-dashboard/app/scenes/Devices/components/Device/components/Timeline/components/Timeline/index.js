@@ -5,6 +5,7 @@ import Event from './../Event';
 import TypeFiltering from './../TypeFiltering';
 import TimeFiltering from './../TimeFiltering';
 import {reduxForm} from 'redux-form';
+import {TIMELINE_ITEMS_PER_PAGE} from 'services/Devices';
 
 @reduxForm()
 class Timeline extends React.Component {
@@ -14,10 +15,27 @@ class Timeline extends React.Component {
     loading: React.PropTypes.bool,
     formValues: React.PropTypes.object,
     params: React.PropTypes.object,
-    onMarkAsResolved: React.PropTypes.func
+    onMarkAsResolved: React.PropTypes.func,
+    page: React.PropTypes.number,
+    loadNextPage: React.PropTypes.func
   };
 
+  getLimitForCurrentPage() {
+    return this.props.page * TIMELINE_ITEMS_PER_PAGE;
+  }
+
+  getEventsForCurrentPage() {
+    return this.props.timeline.get('logEvents').splice(
+      this.getLimitForCurrentPage()
+    );
+  }
+
   render() {
+
+    let pending = null;
+    if(this.props.timeline.has('logEvents') &&  this.props.timeline.get('logEvents').size > this.props.page * TIMELINE_ITEMS_PER_PAGE) {
+      pending = <a href="javascript:void(0)" onClick={this.props.loadNextPage.bind(this)}>Load more</a>;
+    }
 
     return (
       <div className="devices--device-timeline-timeline">
@@ -30,8 +48,9 @@ class Timeline extends React.Component {
         { this.props.loading && (
           <Icon type="loading" className="devices--device-timeline-events"/>
         ) || this.props.timeline.has('logEvents') && (
-          <Timelines className="devices--device-timeline-events">
-            { this.props.timeline.get('logEvents').map((event, key) => (
+          <Timelines className="devices--device-timeline-events"
+                     pending={pending}>
+            { this.getEventsForCurrentPage().map((event, key) => (
               <Event params={this.props.params} event={event} key={key}
                      onMarkAsResolved={this.props.onMarkAsResolved.bind(this)}/>
             ))}

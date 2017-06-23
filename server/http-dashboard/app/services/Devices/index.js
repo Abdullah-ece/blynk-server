@@ -306,3 +306,4 @@ export const TIMELINE_TIME_FILTERS = {
     'value': 'Custom Range'
   }
 };
+export const TIMELINE_ITEMS_PER_PAGE = 25;

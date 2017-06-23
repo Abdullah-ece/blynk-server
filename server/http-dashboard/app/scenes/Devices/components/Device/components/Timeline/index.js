@@ -25,7 +25,8 @@ class Timeline extends React.Component {
 
   state = {
     loading: false,
-    isResolveModalVisible: false
+    isResolveModalVisible: false,
+    page: 1
   };
 
   componentDidMount() {
@@ -46,7 +47,8 @@ class Timeline extends React.Component {
       deviceId: this.props.params.id
     }).then(() => {
       this.setState({
-        loading: false
+        loading: false,
+        page: 1
       });
     });
   }
@@ -94,6 +96,12 @@ class Timeline extends React.Component {
     this.handleValuesChange(this.props.formValues);
   }
 
+  loadNextPage() {
+    this.setState({
+      page: this.state.page + 1
+    });
+  }
+
   render() {
 
     const initialValues = {
@@ -113,6 +121,8 @@ class Timeline extends React.Component {
         )}
         <Timelines form="Timeline"
                    timeline={this.props.timeline}
+                   page={this.state.page}
+                   loadNextPage={this.loadNextPage.bind(this)}
                    loading={this.state.loading}
                    initialValues={initialValues}
                    formValues={this.props.formValues}
