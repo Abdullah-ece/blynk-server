@@ -1,5 +1,6 @@
 package cc.blynk.server.http.web;
 
+import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,5 +16,10 @@ public class Comment {
     @JsonCreator
     public Comment(@JsonProperty("comment") String comment) {
         this.comment = comment;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

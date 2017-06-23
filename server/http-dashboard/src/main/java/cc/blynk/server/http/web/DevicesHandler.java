@@ -268,8 +268,8 @@ public class DevicesHandler extends BaseHttpHandler {
             try {
                 List<LogEvent> eventList;
                 if (eventType == null) {
-                    if (isResolved != null && isResolved) {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, true);
+                    if (isResolved != null) {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, isResolved);
                     } else {
                         eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
                     }

@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.http.web.Comment;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
@@ -292,6 +293,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/resolveEvent/" + logEventId);
+        post.setEntity(new StringEntity(new Comment("123").toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -312,6 +314,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             logEventId = logEvents[0].id;
             assertTrue(logEventId > 1);
             assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);
+            assertEquals("123", logEvents[0].resolvedComment);
         }
     }
 
