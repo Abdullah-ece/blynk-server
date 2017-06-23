@@ -114,7 +114,7 @@ class DeviceCreateModal extends React.Component {
           <Row>
             <Col span={24}>
               <Item label="Product Template" offset="large">
-                <MetadataSelect name="productId" values={products} placeholder="Choose product"
+                <MetadataSelect displayError={false} name="productId" values={products} placeholder="Choose product"
                                 validate={[Validation.Rules.required]}/>
               </Item>
             </Col>
@@ -122,13 +122,15 @@ class DeviceCreateModal extends React.Component {
           <Row>
             <Col span={10}>
               <Item label="Hardware" offset="none">
-                <MetadataSelect name="boardType" values={AVAILABLE_HARDWARE_TYPES} placeholder="Hardware"
+                <MetadataSelect displayError={false} name="boardType" values={AVAILABLE_HARDWARE_TYPES}
+                                placeholder="Hardware"
                                 validate={[Validation.Rules.required]}/>
               </Item>
             </Col>
             <Col span={12} offset={2}>
               <Item label="Connection Type" offset="none">
-                <MetadataSelect name="connectionType" values={AVAILABLE_CONNECTION_TYPES} placeholder="Choose product"
+                <MetadataSelect displayError={false} name="connectionType" values={AVAILABLE_CONNECTION_TYPES}
+                                placeholder="Choose product"
                                 validate={[Validation.Rules.required]}/>
               </Item>
             </Col>
