@@ -52,13 +52,17 @@ class Notifications extends React.Component {
   }
 
   render() {
-
     let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail();
 
     return (
       <FormItem>
         <Item offset="small">
-          <Field name="isNotificationsEnabled" component={this.switcher}/> Notifications
+          <Field name="isNotificationsEnabled" component={this.switcher}/>
+          { this.props.fields.isNotificationsEnabled && (
+            <span className="product-events-notifications-label">Notifications On</span>
+          ) || (
+            <span className="product-events-notifications-label">Notifications Off</span>
+          )}
         </Item>
         <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
           <Item label="E-mail to" offset="normal">
