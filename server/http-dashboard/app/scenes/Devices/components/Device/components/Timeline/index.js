@@ -57,6 +57,7 @@ class Timeline extends React.Component {
 
     if ([TIMELINE_TYPE_FILTERS.CRITICAL.key, TIMELINE_TYPE_FILTERS.WARNING.key].indexOf(values.type) >= 0) {
       params.eventType = values.type;
+      params.isResolved = false;
     }
 
     if (TIMELINE_TYPE_FILTERS.RESOLVED.key === values.type) {
