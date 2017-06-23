@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
         @JsonSubTypes.Type(value = RangeMetaField.class, name = "Range"),
+        @JsonSubTypes.Type(value = SwitchMetaField.class, name = "Switch"),
         @JsonSubTypes.Type(value = CostMetaField.class, name = "Cost"),
         @JsonSubTypes.Type(value = ContactMetaField.class, name = "Contact"),
         @JsonSubTypes.Type(value = MeasurementUnitMetaField.class, name = "Measurement"),
