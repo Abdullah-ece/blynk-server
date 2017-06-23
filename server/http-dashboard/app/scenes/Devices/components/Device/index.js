@@ -8,13 +8,16 @@ import {bindActionCreators} from "redux";
 import {DeviceUpdate} from "data/Devices/api";
 import {ContentEditable} from 'components';
 
-@connect(() => ({}), (dispatch) => ({
+@connect((state) => ({
+  account: state.Account
+}), (dispatch) => ({
   updateDevice: bindActionCreators(DeviceUpdate, dispatch)
 }))
 class Device extends React.Component {
 
   static propTypes = {
     device: React.PropTypes.object,
+    account: React.PropTypes.object,
     params: React.PropTypes.object,
     location: React.PropTypes.object,
     onChange: React.PropTypes.func,
@@ -27,7 +30,9 @@ class Device extends React.Component {
   }
 
   onDeviceChange(device) {
-    return this.props.updateDevice(device);
+    return this.props.updateDevice({
+      orgId: this.props.account.orgId
+    }, device);
   }
 
   handleDeviceNameChange(value) {

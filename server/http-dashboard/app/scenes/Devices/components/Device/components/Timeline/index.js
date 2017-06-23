@@ -9,6 +9,7 @@ import {TimelineFetch} from 'data/Devices/api';
 import './styles.less';
 
 @connect((state) => ({
+  account: state.Account,
   timeline: state.Devices.get('timeline'),
   formValues: getFormValues('Timeline')(state)
 }), (dispatch) => ({
@@ -21,6 +22,7 @@ class Timeline extends React.Component {
     fetchTimeline: React.PropTypes.func,
     formValues: React.PropTypes.object,
     params: React.PropTypes.object,
+    account: React.PropTypes.object,
   };
 
   state = {
@@ -44,7 +46,8 @@ class Timeline extends React.Component {
     });
     this.props.fetchTimeline({
       ...params,
-      deviceId: this.props.params.id
+      deviceId: this.props.params.id,
+      orgId: this.props.account.orgId
     }).then(() => {
       this.setState({
         loading: false,

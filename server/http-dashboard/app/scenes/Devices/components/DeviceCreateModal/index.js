@@ -13,6 +13,7 @@ import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Dev
 import './styles.less';
 
 @connect((state) => ({
+  account: state.Account,
   products: state.Product.products,
   errors: getFormSyncErrors('DeviceCreate')(state),
   formValues: getFormValues('DeviceCreate')(state)
@@ -31,6 +32,7 @@ class DeviceCreateModal extends React.Component {
     visible: React.PropTypes.bool,
     onClose: React.PropTypes.func,
     errors: React.PropTypes.object,
+    account: React.PropTypes.object,
     formValues: React.PropTypes.object,
     products: React.PropTypes.array,
     reduxForm: React.PropTypes.func,
@@ -72,8 +74,12 @@ class DeviceCreateModal extends React.Component {
     this.setState({
       loading: true
     });
-    this.props.createDevice(this.props.formValues).then(() => {
-      this.props.fetchDevices().then(() => {
+    this.props.createDevice({
+      orgId: this.props.account.orgId
+    }, this.props.formValues).then(() => {
+      this.props.fetchDevices({
+        orgId: this.props.account.orgId
+      }).then(() => {
         this.setState({
           loading: false
         });

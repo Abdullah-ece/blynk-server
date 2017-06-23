@@ -1,68 +1,74 @@
-export const DevicesFetch = () => {
+export const DevicesFetch = (data) => {
+
+  if (!data.orgId)
+    throw new Error('orgId parameter is missed');
+
   return {
     type: 'API_DEVICES_FETCH',
     payload: {
       request: {
         method: 'get',
-        url: '/devices'
+        url: `/devices/${data.orgId}`
       }
     }
   };
 };
 
-export const DeviceFetch = (params) => {
+export const DeviceFetch = (params, data) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
   return {
     type: 'API_DEVICE_FETCH',
 
     payload: {
       request: {
         method: 'get',
-        url: `/devices/${params.id}`
+        url: `/devices/${params.orgId}/${data.id}`
       }
     }
   };
 };
 
-export const DeviceUpdate = (device) => {
+export const DeviceUpdate = (data, device) => {
+
+  if (!data.orgId)
+    throw new Error('orgId parameter is missed');
+
   return {
     type: 'API_DEVICE_UPDATE',
     payload: {
       request: {
         method: 'post',
-        url: `/devices`,
+        url: `/devices/${data.orgId}`,
         data: device
       }
     }
   };
 };
 
-export const DeviceCreate = (device) => {
+export const DeviceCreate = (data, device) => {
+
+  if (!data.orgId)
+    throw new Error('orgId parameter is missed');
+
   return {
     type: 'API_DEVICE_CREATE',
     payload: {
       request: {
         method: 'put',
-        url: `/devices`,
+        url: `/devices/${data.orgId}`,
         data: device
-      }
-    }
-  };
-};
-
-export const DevicesUpdate = (devices) => {
-  return {
-    type: 'API_DEVICES_UPDATE',
-    payload: {
-      request: {
-        method: 'post',
-        url: `/devices`,
-        data: devices
       }
     }
   };
 };
 
 export const TimelineFetch = (params = {}) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
 
   if (!params.deviceId) {
     throw new Error('Required parameter deviceId is missed');
@@ -82,7 +88,7 @@ export const TimelineFetch = (params = {}) => {
     payload: {
       request: {
         method: 'get',
-        url: `/devices/${params.deviceId}/timeline`,
+        url: `/devices/${params.orgId}/${params.deviceId}/timeline`,
         params: params
       }
     }
@@ -90,6 +96,9 @@ export const TimelineFetch = (params = {}) => {
 };
 
 export const TimelineResolve = (params) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
 
   if (!params.eventId || !params.deviceId)
     throw new Error('Required parameter is missed');
@@ -99,7 +108,7 @@ export const TimelineResolve = (params) => {
     payload: {
       request: {
         method: 'post',
-        url: `/devices/${params.deviceId}/resolveEvent/${params.eventId}`,
+        url: `/devices/${params.orgId}/${params.deviceId}/resolveEvent/${params.eventId}`,
         data: {
           comment: params.comment
         }

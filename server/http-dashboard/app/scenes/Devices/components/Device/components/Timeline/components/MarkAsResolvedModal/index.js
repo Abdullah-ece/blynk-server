@@ -12,6 +12,7 @@ import {TimelineResolve} from 'data/Devices/api';
 import {connect} from 'react-redux';
 
 @connect((state) => ({
+  account: state.Account,
   formValues: getFormValues('ResolveModal')(state)
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
@@ -30,6 +31,7 @@ class MarkAsResolvedModal extends React.Component {
     onSuccess: React.PropTypes.func,
     event: React.PropTypes.object,
     formValues: React.PropTypes.object,
+    account: React.PropTypes.object,
     deviceId: React.PropTypes.number,
     isModalVisible: React.PropTypes.bool,
   };
@@ -50,6 +52,7 @@ class MarkAsResolvedModal extends React.Component {
       loading: true
     });
     this.props.resolve({
+      orgId: this.props.account.orgId,
       deviceId: this.props.deviceId,
       eventId: this.props.event.get('id'),
       comment: this.props.formValues && this.props.formValues.comment || ''
