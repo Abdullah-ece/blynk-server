@@ -24,10 +24,10 @@ class Dashboard extends React.Component {
 
   FILTER_BUTTONS = [{
     key: this.FILTERS.HOUR,
-    value: '1 Hour'
+    value: '1 hour'
   }, {
     key: this.FILTERS.DAY,
-    value: '1 Day'
+    value: '1 day'
   }, {
     key: this.FILTERS.WEEK,
     value: '1 Week'
