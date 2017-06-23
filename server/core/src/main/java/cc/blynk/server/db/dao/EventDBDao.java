@@ -30,8 +30,10 @@ public class EventDBDao {
     private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ?, resolved_comment = ? where id = ?";
     private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
     private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
+
     private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
     private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
+    private static final String selectEventsTypeAndResolvedFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
     private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
 
     private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? and is_resolved = false group by device_id, type";
@@ -93,6 +95,38 @@ public class EventDBDao {
                         rs.getBoolean("is_resolved")
                 );
                 events.put(logEvent, rs.getInt("count"));
+            }
+
+            connection.commit();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+
+        return events;
+    }
+
+    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
+        ResultSet rs = null;
+        List<LogEvent> events = new ArrayList<>(limit);
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectEventsTypeAndResolvedFilter)) {
+
+            statement.setInt(1, deviceId);
+            statement.setInt(2, eventType.ordinal());
+            statement.setTimestamp(3, new Timestamp(from), UTC_CALENDAR);
+            statement.setTimestamp(4, new Timestamp(to), UTC_CALENDAR);
+            statement.setBoolean(5, isResolved);
+            statement.setInt(6, offset);
+            statement.setInt(7, limit);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                LogEvent logEvent = readEvent(rs);
+                events.add(logEvent);
             }
 
             connection.commit();

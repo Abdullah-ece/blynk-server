@@ -274,7 +274,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         int logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -285,7 +285,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(0, timeLineResponse.totalWarning);
             assertEquals(0, timeLineResponse.totalResolved);
             LogEvent[] logEvents = timeLineResponse.logEvents;
-            assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
             logEventId = logEvents[0].id;
@@ -298,7 +297,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -311,10 +310,25 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
-            logEventId = logEvents[0].id;
-            assertTrue(logEventId > 1);
+            int oldLogEventId = logEvents[0].id;
+            assertEquals(logEventId, oldLogEventId);
+            assertTrue(logEvents[0].isResolved);
             assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);
             assertEquals("123", logEvents[0].resolvedComment);
+        }
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=false");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(1, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertEquals(0, logEvents.length);
         }
     }
 

@@ -267,14 +267,17 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 List<LogEvent> eventList;
-                if (eventType == null) {
-                    if (isResolved != null) {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, isResolved);
-                    } else {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
-                    }
+                //todo introduce some query builder? jOOQ?
+                if (eventType == null && isResolved == null) {
+                    eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
                 } else {
-                    eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
+                    if (eventType == null) {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, isResolved);
+                    } else if (isResolved == null) {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
+                    } else {
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
+                    }
                 }
 
                 if (product != null) {
