@@ -7,6 +7,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
@@ -257,6 +258,42 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(0, logEvents.length);
+        }
+    }
+
+    @Test
+    public void testDeviceIsOnlineIndicatorCorrect() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+            Device device = devices[1];
+            assertNotNull(device);
+            assertEquals(Status.ONLINE, device.status);
+        }
+
+        newHardClient.stop();
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+            Device device = devices[1];
+            assertNotNull(device);
+            assertEquals(Status.OFFLINE, device.status);
         }
     }
 
