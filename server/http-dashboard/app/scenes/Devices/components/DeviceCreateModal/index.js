@@ -9,7 +9,7 @@ import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
 import {reduxForm, getFormSyncErrors, getFormValues, reset, change} from 'redux-form';
 import {DeviceCreate, DevicesFetch} from 'data/Devices/api';
-import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
+import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES, STATUS} from 'services/Devices';
 import './styles.less';
 
 @connect((state) => ({
@@ -76,7 +76,10 @@ class DeviceCreateModal extends React.Component {
     });
     this.props.createDevice({
       orgId: this.props.account.orgId
-    }, this.props.formValues).then(() => {
+    }, {
+      ...this.props.formValues,
+      status: STATUS.OFFLINE
+    }).then(() => {
       this.props.fetchDevices({
         orgId: this.props.account.orgId
       }).then(() => {

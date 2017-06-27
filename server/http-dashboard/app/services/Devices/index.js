@@ -285,6 +285,11 @@ export const TIMELINE_TYPE_FILTERS = {
   },
 };
 
+export const STATUS = {
+  ONLINE: 'ONLINE',
+  OFFLINE: 'OFFLINE'
+};
+
 export const TIMELINE_TIME_FILTERS = {
   'HOUR': {
     'key': 'HOUR',
