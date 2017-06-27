@@ -21,17 +21,17 @@ class Editable extends React.Component {
   constructor(props) {
     super(props);
 
-    this.defaultHtml = props.value;
-
     this.state = {
       html: props.value,
-      isEditable: false
+      isEditable: false,
+      defaultHtml: props.value
     };
   }
 
   componentWillReceiveProps(props) {
     this.setState({
-      html: props.value
+      html: props.value,
+      defaultHtml: props.value
     });
   }
 
@@ -48,7 +48,7 @@ class Editable extends React.Component {
   cancelEdit() {
     this.setState({
       isEditable: false,
-      html: this.defaultHtml
+      html: this.state.defaultHtml,
     });
   }
 
@@ -70,10 +70,10 @@ class Editable extends React.Component {
     } else {
       this.setState({
         isEditable: false,
-        html: html
+        html: html,
+        defaultHtml: html
       });
       this.props.onChange(html);
-      this.defaultHtml = html;
     }
 
   }
