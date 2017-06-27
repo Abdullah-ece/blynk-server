@@ -39,6 +39,7 @@ class DeviceInfo extends React.Component {
   render() {
 
     let time = this.props.device.get('dataReceivedAt');
+    let disconnectTime = this.props.device.get('disconnectTime');
 
     let lastReported = Number(time) ? moment(Number(time)).calendar(null, {
       sameDay: '[Today], hh:mm A',
@@ -47,6 +48,13 @@ class DeviceInfo extends React.Component {
       sameElse: 'hh:mm A, YYYY.MM.DD'
     }) : 'Not reported yet';
 
+    let lastOnlineTime = Number(disconnectTime) ? `Last online: ` + moment(Number(disconnectTime)).calendar(null, {
+        sameDay: '[Today], hh:mm A',
+        lastDay: '[Yesterday], hh:mm A',
+        lastWeek: 'dddd, hh:mm A',
+        sameElse: 'hh:mm A, YYYY.MM.DD'
+      }) : `Wasn't online yet`;
+
     return (
       <div className="device--device-info">
         <Row className="device--device-info-details">
@@ -54,6 +62,9 @@ class DeviceInfo extends React.Component {
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
+              { this.props.device.get('status') === 'OFFLINE' && (
+                <i> ({ lastOnlineTime })</i>
+              )}
             </Fieldset>
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
