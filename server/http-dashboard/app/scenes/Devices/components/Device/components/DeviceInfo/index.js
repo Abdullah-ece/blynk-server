@@ -40,7 +40,7 @@ class DeviceInfo extends React.Component {
 
     let time = this.props.device.get('dataReceivedAt');
 
-    let lastReported = Number(time) ? moment(Number(time) * 1000).calendar(null, {
+    let lastReported = Number(time) ? moment(Number(time)).calendar(null, {
       sameDay: '[Today], hh:mm A',
       lastDay: '[Yesterday], hh:mm A',
       lastWeek: 'dddd, hh:mm A',
