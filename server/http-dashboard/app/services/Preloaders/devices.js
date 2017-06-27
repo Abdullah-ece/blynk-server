@@ -39,11 +39,11 @@ export const Devices = (store) => {
 export const Device = (store) => {
   return (nextState, replaceWith, callback) => {
 
-    const {start, finish, devicesFetch} = getActions(store);
+    const {start, finish, deviceFetch} = getActions(store);
 
     start();
 
-    devicesFetch({
+    deviceFetch({
       orgId: getOrgId(store)
     }, {
       id: nextState.params.id
