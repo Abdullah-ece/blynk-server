@@ -39,7 +39,7 @@ public class PrintProductTest {
                 new CostMetaField(5, "Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
                 new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
-                        "+38063673333",  false, "My street", false,
+                        "+38063673333",  false, "My street", false, "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
                 new AddressMetaField(7, "Farm of Smith", Role.ADMIN, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),

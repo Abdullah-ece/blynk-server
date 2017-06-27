@@ -412,6 +412,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
                 new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
+                        "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false)
         };
         CriticalEvent event = new CriticalEvent();

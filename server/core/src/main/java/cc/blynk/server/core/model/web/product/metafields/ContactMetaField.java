@@ -34,6 +34,10 @@ public class ContactMetaField extends MetaField {
 
     public final boolean isStreetAddressEnabled;
 
+    public final String country;
+
+    public final boolean isCountryEnabled;
+
     public final String city;
 
     public final boolean isCityEnabled;
@@ -63,6 +67,8 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("isPhoneEnabled") boolean isPhoneEnabled,
                             @JsonProperty("streetAddress") String streetAddress,
                             @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
+                            @JsonProperty("country") String country,
+                            @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
                             @JsonProperty("city") String city,
                             @JsonProperty("isCityEnabled") boolean isCityEnabled,
                             @JsonProperty("state") String state,
@@ -82,6 +88,8 @@ public class ContactMetaField extends MetaField {
         this.isPhoneEnabled = isPhoneEnabled;
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
+        this.country = country;
+        this.isCountryEnabled = isCountryEnabled;
         this.city = city;
         this.isCityEnabled = isCityEnabled;
         this.state = state;
@@ -99,6 +107,7 @@ public class ContactMetaField extends MetaField {
                 email, isEmailEnabled,
                 phone, isPhoneEnabled,
                 streetAddress, isStreetAddressEnabled,
+                country, isCountryEnabled,
                 city, isCityEnabled,
                 state, isStateEnabled,
                 zip, isZipEnabled,
