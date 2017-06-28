@@ -31,12 +31,6 @@ class Timeline extends React.Component {
     page: 1
   };
 
-  initialValues = {
-    type: TIMELINE_TYPE_FILTERS.ALL.key,
-    time: TIMELINE_TIME_FILTERS.HOUR.key,
-    customTime: []
-  };
-
   componentDidMount() {
     this.handleValuesChange(this.initialValues);
   }
@@ -46,6 +40,12 @@ class Timeline extends React.Component {
       this.handleValuesChange(this.props.formValues);
     }
   }
+
+  initialValues = {
+    type: TIMELINE_TYPE_FILTERS.ALL.key,
+    time: TIMELINE_TIME_FILTERS.HOUR.key,
+    customTime: []
+  };
 
   fetchTimeline(params = {}) {
     this.setState({
