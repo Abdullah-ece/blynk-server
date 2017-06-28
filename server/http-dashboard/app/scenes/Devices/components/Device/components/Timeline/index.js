@@ -31,13 +31,20 @@ class Timeline extends React.Component {
     page: 1
   };
 
+  initialValues = {
+    type: TIMELINE_TYPE_FILTERS.ALL.key,
+    time: TIMELINE_TIME_FILTERS.HOUR.key,
+    customTime: []
+  };
+
   componentDidMount() {
+    this.handleValuesChange(this.initialValues);
+  }
 
-    const params = {};
-
-    params.from = new Date().getTime() - TIMELINE_TIME_FILTERS.HOUR.time;
-
-    this.fetchTimeline(params);
+  componentDidUpdate(prevProps) {
+    if (prevProps.params.id !== this.props.params.id) {
+      this.handleValuesChange(this.props.formValues);
+    }
   }
 
   fetchTimeline(params = {}) {
@@ -107,12 +114,6 @@ class Timeline extends React.Component {
 
   render() {
 
-    const initialValues = {
-      type: TIMELINE_TYPE_FILTERS.ALL.key,
-      time: TIMELINE_TIME_FILTERS.HOUR.key,
-      customTime: []
-    };
-
     return (
       <div className="devices--device-timeline">
         { this.props.timeline.has('logEvents') && (
@@ -127,7 +128,7 @@ class Timeline extends React.Component {
                    page={this.state.page}
                    loadNextPage={this.loadNextPage.bind(this)}
                    loading={this.state.loading}
-                   initialValues={initialValues}
+                   initialValues={this.initialValues}
                    formValues={this.props.formValues}
                    params={this.props.params}
                    onChange={this.handleValuesChange.bind(this)}
