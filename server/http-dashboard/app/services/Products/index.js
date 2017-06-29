@@ -23,6 +23,12 @@ export const EVENT_TYPES = {
   CRITICAL: 'CRITICAL'
 };
 
+export const DEVICE_FORCE_UPDATE = {
+  UPDATE_DEVICES: 'update_devices',
+  SAVE_WITHOUT_UPDATE: 'save_without_update',
+  CLONE_PRODUCT: 'clone_product'
+};
+
 export const Metadata = {
   Fields: {
     ADDRESS: 'Address',

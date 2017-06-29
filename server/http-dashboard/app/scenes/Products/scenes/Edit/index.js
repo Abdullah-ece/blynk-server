@@ -6,7 +6,7 @@ import {submit, getFormSyncErrors} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
-import {prepareProductForSave, TABS} from 'services/Products';
+import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -20,6 +20,7 @@ import {
 } from 'data/Product/actions';
 import _ from 'lodash';
 import ProductEdit from 'scenes/Products/components/ProductEdit';
+import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
 
 @connect((state) => {
 
@@ -91,6 +92,8 @@ class ProductCreate extends React.Component {
 
     this.state = {
       activeTab: props && props.params.tab || TABS.INFO,
+      isDevicesForceUpdateVisible: false,
+      deviceForceUpdateLoading: false
     };
   }
 
@@ -176,15 +179,14 @@ class ProductCreate extends React.Component {
 
     if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
 
-      this.props.Update(prepareProductForSave(this.props.product)).then(() => {
-        if (this.state.activeTab) {
-          this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
-        } else {
-          this.context.router.push(`/product/${this.props.params.id}?save=true`);
-        }
-      }).catch((err) => {
-        message.error(err.message || 'Cannot save product');
-      });
+      if (this.doesProductHaveDevices()) {
+        this.setState({
+          isDevicesForceUpdateVisible: true
+        });
+      } else {
+        this.saveProductWithoutDevicesUpdate();
+      }
+
 
     }
 
@@ -222,30 +224,108 @@ class ProductCreate extends React.Component {
     this.props.ProductEditEventsFieldsUpdate(field);
   }
 
+  handleProductDeviceForceUpdateSubmit(value) {
+    if (value === DEVICE_FORCE_UPDATE.UPDATE_DEVICES) {
+      this.saveProductAndUpdateDevices();
+    } else if (value === DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE) {
+      this.saveProductWithoutDevicesUpdate();
+    } else if (value === DEVICE_FORCE_UPDATE.CLONE_PRODUCT) {
+      this.cloneProductWithoutSaving();
+    }
+  }
+
+  doesProductHaveDevices() {
+    let product = _.find(this.props.products, product => Number(product.id) === Number(this.props.params.id));
+
+    return product.deviceCount;
+  }
+
+  saveProduct(product) {
+    this.setState({
+      deviceForceUpdateLoading: true
+    });
+    return this.props.Update(product);
+  }
+
+  updateDevicesByProduct(/*product*/) {
+
+  }
+
+  handleProductSaveSuccess() {
+    if (this.state.activeTab) {
+      this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
+    } else {
+      this.context.router.push(`/product/${this.props.params.id}?save=true`);
+    }
+  }
+
+  saveProductAndUpdateDevices() {
+    let product = prepareProductForSave(this.props.product);
+
+    this.saveProduct(product).then(() => {
+      this.updateDevicesByProduct(product)
+        .then(this.handleProductSaveSuccess.bind(this))
+        .catch((err) => {
+          message.error(err.message || 'Cannot save product');
+        });
+    });
+  }
+
+  saveProductWithoutDevicesUpdate() {
+    let product = prepareProductForSave(this.props.product);
+
+    this.saveProduct(product)
+      .then(this.handleProductSaveSuccess.bind(this))
+      .catch((err) => {
+        message.error(err.message || 'Cannot save product');
+      });
+  }
+
+  cloneProductWithoutSaving() {
+    // let product = prepareProductForSave(this.props.product);
+  }
+
+  handleProductDeviceForceUpdateCancel() {
+    this.setState({
+      isDevicesForceUpdateVisible: false
+    });
+  }
+
   render() {
     if (!this.props.product.info.values.id)
       return null;
 
     return (
-      <ProductEdit product={this.props.product}
-                   isInfoFormInvalid={this.props.isProductInfoInvalid}
-                   isEventsFormInvalid={this.isEventsFormInvalid()}
-                   isMetadataFormInvalid={this.isMetadataFormInvalid()}
-                   isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
-                   isMetadataInfoRead={!this.props.isMetadataFirstTime}
-                   updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
-                   onInfoValuesChange={this.onInfoValuesChange.bind(this)}
-                   onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
-                   onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
-                   onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
-                   onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
-                   onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
-                   handleSubmit={this.handleSubmit.bind(this)}
-                   handleCancel={this.handleCancel.bind(this)}
-                   onTabChange={this.onTabChange.bind(this)}
-                   params={this.props.params}/>
+      <div>
+        <ProductEdit product={this.props.product}
+                     isInfoFormInvalid={this.props.isProductInfoInvalid}
+                     isEventsFormInvalid={this.isEventsFormInvalid()}
+                     isMetadataFormInvalid={this.isMetadataFormInvalid()}
+                     isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
+                     isMetadataInfoRead={!this.props.isMetadataFirstTime}
+                     updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
+                     onInfoValuesChange={this.onInfoValuesChange.bind(this)}
+                     onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
+                     onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
+                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
+                     handleSubmit={this.handleSubmit.bind(this)}
+                     handleCancel={this.handleCancel.bind(this)}
+                     onTabChange={this.onTabChange.bind(this)}
+                     params={this.props.params}/>
+        <ProductDevicesForceUpdate
+          isModalVisible={this.state.isDevicesForceUpdateVisible}
+          loading={this.state.deviceForceUpdateLoading}
+          product={_.find(this.props.products, product => Number(product.id) === Number(this.props.params.id))}
+          onSave={this.handleProductDeviceForceUpdateSubmit.bind(this)}
+          onCancel={this.handleProductDeviceForceUpdateCancel.bind(this)}/>
+
+      </div>
     );
   }
 }
 
-export default ProductCreate;
+export
+default
+ProductCreate;
