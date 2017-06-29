@@ -1,6 +1,7 @@
 import React           from 'react';
 import {Modal}         from 'components';
 import {Button, Radio} from 'antd';
+import _               from 'lodash';
 import {
   DEVICE_FORCE_UPDATE
 }                      from 'services/Products';
@@ -15,6 +16,19 @@ class ProductDeviceForceUpdate extends React.Component {
     onCancel: React.PropTypes.func,
     product: React.PropTypes.object,
   };
+
+  shouldComponentUpdate(nextProps) {
+    if (this.props.isModalVisible !== nextProps.isModalVisible)
+      return true;
+
+    if (!_.isEqual(this.props.product, nextProps.product))
+      return true;
+
+    if (this.props.loading !== nextProps.loading)
+      return true;
+
+    return false;
+  }
 
   state = {
     option: DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE
@@ -33,6 +47,7 @@ class ProductDeviceForceUpdate extends React.Component {
   }
 
   render() {
+    console.log('render');
     return (
       <Modal title="Apply Changes?"
              visible={this.props.isModalVisible}
