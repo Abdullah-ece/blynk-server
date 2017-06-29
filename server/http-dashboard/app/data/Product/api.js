@@ -51,3 +51,17 @@ export function ProductCreate(data = false) {
     }
   };
 }
+
+export function ProductUpdateDevices(data = false) {
+  return {
+    type: 'API_PRODUCT_UPDATE_DEVICES',
+    payload: {
+      request: {
+        method: 'POST',
+        url: '/product/updateDevices',
+        data: data
+      }
+    }
+  };
+}
+

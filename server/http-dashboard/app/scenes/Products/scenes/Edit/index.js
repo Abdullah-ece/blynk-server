@@ -45,6 +45,8 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
+  Create: bindActionCreators(API.ProductCreate, dispatch),
+  updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
@@ -69,10 +71,12 @@ class ProductCreate extends React.Component {
 
     Fetch: React.PropTypes.func,
     Update: React.PropTypes.func,
+    Create: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
     ProductEditClearFields: React.PropTypes.func,
+    updateDevicesByProduct: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
     ProductEditEventsFieldsUpdate: React.PropTypes.func,
@@ -247,15 +251,15 @@ class ProductCreate extends React.Component {
     return this.props.Update(product);
   }
 
-  updateDevicesByProduct(/*product*/) {
-
+  updateDevicesByProduct(product) {
+    return this.props.updateDevicesByProduct(product);
   }
 
-  handleProductSaveSuccess() {
+  handleProductSaveSuccess(response) {
     if (this.state.activeTab) {
-      this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}?save=true`);
+      this.context.router.push(`/product/${response.payload.data.id}/${this.state.activeTab}?save=true`);
     } else {
-      this.context.router.push(`/product/${this.props.params.id}?save=true`);
+      this.context.router.push(`/product/${response.payload.data.id}?save=true`);
     }
   }
 
@@ -282,7 +286,14 @@ class ProductCreate extends React.Component {
   }
 
   cloneProductWithoutSaving() {
-    // let product = prepareProductForSave(this.props.product);
+    let product = prepareProductForSave(this.props.product);
+
+    product.name = `${product.name} Copy`;
+
+    this.props.Create(product).then(this.handleProductSaveSuccess.bind(this)).catch((err) => {
+      message.error(err.message || 'Cannot clone product');
+    });
+
   }
 
   handleProductDeviceForceUpdateCancel() {

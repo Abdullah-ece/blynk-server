@@ -17,7 +17,11 @@ class ProductDeviceForceUpdate extends React.Component {
     product: React.PropTypes.object,
   };
 
-  shouldComponentUpdate(nextProps) {
+  state = {
+    option: DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
     if (this.props.isModalVisible !== nextProps.isModalVisible)
       return true;
 
@@ -27,12 +31,11 @@ class ProductDeviceForceUpdate extends React.Component {
     if (this.props.loading !== nextProps.loading)
       return true;
 
+    if (this.state.option !== nextState.option)
+      return true;
+
     return false;
   }
-
-  state = {
-    option: DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE
-  };
 
   handleSelectOption(event) {
     this.setState({
@@ -47,7 +50,6 @@ class ProductDeviceForceUpdate extends React.Component {
   }
 
   render() {
-    console.log('render');
     return (
       <Modal title="Apply Changes?"
              visible={this.props.isModalVisible}
@@ -74,13 +76,13 @@ class ProductDeviceForceUpdate extends React.Component {
             </div>
             <div className="product-device-force-update-option-options">
               <Radio.Group value={this.state.option} onChange={this.handleSelectOption.bind(this)}>
-                <Radio value={DEVICE_FORCE_UPDATE.UPDATE_DEVICES} disabled={true}>
+                <Radio value={DEVICE_FORCE_UPDATE.UPDATE_DEVICES}>
                   Update {this.props.product.deviceCount} active Devices
                 </Radio>
                 <Radio value={DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE}>
                   Save changes. Don't update active Devices
                 </Radio>
-                <Radio value={DEVICE_FORCE_UPDATE.CLONE_PRODUCT} disabled={true}>
+                <Radio value={DEVICE_FORCE_UPDATE.CLONE_PRODUCT}>
                   Create a clone of this Product with updated Metadata
                 </Radio>
               </Radio.Group>
