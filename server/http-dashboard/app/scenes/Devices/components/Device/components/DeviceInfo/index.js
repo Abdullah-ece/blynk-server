@@ -18,6 +18,9 @@ class DeviceInfo extends React.Component {
   }
 
   getDeviceStatus() {
+    if (!this.props.device.has('status'))
+      return 'offline';
+
     if (this.props.device && this.props.device.get('status') === 'OFFLINE') {
       return 'offline';
     } else if (this.props.device && this.props.device.get('status') === 'ONLINE') {
@@ -97,40 +100,40 @@ class DeviceInfo extends React.Component {
               <div className="device--device-info-metadata-list">
                 { this.props.device.get('metaFields').map((field, key) => {
 
-                    const form = `devicemetadataedit${field.get('name')}`;
+                  const form = `devicemetadataedit${field.get('name')}`;
 
-                    const props = {
-                      data: field,
-                      key: key,
-                      form: form,
-                      onChange: this.onChange.bind(this)
-                    };
+                  const props = {
+                    data: field,
+                    key: key,
+                    form: form,
+                    onChange: this.onChange.bind(this)
+                  };
 
-                    if (field.get('type') === Metadata.Fields.TEXT)
-                      return (<DeviceMetadata.Text {...props}/>);
+                  if (field.get('type') === Metadata.Fields.TEXT)
+                    return (<DeviceMetadata.Text {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.NUMBER)
-                      return (<DeviceMetadata.Number {...props}/>);
+                  if (field.get('type') === Metadata.Fields.NUMBER)
+                    return (<DeviceMetadata.Number {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.UNIT)
-                      return (<DeviceMetadata.Unit {...props}/>);
+                  if (field.get('type') === Metadata.Fields.UNIT)
+                    return (<DeviceMetadata.Unit {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.RANGE)
-                      return (<DeviceMetadata.Range {...props}/>);
+                  if (field.get('type') === Metadata.Fields.RANGE)
+                    return (<DeviceMetadata.Range {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.CONTACT)
-                      return (<DeviceMetadata.Contact {...props}/>);
+                  if (field.get('type') === Metadata.Fields.CONTACT)
+                    return (<DeviceMetadata.Contact {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.TIME)
-                      return (<DeviceMetadata.Time {...props}/>);
+                  if (field.get('type') === Metadata.Fields.TIME)
+                    return (<DeviceMetadata.Time {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.COST)
-                      return (<DeviceMetadata.Cost {...props}/>);
+                  if (field.get('type') === Metadata.Fields.COST)
+                    return (<DeviceMetadata.Cost {...props}/>);
 
-                    if (field.get('type') === Metadata.Fields.COORDINATES)
-                      return (<DeviceMetadata.Coordinates {...props}/>);
+                  if (field.get('type') === Metadata.Fields.COORDINATES)
+                    return (<DeviceMetadata.Coordinates {...props}/>);
 
-                  })
+                })
                 }
               </div>
             </Section>) }
