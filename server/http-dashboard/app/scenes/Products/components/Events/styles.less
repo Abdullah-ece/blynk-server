@@ -1,6 +1,6 @@
 @import 'components/Layout/style-guide';
 
-@dnd-cursor: 'move';
+@dnd-cursor: row-resize;
 
 .product-events-list {
   padding: @style-size-3-1 0;
@@ -55,7 +55,7 @@
 
 .product-events-event-tools {
   .cursor-move {
-    cursor: move;
+    cursor: @dnd-cursor;
   }
   > i {
     font-size: 16px;
@@ -79,6 +79,11 @@
 
   .product-events-event-tools {
     opacity: 1;
+  }
+
+  padding: 0;
+  .product-metadata-item {
+    padding: 8px 16px;
   }
 }
 

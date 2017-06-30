@@ -1,4 +1,5 @@
 import React from 'react';
+import Scroll from 'react-scroll';
 import classnames from 'classnames';
 import {Timeline, Row, Col, Button, Popconfirm, Icon} from 'antd';
 import Preview from './preview';
@@ -159,36 +160,38 @@ class Base extends React.Component {
     });
 
     return (
-      <div className={itemClasses}>
-        <Timeline>
-          <Timeline.Item {...this.getPropsByType(this.props.type)}>
-            <Row gutter={8}>
-              <Col span={13}>
-                { this.getChildrenByType(Content.displayName) }
-                <Notifications onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
-                               metadata={this.props.metadata} fields={this.props.fields}/>
-              </Col>
-              <Col span={9} offset={1}>
-                { this.getChildrenByType(Preview.displayName) }
-              </Col>
-              { this.props.tools && (
-                <Col span={1} className="product-events-event-tools">
-                  <this.toolsDragAndDropButton />
-
-                  { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
-
-                  { this.toolsCloneButton() }
+      <Scroll.Element name={this.props.formValues && this.props.formValues.name}>
+        <div className={itemClasses}>
+          <Timeline>
+            <Timeline.Item {...this.getPropsByType(this.props.type)}>
+              <Row gutter={8}>
+                <Col span={13}>
+                  { this.getChildrenByType(Content.displayName) }
+                  <Notifications onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                                 metadata={this.props.metadata} fields={this.props.fields}/>
                 </Col>
-              )}
-            </Row>
-            <Row gutter={8}>
-              <Col span={15}>
-                {/* Notifications there*/}
-              </Col>
-            </Row>
-          </Timeline.Item>
-        </Timeline>
-      </div>
+                <Col span={9} offset={1}>
+                  { this.getChildrenByType(Preview.displayName) }
+                </Col>
+                { this.props.tools && (
+                  <Col span={1} className="product-events-event-tools">
+                    <this.toolsDragAndDropButton />
+
+                    { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
+
+                    { this.toolsCloneButton() }
+                  </Col>
+                )}
+              </Row>
+              <Row gutter={8}>
+                <Col span={15}>
+                  {/* Notifications there*/}
+                </Col>
+              </Row>
+            </Timeline.Item>
+          </Timeline>
+        </div>
+      </Scroll.Element>
     );
   }
 

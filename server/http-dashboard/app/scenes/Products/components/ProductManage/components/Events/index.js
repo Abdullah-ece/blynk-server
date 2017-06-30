@@ -88,6 +88,9 @@ class Events extends React.Component {
 
     const isNameAlreadyExists = (name) => {
       return this.props.fields.some((field) => {
+        if (!field.values || !field.values.name || !name)
+          return false;
+
         return field.values.name.trim() === name.trim();
       });
     };
@@ -280,14 +283,6 @@ class Events extends React.Component {
 
       element = (
         <Critical {...options}/>
-      );
-    }
-
-    if (field.values.isRecentlyCreated) {
-      return (
-        <Scroll.Element name={field.name}>
-          { element }
-        </Scroll.Element>
       );
     }
 
