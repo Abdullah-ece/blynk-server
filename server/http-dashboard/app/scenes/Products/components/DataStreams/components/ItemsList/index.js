@@ -9,6 +9,7 @@ class ItemsList extends React.Component {
   render() {
 
     const classNames = classnames({
+      'product-datastreams-items-list': true,
       'product-metadata-items-list': !this.props.static,
       'product-metadata-items-list-static': this.props.static
     });

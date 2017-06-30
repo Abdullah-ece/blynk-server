@@ -1,4 +1,5 @@
 import React from 'react';
+import Scroll from 'react-scroll';
 import classnames from 'classnames';
 import {Row, Col, Popconfirm, Button, Icon} from 'antd';
 import {SortableHandle} from 'react-sortable-hoc';
@@ -130,41 +131,43 @@ class DataStreamItem extends React.Component {
     });
 
     return (
-      <div className={itemClasses}>
-        <Form onSubmit={this.handleSubmit.bind(this)}>
-          <Row gutter={8}>
-            <Col span={13}>
-              {this.props.children}
-            </Col>
-            <Col span={3}>
+      <Scroll.Element name={this.props.field.name}>
+        <div className={itemClasses}>
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <Row gutter={8}>
+              <Col span={13}>
+                {this.props.children}
+              </Col>
+              <Col span={3}>
 
-              <FormItem.TitleGroup>
-                <FormItem.Title>Pin</FormItem.Title>
-              </FormItem.TitleGroup>
-              <FormItem.Content>
-                <MetadataFormSelect name="pin"
-                                    onFocus={this.markAsActive.bind(this)}
-                                    onBlur={this.handleCancelDelete.bind(this)}
-                                    type="text"
-                                    placeholder="Pin"
-                                    dropdownClassName="product-metadata-item-unit-dropdown"
-                                    values={this.Pins()}
-                                    validate={[
-                                      Validation.Rules.required
-                                    ]}/>
-              </FormItem.Content>
-            </Col>
-            <Col span={8}>
-              { this.preview() }
-            </Col>
-          </Row>
-          <div className="product-metadata-item-tools">
-            <DragHandler/>
-            {deleteButton}
-            <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
-          </div>
-        </Form>
-      </div>
+                <FormItem.TitleGroup>
+                  <FormItem.Title>Pin</FormItem.Title>
+                </FormItem.TitleGroup>
+                <FormItem.Content>
+                  <MetadataFormSelect name="pin"
+                                      onFocus={this.markAsActive.bind(this)}
+                                      onBlur={this.handleCancelDelete.bind(this)}
+                                      type="text"
+                                      placeholder="Pin"
+                                      dropdownClassName="product-metadata-item-unit-dropdown"
+                                      values={this.Pins()}
+                                      validate={[
+                                        Validation.Rules.required
+                                      ]}/>
+                </FormItem.Content>
+              </Col>
+              <Col span={8}>
+                { this.preview() }
+              </Col>
+            </Row>
+            <div className="product-metadata-item-tools">
+              <DragHandler/>
+              {deleteButton}
+              <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+            </div>
+          </Form>
+        </div>
+      </Scroll.Element>
     );
   }
 }

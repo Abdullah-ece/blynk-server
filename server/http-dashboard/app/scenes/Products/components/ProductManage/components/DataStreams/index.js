@@ -58,14 +58,6 @@ class DataStreams extends React.Component {
 
     let element = (<DataStreamsBaseField {...props} />);
 
-    if (field.values.isRecentlyCreated) {
-      return (
-        <Scroll.Element name={field.name}>
-          { element }
-        </Scroll.Element>
-      );
-    }
-
     return element;
 
   });
@@ -136,6 +128,9 @@ class DataStreams extends React.Component {
 
     const isNameAlreadyExists = (name) => {
       return this.props.fields.some((field) => {
+        if (!field.values || !field.values.name || !name)
+          return false;
+
         return field.values.name.trim() === name.trim();
       });
     };
@@ -165,7 +160,7 @@ class DataStreams extends React.Component {
         id: nextId,
         values: {
           ...cloned.values,
-          name: `${name}`,
+          name: cloned.values && cloned.values.name ? `${name}` : '',
           pin: this.generatePin(),
           isRecentlyCreated: true
         }
@@ -218,11 +213,8 @@ class DataStreams extends React.Component {
           <this.SortableList items={this.props.fields} onSortEnd={this.onSortEnd.bind(this)}
                              useDragHandle={true}
                              lockAxis="y"
-                             helperClass="product-item-drag-active"/>) || null
+                             helperClass="product-metadata-item-drag-active"/>) || null
         }
-        {/*<DataStreamsItemsList>*/}
-        {/*<DataStreamsBaseField {...props}/>*/}
-        {/*</DataStreamsItemsList>*/}
         <AddDataStreamsFields onFieldAdd={this.addDataStreamsField.bind(this)}/>
       </div>
     );
