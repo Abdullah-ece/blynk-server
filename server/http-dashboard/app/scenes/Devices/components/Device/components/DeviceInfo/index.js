@@ -65,7 +65,7 @@ class DeviceInfo extends React.Component {
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
-              { this.props.device.get('status') === 'OFFLINE' && (
+              { this.props.device.has('status') && this.props.device.get('status') === 'OFFLINE' && (
                 <i> ({ lastOnlineTime })</i>
               )}
             </Fieldset>
