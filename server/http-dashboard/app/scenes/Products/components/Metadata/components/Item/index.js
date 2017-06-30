@@ -1,4 +1,5 @@
 import React from 'react';
+import Scroll from 'react-scroll';
 import {Row, Col, Icon, Popconfirm, Button} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from 'scenes/Products/components/Preview';
@@ -133,34 +134,36 @@ class MetadataItem extends React.PureComponent {
     });
 
     return (
-      <div className={itemClasses}>
-        <Form onSubmit={this.handleSubmit.bind(this)}>
-          <Row gutter={8}>
-            <Col span={12}>
-              { this.props.children }
-            </Col>
-            <Col span={3}>
-              <FormItem offset={false}>
-                <FormItem.Title>Who can edit</FormItem.Title>
-                <FormItem.Content>
-                  <MetadataSelect onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
-                                  name="role" style={{width: '100%'}} values={MetadataRoles}/>
-                </FormItem.Content>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              { this.preview() }
-            </Col>
-          </Row>
-          { this.props.tools && (
-            <div className="product-metadata-item-tools">
-              <DragHandler/>
-              {deleteButton}
-              <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
-            </div>
-          )}
-        </Form>
-      </div>
+      <Scroll.Element name={this.props.field.name}>
+        <div className={itemClasses}>
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <Row gutter={8}>
+              <Col span={12}>
+                { this.props.children }
+              </Col>
+              <Col span={3}>
+                <FormItem offset={false}>
+                  <FormItem.Title>Who can edit</FormItem.Title>
+                  <FormItem.Content>
+                    <MetadataSelect onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                                    name="role" style={{width: '100%'}} values={MetadataRoles}/>
+                  </FormItem.Content>
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                { this.preview() }
+              </Col>
+            </Row>
+            { this.props.tools && (
+              <div className="product-metadata-item-tools">
+                <DragHandler/>
+                {deleteButton}
+                <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+              </div>
+            )}
+          </Form>
+        </div>
+      </Scroll.Element>
     );
   }
 }

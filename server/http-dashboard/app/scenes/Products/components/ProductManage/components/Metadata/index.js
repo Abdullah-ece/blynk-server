@@ -249,14 +249,6 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.values.isRecentlyCreated) {
-      return (
-        <Scroll.Element name={field.name}>
-          { element }
-        </Scroll.Element>
-      );
-    }
-
     return element;
 
   });
