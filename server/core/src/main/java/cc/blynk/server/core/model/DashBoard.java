@@ -86,14 +86,14 @@ public class DashBoard {
     }
 
     public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
-        puntPingStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
+        puntPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
     private void putPinStorageValue(int deviceId, PinType type, byte pin, String value) {
-        puntPingStorageValue(new PinStorageKey(deviceId, type, pin), value);
+        puntPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
     }
 
-    private void puntPingStorageValue(PinStorageKey key, String value) {
+    private void puntPinStorageValue(PinStorageKey key, String value) {
         if (pinsStorage == Collections.EMPTY_MAP) {
             pinsStorage = new HashMap<>();
         }
@@ -219,7 +219,7 @@ public class DashBoard {
         return widgets[getWidgetIndexByIdOrThrow(id)];
     }
 
-    private Widget getWidgetById(long id) {
+    public Widget getWidgetById(long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
                 return widget;
