@@ -319,6 +319,7 @@ class Events extends React.Component {
 
         <this.SortableList items={this.getDynamicFields(this.props.fields)} /*onSortEnd={this.onSortEnd.bind(this)}*/
                            useDragHandle={true}
+                           useWindowAsScrollContainer={true}
                            onSortEnd={this.onSortEnd.bind(this)}
                            lockAxis="y"
                            helperClass="product-events-item-drag-active"/>

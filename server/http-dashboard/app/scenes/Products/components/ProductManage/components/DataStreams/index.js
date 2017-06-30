@@ -213,6 +213,7 @@ class DataStreams extends React.Component {
           <this.SortableList items={this.props.fields} onSortEnd={this.onSortEnd.bind(this)}
                              useDragHandle={true}
                              lockAxis="y"
+                             useWindowAsScrollContainer={true}
                              helperClass="product-metadata-item-drag-active"/>) || null
         }
         <AddDataStreamsFields onFieldAdd={this.addDataStreamsField.bind(this)}/>

@@ -425,6 +425,7 @@ class ProductMetadata extends React.Component {
 
           { this.props.fields && this.props.fields.length && (
             <this.SortableList items={filterDynamicMetadataFields(this.props.fields)}
+                               useWindowAsScrollContainer={true}
                                onSortEnd={this.onSortEnd.bind(this)}
                                useDragHandle={true}
                                lockAxis="y"
