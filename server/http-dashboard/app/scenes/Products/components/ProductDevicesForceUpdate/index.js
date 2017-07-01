@@ -1,10 +1,13 @@
-import React           from 'react';
-import {Modal}         from 'components';
-import {Button, Radio} from 'antd';
-import _               from 'lodash';
+import React            from 'react';
+import {Modal}          from 'components';
+import {Button, Radio}  from 'antd';
+import _                from 'lodash';
 import {
   DEVICE_FORCE_UPDATE
-}                      from 'services/Products';
+}                       from 'services/Products';
+import {
+  getOptionByAmount
+}                       from 'services/Text';
 import './styles.less';
 
 class ProductDeviceForceUpdate extends React.Component {
@@ -50,6 +53,9 @@ class ProductDeviceForceUpdate extends React.Component {
   }
 
   render() {
+
+    const DevicesText = getOptionByAmount(this.props.product.deviceCount, ['Device', 'Devices']);
+
     return (
       <Modal title="Apply Changes?"
              visible={this.props.isModalVisible}
@@ -67,7 +73,10 @@ class ProductDeviceForceUpdate extends React.Component {
       >
         <div className="product-device-force-update">
           <div className="product-device-force-update-title">
-            There are <span>{ this.props.product.deviceCount }</span> active Devices associated with product:
+            { getOptionByAmount(this.props.product.deviceCount, ['There is', ['There are']])}
+            {'\u00A0'}
+            <span>{ this.props.product.deviceCount }</span> active {DevicesText} associated with product:
+            {'\u00A0'}
             <span>{this.props.product.name}</span>
           </div>
           <div className="product-device-force-update-option">
@@ -77,10 +86,10 @@ class ProductDeviceForceUpdate extends React.Component {
             <div className="product-device-force-update-option-options">
               <Radio.Group value={this.state.option} onChange={this.handleSelectOption.bind(this)}>
                 <Radio value={DEVICE_FORCE_UPDATE.UPDATE_DEVICES}>
-                  Update {this.props.product.deviceCount} active Devices
+                  Update {this.props.product.deviceCount} active { DevicesText }
                 </Radio>
                 <Radio value={DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE}>
-                  Save changes. Don't update active Devices
+                  Save changes. Don't update active { DevicesText }
                 </Radio>
                 <Radio value={DEVICE_FORCE_UPDATE.CLONE_PRODUCT}>
                   Create a clone of this Product with updated Metadata
