@@ -175,6 +175,98 @@ export const HARDWARES = {
     "key": "WiPy",
     "value": "WiPy"
   },
+  "BBC Micro:bit": {
+    "key": "BBC Micro:bit",
+    "value": "BBC Micro:bit"
+  },
+  "Bluz": {
+    "key": "Bluz",
+    "value": "Bluz"
+  },
+  "chipKIT Uno32": {
+    "key": "chipKIT Uno32",
+    "value": "chipKIT Uno32"
+  },
+  "Digistump Digispark": {
+    "key": "Digistump Digispark",
+    "value": "Digistump Digispark"
+  },
+  "Digistump Oak": {
+    "key": "Digistump Oak",
+    "value": "Digistump Oak"
+  },
+  "ESP32 Dev Board": {
+    "key": "ESP32 Dev Board",
+    "value": "ESP32 Dev Board"
+  },
+  "Konekt Dash": {
+    "key": "Konekt Dash",
+    "value": "Konekt Dash"
+  },
+  "Konekt Dash Pro": {
+    "key": "Konekt Dash Pro",
+    "value": "Konekt Dash Pro"
+  },
+  "LeMaker Banana Pro": {
+    "key": "LeMaker Banana Pro",
+    "value": "LeMaker Banana Pro"
+  },
+  "LeMaker Guitar": {
+    "key": "LeMaker Guitar",
+    "value": "LeMaker Guitar"
+  },
+  "LightBlue Bean": {
+    "key": "LightBlue Bean",
+    "value": "LightBlue Bean"
+  },
+  "LightBlue Bean+": {
+    "key": "LightBlue Bean+",
+    "value": "LightBlue Bean+"
+  },
+  "Onion Omega": {
+    "key": "Onion Omega",
+    "value": "Onion Omega"
+  },
+  "panStamp exp-output": {
+    "key": "panStamp exp-output",
+    "value": "panStamp exp-output"
+  },
+  "RedBear Duo": {
+    "key": "RedBear Duo",
+    "value": "RedBear Duo"
+  },
+  "RedBearLab BLE Nano": {
+    "key": "RedBearLab BLE Nano",
+    "value": "RedBearLab BLE Nano"
+  },
+  "RedBearLAb Blend Micro": {
+    "key": "RedBearLAb Blend Micro",
+    "value": "RedBearLAb Blend Micro"
+  },
+  "Samsung ARTIK 5": {
+    "key": "Samsung ARTIK 5",
+    "value": "Samsung ARTIK 5"
+  },
+  "Simbee": {
+    "key": "Simbee",
+    "value": "Simbee"
+  },
+  "STM32F103C Blue Pill": {
+    "key": "STM32F103C Blue Pill",
+    "value": "STM32F103C Blue Pill"
+  },
+  "Teensy 3": {
+    "key": "Teensy 3",
+    "value": "Teensy 3"
+  },
+  "The AirBoard": {
+    "key": "The AirBoard",
+    "value": "The AirBoard"
+  },
+  "TI LM4F120 LaunchPad": {
+    "key": "TI LM4F120 LaunchPad",
+    "value": "TI LM4F120 LaunchPad"
+  },
   "Other": {
     "key": "Other",
     "value": "Other"
@@ -253,6 +345,29 @@ export const AVAILABLE_HARDWARE_TYPES = [
   HARDWARES['Wildfire v3'],
   HARDWARES['Wildfire v4'],
   HARDWARES['WiPy'],
+  HARDWARES['BBC Micro:bit'],
+  HARDWARES['Bluz'],
+  HARDWARES['chipKIT Uno32'],
+  HARDWARES['Digistump Digispark'],
+  HARDWARES['Digistump Oak'],
+  HARDWARES['ESP32 Dev Board'],
+  HARDWARES['Konekt Dash'],
+  HARDWARES['Konekt Dash Pro'],
+  HARDWARES['LeMaker Banana Pro'],
+  HARDWARES['LeMaker Guitar'],
+  HARDWARES['LightBlue Bean'],
+  HARDWARES['LightBlue Bean+'],
+  HARDWARES['Onion Omega'],
+  HARDWARES['panStamp exp-output'],
+  HARDWARES['RedBear Duo'],
+  HARDWARES['RedBearLab BLE Nano'],
+  HARDWARES['RedBearLAb Blend Micro'],
+  HARDWARES['Samsung ARTIK 5'],
+  HARDWARES['Simbee'],
+  HARDWARES['STM32F103C Blue Pill'],
+  HARDWARES['Teensy 3'],
+  HARDWARES['The AirBoard'],
+  HARDWARES['TI LM4F120 LaunchPad'],
   HARDWARES['Other'],
 ];
 
