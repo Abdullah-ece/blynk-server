@@ -60,6 +60,7 @@ class OrganizationUsers extends React.Component {
       dataIndex: 'name',
       sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
       sorter: (a, b) => alphabetSort(a.name, b.name),
+      render: (text) => (<strong>{text}</strong>)
     }, {
       title: 'Email',
       dataIndex: 'email',
