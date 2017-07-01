@@ -9,6 +9,7 @@ import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
 import {reduxForm, getFormSyncErrors, getFormValues, reset, change} from 'redux-form';
 import {DeviceCreate, DevicesFetch} from 'data/Devices/api';
+import {ProductCreate} from 'data/Product/api';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES, STATUS} from 'services/Devices';
 import './styles.less';
 
@@ -21,10 +22,14 @@ import './styles.less';
   change: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
-  createDevice: bindActionCreators(DeviceCreate, dispatch)
+  createDevice: bindActionCreators(DeviceCreate, dispatch),
+  createProduct: bindActionCreators(ProductCreate, dispatch),
 }))
 @reduxForm({
-  form: "DeviceCreate"
+  form: "DeviceCreate",
+  initialValues: {
+    productId: null
+  }
 })
 class DeviceCreateModal extends React.Component {
 
@@ -38,13 +43,16 @@ class DeviceCreateModal extends React.Component {
     reduxForm: React.PropTypes.func,
     resetForm: React.PropTypes.func,
     createDevice: React.PropTypes.func,
+    createProduct: React.PropTypes.func,
     fetchDevices: React.PropTypes.func,
     change: React.PropTypes.func,
   };
 
   state = {
     loading: false,
-    productId: null
+    productId: null,
+    previousBoardType: null,
+    previousConnectionType: null
   };
 
   componentWillReceiveProps(nextProps) {
@@ -57,13 +65,26 @@ class DeviceCreateModal extends React.Component {
         return Number(product.id) === Number(nextProps.formValues.productId);
       });
 
+      if (nextProps.formValues.productId === this.SETUP_PRODUCT_KEY && this.props.formValues.productId !== this.SETUP_PRODUCT_KEY) {
+        this.props.change('boardType', this.state.previousBoardType || null);
+        this.props.change('connectionType', this.state.previousConnectionType || null);
+      }
+
+      if (nextProps.formValues.productId !== this.SETUP_PRODUCT_KEY && this.props.formValues.productId === this.SETUP_PRODUCT_KEY) {
+        this.setState({
+          previousBoardType: this.props.formValues && this.props.formValues.boardType || null,
+          previousConnectionType: this.props.formValues && this.props.formValues.connectionType || null
+        });
+      }
+
       if (product) {
         this.props.change('boardType', product.boardType);
         this.props.change('connectionType', product.connectionType);
       }
-
     }
   }
+
+  SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
 
   handleCancelClick() {
     this.props.resetForm('DeviceCreate');
@@ -71,24 +92,41 @@ class DeviceCreateModal extends React.Component {
   }
 
   handleOkClick() {
+
+    const createDevice = (productId) => {
+      this.props.createDevice({
+        orgId: this.props.account.orgId
+      }, {
+        ...this.props.formValues,
+        productId: productId || this.props.formValues.productId,
+        status: STATUS.OFFLINE
+      }).then(() => {
+        this.props.fetchDevices({
+          orgId: this.props.account.orgId
+        }).then(() => {
+          this.setState({
+            loading: false
+          });
+          this.handleCancelClick();
+        });
+      });
+    };
+
     this.setState({
       loading: true
     });
-    this.props.createDevice({
-      orgId: this.props.account.orgId
-    }, {
-      ...this.props.formValues,
-      status: STATUS.OFFLINE
-    }).then(() => {
-      this.props.fetchDevices({
-        orgId: this.props.account.orgId
-      }).then(() => {
-        this.setState({
-          loading: false
-        });
-        this.handleCancelClick();
+
+    if (this.props.formValues.productId === this.SETUP_PRODUCT_KEY) {
+      this.props.createProduct({
+        "name": "New Product",
+        "boardType": this.props.formValues.boardType,
+        "connectionType": this.props.formValues.connectionType,
+      }).then((response) => {
+        createDevice(response.payload.data.id);
       });
-    });
+    } else {
+      createDevice();
+    }
   }
 
   render() {
@@ -97,6 +135,13 @@ class DeviceCreateModal extends React.Component {
       key: String(product.id),
       value: product.name
     }));
+
+    products.unshift({
+      key: this.SETUP_PRODUCT_KEY,
+      value: 'New product'
+    });
+
+    const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === this.SETUP_PRODUCT_KEY;
 
     return (
       <Modal title="New Device"
@@ -122,28 +167,30 @@ class DeviceCreateModal extends React.Component {
           </Row>
           <Row>
             <Col span={24}>
-              <Item label="Product Template" offset="large">
+              <Item label="Product Template" offset={isAdvancedOptionShouldBeDisplayed ? 'large' : 'none'}>
                 <MetadataSelect displayError={false} name="productId" values={products} placeholder="Choose product"
                                 validate={[Validation.Rules.required]}/>
               </Item>
             </Col>
           </Row>
-          <Row>
-            <Col span={10}>
-              <Item label="Hardware" offset="none">
-                <MetadataSelect displayError={false} name="boardType" values={AVAILABLE_HARDWARE_TYPES}
-                                placeholder="Hardware"
-                                validate={[Validation.Rules.required]}/>
-              </Item>
-            </Col>
-            <Col span={12} offset={2}>
-              <Item label="Connection Type" offset="none">
-                <MetadataSelect displayError={false} name="connectionType" values={AVAILABLE_CONNECTION_TYPES}
-                                placeholder="Choose product"
-                                validate={[Validation.Rules.required]}/>
-              </Item>
-            </Col>
-          </Row>
+          { isAdvancedOptionShouldBeDisplayed && (
+            <Row>
+              <Col span={10}>
+                <Item label="Hardware" offset="none">
+                  <MetadataSelect displayError={false} name="boardType" values={AVAILABLE_HARDWARE_TYPES}
+                                  placeholder="Hardware"
+                                  validate={[Validation.Rules.required]}/>
+                </Item>
+              </Col>
+              <Col span={12} offset={2}>
+                <Item label="Connection Type" offset="none">
+                  <MetadataSelect displayError={false} name="connectionType" values={AVAILABLE_CONNECTION_TYPES}
+                                  placeholder="Choose product"
+                                  validate={[Validation.Rules.required]}/>
+                </Item>
+              </Col>
+            </Row>
+          )}
         </div>
       </Modal>
     );
