@@ -53,7 +53,8 @@ class Simple extends React.Component {
 
         {canBeResolved && (
           <Button icon="check-circle-o"
-                  className="devices--device-timeline--event-mark-as-resolved-lg"
+                  type="primary"
+                  className="devices--device-timeline--event-mark-as-resolved-lg positive"
                   onClick={this.handleOk.bind(this)}>
             Mark as resolved
           </Button>
@@ -61,8 +62,8 @@ class Simple extends React.Component {
 
         {canBeResolved && (
           <Button icon="check-circle-o"
-                  type="default"
-                  className="devices--device-timeline--event-mark-as-resolved-sm"
+                  type="primary"
+                  className="devices--device-timeline--event-mark-as-resolved-sm positive"
                   onClick={this.handleOk.bind(this)}/>
         )}
       </Timeline.Item>
