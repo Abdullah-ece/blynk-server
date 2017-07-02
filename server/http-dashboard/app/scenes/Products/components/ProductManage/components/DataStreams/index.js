@@ -5,6 +5,7 @@ import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/compon
 import {Unit} from "services/Products";
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 class DataStreams extends React.Component {
 
@@ -12,6 +13,10 @@ class DataStreams extends React.Component {
     fields: React.PropTypes.array,
     onFieldChange: React.PropTypes.func,
     onFieldsChange: React.PropTypes.func,
+  };
+
+  state = {
+    isSortEnabled: false
   };
 
   componentDidUpdate() {
@@ -197,6 +202,12 @@ class DataStreams extends React.Component {
     setTimeout(() => document.querySelector(`.datastream-name-field-${nextId}  input`).focus(), 100);
   }
 
+  onSortStart() {
+    this.setState({
+      isSortEnabled: true
+    });
+  }
+
   onSortEnd({oldIndex, newIndex}) {
 
     this.props.onFieldsChange(
@@ -207,10 +218,16 @@ class DataStreams extends React.Component {
 
   render() {
 
+    const className = classnames({
+      'no-mouse-selection': this.state.isSortEnabled
+    });
+
     return (
-      <div>
+      <div className={className}>
         { this.props.fields && this.props.fields.length && (
-          <this.SortableList items={this.props.fields} onSortEnd={this.onSortEnd.bind(this)}
+          <this.SortableList items={this.props.fields}
+                             onSortStart={this.onSortStart.bind(this)}
+                             onSortEnd={this.onSortEnd.bind(this)}
                              useDragHandle={true}
                              lockAxis="y"
                              useWindowAsScrollContainer={true}
