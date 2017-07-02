@@ -12,7 +12,8 @@ import './styles.less';
   form: 'OrganizationSettingsInviteUsersForm',
   initialValues: {
     role: InviteAvailableRoles[0].key
-  }
+  },
+  touchOnBlur: false
 })
 class InviteUsersForm extends React.Component {
 
