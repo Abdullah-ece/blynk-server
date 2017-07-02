@@ -47,6 +47,10 @@ class ProductMetadata extends React.Component {
     });
   }
 
+  state = {
+    isSortEnabled: false
+  };
+
   handleChangeField(values, dispatch, props) {
 
     if (values.id) {
@@ -362,6 +366,10 @@ class ProductMetadata extends React.Component {
       arrayMove(this.props.fields, oldIndex + staticMetadataFieldsCount, newIndex + staticMetadataFieldsCount)
     );
 
+    this.setState({
+      isSortEnabled: false
+    })
+
   }
 
   getStaticFields() {
@@ -416,10 +424,16 @@ class ProductMetadata extends React.Component {
 
   }
 
+  onSortStart() {
+    this.setState({
+      isSortEnabled: true
+    })
+  }
+
   render() {
 
     return (
-      <div>
+      <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null}>
         <Metadata.ItemsList>
           { this.getStaticFields()}
 
@@ -427,6 +441,7 @@ class ProductMetadata extends React.Component {
             <this.SortableList items={filterDynamicMetadataFields(this.props.fields)}
                                useWindowAsScrollContainer={true}
                                onSortEnd={this.onSortEnd.bind(this)}
+                               onSortStart={this.onSortStart.bind(this)}
                                useDragHandle={true}
                                lockAxis="y"
                                helperClass="product-metadata-item-drag-active"/>) || null
