@@ -27,6 +27,10 @@ class ProductMetadata extends React.Component {
     super(props);
   }
 
+  state = {
+    isSortEnabled: false
+  };
+
   componentDidUpdate() {
     this.props.fields.forEach((field) => {
       if (field && field.values && field.values.isRecentlyCreated) {
@@ -46,10 +50,6 @@ class ProductMetadata extends React.Component {
       }
     });
   }
-
-  state = {
-    isSortEnabled: false
-  };
 
   handleChangeField(values, dispatch, props) {
 
@@ -368,7 +368,7 @@ class ProductMetadata extends React.Component {
 
     this.setState({
       isSortEnabled: false
-    })
+    });
 
   }
 
@@ -427,7 +427,7 @@ class ProductMetadata extends React.Component {
   onSortStart() {
     this.setState({
       isSortEnabled: true
-    })
+    });
   }
 
   render() {

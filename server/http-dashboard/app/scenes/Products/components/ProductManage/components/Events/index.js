@@ -5,6 +5,7 @@ import {EVENT_TYPES} from 'services/Products';
 import {getNextId} from 'services/Entity';
 import {arrayMove, SortableContainer, SortableElement} from 'react-sortable-hoc';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 class Events extends React.Component {
 
@@ -12,6 +13,10 @@ class Events extends React.Component {
     fields: React.PropTypes.array,
 
     onFieldsChange: React.PropTypes.func
+  };
+
+  state = {
+    isSortEnabled: false
   };
 
   componentDidUpdate() {
@@ -302,7 +307,17 @@ class Events extends React.Component {
     );
   });
 
+  onSortStart() {
+    this.setState({
+      isSortEnabled: true
+    });
+  }
+
   onSortEnd({oldIndex, newIndex}) {
+    this.setState({
+      isSortEnabled: false
+    });
+
     const COUNT_OF_STATIC_FIELDS = 2;
     this.props.onFieldsChange(
       arrayMove(this.props.fields, oldIndex + COUNT_OF_STATIC_FIELDS, newIndex + COUNT_OF_STATIC_FIELDS)
@@ -313,13 +328,19 @@ class Events extends React.Component {
 
     const staticFields = this.getStaticFields(this.props.fields);
 
+    const className = classnames({
+      'product-events-list': true,
+      'no-mouse-selection': this.state.isSortEnabled
+    });
+
     return (
-      <div className="product-events-list">
+      <div className={className}>
         { staticFields }
 
         <this.SortableList items={this.getDynamicFields(this.props.fields)} /*onSortEnd={this.onSortEnd.bind(this)}*/
                            useDragHandle={true}
                            useWindowAsScrollContainer={true}
+                           onSortStart={this.onSortStart.bind(this)}
                            onSortEnd={this.onSortEnd.bind(this)}
                            lockAxis="y"
                            helperClass="product-events-item-drag-active"/>
