@@ -197,7 +197,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             String value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
-                return Response.badRequest("Requested pin not exists in app.");
+                return Response.badRequest("Requested pin doesn't exist in the app.");
             }
             return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
         }
@@ -292,7 +292,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, pinType, pin, deviceId);
+            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());

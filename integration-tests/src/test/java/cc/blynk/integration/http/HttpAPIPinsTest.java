@@ -2,10 +2,10 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
@@ -52,7 +52,7 @@ public class HttpAPIPinsTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder, true).start();
+        httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
     }
@@ -72,7 +72,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Invalid token.\"}}", consumeText(response));
+            assertEquals("Invalid token.", consumeText(response));
         }
     }
 
@@ -81,7 +81,7 @@ public class HttpAPIPinsTest extends BaseTest {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/w/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(401, response.getStatusLine().getStatusCode());
+            assertEquals(404, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -91,7 +91,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", consumeText(response));
+            assertEquals("Wrong pin format.", consumeText(response));
         }
     }
 
@@ -101,7 +101,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Requested pin not exists in app.\"}}", consumeText(response));
+            assertEquals("Requested pin doesn't exist in the app.", consumeText(response));
         }
     }
 
@@ -267,7 +267,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
@@ -279,7 +279,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Invalid token.\"}}", consumeText(response));
+            assertEquals("Invalid token.", consumeText(response));
         }
     }
 
@@ -291,7 +291,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", consumeText(response));
+            assertEquals("Wrong pin format.", consumeText(response));
         }
     }
 
@@ -314,7 +314,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"No pin for update provided.\"}}", consumeText(response));
+            assertEquals("No pin for update provided.", consumeText(response));
         }
     }
 
@@ -366,7 +366,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \\\"100\\\"\"}}", consumeText(response));
+            assertEquals("Error parsing body param. \"100\"", consumeText(response));
         }
     }
 
@@ -377,7 +377,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
+            assertEquals("Error parsing body param. ", consumeText(response));
         }
     }
 
@@ -390,7 +390,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
@@ -401,7 +401,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
+            assertEquals("Error parsing body param. ", consumeText(response));
         }
     }
 
@@ -416,7 +416,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Body is empty or larger than 255 chars.\"}}", consumeText(response));
+            assertEquals("Body is empty or larger than 255 chars.", consumeText(response));
         }
     }
 
@@ -439,7 +439,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Unexpected content type. Expecting application/json.\"}}", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
@@ -450,7 +450,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"Error parsing body param. \"}}", consumeText(response));
+            assertEquals("Error parsing body param. ", consumeText(response));
         }
     }
 
