@@ -1,4 +1,5 @@
 import React from 'react';
+import {BackTop} from 'components';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
 const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField, LocationField, DeviceOwnerField, DeviceNameField}} = MetadataComponents;
@@ -242,6 +243,7 @@ class Metadata extends React.Component {
       <ItemsList static={true}>
         { this.getStaticFields() }
         { this.getFields() }
+        <BackTop/>
       </ItemsList>
     );
   }
