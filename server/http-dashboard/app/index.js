@@ -65,6 +65,7 @@ Store().then((store) => {
             <Route path="/book/content-editable" component={Book.ContentEditable}/>
             <Route path="/book/section" component={Book.Section}/>
             <Route path="/book/modal" component={Book.Modal}/>
+            <Route path="/book/back-top" component={Book.BackTop}/>
           </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>

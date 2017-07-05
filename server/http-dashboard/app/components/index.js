@@ -7,3 +7,4 @@ export DeviceAuthToken from './DeviceAuthToken';
 export DeviceMetadata from './DeviceMetadata';
 export ContentEditable from './ContentEditable';
 export Modal from './Modal';
+export BackTop from './BackTop';

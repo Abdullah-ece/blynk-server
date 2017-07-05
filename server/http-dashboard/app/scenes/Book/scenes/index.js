@@ -5,3 +5,4 @@ export DeviceAuthToken from './DeviceAuthToken';
 export ContentEditable from './ContentEditable';
 export Section from './Section';
 export Modal from './Modal';
+export BackTop from './BackTop';
