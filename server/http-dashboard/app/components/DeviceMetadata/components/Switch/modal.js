@@ -14,8 +14,8 @@ class SwitchModal extends React.Component {
   radio({input, from, to}) {
     return (
       <Radio.Group value={input.value} onChange={input.onChange}>
-        <Radio value={from}>{from}</Radio>
-        <Radio value={to}>{to}</Radio>
+        <Radio value="0">{from}</Radio>
+        <Radio value="1">{to}</Radio>
       </Radio.Group>
     );
   }

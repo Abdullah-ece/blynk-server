@@ -26,7 +26,7 @@ class Switch extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('value') || <i>No Value</i>}
+        {Number(field.get('value')) === 0 ? field.get('from') : field.get('to')}
       </Fieldset>
     );
   }
