@@ -41,6 +41,7 @@ export default class LoginForm extends React.Component {
       <div className="login-error">{ error && error }</div>
 
       <FormField type="text" name="email"
+                 autoFocus={true}
                  validateStatus={!error ? 'success' : 'error'}
                  icon="user"
                  placeholder="Email"
