@@ -1,5 +1,6 @@
 import React from 'react';
 import {Map} from 'immutable';
+import {BackTop} from 'components';
 import {Timeline as Timelines, MarkAsResolvedModal} from './components';
 import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
@@ -133,6 +134,9 @@ class Timeline extends React.Component {
                    params={this.props.params}
                    onChange={this.handleValuesChange.bind(this)}
                    onMarkAsResolved={this.handleMarkAsResolved.bind(this)}/>
+
+        <BackTop/>
+
       </div>
     );
   }
