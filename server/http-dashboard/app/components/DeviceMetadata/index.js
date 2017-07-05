@@ -8,7 +8,8 @@ import {
   Contact,
   Time,
   Cost,
-  Coordinates
+  Coordinates,
+  Switch
 } from './components';
 
 export default {
@@ -21,5 +22,6 @@ export default {
   Contact,
   Time,
   Cost,
-  Coordinates
+  Coordinates,
+  Switch
 };

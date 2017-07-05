@@ -133,6 +133,9 @@ class DeviceInfo extends React.Component {
                   if (field.get('type') === Metadata.Fields.COORDINATES)
                     return (<DeviceMetadata.Coordinates {...props}/>);
 
+                  if (field.get('type') === Metadata.Fields.SWITCH)
+                    return (<DeviceMetadata.Switch {...props}/>);
+
                 })
                 }
                 <BackTop/>
