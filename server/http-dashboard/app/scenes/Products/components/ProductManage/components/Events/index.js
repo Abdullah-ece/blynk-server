@@ -1,5 +1,6 @@
 import React from 'react';
 import Scroll from 'react-scroll';
+import {BackTop} from 'components';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 import {getNextId} from 'services/Entity';
@@ -346,6 +347,7 @@ class Events extends React.Component {
                            helperClass="product-events-item-drag-active"/>
 
         <Add handleSubmit={this.handleAddField.bind(this)}/>
+        <BackTop/>
       </div>
     );
   }
