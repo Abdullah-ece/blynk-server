@@ -37,6 +37,10 @@ export default class AddMetadataFields extends Base {
     {
       type: Metadata.Fields.COORDINATES,
       title: 'Coordinates'
+    },
+    {
+      type: Metadata.Fields.SWITCH,
+      title: 'Switch'
     }
   ];
 

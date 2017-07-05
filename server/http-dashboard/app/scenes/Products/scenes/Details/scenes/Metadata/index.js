@@ -2,7 +2,7 @@ import React from 'react';
 import {BackTop} from 'components';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
-const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField, LocationField, DeviceOwnerField, DeviceNameField}} = MetadataComponents;
+const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField, LocationField, DeviceOwnerField, DeviceNameField, SwitchField}} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -135,6 +135,18 @@ class Metadata extends React.Component {
             name={field.name}
             lat={field.lat}
             lon={field.lon}
+            role={field.role}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.SWITCH) {
+        fields.push(
+          <SwitchField.Static
+            {...props}
+            name={field.name}
+            from={field.from}
+            to={field.to}
             role={field.role}
           />
         );

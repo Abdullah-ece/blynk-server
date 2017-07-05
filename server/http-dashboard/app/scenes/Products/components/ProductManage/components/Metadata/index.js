@@ -161,6 +161,7 @@ class ProductMetadata extends React.Component {
           initialValues={{
             name: field.values.name,
             from: field.values.from,
+            role: field.values.role,
             to: field.values.to
           }}
         />
