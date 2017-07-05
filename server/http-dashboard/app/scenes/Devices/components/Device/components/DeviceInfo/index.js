@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata} from 'components';
+import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, BackTop} from 'components';
 import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import './styles.less';
@@ -135,6 +135,7 @@ class DeviceInfo extends React.Component {
 
                 })
                 }
+                <BackTop/>
               </div>
             </Section>) }
           </Col>
