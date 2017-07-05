@@ -143,7 +143,7 @@ public class ProductAPITest extends APIBaseTest {
 
         product.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, 0, 1, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, "0", "1", "Farm of Smith"),
                 new RangeMetaField(2, "Farm of Smith", Role.ADMIN, 60, 120),
                 new NumberMetaField(3, "Farm of Smith", Role.ADMIN, 10.222),
                 new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
