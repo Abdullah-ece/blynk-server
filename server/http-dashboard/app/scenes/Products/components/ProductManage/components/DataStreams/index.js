@@ -1,5 +1,6 @@
 import React from 'react';
 import Scroll from 'react-scroll';
+import {BackTop} from 'components';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
 import {Unit} from "services/Products";
@@ -234,6 +235,7 @@ class DataStreams extends React.Component {
                              helperClass="product-metadata-item-drag-active"/>) || null
         }
         <AddDataStreamsFields onFieldAdd={this.addDataStreamsField.bind(this)}/>
+        <BackTop/>
       </div>
     );
   }
