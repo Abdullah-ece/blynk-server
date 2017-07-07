@@ -597,9 +597,12 @@ HOST: https://knight-qa.blynk.cc/
 
 # Devices API
 
-## Get All devices for user [GET] [/devices/{orgId}]
+## Get All devices for user [GET] [/devices/{orgId}?orderField={fieldName}&order={orderType}]
 
 + Request (application/json)
+
+        {fieldName} - field to order by, for example 'name';
+        {orderType} - order direction ASC|DESC;
 
 + Response 200 (application/json)
 
