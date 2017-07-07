@@ -22,8 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.*;
 
 /**
@@ -94,12 +93,14 @@ public class HardwareAppLogic {
         switch (operation) {
             case 'u' :
                 String[] splitBody = split3(split[1]);
-                final int widgetId = ParseUtil.parseInt(splitBody[1]);
+                long widgetId = ParseUtil.parseLong(splitBody[1]);
                 Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
                 if (deviceSelector instanceof DeviceSelector) {
                     final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
                     ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id);
+                    ctx.write(ok(message.id), ctx.voidPromise());
+                    dash.sendSyncs(ctx.channel(), selectedDeviceId);
+                    ctx.flush();
                 }
                 break;
             case 'w' :
