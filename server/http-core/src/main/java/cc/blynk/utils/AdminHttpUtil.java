@@ -17,23 +17,38 @@ import java.util.stream.Collectors;
  */
 public class AdminHttpUtil {
 
-    public static List<?> sortStringAsInt(List<?> list, String field, String order) {
+    public static List<?> sortStringAsInt(List<?> list, String orderField, String order) {
         if (list.size() == 0) {
             return list;
         }
 
-        Comparator c = new GenericStringAsIntComparator(list.get(0).getClass(), field);
+        if (orderField == null) {
+            orderField = "name";
+        }
+        if (order == null) {
+            order = "ASC";
+        }
+
+
+        Comparator c = new GenericStringAsIntComparator(list.get(0).getClass(), orderField);
         list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
 
         return list;
     }
 
-    public static List<?> sort(List<?> list, String field, String order) {
+    public static <T> List<T> sort(List<T> list, String orderField, String order) {
         if (list.size() == 0) {
             return list;
         }
 
-        Comparator c = new GenericComparator(list.get(0).getClass(), field);
+        if (orderField == null) {
+            orderField = "name";
+        }
+        if (order == null) {
+            order = "ASC";
+        }
+
+        Comparator c = new GenericComparator(list.get(0).getClass(), orderField);
         list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
 
         return list;
@@ -87,7 +102,9 @@ public class AdminHttpUtil {
                 return Long.compare((long) v1, (long) v2);
             }
             if (returnType == String.class) {
-                return ((String) v1).compareTo((String) v2);
+                return v1 == null ?
+                      (v2 == null ? 0 : Integer.MIN_VALUE) :
+                      (v2 == null ? Integer.MAX_VALUE : ((String) v1).compareTo((String) v2));
             }
 
             throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());

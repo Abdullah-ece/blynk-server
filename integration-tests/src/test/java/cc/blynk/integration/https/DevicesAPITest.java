@@ -17,8 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -100,12 +99,68 @@ public class DevicesAPITest extends APIBaseTest {
     }
 
     @Test
-    public void getDeviceByIdNotFound() throws Exception {
+    public void getDevicesWithSorting() throws Exception {
         login(admin.email, admin.pass);
 
-        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/11111");
+        int productId = createProduct();
+
+        Device newDevice = new Device();
+        newDevice.name = "B";
+        newDevice.productId = productId;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "C";
+        newDevice.productId = productId;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "A";
+        newDevice.productId = productId;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=name&order=ASC");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertNull(devices[0].name);
+            assertEquals("A", devices[1].name);
+            assertEquals("B", devices[2].name);
+            assertEquals("C", devices[3].name);
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=name&order=DESC");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertEquals("C", devices[0].name);
+            assertEquals("B", devices[1].name);
+            assertEquals("A", devices[2].name);
+            assertNull(devices[3].name);
         }
     }
 
@@ -121,6 +176,17 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(device);;
         }
     }
+
+    @Test
+    public void getDeviceByIdNotFound() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/11111");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
 
     @Test
     public void checkDeviceOrgName() throws Exception {

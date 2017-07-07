@@ -19,17 +19,16 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
+import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cc.blynk.core.http.Response.*;
+import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
  * The Blynk Project.
@@ -147,7 +146,9 @@ public class DevicesHandler extends BaseHttpHandler {
     @GET
     @Path("/{orgId}")
     public Response getAll(@Context ChannelHandlerContext ctx,
-                           @PathParam("orgId") int orgId) {
+                           @PathParam("orgId") int orgId,
+                           @QueryParam("orderField") String orderField,
+                           @QueryParam("order") String order) {
         User user = getUser(ctx);
 
         Collection<Device> devices;
@@ -160,8 +161,8 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                joinEventsCountSinceLastView(devices, user.lastViewTs);
-                response = ok(devices);
+                List<WebDevice> result = joinEventsCountSinceLastView(devices, user.lastViewTs);
+                response = ok(sort(result, orderField, order));
                 user.lastViewTs = System.currentTimeMillis();
             } catch (Exception e){
                 log.error("Error getting counters for devices.", e);
@@ -173,40 +174,20 @@ public class DevicesHandler extends BaseHttpHandler {
         return null;
     }
 
-    private Device joinProductAndOrgInfo(Device device) {
-        Map<String, Object> props = new HashMap<>();
+    private WebDevice joinProductAndOrgInfo(Device device) {
         Product product = organizationDao.getProductByIdOrNull(device.productId);
-
-        if (product != null) {
-            if (product.name != null) {
-                props.put("productName", product.name);
-            }
-            if (product.logoUrl != null) {
-                props.put("productLogoUrl", product.logoUrl);
-            }
-        }
-
         String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
-        if (orgName != null) {
-            props.put("orgName", orgName);
-        }
-
-        device.dynamicFields = props;
-
-        return device;
+        return new WebDevice(device, product, orgName);
     }
 
-    private void joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
+    private List<WebDevice> joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
+        List<WebDevice> result = new ArrayList<>(devices.size());
         Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
         for (Device device : devices) {
             Product product = organizationDao.getProductByIdOrNull(device.productId);
-            String productName = product == null ? null : product.name;
-            device.setEventsCounterSinceLastView(
-                    counters.get(new LogEventCountKey(device.id, EventType.CRITICAL, false)),
-                    counters.get(new LogEventCountKey(device.id, EventType.WARNING, false)),
-                    productName
-            );
+            result.add(new WebDevice(device, product, counters));
         }
+        return result;
     }
 
     @GET

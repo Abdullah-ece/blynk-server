@@ -3,10 +3,6 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The Blynk Project.
@@ -29,6 +25,8 @@ public class Device implements Target {
 
     public volatile Status status = Status.OFFLINE;
 
+    public long createdAt;
+
     public volatile long disconnectTime;
 
     public volatile String lastLoggedIP;
@@ -37,34 +35,16 @@ public class Device implements Target {
 
     public volatile MetaField[] metaFields;
 
-    public transient Map<String, Object> dynamicFields;
-
-    public void setEventsCounterSinceLastView(Integer criticalCounter, Integer warningCounter, String productName) {
-        this.dynamicFields = new HashMap<>();
-        if (criticalCounter != null) {
-            this.dynamicFields.put("criticalSinceLastView", criticalCounter);
-        }
-        if (warningCounter != null) {
-            this.dynamicFields.put("warningSinceLastView", warningCounter);
-        }
-        if (productName != null) {
-            this.dynamicFields.put("productName", productName);
-        }
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getDynamicFields() {
-        return dynamicFields;
-    }
-
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
     }
 
     public Device() {
+        this.createdAt = System.currentTimeMillis();
     }
 
     public Device(String name, String boardType, String token, int productId, ConnectionType connectionType) {
+        this();
         this.name = name;
         this.boardType = boardType;
         this.token = token;
@@ -73,6 +53,7 @@ public class Device implements Target {
     }
 
     public Device(int id, String name, String boardType) {
+        this();
         this.id = id;
         this.name = name;
         this.boardType = boardType;
