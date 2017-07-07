@@ -370,6 +370,69 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testOrderByResolveAtAndThanByTs() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        int logEventId;
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(3, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(logEvents);
+            assertEquals(3, logEvents.length);
+            logEventId = logEvents[2].id;
+        }
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/1/resolveEvent/" + logEventId);
+        post.setEntity(new StringEntity(new Comment("123").toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(2, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(1, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(3, logEvents.length);
+            int oldLogEventId = logEvents[0].id;
+            assertEquals(logEventId, oldLogEventId);
+            assertTrue(logEvents[0].isResolved);
+            assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);
+            assertEquals("123", logEvents[0].resolvedComment);
+        }
+    }
+
+    @Test
     public void testBasicLogEventFlowWithEventCounters() throws Exception {
         String token = createProductAndDevice();
 

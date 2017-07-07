@@ -31,10 +31,10 @@ public class EventDBDao {
     private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
     private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
 
-    private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
-    private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
-    private static final String selectEventsTypeAndResolvedFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? and is_resolved = ? order by ts desc offset ? limit ?";
-    private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by ts desc offset ? limit ?";
+    private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsTypeAndResolvedFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
 
     private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? and is_resolved = false group by device_id, type";
     private static final String selectEventsCountTotalForPeriod = "select type, is_resolved, count(*) from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
