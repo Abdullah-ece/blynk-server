@@ -169,11 +169,18 @@ public class OrganizationHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    @SuperAdmin
-    public Response create(Organization newOrganization) {
+    @Admin
+    public Response create(@ContextUser User user, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
-            return badRequest();
+            return badRequest("Organization is empty.");
+        }
+
+
+        Organization userOrg = organizationDao.getOrgById(user.orgId);
+        if (!userOrg.canCreateOrgs) {
+            log.error("This organization cannot have sub organizations.");
+            return forbidden("This organization cannot have sub organizations.");
         }
 
         return ok(organizationDao.create(newOrganization));

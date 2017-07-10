@@ -17,6 +17,10 @@ public class Organization {
 
     public volatile String name;
 
+    public volatile String description;
+
+    public volatile boolean canCreateOrgs;
+
     public volatile String tzName;
 
     public volatile String logoUrl;
@@ -42,8 +46,17 @@ public class Organization {
         this.logoUrl = logoUrl;
     }
 
+    public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs) {
+        this();
+        this.name = name;
+        this.tzName = tzName;
+        this.logoUrl = logoUrl;
+        this.canCreateOrgs = canCreateOrgs;
+    }
+
     public void update(Organization updatedOrganization) {
         this.name = updatedOrganization.name;
+        this.description = updatedOrganization.description;
         this.tzName = updatedOrganization.tzName;
         this.logoUrl = updatedOrganization.logoUrl;
         this.primaryColor = updatedOrganization.primaryColor;

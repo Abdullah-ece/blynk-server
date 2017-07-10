@@ -1,10 +1,14 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
@@ -82,12 +86,48 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
-    public void createOrganizationNotAllowedForRegularAdmin() throws Exception {
+    public void createOrganizationAllowedForRegularAdmin() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
         Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void organizationNotAllowedToCreateSubOrgs() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+        }
+
+        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), AppName.BLYNK, "local", false, Role.ADMIN);
+        regularAdmin.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
+        regularAdmin.status = UserStatus.Active;
+        regularAdmin.orgId = 2;
+        holder.userDao.add(regularAdmin);
+
+        login(regularAdmin.email, regularAdmin.pass);
+
+        organization = new Organization("My Org2", "Some TimeZone", "/static/logo.png");
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {

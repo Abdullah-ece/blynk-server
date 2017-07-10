@@ -101,7 +101,7 @@ public abstract class APIBaseTest extends BaseTest {
         regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
+        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true));
     }
 
     @After
