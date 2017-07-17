@@ -110,7 +110,7 @@ class MarkAsResolvedModal extends React.Component {
           </div>
         </div>
         <div className="event-resolve-modal-content">
-          <Item label="Add comments(optional)">
+          <Item label="Add comments (optional)">
             <Input type="textarea" name="comment" rows="10"/>
           </Item>
         </div>
