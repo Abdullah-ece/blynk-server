@@ -26,7 +26,7 @@ class Contact extends Base {
     const data = [];
 
     if (field.get('firstName') && field.get('lastName') && field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
-      data.push(`${field.get('firstName')}, ${field.get('lastName')}`);
+      data.push(`${field.get('firstName')} ${field.get('lastName')}`);
 
     if (field.get('firstName') && !field.get('lastName') && !field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
       data.push(`${field.get('firstName')}`);
