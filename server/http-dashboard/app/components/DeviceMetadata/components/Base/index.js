@@ -82,6 +82,7 @@ class Base extends React.Component {
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName="device-metadata-modal"
+               closable={false}
                title={field.get('name')}
                onCancel={this.handleCancelClick.bind(this)}
                footer={[
