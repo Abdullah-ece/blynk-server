@@ -134,7 +134,7 @@ class ProductEdit extends React.Component {
                            </Button>
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
-                                   disabled={!this.props.isFormDirty || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
+                                   disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
                              { this.props.successButtonLabel || 'Save' }
                            </Button>
                          </div>
