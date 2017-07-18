@@ -95,6 +95,7 @@ class MarkAsResolvedModal extends React.Component {
       <Modal visible={this.props.isModalVisible}
              confirmLoading={this.state.loading}
              onCancel={this.handleCancel.bind(this)}
+             closable={false}
              wrapClassName={classNames}
              footer={[
                <Button key={'cancel'} onClick={this.handleCancel.bind(this)}>Cancel</Button>,
