@@ -147,6 +147,7 @@ class DeviceCreateModal extends React.Component {
       <Modal title="New Device"
              visible={this.props.visible}
              confirmLoading={this.state.loading}
+             closable={false}
              onCancel={this.handleCancelClick.bind(this)}
              footer={[
                <Button key="cancel" type="default" size="default"
