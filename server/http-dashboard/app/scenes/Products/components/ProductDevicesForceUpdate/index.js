@@ -61,6 +61,7 @@ class ProductDeviceForceUpdate extends React.Component {
              visible={this.props.isModalVisible}
              confirmLoading={this.props.loading}
              onCancel={this.props.onCancel}
+             closable={false}
              footer={[
                <Button key="save" type="primary" size="default"
                        loading={this.props.loading}
