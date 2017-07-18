@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.less';
 
 import {connect} from 'react-redux';
-import {submit, getFormSyncErrors} from 'redux-form';
+import {submit, getFormSyncErrors, isDirty} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
@@ -40,6 +40,31 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
     isProductInfoInvalid: state.Product.edit.info.invalid,
     eventsForms: eventsForms,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+    isFormDirty: (() => {
+
+      const prefixes = {
+        'metadata': 'metadatafield',
+        'events': 'event',
+        'dataStreams': 'datastreamfield'
+      };
+
+      const forms = [
+        'product-edit-info'
+      ];
+
+      _.forEach(prefixes, (value, prefix) => {
+        if (state.Product.edit[prefix] && Array.isArray(state.Product.edit[prefix].fields)) {
+          state.Product.edit[prefix].fields.forEach((field) => {
+            forms.push(`${value}${field.id}`);
+          });
+        }
+      });
+
+      return forms.some((formName) => {
+        return isDirty(formName)(state)
+      });
+
+    })()
   };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
@@ -66,6 +91,7 @@ class ProductCreate extends React.Component {
   static propTypes = {
     isMetadataFirstTime: React.PropTypes.bool,
     isProductInfoInvalid: React.PropTypes.bool,
+    isFormDirty: React.PropTypes.bool,
 
     metadataFields: React.PropTypes.array,
 
@@ -315,6 +341,7 @@ class ProductCreate extends React.Component {
                      isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
+                     isFormDirty={this.props.isFormDirty}
                      onInfoValuesChange={this.onInfoValuesChange.bind(this)}
                      onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
                      onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}

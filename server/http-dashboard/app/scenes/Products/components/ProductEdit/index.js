@@ -27,6 +27,7 @@ class ProductEdit extends React.Component {
     onDataStreamsFieldsChange: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
 
+    isFormDirty: React.PropTypes.bool,
     isMetadataInfoRead: React.PropTypes.bool,
     isInfoFormInvalid: React.PropTypes.bool,
     isEventsFormInvalid: React.PropTypes.bool,
@@ -133,7 +134,7 @@ class ProductEdit extends React.Component {
                            </Button>
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
-                                   disabled={this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
+                                   disabled={!this.props.isFormDirty || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
                              { this.props.successButtonLabel || 'Save' }
                            </Button>
                          </div>
