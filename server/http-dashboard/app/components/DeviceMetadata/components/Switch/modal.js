@@ -1,10 +1,7 @@
 import React from 'react';
-import {reduxForm, Field} from 'redux-form';
+import {Field} from 'redux-form';
 import {Radio} from 'antd';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class SwitchModal extends React.Component {
 
   static propTypes = {

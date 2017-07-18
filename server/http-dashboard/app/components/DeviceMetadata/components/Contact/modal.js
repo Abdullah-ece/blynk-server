@@ -1,14 +1,10 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
 import {Item, Input} from 'components/UI';
 import {Row, Col} from 'antd';
 import Validation from 'services/Validation';
 
 import './styles.less';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class ContactModal extends React.Component {
 
   static propTypes = {

@@ -1,11 +1,7 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
 import {MetadataField} from 'components/Form';
 import Validation from 'services/Validation';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class TextModal extends React.Component {
 
   static propTypes = {

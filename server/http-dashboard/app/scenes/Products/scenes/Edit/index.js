@@ -61,7 +61,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
       });
 
       return forms.some((formName) => {
-        return isDirty(formName)(state)
+        return isDirty(formName)(state);
       });
 
     })()

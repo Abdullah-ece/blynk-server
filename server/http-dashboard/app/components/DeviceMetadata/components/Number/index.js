@@ -2,17 +2,7 @@ import React from 'react';
 import Base from '../Base';
 import {Fieldset} from 'components';
 import NumberModal from './modal';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {reset, initialize, getFormValues, getFormSyncErrors} from 'redux-form';
 
-@connect((state, ownProps) => ({
-  values: getFormValues(ownProps.form)(state),
-  errors: getFormSyncErrors(ownProps.form)(state)
-}), (dispatch) => ({
-  resetForm: bindActionCreators(reset, dispatch),
-  initialize: bindActionCreators(initialize, dispatch)
-}))
 class Number extends Base {
 
   constructor(props) {
@@ -34,7 +24,7 @@ class Number extends Base {
   getEditableComponent() {
     return (
       <div>
-        <NumberModal form={this.props.form} initialValues={this.props.data.toJS()}/>
+        <NumberModal form={this.props.form}/>
       </div>
     );
   }

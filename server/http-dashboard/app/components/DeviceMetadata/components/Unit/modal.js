@@ -1,13 +1,9 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
 import {ItemsGroup, Item, Input} from 'components/UI';
 import {MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit} from 'services/Products';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class UnitModal extends React.Component {
 
   Unit = {

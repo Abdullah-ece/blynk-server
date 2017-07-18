@@ -2,18 +2,8 @@ import React from 'react';
 import Base from '../Base';
 import {Fieldset} from 'components';
 import CostModal from './modal';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {Currency, Unit} from 'services/Products';
-import {reset, initialize, getFormValues, getFormSyncErrors} from 'redux-form';
 
-@connect((state, ownProps) => ({
-  values: getFormValues(ownProps.form)(state),
-  errors: getFormSyncErrors(ownProps.form)(state)
-}), (dispatch) => ({
-  resetForm: bindActionCreators(reset, dispatch),
-  initialize: bindActionCreators(initialize, dispatch)
-}))
 class Cost extends Base {
 
   constructor(props) {
@@ -48,7 +38,7 @@ class Cost extends Base {
   getEditableComponent() {
     return (
       <div>
-        <CostModal form={this.props.form} initialValues={this.props.data.toJS()}/>
+        <CostModal form={this.props.form}/>
       </div>
     );
   }

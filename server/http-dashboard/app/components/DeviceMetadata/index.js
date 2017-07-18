@@ -9,7 +9,8 @@ import {
   Time,
   Cost,
   Coordinates,
-  Switch
+  Switch,
+  Field
 } from './components';
 
 export default {
@@ -23,5 +24,6 @@ export default {
   Time,
   Cost,
   Coordinates,
-  Switch
+  Switch,
+  Field
 };

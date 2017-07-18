@@ -1,11 +1,7 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
 import {ItemsGroup, Item} from 'components/UI';
 import {MetadataTime} from 'components/Form';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class RangeModal extends React.Component {
 
   render() {

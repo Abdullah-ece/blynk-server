@@ -1,13 +1,9 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
 import {ItemsGroup, Item, Number} from 'components/UI';
 import {MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit, Currency} from 'services/Products';
 
-@reduxForm({
-  form: 'deviceMetadataEdit'
-})
 class CostModal extends React.Component {
 
   Currency = [

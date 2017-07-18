@@ -9,3 +9,4 @@ export Time from './Time';
 export Cost from './Cost';
 export Coordinates from './Coordinates';
 export Switch from './Switch';
+export Field from './Field';
