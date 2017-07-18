@@ -89,6 +89,15 @@ public class Organization {
         return null;
     }
 
+    public boolean isValidProductName(Product newProduct) {
+        for (Product product : products) {
+            if (product.id != newProduct.id && product.name.equalsIgnoreCase(newProduct.name)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isUpdated(long lastStart) {
         return lastStart <= lastModifiedTs;
     }

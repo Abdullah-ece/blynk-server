@@ -105,6 +105,13 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest("Product is empty or has not name.");
         }
 
+        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+
+        if (!organization.isValidProductName(product)) {
+            log.error("Organization {} already has product with name {}.", organization.name, product.name);
+            return badRequest("Product with this name already exists.");
+        }
+
         product = organizationDao.createProduct(httpSession.user.orgId, product);
 
         return ok(product);
@@ -119,15 +126,21 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
-
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);
             return badRequest();
         }
 
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+
+        if (!organization.isValidProductName(updatedProduct)) {
+            log.error("Organization {} already has product with name {}.", organization.name, updatedProduct.name);
+            return badRequest("Product with this name already exists.");
+        }
+
+        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
         existingProduct.update(updatedProduct);
 
         return ok(existingProduct);
