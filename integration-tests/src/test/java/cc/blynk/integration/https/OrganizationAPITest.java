@@ -40,6 +40,36 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void getAllOrganizationsForSuperAdmin() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(1, orgs.length);
+        }
+    }
+
+    @Test
+    public void getAllOrganizationsForSuperAdmin2() throws Exception {
+        login(admin.email, admin.pass);
+
+        holder.organizationDao.create(new Organization("Blynk Inc. 2", "Europe/Kiev", "/static/logo2.png", true));
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(2, orgs.length);
+        }
+    }
+
+    @Test
     public void getOrganizationWithRegularUser() throws Exception {
         login(regularUser.email, regularUser.pass);
 

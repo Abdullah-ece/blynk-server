@@ -76,6 +76,19 @@ public class OrganizationHandler extends BaseHttpHandler {
         return ok(organization);
     }
 
+    @GET
+    @Path("")
+    public Response getListOfOrganizations(@Context ChannelHandlerContext ctx) {
+        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+
+        if (httpSession.user.isSuperAdmin()) {
+            return ok(organizationDao.getAll());
+        } else {
+            //todo return only specrfic org that belong to user
+            Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+            return ok(organization);
+        }
+    }
 
     @GET
     @Path("/{id}/users")

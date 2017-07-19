@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -58,6 +59,10 @@ public class OrganizationDao {
         }
         log.error("Product with passed id {} not found in organization with id {}.", productId, orgId);
         throw new ProductNotFoundException("Product with passed id " + productId + " not found in organization with id " + orgId);
+    }
+
+    public Collection<Organization> getAll() {
+        return organizations.values();
     }
 
     public Organization getOrgById(int id) {
