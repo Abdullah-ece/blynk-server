@@ -4,7 +4,7 @@ export function OrganizationsFetch() {
     payload: {
       request: {
         method: 'get',
-        url: `/organization/1`
+        url: `/organization`
       }
     }
   };
