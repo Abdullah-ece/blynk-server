@@ -3,15 +3,20 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Menu, Button, Icon, Dropdown} from 'antd';
 import {Link} from 'react-router';
+import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 
 import {OrganizationFetch} from 'data/Organization/actions';
+import {OrganizationsFetch} from 'data/Organizations/actions';
 
 import './styles.less';
 @connect((state) => ({
   Account: state.Account,
   Organization: state.Organization
 }), (dispatch) => ({
-  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch)
+  startLoading: bindActionCreators(StartLoading, dispatch),
+  finishLoading: bindActionCreators(FinishLoading, dispatch),
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
+  OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch)
 }))
 class Header extends React.Component {
 
@@ -22,7 +27,10 @@ class Header extends React.Component {
   static propTypes = {
     Account: React.PropTypes.object,
     Organization: React.PropTypes.object,
+    startLoading: React.PropTypes.func,
+    finishLoading: React.PropTypes.func,
     OrganizationFetch: React.PropTypes.func,
+    OrganizationsFetch: React.PropTypes.func,
     location: React.PropTypes.object
   };
 
@@ -69,7 +77,17 @@ class Header extends React.Component {
   }
 
   handleClick(e) {
-    this.context.router.push(e.key);
+    if (e.key === '/organizations') {
+
+      this.props.startLoading();
+      this.props.OrganizationsFetch().then(() => {
+        this.props.finishLoading();
+        this.context.router.push(e.key);
+      });
+
+    } else {
+      this.context.router.push(e.key);
+    }
   }
 
   currentActivePage(state) {
@@ -78,6 +96,9 @@ class Header extends React.Component {
     }
     if (state.indexOf('devices') >= 0) {
       return ['/devices'];
+    }
+    if (state.indexOf('organizations') >= 0) {
+      return ['/organizations'];
     }
   }
 
@@ -104,6 +125,7 @@ class Header extends React.Component {
           {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
           <Menu.Item key="/devices">Devices</Menu.Item>
           <Menu.Item key="/products">Products</Menu.Item>
+          <Menu.Item key="/organizations">Organizations</Menu.Item>
           {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
         </Menu>
       </div>
