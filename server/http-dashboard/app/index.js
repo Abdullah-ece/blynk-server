@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, hashHistory, Redirect} from 'react-router';
+import {Router, Route, browserHistory, Redirect} from 'react-router';
 import Scroll from 'react-scroll';
 
 /* components */
@@ -41,7 +41,7 @@ import enUS from 'antd/lib/locale-provider/en_US';
 
 Store().then((store) => {
 
-  hashHistory.listen(location => {
+  browserHistory.listen(location => {
 
     setTimeout(() => {
       if (location.action === 'POP') {
@@ -56,7 +56,7 @@ Store().then((store) => {
   ReactDOM.render(
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
-        <Router history={hashHistory}>
+        <Router history={browserHistory}>
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>
