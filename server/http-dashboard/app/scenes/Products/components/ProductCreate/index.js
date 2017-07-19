@@ -1,13 +1,19 @@
-import React from 'react';
-import {Button, Tabs, Icon, Popover} from 'antd';
-import MetadataIntroductionMessage from "../MetadataIntroductionMessage";
-import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
-import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
-import DataStreamsTab from 'scenes/Products/components/ProductManage/components/DataStreams';
-import EventsTab from 'scenes/Products/components/ProductManage/components/Events';
-import ProductHeader from 'scenes/Products/components/ProductHeader';
-import ProductContent from 'scenes/Products/components/ProductContent';
-import {TABS} from 'services/Products';
+import React                                from 'react';
+import {
+  Button,
+  Tabs,
+  Icon,
+  Popover
+}                                           from 'antd';
+import {MainLayout}                         from 'components';
+import {TABS}                               from 'services/Products';
+import {
+  Info        as InfoTab,
+  Events      as EventsTab,
+  Metadata    as MetadataTab,
+  DataStreams as DataStreamsTab,
+}                                           from '../ProductManage';
+import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 
 class ProductCreate extends React.Component {
 
@@ -124,8 +130,8 @@ class ProductCreate extends React.Component {
 
   render() {
     return (
-      <div className="products-create">
-        <ProductHeader title="New Product"
+      <MainLayout>
+        <MainLayout.Header title="New Product"
                        options={(
                          <div>
                            <Button type="default"
@@ -139,7 +145,7 @@ class ProductCreate extends React.Component {
                            </Button>
                          </div>
                        )}/>
-        <ProductContent>
+        <MainLayout.Content>
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
@@ -181,8 +187,8 @@ class ProductCreate extends React.Component {
 
           </Tabs>
 
-        </ProductContent>
-      </div>
+        </MainLayout.Content>
+      </MainLayout>
     );
   }
 }

@@ -1,13 +1,19 @@
-import React from 'react';
-import {Button, Tabs, Icon, Popover} from 'antd';
-import MetadataIntroductionMessage from "../MetadataIntroductionMessage";
-import InfoTab from 'scenes/Products/components/ProductManage/components/Info';
-import MetadataTab from 'scenes/Products/components/ProductManage/components/Metadata';
-import DataStreamsTab from 'scenes/Products/components/ProductManage/components/DataStreams';
-import EventsTab from 'scenes/Products/components/ProductManage/components/Events';
-import ProductHeader from 'scenes/Products/components/ProductHeader';
-import ProductContent from 'scenes/Products/components/ProductContent';
-import {TABS} from 'services/Products';
+import React                                from 'react';
+import {
+  Button,
+  Tabs,
+  Icon,
+  Popover
+}                                           from 'antd';
+import {MainLayout}                         from 'components';
+import {TABS}                               from 'services/Products';
+import {
+  Info        as InfoTab,
+  Events      as EventsTab,
+  Metadata    as MetadataTab,
+  DataStreams as DataStreamsTab,
+}                                           from '../ProductManage';
+import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 
 class ProductEdit extends React.Component {
 
@@ -124,22 +130,22 @@ class ProductEdit extends React.Component {
   render() {
 
     return (
-      <div className="products-create">
-        <ProductHeader title={this.state.originalName}
-                       options={(
-                         <div>
-                           <Button type="default"
-                                   onClick={this.props.handleCancel.bind(this)}>
-                             Cancel
-                           </Button>
-                           <Button type="primary"
-                                   onClick={this.handleSubmit.bind(this)}
-                                   disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
-                             { this.props.successButtonLabel || 'Save' }
-                           </Button>
-                         </div>
-                       )}/>
-        <ProductContent>
+      <MainLayout>
+        <MainLayout.Header title={this.state.originalName}
+                           options={(
+                             <div>
+                               <Button type="default"
+                                       onClick={this.props.handleCancel.bind(this)}>
+                                 Cancel
+                               </Button>
+                               <Button type="primary"
+                                       onClick={this.handleSubmit.bind(this)}
+                                       disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
+                                 { this.props.successButtonLabel || 'Save' }
+                               </Button>
+                             </div>
+                           )}/>
+        <MainLayout.Content>
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
@@ -180,8 +186,8 @@ class ProductEdit extends React.Component {
 
           </Tabs>
 
-        </ProductContent>
-      </div>
+        </MainLayout.Content>
+      </MainLayout>
     );
   }
 }

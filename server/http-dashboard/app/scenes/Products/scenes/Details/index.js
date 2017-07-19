@@ -1,17 +1,20 @@
-import React from 'react';
-import {Button, Tabs, message} from 'antd';
+import React                    from 'react';
+import {
+  Button, Tabs, message
+}                               from 'antd';
+import Info                     from './scenes/Info';
+import Metadata                 from './scenes/Metadata';
+import DataStreams              from './scenes/DataStreams';
+import Events                   from './scenes/Events';
+import * as API                 from 'data/Product/api';
+import {connect}                from 'react-redux';
+import {bindActionCreators}     from 'redux';
+import _                        from 'lodash';
+import DeleteModal              from './components/Delete';
+import {TABS}                   from 'services/Products';
 import './styles.less';
-import Info from './scenes/Info';
-import Metadata from './scenes/Metadata';
-import DataStreams from './scenes/DataStreams';
-import Events from './scenes/Events';
-import * as API from 'data/Product/api';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import _ from 'lodash';
-import DeleteModal from './components/Delete';
-import {TABS} from 'services/Products';
-import ProductHeader from 'scenes/Products/components/ProductHeader';
+
+import {MainLayout} from 'components';
 
 @connect((state) => ({
   Product: state.Product.products
@@ -117,15 +120,15 @@ class ProductDetails extends React.Component {
     }
 
     return (
-      <div className="products-create">
-        <ProductHeader title={this.state.product.name}
-                       options={(
-                         <div>
-                           <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
-                           <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
-                           <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
-                         </div>
-                       )}/>
+      <MainLayout>
+        <MainLayout.Header title={this.state.product.name}
+                           options={(
+                             <div>
+                               <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
+                               <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
+                               <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
+                             </div>
+                           )}/>
         <div className="products-content">
           <Tabs className="products-tabs"
                 defaultActiveKey={TABS.INFO}
@@ -148,7 +151,7 @@ class ProductDetails extends React.Component {
                        visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
                        productName={this.state.product.name}/>
         </div>
-      </div>
+      </MainLayout>
     );
   }
 }
