@@ -9,6 +9,7 @@ import {reducer as formReducer} from 'redux-form';
 import Login from '../data/Login/reducers';
 import Account from '../data/Account/reducers';
 import Organization from '../data/Organization/reducers';
+import Organizations from '../data/Organizations/reducers';
 import Product from '../data/Product/reducers';
 import Storage from '../data/Storage/reducers';
 import PageLoading from '../data/PageLoading/reducers';
@@ -22,7 +23,8 @@ const reducers = {
   Product,
   Storage,
   PageLoading,
-  Devices
+  Devices,
+  Organizations
 };
 
 export default combineReducers(reducers);

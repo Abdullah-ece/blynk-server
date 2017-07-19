@@ -15,6 +15,7 @@ import ForgotPass from './scenes/ForgotPass';
 import ResetPass from './scenes/ResetPass';
 import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
+import * as Organizations from './scenes/Organizations';
 import Invite from './scenes/Invite';
 import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
@@ -81,7 +82,7 @@ Store().then((store) => {
                 <Route path="/devices/:id" components={Devices} onEnter={DevicePreloader(store)}/>
                 <Route path="/devices/:id/create" components={Devices} onEnter={DeviceByIdCreatePreload(store)}/>
               </Route>
-              <Route path="/organizations" component={() => (<div>Hello, world!</div>)}/>
+              <Route path="/organizations" component={Organizations.Index}/>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
