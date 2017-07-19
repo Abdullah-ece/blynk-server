@@ -1,7 +1,8 @@
 import React      from 'react';
 import Dotdotdot  from 'react-dotdotdot';
+import './styles.less';
 
-class ProductHeader extends React.Component {
+class Header extends React.Component {
 
   static propTypes = {
     title: React.PropTypes.oneOfType([
@@ -13,18 +14,19 @@ class ProductHeader extends React.Component {
 
   render() {
     return (
-      <div className="products-header">
-        <div className="products-header-name">
+      <div className="main-layout--header">
+        <div className="main-layout--header-name">
           <Dotdotdot clamp={1}>
             {this.props.title}
           </Dotdotdot>
         </div>
-        <div className="products-header-options">
+        <div className="main-layout--header-options">
           {this.props.options}
         </div>
       </div>
     );
   }
+
 }
 
-export default ProductHeader;
+export default Header;

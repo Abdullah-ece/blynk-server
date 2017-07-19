@@ -1,9 +1,12 @@
-import React from 'react';
+import React        from 'react';
+import {Link}       from 'react-router';
+import {Button}     from 'antd';
+import {
+  MainList,
+  MainLayout
+}                   from 'components';
+
 import './styles.less';
-import {Link} from 'react-router';
-import {Button} from 'antd';
-import ProductItem from './components/ProductItem';
-import ProductHeader from 'scenes/Products/components/ProductHeader';
 
 export default class ProductsList extends React.Component {
 
@@ -12,22 +15,27 @@ export default class ProductsList extends React.Component {
   };
 
   render() {
-    const items = this.props.products.map(p => <ProductItem key={p.id} item={p}/>);
-
     return (
-      <div className="product-list">
-        <ProductHeader title="Products"
-                       options={(
-                         <div>
-                           <Link to="/products/create">
-                             <Button icon="plus" type="primary">Create New Product</Button>
-                           </Link>
-                         </div>
-                       )}/>
-        <div className="products-list-content">
-          { items }
-        </div>
-      </div>
+      <MainLayout>
+        <MainLayout.Header title="Products" options={(
+          <div>
+            <Link to="/products/create">
+              <Button icon="plus" type="primary">Create New Product</Button>
+            </Link>
+          </div>
+        )}/>
+        <MainLayout.Content>
+          <MainList>
+            { this.props.products.map((product, key) => (
+              <MainList.Item key={key}
+                             logoUrl={product.logoUrl}
+                             name={product.name}
+                             devicesCount={product.devicesCount}
+                             link={`/product/${product.id}`}/>
+            ))}
+          </MainList>
+        </MainLayout.Content>
+      </MainLayout>
     );
   }
 }
