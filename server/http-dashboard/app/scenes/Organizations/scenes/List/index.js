@@ -1,12 +1,25 @@
-import React      from 'react';
-import {Link}     from 'react-router';
-import {Button}   from 'antd';
+import React                from 'react';
+import {Link}               from 'react-router';
+import {Button}             from 'antd';
+import {List as IList}      from 'immutable';
+import PropTypes            from 'prop-types';
 import {
   MainList,
   MainLayout
-}                 from 'components';
+}                           from 'components';
 
 class List extends React.Component {
+
+  static propTypes = {
+    data: PropTypes.instanceOf(IList)
+  };
+
+  getDevicesCountByProductsList(products) {
+    if (products instanceof IList) {
+      return products.reduce((count, product) => count + product.get('deviceCount'), 0);
+    }
+    return 0;
+  }
 
   render() {
     return (
@@ -20,21 +33,16 @@ class List extends React.Component {
         )}/>
         <MainLayout.Content>
           <MainList>
-            <MainList.Item logoUrl="http://lorempixel.com/400/400?1"
-                           name="Ecolab"
-                           devicesCount={5032}
-                           link="/products"
-            />
-            <MainList.Item logoUrl="http://lorempixel.com/400/400?2"
-                           name="Hencel"
-                           devicesCount={5032}
-                           link="/products"
-            />
-            <MainList.Item logoUrl="http://lorempixel.com/400/400?3"
-                           name="Kronenburg"
-                           devicesCount={5032}
-                           link="/products"
-            />
+            { this.props.data.map((organization, key) => (
+              <MainList.Item key={key}
+                             logoUrl={organization.get('logoUrl')}
+                             name={organization.get('name')}
+                             devicesCount={
+                               this.getDevicesCountByProductsList(organization.get('products'))
+                             }
+                             link={`/organization/${organization.get('id')}`}
+              />
+            ))}
           </MainList>
         </MainLayout.Content>
       </MainLayout>
