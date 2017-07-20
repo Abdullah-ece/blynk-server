@@ -29,6 +29,7 @@ export default class ProductsList extends React.Component {
             { this.props.products.map((product, key) => (
               <MainList.Item key={key}
                              logoUrl={product.logoUrl}
+                             noImageText="No Product Image"
                              name={product.name}
                              devicesCount={product.devicesCount}
                              link={`/product/${product.id}`}/>

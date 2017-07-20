@@ -2,6 +2,7 @@ import React              from 'react';
 import PropTypes          from 'prop-types';
 import {Link}             from 'react-router';
 import Dotdotdot          from 'react-dotdotdot';
+import classnames         from 'classnames';
 
 class MainItem extends React.Component {
 
@@ -9,18 +10,27 @@ class MainItem extends React.Component {
     link: PropTypes.string,
     name: PropTypes.string,
     logoUrl: PropTypes.string,
+    isActive: PropTypes.bool,
     devicesCount: PropTypes.number,
   };
 
   render() {
+
+    const previewClassName = classnames({
+      'main-list--item-preview': true,
+      'main-list--item-preview--is-active': this.props.isActive !== false
+    });
+
     return (
       <div className="main-list--item">
         <Link to={this.props.link}>
-          <div className="main-list--item-preview">
-            { this.props.logoUrl && (
+          <div className={previewClassName}>
+            { this.props.isActive !== false ? ( this.props.logoUrl && (
               <img src={this.props.logoUrl}/>
             ) || (
-              <div className="product-item-no-image">No Product Image</div>
+              <div className="main-list--item-no-image">{this.props.noImageText || 'No Image'}</div>
+            )) : (
+              <div className="main-list--item-image-pending">{this.props.name.length && this.props.name.charAt(0)}</div>
             )}
           </div>
           <div className="main-list--item-details">
@@ -28,7 +38,11 @@ class MainItem extends React.Component {
               <Dotdotdot clamp={1}>{ this.props.name }</Dotdotdot>
             </div>
             <div className="main-list--item-details-amount">
-              { this.props.devicesCount || 0 } Devices
+              { this.props.isActive !== false ? (
+                `${this.props.devicesCount || 0} Devices`
+              ) : (
+                `Pending`
+              )}
             </div>
           </div>
         </Link>

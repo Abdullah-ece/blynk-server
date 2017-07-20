@@ -37,6 +37,8 @@ class List extends React.Component {
               <MainList.Item key={key}
                              logoUrl={organization.get('logoUrl')}
                              name={organization.get('name')}
+                             isActive={Boolean(organization.get('isActive'))}
+                             noImageText="No Organization Image"
                              devicesCount={
                                this.getDevicesCountByProductsList(organization.get('products'))
                              }

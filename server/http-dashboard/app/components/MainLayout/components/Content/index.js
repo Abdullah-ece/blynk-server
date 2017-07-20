@@ -7,7 +7,8 @@ class Content extends React.Component {
 
   static propTypes = {
     children: PropTypes.any,
-    style: PropTypes.object
+    style: PropTypes.object,
+    className: PropTypes.string,
   };
 
   render() {
