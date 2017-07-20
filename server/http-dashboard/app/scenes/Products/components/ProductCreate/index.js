@@ -145,7 +145,7 @@ class ProductCreate extends React.Component {
                            </Button>
                          </div>
                        )}/>
-        <MainLayout.Content>
+        <MainLayout.Content className="product-create-content">
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}

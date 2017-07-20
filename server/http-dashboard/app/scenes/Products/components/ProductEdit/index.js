@@ -130,7 +130,7 @@ class ProductEdit extends React.Component {
   render() {
 
     return (
-      <MainLayout>
+      <div>
         <MainLayout.Header title={this.state.originalName}
                            options={(
                              <div>
@@ -145,7 +145,7 @@ class ProductEdit extends React.Component {
                                </Button>
                              </div>
                            )}/>
-        <MainLayout.Content>
+        <MainLayout.Content className="product-edit-content">
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
             content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
@@ -187,7 +187,7 @@ class ProductEdit extends React.Component {
           </Tabs>
 
         </MainLayout.Content>
-      </MainLayout>
+      </div>
     );
   }
 }

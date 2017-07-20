@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {submit, getFormSyncErrors, isDirty} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
+import {MainLayout}         from 'components';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE} from 'services/Products';
 import * as API from 'data/Product/api';
@@ -333,7 +334,7 @@ class ProductCreate extends React.Component {
       return null;
 
     return (
-      <div>
+      <MainLayout>
         <ProductEdit product={this.props.product}
                      isInfoFormInvalid={this.props.isProductInfoInvalid}
                      isEventsFormInvalid={this.isEventsFormInvalid()}
@@ -358,8 +359,7 @@ class ProductCreate extends React.Component {
           product={_.find(this.props.products, product => Number(product.id) === Number(this.props.params.id))}
           onSave={this.handleProductDeviceForceUpdateSubmit.bind(this)}
           onCancel={this.handleProductDeviceForceUpdateCancel.bind(this)}/>
-
-      </div>
+      </MainLayout>
     );
   }
 }

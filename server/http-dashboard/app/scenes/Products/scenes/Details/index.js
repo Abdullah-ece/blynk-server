@@ -129,7 +129,7 @@ class ProductDetails extends React.Component {
                                <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
                              </div>
                            )}/>
-        <div className="products-content">
+        <MainLayout.Content className="product-details-content">
           <Tabs className="products-tabs"
                 defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
@@ -150,7 +150,7 @@ class ProductDetails extends React.Component {
           <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}
                        visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
                        productName={this.state.product.name}/>
-        </div>
+        </MainLayout.Content>
       </MainLayout>
     );
   }
