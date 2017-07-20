@@ -9,6 +9,7 @@ import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -75,8 +76,6 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(product);
     }
 
-
-    //todo make sure performance is ok
     private Product[] calcDeviceCount(Organization org) {
         Map<Integer, Integer> productIdCount = productDeviceCount();
         for (Product product : org.products) {
@@ -97,22 +96,22 @@ public class ProductHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response create(@Context ChannelHandlerContext ctx, Product product) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+    public Response create(WebProductAndOrgId webProductAndOrgId) {
+        Product product = webProductAndOrgId.product;
 
         if (product == null || product.notValid()) {
             log.error("Product is empty or has not name. {}", product);
             return badRequest("Product is empty or has not name.");
         }
 
-        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+        Organization organization = organizationDao.getOrgById(webProductAndOrgId.orgId);
 
         if (!organization.isValidProductName(product)) {
             log.error("Organization {} already has product with name {}.", organization.name, product.name);
             return badRequest("Product with this name already exists.");
         }
 
-        product = organizationDao.createProduct(httpSession.user.orgId, product);
+        product = organizationDao.createProduct(webProductAndOrgId.orgId, product);
 
         return ok(product);
     }
@@ -120,7 +119,9 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response updateProduct(@Context ChannelHandlerContext ctx, Product updatedProduct) {
+    public Response updateProduct(@Context ChannelHandlerContext ctx, WebProductAndOrgId webProductAndOrgId) {
+        Product updatedProduct = webProductAndOrgId.product;
+
         if (updatedProduct == null) {
             log.error("No product for update.");
             return badRequest();
@@ -131,16 +132,14 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+        Organization organization = organizationDao.getOrgById(webProductAndOrgId.orgId);
 
         if (!organization.isValidProductName(updatedProduct)) {
             log.error("Organization {} already has product with name {}.", organization.name, updatedProduct.name);
             return badRequest("Product with this name already exists.");
         }
 
-        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProduct(webProductAndOrgId.orgId, updatedProduct.id);
         existingProduct.update(updatedProduct);
 
         return ok(existingProduct);
@@ -150,15 +149,14 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/updateDevices")
-    public Response updateProductAndDevices(@Context ChannelHandlerContext ctx, Product updatedProduct) {
+    public Response updateProductAndDevices(@Context ChannelHandlerContext ctx, WebProductAndOrgId webProductAndOrgId) {
+        Product updatedProduct = webProductAndOrgId.product;
         if (updatedProduct == null) {
             log.error("No product for update.");
             return badRequest();
         }
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        Product existingProduct = organizationDao.getProduct(httpSession.user.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProduct(webProductAndOrgId.orgId, updatedProduct.id);
 
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);

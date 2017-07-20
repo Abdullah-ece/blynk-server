@@ -149,7 +149,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testLCDOnActivateSendsCorrectBodySimpleMode() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"type\":\"LCD\",\"id\":1923810267,\"x\":0,\"y\":6,\"color\":600084223,\"width\":8,\"height\":2,\"tabId\":0,\"" +
+        clientPair.appClient.send("createWidget 1\0{\"type\":\"LCD\",\"orgId\":1923810267,\"x\":0,\"y\":6,\"color\":600084223,\"width\":8,\"height\":2,\"tabId\":0,\"" +
                 "pins\":[" +
                 "{\"pin\":10,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023, \"value\":\"10\"}," +
                 "{\"pin\":11,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023, \"value\":\"11\"}]," +
@@ -182,7 +182,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testLCDOnActivateSendsCorrectBodyAdvancedMode() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"type\":\"LCD\",\"id\":1923810267,\"x\":0,\"y\":6,\"color\":600084223,\"width\":8,\"height\":2,\"tabId\":0,\"" +
+        clientPair.appClient.send("createWidget 1\0{\"type\":\"LCD\",\"orgId\":1923810267,\"x\":0,\"y\":6,\"color\":600084223,\"width\":8,\"height\":2,\"tabId\":0,\"" +
                 "pins\":[" +
                 "{\"pin\":10,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}," +
                 "{\"pin\":11,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}]," +
@@ -238,7 +238,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnRTCWithUTCTimezone() throws Exception {
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":2,\"height\":1}"));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -268,7 +268,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnRTCWithUTCTimezonePlus11() throws Exception {
         ZoneId zoneId = ZoneId.of("Australia/Sydney");
 
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":2," +
                 "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
@@ -314,7 +314,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
         ZoneId zoneId = ZoneId.of("Europe/Kiev");
 
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
@@ -343,7 +343,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnRTCWithUTCTimezoneMinus3() throws Exception {
         ZoneId zoneId = ZoneId.of("Brazil/East");
 
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
@@ -371,7 +371,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncForTimeInputWidget() throws Exception {
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":2,\"height\":1}"));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -438,7 +438,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7500")));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.hardwareClient.send("hardware vw 17 a");
@@ -505,7 +505,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSyncWorksForGauge() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 100 101");
@@ -517,7 +517,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSyncForMultiPins() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 100 100");
@@ -553,7 +553,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSyncForMultiDevices() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":4, \"value\":1}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":4, \"value\":1}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         Device device1 = new Device(1, "My Device", "ESP8266");

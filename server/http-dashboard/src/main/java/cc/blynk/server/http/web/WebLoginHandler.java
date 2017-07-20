@@ -197,7 +197,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         }
         Organization organization = organizationDao.getOrgById(user.orgId);
         if (organization == null) {
-            log.info("Organization with id {} not found.", user.orgId);
+            log.info("Organization with orgId {} not found.", user.orgId);
             return badRequest("Organization doesn't exist");
         }
 

@@ -370,7 +370,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        //125564119 is id of project with 4ae3851817194e2596cf1b7103603ef8 token
+        //125564119 is orgId of project with 4ae3851817194e2596cf1b7103603ef8 token
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(new HardwareMessage(2, b("vw 123 10"))));
 

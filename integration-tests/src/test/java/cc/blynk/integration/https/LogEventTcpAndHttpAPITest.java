@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebComment;
+import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
@@ -490,7 +491,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

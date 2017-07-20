@@ -74,22 +74,22 @@ public class WidgetWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCanCreateWebHookWithScheme() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":1111, \"width\":1, \"height\":1,\"url\":\"http://123.com\",\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":1111, \"width\":1, \"height\":1,\"url\":\"http://123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":1113, \"width\":1, \"height\":1,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":1113, \"width\":1, \"height\":1,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
     @Test
     public void testWidgetAlreadyExists() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":1, \"width\":1, \"height\":1,\"type\":\"BUTTON\"}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":1, \"width\":1, \"height\":1,\"type\":\"BUTTON\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 
     @Test
     public void testWidgetWrongSize() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":22222, \"width\":1, \"height\":0,\"type\":\"BUTTON\"}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":22222, \"width\":1, \"height\":0,\"type\":\"BUTTON\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 

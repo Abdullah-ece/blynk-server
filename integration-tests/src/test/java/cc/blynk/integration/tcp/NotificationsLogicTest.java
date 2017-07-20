@@ -69,7 +69,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android" + "\0" + "RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.send("createDash {\"orgId\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         appClient.send("addPushToken 1\0uid\0token");
@@ -242,13 +242,13 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("deleteWidget 1\0" + "9");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("updateWidget 1\0{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
+        clientPair.appClient.send("updateWidget 1\0{\"orgId\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("push 123");

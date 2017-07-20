@@ -293,7 +293,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaAppAndHardwareForWrongPWMButton() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
+        clientPair.appClient.send("createWidget 1\0{\"type\":\"BUTTON\",\"orgId\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.reset();
@@ -545,7 +545,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.send("createWidget 1\0{\"orgId\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/V100");

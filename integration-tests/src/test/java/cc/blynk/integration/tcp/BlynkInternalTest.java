@@ -53,7 +53,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void testGetRTC() throws Exception {
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
 
         clientPair.hardwareClient.send("internal rtc");
@@ -101,7 +101,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void appConnectedEvent() throws Exception {
-        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.send("updateDash {\"orgId\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -115,7 +115,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void appDisconnectedEvent() throws Exception {
-        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.send("updateDash {\"orgId\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.stop().await();

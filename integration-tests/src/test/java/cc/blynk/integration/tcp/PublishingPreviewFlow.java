@@ -313,7 +313,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
-        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
+        clientPair.appClient.send("updateWidget 1\0" + "{\"orgId\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
 
         clientPair.appClient.send("updateFace 1");

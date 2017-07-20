@@ -58,7 +58,7 @@ public class DevicesHandler extends BaseHttpHandler {
     @Path("/{orgId}")
     public Response createDevice(@ContextUser User user, @PathParam("orgId") int orgId, Device newDevice) {
         if (newDevice == null || newDevice.productId < 1) {
-            log.error("No data or product id is wrong. {}", newDevice);
+            log.error("No data or product orgId is wrong. {}", newDevice);
             return badRequest();
         }
 
@@ -67,7 +67,7 @@ public class DevicesHandler extends BaseHttpHandler {
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (dash == null) {
-            log.error("Dash with id = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dashId);
             return badRequest();
         }
 
@@ -125,12 +125,12 @@ public class DevicesHandler extends BaseHttpHandler {
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (dash == null) {
-            log.error("Dash with id = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dashId);
             return badRequest();
         }
 
         if (newDevice.id == 0) {
-            log.error("Cannot find device with id 0.");
+            log.error("Cannot find device with orgId 0.");
             return badRequest();
         }
 
@@ -226,7 +226,7 @@ public class DevicesHandler extends BaseHttpHandler {
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (dash == null) {
-            log.error("Dash with id = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dashId);
             return badRequest();
         }
 

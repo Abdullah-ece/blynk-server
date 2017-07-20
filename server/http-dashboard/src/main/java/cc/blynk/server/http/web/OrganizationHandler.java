@@ -61,8 +61,8 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/{id}")
-    public Response get(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
+    @Path("/{orgId}")
+    public Response get(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
 
@@ -91,8 +91,8 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @GET
-    @Path("/{id}/users")
-    public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId) {
+    @Path("/{orgId}/users")
+    public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
 
@@ -108,9 +108,9 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{id}/users/update")
+    @Path("/{orgId}/users/update")
     @Admin
-    public Response updateUserInfo(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite user) {
+    public Response updateUserInfo(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, UserInvite user) {
         if (user.isNotValid()) {
             log.error("Bad data for account update.");
             return badRequest("Bad data for account update.");
@@ -143,9 +143,9 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{id}/users/delete")
+    @Path("/{orgId}/users/delete")
     @Admin
-    public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, String[] emailsToDelete) {
+    public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, String[] emailsToDelete) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
         Organization organization = organizationDao.getOrgById(orgId);
 
@@ -201,9 +201,9 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{id}")
+    @Path("/{orgId}")
     @Admin
-    public Response update(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, Organization newOrganization) {
+    public Response update(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
@@ -225,18 +225,18 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/{orgId}")
     @SuperAdmin
-    public Response delete(@PathParam("id") int orgId) {
+    public Response delete(@PathParam("orgId") int orgId) {
         if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
-            log.error("Delete operation for initial organization (id = 1) is not allowed.");
+            log.error("Delete operation for initial organization (orgId = 1) is not allowed.");
             return forbidden();
         }
 
         Organization existingOrganization = organizationDao.getOrgById(orgId);
 
         if (!organizationDao.delete(orgId)) {
-            log.error("Wasn't able to remove organization with id {}.", orgId);
+            log.error("Wasn't able to remove organization with orgId {}.", orgId);
             return badRequest();
         }
 
@@ -245,9 +245,9 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{id}/invite")
+    @Path("/{orgId}/invite")
     @Staff
-    public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("id") int orgId, UserInvite userInvite) {
+    public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, UserInvite userInvite) {
         if (orgId == 0 || userInvite.isNotValid()) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
             return badRequest("Invalid invitation.");

@@ -105,11 +105,11 @@ public class Option implements Cloneable
     }
 
     /**
-     * Returns the id of this Option.  This is only set when the
+     * Returns the orgId of this Option.  This is only set when the
      * Option shortOpt is a single character.  This is used for switch
      * statements.
      *
-     * @return the id of this Option
+     * @return the orgId of this Option
      */
     public int getId()
     {

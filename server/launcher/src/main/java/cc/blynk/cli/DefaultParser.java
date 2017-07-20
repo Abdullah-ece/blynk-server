@@ -631,7 +631,7 @@ public class DefaultParser
      * <ul>
      *  <li>ignore the first character ("<b>-</b>")</li>
      *  <li>for each remaining character check if an {@link Option}
-     *  exists with that id.</li>
+     *  exists with that orgId.</li>
      *  <li>if an {@link Option} does exist then add that character
      *  prepended with "<b>-</b>" to the list of processed tokens.</li>
      *  <li>if the {@link Option} can have an argument value and there
