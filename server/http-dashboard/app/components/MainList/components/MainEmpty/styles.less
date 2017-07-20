@@ -1,0 +1,32 @@
+@import 'components/Layout/style-guide';
+
+.main-empty {
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  width: 340px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.main-empty > div {
+  margin: @style-size-3-1 0;
+  &:first-child {
+    margin: 0
+  }
+  &:last-child {
+    margin: 0
+  }
+}
+
+.main-empty-title {
+  .font-h2;
+}
+
+.main-empty-description {
+  .font-descriptions;
+}
+
+.main-empty-action {
+}

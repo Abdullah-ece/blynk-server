@@ -4,8 +4,10 @@ import {connect}              from 'react-redux';
 import PropTypes              from 'prop-types';
 import {bindActionCreators}   from 'redux';
 
-import OrgsList from '../List';
-import Empty from '../Empty';
+import {
+  List as OrgsList,
+  Empty
+}                             from './scenes';
 
 import {
   OrganizationsFetch

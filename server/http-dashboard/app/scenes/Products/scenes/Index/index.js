@@ -49,12 +49,13 @@ class ProductsIndex extends React.Component {
   render() {
     const items = this.props.Product.products;
 
+    if (items && items.length)
+      return (
+        <ProductsList products={items}/>
+      );
+
     return (
-      <div className="product-container">
-
-        { items && items.length ? <ProductsList products={items}/> : <NoProducts/> }
-
-      </div>
+      <NoProducts/>
     );
   }
 }

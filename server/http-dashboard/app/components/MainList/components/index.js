@@ -1,1 +1,2 @@
-export MainItem from './MainItem';
+export MainItem     from './MainItem';
+export MainEmpty    from './MainEmpty';

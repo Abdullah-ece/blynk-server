@@ -1,6 +1,9 @@
 import React      from 'react';
 import PropTypes  from 'prop-types';
-import {MainItem} from './components';
+import {
+  MainItem,
+  MainEmpty
+}                 from './components';
 import './styles.less';
 
 class MainList extends React.Component {
@@ -20,5 +23,6 @@ class MainList extends React.Component {
 }
 
 MainList.Item = MainItem;
+MainList.Empty = MainEmpty;
 
 export default MainList;
