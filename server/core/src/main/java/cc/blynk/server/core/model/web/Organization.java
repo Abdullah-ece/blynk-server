@@ -21,6 +21,8 @@ public class Organization {
 
     public volatile boolean canCreateOrgs;
 
+    public volatile boolean isActive;
+
     public volatile String tzName;
 
     public volatile String logoUrl;
@@ -39,13 +41,6 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public Organization(String name, String tzName, String logoUrl) {
-        this();
-        this.name = name;
-        this.tzName = tzName;
-        this.logoUrl = logoUrl;
-    }
-
     public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs) {
         this();
         this.name = name;
@@ -62,6 +57,7 @@ public class Organization {
         this.primaryColor = updatedOrganization.primaryColor;
         this.secondaryColor = updatedOrganization.secondaryColor;
         this.products = updatedOrganization.products;
+        this.isActive = updatedOrganization.isActive;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 

@@ -128,6 +128,7 @@ public class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
             Organization mainOrg = holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true));
+            mainOrg.isActive = true;
             holder.organizationDao.create(new Organization("New Organization Inc. (id=2)", "Europe/Kiev", "/static/logo.png", false));
             Product product = new Product();
             product.boardType = "Particle Photon";

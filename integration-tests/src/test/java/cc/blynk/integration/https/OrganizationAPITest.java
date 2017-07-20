@@ -105,7 +105,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganizationNotAllowedForRegularUser() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        Organization organization = new Organization("1", "2", "/static/logo.png");
+        Organization organization = new Organization("1", "2", "/static/logo.png", false);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -119,7 +119,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganizationAllowedForRegularAdmin() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -133,7 +133,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void organizationNotAllowedToCreateSubOrgs() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -155,7 +155,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         login(regularAdmin.email, regularAdmin.pass);
 
-        organization = new Organization("My Org2", "Some TimeZone", "/static/logo.png");
+        organization = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false);
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -167,7 +167,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png"));
+        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", false));
 
         login(regularAdmin.email, regularAdmin.pass);
 
@@ -182,7 +182,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png");
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -201,7 +201,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("1", "2", "/static/logo.png");
+        Organization organization = new Organization("1", "2", "/static/logo.png", false);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));

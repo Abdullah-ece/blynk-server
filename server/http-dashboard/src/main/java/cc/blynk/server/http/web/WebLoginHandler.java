@@ -122,6 +122,8 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         user.pass = password;
         user.status = UserStatus.Active;
+        Organization org = organizationDao.getOrgById(user.orgId);
+        org.isActive = true;
 
         Response response = ok(user);
 
