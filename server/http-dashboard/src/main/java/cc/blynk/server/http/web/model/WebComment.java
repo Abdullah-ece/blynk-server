@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web;
+package cc.blynk.server.http.web.model;
 
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 20.06.17.
  */
-public class Comment {
+public class WebComment {
 
     public final String comment;
 
     @JsonCreator
-    public Comment(@JsonProperty("comment") String comment) {
+    public WebComment(@JsonProperty("comment") String comment) {
         this.comment = comment;
     }
 

@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
+import cc.blynk.server.http.web.model.WebComment;
 import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -91,7 +92,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                     @PathParam("orgId") int orgId,
                                     @PathParam("deviceId") int deviceId,
                                     @PathParam("logEventId") int logEventId,
-                                    Comment comment) {
+                                    WebComment comment) {
         User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);
         verifyUserAccessToDevice(user, device);
