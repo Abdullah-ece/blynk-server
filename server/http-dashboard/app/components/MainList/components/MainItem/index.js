@@ -10,6 +10,8 @@ class MainItem extends React.Component {
     link: PropTypes.string,
     name: PropTypes.string,
     logoUrl: PropTypes.string,
+    noImageText: PropTypes.string,
+    
     isActive: PropTypes.bool,
     devicesCount: PropTypes.number,
   };
