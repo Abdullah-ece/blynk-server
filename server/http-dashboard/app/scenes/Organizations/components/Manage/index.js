@@ -1,7 +1,9 @@
-import React        from 'react';
-import {Tabs}        from 'antd';
-import PropTypes     from 'prop-types';
-// import {MainLayout} from 'components'
+import React          from 'react';
+import {Tabs}         from 'antd';
+import PropTypes      from 'prop-types';
+import {
+  Info
+}                     from './components';
 import './styles.less';
 
 const {TabPane} = Tabs;
@@ -27,7 +29,7 @@ class Manage extends React.Component {
         <TabPane tab="Info"
                  key={this.TABS.INFO}>
           <div className="organizations-manage-tab-wrapper">
-            Info
+            <Info />
           </div>
         </TabPane>
         <TabPane tab="Products"

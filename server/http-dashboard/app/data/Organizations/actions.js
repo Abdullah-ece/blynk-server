@@ -16,3 +16,10 @@ export function OrganizationsManageSetActiveTab(tab) {
     value: tab
   };
 }
+
+export function OrganizationsManageUpdate(manage) {
+  return {
+    type: 'ORGANIZATIONS_MANAGE_UPDATE',
+    value: manage
+  };
+}

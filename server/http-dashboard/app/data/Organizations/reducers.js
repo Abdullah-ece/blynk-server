@@ -25,6 +25,9 @@ export default function Organizations(state = initialState, action) {
     case "ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB":
       return state.setIn(['manage', 'activeTab'], action.value);
 
+    case "ORGANIZATIONS_MANAGE_UPDATE":
+      return state.set('manage', action.value);
+
     default:
       return state;
   }
