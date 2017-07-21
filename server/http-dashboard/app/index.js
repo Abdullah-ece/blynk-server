@@ -83,6 +83,7 @@ Store().then((store) => {
                 <Route path="/devices/:id/create" components={Devices} onEnter={DeviceByIdCreatePreload(store)}/>
               </Route>
               <Route path="/organizations" component={Organizations.Index}/>
+              `` <Route path="/organizations/create" component={Organizations.Create}/>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/create" component={ProductCreate}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>

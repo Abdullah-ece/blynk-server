@@ -26,7 +26,7 @@ class List extends React.Component {
       <MainLayout>
         <MainLayout.Header title="Organizations" options={(
           <div>
-            <Link to="/products/create">
+            <Link to="/organizations/create">
               <Button icon="plus" type="primary">Create New Organization</Button>
             </Link>
           </div>

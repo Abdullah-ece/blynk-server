@@ -9,3 +9,10 @@ export function OrganizationsFetch() {
     }
   };
 }
+
+export function OrganizationsManageSetActiveTab(tab) {
+  return {
+    type: 'ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB',
+    value: tab
+  };
+}
