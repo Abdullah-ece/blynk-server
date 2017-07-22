@@ -1,20 +1,28 @@
-import React      from 'react';
-import PropTypes  from 'prop-types';
+import React        from 'react';
+import PropTypes    from 'prop-types';
+import classnames   from 'classnames';
 import {
   MainItem,
   MainEmpty
-}                 from './components';
+}                   from './components';
 import './styles.less';
 
 class MainList extends React.Component {
 
   static propTypes = {
-    children: PropTypes.any
+    children: PropTypes.any,
+    className: PropTypes.string
   };
 
   render() {
+
+    const className = classnames({
+      'main-list': true,
+      [this.props.className]: !!(this.props.className && this.props.className.length)
+    });
+
     return (
-      <div className="main-list">
+      <div className={className}>
         { this.props.children }
       </div>
     );

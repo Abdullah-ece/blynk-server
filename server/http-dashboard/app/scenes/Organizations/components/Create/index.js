@@ -1,8 +1,9 @@
-import React        from 'react';
-import {MainLayout} from 'components';
-import Manage     from './../Manage';
-import {Button}     from 'antd';
-import PropTypes     from 'prop-types';
+import React          from 'react';
+import {MainLayout}   from 'components';
+import Manage         from './../Manage';
+import {Button}       from 'antd';
+import PropTypes      from 'prop-types';
+import {List}         from 'immutable';
 
 import './styles.less';
 
@@ -10,6 +11,7 @@ class Create extends React.Component {
 
   static propTypes = {
     activeTab: PropTypes.string,
+    products: PropTypes.instanceOf(List),
 
     onTabChange: PropTypes.func,
     handleCancel: PropTypes.func,
@@ -38,7 +40,10 @@ class Create extends React.Component {
                            )}/>
         {/*@todo rename product- to layout*/}
         <MainLayout.Content className="product-create-content">
-          <Manage onTabChange={this.props.onTabChange} activeTab={this.props.activeTab}/>
+          <Manage
+            onTabChange={this.props.onTabChange}
+            activeTab={this.props.activeTab}
+            products={this.props.products}/>
         </MainLayout.Content>
       </MainLayout>
     );

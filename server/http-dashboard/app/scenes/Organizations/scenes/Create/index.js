@@ -1,9 +1,11 @@
 import React                  from 'react';
 import {connect}              from 'react-redux';
 import {bindActionCreators}   from 'redux';
-import {initialize}           from 'redux-form';
-import {Map}                  from 'immutable';
+import {initialize, destroy}  from 'redux-form';
+import {Map, List, fromJS}    from 'immutable';
 import PropTypes              from 'prop-types';
+import {ProductsFetch}        from 'data/Product/api';
+import {Manage}               from 'services/Organizations';
 
 import {
   OrganizationsManageSetActiveTab,
@@ -17,20 +19,26 @@ import {
 import './styles.less';
 
 @connect((state) => ({
+  products: fromJS(state.Product.products),
   manage: state.Organizations.get('manage'),
   activeTab: state.Organizations.getIn(['manage', 'activeTab'])
 }), (dispatch) => ({
   updateManage: bindActionCreators(OrganizationsManageUpdate, dispatch),
   setTab: bindActionCreators(OrganizationsManageSetActiveTab, dispatch),
-  initializeForm: bindActionCreators(initialize, dispatch)
+  fetchProducts: bindActionCreators(ProductsFetch, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
+  destroyForm: bindActionCreators(destroy, dispatch),
 }))
 class Create extends React.Component {
 
   static propTypes = {
     setTab: PropTypes.func,
+    destroyForm: PropTypes.func,
     updateManage: PropTypes.func,
     initializeForm: PropTypes.func,
+    fetchProducts: PropTypes.func,
 
+    products: PropTypes.instanceOf(List),
     manage: PropTypes.instanceOf(Map),
     activeTab: PropTypes.string
   };
@@ -43,12 +51,29 @@ class Create extends React.Component {
 
   componentWillMount() {
     this.props.updateManage(
-      this.props.manage.updateIn(['info', 'form'], () => 'organizations-create-info')
+      this.props.manage
+        .updateIn(['info', 'form'], () => Manage.INFO_FORM_NAME)
+        .updateIn(['products', 'form'], () => Manage.PRODUCTS_FORM_NAME)
     );
 
-    this.props.initializeForm('organizations-create-info', {
+    this.props.fetchProducts();
+
+    this.props.initializeForm(Manage.INFO_FORM_NAME, {
       name: 'New Organization'
     });
+
+    this.props.initializeForm(Manage.PRODUCTS_FORM_NAME, {
+      products: []
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.updateManage(
+      this.props.manage.set('activeTab', Manage.DEFAULT_TAB)
+    );
+
+    this.props.destroyForm(this.props.manage.getIn(['info', 'form']));
+    this.props.destroyForm(this.props.manage.getIn(['products', 'form']));
   }
 
   TABS = {
@@ -63,7 +88,11 @@ class Create extends React.Component {
 
   render() {
     return (
-      <OrganizationCreate onTabChange={this.handleTabChange} activeTab={this.props.activeTab}/>
+      <OrganizationCreate
+        products={this.props.products}
+        onTabChange={this.handleTabChange}
+        activeTab={this.props.activeTab}
+      />
     );
   }
 

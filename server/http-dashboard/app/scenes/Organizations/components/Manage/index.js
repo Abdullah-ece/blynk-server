@@ -1,8 +1,10 @@
 import React          from 'react';
 import {Tabs}         from 'antd';
+import {List}         from 'immutable';
 import PropTypes      from 'prop-types';
 import {
-  Info
+  Info,
+  Products
 }                     from './components';
 import './styles.less';
 
@@ -11,6 +13,7 @@ const {TabPane} = Tabs;
 class Manage extends React.Component {
 
   static propTypes = {
+    products: PropTypes.instanceOf(List),
     activeTab: PropTypes.string,
 
     onTabChange: PropTypes.func,
@@ -34,7 +37,7 @@ class Manage extends React.Component {
         </TabPane>
         <TabPane tab="Products"
                  key={this.TABS.PRODUCTS}>
-          Products
+          <Products products={this.props.products}/>
         </TabPane>
         <TabPane tab="Admins"
                  key={this.TABS.ADMINS}>

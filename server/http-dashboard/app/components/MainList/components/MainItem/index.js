@@ -1,4 +1,5 @@
 import React              from 'react';
+import {Icon}             from 'antd';
 import PropTypes          from 'prop-types';
 import {Link}             from 'react-router';
 import Dotdotdot          from 'react-dotdotdot';
@@ -11,10 +12,27 @@ class MainItem extends React.Component {
     name: PropTypes.string,
     logoUrl: PropTypes.string,
     noImageText: PropTypes.string,
-    
+
+    isChecked: PropTypes.bool,
+    lightOverlay: PropTypes.bool,
     isActive: PropTypes.bool,
+
+    id: PropTypes.number,
     devicesCount: PropTypes.number,
+
+    onItemClick: PropTypes.func
   };
+
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    if (this.props.onItemClick)
+      this.props.onItemClick(this.props.id);
+  }
 
   render() {
 
@@ -23,8 +41,19 @@ class MainItem extends React.Component {
       'main-list--item-preview--is-active': this.props.isActive !== false
     });
 
+    const className = classnames({
+      'main-list--item': true,
+      'main-list--item--checked': this.props.isChecked === true,
+      'main-list--item--overlay': this.props.lightOverlay === true && !this.props.isChecked
+    });
+
     return (
-      <div className="main-list--item">
+      <div className={className} onClick={this.handleClick}>
+        { this.props.isChecked && (
+          <div className="main-list--item-check-icon">
+            <Icon type="check-circle"/>
+          </div>
+        )}
         <Link to={this.props.link}>
           <div className={previewClassName}>
             { this.props.isActive !== false ? ( this.props.logoUrl && (

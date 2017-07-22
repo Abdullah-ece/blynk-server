@@ -1,15 +1,42 @@
-import React                    from 'react';
-import {Input, Item}            from "components/UI";
-import Validation               from 'services/Validation';
-import {Row, Col, Switch}       from 'antd';
+import React                      from 'react';
+import {Input, Item, Switch}      from "components/UI";
+import Validation                 from 'services/Validation';
+import {Row, Col, message}        from 'antd';
 import {
   reduxForm,
   Field as FormField
-}                               from 'redux-form';
-import ImageUploader            from 'components/ImageUploader';
+}                                 from 'redux-form';
+import ImageUploader              from 'components/ImageUploader';
 
 @reduxForm()
 class Form extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  logoComponent({input, meta: {error, touched}}) {
+
+    const handleComponentChange = (info) => {
+      const status = info.file.status;
+      if (status === 'done') {
+        input.onChange(info.file.response);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    };
+
+    return (
+      <ImageUploader text="Add image"
+                     logo={input.value}
+                     error={error}
+                     touched={touched}
+                     hint={() => (
+                       <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
+                     )}
+                     onChange={handleComponentChange}/>
+    );
+  }
 
   render() {
     return (
@@ -25,24 +52,14 @@ class Form extends React.Component {
           </Item>
 
           <Item>
-            <Switch size="small"/> <span className="switch-label">Organization can create Sub-Organizations</span>
+            <Switch size="small" name="canCreate" label="Can create Sub-Organizations"/>
           </Item>
 
         </Col>
         <Col span={9}>
           <div className="organizations-create-drag-and-drop">
             <FormField name="logoUrl"
-                       component={({input, meta: {error, touched}}) => (
-                         <ImageUploader text="Add image"
-                                        logo={input.value}
-                                        error={error}
-                                        touched={touched}
-                                        hint={() => (
-                                          <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
-                                        )}
-                                        onChange={() => {
-                                        }}/>
-                       )}/>
+                       component={this.logoComponent}/>
           </div>
         </Col>
       </Row>
