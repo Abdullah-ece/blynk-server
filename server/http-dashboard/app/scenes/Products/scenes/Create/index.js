@@ -81,6 +81,8 @@ class Create extends React.Component {
     products: React.PropTypes.array,
     eventsForms: React.PropTypes.array,
     product: React.PropTypes.object,
+
+    orgId: React.PropTypes.any
   };
 
   componentWillMount() {

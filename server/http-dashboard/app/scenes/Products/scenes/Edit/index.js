@@ -117,6 +117,8 @@ class ProductCreate extends React.Component {
     products: React.PropTypes.array,
     product: React.PropTypes.object,
     eventsForms: React.PropTypes.array,
+
+    orgId: React.PropTypes.any
   };
 
   constructor(props) {

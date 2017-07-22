@@ -88,6 +88,8 @@ class Clone extends React.Component {
     params: React.PropTypes.object,
     products: React.PropTypes.array,
     product: React.PropTypes.object,
+
+    orgId: React.PropTypes.any
   };
 
   constructor(props) {
