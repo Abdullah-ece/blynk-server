@@ -37,6 +37,7 @@ import ProductEdit from 'scenes/Products/components/ProductEdit';
   }
 
   return {
+    orgId: state.Account.orgId,
     product: state.Product.edit,
     products: state.Product.products,
     isProductInfoInvalid: state.Product.edit.info.invalid,
@@ -192,7 +193,10 @@ class Clone extends React.Component {
 
     if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
 
-      this.props.Create(prepareProductForSave(prepareProductForClone(this.props.product))).then(() => {
+      this.props.Create({
+        product: prepareProductForSave(prepareProductForClone(this.props.product)),
+        orgId: this.props.orgId
+      }).then(() => {
         this.context.router.push(`/products/?cloned=true`);
       }).catch((err) => {
         message.error(err.message || 'Cannot save product');

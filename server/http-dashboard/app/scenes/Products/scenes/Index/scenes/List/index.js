@@ -31,7 +31,7 @@ export default class ProductsList extends React.Component {
                              logoUrl={product.logoUrl}
                              noImageText="No Product Image"
                              name={product.name}
-                             devicesCount={product.devicesCount}
+                             devicesCount={product.deviceCount}
                              link={`/product/${product.id}`}/>
             ))}
           </MainList>

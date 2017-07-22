@@ -36,6 +36,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   }
 
   return {
+    orgId: state.Account.orgId,
     product: state.Product.edit,
     products: state.Product.products,
     isProductInfoInvalid: state.Product.edit.info.invalid,
@@ -293,8 +294,14 @@ class ProductCreate extends React.Component {
   saveProductAndUpdateDevices() {
     let product = prepareProductForSave(this.props.product);
 
-    this.saveProduct(product).then(() => {
-      this.updateDevicesByProduct(product)
+    this.saveProduct({
+      product: product,
+      orgId: this.props.orgId
+    }).then(() => {
+      this.updateDevicesByProduct({
+        product: product,
+        orgId: this.props.orgId
+      })
         .then(this.handleProductSaveSuccess.bind(this))
         .catch((err) => {
           message.error(err.message || 'Cannot save product');
@@ -305,7 +312,10 @@ class ProductCreate extends React.Component {
   saveProductWithoutDevicesUpdate() {
     let product = prepareProductForSave(this.props.product);
 
-    this.saveProduct(product)
+    this.saveProduct({
+      product: product,
+      orgId: this.props.orgId
+    })
       .then(this.handleProductSaveSuccess.bind(this))
       .catch((err) => {
         message.error(err.message || 'Cannot save product');
@@ -317,7 +327,10 @@ class ProductCreate extends React.Component {
 
     product.name = `${product.name} Copy`;
 
-    this.props.Create(product).then(this.handleProductSaveSuccess.bind(this)).catch((err) => {
+    this.props.Create({
+      product: product,
+      orgId: this.props.orgId
+    }).then(this.handleProductSaveSuccess.bind(this)).catch((err) => {
       message.error(err.message || 'Cannot clone product');
     });
 
