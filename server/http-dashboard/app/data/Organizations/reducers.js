@@ -2,6 +2,9 @@ import {fromJS} from 'immutable';
 
 const initialState = fromJS({
   list: null,
+  details: {
+    activeTab: 'info' //hardcoded info tab key
+  },
   manage: {
     activeTab: 'info', //hardcoded info tab key
     info: {
@@ -27,6 +30,9 @@ export default function Organizations(state = initialState, action) {
 
     case "ORGANIZATIONS_MANAGE_UPDATE":
       return state.set('manage', action.value);
+
+    case "ORGANIZATIONS_DETAILS_UPDATE":
+      return state.set('details', action.value);
 
     default:
       return state;

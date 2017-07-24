@@ -55,7 +55,7 @@ class List extends React.Component {
                              devicesCount={
                                this.getDevicesCountByProductsList(organization.get('products'))
                              }
-                             link={`/organization/${organization.get('id')}`}
+                             link={`/organizations/${organization.get('id')}`}
               />
             ))}
           </MainList>

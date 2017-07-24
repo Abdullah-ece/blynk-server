@@ -23,6 +23,13 @@ export function OrganizationsCreate(data) {
   };
 }
 
+export function OrganizationsDetailsUpdate(details) {
+  return {
+    type: 'ORGANIZATIONS_DETAILS_UPDATE',
+    value: details
+  };
+}
+
 export function OrganizationsManageSetActiveTab(tab) {
   return {
     type: 'ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB',
