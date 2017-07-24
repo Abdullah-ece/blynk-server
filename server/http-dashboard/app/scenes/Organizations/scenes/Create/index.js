@@ -55,6 +55,7 @@ class Create extends React.Component {
     submitForm: PropTypes.func,
     destroyForm: PropTypes.func,
     updateManage: PropTypes.func,
+    registerField: PropTypes.func,
     initializeForm: PropTypes.func,
     fetchProducts: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
