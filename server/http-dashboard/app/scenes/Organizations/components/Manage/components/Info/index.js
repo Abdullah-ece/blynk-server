@@ -6,7 +6,7 @@ class Info extends React.Component {
 
   render() {
     return (
-      <Form form="organizations-create-info"/>
+      <Form />
     );
   }
 

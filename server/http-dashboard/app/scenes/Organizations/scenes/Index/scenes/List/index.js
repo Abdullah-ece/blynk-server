@@ -1,6 +1,6 @@
 import React                from 'react';
 import {Link}               from 'react-router';
-import {Button}             from 'antd';
+import {Button, message}    from 'antd';
 import {List as IList}      from 'immutable';
 import PropTypes            from 'prop-types';
 import {
@@ -10,9 +10,22 @@ import {
 
 class List extends React.Component {
 
-  static propTypes = {
-    data: PropTypes.instanceOf(IList)
+  static contextTypes = {
+    router: PropTypes.object
   };
+
+  static propTypes = {
+    data: PropTypes.instanceOf(IList),
+
+    location: PropTypes.object
+  };
+
+  componentDidMount() {
+    if (this.props.location.query && this.props.location.query.success) {
+      this.context.router.push('/organizations');
+      message.success('Organization created successfully');
+    }
+  }
 
   getDevicesCountByProductsList(products) {
     if (products instanceof IList) {

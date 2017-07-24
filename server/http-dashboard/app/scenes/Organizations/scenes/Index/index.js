@@ -31,6 +31,8 @@ class Index extends React.Component {
     OrganizationsFetch: PropTypes.func,
     startLoading: PropTypes.func,
     finishLoading: PropTypes.func,
+
+    location: PropTypes.object
   };
 
   componentWillMount() {
@@ -52,7 +54,7 @@ class Index extends React.Component {
     // if has organizations display list scene
     if (this.props.list.size)
       return (
-        <OrgsList data={this.props.list}/>
+        <OrgsList data={this.props.list} location={this.props.location}/>
       );
 
     // if has no organizations display empty scene

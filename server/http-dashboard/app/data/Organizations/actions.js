@@ -10,6 +10,19 @@ export function OrganizationsFetch() {
   };
 }
 
+export function OrganizationsCreate(data) {
+  return {
+    type: 'API_ORGANIZATIONS_CREATE',
+    payload: {
+      request: {
+        method: 'put',
+        url: `/organization`,
+        data: data
+      }
+    }
+  };
+}
+
 export function OrganizationsManageSetActiveTab(tab) {
   return {
     type: 'ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB',

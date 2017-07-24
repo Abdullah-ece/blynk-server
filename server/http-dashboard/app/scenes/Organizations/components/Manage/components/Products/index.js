@@ -4,21 +4,18 @@ import {List, fromJS}       from 'immutable';
 import {connect}            from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
-  reduxForm,
   getFormValues,
   change
 }                           from 'redux-form';
+import {Manage}    from 'services/Organizations';
 import {ProductsSelectList} from './components';
 import './styles.less';
 
 @connect((state) => ({
-  formValues: fromJS(getFormValues('organizations-create-products')(state))
+  formValues: fromJS(getFormValues(Manage.FORM_NAME)(state))
 }), (dispatch) => ({
   changeValue: bindActionCreators(change, dispatch)
 }))
-@reduxForm({
-  form: 'organizations-create-products'
-})
 class Products extends React.Component {
 
   static propTypes = {
@@ -46,9 +43,9 @@ class Products extends React.Component {
     let index = products.indexOf(id);
 
     if (index === -1) {
-      this.props.changeValue('organizations-create-products', 'products', products.push(id).toJS());
+      this.props.changeValue(Manage.FORM_NAME, 'products', products.push(id).toJS());
     } else {
-      this.props.changeValue('organizations-create-products', 'products', products.remove(index).toJS());
+      this.props.changeValue(Manage.FORM_NAME, 'products', products.remove(index).toJS());
     }
   }
 

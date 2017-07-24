@@ -3,12 +3,10 @@ import {Input, Item, Switch}      from "components/UI";
 import Validation                 from 'services/Validation';
 import {Row, Col, message}        from 'antd';
 import {
-  reduxForm,
   Field as FormField
 }                                 from 'redux-form';
 import ImageUploader              from 'components/ImageUploader';
 
-@reduxForm()
 class Form extends React.Component {
 
   constructor(props) {
@@ -52,7 +50,7 @@ class Form extends React.Component {
           </Item>
 
           <Item>
-            <Switch size="small" name="canCreate" label="Can create Sub-Organizations"/>
+            <Switch size="small" name="canCreateOrgs" label="Can create Sub-Organizations"/>
           </Item>
 
         </Col>
