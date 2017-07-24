@@ -1,13 +1,13 @@
 import React                  from 'react';
 import {connect}              from 'react-redux';
 import {bindActionCreators}   from 'redux';
-import {message}              from 'antd';
 import {
   initialize,
   destroy,
   getFormSyncErrors,
   submit,
-  getFormValues
+  getFormValues,
+  registerField
 }              from 'redux-form';
 import {Map, List, fromJS}    from 'immutable';
 import PropTypes              from 'prop-types';
@@ -38,6 +38,7 @@ import './styles.less';
   submitForm: bindActionCreators(submit, dispatch),
   destroyForm: bindActionCreators(destroy, dispatch),
   updateManage: bindActionCreators(OrganizationsManageUpdate, dispatch),
+  registerField: bindActionCreators(registerField, dispatch),
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
@@ -85,6 +86,8 @@ class Create extends React.Component {
       products: [],
       admins: []
     });
+
+    this.props.registerField(Manage.FORM_NAME, 'admins', 'Field');
   }
 
   componentWillUnmount() {
@@ -114,7 +117,7 @@ class Create extends React.Component {
   }
 
   handleSubmitFail() {
-    message.error('Cannot create organization');
+    //message.error('Cannot create organization');
   }
 
   handleSubmit() {

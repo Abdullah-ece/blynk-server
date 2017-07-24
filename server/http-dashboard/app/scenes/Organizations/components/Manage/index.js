@@ -56,7 +56,7 @@ class Manage extends React.Component {
   }
 
   adminsTabInvalidIcon() {
-    const fields = [];
+    const fields = ['admins'];
 
     if (this.validateFields(fields) && this.props.submitFailed)
       return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid"/>);
@@ -81,7 +81,7 @@ class Manage extends React.Component {
         <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
                  key={this.TABS.ADMINS}>
           <div className="organizations-manage-tab-wrapper">
-            <Admins />
+            <Admins submitFailed={this.props.submitFailed}/>
           </div>
         </TabPane>
       </Tabs>

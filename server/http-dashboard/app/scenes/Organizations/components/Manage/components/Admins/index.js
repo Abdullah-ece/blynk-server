@@ -18,13 +18,15 @@ import {
   change,
   getFormValues,
   SubmissionError,
+  getFormSyncErrors,
   reset
 }                           from 'redux-form';
 import PropTypes            from 'prop-types';
 import './styles.less';
 
 @connect((state) => ({
-  formValues: fromJS(getFormValues(Manage.FORM_NAME)(state)),
+  formValues: fromJS(getFormValues(Manage.FORM_NAME)(state) || {}),
+  formErrors: fromJS(getFormSyncErrors(Manage.FORM_NAME)(state) || {}),
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
   changeForm: bindActionCreators(change, dispatch),
@@ -35,6 +37,9 @@ class Admins extends React.Component {
     resetForm: PropTypes.func,
     changeForm: PropTypes.func,
 
+    submitFailed: PropTypes.bool,
+
+    formErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map),
   };
 
@@ -76,7 +81,7 @@ class Admins extends React.Component {
       email: data.email,
       role: Roles.ADMIN.value,
       status: 'Pending'
-    })));
+    })).toJS());
   }
 
   updateColumns(sortedInfo) {
@@ -129,7 +134,7 @@ class Admins extends React.Component {
   handleDeleteUser() {
 
     this.props.changeForm(Manage.FORM_NAME, 'admins', this.props.formValues.get('admins').update(
-      (admins) => admins.filter(admin => this.state.selectedRows.indexOf(admin.get('email')) === -1))
+      (admins) => admins.filter(admin => this.state.selectedRows.indexOf(admin.get('email')) === -1)).toJS()
     );
   }
 
@@ -141,6 +146,12 @@ class Admins extends React.Component {
       <div className="organizations">
         <div>Add at least one Administrator. Invitations will be sent out once you save the Organization.</div>
         <AdminInviteForm onSubmit={this.handleSubmit} onSubmitSuccess={this.handleSubmitSuccess}/>
+
+        { this.props.formErrors.get('admins') && this.props.submitFailed && (
+          <div className="admin-invite-form--error">You should invite at least one administrator</div>
+        )}
+
+
         <div>
 
           { !!this.props.formValues.get('admins').size && (

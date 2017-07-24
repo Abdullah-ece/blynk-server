@@ -8,7 +8,17 @@ import {reduxForm}          from 'redux-form';
 
 import './styles.less';
 
-@reduxForm()
+@reduxForm({
+  validate: (data) => {
+
+    const errors = {};
+
+    if (!data.admins || !data.admins.length)
+      errors['admins'] = 'Should have at least one administrator';
+
+    return errors;
+  }
+})
 class Create extends React.Component {
 
   static propTypes = {
