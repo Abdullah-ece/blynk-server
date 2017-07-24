@@ -22,6 +22,11 @@ import {
 }                             from 'data/Organizations/actions';
 
 import {
+  OrganizationSendInvite
+}                             from 'data/Organization/actions';
+
+
+import {
   Create as OrganizationCreate
 }                             from 'scenes/Organizations/components';
 
@@ -43,6 +48,7 @@ import './styles.less';
   initializeForm: bindActionCreators(initialize, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
   OrganizationsCreate: bindActionCreators(OrganizationsCreate, dispatch),
+  OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
 }))
 class Create extends React.Component {
 
@@ -60,6 +66,7 @@ class Create extends React.Component {
     fetchProducts: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
     OrganizationsCreate: PropTypes.func,
+    OrganizationSendInvite: PropTypes.func,
 
     formErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map),
@@ -126,9 +133,16 @@ class Create extends React.Component {
       this.props.OrganizationsCreate({
         ...this.props.formValues.toJS(),
         products: []
-      }).then(() => {
+      }).then((organization) => {
         this.props.OrganizationsFetch().then(() => {
-          resolve();
+          const promises = [];
+          this.props.formValues.get('admins').forEach((admin) => {
+            promises.push(this.props.OrganizationSendInvite({...admin.toJS(), id: organization.payload.data.id}));
+          });
+
+          Promise.all(promises).then(() => {
+            resolve();
+          });
         });
       });
     });
