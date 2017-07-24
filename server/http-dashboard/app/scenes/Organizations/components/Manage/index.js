@@ -4,7 +4,8 @@ import {List, Map}        from 'immutable';
 import PropTypes          from 'prop-types';
 import {
   Info,
-  Products
+  Products,
+  Admins
 }                         from './components';
 import './styles.less';
 
@@ -79,7 +80,9 @@ class Manage extends React.Component {
         </TabPane>
         <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
                  key={this.TABS.ADMINS}>
-          Admins
+          <div className="organizations-manage-tab-wrapper">
+            <Admins />
+          </div>
         </TabPane>
       </Tabs>
     );

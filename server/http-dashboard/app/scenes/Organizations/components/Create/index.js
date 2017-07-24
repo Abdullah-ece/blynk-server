@@ -15,6 +15,7 @@ class Create extends React.Component {
     activeTab: PropTypes.string,
     products: PropTypes.instanceOf(List),
 
+    onCancel: PropTypes.func,
     onTabChange: PropTypes.func,
     handleCancel: PropTypes.func,
     handleSubmit: PropTypes.func,

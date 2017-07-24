@@ -82,7 +82,8 @@ class Create extends React.Component {
 
     this.props.initializeForm(Manage.FORM_NAME, {
       name: 'New Organization',
-      products: []
+      products: [],
+      admins: []
     });
   }
 
