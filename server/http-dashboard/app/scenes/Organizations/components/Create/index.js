@@ -32,9 +32,7 @@ class Create extends React.Component {
                            options={(
                              <div>
                                <Button type="default"
-                                 // onClick={this.props.handleCancel.bind(this)}>
-                                       onClick={() => {
-                                       }}>
+                                       onClick={this.props.onCancel}>
                                  Cancel
                                </Button>
                                <Button type="primary"

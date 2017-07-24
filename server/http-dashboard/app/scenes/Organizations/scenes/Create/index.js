@@ -70,8 +70,9 @@ class Create extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleTabChange = this.handleTabChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
     this.handleSubmitFail = this.handleSubmitFail.bind(this);
     this.handleSubmitSuccess = this.handleSubmitSuccess.bind(this);
   }
@@ -98,6 +99,10 @@ class Create extends React.Component {
     PRODUCTS: 'Products',
     ADMINS: 'Admins'
   };
+
+  handleCancel() {
+    this.context.router.push('/organizations');
+  }
 
   handleTabChange(tab) {
     this.props.setTab(tab);
@@ -132,6 +137,7 @@ class Create extends React.Component {
         onSubmit={this.handleSubmit}
         onSubmitSuccess={this.handleSubmitSuccess}
         onSubmitFail={this.handleSubmitFail}
+        onCancel={this.handleCancel}
         products={this.props.products}
         onTabChange={this.handleTabChange}
         activeTab={this.props.activeTab}
