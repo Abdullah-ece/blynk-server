@@ -1,12 +1,18 @@
-import React      from 'react';
-import {MainList} from 'components';
+import React        from 'react';
+import {MainList}   from 'components';
+import PropTypes    from 'prop-types';
+import {List}       from 'immutable';
 import './styles.less';
 
 class Products extends React.Component {
 
+  static propTypes = {
+    products: PropTypes.instanceOf(List)
+  };
+
   render() {
     return (
-      <MainList className='organizations-create-products-list'>
+      <MainList className="organizations-create-products-list">
         { this.props.products && this.props.products.map((product) => (
           <MainList.Item key={product.get('id')}
                          id={product.get('id')}

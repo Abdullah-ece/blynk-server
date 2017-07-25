@@ -3,7 +3,9 @@ import {fromJS} from 'immutable';
 const initialState = fromJS({
   list: null,
   details: {
-    activeTab: 'info' //hardcoded info tab key
+    activeTab: 'info', //hardcoded info tab key
+    users: null,
+    userDeleteLoading: false
   },
   manage: {
     activeTab: 'info', //hardcoded info tab key
@@ -16,6 +18,14 @@ const initialState = fromJS({
     admins: {
       form: ''
     }
+  },
+  adminTableListOptions: {
+    sortInfo: {
+      order: 'ascend',
+      columnKey: 'name'
+    },
+    selectedRows: [],
+    loading: false,
   }
 });
 
@@ -33,6 +43,15 @@ export default function Organizations(state = initialState, action) {
 
     case "ORGANIZATIONS_DETAILS_UPDATE":
       return state.set('details', action.value);
+
+    case "ORGANIZATIONS_ADMIN_TABLE_LIST_UPDATE_SELECTED_ROWS":
+      return state.setIn(['adminTableListOptions', 'selectedRows'], fromJS(action.value));
+
+    case "ORGANIZATIONS_ADMIN_TABLE_LIST_UPDATE_SORT_INFO":
+      return state.setIn(['adminTableListOptions', 'sortInfo'], fromJS(action.value));
+
+    case "API_ORGANIZATIONS_USERS_FETCH_SUCCESS":
+      return state.setIn(['details', 'users'], fromJS(action.payload.data));
 
     default:
       return state;

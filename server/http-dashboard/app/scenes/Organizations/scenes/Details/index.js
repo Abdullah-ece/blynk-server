@@ -14,12 +14,18 @@ import {
 import {bindActionCreators} from 'redux';
 import {
   OrganizationsDetailsUpdate,
-  OrganizationsFetch
+  OrganizationsFetch,
+  OrganizationsUsersFetch
 }                           from 'data/Organizations/actions';
 
 import {
+  OrganizationUsersDelete
+}                           from 'data/Organization/actions';
+
+import {
   Info,
-  Products
+  Products,
+  Admins
 }                           from './components';
 
 const {TabPane} = Tabs;
@@ -31,6 +37,8 @@ import './styles.less';
   details: state.Organizations.get('details'),
 }), (dispatch) => ({
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
+  OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
+  OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
 }))
 class Details extends React.Component {
@@ -46,6 +54,8 @@ class Details extends React.Component {
     params: PropTypes.object,
 
     OrganizationsFetch: PropTypes.func,
+    OrganizationsUsersFetch: PropTypes.func,
+    OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
   };
 
@@ -53,6 +63,7 @@ class Details extends React.Component {
     super(props);
 
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleUsersDelete = this.handleUsersDelete.bind(this);
   }
 
   componentWillMount() {
@@ -68,6 +79,12 @@ class Details extends React.Component {
       });
     }
 
+    if (!this.props.details.get('users')) {
+      this.props.OrganizationsUsersFetch({
+        id: this.props.params.id
+      });
+    }
+
     if (this.props.list)
       redirectIfNotExist(this.props.list);
 
@@ -75,7 +92,9 @@ class Details extends React.Component {
 
   componentWillUnmount() {
     this.props.OrganizationsDetailsUpdate(
-      this.props.details.set('activeTab', this.TABS.INFO)
+      this.props.details
+        .set('activeTab', this.TABS.INFO)
+        .set('users', null)
     );
   }
 
@@ -84,6 +103,20 @@ class Details extends React.Component {
     PRODUCTS: 'products',
     ADMINS: 'admins'
   };
+
+  handleUsersDelete(ids) {
+    this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', true));
+    return new Promise((resolve) => {
+      this.props.OrganizationUsersDelete(this.props.params.id, ids).then(() => {
+        this.props.OrganizationsUsersFetch({
+          id: this.props.params.id
+        }).then(() => {
+          this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', false));
+          resolve(true);
+        });
+      });
+    });
+  }
 
   handleTabChange(tab) {
     this.props.OrganizationsDetailsUpdate(
@@ -94,6 +127,9 @@ class Details extends React.Component {
   render() {
 
     if (!this.props.list)
+      return null;
+
+    if (!this.props.details.get('users'))
       return null;
 
     const organization = this.props.list.find(org => org.get('id') === Number(this.props.params.id));
@@ -131,7 +167,9 @@ class Details extends React.Component {
             <TabPane tab="Admins"
                      key={this.TABS.ADMINS}>
               <div className="organizations-manage-tab-wrapper">
-                {/*<Admins submitFailed={this.props.submitFailed}/>*/}
+                <Admins onUsersDelete={this.handleUsersDelete}
+                        loading={this.props.details.get('userDeleteLoading')}
+                        users={this.props.details.get('users').filter(user => user.get('role') === 'ADMIN')}/>
               </div>
             </TabPane>
           </Tabs>

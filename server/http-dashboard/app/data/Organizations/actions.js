@@ -43,3 +43,31 @@ export function OrganizationsManageUpdate(manage) {
     value: manage
   };
 }
+
+export function OrganizationsAdminTableListUpdateSelectedRows(value) {
+  return {
+    type: 'ORGANIZATIONS_ADMIN_TABLE_LIST_UPDATE_SELECTED_ROWS',
+    value: value
+  };
+}
+
+export function OrganizationsAdminTableListUpdateSortInfo(value) {
+  return {
+    type: 'ORGANIZATIONS_ADMIN_TABLE_LIST_UPDATE_SORT_INFO',
+    value: value
+  };
+}
+
+export function OrganizationsUsersFetch(data) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATIONS_USERS_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/organization/${data.id}/users`
+      }
+    }
+  };
+}
