@@ -18,7 +18,8 @@ import {
 }                           from 'data/Organizations/actions';
 
 import {
-  Info
+  Info,
+  Products
 }                           from './components';
 
 const {TabPane} = Tabs;
@@ -72,6 +73,12 @@ class Details extends React.Component {
 
   }
 
+  componentWillUnmount() {
+    this.props.OrganizationsDetailsUpdate(
+      this.props.details.set('activeTab', this.TABS.INFO)
+    );
+  }
+
   TABS = {
     INFO: 'info',
     PRODUCTS: 'products',
@@ -117,7 +124,9 @@ class Details extends React.Component {
             </TabPane>
             <TabPane tab="Products"
                      key={this.TABS.PRODUCTS}>
-              {/*<Products products={this.props.products}/>*/}
+              <div className="organizations-manage-tab-wrapper">
+                <Products products={organization.get('products')}/>
+              </div>
             </TabPane>
             <TabPane tab="Admins"
                      key={this.TABS.ADMINS}>

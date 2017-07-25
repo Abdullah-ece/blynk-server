@@ -1,5 +1,5 @@
 import React                  from 'react';
-import {List}                 from 'immutable';
+import {List, fromJS}         from 'immutable';
 import {connect}              from 'react-redux';
 import PropTypes              from 'prop-types';
 import {bindActionCreators}   from 'redux';
@@ -18,7 +18,7 @@ import {
 }                             from 'data/PageLoading/actions';
 
 @connect((state) => ({
-  list: state.Organizations.get('list')
+  list: fromJS(state.Organizations.get('list'))
 }), (dispatch) => ({
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
   startLoading: bindActionCreators(StartLoading, dispatch),
