@@ -71,3 +71,17 @@ export function OrganizationsUsersFetch(data) {
     }
   };
 }
+
+export function OrganizationsDelete(data) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATIONS_DELETE',
+    payload: {
+      request: {
+        method: 'delete',
+        url: `/organization/${data.id}`
+      }
+    }
+  };
+}

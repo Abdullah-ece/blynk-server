@@ -6,7 +6,8 @@ import {Manage}             from 'services/Organizations';
 import {
   Button,
   Tabs,
-  message
+  message,
+  Popconfirm
 }                           from 'antd';
 import PropTypes            from 'prop-types';
 import {
@@ -19,7 +20,8 @@ import {reset, SubmissionError}              from 'redux-form';
 import {
   OrganizationsDetailsUpdate,
   OrganizationsFetch,
-  OrganizationsUsersFetch
+  OrganizationsUsersFetch,
+  OrganizationsDelete,
 }                           from 'data/Organizations/actions';
 
 import {
@@ -43,6 +45,7 @@ import './styles.less';
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
+  OrganizationsDelete: bindActionCreators(OrganizationsDelete, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
   OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
@@ -62,6 +65,7 @@ class Details extends React.Component {
 
     resetForm: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
+    OrganizationsDelete: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
     OrganizationsUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
@@ -75,6 +79,7 @@ class Details extends React.Component {
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleUsersDelete = this.handleUsersDelete.bind(this);
     this.handleUserInviteSuccess = this.handleUserInviteSuccess.bind(this);
+    this.handleOrganizationDelete = this.handleOrganizationDelete.bind(this);
   }
 
   componentWillMount() {
@@ -114,6 +119,35 @@ class Details extends React.Component {
     PRODUCTS: 'products',
     ADMINS: 'admins'
   };
+
+  toggleOrganizationDeleteLoading(state) {
+    this.props.OrganizationsDetailsUpdate(
+      this.props.details.set('organizationDeleteLoading', state)
+    );
+  }
+
+  handleOrganizationDelete() {
+    this.toggleOrganizationDeleteLoading(true);
+
+    this.props.OrganizationsDelete({
+      id: this.props.params.id
+    }).then(() => {
+
+      this.props.OrganizationsFetch().then(() => {
+
+        this.context.router.push('/organizations');
+
+        this.toggleOrganizationDeleteLoading(false);
+      });
+
+    }).catch((response) => {
+      this.toggleOrganizationDeleteLoading(false);
+
+      const data = response.error.response.data;
+
+      message.error(data.error && data.error.message || 'Cannot delete organization');
+    });
+  }
 
   handleUsersDelete(ids) {
     this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', true));
@@ -186,15 +220,19 @@ class Details extends React.Component {
 
     const organization = this.props.list.find(org => org.get('id') === Number(this.props.params.id));
 
+    if (!organization)
+      return null;
+
     return (
       <MainLayout>
         <MainLayout.Header title={'Organization Name Is There'}
                            options={(
                              <div>
-                               <Button type="danger" onClick={() => {
-                               }}>Delete</Button>
-                               <Button type="default" onClick={() => {
-                               }}>Clone</Button>
+                               <Popconfirm title="Are you sure？" okText="Yes" cancelText="No"
+                                           onConfirm={this.handleOrganizationDelete}>
+                                 <Button type="danger" onClick={() => {
+                                 }}>Delete</Button>
+                               </Popconfirm>
                                <Button type="primary" onClick={() => {
                                }}>Edit</Button>
                              </div>

@@ -7,6 +7,7 @@ const initialState = fromJS({
     users: null,
     userDeleteLoading: false,
     userInviteLoading: false,
+    organizationDeleteLoading: false,
   },
   manage: {
     activeTab: 'info', //hardcoded info tab key
