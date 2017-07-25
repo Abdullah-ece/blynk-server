@@ -155,8 +155,8 @@ class Admins extends React.Component {
         <div>
 
           { !!this.props.formValues.get('admins').size && (
-            <div className="organizations-manage-admins-table">
-              <div className="organizations-manage-admins-table-delete-button">
+            <div className="admins-table-list">
+              <div className="admins-table-list-delete-button">
                 <Button type="danger"
                         disabled={!this.state.selectedRows.length}
                         onClick={this.handleDeleteUser}
