@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -94,7 +95,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{orgId}/users")
     public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(orgId);
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -104,6 +104,17 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         return ok(userDao.getUsersByOrgId(orgId, httpSession.user.email));
+    }
+
+    @POST
+    @Path("/canInviteUser")
+    @Admin
+    public Response checkUserEmail(WebEmail webEmail) {
+        if (userDao.contains(webEmail.email, AppName.BLYNK)) {
+            return badRequest("User already exists in system.");
+        } else {
+            return ok();
+        }
     }
 
     @POST

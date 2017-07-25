@@ -141,6 +141,23 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
+## Check if user can be invited [POST] [/organization/canInviteUser]
+
++ Request (application/json)
+
+        {
+            "email" : "xxx@gmail.com"
+        }
+
++ Response 200 (application/json)
+
+        "User can be invited"
+
++ Response 400 (application/json)
+
+        "User already exists in system."
+
+
 ## Update Organization [POST] [/organization/{orgId}]
 
 + Request (application/json)

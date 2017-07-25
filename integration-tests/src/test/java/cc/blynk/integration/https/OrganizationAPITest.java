@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.config.CookieSpecs;
@@ -98,6 +99,25 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.id);
             assertEquals("Blynk Inc.", fromApi.name);
             assertEquals("Europe/Kiev", fromApi.tzName);
+        }
+    }
+
+    @Test
+    public void canInviteUser() throws Exception {
+        login(admin.email, admin.pass);
+
+        HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/canInviteUser");
+        req.setEntity(new StringEntity(new WebEmail("xxx@gmail.com").toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        req = new HttpPost(httpsAdminServerUrl + "/organization/canInviteUser");
+        req.setEntity(new StringEntity(new WebEmail("user@blynk.cc").toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
