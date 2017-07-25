@@ -11,6 +11,7 @@ const initialState = fromJS({
   },
   manage: {
     activeTab: 'info', //hardcoded info tab key
+    loading: false,
     info: {
       form: ''
     },

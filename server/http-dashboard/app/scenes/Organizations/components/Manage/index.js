@@ -78,12 +78,14 @@ class Manage extends React.Component {
                  key={this.TABS.PRODUCTS}>
           <Products products={this.props.products}/>
         </TabPane>
-        <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
-                 key={this.TABS.ADMINS}>
-          <div className="organizations-manage-tab-wrapper">
-            <Admins submitFailed={this.props.submitFailed}/>
-          </div>
-        </TabPane>
+        {!this.props.edit && (
+          <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
+                   key={this.TABS.ADMINS}>
+            <div className="organizations-manage-tab-wrapper">
+              <Admins submitFailed={this.props.submitFailed}/>
+            </div>
+          </TabPane>
+        )}
       </Tabs>
     );
   }
