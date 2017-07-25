@@ -27,6 +27,8 @@ class AdminInviteForm extends React.Component {
   static propTypes = {
     destroyForm: PropTypes.func,
     handleSubmit: PropTypes.func,
+
+    loading: PropTypes.bool,
   };
 
   componentWillUnmount() {
@@ -48,7 +50,11 @@ class AdminInviteForm extends React.Component {
                  ]}/>
         </Item>
         <Item position="center">
-          <Button type="primary" size="default" className="admin-invite-form--button" onClick={this.props.handleSubmit}>Add</Button>
+          <Button type="primary"
+                  size="default"
+                  className="admin-invite-form--button"
+                  loading={this.props.loading}
+                  onClick={this.props.handleSubmit}>Add</Button>
         </Item>
       </Form>
     );

@@ -1,9 +1,12 @@
 import React                from 'react';
 import {MainLayout}         from 'components';
 import {connect}            from 'react-redux';
+import {Roles}              from 'services/Roles';
+import {Manage}             from 'services/Organizations';
 import {
   Button,
-  Tabs
+  Tabs,
+  message
 }                           from 'antd';
 import PropTypes            from 'prop-types';
 import {
@@ -12,6 +15,7 @@ import {
   fromJS
 }                           from 'immutable';
 import {bindActionCreators} from 'redux';
+import {reset, SubmissionError}              from 'redux-form';
 import {
   OrganizationsDetailsUpdate,
   OrganizationsFetch,
@@ -19,7 +23,8 @@ import {
 }                           from 'data/Organizations/actions';
 
 import {
-  OrganizationUsersDelete
+  OrganizationUsersDelete,
+  OrganizationSendInvite
 }                           from 'data/Organization/actions';
 
 import {
@@ -36,7 +41,9 @@ import './styles.less';
   list: state.Organizations.get('list') || null,
   details: state.Organizations.get('details'),
 }), (dispatch) => ({
+  resetForm: bindActionCreators(reset, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
+  OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
   OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
@@ -53,7 +60,9 @@ class Details extends React.Component {
 
     params: PropTypes.object,
 
+    resetForm: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
+    OrganizationSendInvite: PropTypes.func,
     OrganizationsUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
@@ -62,8 +71,10 @@ class Details extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleAddAdmin = this.handleAddAdmin.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleUsersDelete = this.handleUsersDelete.bind(this);
+    this.handleUserInviteSuccess = this.handleUserInviteSuccess.bind(this);
   }
 
   componentWillMount() {
@@ -118,10 +129,51 @@ class Details extends React.Component {
     });
   }
 
+  handleAddAdmin(user) {
+    this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', true));
+
+    return (new Promise((resolve, reject) => {
+      this.props.OrganizationSendInvite({
+        id: this.props.params.id,
+        email: user.email,
+        name: user.name,
+        role: Roles.ADMIN.value
+      }).then(() => {
+        this.props.OrganizationsUsersFetch({
+          id: this.props.params.id
+        }).then(() => {
+          this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
+
+          resolve();
+        });
+      }).catch((response) => {
+        const data = response.error.response.data;
+
+        this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
+
+        reject(data);
+      });
+    })).catch((data) => {
+
+      if (data && data.error && data.error.message) {
+        throw new SubmissionError({'email': data.error.message});
+      } else {
+        message.error(data && data.error && data.error.message || 'Cannot invite user');
+        throw new SubmissionError();
+      }
+
+    });
+  }
+
   handleTabChange(tab) {
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', tab)
     );
+  }
+
+  handleUserInviteSuccess() {
+    message.success('Invite has been sent');
+    this.props.resetForm(Manage.ADMIN_INVITE_FORM_NAME);
   }
 
   render() {
@@ -168,8 +220,11 @@ class Details extends React.Component {
                      key={this.TABS.ADMINS}>
               <div className="organizations-manage-tab-wrapper">
                 <Admins onUsersDelete={this.handleUsersDelete}
-                        loading={this.props.details.get('userDeleteLoading')}
-                        users={this.props.details.get('users').filter(user => user.get('role') === 'ADMIN')}/>
+                        onUserAdd={this.handleAddAdmin}
+                        onUserInviteSuccess={this.handleUserInviteSuccess}
+                        userDeleteLoading={this.props.details.get('userDeleteLoading')}
+                        userInviteLoading={this.props.details.get('userInviteLoading')}
+                        users={this.props.details.get('users').filter(user => user.get('role') === Roles.ADMIN.value)}/>
               </div>
             </TabPane>
           </Tabs>

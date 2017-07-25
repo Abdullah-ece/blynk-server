@@ -1,5 +1,8 @@
 import React            from 'react';
-import {AdminTableList} from "scenes/Organizations/components/Manage/components/Admins/components";
+import {
+  AdminTableList,
+  AdminInviteForm
+}                       from "scenes/Organizations/components/Manage/components/Admins/components";
 import {
   List
 }                       from "immutable";
@@ -11,14 +14,18 @@ class Admins extends React.Component {
   static propTypes = {
     users: PropTypes.instanceOf(List),
 
+    onUserAdd: PropTypes.func,
     onUsersDelete: PropTypes.func,
+    onUserInviteSuccess: PropTypes.func,
 
-    loading: PropTypes.bool,
+    userInviteLoading: PropTypes.bool,
+    userDeleteLoading: PropTypes.bool,
   };
 
   constructor(props) {
     super(props);
 
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleAdminDelete = this.handleAdminDelete.bind(this);
   }
 
@@ -26,10 +33,17 @@ class Admins extends React.Component {
     return this.props.onUsersDelete(ids.toJS());
   }
 
+  handleSubmit(values) {
+    return this.props.onUserAdd(values);
+  }
+
   render() {
     return (
       <div>
-        <AdminTableList loading={this.props.loading} onAdminDelete={this.handleAdminDelete} data={this.props.users}/>
+        <AdminInviteForm loading={this.props.userInviteLoading} onSubmit={this.handleSubmit}
+                         onSubmitSuccess={this.props.onUserInviteSuccess}/>
+        <AdminTableList loading={this.props.userDeleteLoading} onAdminDelete={this.handleAdminDelete}
+                        data={this.props.users}/>
       </div>
     );
   }
