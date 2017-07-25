@@ -13,6 +13,8 @@ import static cc.blynk.utils.ArrayUtil.remove;
  */
 public class Organization {
 
+    public static final int SUPER_ORG_PARENT_ID = -1;
+
     public int id;
 
     public volatile String name;
@@ -37,16 +39,23 @@ public class Organization {
 
     public volatile Product[] products = ArrayUtil.EMPTY_PRODUCTS;
 
+    public volatile int parentId = SUPER_ORG_PARENT_ID;
+
     public Organization() {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs) {
+        this(name, tzName, logoUrl, canCreateOrgs, SUPER_ORG_PARENT_ID);
+    }
+
+    public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs, int parentId) {
         this();
         this.name = name;
         this.tzName = tzName;
         this.logoUrl = logoUrl;
         this.canCreateOrgs = canCreateOrgs;
+        this.parentId = parentId;
     }
 
     public void update(Organization updatedOrganization) {

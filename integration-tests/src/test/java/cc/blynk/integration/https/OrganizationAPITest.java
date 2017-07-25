@@ -10,19 +10,31 @@ import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
+import org.apache.http.Header;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -58,7 +70,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void getAllOrganizationsForSuperAdmin2() throws Exception {
         login(admin.email, admin.pass);
 
-        holder.organizationDao.create(new Organization("Blynk Inc. 2", "Europe/Kiev", "/static/logo2.png", true));
+        holder.organizationDao.create(new Organization("Blynk Inc. 2", "Europe/Kiev", "/static/logo2.png", true, 1));
 
         HttpGet req = new HttpGet(httpsAdminServerUrl + "/organization");
 
@@ -125,7 +137,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganizationNotAllowedForRegularUser() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        Organization organization = new Organization("1", "2", "/static/logo.png", false);
+        Organization organization = new Organization("1", "2", "/static/logo.png", false, 1);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -139,7 +151,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganizationAllowedForRegularAdmin() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, 1);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -150,10 +162,10 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
-    public void organizationNotAllowedToCreateSubOrgs() throws Exception {
+    public void getOrganizationRestrictedForSpecificAdmin() throws Exception {
         login(regularAdmin.email, regularAdmin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, -1);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -163,6 +175,90 @@ public class OrganizationAPITest extends APIBaseTest {
             Organization fromApi = JsonParser.parseOrganization(consumeText(response));
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+        }
+
+
+        String email = "dmitriy@blynk.cc";
+        String name = "Dmitriy";
+        Role role = Role.ADMIN;
+
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
+        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, name, role));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
+        CloseableHttpClient newHttpClient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/invite");
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("token", token));
+        nvps.add(new BasicNameValuePair("password", "123"));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = newHttpClient.execute(loginRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            assertTrue(cookieHeader.getValue().startsWith("session="));
+            User user = JsonParser.parseUserFromString(consumeText(response));
+            assertNotNull(user);
+            assertEquals(email, user.email);
+            assertEquals(name, user.name);
+            assertEquals(role, user.role);
+            assertEquals(2, user.orgId);
+        }
+
+        HttpGet getOrgs = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = newHttpClient.execute(getOrgs)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(1, orgs.length);
+            assertEquals(2, orgs[0].id);
+            assertEquals(1, orgs[0].parentId);
+        }
+    }
+
+    @Test
+    public void organizationNotAllowedToCreateSubOrgs() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, 1);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
         }
 
         User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), AppName.BLYNK, "local", false, Role.ADMIN);
@@ -175,7 +271,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         login(regularAdmin.email, regularAdmin.pass);
 
-        organization = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false);
+        organization = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false, 1);
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -187,7 +283,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", false));
+        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", false, 1));
 
         login(regularAdmin.email, regularAdmin.pass);
 
@@ -202,7 +298,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, 1);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -221,7 +317,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void updateOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("1", "2", "/static/logo.png", false);
+        Organization organization = new Organization("1", "2", "/static/logo.png", false, 1);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));

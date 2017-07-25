@@ -9,7 +9,9 @@ import cc.blynk.server.core.model.web.product.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,8 +63,64 @@ public class OrganizationDao {
         throw new ProductNotFoundException("Product with passed id " + productId + " not found in organization with id " + orgId);
     }
 
+    public Collection<Organization> getAll(User user) {
+        if (user.isSuperAdmin()) {
+            return organizations.values();
+        } else {
+            return getOrgsByParentId(user.orgId);
+        }
+    }
+
+    private List<Organization> getOrgsByParentId(int parentId) {
+        List<Organization> orgs = new ArrayList<>();
+        Organization org = organizations.get(parentId);
+        orgs.add(org);
+        getOrgsByParentId(orgs, parentId, 1);
+        return orgs;
+    }
+
+    private void getOrgsByParentId(List<Organization> orgs, int parentId, int invocationCounter) {
+        if (invocationCounter == 100) {
+            throw new RuntimeException("Error finding organization.");
+        }
+        for (Organization org : organizations.values()) {
+            if (org.parentId == parentId) {
+                orgs.add(org);
+                getOrgsByParentId(orgs, org.id, invocationCounter++);
+            }
+        }
+    }
+
+    public boolean hasAccess(User user, int orgId) {
+        if (user.isSuperAdmin()) {
+            return true;
+        }
+        if (user.isAdmin()) {
+            if (user.orgId == orgId) {
+                return true;
+            } else {
+                //user is admin of parent org, so he can send invite too to child orgs
+                List<Organization> childOrgs = getOrgsByParentId(user.orgId);
+                Organization org = getOrgById(childOrgs, orgId);
+                if (org != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public Collection<Organization> getAll() {
         return organizations.values();
+    }
+
+    public static Organization getOrgById(List<Organization> orgs, int id) {
+        for (Organization org : orgs) {
+            if (org.id == id) {
+                return org;
+            }
+        }
+        return null;
     }
 
     public Organization getOrgById(int id) {

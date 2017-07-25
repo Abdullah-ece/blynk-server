@@ -127,9 +127,10 @@ public class ServerLauncher {
 
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppName.BLYNK, Role.SUPER_ADMIN);
-            Organization mainOrg = holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true));
+            Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
+            Organization mainOrg = holder.organizationDao.create(superOrg);
             mainOrg.isActive = true;
-            holder.organizationDao.create(new Organization("New Organization Inc. (orgId=2)", "Europe/Kiev", "/static/logo.png", false));
+            holder.organizationDao.create(new Organization("New Organization Inc. (orgId=2)", "Europe/Kiev", "/static/logo.png", false, superOrg.id));
             Product product = new Product();
             product.boardType = "Particle Photon";
             product.connectionType = ConnectionType.WI_FI;

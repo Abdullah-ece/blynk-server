@@ -81,14 +81,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("")
     public Response getListOfOrganizations(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        if (httpSession.user.isSuperAdmin()) {
-            return ok(organizationDao.getAll());
-        } else {
-            //todo return only specrfic org that belong to user
-            Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
-            return ok(organization);
-        }
+        return ok(organizationDao.getAll(httpSession.user));
     }
 
     @GET
@@ -200,6 +193,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return badRequest("Organization is empty.");
         }
 
+        newOrganization.parentId = user.orgId;
 
         Organization userOrg = organizationDao.getOrgById(user.orgId);
         if (!userOrg.canCreateOrgs) {
@@ -271,11 +265,9 @@ public class OrganizationHandler extends BaseHttpHandler {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
         //if user is not super admin, check organization is correct
-        if (!httpSession.user.isSuperAdmin()) {
-            if (httpSession.user.orgId != orgId) {
-                log.error("{} user (orgId = {}) tries to send invite to another organization = {}", httpSession.user.email, httpSession.user.orgId, orgId);
-                return forbidden();
-            }
+        if (!organizationDao.hasAccess(httpSession.user, orgId)) {
+            log.error("{} (orgId = {}) tries to send invite to another organization with id = {}", httpSession.user.email, httpSession.user.orgId, orgId);
+            return forbidden();
         }
 
         if (httpSession.user.role.ordinal() > userInvite.role.ordinal()) {
