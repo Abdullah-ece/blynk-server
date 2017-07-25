@@ -54,7 +54,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.INVITE_TEMPLATE = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
-        String host = holder.props.getProperty("server.host");
+        String host = holder.props.getProperty("server.host", "localhost");
         this.host = "https://" + host;
         this.inviteURL = "https://" + host + rootPath + "#/invite?token=";
         this.blockingIOProcessor = holder.blockingIOProcessor;
