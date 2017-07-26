@@ -24,4 +24,8 @@ public class EventReceiver {
         this.type = type;
         this.value = value;
     }
+
+    public EventReceiver(EventReceiver eventReceiver) {
+        this(eventReceiver.id, eventReceiver.type, eventReceiver.value);
+    }
 }

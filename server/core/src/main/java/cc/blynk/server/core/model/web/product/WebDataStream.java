@@ -1,6 +1,8 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -9,24 +11,30 @@ import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
  */
 public class WebDataStream {
 
-    public String name;
+    public final String name;
 
-    public MeasurementUnit units;
+    public final MeasurementUnit units;
 
-    public double min;
+    public final double min;
 
-    public double max;
+    public final double max;
 
-    public byte pin;
+    public final byte pin;
 
-    public WebDataStream() {
-    }
-
-    public WebDataStream(String name, MeasurementUnit units, double min, double max, byte pin) {
+    @JsonCreator
+    public WebDataStream(@JsonProperty("name") String name,
+                         @JsonProperty("units") MeasurementUnit units,
+                         @JsonProperty("min") double min,
+                         @JsonProperty("max") double max,
+                         @JsonProperty("pin") byte pin) {
         this.name = name;
         this.units = units;
         this.min = min;
         this.max = max;
         this.pin = pin;
+    }
+
+    public WebDataStream(WebDataStream webDataStream) {
+        this(webDataStream.name, webDataStream.units, webDataStream.min, webDataStream.max, webDataStream.pin);
     }
 }

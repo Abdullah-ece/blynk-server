@@ -55,6 +55,24 @@ public class ArrayUtil {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T[] cloneArray(T[] array, Class<T> type) {
+        if (array == null || array.length == 0) {
+            return (T[]) Array.newInstance(type, 0);
+        }
+
+        T[] result = (T[]) Array.newInstance(type, array.length);
+        int i = 0;
+        for (T value : array) {
+            try {
+                result[i++] = type.getConstructor(type).newInstance(value);
+            } catch (Exception e){
+                throw new RuntimeException("Error cloning array.");
+            }
+        }
+        return result;
+    }
+
     public static boolean contains(final int[] ar, final int val) {
         for (final int arVal : ar) {
             if (arVal == val) {

@@ -72,7 +72,7 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         Product product = organizationDao.getProductById(newDevice.productId);
-        newDevice.metaFields = product.copyMetaFields();
+        newDevice.metaFields = product.copyNonDefaultMetaFields();
 
         deviceDao.create(user.orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);

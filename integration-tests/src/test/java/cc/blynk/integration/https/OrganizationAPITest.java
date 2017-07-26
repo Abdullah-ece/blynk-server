@@ -4,10 +4,16 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDataStream;
+import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.server.http.web.model.WebEmail;
+import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -28,6 +34,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -310,6 +318,91 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
             assertEquals(organization.tzName, fromApi.tzName);
+        }
+    }
+
+    @Test
+    public void createOrganizationWithProductsAssigned() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, "0", "1", "Farm of Smith"),
+                new RangeMetaField(2, "Farm of Smith", Role.ADMIN, 60, 120),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
+                        "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                        "+38063673333",  false, "My street", false,
+                        "Ukraine", false,
+                        "Kyiv", false, "Ukraine", false, "03322", false, false),
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, "My street", false,
+                        "San Diego", false, "CA", false, "03322", false, "US", false, false),
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, new Date())
+        };
+
+        product.dataStreams = new WebDataStream[] {
+                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        };
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertEquals(product.boardType, fromApi.boardType);
+            assertEquals(product.connectionType, fromApi.connectionType);
+            assertEquals(product.logoUrl, fromApi.logoUrl);
+            assertEquals(0, fromApi.version);
+            assertNotEquals(0, fromApi.lastModifiedTs);
+            assertNotNull(fromApi.dataStreams);
+            assertNotNull(fromApi.metaFields);
+            assertEquals(10, fromApi.metaFields.length);
+        }
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{1};
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(2, fromApi.id);
+            assertEquals(product.name, productFromApi.name);
+            assertEquals(product.description, productFromApi.description);
+            assertEquals(product.boardType, productFromApi.boardType);
+            assertEquals(product.connectionType, productFromApi.connectionType);
+            assertEquals(product.logoUrl, productFromApi.logoUrl);
+            assertEquals(0, productFromApi.version);
+            assertNotEquals(0, productFromApi.lastModifiedTs);
+            assertNotNull(productFromApi.dataStreams);
+            assertNotNull(productFromApi.metaFields);
+            assertEquals(10, productFromApi.metaFields.length);
         }
     }
 

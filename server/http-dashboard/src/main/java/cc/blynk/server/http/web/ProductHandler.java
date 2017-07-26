@@ -168,7 +168,7 @@ public class ProductHandler extends BaseHttpHandler {
         //todo persist?
         List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
         for (Device device : devices) {
-            device.metaFields = updatedProduct.copyMetaFields();
+            device.metaFields = updatedProduct.copyNonDefaultMetaFields();
         }
 
         return ok(existingProduct);

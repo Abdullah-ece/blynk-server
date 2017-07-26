@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -195,13 +196,30 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         newOrganization.parentId = user.orgId;
 
-        Organization userOrg = organizationDao.getOrgById(user.orgId);
-        if (!userOrg.canCreateOrgs) {
+        Organization parentOrg = organizationDao.getOrgById(user.orgId);
+        if (!parentOrg.canCreateOrgs) {
             log.error("This organization cannot have sub organizations.");
             return forbidden("This organization cannot have sub organizations.");
         }
 
-        return ok(organizationDao.create(newOrganization));
+        newOrganization = organizationDao.create(newOrganization);
+        createProductsFromParentOrg(newOrganization);
+
+        return ok(newOrganization);
+    }
+
+    private void createProductsFromParentOrg(Organization newOrg) {
+        for (int productId : newOrg.selectedProducts) {
+            if (organizationDao.hasNoProductWithParent(productId)) {
+                log.debug("Cloning product for org {} and parentProductId {}.", newOrg.name, productId);
+                Product parentProduct = organizationDao.getProductById(productId);
+                Product newProduct = new Product(parentProduct);
+                newProduct.parentId = parentProduct.id;
+                organizationDao.createProduct(newOrg.id, newProduct);
+            } else {
+                log.debug("Already has product for org {} with product parent id {}.", newOrg.name, productId);
+            }
+        }
     }
 
     @POST

@@ -194,10 +194,26 @@ public class OrganizationDao {
         return product;
     }
 
+    public boolean hasNoProductWithParent(int parentProductId) {
+        Product product = getProductByParentIdOrNull(parentProductId);
+        return product == null;
+    }
+
     public Product getProductByIdOrNull(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
                 if (product.id == productId) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Product getProductByParentIdOrNull(int parentProductId) {
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.parentId == parentProductId) {
                     return product;
                 }
             }

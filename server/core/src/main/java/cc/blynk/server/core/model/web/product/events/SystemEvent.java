@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.Event;
+import cc.blynk.server.core.model.web.product.EventReceiver;
 
 /**
  * The Blynk Project.
@@ -18,4 +19,12 @@ public abstract class SystemEvent extends Event {
     public int hashCode() {
         return name == null ? 0 : name.hashCode();
     }
+
+    public SystemEvent() {
+    }
+
+    public SystemEvent(String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications) {
+        super(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+    }
+
 }

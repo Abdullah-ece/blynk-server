@@ -39,6 +39,8 @@ public class Organization {
 
     public volatile Product[] products = ArrayUtil.EMPTY_PRODUCTS;
 
+    public volatile int[] selectedProducts = ArrayUtil.EMPTY_INTS;
+
     public volatile int parentId = SUPER_ORG_PARENT_ID;
 
     public Organization() {

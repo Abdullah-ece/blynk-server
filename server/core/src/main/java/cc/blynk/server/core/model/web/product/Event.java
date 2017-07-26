@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.product.events.*;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -42,4 +43,20 @@ public abstract class Event {
 
     public abstract EventType getType();
 
+    public abstract Event copy();
+
+    public Event() {
+    }
+
+    public Event(String name, String description, boolean isNotificationsEnabled,
+                 EventReceiver[] emailNotifications,
+                 EventReceiver[] pushNotifications,
+                 EventReceiver[] smsNotifications) {
+        this.name = name;
+        this.description = description;
+        this.isNotificationsEnabled = isNotificationsEnabled;
+        this.emailNotifications = ArrayUtil.cloneArray(emailNotifications, EventReceiver.class);
+        this.pushNotifications = ArrayUtil.cloneArray(pushNotifications, EventReceiver.class);
+        this.smsNotifications = ArrayUtil.cloneArray(smsNotifications, EventReceiver.class);
+    }
 }

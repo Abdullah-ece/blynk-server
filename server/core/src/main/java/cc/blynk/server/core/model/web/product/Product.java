@@ -19,6 +19,8 @@ public class Product {
 
     public int id;
 
+    public int parentId;
+
     public volatile String name;
 
     public volatile String boardType;
@@ -46,6 +48,26 @@ public class Product {
     public Product() {
         this.createdAt = System.currentTimeMillis();
         this.lastModifiedTs = createdAt;
+    }
+
+    public Product(String name, String boardType, ConnectionType connectionType,
+                   String description, String logoUrl,
+                   MetaField[] metaFields, WebDataStream[] dataStreams, Event[] events) {
+        this();
+        this.name = name;
+        this.boardType = boardType;
+        this.connectionType = connectionType;
+        this.description = description;
+        this.logoUrl = logoUrl;
+        this.metaFields = metaFields;
+        this.dataStreams = dataStreams;
+        this.events = events;
+    }
+
+    public Product(Product product) {
+        this(product.name, product.boardType, product.connectionType,
+                product.description, product.logoUrl,
+                product.copyMetaFields(), product.copyDataStreams(), product.copyEvents());
     }
 
     public void update(Product updatedProduct) {
@@ -93,7 +115,38 @@ public class Product {
         return 0;
     }
 
+    public WebDataStream[] copyDataStreams() {
+        return ArrayUtil.cloneArray(dataStreams, WebDataStream.class);
+    }
+
+    //todo a bit ugly. do cleanup
     public MetaField[] copyMetaFields() {
+        if (metaFields == null || metaFields.length == 0) {
+            return ArrayUtil.EMPTY_META_FIELDS;
+        }
+
+        MetaField[] result = new MetaField[metaFields.length];
+        int i = 0;
+        for (MetaField metaField : metaFields) {
+            result[i++] = metaField.copy();
+        }
+        return result;
+    }
+
+    public Event[] copyEvents() {
+        if (events == null || events.length == 0) {
+            return ArrayUtil.EMPTY_EVENTS;
+        }
+
+        Event[] result = new Event[events.length];
+        int i = 0;
+        for (Event event : events) {
+            result[i++] = event.copy();
+        }
+        return result;
+    }
+
+    public MetaField[] copyNonDefaultMetaFields() {
         if (metaFields == null || metaFields.length == 0) {
             return ArrayUtil.EMPTY_META_FIELDS;
         }
