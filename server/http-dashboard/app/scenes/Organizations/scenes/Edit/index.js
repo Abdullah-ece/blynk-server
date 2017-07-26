@@ -186,6 +186,8 @@ class Edit extends React.Component {
   componentWillUnmount() {
     this.props.updateManage(
       this.props.manage.set('activeTab', Manage.DEFAULT_TAB)
+        .set('organization', null)
+        .set('loading', false)
     );
 
     this.props.destroyForm(Manage.FORM_NAME);
