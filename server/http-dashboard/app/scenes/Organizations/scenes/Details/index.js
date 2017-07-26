@@ -68,6 +68,7 @@ class Details extends React.Component {
     params: PropTypes.object,
 
     resetForm: PropTypes.func,
+    fetchProducts: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
     OrganizationsDelete: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
