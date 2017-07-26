@@ -226,7 +226,7 @@ class Details extends React.Component {
 
     return (
       <MainLayout>
-        <MainLayout.Header title={'Organization Name Is There'}
+        <MainLayout.Header title={organization.get('name')}
                            options={(
                              <div>
                                <Popconfirm title="Are you sure？" okText="Yes" cancelText="No"
