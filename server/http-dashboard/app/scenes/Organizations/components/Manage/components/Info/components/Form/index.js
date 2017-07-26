@@ -30,7 +30,7 @@ class Form extends React.Component {
     };
 
     return (
-      <ImageUploader text="Add image"
+      <ImageUploader text={() => (<span>Upload Logo (optional)<br/><br/></span>)}
                      logo={input.value}
                      error={error}
                      touched={touched}
