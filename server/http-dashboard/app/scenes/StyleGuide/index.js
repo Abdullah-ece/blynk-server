@@ -78,13 +78,13 @@ class StyleGuide extends React.Component {
         <div className="style-guide-element">
           <h3>Form</h3>
           <ui.Form form="style-guide">
-            <ui.Form.Item>
+            <ui.Form.Item offset="normal">
               <ui.Form.Input name="something" validate={[Validation.Rules.required]}/>
             </ui.Form.Item>
-            <ui.Form.Item label="Name">
+            <ui.Form.Item label="Name" offset="normal">
               <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
             </ui.Form.Item>
-            <ui.Form.Item label="Email">
+            <ui.Form.Item label="Email" offset="normal">
               <ui.Form.Input name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
             </ui.Form.Item>
             <ui.Form.Item>
@@ -95,13 +95,13 @@ class StyleGuide extends React.Component {
         <div className="style-guide-element">
           <h3>Inline form</h3>
           <ui.Form layout="inline" form="style-guide">
-            <ui.Form.Item label="Name">
+            <ui.Form.Item label="Name" offset="normal">
               <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
             </ui.Form.Item>
-            <ui.Form.Item label="Email">
+            <ui.Form.Item label="Email" offset="normal">
               <ui.Form.Input name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
             </ui.Form.Item>
-            <ui.Form.Item position="center">
+            <ui.Form.Item position="center" offset="normal">
               <Button size="default">Login</Button>
             </ui.Form.Item>
           </ui.Form>
@@ -110,13 +110,13 @@ class StyleGuide extends React.Component {
           <h3>Group form</h3>
           <ui.Form layout="inline" form="style-guide">
             <ui.Form.ItemsGroup>
-              <ui.Form.Item label="Name">
+              <ui.Form.Item label="Name" offset="normal">
                 <ui.Form.Input name="name" placeholder="Name" validate={[Validation.Rules.required]}/>
               </ui.Form.Item>
-              <ui.Form.Item label="Email">
+              <ui.Form.Item label="Email" offset="normal">
                 <ui.Form.Input icon="user" name="email" placeholder="Email" validate={[Validation.Rules.required]}/>
               </ui.Form.Item>
-              <ui.Form.Item position="center">
+              <ui.Form.Item position="center" offset="normal">
                 <Button size="default">Login</Button>
               </ui.Form.Item>
             </ui.Form.ItemsGroup>
