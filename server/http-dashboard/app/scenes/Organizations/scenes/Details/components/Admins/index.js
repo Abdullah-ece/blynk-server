@@ -40,7 +40,7 @@ class Admins extends React.Component {
   render() {
     return (
       <div>
-        <AdminInviteForm loading={this.props.userInviteLoading} onSubmit={this.handleSubmit}
+        <AdminInviteForm addText={'Send'} loading={this.props.userInviteLoading} onSubmit={this.handleSubmit}
                          onSubmitSuccess={this.props.onUserInviteSuccess}/>
         <AdminTableList loading={this.props.userDeleteLoading} onAdminDelete={this.handleAdminDelete}
                         data={this.props.users}/>

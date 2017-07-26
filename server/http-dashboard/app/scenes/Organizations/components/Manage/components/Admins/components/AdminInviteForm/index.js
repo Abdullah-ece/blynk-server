@@ -27,6 +27,8 @@ class AdminInviteForm extends React.Component {
   static propTypes = {
     destroyForm: PropTypes.func,
     handleSubmit: PropTypes.func,
+    
+    addText: PropTypes.string,
 
     loading: PropTypes.bool,
   };
@@ -54,7 +56,7 @@ class AdminInviteForm extends React.Component {
                   size="default"
                   className="admin-invite-form--button"
                   loading={this.props.loading}
-                  onClick={this.props.handleSubmit}>Add</Button>
+                  onClick={this.props.handleSubmit}>{this.props.addText || 'Add'}</Button>
         </Item>
       </Form>
     );
