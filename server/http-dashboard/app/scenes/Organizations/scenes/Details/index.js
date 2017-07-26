@@ -231,8 +231,7 @@ class Details extends React.Component {
                              <div>
                                <Popconfirm title="Are you sure？" okText="Yes" cancelText="No"
                                            onConfirm={this.handleOrganizationDelete}>
-                                 <Button type="danger" onClick={() => {
-                                 }}>Delete</Button>
+                                 <Button type="danger">Delete</Button>
                                </Popconfirm>
                                <Link to={`/organizations/edit/${this.props.params.id}`}>
                                  <Button type="primary" onClick={() => {
