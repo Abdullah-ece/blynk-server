@@ -3,6 +3,7 @@ import {MainLayout}         from 'components';
 import {connect}            from 'react-redux';
 import {Roles}              from 'services/Roles';
 import {Manage}             from 'services/Organizations';
+import {Link}               from 'react-router';
 import {
   Button,
   Tabs,
@@ -233,8 +234,10 @@ class Details extends React.Component {
                                  <Button type="danger" onClick={() => {
                                  }}>Delete</Button>
                                </Popconfirm>
-                               <Button type="primary" onClick={() => {
-                               }}>Edit</Button>
+                               <Link to={`/organizations/edit/${this.props.params.id}`}>
+                                 <Button type="primary" onClick={() => {
+                                 }}>Edit</Button>
+                               </Link>
                              </div>
                            )}/>
         <MainLayout.Content className="product-details-content">
