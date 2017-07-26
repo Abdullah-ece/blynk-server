@@ -152,6 +152,7 @@ class Create extends React.Component {
     return (
       <OrganizationCreate
         formErrors={this.props.formErrors}
+        formValues={this.props.formValues}
         form={Manage.FORM_NAME}
         onSubmit={this.handleSubmit}
         onSubmitSuccess={this.handleSubmitSuccess}

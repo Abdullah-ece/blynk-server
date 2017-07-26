@@ -6,8 +6,13 @@ import {
   Field as FormField
 }                                 from 'redux-form';
 import ImageUploader              from 'components/ImageUploader';
+import PropTypes                  from 'prop-types';
 
 class Form extends React.Component {
+
+  static propTypes = {
+    organizationName: PropTypes.string
+  };
 
   constructor(props) {
     super(props);
@@ -50,7 +55,8 @@ class Form extends React.Component {
           </Item>
 
           <Item>
-            <Switch size="small" name="canCreateOrgs" label="Can create Sub-Organizations"/>
+            <Switch size="small" name="canCreateOrgs"
+                    label={`${this.props.organizationName} can create Sub-Organizations`}/>
           </Item>
 
         </Col>

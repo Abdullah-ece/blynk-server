@@ -15,6 +15,7 @@ class Manage extends React.Component {
   static propTypes = {
     products: PropTypes.instanceOf(List),
 
+    formValues: PropTypes.instanceOf(Map),
     formErrors: PropTypes.instanceOf(Map),
 
     activeTab: PropTypes.string,
@@ -72,12 +73,12 @@ class Manage extends React.Component {
         <TabPane tab={<span>{this.infoTabInvalidIcon()} Info</span>}
                  key={this.TABS.INFO}>
           <div className="organizations-manage-tab-wrapper">
-            <Info />
+            <Info organizationName={this.props.formValues.get('name')}/>
           </div>
         </TabPane>
         <TabPane tab={<span>{this.productsTabInvalidIcon()} Products</span>}
                  key={this.TABS.PRODUCTS}>
-          <Products products={this.props.products}/>
+          <Products organizationName={this.props.formValues.get('name')} products={this.props.products}/>
         </TabPane>
         <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
                  key={this.TABS.ADMINS}>

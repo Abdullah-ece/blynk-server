@@ -49,6 +49,7 @@ class Edit extends React.Component {
         <MainLayout.Content className="organizations-create-content">
           <Manage
             submitFailed={this.props.submitFailed}
+            formValues={this.props.formValues}
             formErrors={this.props.formErrors}
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}

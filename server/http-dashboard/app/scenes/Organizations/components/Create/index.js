@@ -36,13 +36,14 @@ class Create extends React.Component {
     submitting: PropTypes.bool,
     submitFailed: PropTypes.bool,
 
-    formErrors: PropTypes.instanceOf(Map)
+    formErrors: PropTypes.instanceOf(Map),
+    formValues: PropTypes.instanceOf(Map),
   };
 
   render() {
     return (
       <MainLayout>
-        <MainLayout.Header title="New Organization"
+        <MainLayout.Header title={this.props.formValues.get('name')}
                            options={(
                              <div>
                                <Button type="default"
@@ -59,6 +60,7 @@ class Create extends React.Component {
                            )}/>
         <MainLayout.Content className="organizations-create-content">
           <Manage
+            formValues={this.props.formValues}
             submitFailed={this.props.submitFailed}
             formErrors={this.props.formErrors}
             onTabChange={this.props.onTabChange}

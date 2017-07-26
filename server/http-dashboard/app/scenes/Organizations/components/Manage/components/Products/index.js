@@ -52,7 +52,8 @@ class Products extends React.Component {
   render() {
     return (
       <div className="organizations-create-products">
-        <div className="organizations-create-products-title">Choose products available for Organization</div>
+        <div className="organizations-create-products-title">Choose products available
+          for {this.props.formValues.get('name')}</div>
         <ProductsSelectList onSelect={this.handleProductSelect}
                             value={this.props.formValues.get('products').toJS()}
                             products={this.props.products}/>

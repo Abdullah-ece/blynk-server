@@ -12,6 +12,7 @@ import './styles.less';
 class Info extends React.Component {
 
   static propTypes = {
+    name: PropTypes.string,
     logoUrl: PropTypes.string,
     description: PropTypes.string,
 
@@ -36,7 +37,7 @@ class Info extends React.Component {
             <FormItem>
               <FormItem.Content>
                 <Switch size="small" checked={this.props.canCreateOrgs}/> <span
-                className="switch-label">Can create orgs</span>
+                className="switch-label">{this.props.name} can create orgs</span>
               </FormItem.Content>
             </FormItem>
           </div>
