@@ -6,7 +6,8 @@ import {
   message
 }                             from 'antd';
 import {
-  Admins
+  Admins,
+  Products
 }                             from '../Details/components';
 import {
   initialize,
@@ -27,10 +28,10 @@ import {
   OrganizationsManageSetActiveTab,
   OrganizationsManageUpdate,
   OrganizationsCreate,
-  OrganizationsUsersFetch,
   OrganizationsFetch,
   OrganizationsUpdate,
-  OrganizationsDetailsUpdate
+  OrganizationsDetailsUpdate,
+  OrganizationsManageUsersFetch
 }                             from 'data/Organizations/actions';
 
 import {
@@ -65,8 +66,8 @@ import {
   OrganizationsCreate: bindActionCreators(OrganizationsCreate, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
-  OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
+  OrganizationsManageUsersFetch: bindActionCreators(OrganizationsManageUsersFetch, dispatch),
 }))
 class Edit extends React.Component {
 
@@ -88,7 +89,7 @@ class Edit extends React.Component {
     OrganizationsCreate: PropTypes.func,
     OrganizationsUpdate: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
-    OrganizationsUsersFetch: PropTypes.func,
+    OrganizationsManageUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
 
@@ -127,7 +128,7 @@ class Edit extends React.Component {
         description: data.organization.get('description'),
         logoUrl: data.organization.get('logoUrl'),
         canCreateOrgs: data.organization.get('canCreateOrgs'),
-        products: (data.organization.get('products') || []).map(product => product.get('id')),
+        selectedProducts: (data.organization.get('products') || []).map(product => product.get('id')),
         admins: data.users.toJS()
       });
 
@@ -149,9 +150,12 @@ class Edit extends React.Component {
     };
 
     const loadUsers = () => {
-      return this.props.OrganizationsUsersFetch({
-        id: this.props.params.id
-      });
+      if (!this.props.manage.getIn(['admins', 'list']))
+        return this.props.OrganizationsManageUsersFetch({
+          id: this.props.params.id
+        });
+
+      return new Promise((resolve) => resolve(this.props.manage.getIn(['admins', 'list']).toJS()));
     };
 
     this.props.updateManage(this.props.manage.set('loading', true));
@@ -162,7 +166,7 @@ class Edit extends React.Component {
       loadProducts(),
     ]).then(([list, users]) => {
 
-      users = users.payload.data;
+      users = Array.isArray(users) ? users : users.payload.data;
 
       const organizations = Array.isArray(list) ? list : list.payload.data;
 
@@ -188,6 +192,7 @@ class Edit extends React.Component {
       this.props.manage.set('activeTab', Manage.DEFAULT_TAB)
         .set('organization', null)
         .set('loading', false)
+        .setIn(['admins', 'list'], null)
     );
 
     this.props.destroyForm(Manage.FORM_NAME);
@@ -200,7 +205,7 @@ class Edit extends React.Component {
   };
 
   handleCancel() {
-    this.context.router.push('/organizations');
+    this.context.router.push(`/organizations/${this.props.params.id}`);
   }
 
   handleTabChange(tab) {
@@ -208,7 +213,7 @@ class Edit extends React.Component {
   }
 
   handleSubmitSuccess() {
-    this.context.router.push('/organizations?success=true');
+    this.context.router.push(`/organizations/${this.props.params.id}`);
   }
 
   handleSubmitFail() {
@@ -238,7 +243,7 @@ class Edit extends React.Component {
     this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', true));
     return new Promise((resolve) => {
       this.props.OrganizationUsersDelete(this.props.params.id, ids).then(() => {
-        this.props.OrganizationsUsersFetch({
+        this.props.OrganizationsManageUsersFetch({
           id: this.props.params.id
         }).then(() => {
           this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', false));
@@ -258,7 +263,7 @@ class Edit extends React.Component {
         name: user.name,
         role: Roles.ADMIN.value
       }).then(() => {
-        this.props.OrganizationsUsersFetch({
+        this.props.OrganizationsManageUsersFetch({
           id: this.props.params.id
         }).then(() => {
           this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
@@ -291,7 +296,7 @@ class Edit extends React.Component {
 
   render() {
 
-    if (this.props.manage.get('loading') || !this.props.details.get('users'))
+    if (this.props.manage.get('loading') || !this.props.manage.getIn(['admins', 'list']))
       return null;
 
     return (
@@ -312,8 +317,9 @@ class Edit extends React.Component {
           onUserInviteSuccess={this.handleUserInviteSuccess}
           userDeleteLoading={this.props.details.get('userDeleteLoading')}
           userInviteLoading={this.props.details.get('userInviteLoading')}
-          users={this.props.details.get('users').filter(user => user.get('role') === Roles.ADMIN.value)}
+          users={this.props.manage.getIn(['admins', 'list']).filter(user => user.get('role') === Roles.ADMIN.value)}
         />}
+        productsComponent={<Products products={this.props.products}/>}
         activeTab={this.props.activeTab}
       />
     );

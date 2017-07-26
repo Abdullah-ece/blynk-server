@@ -20,6 +20,7 @@ class Edit extends React.Component {
     handleSubmit: PropTypes.func,
 
     adminsComponent: PropTypes.element,
+    productsComponent: PropTypes.element,
 
     submitting: PropTypes.bool,
     submitFailed: PropTypes.bool,
@@ -54,6 +55,7 @@ class Edit extends React.Component {
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}
             adminsComponent={this.props.adminsComponent}
+            productsComponent={this.props.productsComponent}
             products={this.props.products}/>
         </MainLayout.Content>
       </MainLayout>

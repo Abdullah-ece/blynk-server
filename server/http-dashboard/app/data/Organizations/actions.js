@@ -87,6 +87,20 @@ export function OrganizationsUsersFetch(data) {
   };
 }
 
+export function OrganizationsManageUsersFetch(data) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATIONS_MANAGE_USERS_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/organization/${data.id}/users`
+      }
+    }
+  };
+}
+
 export function OrganizationsDelete(data) {
   if (!data.id)
     throw Error('Organization id is not specified');

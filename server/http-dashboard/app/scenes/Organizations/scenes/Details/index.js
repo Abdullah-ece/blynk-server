@@ -3,7 +3,7 @@ import {MainLayout}         from 'components';
 import {connect}            from 'react-redux';
 import {Roles}              from 'services/Roles';
 import {Manage}             from 'services/Organizations';
-import {Link}               from 'react-router';
+import {ProductsFetch}      from 'data/Product/api';
 import {
   Button,
   Tabs,
@@ -19,6 +19,7 @@ import {
 import {bindActionCreators} from 'redux';
 import {reset, SubmissionError}              from 'redux-form';
 import {
+  OrganizationsManageUsersFetch,
   OrganizationsDetailsUpdate,
   OrganizationsFetch,
   OrganizationsUsersFetch,
@@ -45,12 +46,14 @@ import './styles.less';
   details: state.Organizations.get('details'),
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
+  fetchProducts: bindActionCreators(ProductsFetch, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
   OrganizationsDelete: bindActionCreators(OrganizationsDelete, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
   OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
+  OrganizationsManageUsersFetch: bindActionCreators(OrganizationsManageUsersFetch, dispatch),
 }))
 class Details extends React.Component {
 
@@ -71,6 +74,7 @@ class Details extends React.Component {
     OrganizationsUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
+    OrganizationsManageUsersFetch: PropTypes.func,
   };
 
   constructor(props) {
@@ -79,6 +83,7 @@ class Details extends React.Component {
     this.handleAddAdmin = this.handleAddAdmin.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleUsersDelete = this.handleUsersDelete.bind(this);
+    this.handleOrganizationEdit = this.handleOrganizationEdit.bind(this);
     this.handleUserInviteSuccess = this.handleUserInviteSuccess.bind(this);
     this.handleOrganizationDelete = this.handleOrganizationDelete.bind(this);
   }
@@ -114,6 +119,23 @@ class Details extends React.Component {
         .set('users', null)
     );
   }
+
+  handleOrganizationEdit() {
+
+    this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', true));
+
+    return Promise.all([
+      this.props.OrganizationsFetch(),
+      this.props.fetchProducts(),
+      this.props.OrganizationsManageUsersFetch({id: this.props.params.id})
+    ]).then(() => {
+      setTimeout(() => {
+        this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', false));
+        this.context.router.push(`/organizations/edit/${this.props.params.id}`);
+      }, 500);
+    });
+  }
+
 
   TABS = {
     INFO: 'info',
@@ -233,10 +255,8 @@ class Details extends React.Component {
                                            onConfirm={this.handleOrganizationDelete}>
                                  <Button type="danger">Delete</Button>
                                </Popconfirm>
-                               <Link to={`/organizations/edit/${this.props.params.id}`}>
-                                 <Button type="primary" onClick={() => {
-                                 }}>Edit</Button>
-                               </Link>
+                               <Button type="primary" loading={this.props.details.get('loading')}
+                                       onClick={this.handleOrganizationEdit}>Edit</Button>
                              </div>
                            )}/>
         <MainLayout.Content className="product-details-content">

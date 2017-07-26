@@ -20,6 +20,7 @@ const initialState = fromJS({
       form: ''
     },
     admins: {
+      list: null,
       form: '',
       canInviteLoading: false
     }
@@ -57,6 +58,9 @@ export default function Organizations(state = initialState, action) {
 
     case "API_ORGANIZATIONS_USERS_FETCH_SUCCESS":
       return state.setIn(['details', 'users'], fromJS(action.payload.data));
+
+    case "API_ORGANIZATIONS_MANAGE_USERS_FETCH_SUCCESS":
+      return state.setIn(['manage', 'admins', 'list'], fromJS(action.payload.data));
 
     default:
       return state;

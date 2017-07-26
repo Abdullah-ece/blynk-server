@@ -3,8 +3,7 @@ import {Tabs, Icon}       from 'antd';
 import {List, Map}        from 'immutable';
 import PropTypes          from 'prop-types';
 import {
-  Info,
-  Products
+  Info
 }                         from './components';
 import './styles.less';
 
@@ -24,6 +23,7 @@ class Manage extends React.Component {
 
     onTabChange: PropTypes.func,
 
+    productsComponent: PropTypes.element,
     adminsComponent: PropTypes.element,
   };
 
@@ -78,7 +78,9 @@ class Manage extends React.Component {
         </TabPane>
         <TabPane tab={<span>{this.productsTabInvalidIcon()} Products</span>}
                  key={this.TABS.PRODUCTS}>
-          <Products organizationName={this.props.formValues.get('name')} products={this.props.products}/>
+          <div className="organizations-manage-tab-wrapper">
+            { this.props.productsComponent }
+          </div>
         </TabPane>
         <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
                  key={this.TABS.ADMINS}>
