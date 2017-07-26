@@ -2,7 +2,11 @@ import React                from 'react';
 import {alphabetSort}       from 'services/Sort';
 import {Status}             from 'components/User';
 import PropTypes            from 'prop-types';
-import {Button, Table}      from 'antd';
+import {
+  Button,
+  Table,
+  Popconfirm
+}                           from 'antd';
 import {connect}            from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
@@ -116,11 +120,16 @@ class AdminTableList extends React.Component {
     return (
       <div className="admins-table-list">
         <div className="admins-table-list-delete-button">
-          <Button type="danger"
-                  loading={this.props.loading}
-                  disabled={!this.props.selectedRows.size || this.props.loading}
-                  onClick={this.handleDeleteUser}
-          >Delete</Button>
+          <Popconfirm title="Are you sure you want to delete selected users?？"
+                      okText="Yes"
+                      cancelText="No"
+                      onConfirm={this.handleDeleteUser}
+                      overlayClassName="danger">
+            <Button type="danger"
+                    loading={this.props.loading}
+                    disabled={!this.props.selectedRows.size || this.props.loading}
+            >Delete</Button>
+          </Popconfirm>
         </div>
         <Table locale={{emptyText: 'No Admins'}}
                rowKey={(record) => record.email}
