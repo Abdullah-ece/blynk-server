@@ -38,14 +38,14 @@ class Products extends React.Component {
 
     id = Number(id);
 
-    let products = this.props.formValues.get('products');
+    let products = this.props.formValues.get('selectedProducts');
 
     let index = products.indexOf(id);
 
     if (index === -1) {
-      this.props.changeValue(Manage.FORM_NAME, 'products', products.push(id).toJS());
+      this.props.changeValue(Manage.FORM_NAME, 'selectedProducts', products.push(id).toJS());
     } else {
-      this.props.changeValue(Manage.FORM_NAME, 'products', products.remove(index).toJS());
+      this.props.changeValue(Manage.FORM_NAME, 'selectedProducts', products.remove(index).toJS());
     }
   }
 
@@ -55,7 +55,7 @@ class Products extends React.Component {
         <div className="organizations-create-products-title">Choose products available
           for {this.props.formValues.get('name')}</div>
         <ProductsSelectList onSelect={this.handleProductSelect}
-                            value={this.props.formValues.get('products').toJS()}
+                            value={this.props.formValues.get('selectedProducts').toJS()}
                             products={this.props.products}/>
       </div>
     );

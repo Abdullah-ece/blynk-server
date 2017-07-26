@@ -29,6 +29,7 @@ import PropTypes            from 'prop-types';
 import './styles.less';
 
 @connect((state) => ({
+  account: fromJS(state.Account),
   manage: fromJS(state.Organizations.get('manage')),
   formValues: fromJS(getFormValues(Manage.FORM_NAME)(state) || {}),
   formErrors: fromJS(getFormSyncErrors(Manage.FORM_NAME)(state) || {}),
@@ -44,9 +45,13 @@ class Admins extends React.Component {
   static propTypes = {
     resetForm: PropTypes.func,
     changeForm: PropTypes.func,
+    updateManage: PropTypes.func,
+    OrganizationsCanInvite: PropTypes.func,
 
     submitFailed: PropTypes.bool,
 
+    manage: PropTypes.instanceOf(Map),
+    account: PropTypes.instanceOf(Map),
     formErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map),
   };
@@ -91,6 +96,7 @@ class Admins extends React.Component {
     this.toggleCanInviteLoading(true);
 
     return this.props.OrganizationsCanInvite({
+      orgId: this.props.account.get('orgId'),
       email: data.email
     }).then(() => {
 

@@ -107,8 +107,10 @@ export function OrganizationsCanInvite(data) {
     payload: {
       request: {
         method: 'post',
-        url: `/organization/canInviteUser`,
-        data: data
+        url: `/organization/${data.id}/canInviteUser`,
+        data: {
+          email: data.email
+        }
       }
     }
   };

@@ -91,7 +91,7 @@ class Create extends React.Component {
 
     this.props.initializeForm(Manage.FORM_NAME, {
       name: 'New Organization',
-      products: [],
+      selectedProducts: [],
       admins: []
     });
 
@@ -131,8 +131,7 @@ class Create extends React.Component {
   handleSubmit() {
     return new Promise((resolve) => {
       this.props.OrganizationsCreate({
-        ...this.props.formValues.toJS(),
-        products: []
+        ...this.props.formValues.toJS()
       }).then((organization) => {
         this.props.OrganizationsFetch().then(() => {
           const promises = [];
