@@ -73,7 +73,8 @@ class Manage extends React.Component {
         <TabPane tab={<span>{this.infoTabInvalidIcon()} Info</span>}
                  key={this.TABS.INFO}>
           <div className="organizations-manage-tab-wrapper">
-            <Info organizationName={this.props.formValues.get('name')}/>
+            <Info organizationName={this.props.formValues.get('name')}
+                  canCreateOrgs={this.props.formValues.get('canCreateOrgs')}/>
           </div>
         </TabPane>
         <TabPane tab={<span>{this.productsTabInvalidIcon()} Products</span>}

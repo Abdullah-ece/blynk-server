@@ -11,7 +11,9 @@ import PropTypes                  from 'prop-types';
 class Form extends React.Component {
 
   static propTypes = {
-    organizationName: PropTypes.string
+    organizationName: PropTypes.string,
+
+    canCreateOrgs: PropTypes.bool,
   };
 
   constructor(props) {
@@ -56,7 +58,7 @@ class Form extends React.Component {
 
           <Item>
             <Switch size="small" name="canCreateOrgs"
-                    label={`${this.props.organizationName} can create Sub-Organizations`}/>
+                    label={`${this.props.organizationName} ${this.props.canCreateOrgs ? `can` : `can't`} create Sub-Organizations`}/>
           </Item>
 
         </Col>

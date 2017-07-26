@@ -6,12 +6,14 @@ import './styles.less';
 class Info extends React.Component {
 
   static propTypes = {
-    organizationName: PropTypes.string
+    organizationName: PropTypes.string,
+
+    canCreateOrgs: PropTypes.bool
   };
 
   render() {
     return (
-      <Form organizationName={this.props.organizationName}/>
+      <Form organizationName={this.props.organizationName} canCreateOrgs={this.props.canCreateOrgs}/>
     );
   }
 
