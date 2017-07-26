@@ -20,7 +20,8 @@ const initialState = fromJS({
       form: ''
     },
     admins: {
-      form: ''
+      form: '',
+      canInviteLoading: false
     }
   },
   adminTableListOptions: {

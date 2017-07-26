@@ -100,3 +100,16 @@ export function OrganizationsDelete(data) {
     }
   };
 }
+
+export function OrganizationsCanInvite(data) {
+  return {
+    type: 'API_ORGANIZATIONS_CAN_INVITE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/organization/canInviteUser`,
+        data: data
+      }
+    }
+  };
+}

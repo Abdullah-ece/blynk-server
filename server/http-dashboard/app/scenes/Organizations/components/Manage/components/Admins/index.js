@@ -21,15 +21,23 @@ import {
   getFormSyncErrors,
   reset
 }                           from 'redux-form';
+import {
+  OrganizationsCanInvite,
+  OrganizationsManageUpdate
+}                           from 'data/Organizations/actions';
 import PropTypes            from 'prop-types';
 import './styles.less';
 
 @connect((state) => ({
+  manage: fromJS(state.Organizations.get('manage')),
   formValues: fromJS(getFormValues(Manage.FORM_NAME)(state) || {}),
   formErrors: fromJS(getFormSyncErrors(Manage.FORM_NAME)(state) || {}),
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
   changeForm: bindActionCreators(change, dispatch),
+  updateManage: bindActionCreators(OrganizationsManageUpdate, dispatch),
+  OrganizationsCanInvite: bindActionCreators(OrganizationsCanInvite, dispatch),
+  OrganizationsManageUpdate: bindActionCreators(OrganizationsManageUpdate, dispatch),
 }))
 class Admins extends React.Component {
 
@@ -66,6 +74,10 @@ class Admins extends React.Component {
     this.props.resetForm(Manage.ADMIN_INVITE_FORM_NAME);
   }
 
+  toggleCanInviteLoading(state) {
+    this.props.updateManage(this.props.manage.setIn(['admins', 'canInviteLoading'], state));
+  }
+
   handleSubmit(data) {
 
     const alreadyExists = this.props.formValues.get('admins').some((admin) => admin.email === data.email);
@@ -76,12 +88,32 @@ class Admins extends React.Component {
       });
     }
 
-    this.props.changeForm(Manage.FORM_NAME, 'admins', this.props.formValues.get('admins').update((admins) => admins.push({
-      name: data.name,
-      email: data.email,
-      role: Roles.ADMIN.value,
-      status: 'Pending'
-    })).toJS());
+    this.toggleCanInviteLoading(true);
+
+    return this.props.OrganizationsCanInvite({
+      email: data.email
+    }).then(() => {
+
+      this.toggleCanInviteLoading(false);
+
+      this.props.changeForm(Manage.FORM_NAME, 'admins', this.props.formValues.get('admins').update((admins) => admins.push({
+        name: data.name,
+        email: data.email,
+        role: Roles.ADMIN.value,
+        status: 'Pending'
+      })).toJS());
+
+    }).catch((response) => {
+
+      this.toggleCanInviteLoading(false);
+
+      const data = response.error.response.data;
+
+      throw new SubmissionError({
+        'email': data && data.error && data.error.message
+      });
+
+    });
   }
 
   updateColumns(sortedInfo) {
@@ -145,7 +177,8 @@ class Admins extends React.Component {
     return (
       <div className="organizations">
         <div>Add at least one Administrator. Invitations will be sent out once you save the Organization.</div>
-        <AdminInviteForm onSubmit={this.handleSubmit} onSubmitSuccess={this.handleSubmitSuccess}/>
+        <AdminInviteForm loading={this.props.manage.getIn(['admins', 'canInviteLoading'])} onSubmit={this.handleSubmit}
+                         onSubmitSuccess={this.handleSubmitSuccess}/>
 
         { this.props.formErrors.get('admins') && this.props.submitFailed && (
           <div className="admin-invite-form--error">You should invite at least one administrator</div>
