@@ -67,6 +67,7 @@ public class Organization {
         this.secondaryColor = updatedOrganization.secondaryColor;
         this.products = updatedOrganization.products;
         this.isActive = updatedOrganization.isActive;
+        this.canCreateOrgs = updatedOrganization.canCreateOrgs;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
