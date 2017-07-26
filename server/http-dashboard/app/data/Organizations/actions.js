@@ -58,6 +58,21 @@ export function OrganizationsAdminTableListUpdateSortInfo(value) {
   };
 }
 
+export function OrganizationsUpdate(data = {}) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_ORGANIZATIONS_UPDATE',
+    payload: {
+      request: {
+        method: 'post',
+        url: `/organization/${data.id}`,
+        data: data
+      }
+    }
+  };
+}
+
 export function OrganizationsUsersFetch(data) {
   if (!data.id)
     throw Error('Organization id is not specified');

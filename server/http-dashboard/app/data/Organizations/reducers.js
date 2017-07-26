@@ -10,6 +10,7 @@ const initialState = fromJS({
     organizationDeleteLoading: false,
   },
   manage: {
+    organization: null,
     activeTab: 'info', //hardcoded info tab key
     loading: false,
     info: {

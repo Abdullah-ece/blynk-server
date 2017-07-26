@@ -5,6 +5,9 @@ import {Button}             from 'antd';
 import PropTypes            from 'prop-types';
 import {List, Map}          from 'immutable';
 import {reduxForm}          from 'redux-form';
+import {
+  Admins
+}                           from 'scenes/Organizations/components/Manage/components';
 
 import './styles.less';
 
@@ -60,6 +63,7 @@ class Create extends React.Component {
             formErrors={this.props.formErrors}
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}
+            adminsComponent={<Admins submitFailed={this.props.submitFailed}/>}
             products={this.props.products}/>
         </MainLayout.Content>
       </MainLayout>

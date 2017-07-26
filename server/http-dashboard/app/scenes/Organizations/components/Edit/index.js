@@ -6,21 +6,12 @@ import PropTypes            from 'prop-types';
 import {List, Map}          from 'immutable';
 import {reduxForm}          from 'redux-form';
 
-@reduxForm({
-  validate: (data) => {
-
-    const errors = {};
-
-    if (!data.admins || !data.admins.length)
-      errors['admins'] = 'Should have at least one administrator';
-
-    return errors;
-  }
-})
+@reduxForm()
 class Edit extends React.Component {
 
   static propTypes = {
     activeTab: PropTypes.string,
+
     products: PropTypes.instanceOf(List),
 
     onCancel: PropTypes.func,
@@ -28,16 +19,19 @@ class Edit extends React.Component {
     handleCancel: PropTypes.func,
     handleSubmit: PropTypes.func,
 
+    adminsComponent: PropTypes.element,
+
     submitting: PropTypes.bool,
     submitFailed: PropTypes.bool,
 
-    formErrors: PropTypes.instanceOf(Map)
+    formErrors: PropTypes.instanceOf(Map),
+    formValues: PropTypes.instanceOf(Map)
   };
 
   render() {
     return (
       <MainLayout>
-        <MainLayout.Header title="Edit Organization"
+        <MainLayout.Header title={this.props.formValues.get('name')}
                            options={(
                              <div>
                                <Button type="default"
@@ -54,11 +48,11 @@ class Edit extends React.Component {
                            )}/>
         <MainLayout.Content className="organizations-create-content">
           <Manage
-            edit={this.props.edit} // hardcoded to hide admins tab
             submitFailed={this.props.submitFailed}
             formErrors={this.props.formErrors}
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}
+            adminsComponent={this.props.adminsComponent}
             products={this.props.products}/>
         </MainLayout.Content>
       </MainLayout>

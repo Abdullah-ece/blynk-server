@@ -4,8 +4,7 @@ import {List, Map}        from 'immutable';
 import PropTypes          from 'prop-types';
 import {
   Info,
-  Products,
-  Admins
+  Products
 }                         from './components';
 import './styles.less';
 
@@ -23,6 +22,8 @@ class Manage extends React.Component {
     submitFailed: PropTypes.bool,
 
     onTabChange: PropTypes.func,
+
+    adminsComponent: PropTypes.element,
   };
 
   TABS = {
@@ -78,14 +79,12 @@ class Manage extends React.Component {
                  key={this.TABS.PRODUCTS}>
           <Products products={this.props.products}/>
         </TabPane>
-        {!this.props.edit && (
-          <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
-                   key={this.TABS.ADMINS}>
-            <div className="organizations-manage-tab-wrapper">
-              <Admins submitFailed={this.props.submitFailed}/>
-            </div>
-          </TabPane>
-        )}
+        <TabPane tab={<span>{this.adminsTabInvalidIcon()} Admins</span>}
+                 key={this.TABS.ADMINS}>
+          <div className="organizations-manage-tab-wrapper">
+            { this.props.adminsComponent }
+          </div>
+        </TabPane>
       </Tabs>
     );
   }

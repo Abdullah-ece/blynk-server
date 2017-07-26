@@ -113,7 +113,8 @@ class AdminTableList extends React.Component {
                   onClick={this.handleDeleteUser}
           >Delete</Button>
         </div>
-        <Table rowKey={(record) => record.email}
+        <Table locale={{emptyText: 'No Admins'}}
+               rowKey={(record) => record.email}
                columns={columns}
                pagination={false}
                dataSource={this.props.data.toJS()}
