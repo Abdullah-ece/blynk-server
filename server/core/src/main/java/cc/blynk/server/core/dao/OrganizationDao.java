@@ -194,8 +194,8 @@ public class OrganizationDao {
         return product;
     }
 
-    public boolean hasNoProductWithParent(int parentProductId) {
-        Product product = getProductByParentIdOrNull(parentProductId);
+    public boolean hasNoProductWithParent(int newOrgId, int parentProductId) {
+        Product product = getProductByParentIdOrNull(newOrgId, parentProductId);
         return product == null;
     }
 
@@ -210,10 +210,10 @@ public class OrganizationDao {
         return null;
     }
 
-    public Product getProductByParentIdOrNull(int parentProductId) {
+    public Product getProductByParentIdOrNull(int newOrgId, int parentProductId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
-                if (product.parentId == parentProductId) {
+                if (org.id == newOrgId && product.parentId == parentProductId) {
                     return product;
                 }
             }

@@ -404,6 +404,37 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(productFromApi.metaFields);
             assertEquals(10, productFromApi.metaFields.length);
         }
+
+        Organization organization2 = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization2.selectedProducts = new int[]{1};
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization2.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(3, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(3, fromApi.id);
+            assertEquals(product.name, productFromApi.name);
+            assertEquals(product.description, productFromApi.description);
+            assertEquals(product.boardType, productFromApi.boardType);
+            assertEquals(product.connectionType, productFromApi.connectionType);
+            assertEquals(product.logoUrl, productFromApi.logoUrl);
+            assertEquals(0, productFromApi.version);
+            assertNotEquals(0, productFromApi.lastModifiedTs);
+            assertNotNull(productFromApi.dataStreams);
+            assertNotNull(productFromApi.metaFields);
+            assertEquals(10, productFromApi.metaFields.length);
+        }
     }
 
     @Test
