@@ -101,7 +101,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     @POST
-    @Path("/canInviteUser")
+    @Path("/{orgId}/canInviteUser")
     @Admin
     public Response checkUserEmail(WebEmail webEmail) {
         if (userDao.contains(webEmail.email, AppName.BLYNK)) {
