@@ -25,8 +25,8 @@ const initialState = fromJS({
   },
   adminTableListOptions: {
     sortInfo: {
-      order: 'ascend',
-      columnKey: 'name'
+      order: null,
+      columnKey: null
     },
     selectedRows: [],
     loading: false,

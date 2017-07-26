@@ -44,6 +44,15 @@ class AdminTableList extends React.Component {
     this.handleRowSelectionChange = this.handleRowSelectionChange.bind(this);
   }
 
+  componentWillUnmount() {
+    this.props.updateSortInfo({
+      order: null,
+      columnKey: null
+    });
+
+    this.props.updateSelectedRows([]);
+  }
+
   getColumnsBySortInfo(sortInfo) {
     return [{
       title: 'Name',
