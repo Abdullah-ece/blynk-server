@@ -51,12 +51,12 @@ class DeviceInfo extends React.Component {
       sameElse: 'hh:mm A, YYYY.MM.DD'
     }) : 'Not reported yet';
 
-    let lastOnlineTime = Number(disconnectTime) ? `Last online: ` + moment(Number(disconnectTime)).calendar(null, {
-        sameDay: '[Today], hh:mm A',
-        lastDay: '[Yesterday], hh:mm A',
-        lastWeek: 'dddd, hh:mm A',
-        sameElse: 'hh:mm A, YYYY.MM.DD'
-      }) : `Wasn't online yet`;
+    let lastOnlineTime = moment(Number(disconnectTime || 0)).calendar(null, {
+      sameDay: '[Today], hh:mm A',
+      lastDay: '[Yesterday], hh:mm A',
+      lastWeek: 'dddd, hh:mm A',
+      sameElse: 'hh:mm A, YYYY.MM.DD'
+    });
 
     return (
       <div className="device--device-info">
@@ -65,10 +65,13 @@ class DeviceInfo extends React.Component {
             <Fieldset>
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
-              { this.props.device.has('status') && this.props.device.get('status') === 'OFFLINE' && (
-                <i> ({ lastOnlineTime })</i>
-              )}
             </Fieldset>
+            { !!Number(disconnectTime) && this.props.device.get('status') === 'OFFLINE' && (
+              <Fieldset>
+                <Fieldset.Legend>Last Online</Fieldset.Legend>
+                { lastOnlineTime }
+              </Fieldset>
+            )}
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
               <DeviceAuthToken authToken={this.props.device.get('token')}/>
