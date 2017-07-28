@@ -208,6 +208,12 @@ CREATE TABLE reporting_events (
 );
 CREATE INDEX reporting_events_main_idx ON reporting_events (device_id, type, ts);
 
+CREATE TABLE reporting_events_last_seen (
+  device_id int4,
+  email text,
+  ts timestamp without time zone default (now() at time zone 'utc'),
+  PRIMARY KEY(device_id, email)
+);
 
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;

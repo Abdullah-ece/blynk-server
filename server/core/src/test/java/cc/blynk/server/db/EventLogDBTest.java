@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 import static org.junit.Assert.*;
 
 /**
@@ -43,6 +44,43 @@ public class EventLogDBTest {
     public void cleanAll() throws Exception {
         //clean everything just in case
         dbManager.executeSQL("DELETE FROM reporting_events");
+        dbManager.executeSQL("DELETE FROM reporting_events_last_seen");
+    }
+
+    @Test
+    public void upsertLastSeen() throws Exception {
+        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+
+        long ts = 0;
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from reporting_events_last_seen")) {
+
+            while (rs.next()) {
+                assertEquals(1, rs.getInt("device_id"));
+                assertEquals("test@blynk.cc", rs.getString("email"));
+                ts = rs.getTimestamp("ts", UTC_CALENDAR).getTime();
+                assertEquals(System.currentTimeMillis(), ts, 10000);
+            }
+
+            connection.commit();
+        }
+
+        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from reporting_events_last_seen")) {
+
+            while (rs.next()) {
+                assertEquals(1, rs.getInt("device_id"));
+                assertEquals("test@blynk.cc", rs.getString("email"));
+                long newTs = rs.getTimestamp("ts", UTC_CALENDAR).getTime();
+                assertEquals(System.currentTimeMillis(), newTs, 10000);
+                assertNotEquals(ts, newTs);
+            }
+
+            connection.commit();
+        }
     }
 
     @Test
@@ -183,7 +221,7 @@ public class EventLogDBTest {
     }
 
     @Test
-    public void selectEventsSinceLastLogin() throws Exception {
+    public void selectEventsSinceLastView() throws Exception {
         long now = System.currentTimeMillis();
         String eventCode = "something";
         LogEvent logEvent;
@@ -192,12 +230,10 @@ public class EventLogDBTest {
         dbManager.eventDBDao.insert(logEvent);
         logEvent = new LogEvent(1, EventType.INFORMATION, now + 1, eventCode.hashCode(), null);
         dbManager.eventDBDao.insert(logEvent);
-
         logEvent = new LogEvent(2, EventType.INFORMATION, now + 2, eventCode.hashCode(), null);
         dbManager.eventDBDao.insert(logEvent);
 
-
-        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now - 1);
+        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(2, lastViewEvents.size());
 
         Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
@@ -205,21 +241,40 @@ public class EventLogDBTest {
 
         lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
+    }
 
-        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now);
-        assertEquals(2, lastViewEvents.size());
+    @Test
+    public void selectEventsSinceLastViewAndViewRecords() throws Exception {
+        long now = System.currentTimeMillis();
+        String eventCode = "something";
+        LogEvent logEvent;
 
-        lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
-        assertEquals(1, lastView.intValue());
+        logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
+        dbManager.eventDBDao.insert(logEvent);
 
-        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
-        assertEquals(1, lastView.intValue());
-
-        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastLogin(now + 1);
+        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(1, lastViewEvents.size());
 
-        lastView = lastViewEvents.get(new LogEventCountKey(2, EventType.INFORMATION, false));
+        Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
+
+        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+
+        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        assertEquals(1, lastViewEvents.size());
+
+        dbManager.eventDBDao.upsertLastSeen(1, "pupkin@blynk.cc");
+
+        //0 because last view is later than event itself
+        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        assertEquals(0, lastViewEvents.size());
+
+        //new event comes after "last view", so expecting it
+        logEvent = new LogEvent(1, EventType.INFORMATION, System.currentTimeMillis(), eventCode.hashCode(), null);
+        dbManager.eventDBDao.insert(logEvent);
+
+        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        assertEquals(1, lastViewEvents.size());
     }
 
 

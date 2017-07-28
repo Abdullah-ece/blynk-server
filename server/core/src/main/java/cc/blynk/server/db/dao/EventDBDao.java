@@ -36,8 +36,17 @@ public class EventDBDao {
     private static final String selectEventsTypeAndResolvedFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
     private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
 
-    private static final String selectEventsCountSinceLastView = "select device_id, type, count(*) from reporting_events where ts > ? and is_resolved = false group by device_id, type";
+    private static final String selectEventsCountSinceLastView =
+            "select ev.device_id, ev.type, count(*) " +
+            "from reporting_events ev LEFT JOIN reporting_events_last_seen ls " +
+            "ON (ev.device_id = ls.device_id and ls.email=?) " +
+            "where ls.ts IS NULL OR ev.ts > ls.ts and " +
+                  "ev.is_resolved = false " +
+            "group by ev.device_id, ev.type";
+
     private static final String selectEventsCountTotalForPeriod = "select type, is_resolved, count(*) from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
+
+    private static final String upsertLastSeen = "INSERT INTO reporting_events_last_seen (device_id, email) VALUES (?, ?) ON CONFLICT (device_id, email) DO UPDATE SET ts = NOW() at time zone 'utc'";
 
     private final HikariDataSource ds;
 
@@ -45,30 +54,28 @@ public class EventDBDao {
         this.ds = ds;
     }
 
-    public Map<LogEventCountKey, Integer> getEventsSinceLastLogin(long lastViewTs) throws Exception {
-        ResultSet rs = null;
+    public Map<LogEventCountKey, Integer> getEventsSinceLastView(String email) throws Exception {
         Map<LogEventCountKey, Integer> events = new HashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectEventsCountSinceLastView)) {
 
-            statement.setTimestamp(1, new Timestamp(lastViewTs), UTC_CALENDAR);
+            statement.setString(1, email);
 
-            rs = statement.executeQuery();
+            log.debug(statement);
 
-            while (rs.next()) {
-                LogEventCountKey logEvent = new LogEventCountKey(
-                        rs.getInt("device_id"),
-                        EventType.values()[rs.getInt("type")],
-                        false
-                );
-                events.put(logEvent, rs.getInt("count"));
-            }
+            try (ResultSet rs = statement.executeQuery()) {
 
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                while (rs.next()) {
+                    LogEventCountKey logEvent = new LogEventCountKey(
+                            rs.getInt("device_id"),
+                            EventType.values()[rs.getInt("type")],
+                            false
+                    );
+                    events.put(logEvent, rs.getInt("count"));
+                }
+
+                connection.commit();
             }
         }
 
@@ -76,7 +83,6 @@ public class EventDBDao {
     }
 
     public Map<LogEventCountKey, Integer> getEventsTotalCounters(long from, long to, int deviceId) throws Exception {
-        ResultSet rs = null;
         Map<LogEventCountKey, Integer> events = new HashMap<>();
 
         try (Connection connection = ds.getConnection();
@@ -86,21 +92,17 @@ public class EventDBDao {
             statement.setTimestamp(2, new Timestamp(to), UTC_CALENDAR);
             statement.setInt(3, deviceId);
 
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LogEventCountKey logEvent = new LogEventCountKey(
+                            deviceId,
+                            EventType.values()[rs.getInt("type")],
+                            rs.getBoolean("is_resolved")
+                    );
+                    events.put(logEvent, rs.getInt("count"));
+                }
 
-            while (rs.next()) {
-                LogEventCountKey logEvent = new LogEventCountKey(
-                        deviceId,
-                        EventType.values()[rs.getInt("type")],
-                        rs.getBoolean("is_resolved")
-                );
-                events.put(logEvent, rs.getInt("count"));
-            }
-
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                connection.commit();
             }
         }
 
@@ -108,7 +110,6 @@ public class EventDBDao {
     }
 
     public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
-        ResultSet rs = null;
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -122,17 +123,13 @@ public class EventDBDao {
             statement.setInt(6, offset);
             statement.setInt(7, limit);
 
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LogEvent logEvent = readEvent(rs);
+                    events.add(logEvent);
+                }
 
-            while (rs.next()) {
-                LogEvent logEvent = readEvent(rs);
-                events.add(logEvent);
-            }
-
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                connection.commit();
             }
         }
 
@@ -140,7 +137,6 @@ public class EventDBDao {
     }
 
     public List<LogEvent> getEvents(int deviceId, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
-        ResultSet rs = null;
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -153,17 +149,13 @@ public class EventDBDao {
             statement.setInt(5, offset);
             statement.setInt(6, limit);
 
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LogEvent logEvent = readEvent(rs);
+                    events.add(logEvent);
+                }
 
-            while (rs.next()) {
-                LogEvent logEvent = readEvent(rs);
-                events.add(logEvent);
-            }
-
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                connection.commit();
             }
         }
 
@@ -171,7 +163,6 @@ public class EventDBDao {
     }
 
     public List<LogEvent> getEvents(int deviceId, long from, long to, int offset, int limit) throws Exception {
-        ResultSet rs = null;
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -183,17 +174,13 @@ public class EventDBDao {
             statement.setInt(4, offset);
             statement.setInt(5, limit);
 
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LogEvent logEvent = readEvent(rs);
+                    events.add(logEvent);
+                }
 
-            while (rs.next()) {
-                LogEvent logEvent = readEvent(rs);
-                events.add(logEvent);
-            }
-
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                connection.commit();
             }
         }
 
@@ -201,7 +188,6 @@ public class EventDBDao {
     }
 
     public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to, int offset, int limit) throws Exception {
-        ResultSet rs = null;
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -214,17 +200,13 @@ public class EventDBDao {
             statement.setInt(5, offset);
             statement.setInt(6, limit);
 
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LogEvent logEvent = readEvent(rs);
+                    events.add(logEvent);
+                }
 
-            while (rs.next()) {
-                LogEvent logEvent = readEvent(rs);
-                events.add(logEvent);
-            }
-
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                connection.commit();
             }
         }
 
@@ -273,6 +255,18 @@ public class EventDBDao {
             ps.setBoolean(6, isResolved);
 
             ps.executeUpdate();
+            connection.commit();
+        }
+    }
+
+    public void upsertLastSeen(int deviceId, String email) throws Exception {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(upsertLastSeen)) {
+
+            ps.setInt(1, deviceId);
+            ps.setString(2, email);
+            ps.executeUpdate();
+
             connection.commit();
         }
     }

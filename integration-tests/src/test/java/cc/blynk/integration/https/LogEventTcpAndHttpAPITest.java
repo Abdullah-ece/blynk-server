@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebComment;
+import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
@@ -575,6 +576,67 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(1, logEvents[0].deviceId);
             assertEquals(EventType.OFFLINE, logEvents[0].eventType);
             assertFalse(logEvents[0].isResolved);
+        }
+    }
+
+    @Test
+    public void testBasicLogEventFlowWithLastView() throws Exception {
+        String token = createProductAndDevice();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+            WebDevice device = devices[1];
+            assertEquals(1, device.id);
+            assertNotNull(device.criticalSinceLastView);
+            assertEquals(1, device.criticalSinceLastView.intValue());
+            assertNull(device.warningSinceLastView);
+        }
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+            WebDevice device = devices[1];
+            assertEquals(1, device.id);
+            assertNull(device.criticalSinceLastView);
+            assertNull(device.warningSinceLastView);
         }
     }
 

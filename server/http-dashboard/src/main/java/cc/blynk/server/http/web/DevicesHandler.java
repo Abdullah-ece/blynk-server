@@ -162,9 +162,8 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                List<WebDevice> result = joinEventsCountSinceLastView(devices, user.lastViewTs);
+                List<WebDevice> result = joinEventsCountSinceLastView(devices, user.email);
                 response = ok(sort(result, orderField, order));
-                user.lastViewTs = System.currentTimeMillis();
             } catch (Exception e){
                 log.error("Error getting counters for devices.", e);
                 response = serverError("Error getting counters for devices.");
@@ -181,9 +180,9 @@ public class DevicesHandler extends BaseHttpHandler {
         return new WebDevice(device, product, orgName);
     }
 
-    private List<WebDevice> joinEventsCountSinceLastView(Collection<Device> devices, long lastViewTs) throws Exception {
+    private List<WebDevice> joinEventsCountSinceLastView(Collection<Device> devices, String email) throws Exception {
         List<WebDevice> result = new ArrayList<>(devices.size());
-        Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastLogin(lastViewTs);
+        Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastView(email);
         for (Device device : devices) {
             Product product = organizationDao.getProductByIdOrNull(device.productId);
             result.add(new WebDevice(device, product, counters));
@@ -253,7 +252,8 @@ public class DevicesHandler extends BaseHttpHandler {
                                       @QueryParam("limit") int limit) {
 
         Device device = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(getUser(ctx), device);
+        User user = getUser(ctx);
+        verifyUserAccessToDevice(user, device);
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);
 
@@ -273,6 +273,8 @@ public class DevicesHandler extends BaseHttpHandler {
                         eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
                     }
                 }
+
+                dbManager.eventDBDao.upsertLastSeen(deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);

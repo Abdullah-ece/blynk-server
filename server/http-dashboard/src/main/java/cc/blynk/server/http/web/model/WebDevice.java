@@ -19,29 +19,29 @@ import java.util.Map;
  */
 public class WebDevice {
 
-    public final int id;
+    public int id;
 
-    public final int productId;
+    public int productId;
 
-    public final String name;
+    public String name;
 
-    public final String boardType;
+    public String boardType;
 
-    public final String token;
+    public String token;
 
-    public final ConnectionType connectionType;
+    public ConnectionType connectionType;
 
-    public final Status status;
+    public Status status;
 
-    public final long createdAt;
+    public long createdAt;
 
-    public final long disconnectTime;
+    public long disconnectTime;
 
-    public final String lastLoggedIP;
+    public String lastLoggedIP;
 
-    public final long dataReceivedAt;
+    public long dataReceivedAt;
 
-    public final MetaField[] metaFields;
+    public MetaField[] metaFields;
 
     public String productName;
 
@@ -52,6 +52,9 @@ public class WebDevice {
     public Integer criticalSinceLastView;
 
     public Integer warningSinceLastView;
+
+    public WebDevice() {
+    }
 
     private WebDevice(Device device, Product product) {
         this.id = device.id;
