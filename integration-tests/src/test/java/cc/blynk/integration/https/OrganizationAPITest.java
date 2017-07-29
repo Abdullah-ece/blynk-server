@@ -478,12 +478,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void regularAdminCantDeleteOtherOrganization() throws Exception {
         createOrganization();
 
-        //we don't need cookie from initial login here
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
-        CloseableHttpClient newHttpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
+        CloseableHttpClient newHttpClient = newHttpClient();
 
         login(newHttpClient,  httpsAdminServerUrl, regularAdmin.email, regularAdmin.pass);
 

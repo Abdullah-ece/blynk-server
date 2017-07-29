@@ -162,6 +162,14 @@ public abstract class APIBaseTest extends BaseTest {
         }
     }
 
+    public CloseableHttpClient newHttpClient() throws Exception {
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
+        return HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+    }
+
     protected class MyHostVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String s, SSLSession sslSession) {
