@@ -15,7 +15,10 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.product.Event;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -25,12 +28,13 @@ import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
@@ -38,8 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Base64;
 
-import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.core.http.Response.redirect;
+import static cc.blynk.core.http.Response.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -58,22 +61,20 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
+    private final DBManager dbManager;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.tokenManager, holder.sessionDao, holder.blockingIOProcessor,
-                holder.mailWrapper, holder.gcmWrapper, holder.reportingDao,
-                holder.stats, holder.eventorProcessor);
-    }
-
-    private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
-                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
-                         GlobalStats globalStats, EventorProcessor eventorProcessor) {
-        super(tokenManager, sessionDao, globalStats, "");
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.mailWrapper = mailWrapper;
-        this.gcmWrapper = gcmWrapper;
-        this.reportingDao = reportingDao;
-        this.eventorProcessor = eventorProcessor;
+        super(holder.tokenManager, holder.sessionDao, holder.stats, "");
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.mailWrapper = holder.mailWrapper;
+        this.gcmWrapper = holder.gcmWrapper;
+        this.reportingDao = holder.reportingDao;
+        this.eventorProcessor = holder.eventorProcessor;
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
+        this.dbManager = holder.dbManager;
     }
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
@@ -90,11 +91,59 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     }
 
     @GET
+    @Path("{token}/logEvent")
+    public Response logEvent(@Context ChannelHandlerContext ctx,
+                             @PathParam("token") String token,
+                             @QueryParam("code") String eventCode,
+                             @QueryParam("description") String description) {
+
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+
+        Device device = deviceDao.getById(tokenValue.deviceId);
+        if (device == null) {
+            log.error("Device with id {} not exists!", tokenValue.deviceId);
+            return (badRequest("Device not exists."));
+        }
+
+        Product product = organizationDao.getProductByIdOrNull(device.productId);
+        if (product == null) {
+            log.error("Product with id {} not exists.", device.productId);
+            return (badRequest("Product not exists for device."));
+        }
+
+        if (eventCode == null) {
+            log.error("Event code is not provided.");
+            return (badRequest("Event code is not provided."));
+        }
+
+        Event event = product.findEventByCode(eventCode.hashCode());
+
+        if (event == null) {
+            log.error("Event with code {} not found in product {}.", eventCode, product.id);
+            return badRequest("Event with code not found in product.");
+        }
+
+        blockingIOProcessor.executeDB(() -> {
+            try {
+                long now = System.currentTimeMillis();
+                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
+                device.dataReceivedAt = now;
+                ctx.writeAndFlush(ok(), ctx.voidPromise());
+            } catch (Exception e) {
+                log.error("Error inserting log event.", e);
+                ctx.writeAndFlush(serverError("Error inserting log event."), ctx.voidPromise());
+            }
+        });
+
+        return null;
+    }
+
+    @GET
     @Path("{token}/project")
     public Response getDashboard(@PathParam("token") String token) {
         globalStats.mark(HTTP_GET_PROJECT);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -114,7 +163,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response isHardwareConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -135,7 +184,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response isAppConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_APP_CONNECTED);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -167,7 +216,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         globalStats.mark(HTTP_GET_PIN_DATA);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -210,7 +259,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response getWidgetPinData(@PathParam("token") String token) {
         globalStats.mark(HTTP_GET_PIN_DATA);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -239,7 +288,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response getQR(@PathParam("token") String token) {
         globalStats.mark(HTTP_QR);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -268,7 +317,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
                                       @PathParam("pin") String pinString) {
         globalStats.mark(HTTP_GET_HISTORY_DATA);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -317,7 +366,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No properties for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -429,7 +478,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -494,7 +543,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -551,7 +600,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         globalStats.mark(HTTP_NOTIFY);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -598,7 +647,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         globalStats.mark(HTTP_EMAIL);
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);

@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.web.model.WebComment;
 import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
@@ -23,6 +24,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
+    private BaseServer httpServer;
     private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
@@ -52,6 +55,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareServer(holder).start();
         this.appServer = new AppServer(holder).start();
+        this.httpServer = new HttpAPIServer(holder, false).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
@@ -63,6 +67,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         super.shutdown();
         this.appServer.close();
         this.hardwareServer.close();
+        this.httpServer.close();
         this.clientPair.stop();
     }
 
@@ -99,6 +104,44 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("This is my description", logEvents[0].description);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(timeLineResponse));
+        }
+    }
+
+    @Test
+    public void testLogEventViaHttpApi() throws Exception {
+        String token = createProductAndDevice();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionReuseStrategy((response, context) -> true)
+                .setKeepAliveStrategy((response, context) -> 10000000).build();
+
+        String baseUrl = String.format("http://localhost:%s/", httpPort);
+
+        HttpGet insertEvent = new HttpGet(baseUrl + token + "/logEvent?code=temp_is_high");
+        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
         }
     }
 

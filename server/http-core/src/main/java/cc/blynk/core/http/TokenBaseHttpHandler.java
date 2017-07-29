@@ -32,7 +32,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        TokenValue tokenValue = tokenManager.getUserByToken(tokenPathParam);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(tokenPathParam);
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());
@@ -42,14 +42,19 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), handler.invoke(params)));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), handler, params));
         } else {
-            completeLogin(ctx.channel(), handler.invoke(params));
+            completeLogin(ctx.channel(), handler, params);
         }
     }
 
-    private void completeLogin(Channel channel, FullHttpResponse response) {
-        channel.writeAndFlush(response);
+    private void completeLogin(Channel channel, Handler handler, Object[] params) {
         log.debug("Re registering http channel finished.");
+
+        FullHttpResponse response = handler.invoke(params);
+        if (response != null) {
+            log.trace("Sending response {}", response);
+            channel.writeAndFlush(response);
+        }
     }
 }

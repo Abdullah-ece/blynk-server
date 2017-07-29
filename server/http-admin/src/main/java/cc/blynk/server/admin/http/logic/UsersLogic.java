@@ -90,7 +90,7 @@ public class UsersLogic extends BaseHttpHandler {
     @GET
     @Path("/token/assign")
     public Response assignToken(@QueryParam("old") String oldToken, @QueryParam("new") String newToken) {
-        TokenValue tokenValue = tokenManager.getUserByToken(oldToken);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(oldToken);
 
         if (tokenValue == null) {
             return badRequest("This token not exists.");
