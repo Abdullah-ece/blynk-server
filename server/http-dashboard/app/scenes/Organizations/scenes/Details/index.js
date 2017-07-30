@@ -1,8 +1,6 @@
 import React                from 'react';
 import {MainLayout}         from 'components';
 import {connect}            from 'react-redux';
-import {Roles}              from 'services/Roles';
-import {Manage}             from 'services/Organizations';
 import {ProductsFetch}      from 'data/Product/api';
 import {
   Button,
@@ -17,9 +15,8 @@ import {
   fromJS
 }                           from 'immutable';
 import {bindActionCreators} from 'redux';
-import {reset, SubmissionError}              from 'redux-form';
+import {reset}              from 'redux-form';
 import {
-  OrganizationsManageUsersFetch,
   OrganizationsDetailsUpdate,
   OrganizationsFetch,
   OrganizationsUsersFetch,
@@ -33,9 +30,10 @@ import {
 
 import {
   Info,
-  Products,
-  Admins
+  Products
 }                           from './components';
+
+import AdminsEditScene from "../AdminsEdit";
 
 const {TabPane} = Tabs;
 
@@ -44,6 +42,7 @@ import './styles.less';
 @connect((state) => ({
   list: state.Organizations.get('list') || null,
   details: state.Organizations.get('details'),
+  admins: state.Organizations.get('adminsEdit') || null,
 }), (dispatch) => ({
   resetForm: bindActionCreators(reset, dispatch),
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
@@ -53,7 +52,6 @@ import './styles.less';
   OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
-  OrganizationsManageUsersFetch: bindActionCreators(OrganizationsManageUsersFetch, dispatch),
 }))
 class Details extends React.Component {
 
@@ -63,6 +61,7 @@ class Details extends React.Component {
 
   static propTypes = {
     list: PropTypes.instanceOf(List),
+    admins: PropTypes.instanceOf(Map),
     details: PropTypes.instanceOf(Map),
 
     params: PropTypes.object,
@@ -75,17 +74,13 @@ class Details extends React.Component {
     OrganizationsUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
-    OrganizationsManageUsersFetch: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    this.handleAddAdmin = this.handleAddAdmin.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
-    this.handleUsersDelete = this.handleUsersDelete.bind(this);
     this.handleOrganizationEdit = this.handleOrganizationEdit.bind(this);
-    this.handleUserInviteSuccess = this.handleUserInviteSuccess.bind(this);
     this.handleOrganizationDelete = this.handleOrganizationDelete.bind(this);
   }
 
@@ -128,7 +123,7 @@ class Details extends React.Component {
     return Promise.all([
       this.props.OrganizationsFetch(),
       this.props.fetchProducts(),
-      this.props.OrganizationsManageUsersFetch({id: this.props.params.id})
+      this.props.OrganizationsUsersFetch({id: this.props.params.id})
     ]).then(() => {
       setTimeout(() => {
         this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', false));
@@ -173,65 +168,10 @@ class Details extends React.Component {
     });
   }
 
-  handleUsersDelete(ids) {
-    this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', true));
-    return new Promise((resolve) => {
-      this.props.OrganizationUsersDelete(this.props.params.id, ids).then(() => {
-        this.props.OrganizationsUsersFetch({
-          id: this.props.params.id
-        }).then(() => {
-          this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', false));
-          resolve(true);
-        });
-      });
-    });
-  }
-
-  handleAddAdmin(user) {
-    this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', true));
-
-    return (new Promise((resolve, reject) => {
-      this.props.OrganizationSendInvite({
-        id: this.props.params.id,
-        email: user.email,
-        name: user.name,
-        role: Roles.ADMIN.value
-      }).then(() => {
-        this.props.OrganizationsUsersFetch({
-          id: this.props.params.id
-        }).then(() => {
-          this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
-
-          resolve();
-        });
-      }).catch((response) => {
-        const data = response.error.response.data;
-
-        this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
-
-        reject(data);
-      });
-    })).catch((data) => {
-
-      if (data && data.error && data.error.message) {
-        throw new SubmissionError({'email': data.error.message});
-      } else {
-        message.error(data && data.error && data.error.message || 'Cannot invite user');
-        throw new SubmissionError();
-      }
-
-    });
-  }
-
   handleTabChange(tab) {
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', tab)
     );
-  }
-
-  handleUserInviteSuccess() {
-    message.success('Invite has been sent');
-    this.props.resetForm(Manage.ADMIN_INVITE_FORM_NAME);
   }
 
   render() {
@@ -239,7 +179,7 @@ class Details extends React.Component {
     if (!this.props.list)
       return null;
 
-    if (!this.props.details.get('users'))
+    if (!this.props.admins.get('users'))
       return null;
 
     const organization = this.props.list.find(org => org.get('id') === Number(this.props.params.id));
@@ -281,12 +221,7 @@ class Details extends React.Component {
             <TabPane tab="Admins"
                      key={this.TABS.ADMINS}>
               <div className="organizations-manage-tab-wrapper">
-                <Admins onUsersDelete={this.handleUsersDelete}
-                        onUserAdd={this.handleAddAdmin}
-                        onUserInviteSuccess={this.handleUserInviteSuccess}
-                        userDeleteLoading={this.props.details.get('userDeleteLoading')}
-                        userInviteLoading={this.props.details.get('userInviteLoading')}
-                        users={this.props.details.get('users').filter(user => user.get('role') === Roles.ADMIN.value)}/>
+                <AdminsEditScene params={this.props.params}/>
               </div>
             </TabPane>
           </Tabs>

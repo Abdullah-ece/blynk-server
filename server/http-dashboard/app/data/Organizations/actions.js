@@ -30,6 +30,20 @@ export function OrganizationsDetailsUpdate(details) {
   };
 }
 
+export function OrganizationsAdminsInviteLoadingToggle(state) {
+  return {
+    type: 'ORGANIZATIONS_ADMINS_INVITE_LOADING_TOGGLE',
+    value: state
+  };
+}
+
+export function OrganizationsAdminsDeleteLoadingToggle(state) {
+  return {
+    type: 'ORGANIZATIONS_ADMINS_DELETE_LOADING_TOGGLE',
+    value: state
+  };
+}
+
 export function OrganizationsManageSetActiveTab(tab) {
   return {
     type: 'ORGANIZATIONS_MANAGE_SET_ACTIVE_TAB',
@@ -78,20 +92,6 @@ export function OrganizationsUsersFetch(data) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATIONS_USERS_FETCH',
-    payload: {
-      request: {
-        method: 'get',
-        url: `/organization/${data.id}/users`
-      }
-    }
-  };
-}
-
-export function OrganizationsManageUsersFetch(data) {
-  if (!data.id)
-    throw Error('Organization id is not specified');
-  return {
-    type: 'API_ORGANIZATIONS_MANAGE_USERS_FETCH',
     payload: {
       request: {
         method: 'get',

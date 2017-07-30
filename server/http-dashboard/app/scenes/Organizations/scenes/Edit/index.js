@@ -1,12 +1,7 @@
 import React                  from 'react';
 import {connect}              from 'react-redux';
 import {bindActionCreators}   from 'redux';
-import {Roles}                from 'services/Roles';
 import {
-  message
-}                             from 'antd';
-import {
-  Admins,
   Products
 }                             from '../Details/components';
 import {
@@ -16,7 +11,6 @@ import {
   submit,
   getFormValues,
   registerField,
-  SubmissionError,
   reset
 }                             from 'redux-form';
 import {Map, List, fromJS}    from 'immutable';
@@ -30,8 +24,8 @@ import {
   OrganizationsCreate,
   OrganizationsFetch,
   OrganizationsUpdate,
-  OrganizationsDetailsUpdate,
-  OrganizationsManageUsersFetch
+  OrganizationsUsersFetch,
+  OrganizationsDetailsUpdate
 }                             from 'data/Organizations/actions';
 
 import {
@@ -43,9 +37,11 @@ import {
 import {
   Edit as OrganizationEdit
 }                             from 'scenes/Organizations/components';
+import AdminsEditScene from "../AdminsEdit/index";
 
 @connect((state) => ({
   list: state.Organizations.get('list'),
+  admins: state.Organizations.get('adminsEdit'),
   manage: state.Organizations.get('manage'),
   products: fromJS(state.Product.products),
   details: fromJS(state.Organizations.get('details')),
@@ -65,9 +61,9 @@ import {
   OrganizationsUpdate: bindActionCreators(OrganizationsUpdate, dispatch),
   OrganizationsCreate: bindActionCreators(OrganizationsCreate, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
+  OrganizationsUsersFetch: bindActionCreators(OrganizationsUsersFetch, dispatch),
   OrganizationUsersDelete: bindActionCreators(OrganizationUsersDelete, dispatch),
   OrganizationsDetailsUpdate: bindActionCreators(OrganizationsDetailsUpdate, dispatch),
-  OrganizationsManageUsersFetch: bindActionCreators(OrganizationsManageUsersFetch, dispatch),
 }))
 class Edit extends React.Component {
 
@@ -89,14 +85,15 @@ class Edit extends React.Component {
     OrganizationsCreate: PropTypes.func,
     OrganizationsUpdate: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
-    OrganizationsManageUsersFetch: PropTypes.func,
+    OrganizationsUsersFetch: PropTypes.func,
     OrganizationUsersDelete: PropTypes.func,
     OrganizationsDetailsUpdate: PropTypes.func,
 
     params: PropTypes.object,
 
-    details: PropTypes.instanceOf(Map),
+    admins: PropTypes.instanceOf(Map),
     manage: PropTypes.instanceOf(Map),
+    details: PropTypes.instanceOf(Map),
     formErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map),
 
@@ -114,10 +111,6 @@ class Edit extends React.Component {
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleSubmitFail = this.handleSubmitFail.bind(this);
     this.handleSubmitSuccess = this.handleSubmitSuccess.bind(this);
-
-    this.handleAddAdmin = this.handleAddAdmin.bind(this);
-    this.handleUsersDelete = this.handleUsersDelete.bind(this);
-    this.handleUserInviteSuccess = this.handleUserInviteSuccess.bind(this);
   }
 
   componentWillMount() {
@@ -150,12 +143,12 @@ class Edit extends React.Component {
     };
 
     const loadUsers = () => {
-      if (!this.props.manage.getIn(['admins', 'list']))
-        return this.props.OrganizationsManageUsersFetch({
+      if (!this.props.admins.get('users'))
+        return this.props.OrganizationsUsersFetch({
           id: this.props.params.id
         });
 
-      return new Promise((resolve) => resolve(this.props.manage.getIn(['admins', 'list']).toJS()));
+      return new Promise((resolve) => resolve(this.props.admins.get('users').toJS()));
     };
 
     this.props.updateManage(this.props.manage.set('loading', true));
@@ -239,64 +232,9 @@ class Edit extends React.Component {
     });
   }
 
-  handleUsersDelete(ids) {
-    this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', true));
-    return new Promise((resolve) => {
-      this.props.OrganizationUsersDelete(this.props.params.id, ids).then(() => {
-        this.props.OrganizationsManageUsersFetch({
-          id: this.props.params.id
-        }).then(() => {
-          this.props.OrganizationsDetailsUpdate(this.props.details.set('userDeleteLoading', false));
-          resolve(true);
-        });
-      });
-    });
-  }
-
-  handleAddAdmin(user) {
-    this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', true));
-
-    return (new Promise((resolve, reject) => {
-      this.props.OrganizationSendInvite({
-        id: this.props.params.id,
-        email: user.email,
-        name: user.name,
-        role: Roles.ADMIN.value
-      }).then(() => {
-        this.props.OrganizationsManageUsersFetch({
-          id: this.props.params.id
-        }).then(() => {
-          this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
-
-          resolve();
-        });
-      }).catch((response) => {
-        const data = response.error.response.data;
-
-        this.props.OrganizationsDetailsUpdate(this.props.details.set('userInviteLoading', false));
-
-        reject(data);
-      });
-    })).catch((data) => {
-
-      if (data && data.error && data.error.message) {
-        throw new SubmissionError({'email': data.error.message});
-      } else {
-        message.error(data && data.error && data.error.message || 'Cannot invite user');
-        throw new SubmissionError();
-      }
-
-    });
-  }
-
-  handleUserInviteSuccess() {
-    message.success('Invite has been sent');
-    this.props.resetForm(Manage.ADMIN_INVITE_FORM_NAME);
-  }
-
   render() {
 
-    if (this.props.manage.get('loading') || !this.props.manage.getIn(['admins', 'list']))
+    if (this.props.manage.get('loading') || !this.props.admins.get('users'))
       return null;
 
     return (
@@ -308,17 +246,9 @@ class Edit extends React.Component {
         onSubmitSuccess={this.handleSubmitSuccess}
         onSubmitFail={this.handleSubmitFail}
         onCancel={this.handleCancel}
-        edit={true} // hardcoded to hide admins tab
         products={this.props.products}
         onTabChange={this.handleTabChange}
-        adminsComponent={<Admins
-          onUsersDelete={this.handleUsersDelete}
-          onUserAdd={this.handleAddAdmin}
-          onUserInviteSuccess={this.handleUserInviteSuccess}
-          userDeleteLoading={this.props.details.get('userDeleteLoading')}
-          userInviteLoading={this.props.details.get('userInviteLoading')}
-          users={this.props.manage.getIn(['admins', 'list']).filter(user => user.get('role') === Roles.ADMIN.value)}
-        />}
+        adminsComponent={<AdminsEditScene params={this.props.params}/>}
         productsComponent={<Products products={this.props.products}/>}
         activeTab={this.props.activeTab}
       />
