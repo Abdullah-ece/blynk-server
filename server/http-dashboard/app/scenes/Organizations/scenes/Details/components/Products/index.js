@@ -20,7 +20,7 @@ class Products extends React.Component {
                          noImageText="No Product Image"
                          name={product.get('name')}
                          link={`/product/${product.get('id')}`}
-                         devicesCount={product.get('devicesCount')}/>
+                         devicesCount={product.get('deviceCount')}/>
         ))}
 
         { (!this.props.products || !this.props.products.size) && (

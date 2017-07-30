@@ -49,7 +49,7 @@ class ProductSelectList extends React.Component {
                          lightOverlay={this.isAnyChecked()}
                          noImageText="No Product Image"
                          name={product.get('name')}
-                         devicesCount={product.get('devicesCount')}/>
+                         devicesCount={product.get('deviceCount')}/>
         ))}
       </MainList>
     );
