@@ -26,8 +26,6 @@ import static java.nio.file.StandardOpenOption.*;
 public class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
-    private static final int SIZE_OF_REPORT_ENTRY = 16;
-
     //reporting entry is long value (8 bytes) + timestamp (8 bytes)
     public static final int SIZE_OF_REPORT_ENTRY = 16;
 
