@@ -56,7 +56,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(webLoginHandler);
         pipeline.addLast(authCookieHandler);
 
-        pipeline.addLast(new UploadHandler(rootPath + "/upload"));
+        pipeline.addLast(new UploadHandler(rootPath));
         pipeline.addLast(accountHandler);
         pipeline.addLast(devicesHandler);
         pipeline.addLast(productHandler);

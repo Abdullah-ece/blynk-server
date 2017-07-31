@@ -40,10 +40,11 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
     private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
     private final String reqPath;
     private HttpPostRequestDecoder decoder;
+    private static final String UPLOAD_URL = "/upload";
 
-    public UploadHandler(String reqPath) {
+    public UploadHandler(String rootPath) {
         super(false);
-        this.reqPath = reqPath;
+        this.reqPath = rootPath + UPLOAD_URL;
     }
 
     @Override
