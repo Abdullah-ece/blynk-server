@@ -1,5 +1,5 @@
 import React from 'react';
-import {MetadataField} from 'components/Form';
+import {Item, Input} from 'components/UI';
 import Validation from 'services/Validation';
 
 class TextModal extends React.Component {
@@ -19,9 +19,20 @@ class TextModal extends React.Component {
 
     return (
       <div>
-        <MetadataField validateOnBlur={validateOnBlur}
-                       placeholder="Value" name="value"
-                       validate={validationRules}/>
+        { this.props.isDeviceOwner && (
+          <Item label="E-mail">
+            <Input validateOnBlur={validateOnBlur}
+                   placeholder='E-mail' name="value"
+                   validate={validationRules}/>
+          </Item>
+        )}
+
+        { !this.props.isDeviceOwner && (
+          <Input validateOnBlur={validateOnBlur}
+                 placeholder='Value' name="value"
+                 validate={validationRules}/>
+        )}
+
       </div>
     );
   }
