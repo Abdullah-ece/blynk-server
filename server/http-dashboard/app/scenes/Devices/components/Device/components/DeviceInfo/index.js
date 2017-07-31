@@ -112,6 +112,7 @@ class DeviceInfo extends React.Component {
                   };
 
                   const props = {
+                    form: form,
                     data: field,
                     onChange: this.onChange.bind(this)
                   };

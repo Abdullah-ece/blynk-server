@@ -26,7 +26,7 @@ class Field extends React.Component {
 
   componentWillUpdate(nextProps) {
     if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
-      // this.props.initialize(this.props.form, nextProps.initialValues);
+      this.props.initialize(this.props.form, nextProps.initialValues);
     }
   }
 
