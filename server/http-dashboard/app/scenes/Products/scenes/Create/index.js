@@ -174,8 +174,8 @@ class Create extends React.Component {
         orgId: this.props.orgId
       }).then(() => {
         this.context.router.push(`/products/?success=true`);
-      }).catch((err) => {
-        message.error(err.message || 'Cannot create product');
+      }).catch((response) => {
+        message.error(response && response.error && response.error.response.message || 'Cannot create product');
       });
 
     }

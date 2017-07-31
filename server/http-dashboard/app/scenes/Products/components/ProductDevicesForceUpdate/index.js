@@ -20,8 +20,15 @@ class ProductDeviceForceUpdate extends React.Component {
     product: React.PropTypes.object,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleSave = this.handleSave.bind(this);
+    this.handleSelectOption = this.handleSelectOption.bind(this);
+  }
+
   state = {
-    option: DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE
+    option: null
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -38,6 +45,14 @@ class ProductDeviceForceUpdate extends React.Component {
       return true;
 
     return false;
+  }
+
+  componentWillUpdate(nextProps) {
+    if (!nextProps.isModalVisible) {
+      this.setState({
+        option: null
+      });
+    }
   }
 
   handleSelectOption(event) {
@@ -64,8 +79,9 @@ class ProductDeviceForceUpdate extends React.Component {
              closable={false}
              footer={[
                <Button key="save" type="primary" size="default"
+                       disabled={!this.state.option}
                        loading={this.props.loading}
-                       onClick={this.handleSave.bind(this)}>
+                       onClick={this.handleSave}>
                  Continue
                </Button>,
                <Button key="cancel" type="default" size="default"
@@ -85,7 +101,7 @@ class ProductDeviceForceUpdate extends React.Component {
               How to apply changes?
             </div>
             <div className="product-device-force-update-option-options">
-              <Radio.Group value={this.state.option} onChange={this.handleSelectOption.bind(this)}>
+              <Radio.Group value={this.state.option} onChange={this.handleSelectOption}>
                 <Radio value={DEVICE_FORCE_UPDATE.UPDATE_DEVICES}>
                   Update {this.props.product.deviceCount} active { DevicesText }
                 </Radio>
