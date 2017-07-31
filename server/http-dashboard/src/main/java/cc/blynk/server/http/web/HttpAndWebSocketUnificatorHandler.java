@@ -6,7 +6,6 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelPipeline;
 
 /**
  * Utility handler used to define what protocol should be handled
@@ -35,7 +34,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         this.noMatchHandler = new NoMatchHandler();
 
-        //admin API handlers
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
@@ -51,19 +49,16 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     }
 
     private void initUserPipeline(ChannelHandlerContext ctx) {
-        ChannelPipeline pipeline = ctx.pipeline();
-
-        pipeline.addLast(webLoginHandler);
-        pipeline.addLast(authCookieHandler);
-
-        pipeline.addLast(new UploadHandler(rootPath));
-        pipeline.addLast(accountHandler);
-        pipeline.addLast(devicesHandler);
-        pipeline.addLast(productHandler);
-        pipeline.addLast(organizationHandler);
-
-        pipeline.addLast(noMatchHandler);
-        pipeline.remove(this);
+        ctx.pipeline()
+        .addLast(webLoginHandler)
+        .addLast(authCookieHandler)
+        .addLast(new UploadHandler(rootPath))
+        .addLast(accountHandler)
+        .addLast(devicesHandler)
+        .addLast(productHandler)
+        .addLast(organizationHandler)
+        .addLast(noMatchHandler)
+        .remove(this);
     }
 
     @Override
