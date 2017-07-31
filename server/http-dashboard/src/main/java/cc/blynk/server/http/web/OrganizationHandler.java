@@ -57,7 +57,8 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("server.host", "localhost");
         this.host = "https://" + host;
-        this.inviteURL = "https://" + host + rootPath + "#/invite?token=";
+        //todo fix "/dashboard"
+        this.inviteURL = "https://" + host + "/dashboard" + "/invite?token=";
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
     }

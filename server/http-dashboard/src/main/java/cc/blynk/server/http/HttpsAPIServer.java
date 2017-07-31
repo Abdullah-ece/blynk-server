@@ -5,8 +5,6 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
@@ -32,20 +30,15 @@ public class HttpsAPIServer extends BaseServer {
     public HttpsAPIServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
+        HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
+                new HttpAndWebSocketUnificatorHandler(holder, "/api");
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, rootPath);
-        final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
+        UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
-                new UrlMapper(rootPath, "/static/index.html"),
-                new UrlStartWithMapper("/dashboard#/invite", "/static/index.html"),
-                new UrlStartWithMapper("/dashboard#/resetPass", "/static/index.html"));
-        final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+                new UrlMapper("/", "/static/index.html"),
+                new UrlStartWithMapper("/dashboard", "/static/index.html"));
+        StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
-        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-
-        final HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -55,12 +48,10 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpsServerCodec", new HttpServerCodec())
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                 .addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
-                .addLast(letsEncryptHandler)
                 .addLast(new ChunkedWriteHandler())
                 .addLast(favIconUrlRewriter)
                 .addLast(staticFileHandler)
                 .addLast(new HttpContentCompressor())
-                .addLast(httpAPILogic)
                 .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };

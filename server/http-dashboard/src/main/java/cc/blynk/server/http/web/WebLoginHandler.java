@@ -55,7 +55,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         this.userDao = holder.userDao;
         this.organizationDao = holder.organizationDao;
 
-        this.resetURL = "https://" + holder.props.getProperty("server.host") + rootPath + "#/resetPass?token=";
+        this.resetURL = "https://" + holder.props.getProperty("server.host") + "/dashboard" + "/resetPass?token=";
         this.host = "https://" + holder.props.getProperty("server.host");
         this.mailWrapper = holder.mailWrapper;
         this.emailBody = FileLoaderUtil.readResetPassMailBody();

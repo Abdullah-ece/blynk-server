@@ -33,7 +33,7 @@ public class UploadAPITest extends APIBaseTest {
 
         String pathToImage = upload("logo.png");
 
-        HttpGet index = new HttpGet(httpsAdminServerUrl.replace("/dashboard", "") + pathToImage);
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -46,7 +46,7 @@ public class UploadAPITest extends APIBaseTest {
 
         String pathToImage = upload("logo with space in name.png");
 
-        HttpGet index = new HttpGet(httpsAdminServerUrl.replace("/dashboard", "") + pathToImage);
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort  + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -68,7 +68,7 @@ public class UploadAPITest extends APIBaseTest {
 
         post.setEntity(entity);
 
-        String staticPath = null;
+        String staticPath;
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             staticPath = consumeText(response);

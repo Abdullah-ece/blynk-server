@@ -53,7 +53,7 @@ public abstract class APIBaseTest extends BaseTest {
 
     @BeforeClass
     public static void initRootPath() {
-        rootPath = staticHolder.props.getProperty("admin.rootPath");
+        rootPath = "/api";
     }
 
     @Before

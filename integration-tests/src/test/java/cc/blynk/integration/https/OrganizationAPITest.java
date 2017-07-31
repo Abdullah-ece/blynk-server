@@ -206,9 +206,9 @@ public class OrganizationAPITest extends APIBaseTest {
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard" + "/invite?token="));
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/invite?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());

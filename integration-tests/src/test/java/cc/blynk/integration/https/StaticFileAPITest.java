@@ -19,7 +19,7 @@ public class StaticFileAPITest extends APIBaseTest {
 
     @Test
     public void getIndexPage() throws Exception {
-        httpsAdminServerUrl = httpsAdminServerUrl.replace("/dashboard", "");
+        httpsAdminServerUrl = httpsAdminServerUrl.replace("/api", "");
 
         HttpGet index = new HttpGet(httpsAdminServerUrl + "/static/index.html");
 

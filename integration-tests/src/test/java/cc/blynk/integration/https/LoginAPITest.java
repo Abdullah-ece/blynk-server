@@ -93,7 +93,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void adminLoginFlowSupport()  throws Exception {
-        HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
+        HttpGet loadLoginPageRequest = new HttpGet("https://localhost:" + httpsPort + "/dashboard");
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String loginPage = consumeText(response);
@@ -103,7 +103,7 @@ public class LoginAPITest extends APIBaseTest {
 
         login(admin.email, admin.pass);
 
-        HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
+        HttpGet loadAdminPage = new HttpGet("https://localhost:" + httpsPort + "/dashboard");
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String adminPage = consumeText(response);
@@ -141,7 +141,7 @@ public class LoginAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(logoutRequest)) {
             assertEquals(301, response.getStatusLine().getStatusCode());
             String location = response.getFirstHeader("location").getValue();
-            assertEquals("/dashboard", location);
+            assertEquals("/api", location);
             Header cookieHeader = response.getFirstHeader("set-cookie");
             assertNotNull(cookieHeader);
             String[] split = cookieHeader.getValue().split("=|;", 3);
@@ -214,26 +214,8 @@ public class LoginAPITest extends APIBaseTest {
     }
 
     @Test
-    public void testGetUserFromAdminPage() throws Exception {
-        login(admin.email, admin.pass);
-        String testUser = "dmitriy@blynk.cc";
-        String appName = "Blynk";
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            String jsonProfile = consumeText(response);
-            assertNotNull(jsonProfile);
-            User user = JsonParser.readAny(jsonProfile, User.class);
-            assertNotNull(user);
-            assertEquals(testUser, user.email);
-            assertNotNull(user.profile.dashBoards);
-        }
-    }
-
-    @Test
     public void testMakeRootPathRequest() throws Exception {
-        HttpGet request = new HttpGet(httpsAdminServerUrl);
+        HttpGet request = new HttpGet("https://localhost:" + httpsPort);
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -251,7 +233,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void getStaticFile() throws Exception {
-        HttpGet request = new HttpGet(httpsAdminServerUrl.replace(rootPath, "/static/index.html"));
+        HttpGet request = new HttpGet("https://localhost:" + httpsPort + "/static/index.html");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -260,20 +242,10 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void testGetFavIconHttp() throws Exception {
-        HttpGet request = new HttpGet(httpsAdminServerUrl.replaceAll("/dashboard", "") + "/favicon.ico");
+        HttpGet request = new HttpGet("https://localhost:" + httpsPort + "/favicon.ico");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-    }
-
-    @Test
-    public void testAssignNewTokenForNonExistingToken() throws Exception {
-        login(admin.email, admin.pass);
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=123&new=123");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 

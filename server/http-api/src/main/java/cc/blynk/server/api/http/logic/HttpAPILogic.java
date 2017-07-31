@@ -51,7 +51,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.12.15.
  */
-@Path("/")
+@Path("/api")
 @ChannelHandler.Sharable
 public class HttpAPILogic extends TokenBaseHttpHandler {
 

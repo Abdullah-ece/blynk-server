@@ -120,12 +120,12 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
     }
 
     @Test
     public void invitationLandingWorks() throws Exception {
-        HttpGet inviteGet = new HttpGet(httpsAdminServerUrl + "#/invite?token=123");
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=123");
 
         try (CloseableHttpResponse response = httpclient.execute(inviteGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -155,9 +155,9 @@ public class InvitationAPITest extends APIBaseTest {
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains(rootPath + "#/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/invite?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());

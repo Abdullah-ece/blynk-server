@@ -65,9 +65,9 @@ public class ResetPassAPITest extends APIBaseTest {
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(regularUser.email), eq("Reset your Blynk Inc. Dashboard password"), contains(rootPath + "#/resetPass?token="));
+        verify(mailWrapper).sendHtml(eq(regularUser.email), eq("Reset your Blynk Inc. Dashboard password"), contains("/dashboard" + "/resetPass?token="));
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/resetPass?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -125,9 +125,9 @@ public class ResetPassAPITest extends APIBaseTest {
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(admin.email), eq("Reset your Blynk Inc. Dashboard password"), contains(rootPath + "#/resetPass?token="));
+        verify(mailWrapper).sendHtml(eq(admin.email), eq("Reset your Blynk Inc. Dashboard password"), contains("/dashboard" + "/resetPass?token="));
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + rootPath + "#/resetPass?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/resetPass?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
