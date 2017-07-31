@@ -4,12 +4,13 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ServerProperties;
 import org.apache.commons.io.FileUtils;
@@ -92,7 +93,7 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("ddd\0+123@gmail.com", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(new BaseReportingKey("ddd\0+123@gmail.com", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
 
@@ -115,13 +116,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test2", AppName.BLYNK, 2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, ts);
+        AggregationKey aggregationKey3 = new AggregationKey(new BaseReportingKey("test2", AppName.BLYNK, 2, 0, PinType.ANALOG, (byte) 2), ts);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 
@@ -140,7 +141,7 @@ public class ReportingWorkerTest {
 
         assertTrue(map.isEmpty());
 
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(32, data.capacity());
@@ -154,7 +155,7 @@ public class ReportingWorkerTest {
         User user2 = new User();
         user2.email = "test2";
         user2.appName = AppName.BLYNK;
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY);
+        data = reportingDaoMock.getByteBufferFromDisk(user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -170,13 +171,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts - 2);
+        AggregationKey aggregationKey3 = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts - 2);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 
@@ -199,7 +200,7 @@ public class ReportingWorkerTest {
         user.appName = AppName.BLYNK;
 
         //take less
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -209,7 +210,7 @@ public class ReportingWorkerTest {
 
 
         //take more
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY);
+        data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(48, data.capacity());
@@ -233,13 +234,13 @@ public class ReportingWorkerTest {
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
-        AggregationKey aggregationKey2 = new AggregationKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts - 1);
+        AggregationKey aggregationKey2 = new AggregationKey(new BaseReportingKey("test", AppName.BLYNK, 1, 0, PinType.ANALOG, (byte) 1), ts - 1);
         AggregationValue aggregationValue2 = new AggregationValue();
         aggregationValue2.update(150.54);
-        AggregationKey aggregationKey3 = new AggregationKey("test2", AppName.BLYNK, 2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, ts);
+        AggregationKey aggregationKey3 = new AggregationKey(new BaseReportingKey("test2", AppName.BLYNK, 2, 0, PinType.ANALOG, (byte) 2), ts);
         AggregationValue aggregationValue3 = new AggregationValue();
         aggregationValue3.update(200);
 

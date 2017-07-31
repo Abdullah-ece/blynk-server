@@ -3,6 +3,7 @@ package cc.blynk.server.transport;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -29,17 +30,12 @@ public class TransportTypeHolder implements Closeable {
     public final Class<? extends ServerChannel> channelClass;
 
     public TransportTypeHolder(ServerProperties serverProperties) {
-        this(serverProperties.getBoolProperty("enable.native.epoll.transport"),
-                serverProperties.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors() * 2));
-
-        if (serverProperties.getBoolProperty("enable.native.openssl")) {
-            log.info("Using native openSSL provider.");
-        }
+        this(serverProperties.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors() * 2));
     }
 
-    private TransportTypeHolder(boolean enableNativeEpoll, int workerThreads) {
-        if (enableNativeEpoll) {
-            log.warn("Using native epoll transport.");
+    private TransportTypeHolder(int workerThreads) {
+        if (Epoll.isAvailable()) {
+            log.info("Using native epoll transport.");
             bossGroup = new EpollEventLoopGroup(1);
             workerGroup = new EpollEventLoopGroup(workerThreads);
             channelClass = EpollServerSocketChannel.class;

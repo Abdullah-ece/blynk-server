@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.utils.serialization.DashboardMixIn;
 import cc.blynk.utils.serialization.DeviceIgnoreMixIn;
 import cc.blynk.utils.serialization.NotificationIgnoreMixIn;
 import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
@@ -74,6 +75,7 @@ public final class JsonParser {
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
             .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
             .addMixIn(Device.class, DeviceIgnoreMixIn.class)
+            .addMixIn(DashBoard.class, DashboardMixIn.class)
             .writerFor(DashBoard.class);
 
     public static final ObjectWriter restrictiveWidgetWriter = init()

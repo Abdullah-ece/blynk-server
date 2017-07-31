@@ -44,6 +44,22 @@ public class BlynkByteBufUtil {
         return makeResponse(msgId, ILLEGAL_COMMAND);
     }
 
+    public static ByteBuf invalidToken(final int msgId) {
+        return makeResponse(msgId, INVALID_TOKEN);
+    }
+
+    public static ByteBuf alreadyRegistered(final int msgId) {
+        return makeResponse(msgId, USER_ALREADY_REGISTERED);
+    }
+
+    public static ByteBuf serverError(final int msgId) {
+        return makeResponse(msgId, SERVER_ERROR);
+    }
+
+    public static ByteBuf noData(final int msgId) {
+        return makeResponse(msgId, NO_DATA);
+    }
+
     public static ByteBuf ok(final int msgId) {
         return makeResponse(msgId, OK);
     }

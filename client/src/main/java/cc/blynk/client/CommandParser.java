@@ -35,6 +35,10 @@ public class CommandParser {
                 return LOGIN;
             case "getgraphdata" :
                 return GET_GRAPH_DATA;
+            case "getenhanceddata" :
+                return GET_ENHANCED_GRAPH_DATA;
+            case "deleteenhanceddata" :
+                return DELETE_ENHANCED_GRAPH_DATA;
             case "export" :
                 return EXPORT_GRAPH_DATA;
             case "activate" :
@@ -126,6 +130,10 @@ public class CommandParser {
                 return EMAIL_QR;
             case "updateface" :
                 return UPDATE_FACE;
+            case "getclonecode" :
+                return GET_CLONE_CODE;
+            case "getprojectbyclonecode" :
+                return GET_PROJECT_BY_CLONE_CODE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

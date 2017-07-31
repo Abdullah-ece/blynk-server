@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -26,6 +27,9 @@ public class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
     private static final int SIZE_OF_REPORT_ENTRY = 16;
+
+    //reporting entry is long value (8 bytes) + timestamp (8 bytes)
+    public static final int SIZE_OF_REPORT_ENTRY = 16;
 
     public static void deleteQuietly(Path path) {
         try {
@@ -69,17 +73,38 @@ public class FileUtils {
      *
      * @param userDataFile - file to read
      * @param count = number of records to read
+     *
      * @return - byte buffer with data
      * @throws IOException
      */
     public static ByteBuffer read(Path userDataFile, int count) throws IOException {
-        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
-            final int size = (int) Files.size(userDataFile);
-            final int dataSize = count * SIZE_OF_REPORT_ENTRY;
-            final int readDataSize = Math.min(dataSize, size);
+        return read(userDataFile, count, 0);
+    }
 
-            final ByteBuffer buf = ByteBuffer.allocate(readDataSize);
-            channel.position(Math.max(0, size - dataSize))
+    /**
+     * Read bunch of last records from file.
+     *
+     * @param userDataFile - file to read
+     * @param count - number of records to read
+     * @param skip - number of entries to skip from the end
+     *
+     * @return - byte buffer with data
+     * @throws IOException
+     */
+    public static ByteBuffer read(Path userDataFile, int count, int skip) throws IOException {
+        int size = (int) Files.size(userDataFile);
+        int expectedMinimumLength = (count + skip) * SIZE_OF_REPORT_ENTRY;
+        int diff = size - expectedMinimumLength;
+        int startReadIndex = Math.max(0, diff);
+        int bufferSize = diff < 0 ? count * SIZE_OF_REPORT_ENTRY + diff : count * SIZE_OF_REPORT_ENTRY;
+        if (bufferSize <= 0) {
+            return null;
+        }
+
+        ByteBuffer buf = ByteBuffer.allocate(bufferSize);
+
+        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
+            channel.position(startReadIndex)
                    .read(buf);
             return buf;
         }
@@ -90,7 +115,7 @@ public class FileUtils {
     }
 
     public static String getUserReportingDir(String email, String appName) {
-        if (appName.equals(AppName.BLYNK)) {
+        if (AppName.BLYNK.equals(appName)) {
             return email;
         }
         return email + "_" + appName;
@@ -98,5 +123,18 @@ public class FileUtils {
 
     public static String csvDownloadUrl(String host, String httpPort) {
         return "http://" + host + ":" + httpPort + "/";
+    }
+
+    public static File getLatestFile(File[] files) {
+        if (files == null || files.length ==0) {
+            return null;
+        }
+        File lastModifiedFile = files[0];
+        for (int i = 1; i < files.length; i++) {
+            if (lastModifiedFile.lastModified() < files[i].lastModified()) {
+                lastModifiedFile = files[i];
+            }
+        }
+        return lastModifiedFile;
     }
 }

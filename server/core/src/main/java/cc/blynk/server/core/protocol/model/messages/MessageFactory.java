@@ -43,6 +43,10 @@ public class MessageFactory {
                 return new RefreshTokenMessage(messageId, body);
             case GET_GRAPH_DATA :
                 return new GetGraphDataStringMessage(messageId, body);
+            case GET_ENHANCED_GRAPH_DATA :
+                return new GetEnhancedGraphDataStringMessage(messageId, body);
+            case DELETE_ENHANCED_GRAPH_DATA :
+                return new DeleteEnhancedGraphDataStringMessage(messageId, body);
             case EXPORT_GRAPH_DATA :
                 return new ExportDataMessage(messageId, body);
             case SET_WIDGET_PROPERTY :
@@ -142,6 +146,10 @@ public class MessageFactory {
                 return new EmailQRsMessage(messageId, body);
             case UPDATE_FACE :
                 return new UpdateFaceMessage(messageId, body);
+            case GET_CLONE_CODE :
+                return new GetCloneCodeMessage(messageId, body);
+            case GET_PROJECT_BY_CLONE_CODE :
+                return new GetProjectByCloneCodeStringMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

@@ -5,6 +5,8 @@ import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
@@ -28,6 +30,8 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public final AppShareStateHolder state;
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
+    private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
+    private final DeleteEnhancedGraphDataLogic deleteEnhancedGraphDataLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final GlobalStats stats;
 
@@ -35,6 +39,8 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         super(StringMessage.class, holder.limits);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.state = state;
         this.stats = holder.stats;
@@ -55,6 +61,12 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case GET_GRAPH_DATA :
                 graphData.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_ENHANCED_GRAPH_DATA :
+                enhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_ENHANCED_GRAPH_DATA :
+                deleteEnhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);

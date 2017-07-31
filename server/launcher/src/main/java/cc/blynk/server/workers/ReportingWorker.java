@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.db.DBManager;
@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,7 +72,7 @@ public class ReportingWorker implements Runnable {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());
-        Collections.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
+        keys.sort(AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
 
@@ -83,12 +82,12 @@ public class ReportingWorker implements Runnable {
                 AggregationValue value = map.get(keyToRemove);
 
                 try {
-                    final Path userReportFolder = Paths.get(reportingPath, FileUtils.getUserReportingDir(keyToRemove.email, keyToRemove.appName));
+                    final Path userReportFolder = Paths.get(reportingPath, FileUtils.getUserReportingDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
                     if (Files.notExists(userReportFolder)) {
                         Files.createDirectories(userReportFolder);
                     }
 
-                    String fileName = generateFilename(keyToRemove.dashId, keyToRemove.deviceId, keyToRemove.pinType, keyToRemove.pin, type);
+                    String fileName = generateFilename(keyToRemove.getDashId(), keyToRemove.getDeviceId(), keyToRemove.getPinType(), keyToRemove.getPin(), type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
                     FileUtils.write(filePath, value.calcAverage(), keyToRemove.getTs(type));

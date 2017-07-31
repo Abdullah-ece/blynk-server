@@ -6,7 +6,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java8-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.25.3/server-0.25.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.26.0/server-0.26.0.jar"
         
 
 server.properties
@@ -14,10 +14,9 @@ server.properties
         data.folder=./data
         logs.folder=./logs
         log.level=info
-        enable.native.epoll.transport=true
-        enable.native.openssl=true
         enable.db=true
         admin.rootPath=/admin
+        allowed.administrator.ips=
         server.host=xxx.blynk.cc
         contact.email=xxx@blynk.cc
         region=xxx

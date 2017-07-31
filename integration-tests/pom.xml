@@ -3,7 +3,7 @@
     <parent>
         <artifactId>blynk</artifactId>
         <groupId>cc.blynk</groupId>
-        <version>0.25.4-SNAPSHOT</version>
+        <version>0.26.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>-Dio.netty.leakDetection.level=paranoid</argLine>
+                    <argLine>-Dio.netty.leakDetection.level=advanced</argLine>
                 </configuration>
             </plugin>
         </plugins>

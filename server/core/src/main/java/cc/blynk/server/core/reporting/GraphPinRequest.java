@@ -1,8 +1,13 @@
 package cc.blynk.server.core.reporting;
 
-import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
 
 /**
  * The Blynk Project.
@@ -15,25 +20,90 @@ public class GraphPinRequest {
 
     public final int deviceId;
 
+    public final int[] deviceIds;
+
+    public final boolean isTag;
+
     public final PinType pinType;
 
     public final byte pin;
+
+    public final GraphPeriod graphPeriod;
+
+    public final AggregationFunctionType functionType;
 
     public final int count;
 
     public final GraphGranularityType type;
 
+    public final int skipCount;
+
+    //todo remove in future versions
     public GraphPinRequest(int dashId, int deviceId, String[] messageParts, int pinIndex, int valuesPerPin) {
         try {
             this.dashId = dashId;
             this.deviceId = deviceId;
             this.pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
             this.pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
+
+            //not used for old graphs, so setting any value.
+            this.graphPeriod = GraphPeriod.ALL;
+            this.functionType = null;
+            this.deviceIds = null;
+            this.isTag = false;
+            /////////////////////////////////////
+
             this.count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
             this.type = GraphGranularityType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
+            this.skipCount = 0;
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("Graph request command body incorrect.");
         }
     }
 
+    public GraphPinRequest(int dashId, int[] deviceIds, Pin pin, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+        this.dashId = dashId;
+        this.deviceId = -1;
+        this.deviceIds = deviceIds;
+        this.isTag = true;
+        if (pin == null) {
+            this.pinType = PinType.VIRTUAL;
+            this.pin = (byte) Pin.NO_PIN;
+        } else {
+            this.pinType = (pin.pinType == null ? PinType.VIRTUAL : pin.pinType);
+            this.pin = pin.pin;
+        }
+        this.graphPeriod = graphPeriod;
+        this.functionType = function;
+        this.count = graphPeriod.numberOfPoints;
+        this.type = graphPeriod.granularityType;
+        this.skipCount = skipCount;
+    }
+
+    public GraphPinRequest(int dashId, int deviceId, Pin pin, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+        this.dashId = dashId;
+        this.deviceId = deviceId;
+        this.deviceIds = null;
+        this.isTag = false;
+        if (pin == null) {
+            this.pinType = PinType.VIRTUAL;
+            this.pin = (byte) Pin.NO_PIN;
+        } else {
+            this.pinType = (pin.pinType == null ? PinType.VIRTUAL : pin.pinType);
+            this.pin = pin.pin;
+        }
+        this.graphPeriod = graphPeriod;
+        this.functionType = function;
+        this.count = graphPeriod.numberOfPoints;
+        this.type = graphPeriod.granularityType;
+        this.skipCount = skipCount;
+    }
+
+    public boolean isLiveData() {
+        return graphPeriod == LIVE;
+    }
+
+    public boolean isValid() {
+        return deviceId != -1 || (deviceIds != null && deviceIds.length > 0);
+    }
 }

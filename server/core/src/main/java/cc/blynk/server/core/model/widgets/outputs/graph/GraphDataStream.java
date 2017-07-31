@@ -11,13 +11,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class GraphDataStream {
 
+    private final String title;
+
     private final GraphType graphType;
 
     private final int color;
 
-    private final int targetId;
+    public final int targetId;
 
-    private final Pin pin;
+    public final Pin pin;
+
+    public final AggregationFunctionType functionType;
+
+    public final int flip;
+
+    public final String low;
+
+    public final String high;
 
     private final String mathFormula;
 
@@ -31,26 +41,40 @@ public class GraphDataStream {
 
     private final boolean connectMissingPointsEnabled;
 
+    private final boolean isPercentMaxMin;
+
     @JsonCreator
-    public GraphDataStream(@JsonProperty("graphType") GraphType graphType,
+    public GraphDataStream(@JsonProperty("title") String title,
+                           @JsonProperty("graphType") GraphType graphType,
                            @JsonProperty("color") int color,
                            @JsonProperty("targetId") int targetId,
-                           @JsonProperty("targetId") Pin pin,
+                           @JsonProperty("pin") Pin pin,
+                           @JsonProperty("functionType") AggregationFunctionType functionType,
+                           @JsonProperty("flip") int flip,
+                           @JsonProperty("low") String low,
+                           @JsonProperty("high") String high,
                            @JsonProperty("mathFormula") String mathFormula,
                            @JsonProperty("yAxisMin") int yAxisMin,
                            @JsonProperty("yAxisMax") int yAxisMax,
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
-                           @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled) {
+                           @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
+                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin) {
+        this.title = title;
         this.graphType = graphType;
         this.color = color;
         this.targetId = targetId;
         this.pin = pin;
+        this.functionType = functionType;
+        this.flip = flip;
+        this.low = low;
+        this.high = high;
         this.mathFormula = mathFormula;
         this.yAxisMin = yAxisMin;
         this.yAxisMax = yAxisMax;
         this.suffix = suffix;
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
+        this.isPercentMaxMin = isPercentMaxMin;
     }
 }

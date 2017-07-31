@@ -2,8 +2,8 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import io.netty.util.CharsetUtil;
@@ -91,6 +91,7 @@ public class CSVGenerator {
 
     //"%s_%s_%c%d.csv.gz"
     private static String format(String email, int dashId, int deviceId, PinType pinType, byte pin) {
-        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
+        long now = System.currentTimeMillis();
+        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + "_" + now + ".csv.gz";
     }
 }

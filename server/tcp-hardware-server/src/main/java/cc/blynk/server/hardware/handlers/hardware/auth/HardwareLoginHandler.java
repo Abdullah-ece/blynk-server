@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
@@ -89,7 +88,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         if (tokenValue == null) {
             //checkUserOnOtherServer(ctx, token, message.id);
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(message.id, INVALID_TOKEN), ctx.voidPromise());
+            ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
             return;
         }
 
@@ -100,7 +99,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
             log.warn("User : {} requested token {} for non-existing {} dash id.", user.email, token, dashId);
-            ctx.writeAndFlush(makeResponse(message.id, INVALID_TOKEN), ctx.voidPromise());
+            ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
             return;
         }
 
@@ -117,6 +116,20 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         } else {
             completeLogin(ctx.channel(), session, user, dash, deviceId, message.id);
         }
+    }
+
+    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
+        blockingIOProcessor.executeDB(() -> {
+            String server = dbManager.getServerByToken(token);
+            // no server found, that's means token is wrong.
+            if (server == null || server.equals(holder.host)) {
+                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+                ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
+            } else {
+                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
+                ctx.writeAndFlush(makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort), ctx.voidPromise());
+            }
+        });
     }
 
     @Override

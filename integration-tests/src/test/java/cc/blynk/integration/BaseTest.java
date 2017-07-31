@@ -9,7 +9,6 @@ import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -19,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -79,12 +79,6 @@ public abstract class BaseTest {
     @BeforeClass
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
-
-        //disable native linux epoll transport for non linux envs.
-        if (!SystemUtils.IS_OS_LINUX) {
-            System.out.println("WARNING : DISABLING NATIVE EPOLL TRANSPORT. SYSTEM : " + SystemUtils.OS_NAME);
-            properties.put("enable.native.epoll.transport", false);
-        }
 
         tcpAppPort = properties.getIntProperty("app.ssl.port");
         tcpHardPort = properties.getIntProperty("hardware.default.port");
@@ -152,6 +146,24 @@ public abstract class BaseTest {
     @SuppressWarnings("unchecked")
     public static String consumeText(CloseableHttpResponse response) throws IOException {
         return EntityUtils.toString(response.getEntity());
+    }
+
+    public static String getFileNameByMask(String whereToFind, String pattern) {
+        File dir = new File(whereToFind);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
+        return latest(files).getName();
+    }
+
+    private static File latest(File[] files) {
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+        for (File file : files) {
+            if (file.lastModified() > lastMod) {
+                choice = file;
+                lastMod = file.lastModified();
+            }
+        }
+        return choice;
     }
 
 }

@@ -143,9 +143,17 @@ public class WebhookProcessor extends NotificationBase {
         if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
             data = PIN_PATTERN.matcher(data).replaceFirst(triggerValue);
         }
-        data = data.replace("%s", triggerValue);
+
         String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
         switch (splitted.length) {
+            case 10 :
+                data = PIN_PATTERN_9.matcher(data).replaceFirst(splitted[9]);
+            case 9 :
+                data = PIN_PATTERN_8.matcher(data).replaceFirst(splitted[8]);
+            case 8 :
+                data = PIN_PATTERN_7.matcher(data).replaceFirst(splitted[7]);
+            case 7 :
+                data = PIN_PATTERN_6.matcher(data).replaceFirst(splitted[6]);
             case 6 :
                 data = PIN_PATTERN_5.matcher(data).replaceFirst(splitted[5]);
             case 5 :
@@ -158,10 +166,9 @@ public class WebhookProcessor extends NotificationBase {
                 data = PIN_PATTERN_1.matcher(data).replaceFirst(splitted[1]);
             case 1 :
                 data = PIN_PATTERN_0.matcher(data).replaceFirst(splitted[0]);
+                data = GENERIC_PLACEHOLDER.matcher(data).replaceFirst(triggerValue);
+                data = DATETIME_PATTERN.matcher(data).replaceFirst(Instant.now().toString());
         }
-
-        data = DATETIME_PATTERN.matcher(data).replaceFirst(Instant.now().toString());
-
         return data;
     }
 

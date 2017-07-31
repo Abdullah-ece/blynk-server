@@ -3,7 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -42,11 +42,12 @@ public class DBManager implements Closeable {
     private final boolean cleanOldReporting;
     public InvitationTokensDBDao invitationTokensDBDao;
     public UserDBDao userDBDao;
-    protected ReportingDBDao reportingDBDao;
-    protected RedeemDBDao redeemDBDao;
-    protected PurchaseDBDao purchaseDBDao;
-    protected FlashedTokensDBDao flashedTokensDBDao;
     public EventDBDao eventDBDao;
+    ReportingDBDao reportingDBDao;
+    RedeemDBDao redeemDBDao;
+    PurchaseDBDao purchaseDBDao;
+    FlashedTokensDBDao flashedTokensDBDao;
+    CloneProjectDBDao cloneProjectDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
@@ -99,6 +100,7 @@ public class DBManager implements Closeable {
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.invitationTokensDBDao = new InvitationTokensDBDao(hikariDataSource);
         this.eventDBDao = new EventDBDao(hikariDataSource);
+        this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         checkDBVersion();
@@ -203,7 +205,6 @@ public class DBManager implements Closeable {
         return false;
     }
 
-
     public void insertPurchase(Purchase purchase) {
         if (isDBEnabled()) {
             purchaseDBDao.insertPurchase(purchase);
@@ -226,6 +227,21 @@ public class DBManager implements Closeable {
         if (isDBEnabled()) {
             eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description, false);
         }
+    }
+
+    public boolean insertClonedProject(String token, String projectJson) throws Exception {
+        if (isDBEnabled()) {
+            cloneProjectDBDao.insertClonedProject(token, projectJson);
+            return true;
+        }
+        return false;
+    }
+
+    public String selectClonedProject(String token) throws Exception {
+        if (isDBEnabled()) {
+            return cloneProjectDBDao.selectClonedProjectByToken(token);
+        }
+        return null;
     }
 
     public boolean isDBEnabled() {
