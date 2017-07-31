@@ -23,6 +23,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private final NoMatchHandler noMatchHandler;
 
+    private final ExternalAPIHandler externalAPILogic;
     private final WebLoginHandler webLoginHandler;
     private final AccountHandler accountHandler;
     private final DevicesHandler devicesHandler;
@@ -34,6 +35,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         this.noMatchHandler = new NoMatchHandler();
 
+        this.externalAPILogic = new ExternalAPIHandler(holder);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
@@ -50,6 +52,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initUserPipeline(ChannelHandlerContext ctx) {
         ctx.pipeline()
+        .addLast(externalAPILogic)
         .addLast(webLoginHandler)
         .addLast(authCookieHandler)
         .addLast(new UploadHandler(rootPath))

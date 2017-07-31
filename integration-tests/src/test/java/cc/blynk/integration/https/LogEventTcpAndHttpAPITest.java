@@ -20,7 +20,10 @@ import cc.blynk.server.http.web.model.WebComment;
 import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -112,12 +115,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String token = createProductAndDevice();
 
         CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionReuseStrategy((response, context) -> true)
-                .setKeepAliveStrategy((response, context) -> 10000000).build();
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
 
-        String baseUrl = String.format("http://localhost:%s/", httpPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
-        HttpGet insertEvent = new HttpGet(baseUrl + token + "/logEvent?code=temp_is_high");
+        HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
