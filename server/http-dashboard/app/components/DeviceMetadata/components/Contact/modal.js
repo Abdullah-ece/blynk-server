@@ -69,6 +69,10 @@ class ContactModal extends React.Component {
 
     const form = [];
 
+    // if we have only 1 field we should
+    // make if to full modal width
+    const span = fields.length === 1 ? 24 : 12;
+
     const rows = Math.ceil(fields.length / 2);
 
     for (let i = 0; i < rows; i++) {
@@ -81,7 +85,7 @@ class ContactModal extends React.Component {
           { getFields(i).map((item, key) => {
             if (item)
               return (
-                <Col span={12} key={key}>
+                <Col span={span} key={key}>
                   <Item label={item.label} offset={rows - i === 1 ? `none` : `normal`}>
                     <Input name={item.name} placeholder={item.label} validate={item.validate}
                            validateOnBlur={item.validateOnBlur || false}/>
