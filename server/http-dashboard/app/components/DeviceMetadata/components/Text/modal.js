@@ -22,14 +22,14 @@ class TextModal extends React.Component {
         { this.props.isDeviceOwner && (
           <Item label="E-mail">
             <Input validateOnBlur={validateOnBlur}
-                   placeholder='E-mail' name="value"
+                   placeholder="E-mail" name="value"
                    validate={validationRules}/>
           </Item>
         )}
 
         { !this.props.isDeviceOwner && (
           <Input validateOnBlur={validateOnBlur}
-                 placeholder='Value' name="value"
+                 placeholder="Value" name="value"
                  validate={validationRules}/>
         )}
 

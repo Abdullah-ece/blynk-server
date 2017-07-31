@@ -305,9 +305,17 @@ class ProductCreate extends React.Component {
         orgId: this.props.orgId
       })
         .then(this.handleProductSaveSuccess.bind(this))
-        .catch((err) => {
-          message.error(err.message || 'Cannot save product');
+        .catch((response) => {
+          this.setState({
+            deviceForceUpdateLoading: false
+          });
+          message.error(response && response.error && response.error.response.message || 'Cannot save product');
         });
+    }).catch((response) => {
+      this.setState({
+        deviceForceUpdateLoading: false
+      });
+      message.error(response && response.error && response.error.response.message || 'Cannot save product');
     });
   }
 
@@ -319,8 +327,11 @@ class ProductCreate extends React.Component {
       orgId: this.props.orgId
     })
       .then(this.handleProductSaveSuccess.bind(this))
-      .catch((err) => {
-        message.error(err.message || 'Cannot save product');
+      .catch((response) => {
+        this.setState({
+          deviceForceUpdateLoading: false
+        });
+        message.error(response && response.error && response.error.response.message || 'Cannot save product');
       });
   }
 
@@ -332,9 +343,13 @@ class ProductCreate extends React.Component {
     this.props.Create({
       product: product,
       orgId: this.props.orgId
-    }).then(this.handleProductSaveSuccess.bind(this)).catch((err) => {
-      message.error(err.message || 'Cannot clone product');
-    });
+    }).then(this.handleProductSaveSuccess.bind(this))
+      .catch((response) => {
+        this.setState({
+          deviceForceUpdateLoading: false
+        });
+        message.error(response && response.error && response.error.response.message || 'Cannot clone product');
+      });
 
   }
 
