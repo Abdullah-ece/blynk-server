@@ -4,7 +4,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Login API
 
-## Login [POST] [/login]
+## Login [POST] [/api/login]
 
 + Request (application/x-www-form-urlencoded)
 
@@ -23,7 +23,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected server error, probably wrong content-type.
 
-## Invite [POST] [/invite]
+## Invite [POST] [/api/invite]
 
 + Request (application/x-www-form-urlencoded)
 
@@ -60,7 +60,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Error sending email.
 
-## Reset Password [POST] [/resetPass]
+## Reset Password [POST] [/api/resetPass]
 
 + Request (application/x-www-form-urlencoded)
 
@@ -79,7 +79,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected server error, probably wrong content-type.
 
-## Logout [POST] [/logout]
+## Logout [POST] [/api/logout]
 
 + Request (application/json)
         
@@ -90,7 +90,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Organizations API
 
-## Get list of organizations user has access to [GET] [/organization]
+## Get list of organizations user has access to [GET] [/api/organization]
 
 + Request (application/json)
 
@@ -103,7 +103,7 @@ HOST: https://knight-qa.blynk.cc/
         Unexpected error.
 
 
-## Get organization assigned to user [GET] [/organization/{orgId}]
+## Get organization assigned to user [GET] [/api/organization/{orgId}]
 
 + Request (application/json)
 
@@ -123,7 +123,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Create New Organization [PUT] [/organization]
+## Create New Organization [PUT] [/api/organization]
 
 + Request (application/json)
 
@@ -141,7 +141,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Check if user can be invited [POST] [/organization/{orgId}/canInviteUser]
+## Check if user can be invited [POST] [/api/organization/{orgId}/canInviteUser]
 
 + Request (application/json)
 
@@ -158,7 +158,7 @@ HOST: https://knight-qa.blynk.cc/
         "User already exists in system."
 
 
-## Update Organization [POST] [/organization/{orgId}]
+## Update Organization [POST] [/api/organization/{orgId}]
 
 + Request (application/json)
 
@@ -180,7 +180,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Delete Organization [DELETE] [/organization/{orgId}]
+## Delete Organization [DELETE] [/api/organization/{orgId}]
 
 + Request (application/json)
 
@@ -194,7 +194,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Invite user [POST] [/organization/{orgId}/invite]
+## Invite user [POST] [/api/organization/{orgId}/invite]
 
 + Request (application/json)
 
@@ -221,7 +221,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Organization Users API
 
-## Get organization users [GET] [/organization/{orgId}/users]
+## Get organization users [GET] [/api/organization/{orgId}/users]
 
 + Request (application/json)
 
@@ -241,7 +241,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Update organization user [POST] [/organization/{orgId}/users/update]
+## Update organization user [POST] [/api/organization/{orgId}/users/update]
 
 + Request (application/json)
 
@@ -269,7 +269,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
-## Delete organization users [POST] [/organization/{orgId}/users/delete]
+## Delete organization users [POST] [/api/organization/{orgId}/users/delete]
 
 + Request (application/json)
 
@@ -292,7 +292,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Account API
 
-## Get Account Info [GET] [/account]
+## Get Account Info [GET] [/api/account]
 
 + Request (application/json)
 
@@ -301,7 +301,7 @@ HOST: https://knight-qa.blynk.cc/
         User json
 
 
-## Update Account Info [POST] [/account]
+## Update Account Info [POST] [/api/account]
 
 + Request (application/json)
 
@@ -314,7 +314,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Products API
 
-## Get List Of Products [GET] [/product]
+## Get List Of Products [GET] [/api/product]
 
 + Request (application/json)
 
@@ -542,7 +542,7 @@ HOST: https://knight-qa.blynk.cc/
         No organization with products.
 
 
-## Get Product by Id [GET] [/product/{productId}]
+## Get Product by Id [GET] [/api/product/{productId}]
 
 + Request (application/json)
 
@@ -552,7 +552,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Product with passed id is not found.
 
-## Create New Product [PUT] [/product]
+## Create New Product [PUT] [/api/product]
 
 + Request (application/json)
 
@@ -569,7 +569,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Wrong data for product.
 
-## Update Product [POST] [/product]
+## Update Product [POST] [/api/product]
 
 + Request (application/json)
 
@@ -586,7 +586,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Wrong data for product.
 
-## Update Product and related devices metadata [POST] [/product/updateDevices]
+## Update Product and related devices metadata [POST] [/api/product/updateDevices]
 
 + Request (application/json)
 
@@ -603,7 +603,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Wrong data for product.
 
-## Delete Product [DELETE] [/product/{productId}]
+## Delete Product [DELETE] [/api/product/{productId}]
 
 + Request (application/json)
 
@@ -618,7 +618,7 @@ HOST: https://knight-qa.blynk.cc/
         Unexpected error.
 
 
-## Upload API [POST] [/upload]
+## Upload API [POST] [/api/upload]
 
 + Request (multipart/form-data)
 
@@ -636,7 +636,7 @@ HOST: https://knight-qa.blynk.cc/
 
 # Devices API
 
-## Get All devices for user [GET] [/devices/{orgId}?orderField={fieldName}&order={orderType}]
+## Get All devices for user [GET] [/api/devices/{orgId}?orderField={fieldName}&order={orderType}]
 
 + Request (application/json)
 
@@ -689,7 +689,7 @@ HOST: https://knight-qa.blynk.cc/
         }
     ]
 
-## Get device by id [GET] [/devices/{orgId}/{deviceId}]
+## Get device by id [GET] [/api/devices/{orgId}/{deviceId}]
 
 + Request (application/json)
 
@@ -714,7 +714,7 @@ HOST: https://knight-qa.blynk.cc/
           } ]
         }
 
-## Create New Device [PUT] [/devices/{orgId}]
+## Create New Device [PUT] [/api/devices/{orgId}]
 
 + Request (application/json)
 
@@ -731,7 +731,7 @@ HOST: https://knight-qa.blynk.cc/
 
         Full device json
 
-## Update Device [POST] [/devices/{orgId}]
+## Update Device [POST] [/api/devices/{orgId}]
 
 + Request (application/json)
 
@@ -741,13 +741,13 @@ HOST: https://knight-qa.blynk.cc/
 
         Full device json
 
-## Delete Device [DELETE] [/devices/{orgId}/{deviceId}]
+## Delete Device [DELETE] [/api/devices/{orgId}/{deviceId}]
 
 + Request (application/json)
 
 + Response 200 (application/json)
 
-## Get device timeline [GET] [/devices/{orgId}/{deviceId}/timeline?eventType=CRITICAL&from=1&to=1496949455462&limit=10&offset=0&isResolved=true]
+## Get device timeline [GET] [/api/devices/{orgId}/{deviceId}/timeline?eventType=CRITICAL&from=1&to=1496949455462&limit=10&offset=0&isResolved=true]
 
 + Request (application/json)
 
@@ -778,7 +778,7 @@ HOST: https://knight-qa.blynk.cc/
 
 + Response 500 (application/json)
 
-## Resolve Log Event [POST] [/devices/{orgId}/{deviceId}/resolveEvent/{logEventId}]
+## Resolve Log Event [POST] [/api/devices/{orgId}/{deviceId}/resolveEvent/{logEventId}]
 
 + Request (application/json)
 
