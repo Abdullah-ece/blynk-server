@@ -5,9 +5,9 @@ package cc.blynk.server.core.model.exceptions;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.06.17.
  */
-public class NotAllowedWebException extends WebException {
+public class ForbiddenWebException extends WebException {
 
-    public NotAllowedWebException(String message) {
+    public ForbiddenWebException(String message) {
         super(message);
     }
 }

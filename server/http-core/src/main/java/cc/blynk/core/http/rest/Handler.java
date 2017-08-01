@@ -3,7 +3,7 @@ package cc.blynk.core.http.rest;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.rest.params.Param;
-import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Role;
 import io.netty.channel.ChannelHandlerContext;
@@ -77,7 +77,7 @@ public class Handler {
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof WebException) {
-                if (cause instanceof NotAllowedWebException) {
+                if (cause instanceof ForbiddenWebException) {
                     return forbidden(cause.getMessage());
                 } else {
                     return badRequest(cause.getMessage());

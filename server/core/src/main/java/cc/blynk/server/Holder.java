@@ -85,7 +85,7 @@ public class Holder implements Closeable {
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.organizationDao = new OrganizationDao(fileManager);
+
         
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
@@ -106,6 +106,8 @@ public class Holder implements Closeable {
         }
 
         this.deviceDao = new DeviceDao(userDao.users);
+        this.organizationDao = new OrganizationDao(fileManager, deviceDao);
+
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, deviceDao, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
@@ -149,7 +151,6 @@ public class Holder implements Closeable {
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
-        this.organizationDao = new OrganizationDao(fileManager);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
@@ -157,6 +158,8 @@ public class Holder implements Closeable {
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
 
         this.deviceDao = new DeviceDao(userDao.users);
+        this.organizationDao = new OrganizationDao(fileManager, deviceDao);
+
         this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, deviceDao, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);

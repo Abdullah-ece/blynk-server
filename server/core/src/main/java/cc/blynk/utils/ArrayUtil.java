@@ -9,6 +9,9 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Blynk Project.
@@ -80,6 +83,33 @@ public class ArrayUtil {
             }
         }
         return false;
+    }
+
+    public static int[] substruct(int in[], int in2[]) {
+        Set<Integer> inSet = arrayToSet(in);
+        Set<Integer> existingSet = arrayToSet(in2);
+        inSet.removeAll(existingSet);
+        return toInt(inSet);
+    }
+
+    public static Set<Integer> arrayToSet(int[] array) {
+        if (array.length == 0) {
+            return Collections.emptySet();
+        }
+        HashSet<Integer> set = new HashSet<>();
+        for (int i : array) {
+            set.add(i);
+        }
+        return set;
+    }
+
+    public static int[] toInt(Set<Integer> set) {
+        int[] a = new int[set.size()];
+        int i = 0;
+        for (Integer val : set) {
+            a[i++] = val;
+        }
+        return a;
     }
 
 }

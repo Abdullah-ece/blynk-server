@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
@@ -223,27 +224,39 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
     }
 
+    private void deleteRemovedProducts(String orgName, int[] deletedProducts) {
+        for (int parentProductId : deletedProducts) {
+            log.debug("Deleting product for org {} and parentProductId {}.", orgName, parentProductId);
+            if (organizationDao.deleteProductByParentId(parentProductId)) {
+                log.debug("Product was removed.");
+            }
+        }
+    }
+
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}")
     @Admin
-    public Response update(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, Organization newOrganization) {
+    public Response update(@ContextUser User user, @PathParam("orgId") int orgId, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
             return badRequest();
         }
 
-        Organization existingOrganization = organizationDao.getOrgById(orgId);
+        Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
 
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        if (!httpSession.user.isSuperAdmin()) {
-            if (orgId != httpSession.user.orgId) {
-                log.error("User {} tries to update organization he has no access.", httpSession.user.email);
-                return forbidden("You are not allowed to update this organization.");
-            }
+        if (!organizationDao.hasAccess(user, newOrganization.id)) {
+            log.error("User {} tries to update organization he has no access.", user.email);
+            return forbidden("You are not allowed to update this organization.");
         }
 
         existingOrganization.update(newOrganization);
+
+        int[] addedProducts = ArrayUtil.substruct(newOrganization.selectedProducts, existingOrganization.selectedProducts);
+        createProductsFromParentOrg(newOrganization.id, newOrganization.name, addedProducts);
+
+        int[] removedProducts = ArrayUtil.substruct(existingOrganization.selectedProducts, newOrganization.selectedProducts);
+        deleteRemovedProducts(newOrganization.name, removedProducts);
 
         return ok(existingOrganization);
     }

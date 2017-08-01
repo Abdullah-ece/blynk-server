@@ -6,6 +6,7 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -178,10 +179,8 @@ public class ProductHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Admin
-    public Response delete(@Context ChannelHandlerContext ctx, @PathParam("id") int productId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        if (organizationDao.deleteProduct(httpSession.user, productId)) {
+    public Response delete(@ContextUser User user, @PathParam("id") int productId) {
+        if (organizationDao.deleteProduct(user, productId)) {
             return ok();
         } else {
             return notFound();

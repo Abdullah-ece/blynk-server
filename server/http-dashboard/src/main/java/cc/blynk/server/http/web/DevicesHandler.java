@@ -12,7 +12,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
@@ -206,7 +206,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device he has no access.", user.email);
-            throw new NotAllowedWebException("You have no access to this device.");
+            throw new ForbiddenWebException("You have no access to this device.");
         }
     }
 

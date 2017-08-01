@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -410,7 +411,46 @@ public class ProductAPITest extends APIBaseTest {
     }
 
     @Test
-    public void createProductAndDeleteRegularUserCanrtDelete() throws Exception {
+    public void cantDeleteProductWithDevices() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpDelete req3 = new HttpDelete(httpsAdminServerUrl + "/product/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(req3)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"You are not allowed to remove product with devices.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
+    public void createProductAndDeleteRegularUserCantDelete() throws Exception {
         login(regularUser.email, regularUser.pass);
 
         Product product = new Product();

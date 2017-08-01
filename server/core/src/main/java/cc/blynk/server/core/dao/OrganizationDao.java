@@ -1,7 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.exceptions.NotAllowedWebException;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
@@ -28,8 +28,9 @@ public class OrganizationDao {
     private final AtomicInteger orgSequence;
     private final AtomicInteger productSequence;
     private final FileManager fileManager;
+    private final DeviceDao deviceDao;
 
-    public OrganizationDao(FileManager fileManager) {
+    public OrganizationDao(FileManager fileManager, DeviceDao deviceDao) {
         this.fileManager = fileManager;
         this.organizations = fileManager.deserializeOrganizations();
 
@@ -43,6 +44,7 @@ public class OrganizationDao {
         }
         this.orgSequence = new AtomicInteger(largestOrgSequenceNumber);
         this.productSequence = new AtomicInteger(largestProductSequenceNumber);
+        this.deviceDao = deviceDao;
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
@@ -99,7 +101,7 @@ public class OrganizationDao {
             if (user.orgId == orgId) {
                 return true;
             } else {
-                //user is admin of parent org, so he can send invite too to child orgs
+                //user is admin of parent org, so he can perform admin action on child org
                 List<Organization> childOrgs = getOrgsByParentId(user.orgId);
                 Organization org = getOrgById(childOrgs, orgId);
                 if (org != null) {
@@ -132,19 +134,39 @@ public class OrganizationDao {
         return org;
     }
 
-    public boolean deleteProduct(User user, int productId) {
+    public boolean deleteProductByParentId(int productParentId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
-                if (product.id == productId) {
-                    if (!user.hasAccess(org.id)) {
-                        throw new NotAllowedWebException("User has no rights for product removal.");
-                    }
-                    org.deleteProduct(productId);
+                if (product.parentId == productParentId) {
+                    deleteProduct(org, product.id);
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public boolean deleteProduct(User user, int productId) {
+        for (Organization org : organizations.values()) {
+            for (Product product : org.products) {
+                if (product.id == productId) {
+                    if (!hasAccess(user, org.id)) {
+                        throw new ForbiddenWebException("User has no rights for product removal.");
+                    }
+                    deleteProduct(org, product.id);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void deleteProduct(Organization org, int productId) {
+        if (deviceDao.productHasDevices(productId)) {
+            log.error("You are not allowed to remove product with devices.");
+            throw new ForbiddenWebException("You are not allowed to remove product with devices.");
+        }
+        org.deleteProduct(productId);
     }
 
     public boolean delete(int id) {
