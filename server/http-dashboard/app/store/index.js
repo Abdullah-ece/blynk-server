@@ -10,7 +10,7 @@ import {persistStore, autoRehydrate} from 'redux-persist';
 /* instance for basic API */
 axios.defaults.headers['Content-Type'] = 'application/json';
 const axiosAPI = axios.create({
-  baseURL: '/dashboard',
+  baseURL: '/api',
   options: {
     responseType: 'json',
   }

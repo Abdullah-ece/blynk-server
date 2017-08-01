@@ -1,6 +1,7 @@
 import React from 'react';
 import {Upload, Icon, message} from 'antd';
 import classnames from 'classnames';
+import {FILE_UPLOAD_URL} from 'services/API';
 import './styles.less';
 
 class ImageUploader extends React.Component {
@@ -49,7 +50,7 @@ class ImageUploader extends React.Component {
 
   fileProps = {
     name: 'file',
-    action: '/dashboard/upload',
+    action: FILE_UPLOAD_URL,
     showUploadList: false,
     accept: 'image/*'
   };

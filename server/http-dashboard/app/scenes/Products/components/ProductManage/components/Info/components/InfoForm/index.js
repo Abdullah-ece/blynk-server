@@ -6,6 +6,7 @@ import ImageUploader from 'components/ImageUploader';
 import {reduxForm, Field as FormField} from 'redux-form';
 import Validation from 'services/Validation';
 import {connect} from 'react-redux';
+import {FILE_UPLOAD_URL} from 'services/API';
 import {bindActionCreators} from 'redux';
 import {ProductInfoUpdateInvalidFlag} from 'data/Product/actions';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
@@ -54,7 +55,7 @@ class Info extends React.Component {
 
   InfoFileProps = {
     name: 'file',
-    action: '/dashboard/upload',
+    action: FILE_UPLOAD_URL,
     showUploadList: false,
     accept: 'image/*'
   };

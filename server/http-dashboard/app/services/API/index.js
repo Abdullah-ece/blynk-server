@@ -1,3 +1,7 @@
+export const BASE_APP_URL = '/dashboard';
+export const BASE_API_URL = '/api';
+export const FILE_UPLOAD_URL = `${BASE_API_URL}/upload`;
+
 export const applyRequestTransformers = (transformers) => {
   return (data) => {
     return transformers.reduce((data, transformer) => {
