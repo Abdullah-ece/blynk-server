@@ -6,10 +6,8 @@ import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.UrlMapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -33,14 +31,12 @@ public class HttpAPIServer extends BaseServer {
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, rootPath);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"));
         final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
-        final HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

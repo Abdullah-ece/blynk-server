@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
@@ -40,6 +41,8 @@ public class HttpsAPIServer extends BaseServer {
         StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
 
+        LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
+
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
@@ -49,6 +52,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                 .addLast("HttpsObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
                 .addLast(new ChunkedWriteHandler())
+                .addLast(letsEncryptHandler)
                 .addLast(favIconUrlRewriter)
                 .addLast(staticFileHandler)
                 .addLast(new HttpContentCompressor())
