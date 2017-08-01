@@ -204,21 +204,21 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         newOrganization = organizationDao.create(newOrganization);
-        createProductsFromParentOrg(newOrganization);
+        createProductsFromParentOrg(newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
 
         return ok(newOrganization);
     }
 
-    private void createProductsFromParentOrg(Organization newOrg) {
-        for (int productId : newOrg.selectedProducts) {
-            if (organizationDao.hasNoProductWithParent(newOrg.id, productId)) {
-                log.debug("Cloning product for org {} and parentProductId {}.", newOrg.name, productId);
+    private void createProductsFromParentOrg(int orgId, String orgName, int[] selectedProducts) {
+        for (int productId : selectedProducts) {
+            if (organizationDao.hasNoProductWithParent(orgId, productId)) {
+                log.debug("Cloning product for org {} and parentProductId {}.", orgName, productId);
                 Product parentProduct = organizationDao.getProductById(productId);
                 Product newProduct = new Product(parentProduct);
                 newProduct.parentId = parentProduct.id;
-                organizationDao.createProduct(newOrg.id, newProduct);
+                organizationDao.createProduct(orgId, newProduct);
             } else {
-                log.debug("Already has product for org {} with product parent id {}.", newOrg.name, productId);
+                log.debug("Already has product for org {} with product parent id {}.", orgName, productId);
             }
         }
     }
