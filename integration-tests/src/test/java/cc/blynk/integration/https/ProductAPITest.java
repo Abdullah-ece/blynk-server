@@ -494,4 +494,49 @@ public class ProductAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void canDeleteProductRequest() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        HttpGet canDeleteProductReq = new HttpGet(httpsAdminServerUrl + "/product/canDeleteProduct/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(canDeleteProductReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet canDeleteProductReq2 = new HttpGet(httpsAdminServerUrl + "/product/canDeleteProduct/1");
+
+        try (CloseableHttpResponse response = httpclient.execute(canDeleteProductReq2)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+        }
+
+    }
+
 }

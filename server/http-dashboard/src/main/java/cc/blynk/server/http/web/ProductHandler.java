@@ -175,6 +175,17 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(existingProduct);
     }
 
+    @GET
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/canDeleteProduct/{id}")
+    @Admin
+    public Response canDeleteProduct(@PathParam("id") int productId) {
+        if (deviceDao.productHasDevices(productId)) {
+            return forbidden();
+        }
+        return ok();
+    }
+
     @DELETE
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
