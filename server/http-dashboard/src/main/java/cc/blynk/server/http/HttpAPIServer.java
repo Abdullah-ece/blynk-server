@@ -52,9 +52,7 @@ public class HttpAPIServer extends BaseServer {
                 .addLast(letsEncryptHandler)
                 .addLast(new ChunkedWriteHandler())
                 .addLast(favIconUrlRewriter)
-                .addLast(staticFileHandler)
-                .addLast(httpAPILogic)
-                .addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
+                .addLast(staticFileHandler);
             }
         };
     }
