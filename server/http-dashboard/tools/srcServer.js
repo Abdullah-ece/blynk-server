@@ -17,6 +17,7 @@ const bundler = webpack(config);
 // Run Browsersync and use middleware for Hot Module Replacement
 browserSync({
   port: 3000,
+  https: true,
   ui: {
     port: 3001
   },
@@ -26,16 +27,18 @@ browserSync({
     middleware: [
       historyApiFallback(),
 
-      proxyMiddleware('/dashboard', {
-        target: 'http://localhost:8080',
+      proxyMiddleware('/api', {
+        target: 'https://localhost:9443',
         changeOrigin: true,
-        logLevel: 'debug'
+        logLevel: 'debug',
+        secure: false
       }),
 
       proxyMiddleware('/static', {
-        target: 'http://localhost:8080',
+        target: 'https://localhost:9443',
         changeOrigin: true,
-        logLevel: 'debug'
+        logLevel: 'debug',
+        secure: false
       }),
 
       webpackDevMiddleware(bundler, {

@@ -1,7 +1,8 @@
 import axios from 'axios';
+import {BASE_API_URL} from 'services/API';
 
 export const isLoggedIn = () => {
-  return axios.get('/dashboard/account');
+  return axios.get(`${BASE_API_URL}/account`);
 };
 
 export const RouteAuthorizedOnly = () => {
