@@ -1,5 +1,6 @@
 import React from 'react';
 import {Header} from './components';
+import './styles.less';
 
 class Content extends React.Component {
 

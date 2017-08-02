@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {DeviceItem} from './components';
 
 import './styles.less';
@@ -12,6 +13,11 @@ class DevicesList extends React.Component {
 
     onDeviceSelect: React.PropTypes.func,
   };
+
+  componentWillUpdate() {
+    const node = ReactDOM.findDOMNode(this);
+    console.log(node.scrollTop, node.scrollHeight, (node));
+  }
 
   handleDeviceSelect(device) {
     if (typeof this.props.onDeviceSelect === 'function') {

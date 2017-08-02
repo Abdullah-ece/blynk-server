@@ -1,13 +1,16 @@
 @import 'components/Layout/style-guide';
 
 .navigation-devices-list {
-  margin: @style-size-3 0;
+  padding: @style-size-3 @style-size-4;
   &:first-child {
     margin-top: 0;
   }
   &:last-child {
     margin-bottom: 0;
   }
+
+  overflow: auto;
+  flex-basis: 100%;
 }
 
 .navigation-devices-list-item-state-active {
