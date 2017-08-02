@@ -26,6 +26,7 @@ class DataStreams extends React.Component {
 
         Scroll.scroller.scrollTo(`${field.name}`, {
           duration: 1000,
+          offset: -64,
           smooth: "easeInOutQuint",
         });
 
