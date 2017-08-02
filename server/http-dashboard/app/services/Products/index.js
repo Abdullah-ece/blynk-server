@@ -65,18 +65,21 @@ export const filterDynamicMetadataFields = (fields) => {
 
 export const hardcodedRequiredMetadataFields = [
   {
+    id: 1,
     type: Metadata.Fields.TEXT,
     name: 'Device Name',
     role: 'ADMIN',
     hardcoded: true
   },
   {
+    id: 2,
     type: Metadata.Fields.TEXT,
     name: 'Device Owner',
     role: 'ADMIN',
     hardcoded: true
   },
   {
+    id: 3,
     type: Metadata.Fields.TEXT,
     name: 'Location Name',
     role: 'ADMIN',
@@ -290,8 +293,10 @@ export const prepareProductForEdit = (data) => {
           isSavedBefore: true
         };
 
+        delete values.id;
+
         return {
-          id: ++id,
+          id: field.id,
           type: field.type,
           values: values,
         };
@@ -400,8 +405,6 @@ export const prepareProductForSave = (data) => {
           });
         }
 
-        delete event.id;
-
         return {
           ...event
         };
@@ -433,17 +436,11 @@ export const prepareProductForSave = (data) => {
 
 
       const field = {
+        id: value.id,
         name: value.name,
         type: value.type,
         ...values
       };
-
-      field.id = Math.ceil(Math.random() * 1000);
-
-      if (values.isSavedBefore) {
-        delete field.id;
-        delete field.isSavedBefore;
-      }
 
       product.metaFields.push(field);
     });

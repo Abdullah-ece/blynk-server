@@ -295,9 +295,7 @@ class ProductMetadata extends React.Component {
 
     const cloned = _.find(this.props.fields, {id: id});
 
-    const nextId = this.props.fields.reduce((acc, value) => (
-        acc < value.id ? value.id : acc
-      ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
+    const nextId = _.random(4, 2000000000);
 
     let name = '';
     let nameUnique = false;
@@ -334,10 +332,7 @@ class ProductMetadata extends React.Component {
 
   addMetadataField(params) {
 
-    const nextId = this.props.fields.reduce((acc, value) => (
-        acc < value.id ? value.id : acc
-      ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
-
+    const nextId = _.random(4, 2000000000);
 
     this.props.onFieldsChange([
       ...this.props.fields,
