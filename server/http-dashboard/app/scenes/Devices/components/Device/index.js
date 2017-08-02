@@ -59,7 +59,7 @@ class Device extends React.Component {
             <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
           </TabPane>
           <TabPane tab="Labels" key="4">
-            <div style={{padding: '12px 0'}}>Labels</div>
+            <div style={{padding: '12px 32px'}}>Labels</div>
           </TabPane>
         </Tabs>
       </div>
