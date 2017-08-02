@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static cc.blynk.core.http.Response.*;
@@ -84,6 +85,9 @@ public class Handler {
                 }
             } else {
                 log.error("Error invoking handler. Reason : {}.", cause.getMessage());
+                if (e instanceof InvocationTargetException) {
+                    log.debug(((InvocationTargetException) e).getTargetException());
+                }
                 log.debug(cause);
                 return serverError(e.getMessage());
             }
