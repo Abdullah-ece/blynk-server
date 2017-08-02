@@ -59,7 +59,7 @@ class Timeline extends React.Component {
         )}
 
         { !this.props.loading && this.props.timeline.has('logEvents') && !this.props.timeline.get('logEvents').size && (
-          <i>There were no events during this period</i>
+          <i className="no-timeline">There were no events during this period</i>
         )}
 
       </div>
