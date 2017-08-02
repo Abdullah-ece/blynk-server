@@ -12,7 +12,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static cc.blynk.core.http.Response.*;
@@ -75,11 +74,6 @@ public class Handler {
     public FullHttpResponse invoke(Object[] params) {
         try {
             return (FullHttpResponse) classMethod.invoke(handler, params);
-        } catch (InvocationTargetException ite) {
-            Throwable te = ite.getTargetException();
-            log.error("Error in invoked handler : ", te.getMessage());
-            log.debug(te);
-            return serverError(te.getMessage());
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof WebException) {
@@ -89,7 +83,8 @@ public class Handler {
                     return badRequest(cause.getMessage());
                 }
             } else {
-                log.error("Error invoking handler. Reason : {}.", e.getMessage());
+                log.error("Error invoking handler. Reason : {}.", cause.getMessage());
+                log.debug(cause);
                 return serverError(e.getMessage());
             }
         }
