@@ -10,22 +10,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class EventReceiver {
 
-    public final int id;
+    public final int metaFieldId;
 
     public final MetadataType type;
 
     public final String value;
 
     @JsonCreator
-    public EventReceiver(@JsonProperty("id") int id,
+    public EventReceiver(@JsonProperty("id") int metaFieldId,
                          @JsonProperty("type") MetadataType type,
                          @JsonProperty("value") String value) {
-        this.id = id;
+        this.metaFieldId = metaFieldId;
         this.type = type;
         this.value = value;
     }
 
     public EventReceiver(EventReceiver eventReceiver) {
-        this(eventReceiver.id, eventReceiver.type, eventReceiver.value);
+        this(eventReceiver.metaFieldId, eventReceiver.type, eventReceiver.value);
     }
 }

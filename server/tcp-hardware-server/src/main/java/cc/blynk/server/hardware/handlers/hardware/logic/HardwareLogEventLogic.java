@@ -97,7 +97,7 @@ public class HardwareLogEventLogic {
         });
 
         for (EventReceiver mailReceiver : event.emailNotifications) {
-            MetaField metaField = device.findMetaFieldById(mailReceiver.id);
+            MetaField metaField = device.findMetaFieldById(mailReceiver.metaFieldId);
             if (metaField != null && metaField instanceof ContactMetaField) {
                 ContactMetaField contactMetaField = (ContactMetaField) metaField;
                 mail(contactMetaField.email, "You received event.", event.name);
@@ -105,7 +105,7 @@ public class HardwareLogEventLogic {
         }
 
         for (EventReceiver pushReceiver : event.pushNotifications) {
-            MetaField metaField = device.findMetaFieldById(pushReceiver.id);
+            MetaField metaField = device.findMetaFieldById(pushReceiver.metaFieldId);
             if (metaField != null && metaField instanceof ContactMetaField) {
                 push(state, "You received new event : " + event.name);
             }
