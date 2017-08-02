@@ -70,7 +70,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
             assertNotNull(orgs);
-            assertEquals(1, orgs.length);
+            assertEquals(0, orgs.length);
         }
     }
 
@@ -86,7 +86,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
             assertNotNull(orgs);
-            assertEquals(2, orgs.length);
+            assertEquals(1, orgs.length);
         }
     }
 

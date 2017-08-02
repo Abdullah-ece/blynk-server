@@ -22,6 +22,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.net.URLEncoder;
+import java.util.stream.Collectors;
 
 import static cc.blynk.core.http.Response.*;
 
@@ -84,7 +85,12 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("")
     public Response getListOfOrganizations(@Context ChannelHandlerContext ctx) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        return ok(organizationDao.getAll(httpSession.user));
+        return ok(
+                organizationDao.getAll(httpSession.user)
+                .stream()
+                        .filter(org -> org.id != 1)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GET

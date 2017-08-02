@@ -87,8 +87,9 @@ public class Handler {
                 log.error("Error invoking handler. Reason : {}.", cause.getMessage());
                 if (e instanceof InvocationTargetException) {
                     log.debug(((InvocationTargetException) e).getTargetException());
+                } else {
+                    log.debug(cause);
                 }
-                log.debug(cause);
                 return serverError(e.getMessage());
             }
         }
