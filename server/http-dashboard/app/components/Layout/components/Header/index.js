@@ -105,29 +105,31 @@ class Header extends React.Component {
   render() {
     return (
       <div className="user-layout--header">
-        <div className="user-layout--header-logo">
-          <Link to="/">
-            <img src={this.props.Organization.logoUrl} alt=""/>
-          </Link>
-        </div>
-        <div className="user-layout--header-user">
-          <div className="dark user-layout--header-user-link">
-            { this.props.Account.email }
-            <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
-              <Button type="primary" icon="user" className="user-layout--header-user-button dark"/>
-            </Dropdown>
+        <div className="user-layout--header--fixed">
+          <div className="user-layout--header-logo">
+            <Link to="/">
+              <img src={this.props.Organization.logoUrl} alt=""/>
+            </Link>
           </div>
+          <div className="user-layout--header-user">
+            <div className="dark user-layout--header-user-link">
+              { this.props.Account.email }
+              <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
+                <Button type="primary" icon="user" className="user-layout--header-user-button dark"/>
+              </Dropdown>
+            </div>
+          </div>
+          <Menu mode="horizontal"
+                className="user-layout--header-menu"
+                onClick={this.handleClick.bind(this)}
+                selectedKeys={this.currentActivePage(this.state.current)}>
+            {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
+            <Menu.Item key="/devices">Devices</Menu.Item>
+            <Menu.Item key="/products">Products</Menu.Item>
+            <Menu.Item key="/organizations">Organizations</Menu.Item>
+            {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
+          </Menu>
         </div>
-        <Menu mode="horizontal"
-              className="user-layout--header-menu"
-              onClick={this.handleClick.bind(this)}
-              selectedKeys={this.currentActivePage(this.state.current)}>
-          {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
-          <Menu.Item key="/devices">Devices</Menu.Item>
-          <Menu.Item key="/products">Products</Menu.Item>
-          <Menu.Item key="/organizations">Organizations</Menu.Item>
-          {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
-        </Menu>
       </div>
     );
   }
