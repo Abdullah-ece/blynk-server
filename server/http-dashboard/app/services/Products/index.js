@@ -399,6 +399,7 @@ export const prepareProductForSave = (data) => {
           event[type] = event[type].map((contactId) => {
             const metadata = _.find(data.metadata.fields, {id: Number(contactId)});
             return {
+              metaFieldId: Number(contactId),
               type: 'Contact',
               value: metadata.values.name
             };
