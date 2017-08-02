@@ -220,9 +220,12 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         HttpDelete deleteReq = new HttpDelete(httpsAdminServerUrl + "/product/1");
         try (CloseableHttpResponse response = httpclient.execute(deleteReq)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(403, response.getStatusLine().getStatusCode());
         }
 
+        //We do not allow anymore to remove product with devices.
+
+        /*
         getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -242,6 +245,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNull(logEvents[0].name);
             assertEquals("MyNewDescription", logEvents[0].description);
         }
+        */
     }
 
     @Test

@@ -569,6 +569,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         Organization organization = new Organization("1", "2", "/static/logo.png", false, 1);
+        organization.id = 1;
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
