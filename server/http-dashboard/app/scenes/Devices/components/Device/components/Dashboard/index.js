@@ -59,7 +59,7 @@ class Dashboard extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="devices--device-dashboard">
 
         <div>
           <Button.Group size="default" className="devices-device-dashboard-time-filter">
