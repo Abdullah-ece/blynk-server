@@ -5,12 +5,17 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.HttpSession;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -30,13 +35,11 @@ import static cc.blynk.core.http.Response.*;
 public class ProductHandler extends BaseHttpHandler {
 
     private final OrganizationDao organizationDao;
-    private final UserDao userDao;
     private final DeviceDao deviceDao;
 
     public ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.organizationDao = holder.organizationDao;
-        this.userDao = holder.userDao;
         this.deviceDao = holder.deviceDao;
     }
 
@@ -120,7 +123,7 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response updateProduct(@Context ChannelHandlerContext ctx, WebProductAndOrgId webProductAndOrgId) {
+    public Response updateProduct(WebProductAndOrgId webProductAndOrgId) {
         Product updatedProduct = webProductAndOrgId.product;
 
         if (updatedProduct == null) {
@@ -146,11 +149,10 @@ public class ProductHandler extends BaseHttpHandler {
         return ok(existingProduct);
     }
 
-    //todo cover with test
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/updateDevices")
-    public Response updateProductAndDevices(@Context ChannelHandlerContext ctx, WebProductAndOrgId webProductAndOrgId) {
+    public Response updateProductAndDevices(WebProductAndOrgId webProductAndOrgId) {
         Product updatedProduct = webProductAndOrgId.product;
         if (updatedProduct == null) {
             log.error("No product for update.");
@@ -169,7 +171,11 @@ public class ProductHandler extends BaseHttpHandler {
         //todo persist?
         List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
         for (Device device : devices) {
-            device.metaFields = updatedProduct.copyNonDefaultMetaFields();
+            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields);
+            device.addMetaFields(addedMetaFields);
+
+            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields);
+            device.deleteMetaFields(deletedMetaFields);
         }
 
         return ok(existingProduct);

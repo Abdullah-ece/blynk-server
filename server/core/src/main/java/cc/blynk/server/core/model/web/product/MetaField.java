@@ -49,4 +49,20 @@ public abstract class MetaField {
     public boolean isDefault() {
         return DEFAULT_DEVICE_NAME_FIELD.equals(name);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MetaField)) return false;
+
+        MetaField metaField = (MetaField) o;
+
+        return id == metaField.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }

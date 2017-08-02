@@ -9,9 +9,9 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -85,28 +85,59 @@ public class ArrayUtil {
         return false;
     }
 
-    public static int[] substruct(int in[], int in2[]) {
-        Set<Integer> inSet = arrayToSet(in);
-        Set<Integer> existingSet = arrayToSet(in2);
+    @SuppressWarnings("unchecked")
+    public static <T> T[] concat(T[] a, T[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+
+        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+
+        return c;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static MetaField[] substruct(MetaField[] in, MetaField[] in2) {
+        List<MetaField> inSet = arrayToList(in);
+        List<MetaField> existingSet = arrayToList(in2);
+        inSet.removeAll(existingSet);
+        return inSet.toArray(new MetaField[0]);
+    }
+
+    public static <T> List<T> arrayToList(T[] array) {
+        if (array.length == 0) {
+            return Collections.emptyList();
+        }
+        List<T> list = new ArrayList<>();
+        Collections.addAll(list, array);
+        return list;
+    }
+
+
+    public static int[] substruct(int[] in, int[] in2) {
+        List<Integer> inSet = arrayToList(in);
+        List<Integer> existingSet = arrayToList(in2);
         inSet.removeAll(existingSet);
         return toInt(inSet);
     }
 
-    public static Set<Integer> arrayToSet(int[] array) {
+
+    private static List<Integer> arrayToList(int[] array) {
         if (array.length == 0) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
-        HashSet<Integer> set = new HashSet<>();
+        List<Integer> set = new ArrayList<>();
         for (int i : array) {
             set.add(i);
         }
         return set;
     }
 
-    public static int[] toInt(Set<Integer> set) {
-        int[] a = new int[set.size()];
+    private static int[] toInt(List<Integer> list) {
+        int[] a = new int[list.size()];
         int i = 0;
-        for (Integer val : set) {
+        for (Integer val : list) {
             a[i++] = val;
         }
         return a;

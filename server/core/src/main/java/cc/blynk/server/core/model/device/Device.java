@@ -4,6 +4,11 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
 
+import java.util.List;
+
+import static cc.blynk.utils.ArrayUtil.arrayToList;
+import static cc.blynk.utils.ArrayUtil.concat;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -66,6 +71,16 @@ public class Device implements Target {
             }
         }
         return null;
+    }
+
+    public void addMetaFields(MetaField[] metaFields) {
+        this.metaFields = concat(this.metaFields, metaFields);
+    }
+
+    public void deleteMetaFields(MetaField[] metaFields) {
+        List<MetaField> updatedSet = arrayToList(this.metaFields);
+        updatedSet.removeAll(arrayToList(metaFields));
+        this.metaFields = (MetaField[]) updatedSet.toArray(new MetaField[0]);
     }
 
     @Override

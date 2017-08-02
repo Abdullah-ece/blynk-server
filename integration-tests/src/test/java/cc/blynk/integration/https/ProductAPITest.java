@@ -450,6 +450,114 @@ public class ProductAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testAddMetaDataFieldInChildDevices() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My test metafield", Role.ADMIN, "Default Device")
+        };
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            product = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(product);
+            assertEquals(1, product.id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        TextMetaField textMetaField;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            newDevice = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", newDevice.name);
+            assertEquals(1, newDevice.id);
+            assertNotNull(newDevice.metaFields);
+            assertEquals(1, newDevice.metaFields.length);
+            textMetaField = (TextMetaField) newDevice.metaFields[0];
+            assertEquals(1, textMetaField.id);
+            assertEquals("My test metafield", textMetaField.name);
+            assertEquals(Role.ADMIN, textMetaField.role);
+            assertEquals("Default Device", textMetaField.value);
+        }
+
+        newDevice.metaFields[0] = new TextMetaField(textMetaField.id, textMetaField.name, textMetaField.role, "My updated value");
+
+        HttpPost updateDeviceReq = new HttpPost(httpsAdminServerUrl + "/devices/1");
+        updateDeviceReq.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateDeviceReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            textMetaField = (TextMetaField) device.metaFields[0];
+            assertEquals(1, textMetaField.id);
+            assertEquals("My test metafield", textMetaField.name);
+            assertEquals(Role.ADMIN, textMetaField.role);
+            assertEquals("My updated value", textMetaField.value);
+        }
+
+        product.metaFields = new MetaField[] {
+                product.metaFields[0],
+                new NumberMetaField(2, "New metafield", Role.ADMIN, 123)
+        };
+
+        HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");
+        updateProductAndDevicesReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateProductAndDevicesReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(2, fromApi.metaFields.length);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(2, device.metaFields.length);
+            textMetaField = (TextMetaField) device.metaFields[0];
+            assertEquals(1, textMetaField.id);
+            assertEquals("My test metafield", textMetaField.name);
+            assertEquals(Role.ADMIN, textMetaField.role);
+            assertEquals("My updated value", textMetaField.value);
+
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[1];
+            assertEquals(2, numberMetaField.id);
+            assertEquals("New metafield", numberMetaField.name);
+            assertEquals(Role.ADMIN, numberMetaField.role);
+            assertEquals(123, numberMetaField.value, 0.1);
+
+        }
+    }
+
+    @Test
     public void createProductAndDeleteRegularUserCantDelete() throws Exception {
         login(regularUser.email, regularUser.pass);
 

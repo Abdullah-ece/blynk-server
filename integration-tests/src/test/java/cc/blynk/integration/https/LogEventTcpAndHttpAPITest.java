@@ -185,7 +185,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     }
 
     @Test
-    public void testTimneLineIsFetchedEventProductWasRemoved() throws Exception {
+    public void testTimeLineIsFetchedEventProductWasRemoved() throws Exception {
         String token = createProductAndDevice();
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
