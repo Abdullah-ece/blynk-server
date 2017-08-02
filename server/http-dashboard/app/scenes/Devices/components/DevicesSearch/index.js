@@ -1,6 +1,6 @@
 import React from 'react';
 import {Select} from 'antd';
-import './styles.less'
+import './styles.less';
 
 class DevicesSearch extends React.Component {
 

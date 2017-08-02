@@ -1,7 +1,24 @@
 .devices--device-timeline {
+  height: 100%;
+  overflow: auto;
   padding: 16px 0;
+
+  i {
+    margin: 32px;
+  }
 }
 
 .devices--device-timeline-events {
-  margin: 32px 0;
+  margin: 28px 0;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.devices--device-timeline--event {
+  margin-left: 32px;
+  margin-right: 32px;
 }

@@ -6,6 +6,7 @@ import TypeFiltering from './../TypeFiltering';
 import TimeFiltering from './../TimeFiltering';
 import {reduxForm} from 'redux-form';
 import {TIMELINE_ITEMS_PER_PAGE} from 'services/Devices';
+import './styles.less';
 
 @reduxForm()
 class Timeline extends React.Component {
