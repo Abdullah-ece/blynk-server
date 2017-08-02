@@ -25,12 +25,12 @@ public abstract class UserEvent extends Event {
     UserEvent() {
     }
 
-    UserEvent(String name, String description, boolean isNotificationsEnabled,
+    UserEvent(int id, String name, String description, boolean isNotificationsEnabled,
                      EventReceiver[] emailNotifications,
                      EventReceiver[] pushNotifications,
                      EventReceiver[] smsNotifications,
                      String eventCode) {
-        super(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
         this.eventCode = eventCode;
     }
 

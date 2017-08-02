@@ -27,6 +27,8 @@ import static cc.blynk.utils.ArrayUtil.EMPTY_RECEIVERS;
 })
 public abstract class Event {
 
+    public int id;
+
     public String name;
 
     public String description;
@@ -48,10 +50,11 @@ public abstract class Event {
     public Event() {
     }
 
-    public Event(String name, String description, boolean isNotificationsEnabled,
+    public Event(int id, String name, String description, boolean isNotificationsEnabled,
                  EventReceiver[] emailNotifications,
                  EventReceiver[] pushNotifications,
                  EventReceiver[] smsNotifications) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.isNotificationsEnabled = isNotificationsEnabled;

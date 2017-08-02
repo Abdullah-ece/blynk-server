@@ -19,15 +19,15 @@ public class WarningEvent extends UserEvent {
     public WarningEvent() {
     }
 
-    public WarningEvent(String name, String description,
+    public WarningEvent(int id, String name, String description,
                         boolean isNotificationsEnabled, EventReceiver[] emailNotifications,
                         EventReceiver[] pushNotifications, EventReceiver[] smsNotifications, String eventCode) {
-        super(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
+        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
     }
 
     @Override
     public Event copy() {
-        return new WarningEvent(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
+        return new WarningEvent(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
     }
 
 }

@@ -23,8 +23,8 @@ public abstract class SystemEvent extends Event {
     public SystemEvent() {
     }
 
-    public SystemEvent(String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications) {
-        super(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+    public SystemEvent(int id, String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications) {
+        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
     }
 
 }

@@ -21,13 +21,13 @@ public class OfflineEvent extends SystemEvent {
     public OfflineEvent() {
     }
 
-    public OfflineEvent(String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications, int ignorePeriod) {
-        super(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+    public OfflineEvent(int id, String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications, int ignorePeriod) {
+        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
         this.ignorePeriod = ignorePeriod;
     }
 
     @Override
     public Event copy() {
-        return new OfflineEvent(name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, ignorePeriod);
+        return new OfflineEvent(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, ignorePeriod);
     }
 }
