@@ -162,7 +162,7 @@ public class ProductAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

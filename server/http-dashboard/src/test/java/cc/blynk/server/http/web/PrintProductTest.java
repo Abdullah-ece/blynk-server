@@ -48,7 +48,7 @@ public class PrintProductTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");

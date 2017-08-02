@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class WebDataStream {
 
+    public final int id;
+
     public final String name;
 
     public final MeasurementUnit units;
@@ -22,11 +24,13 @@ public class WebDataStream {
     public final byte pin;
 
     @JsonCreator
-    public WebDataStream(@JsonProperty("name") String name,
+    public WebDataStream(@JsonProperty("id") int id,
+                         @JsonProperty("name") String name,
                          @JsonProperty("units") MeasurementUnit units,
                          @JsonProperty("min") double min,
                          @JsonProperty("max") double max,
                          @JsonProperty("pin") byte pin) {
+        this.id = id;
         this.name = name;
         this.units = units;
         this.min = min;
@@ -35,6 +39,6 @@ public class WebDataStream {
     }
 
     public WebDataStream(WebDataStream webDataStream) {
-        this(webDataStream.name, webDataStream.units, webDataStream.min, webDataStream.max, webDataStream.pin);
+        this(webDataStream.id, webDataStream.name, webDataStream.units, webDataStream.min, webDataStream.max, webDataStream.pin);
     }
 }

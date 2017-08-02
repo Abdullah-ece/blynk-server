@@ -351,7 +351,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -451,7 +451,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith")
         };
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -474,7 +474,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith")
         };
         product2.dataStreams = new WebDataStream[] {
-                new WebDataStream("Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
