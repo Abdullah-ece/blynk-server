@@ -1,9 +1,6 @@
 import React from 'react';
-import {Layout} from 'antd';
 import {getChildrenByType} from 'services/Layout';
 import {Content as PageLayoutContent, Navigation as PageLayoutNavigation} from './components';
-
-const {Sider, Content} = Layout;
 
 import './styles.less';
 
@@ -15,16 +12,14 @@ class PageLayout extends React.Component {
 
   render() {
     return (
-      <Layout className="page-layout">
-        <Layout>
-          <Sider width={400} className="page-layout-navigation">
+      <div className="page-layout">
+        <div className="page-layout-navigation">
             {getChildrenByType(PageLayoutNavigation.displayName, this.props.children)}
-          </Sider>
-          <Content className="page-layout-content">
+        </div>
+        <div className="page-layout-content">
             {getChildrenByType(PageLayoutContent.displayName, this.props.children)}
-          </Content>
-        </Layout>
-      </Layout>
+        </div>
+      </div>
     );
   }
 
