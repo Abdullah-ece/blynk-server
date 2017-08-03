@@ -1,9 +1,6 @@
 package cc.blynk.server.http;
 
-import cc.blynk.core.http.handlers.StaticFile;
-import cc.blynk.core.http.handlers.StaticFileEdsWith;
-import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UrlReWriterHandler;
+import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
@@ -31,12 +28,13 @@ public class HttpAPIServer extends BaseServer {
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
+        LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
-        final UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+        UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"));
-        final StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+        StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
+        NoMatchHandler noMatchHandler = new NoMatchHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -48,7 +46,8 @@ public class HttpAPIServer extends BaseServer {
                 .addLast(letsEncryptHandler)
                 .addLast(new ChunkedWriteHandler())
                 .addLast(favIconUrlRewriter)
-                .addLast(staticFileHandler);
+                .addLast(staticFileHandler)
+                .addLast(noMatchHandler);
             }
         };
     }
