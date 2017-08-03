@@ -291,7 +291,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
     @Test
     public void deleteOrganizationNotAllowedForRegularAdmin() throws Exception {
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", false, 1));
+        holder.organizationDao.create(new Organization("Blynk Inc. 2", "Europe/Kiev", "/static/logo.png", false, 1));
 
         login(regularAdmin.email, regularAdmin.pass);
 
