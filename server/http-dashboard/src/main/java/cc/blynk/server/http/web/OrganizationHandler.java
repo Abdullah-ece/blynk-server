@@ -256,6 +256,8 @@ public class OrganizationHandler extends BaseHttpHandler {
             return forbidden("You are not allowed to update this organization.");
         }
 
+        organizationDao.checkNameExists(newOrganization.id, newOrganization.name);
+
         existingOrganization.update(newOrganization);
 
         int[] addedProducts = ArrayUtil.substruct(newOrganization.selectedProducts, existingOrganization.selectedProducts);

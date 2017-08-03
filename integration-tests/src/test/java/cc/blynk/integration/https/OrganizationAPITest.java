@@ -322,6 +322,53 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void createOrganizationWithSameNameNotAllowed() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("Blynk Inc.", "Some TimeZone", "/static/logo.png", false, 1);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Organization with this name already exists.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
+    public void updateOrganizationWithSameNameNotAllowed() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("Blynk Inc. 2", "Some TimeZone", "/static/logo.png", false, 1);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            organization = JsonParser.parseOrganization(consumeText(response));
+        }
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/organization/2");
+        post.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        organization.name = "Blynk Inc.";
+
+        post = new HttpPost(httpsAdminServerUrl + "/organization/2");
+        post.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Organization with this name already exists.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void createOrganizationWithProductsAssigned() throws Exception {
         login(admin.email, admin.pass);
 
@@ -405,7 +452,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(10, productFromApi.metaFields.length);
         }
 
-        Organization organization2 = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization2 = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false);
         organization2.selectedProducts = new int[]{1};
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -417,7 +464,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(fromApi);
             assertEquals(3, fromApi.id);
             assertEquals(1, fromApi.parentId);
-            assertEquals(organization.name, fromApi.name);
+            assertEquals("My Org2", fromApi.name);
             assertEquals(organization.tzName, fromApi.tzName);
             assertNotNull(fromApi.products);
             assertEquals(1, fromApi.products.length);
