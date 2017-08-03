@@ -77,21 +77,26 @@ public class Handler {
             return (FullHttpResponse) classMethod.invoke(handler, params);
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            if (cause instanceof WebException) {
-                if (cause instanceof ForbiddenWebException) {
-                    return forbidden(cause.getMessage());
-                } else {
-                    return badRequest(cause.getMessage());
-                }
-            } else {
-                log.error("Error invoking handler. Reason : {}.", cause.getMessage());
-                if (e instanceof InvocationTargetException) {
-                    log.debug(((InvocationTargetException) e).getTargetException());
-                } else {
-                    log.debug(cause);
-                }
-                return serverError(e.getMessage());
+            if (cause instanceof ForbiddenWebException) {
+                return forbidden(cause.getMessage());
             }
+            if (cause instanceof WebException) {
+                return badRequest(cause.getMessage());
+            }
+
+            log.error("Error invoking handler. Reason : {}.", e.getMessage());
+
+            if (e instanceof InvocationTargetException) {
+                Throwable originalException = ((InvocationTargetException) e).getTargetException();
+                StringBuilder sb = new StringBuilder();
+                for (StackTraceElement element : originalException.getStackTrace()) {
+                   sb.append(element)
+                     .append("\n");
+                }
+                log.error(sb.toString());
+            }
+
+            return serverError("Error invoking handler.");
         }
     }
 
