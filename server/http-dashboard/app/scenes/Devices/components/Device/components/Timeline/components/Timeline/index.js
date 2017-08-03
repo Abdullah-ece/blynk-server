@@ -47,7 +47,7 @@ class Timeline extends React.Component {
                        totalWarning={(this.props.timeline.has('totalWarning') && this.props.timeline.get('totalWarning')) || 0}
                        totalResolved={(this.props.timeline.has('totalResolved') && this.props.timeline.get('totalResolved')) || 0}/>
         { this.props.loading && (
-          <Icon type="loading" className="devices--device-timeline-events"/>
+          <Icon type="loading" className="devices--device-timeline-events devices--device-timeline-events--loading"/>
         ) || this.props.timeline.has('logEvents') && (
           <Timelines className="devices--device-timeline-events"
                      pending={pending}>

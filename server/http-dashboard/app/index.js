@@ -62,7 +62,7 @@ Store().then((store) => {
   ReactDOM.render(
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
-        <Router history={ history }>
+        <Router history={history}>
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>
