@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, browserHistory, Redirect} from 'react-router';
+import {Router, Route, Redirect, useRouterHistory} from 'react-router';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 
 /* components */
@@ -42,7 +43,11 @@ import enUS from 'antd/lib/locale-provider/en_US';
 
 Store().then((store) => {
 
-  browserHistory.listen(location => {
+  const history = useRouterHistory(createBrowserHistory)({
+    basename: '/dashboard'
+  });
+
+  history.listen(location => {
 
     setTimeout(() => {
       if (location.action === 'POP') {
@@ -57,7 +62,7 @@ Store().then((store) => {
   ReactDOM.render(
     <Provider store={store}>
       <LocaleProvider locale={enUS}>
-        <Router history={browserHistory}>
+        <Router history={ history }>
           <Route component={Book}>
             <Route path="/book" component={Book.Index}/>
             <Route path="/book/fieldset" component={Book.Fieldset}/>
