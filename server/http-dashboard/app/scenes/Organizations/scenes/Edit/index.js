@@ -2,9 +2,6 @@ import React                  from 'react';
 import {connect}              from 'react-redux';
 import {bindActionCreators}   from 'redux';
 import {
-  Products
-}                             from '../Details/components';
-import {
   initialize,
   destroy,
   getFormSyncErrors,
@@ -37,6 +34,10 @@ import {
 import {
   Edit as OrganizationEdit
 }                             from 'scenes/Organizations/components';
+import {
+  ProductsEdit
+}                             from 'scenes/Organizations/scenes';
+
 import AdminsEditScene from "../AdminsEdit/index";
 
 @connect((state) => ({
@@ -121,7 +122,7 @@ class Edit extends React.Component {
         description: data.organization.get('description'),
         logoUrl: data.organization.get('logoUrl'),
         canCreateOrgs: data.organization.get('canCreateOrgs'),
-        selectedProducts: (data.organization.get('products') || []).map(product => product.get('id')),
+        selectedProducts: (data.organization.get('products') || []).map(product => product.get('parentId')),
         admins: data.users.toJS()
       });
 
@@ -223,7 +224,6 @@ class Edit extends React.Component {
       this.props.OrganizationsUpdate({
         ...organization.toJS(),
         ...this.props.formValues.toJS(),
-        products: []
       }).then(() => {
         this.props.OrganizationsFetch().then(() => {
           resolve();
@@ -249,7 +249,7 @@ class Edit extends React.Component {
         products={this.props.products}
         onTabChange={this.handleTabChange}
         adminsComponent={<AdminsEditScene params={this.props.params}/>}
-        productsComponent={<Products products={this.props.products}/>}
+        productsComponent={<ProductsEdit products={this.props.products}/>}
         activeTab={this.props.activeTab}
       />
     );

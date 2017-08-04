@@ -65,3 +65,15 @@ export function ProductUpdateDevices(data = false) {
   };
 }
 
+export function CanDeleteProduct(data = {}) {
+  return {
+    type: 'API_PRODUCT_CAN_DELETE_PRODUCT',
+    payload: {
+      request: {
+        method: 'GET',
+        url: `/product/canDeleteProduct/${data.id}`
+      }
+    }
+  };
+}
+

@@ -29,7 +29,7 @@ const initialState = {
       fields: []
     }
   },
-  products: []
+  products: null
 };
 
 export default function Product(state = initialState, action) {

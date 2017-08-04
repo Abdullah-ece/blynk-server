@@ -6,9 +6,9 @@ import PropTypes            from 'prop-types';
 import {List, Map}          from 'immutable';
 import {reduxForm}          from 'redux-form';
 import {
-  Admins,
-  Products
+  Admins
 }                           from 'scenes/Organizations/components/Manage/components';
+import {ProductsCreate}     from 'scenes/Organizations';
 
 import './styles.less';
 
@@ -67,8 +67,7 @@ class Create extends React.Component {
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}
             adminsComponent={<Admins submitFailed={this.props.submitFailed}/>}
-            productsComponent={<Products organizationName={this.props.formValues.get('name')}
-                                         products={this.props.products}/>}
+            productsComponent={<ProductsCreate products={this.props.products}/>}
             products={this.props.products}/>
         </MainLayout.Content>
       </MainLayout>
