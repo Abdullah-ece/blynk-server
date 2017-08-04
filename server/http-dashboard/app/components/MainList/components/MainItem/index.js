@@ -20,7 +20,9 @@ class MainItem extends React.Component {
     id: PropTypes.number,
     devicesCount: PropTypes.number,
 
-    onItemClick: PropTypes.func
+    onItemClick: PropTypes.func,
+
+    item: PropTypes.object
   };
 
   constructor(props) {
@@ -30,8 +32,8 @@ class MainItem extends React.Component {
   }
 
   handleClick() {
-    if (this.props.onItemClick)
-      this.props.onItemClick(this.props.id);
+    if (this.props.onItemClick && this.props.item)
+      this.props.onItemClick(this.props.item);
   }
 
   render() {

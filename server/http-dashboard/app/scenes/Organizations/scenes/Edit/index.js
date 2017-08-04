@@ -122,7 +122,8 @@ class Edit extends React.Component {
         description: data.organization.get('description'),
         logoUrl: data.organization.get('logoUrl'),
         canCreateOrgs: data.organization.get('canCreateOrgs'),
-        selectedProducts: (data.organization.get('products') || []).map(product => product.get('parentId')),
+        selectedProducts: (data.organization.get('selectedProducts') || []),
+        products: (data.organization.get('products') || fromJS([])),
         admins: data.users.toJS()
       });
 

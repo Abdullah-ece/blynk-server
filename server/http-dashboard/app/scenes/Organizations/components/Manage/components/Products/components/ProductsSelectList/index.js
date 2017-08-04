@@ -27,8 +27,8 @@ class ProductSelectList extends React.Component {
     return !!this.props.value.length;
   }
 
-  handleClick(id) {
-    this.props.onSelect(id);
+  handleClick(item) {
+    this.props.onSelect(item);
   }
 
   render() {
@@ -42,6 +42,7 @@ class ProductSelectList extends React.Component {
       <MainList className={className}>
         { this.props.products.map((product) => (
           <MainList.Item key={product.get('id')}
+                         item={product}
                          id={product.get('id')}
                          onItemClick={this.handleClick}
                          logoUrl={product.get('logoUrl')}
