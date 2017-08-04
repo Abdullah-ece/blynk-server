@@ -276,6 +276,8 @@ public class OrganizationHandler extends BaseHttpHandler {
         int[] removedProducts = ArrayUtil.substruct(existingOrganization.selectedProducts, newOrganization.selectedProducts);
         deleteRemovedProducts(newOrganization.id, newOrganization.name, removedProducts);
 
+        existingOrganization.selectedProducts = newOrganization.selectedProducts;
+
         return ok(existingOrganization);
     }
 

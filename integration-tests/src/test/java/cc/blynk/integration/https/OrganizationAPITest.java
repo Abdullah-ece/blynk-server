@@ -550,6 +550,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(organization.tzName, fromApi.tzName);
             assertNotNull(fromApi.products);
             assertEquals(1, fromApi.products.length);
+            assertArrayEquals(new int[] {1}, fromApi.selectedProducts);
 
             Product productFromApi = fromApi.products[0];
             assertEquals(3, productFromApi.id);
@@ -581,6 +582,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(organization.tzName, fromApi.tzName);
             assertNotNull(fromApi.products);
             assertEquals(2, fromApi.products.length);
+            assertArrayEquals(new int[] {1, 2}, fromApi.selectedProducts);
 
             Product productFromApi = fromApi.products[0];
             assertEquals(3, productFromApi.id);
@@ -677,6 +679,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(organization.tzName, fromApi.tzName);
             assertNotNull(fromApi.products);
             assertEquals(2, fromApi.products.length);
+            assertArrayEquals(new int[] {1, 2}, fromApi.selectedProducts);
 
             Product productFromApi = fromApi.products[0];
             assertEquals(3, productFromApi.id);
@@ -724,6 +727,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(organization.tzName, fromApi.tzName);
             assertNotNull(fromApi.products);
             assertEquals(1, fromApi.products.length);
+            assertArrayEquals(new int[] {1}, fromApi.selectedProducts);
 
             Product productFromApi = fromApi.products[0];
             assertEquals(3, productFromApi.id);
@@ -739,8 +743,6 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(productFromApi.metaFields);
             assertEquals(1, productFromApi.metaFields.length);
         }
-
-
     }
 
 
