@@ -23,7 +23,7 @@ class Products extends React.Component {
         ))}
 
         { (!this.props.products || !this.props.products.size) && (
-          <div>This organization doesn't have products</div>
+          <div>You don't have any products</div>
         ) }
 
       </MainList>
