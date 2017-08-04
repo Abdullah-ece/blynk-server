@@ -143,18 +143,6 @@ public class OrganizationDao {
         return org;
     }
 
-    public boolean deleteProductByParentId(int productParentId) {
-        for (Organization org : organizations.values()) {
-            for (Product product : org.products) {
-                if (product.parentId == productParentId) {
-                    deleteProduct(org, product.id);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean deleteProduct(User user, int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
@@ -170,7 +158,7 @@ public class OrganizationDao {
         return false;
     }
 
-    private void deleteProduct(Organization org, int productId) {
+    public void deleteProduct(Organization org, int productId) {
         if (deviceDao.productHasDevices(productId)) {
             log.error("You are not allowed to remove product with devices.");
             throw new ForbiddenWebException("You are not allowed to remove product with devices.");

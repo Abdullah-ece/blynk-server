@@ -9,6 +9,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.web.product.Product;
@@ -230,11 +231,20 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
     }
 
-    private void deleteRemovedProducts(String orgName, int[] deletedProducts) {
+    private void deleteRemovedProducts(int orgId, String orgName, int[] deletedProducts) {
+        Organization org = organizationDao.getOrgById(orgId);
         for (int parentProductId : deletedProducts) {
             log.debug("Deleting product for org {} and parentProductId {}.", orgName, parentProductId);
-            if (organizationDao.deleteProductByParentId(parentProductId)) {
-                log.debug("Product was removed.");
+            for (Product product : org.products) {
+                if (product.parentId == parentProductId) {
+                    try {
+                        organizationDao.deleteProduct(org, product.id);
+                        log.debug("Product was removed.");
+                    } catch (ForbiddenWebException e) {
+                        log.debug("Cannot delete product. {}", e.getMessage());
+                    }
+
+                }
             }
         }
     }
@@ -264,7 +274,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         createProductsFromParentOrg(newOrganization.id, newOrganization.name, addedProducts);
 
         int[] removedProducts = ArrayUtil.substruct(existingOrganization.selectedProducts, newOrganization.selectedProducts);
-        deleteRemovedProducts(newOrganization.name, removedProducts);
+        deleteRemovedProducts(newOrganization.id, newOrganization.name, removedProducts);
 
         return ok(existingOrganization);
     }

@@ -612,6 +612,139 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void createOrganizationWithProductsAssignedAndRemoveProduct() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith")
+        };
+        product.dataStreams = new WebDataStream[] {
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        };
+
+        HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
+        createProductReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(createProductReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        Product product2 = new Product();
+        product2.name = "My product2";
+        product2.description = "Description";
+        product2.boardType = "ESP8266";
+        product2.connectionType = ConnectionType.WI_FI;
+        product2.logoUrl = "/static/logo.png";
+        product2.metaFields = new MetaField[] {
+                new TextMetaField(1, "My Farm", Role.ADMIN, "Farm of Smith")
+        };
+        product2.dataStreams = new WebDataStream[] {
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        };
+
+        HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
+        req2.setEntity(new StringEntity(new WebProductAndOrgId(1, product2).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+        }
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{1, 2};
+
+        HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
+        createOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertNotNull(fromApi.products);
+            assertEquals(2, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(3, productFromApi.id);
+            assertEquals(product.name, productFromApi.name);
+            assertEquals(product.description, productFromApi.description);
+            assertEquals(product.boardType, productFromApi.boardType);
+            assertEquals(product.connectionType, productFromApi.connectionType);
+            assertEquals(product.logoUrl, productFromApi.logoUrl);
+            assertEquals(1, productFromApi.parentId);
+            assertEquals(0, productFromApi.version);
+            assertNotEquals(0, productFromApi.lastModifiedTs);
+            assertNotNull(productFromApi.dataStreams);
+            assertNotNull(productFromApi.metaFields);
+            assertEquals(1, productFromApi.metaFields.length);
+
+            productFromApi = fromApi.products[1];
+            assertEquals(4, productFromApi.id);
+            assertEquals("My product2", productFromApi.name);
+            assertEquals(product.description, productFromApi.description);
+            assertEquals(product.boardType, productFromApi.boardType);
+            assertEquals(product.connectionType, productFromApi.connectionType);
+            assertEquals(product.logoUrl, productFromApi.logoUrl);
+            assertEquals(2, productFromApi.parentId);
+            assertEquals(0, productFromApi.version);
+            assertNotEquals(0, productFromApi.lastModifiedTs);
+            assertNotNull(productFromApi.dataStreams);
+            assertNotNull(productFromApi.metaFields);
+            assertEquals(1, productFromApi.metaFields.length);
+
+            organization = fromApi;
+        }
+
+        organization.selectedProducts = new int[]{1};
+
+        HttpPost updateOrgReq = new HttpPost(httpsAdminServerUrl + "/organization/2");
+        updateOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateOrgReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(3, productFromApi.id);
+            assertEquals(product.name, productFromApi.name);
+            assertEquals(product.description, productFromApi.description);
+            assertEquals(product.boardType, productFromApi.boardType);
+            assertEquals(product.connectionType, productFromApi.connectionType);
+            assertEquals(product.logoUrl, productFromApi.logoUrl);
+            assertEquals(1, productFromApi.parentId);
+            assertEquals(0, productFromApi.version);
+            assertNotEquals(0, productFromApi.lastModifiedTs);
+            assertNotNull(productFromApi.dataStreams);
+            assertNotNull(productFromApi.metaFields);
+            assertEquals(1, productFromApi.metaFields.length);
+        }
+
+
+    }
+
+
+    @Test
     public void updateOrganization() throws Exception {
         login(admin.email, admin.pass);
 
