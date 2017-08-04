@@ -115,6 +115,17 @@ export default function Product(state = initialState, action) {
         products: action.payload.data
       };
 
+    case "API_PRODUCT_FETCH_SUCCESS":
+
+      let products = (state.products || []).filter((product) => product.id !== action.payload.data.id);
+
+      products = products.concat(action.payload.data);
+
+      return {
+        ...state,
+        products: products
+      };
+
     case "PRODUCT_METADATA_FIELD_ADD":
       return {
         ...state,

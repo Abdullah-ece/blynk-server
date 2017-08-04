@@ -19,7 +19,7 @@ import {MainLayout} from 'components';
 @connect((state) => ({
   Product: state.Product.products
 }), (dispatch) => ({
-  Fetch: bindActionCreators(API.ProductsFetch, dispatch),
+  Fetch: bindActionCreators(API.ProductFetch, dispatch),
   Delete: bindActionCreators(API.ProductDelete, dispatch)
 }))
 class ProductDetails extends React.Component {

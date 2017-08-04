@@ -10,6 +10,21 @@ export function ProductsFetch() {
   };
 }
 
+export function ProductFetch(data) {
+  if (!data.id)
+    throw new Error('Missing id parameter for product fetch');
+
+  return {
+    type: 'API_PRODUCT_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/product/${data.id}`
+      }
+    }
+  };
+}
+
 export function ProductUpdate(data) {
   return {
     type: 'API_PRODUCT_UPDATE',
