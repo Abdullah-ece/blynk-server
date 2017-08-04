@@ -60,22 +60,25 @@ public class ProductHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{id}")
-    public Response getAll(@Context ChannelHandlerContext ctx, @PathParam("id") int productId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+    public Response getProductById(@ContextUser User user, @PathParam("id") int productId) {
+        Organization organization = organizationDao.getOrgById(user.orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", httpSession.user.orgId, httpSession.user.email);
+            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
             return badRequest();
         }
 
-        //Map<Integer, Integer> productIdCount = productDeviceCount(organization);
-        //product.deviceCount = productIdCount.getOrDefault(productId, 0);
+        Product product = organizationDao.getProductById(productId);
 
-        Product product = organization.getProduct(productId);
         if (product == null) {
-            log.error("Cannot find product with id {}", productId);
+            log.error("Cannot find product with id {} for org {}", productId, organization.name);
             return badRequest();
+        }
+
+        int orgId = organizationDao.getOrganizationIdByProductId(product.id);
+        if (!organizationDao.hasAccess(user, orgId)) {
+            log.error("User {} tries to access product he has no access.", user.email);
+            return forbidden("You are not allowed to get this product.");
         }
 
         return ok(product);
