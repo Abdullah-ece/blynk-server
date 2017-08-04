@@ -33,9 +33,9 @@ class ProductsCreate extends React.Component {
     this.handleProductSelect = this.handleProductSelect.bind(this);
   }
 
-  handleProductSelect(id) {
+  handleProductSelect(item) {
 
-    id = Number(id);
+    const id = Number(item.get('id'));
 
     let products = this.props.formValues.get('selectedProducts');
 
