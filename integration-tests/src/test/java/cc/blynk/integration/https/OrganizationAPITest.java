@@ -322,6 +322,51 @@ public class OrganizationAPITest extends APIBaseTest {
     }
 
     @Test
+    public void doNotAllowCreateOrganizationForSubOrgThatDoesntSupportThis() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.canCreateOrgs = false;
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertEquals(organization.canCreateOrgs, fromApi.canCreateOrgs);
+        }
+
+        String name = "newadmin@blynk.cc";
+        String pass = "admin";
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        newadmin.orgId = 2;
+        newadmin.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
+        newadmin.status = UserStatus.Active;
+        holder.userDao.add(newadmin);
+
+        CloseableHttpClient newHttpClient = newHttpClient();
+
+        login(newHttpClient, httpsAdminServerUrl, newadmin.email, newadmin.pass);
+
+        organization = new Organization("My Org 2 ", "Some TimeZone", "/static/logo.png", false);
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = newHttpClient.execute(req)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"This organization cannot have sub organizations.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void createOrganizationWithSameNameNotAllowed() throws Exception {
         login(admin.email, admin.pass);
 
