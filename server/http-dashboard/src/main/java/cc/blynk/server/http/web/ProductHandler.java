@@ -11,6 +11,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -109,6 +110,11 @@ public class ProductHandler extends BaseHttpHandler {
         }
 
         Organization organization = organizationDao.getOrgById(webProductAndOrgId.orgId);
+
+        if (organization.isSubOrg()) {
+            log.error("You can't create products for sub organizations.");
+            throw new ForbiddenWebException("You can't create products for sub organizations.");
+        }
 
         if (!organization.isValidProductName(product)) {
             log.error("Organization {} already has product with name {}.", organization.name, product.name);

@@ -106,6 +106,10 @@ public class Organization {
         return true;
     }
 
+    public boolean isSubOrg() {
+        return parentId > 0;
+    }
+
     public boolean isUpdated(long lastStart) {
         return lastStart <= lastModifiedTs;
     }

@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -645,6 +646,40 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(403, response.getStatusLine().getStatusCode());
         }
 
+    }
+
+    @Test
+    public void checkProductCannotBeCreatedForSubOrg() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, 1);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        HttpPut productCreateReq = new HttpPut(httpsAdminServerUrl + "/product");
+        productCreateReq.setEntity(new StringEntity(new WebProductAndOrgId(2, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(productCreateReq)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"You can't create products for sub organizations.\"}}", consumeText(response));
+        }
     }
 
 }
