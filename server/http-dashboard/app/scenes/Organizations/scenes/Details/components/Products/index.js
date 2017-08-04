@@ -19,7 +19,6 @@ class Products extends React.Component {
                          logoUrl={product.get('logoUrl')}
                          noImageText="No Product Image"
                          name={product.get('name')}
-                         link={`/product/${product.get('id')}`}
                          devicesCount={product.get('deviceCount')}/>
         ))}
 
