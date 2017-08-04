@@ -58,11 +58,9 @@ class MainItem extends React.Component {
         )}
         <Link to={this.props.link}>
           <div className={previewClassName}>
-            { this.props.isActive !== false ? ( this.props.logoUrl && (
+            { this.props.logoUrl && (
               <img src={this.props.logoUrl}/>
             ) || (
-              <div className="main-list--item-no-image">{this.props.noImageText || 'No Image'}</div>
-            )) : (
               <div className="main-list--item-image-pending">{this.props.name.length && this.props.name.charAt(0)}</div>
             )}
           </div>
