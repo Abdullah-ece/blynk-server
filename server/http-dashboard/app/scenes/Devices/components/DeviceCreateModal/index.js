@@ -179,14 +179,14 @@ class DeviceCreateModal extends React.Component {
               <Col span={10}>
                 <Item label="Hardware" offset="none">
                   <MetadataSelect displayError={false} name="boardType" values={AVAILABLE_HARDWARE_TYPES}
-                                  placeholder="Hardware"
+                                  placeholder="Choose hardware type"
                                   validate={[Validation.Rules.required]}/>
                 </Item>
               </Col>
               <Col span={12} offset={2}>
                 <Item label="Connection Type" offset="none">
                   <MetadataSelect displayError={false} name="connectionType" values={AVAILABLE_CONNECTION_TYPES}
-                                  placeholder="Choose product"
+                                  placeholder="Choose connection type"
                                   validate={[Validation.Rules.required]}/>
                 </Item>
               </Col>
