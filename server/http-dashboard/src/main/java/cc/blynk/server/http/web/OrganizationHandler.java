@@ -84,13 +84,12 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @GET
     @Path("")
-    public Response getListOfOrganizations(@Context ChannelHandlerContext ctx) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+    public Response getListOfOrganizations(@ContextUser User user) {
         return ok(
-                organizationDao.getAll(httpSession.user)
-                .stream()
-                        .filter(org -> org.id != 1)
-                        .collect(Collectors.toList())
+                organizationDao.getAll(user)
+                    .stream()
+                    .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
+                    .collect(Collectors.toList())
         );
     }
 

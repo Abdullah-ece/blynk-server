@@ -246,9 +246,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
             assertNotNull(orgs);
-            assertEquals(1, orgs.length);
-            assertEquals(2, orgs[0].id);
-            assertEquals(1, orgs[0].parentId);
+            assertEquals(0, orgs.length);
         }
     }
 
@@ -306,7 +304,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void createOrganization() throws Exception {
         login(admin.email, admin.pass);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, 1);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -318,6 +316,95 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
             assertEquals(organization.tzName, fromApi.tzName);
+        }
+    }
+
+    @Test
+    public void organizationListReturnsOnlySubOrganizations() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+
+        HttpGet getOrgs = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = httpclient.execute(getOrgs)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(1, orgs.length);
+            Organization fromApi = orgs[0];
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+    }
+
+    @Test
+    public void organizationListReturnsOnlySubOrganizations2() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+
+        HttpGet getOrgs = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = httpclient.execute(getOrgs)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(1, orgs.length);
+            Organization fromApi = orgs[0];
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+        }
+
+        String name = "newadmin@blynk.cc";
+        String pass = "admin";
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        newadmin.orgId = 2;
+        newadmin.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
+        newadmin.status = UserStatus.Active;
+        holder.userDao.add(newadmin);
+
+        CloseableHttpClient newHttpClient = newHttpClient();
+
+        login(newHttpClient, httpsAdminServerUrl, newadmin.email, newadmin.pass);
+
+        getOrgs = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = newHttpClient.execute(getOrgs)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(0, orgs.length);
         }
     }
 
