@@ -26,6 +26,8 @@ class Edit extends React.Component {
     submitFailed: PropTypes.bool,
 
     formErrors: PropTypes.instanceOf(Map),
+    formAsyncErrors: PropTypes.instanceOf(Map),
+    formSubmitErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map)
   };
 
@@ -41,7 +43,7 @@ class Edit extends React.Component {
                                </Button>
                                <Button type="primary"
                                        loading={this.props.submitting}
-                                       disabled={this.props.formErrors.size && this.props.submitFailed}
+                                       disabled={this.props.formSubmitErrors.size && this.props.formAsyncErrors.size && this.props.formErrors.size && this.props.submitFailed}
                                        onClick={this.props.handleSubmit}>
                                  Save
                                </Button>
@@ -52,6 +54,8 @@ class Edit extends React.Component {
             submitFailed={this.props.submitFailed}
             formValues={this.props.formValues}
             formErrors={this.props.formErrors}
+            formAsyncErrors={this.props.formAsyncErrors}
+            formSubmitErrors={this.props.formSubmitErrors}
             onTabChange={this.props.onTabChange}
             activeTab={this.props.activeTab}
             adminsComponent={this.props.adminsComponent}

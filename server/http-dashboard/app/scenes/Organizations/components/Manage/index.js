@@ -16,6 +16,8 @@ class Manage extends React.Component {
 
     formValues: PropTypes.instanceOf(Map),
     formErrors: PropTypes.instanceOf(Map),
+    formAsyncErrors: PropTypes.instanceOf(Map),
+    formSubmitErrors: PropTypes.instanceOf(Map),
 
     activeTab: PropTypes.string,
 
@@ -35,6 +37,12 @@ class Manage extends React.Component {
 
   validateFields(fields) {
     if (fields.filter(value => this.props.formErrors.has(value)).length)
+      return true;
+
+    if (fields.filter(value => this.props.formAsyncErrors.has(value)).length)
+      return true;
+
+    if (fields.filter(value => this.props.formSubmitErrors.has(value)).length)
       return true;
   }
 

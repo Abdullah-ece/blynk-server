@@ -5,9 +5,12 @@ import {
   initialize,
   destroy,
   getFormSyncErrors,
+  getFormAsyncErrors,
+  getFormSubmitErrors,
   submit,
   getFormValues,
   registerField,
+  SubmissionError,
   reset
 }                             from 'redux-form';
 import {Map, List, fromJS}    from 'immutable';
@@ -48,6 +51,8 @@ import AdminsEditScene from "../AdminsEdit/index";
   details: fromJS(state.Organizations.get('details')),
   activeTab: state.Organizations.getIn(['manage', 'activeTab']),
   formErrors: fromJS(getFormSyncErrors(Manage.FORM_NAME)(state) || {}),
+  formAsyncErrors: fromJS(getFormAsyncErrors(Manage.FORM_NAME)(state) || {}),
+  formSubmitErrors: fromJS(getFormSubmitErrors(Manage.FORM_NAME)(state) || {}),
   formValues: fromJS(getFormValues(Manage.FORM_NAME)(state) || {}),
 }), (dispatch) => ({
   setTab: bindActionCreators(OrganizationsManageSetActiveTab, dispatch),
@@ -97,6 +102,8 @@ class Edit extends React.Component {
     details: PropTypes.instanceOf(Map),
     formErrors: PropTypes.instanceOf(Map),
     formValues: PropTypes.instanceOf(Map),
+    formAsyncErrors: PropTypes.instanceOf(Map),
+    formSubmitErrors: PropTypes.instanceOf(Map),
 
     list: PropTypes.instanceOf(List),
     products: PropTypes.instanceOf(List),
@@ -221,7 +228,7 @@ class Edit extends React.Component {
       return org.get('id') === Number(this.props.params.id);
     });
 
-    return new Promise((resolve) => {
+    return (new Promise((resolve, reject) => {
       this.props.OrganizationsUpdate({
         ...organization.toJS(),
         ...this.props.formValues.toJS(),
@@ -229,7 +236,15 @@ class Edit extends React.Component {
         this.props.OrganizationsFetch().then(() => {
           resolve();
         });
+      }).catch((err) => {
+        reject({orgUpdate: err});
       });
+    })).catch((err) => {
+      if (err.orgUpdate) {
+        throw new SubmissionError({
+          name: err.orgUpdate.error.response.data.error.message
+        });
+      }
     });
   }
 
@@ -240,8 +255,10 @@ class Edit extends React.Component {
 
     return (
       <OrganizationEdit
-        formValues={this.props.formValues}
         formErrors={this.props.formErrors}
+        formAsyncErrors={this.props.formAsyncErrors}
+        formSubmitErrors={this.props.formSubmitErrors}
+        formValues={this.props.formValues}
         form={Manage.FORM_NAME}
         onSubmit={this.handleSubmit}
         onSubmitSuccess={this.handleSubmitSuccess}
