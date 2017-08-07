@@ -44,23 +44,48 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
     isFormDirty: (() => {
 
+      const getIds = (entity) => {
+        return entity.map((entity) => entity.id);
+      };
+
       const prefixes = {
         'metadata': 'metadatafield',
         'events': 'event',
         'dataStreams': 'datastreamfield'
       };
 
+      const ids = {
+        metadata: [],
+        dataStreams: [],
+        events: []
+      };
+
       const forms = [
         'product-edit-info'
       ];
 
+      const entity = state.Product.edit.entity || {};
+
       _.forEach(prefixes, (value, prefix) => {
         if (state.Product.edit[prefix] && Array.isArray(state.Product.edit[prefix].fields)) {
           state.Product.edit[prefix].fields.forEach((field) => {
+            ids[prefix].push(field.id);
             forms.push(`${value}${field.id}`);
           });
         }
       });
+
+      if (entity.metaFields && !_.isEqual(getIds(entity.metaFields).sort(), ids.metadata.sort())) {
+        return true;
+      }
+
+      if (entity.dataStreams && !_.isEqual(getIds(entity.dataStreams).sort(), ids.dataStreams.sort())) {
+        return true;
+      }
+
+      if (entity.events && !_.isEqual(getIds(entity.events).sort(), ids.events.sort())) {
+        return true;
+      }
 
       return forms.some((formName) => {
         return isDirty(formName)(state);

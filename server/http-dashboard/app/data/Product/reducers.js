@@ -12,6 +12,7 @@ const initialState = {
     }
   },
   edit: {
+    entity: {},
     info: {
       invalid: true,
       values: {}
@@ -105,6 +106,7 @@ export default function Product(state = initialState, action) {
         ...state,
         edit: {
           ...state.edit,
+          entity: action.data, // to check with original entity meta/event/datastreams ids if something was delete/create
           ...prepareProductForEdit(action.data)
         }
       };
