@@ -8,6 +8,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
@@ -332,6 +333,10 @@ public class OrganizationHandler extends BaseHttpHandler {
             log.error("User {} is already in a system.", userInvite.email);
             return forbidden("User is already in a system.");
         }
+
+        invitedUser.profile.dashBoards = new DashBoard[] {
+                new DashBoard()
+        };
 
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("Trying to send invitation email to {}.", userInvite.email);
