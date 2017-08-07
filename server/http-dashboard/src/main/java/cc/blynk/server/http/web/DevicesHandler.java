@@ -152,12 +152,7 @@ public class DevicesHandler extends BaseHttpHandler {
                            @QueryParam("order") String order) {
         User user = getUser(ctx);
 
-        Collection<Device> devices;
-        if (user.isAdmin()) {
-            devices = deviceDao.getAll();
-        } else {
-            devices = deviceDao.getAllByUser(user);
-        }
+        Collection<Device> devices = deviceDao.getAllByUser(user);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
