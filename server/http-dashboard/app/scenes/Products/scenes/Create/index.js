@@ -92,10 +92,12 @@ class Create extends React.Component {
       metaFields: this.props.isMetadataFirstTime ? hardcodedRequiredMetadataFields.concat(exampleMetadataField) : hardcodedRequiredMetadataFields,
       events: [
         {
+          id: 1,
           name: '',
           type: "ONLINE"
         },
         {
+          id: 2,
           name: '',
           type: "OFFLINE",
           ignorePeriod: '0 hrs 0 min'

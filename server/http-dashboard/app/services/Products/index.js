@@ -266,7 +266,6 @@ export const prepareProductForEdit = (data) => {
     return key !== 'metaFields';
   });
 
-  let id = 1;
   if (data.metaFields) {
     edit.metadata.fields = (data.metaFields && data.metaFields.map((field) => {
         let values = _.pickBy(field, (value, key) => key !== 'type');
@@ -303,20 +302,17 @@ export const prepareProductForEdit = (data) => {
       })) || [];
   }
 
-  id = 1;
   if (data.dataStreams) {
     edit.dataStreams.fields = (data.dataStreams && data.dataStreams.map((field) => {
         return {
-          id: ++id,
+          id: field.id,
           values: field
         };
       })) || [];
   }
 
-  id = 1;
   if (data.events) {
     edit.events.fields = (data.events && data.events.map((field) => {
-        ++id;
 
         if (field.type === EVENT_TYPES.OFFLINE) {
           let hours, minutes;
@@ -351,10 +347,10 @@ export const prepareProductForEdit = (data) => {
         }
 
         return {
-          id: id,
+          id: field.id,
           type: field.type,
           values: {
-            id: id,
+            id: field.id,
             ...field,
             emailNotifications: emailNotifications,
             pushNotifications: pushNotifications
@@ -450,6 +446,7 @@ export const prepareProductForSave = (data) => {
   if (Array.isArray(data.dataStreams.fields)) {
     data.dataStreams.fields.forEach((value) => {
       product.dataStreams.push({
+        id: value.id,
         ...value.values
       });
     });
