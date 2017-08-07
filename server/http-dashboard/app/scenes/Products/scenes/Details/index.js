@@ -17,7 +17,8 @@ import './styles.less';
 import {MainLayout} from 'components';
 
 @connect((state) => ({
-  Product: state.Product.products
+  Product: state.Product.products,
+  canEditProduct: state.Organization && state.Organization.parentId && state.Organization.parentId === -1,
 }), (dispatch) => ({
   Fetch: bindActionCreators(API.ProductFetch, dispatch),
   Delete: bindActionCreators(API.ProductDelete, dispatch)
@@ -32,6 +33,8 @@ class ProductDetails extends React.Component {
     location: React.PropTypes.object,
 
     Product: React.PropTypes.array,
+
+    canEditProduct: React.PropTypes.bool,
   };
 
   static contextTypes = {
@@ -122,13 +125,13 @@ class ProductDetails extends React.Component {
     return (
       <MainLayout>
         <MainLayout.Header title={this.state.product.name}
-                           options={(
+                           options={this.props.canEditProduct && (
                              <div>
                                <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
                                <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
                                <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
                              </div>
-                           )}/>
+                           ) || (null)}/>
         <MainLayout.Content className="product-details-content">
           <Tabs className="products-tabs"
                 defaultActiveKey={TABS.INFO}

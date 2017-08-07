@@ -3,11 +3,15 @@ import {Link}               from 'react-router';
 import {Button, message}    from 'antd';
 import {List as IList}      from 'immutable';
 import PropTypes            from 'prop-types';
+import {connect}            from 'react-redux';
 import {
   MainList,
   MainLayout
 }                           from 'components';
 
+@connect((state) => ({
+  canCreateOrgs: state.Organization && state.Organization.canCreateOrgs
+}))
 class List extends React.Component {
 
   static contextTypes = {
@@ -17,7 +21,9 @@ class List extends React.Component {
   static propTypes = {
     data: PropTypes.instanceOf(IList),
 
-    location: PropTypes.object
+    location: PropTypes.object,
+
+    canCreateOrgs: PropTypes.bool,
   };
 
   componentDidMount() {
@@ -35,15 +41,19 @@ class List extends React.Component {
   }
 
   render() {
+
+    if (!this.props.canCreateOrgs)
+      return null;
+
     return (
       <MainLayout>
-        <MainLayout.Header title="Organizations" options={(
+        <MainLayout.Header title="Organizations" options={this.props.canCreateOrgs && (
           <div>
             <Link to="/organizations/create">
               <Button icon="plus" type="primary">Create New Organization</Button>
             </Link>
           </div>
-        )}/>
+        ) || (null)}/>
         <MainLayout.Content>
           <MainList>
             { this.props.data.map((organization, key) => (
