@@ -7,6 +7,7 @@ import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {MainLayout}         from 'components';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
+import {OrganizationFetch} from 'data/Organization/actions';
 import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
@@ -36,6 +37,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   }
 
   return {
+    Organization: state.Organization,
     orgId: state.Account.orgId,
     product: state.Product.edit,
     products: state.Product.products,
@@ -100,6 +102,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   Create: bindActionCreators(API.ProductCreate, dispatch),
   updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
@@ -127,6 +130,7 @@ class ProductCreate extends React.Component {
     Create: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
+    OrganizationFetch: React.PropTypes.func,
     updateInfoInvalidFlag: React.PropTypes.func,
     ProductEditClearFields: React.PropTypes.func,
     updateDevicesByProduct: React.PropTypes.func,
@@ -142,6 +146,7 @@ class ProductCreate extends React.Component {
     products: React.PropTypes.array,
     product: React.PropTypes.object,
     eventsForms: React.PropTypes.array,
+    Organization: React.PropTypes.object,
 
     orgId: React.PropTypes.any
   };
@@ -157,6 +162,21 @@ class ProductCreate extends React.Component {
   }
 
   componentWillMount() {
+
+    const checkForPermission = (org) => {
+      if (org && org.parentId > 0) {
+        this.context.router.push('/products');
+      }
+    };
+
+    if (this.props.Organization.parentId === null) {
+      this.props.OrganizationFetch({id: this.props.orgId}).then(() => {
+        checkForPermission(this.props.Organization);
+      });
+    } else {
+      checkForPermission(this.props.Organization);
+    }
+
     this.props.Fetch().then(() => {
       if (!this.getProduct())
         this.context.router.push('/products?notFound=true');

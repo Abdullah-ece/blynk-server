@@ -4,7 +4,8 @@ const initialState = {
   primaryColor: 'f00a0a',
   secondaryColor: '979282',
   logoUrl: '',
-  users: []
+  users: [],
+  parentId: null
 };
 
 export default function Account(state = initialState, action) {

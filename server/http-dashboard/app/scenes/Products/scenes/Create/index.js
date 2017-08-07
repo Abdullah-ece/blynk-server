@@ -7,6 +7,7 @@ import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {prepareProductForSave, exampleMetadataField, hardcodedRequiredMetadataFields} from 'services/Products';
+import {OrganizationFetch} from 'data/Organization/actions';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -37,6 +38,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     product: state.Product.edit,
     products: state.Product.products,
     eventsForms: eventsForms,
+    Organization: state.Organization,
     isProductInfoInvalid: state.Product.edit.info.invalid,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
   };
@@ -45,6 +47,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
+  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
   ProductEditInfoValuesUpdate: bindActionCreators(ProductEditInfoValuesUpdate, dispatch),
@@ -68,6 +71,7 @@ class Create extends React.Component {
     Create: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
+    OrganizationFetch: React.PropTypes.func,
     ProductEditClearFields: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
     ProductEditInfoValuesUpdate: React.PropTypes.func,
@@ -81,11 +85,27 @@ class Create extends React.Component {
     products: React.PropTypes.array,
     eventsForms: React.PropTypes.array,
     product: React.PropTypes.object,
+    Organization: React.PropTypes.object,
 
     orgId: React.PropTypes.any
   };
 
   componentWillMount() {
+
+    const checkForPermission = (org) => {
+      if (org && org.parentId > 0) {
+        this.context.router.push('/products');
+      }
+    };
+
+    if (this.props.Organization.parentId === null) {
+      this.props.OrganizationFetch({id: this.props.orgId}).then(() => {
+        checkForPermission(this.props.Organization);
+      });
+    } else {
+      checkForPermission(this.props.Organization);
+    }
+
     this.props.ProductSetEdit({
       boardType: HARDWARES["Particle Electron"].key,
       connectionType: CONNECTIONS_TYPES["GSM"].key,
