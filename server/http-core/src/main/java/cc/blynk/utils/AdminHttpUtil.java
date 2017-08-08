@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class AdminHttpUtil {
 
-    public static List<?> sortStringAsInt(List<?> list, String orderField, String order) {
+    public static List<?> sortStringAsInt(List<?> list, String orderField, SortOrder order) {
         if (list.size() == 0) {
             return list;
         }
@@ -26,32 +26,32 @@ public class AdminHttpUtil {
             orderField = "name";
         }
         if (order == null) {
-            order = "ASC";
+            order = SortOrder.ASC;
         }
 
 
         Comparator c = new GenericStringAsIntComparator(list.get(0).getClass(), orderField);
-        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
+        list.sort(order == SortOrder.ASC ? c : Collections.reverseOrder(c));
 
         return list;
     }
 
-    public static <T> List<T> sort(List<T> list, String[] orderFields, String order) {
+    public static <T> List<T> sort(List<T> list, String[] orderFields, SortOrder order) {
         if (list.size() == 0 || orderFields == null || orderFields.length == 0) {
             return list;
         }
 
         if (order == null) {
-            order = "ASC";
+            order = SortOrder.ASC;
         }
 
         Comparator c = new MultiFieldComparator(list.get(0).getClass(), orderFields);
-        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
+        list.sort(order == SortOrder.ASC ? c : Collections.reverseOrder(c));
 
         return list;
     }
 
-    public static <T> List<T> sort(List<T> list, String orderField, String order) {
+    public static <T> List<T> sort(List<T> list, String orderField, SortOrder order) {
         if (list.size() == 0) {
             return list;
         }
@@ -60,11 +60,11 @@ public class AdminHttpUtil {
             orderField = "name";
         }
         if (order == null) {
-            order = "ASC";
+            order = SortOrder.ASC;
         }
 
         Comparator c = new GenericComparator(list.get(0).getClass(), orderField);
-        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
+        list.sort(order == SortOrder.ASC ? c : Collections.reverseOrder(c));
 
         return list;
     }

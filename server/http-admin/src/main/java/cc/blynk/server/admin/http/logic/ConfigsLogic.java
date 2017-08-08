@@ -12,6 +12,7 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class ConfigsLogic extends BaseHttpHandler {
                              @QueryParam("_page") int page,
                              @QueryParam("_perPage") int size,
                              @QueryParam("_sortField") String sortField,
-                             @QueryParam("_sortDir") String sortOrder) {
+                             @QueryParam("_sortDir") SortOrder sortOrder) {
 
         List<Config> configs = new ArrayList<>();
         configs.add(new Config(ServerProperties.SERVER_PROPERTIES_FILENAME));

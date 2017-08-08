@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class UsersLogic extends BaseHttpHandler {
                                  @QueryParam("_page") int page,
                                  @QueryParam("_perPage") int size,
                                  @QueryParam("_sortField") String sortField,
-                                 @QueryParam("_sortDir") String sortOrder) {
+                                 @QueryParam("_sortDir") SortOrder sortOrder) {
         if (filterParam != null) {
             Filter filter = JsonParser.readAny(filterParam, Filter.class);
             filterParam = filter == null ? null : filter.name;

@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class StatsLogic extends BaseHttpHandler {
     @GET
     @Path("/requestsPerUser")
     public Response getRequestPerUser(@QueryParam("_sortField") String sortField,
-                                          @QueryParam("_sortDir") String sortOrder) {
+                                          @QueryParam("_sortDir") SortOrder sortOrder) {
         List<RequestPerSecondResponse> res = new ArrayList<>();
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
@@ -75,49 +76,49 @@ public class StatsLogic extends BaseHttpHandler {
     @GET
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
-                                    @QueryParam("_sortDir") String sortOrder) {
+                                    @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false).commands), sortField, sortOrder));
     }
 
     @GET
     @Path("/widgets")
     public Response getWidgets(@QueryParam("_sortField") String sortField,
-                                   @QueryParam("_sortDir") String sortOrder) {
+                                   @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getWidgetsUsage()), sortField, sortOrder));
     }
 
     @GET
     @Path("/projectsPerUser")
     public Response getProjectsPerUser(@QueryParam("_sortField") String sortField,
-                                           @QueryParam("_sortDir") String sortOrder) {
+                                           @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder));
     }
 
     @GET
     @Path("/boards")
     public Response getBoards(@QueryParam("_sortField") String sortField,
-                                    @QueryParam("_sortDir") String sortOrder) {
+                                    @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getBoardsUsage()), sortField, sortOrder));
     }
 
     @GET
     @Path("/facebookLogins")
     public Response getFacebookLogins(@QueryParam("_sortField") String sortField,
-                              @QueryParam("_sortDir") String sortOrder) {
+                              @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getFacebookLogin()), sortField, sortOrder));
     }
 
     @GET
     @Path("/filledSpace")
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
-                                  @QueryParam("_sortDir") String sortOrder) {
+                                  @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder));
     }
 
     @GET
     @Path("/userProfileSize")
     public Response getUserProfileSize(@QueryParam("_sortField") String sortField,
-                                   @QueryParam("_sortDir") String sortOrder) {
+                                   @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder));
     }
 
@@ -125,7 +126,7 @@ public class StatsLogic extends BaseHttpHandler {
     @GET
     @Path("/webHookHosts")
     public Response getWebHookHosts(@QueryParam("_sortField") String sortField,
-                                       @QueryParam("_sortDir") String sortOrder) {
+                                       @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder));
     }
 
@@ -135,7 +136,7 @@ public class StatsLogic extends BaseHttpHandler {
                            @QueryParam("_page") int page,
                            @QueryParam("_perPage") int size,
                            @QueryParam("_sortField") String sortField,
-                           @QueryParam("_sortDir") String sortOrder) {
+                           @QueryParam("_sortDir") SortOrder sortOrder) {
 
         if (filterParam != null) {
             IpFilter filter = JsonParser.readAny(filterParam, IpFilter.class);

@@ -22,6 +22,7 @@ import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.server.http.web.model.WebComment;
 import cc.blynk.server.http.web.model.WebDevice;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.SortOrder;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -149,7 +150,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @PathParam("orgId") int orgId,
                            @QueryParam("orderField") String[] orderFields,
-                           @QueryParam("order") String order) {
+                           @QueryParam("order") SortOrder order) {
         User user = getUser(ctx);
 
         Collection<Device> devices = deviceDao.getAllByUser(user);

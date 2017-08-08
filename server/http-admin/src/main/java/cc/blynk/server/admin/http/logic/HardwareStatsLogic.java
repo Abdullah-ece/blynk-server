@@ -7,6 +7,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import static cc.blynk.core.http.Response.ok;
@@ -31,28 +32,28 @@ public class HardwareStatsLogic extends BaseHttpHandler {
     @GET
     @Path("/version")
     public Response getLibraryVersion(@QueryParam("_sortField") String sortField,
-                                           @QueryParam("_sortDir") String sortOrder) {
+                                           @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getLibraryVersion()), sortField, sortOrder));
     }
 
     @GET
     @Path("/cpuType")
     public Response getBoards(@QueryParam("_sortField") String sortField,
-                                    @QueryParam("_sortDir") String sortOrder) {
+                                    @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getCpuType()), sortField, sortOrder));
     }
 
     @GET
     @Path("/connectionType")
     public Response getFacebookLogins(@QueryParam("_sortField") String sortField,
-                              @QueryParam("_sortDir") String sortOrder) {
+                              @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getConnectionType()), sortField, sortOrder));
     }
 
     @GET
     @Path("/boards")
     public Response getHardwareBoards(@QueryParam("_sortField") String sortField,
-                                      @QueryParam("_sortDir") String sortOrder) {
+                                      @QueryParam("_sortDir") SortOrder sortOrder) {
         return ok(sort(convertMapToPair(userDao.getHardwareBoards()), sortField, sortOrder));
     }
 
