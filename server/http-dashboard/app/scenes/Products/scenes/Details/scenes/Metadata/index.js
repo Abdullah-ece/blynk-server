@@ -2,7 +2,26 @@ import React from 'react';
 import {BackTop} from 'components';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
-const {ItemsList, Fields: {ContactField, TextField, NumberField, UnitField, TimeField, ShiftField, CostField, CoordinatesField, AddressField, LocationField, DeviceOwnerField, DeviceNameField, SwitchField}} = MetadataComponents;
+const {
+  ItemsList, Fields: {
+    ContactField,
+    TextField,
+    NumberField,
+    UnitField,
+    TimeField,
+    ShiftField,
+    CostField,
+    CoordinatesField,
+    AddressField,
+    LocationField,
+    DeviceOwnerField,
+    DeviceNameField,
+    SwitchField,
+    ManufacturerField,
+    ModelNameField,
+    TimezoneOfDeviceField
+  }
+} = MetadataComponents;
 class Metadata extends React.Component {
 
   static propTypes = {
@@ -16,6 +35,9 @@ class Metadata extends React.Component {
       hardcodedRequiredMetadataFieldsNames.DeviceName,
       hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       hardcodedRequiredMetadataFieldsNames.LocationName,
+      hardcodedRequiredMetadataFieldsNames.Manufacturer,
+      hardcodedRequiredMetadataFieldsNames.ModelName,
+      hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
     ];
     return hardcodedNames.indexOf(field.name) !== -1;
   }
@@ -25,6 +47,9 @@ class Metadata extends React.Component {
       hardcodedRequiredMetadataFieldsNames.DeviceName,
       hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       hardcodedRequiredMetadataFieldsNames.LocationName,
+      hardcodedRequiredMetadataFieldsNames.Manufacturer,
+      hardcodedRequiredMetadataFieldsNames.ModelName,
+      hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
     ];
     return hardcodedNames.indexOf(field.name) === -1;
   }
@@ -236,6 +261,24 @@ class Metadata extends React.Component {
       if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.DeviceName) {
         elements.push(
           <DeviceNameField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.Manufacturer) {
+        elements.push(
+          <ManufacturerField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.ModelName) {
+        elements.push(
+          <ModelNameField.Static {...props}/>
+        );
+      }
+
+      if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
+        elements.push(
+          <TimezoneOfDeviceField.Static {...props}/>
         );
       }
 

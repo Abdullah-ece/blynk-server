@@ -320,6 +320,9 @@ export const prepareProductForEdit = (data) => {
           hardcodedRequiredMetadataFieldsNames.DeviceName,
           hardcodedRequiredMetadataFieldsNames.DeviceOwner,
           hardcodedRequiredMetadataFieldsNames.LocationName,
+          hardcodedRequiredMetadataFieldsNames.Manufacturer,
+          hardcodedRequiredMetadataFieldsNames.ModelName,
+          hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
         ];
 
         if (field.type === Metadata.Fields.CONTACT) {
