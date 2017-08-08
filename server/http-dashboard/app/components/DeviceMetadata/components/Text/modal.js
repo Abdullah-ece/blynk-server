@@ -1,11 +1,20 @@
-import React from 'react';
-import {Item, Input} from 'components/UI';
-import Validation from 'services/Validation';
+import React        from 'react';
+import _            from 'lodash';
+import {
+  MetadataSelect
+}                   from 'components/Form';
+import {
+  Item,
+  Input
+}                   from 'components/UI';
+import Validation   from 'services/Validation';
+import Timezones    from 'services/timeszones';
 
 class TextModal extends React.Component {
 
   static propTypes = {
-    isDeviceOwner: React.PropTypes.bool
+    isDeviceOwner: React.PropTypes.bool,
+    isTimezoneOfDevice: React.PropTypes.bool,
   };
 
   render() {
@@ -17,6 +26,13 @@ class TextModal extends React.Component {
       validateOnBlur = true;
     }
 
+    const timezones = _.map(Timezones, (value, key) => {
+      return {
+        key: key,
+        value: value
+      };
+    });
+
     return (
       <div>
         { this.props.isDeviceOwner && (
@@ -27,10 +43,19 @@ class TextModal extends React.Component {
           </Item>
         )}
 
-        { !this.props.isDeviceOwner && (
-          <Input validateOnBlur={validateOnBlur}
-                 placeholder="Value" name="value"
-                 validate={validationRules}/>
+        { this.props.isTimezoneOfDevice && (
+          <Item>
+            <MetadataSelect displayError={false} name="value" values={timezones}
+                            placeholder="Choose timezone"/>
+          </Item>
+        )}
+
+        { !this.props.isDeviceOwner && !this.props.isTimezoneOfDevice && (
+          <Item>
+            <Input validateOnBlur={validateOnBlur}
+                   placeholder="Value" name="value"
+                   validate={validationRules}/>
+          </Item>
         )}
 
       </div>

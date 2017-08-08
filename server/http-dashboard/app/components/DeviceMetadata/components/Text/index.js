@@ -2,6 +2,7 @@ import React from 'react';
 import Base from '../Base';
 import {Fieldset} from 'components';
 import TextModal from './modal';
+import {hardcodedRequiredMetadataFieldsNames} from 'services/Products';
 
 class Text extends Base {
 
@@ -10,12 +11,14 @@ class Text extends Base {
   }
 
   isDeviceOwner() {
-    const DEVICE_OWNER = 'Device Owner';
-    return this.props.data.get('name') === DEVICE_OWNER;
+    return this.props.data.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner;
+  }
+
+  isTimezoneOfDevice() {
+    return this.props.data.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice;
   }
 
   getPreviewComponent() {
-
     const field = this.props.data;
 
     return (
@@ -29,7 +32,8 @@ class Text extends Base {
   getEditableComponent() {
     return (
       <div>
-        <TextModal form={this.props.form} isDeviceOwner={this.isDeviceOwner()}/>
+        <TextModal form={this.props.form} isDeviceOwner={this.isDeviceOwner()}
+                   isTimezoneOfDevice={this.isTimezoneOfDevice()}/>
       </div>
     );
   }
