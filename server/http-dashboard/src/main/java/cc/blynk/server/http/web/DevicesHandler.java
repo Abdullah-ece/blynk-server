@@ -148,7 +148,7 @@ public class DevicesHandler extends BaseHttpHandler {
     @Path("/{orgId}")
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @PathParam("orgId") int orgId,
-                           @QueryParam("orderField") String orderField,
+                           @QueryParam("orderField") String[] orderFields,
                            @QueryParam("order") String order) {
         User user = getUser(ctx);
 
@@ -158,7 +158,7 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 List<WebDevice> result = joinEventsCountSinceLastView(devices, user.email);
-                response = ok(sort(result, orderField, order));
+                response = ok(sort(result, orderFields, order));
             } catch (Exception e){
                 log.error("Error getting counters for devices.", e);
                 response = serverError("Error getting counters for devices.");

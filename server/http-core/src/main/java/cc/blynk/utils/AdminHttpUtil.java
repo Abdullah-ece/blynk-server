@@ -36,6 +36,21 @@ public class AdminHttpUtil {
         return list;
     }
 
+    public static <T> List<T> sort(List<T> list, String[] orderFields, String order) {
+        if (list.size() == 0 || orderFields == null || orderFields.length == 0) {
+            return list;
+        }
+
+        if (order == null) {
+            order = "ASC";
+        }
+
+        Comparator c = new MultiFieldComparator(list.get(0).getClass(), orderFields);
+        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
+
+        return list;
+    }
+
     public static <T> List<T> sort(List<T> list, String orderField, String order) {
         if (list.size() == 0) {
             return list;
@@ -76,10 +91,10 @@ public class AdminHttpUtil {
         GenericComparator(Class<?> type, String sortField) {
             try {
                 this.field = type.getField(sortField);
+                this.fieldType = field.getType();
             } catch (NoSuchFieldException nsfe) {
                 throw new RuntimeException("Can't find field.");
             }
-            this.fieldType = field.getType();
         }
 
         @Override
@@ -109,7 +124,31 @@ public class AdminHttpUtil {
 
             throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());
         }
+    }
 
+    public static class MultiFieldComparator implements Comparator {
+
+        private final GenericComparator[] fieldComparators;
+
+        public MultiFieldComparator(Class<?> type, String[] sortFields) {
+            this.fieldComparators = new GenericComparator[sortFields.length];
+            int i = 0;
+            for (String field : sortFields) {
+                fieldComparators[i++] = new GenericComparator(type, field);
+            }
+        }
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            int r = 0;
+            for (GenericComparator genericComparator : fieldComparators) {
+                r = genericComparator.compare(o1, o2);
+                if (r != 0) {
+                    return r;
+                }
+            }
+            return r;
+        }
     }
 
     public static class GenericStringAsIntComparator extends GenericComparator {

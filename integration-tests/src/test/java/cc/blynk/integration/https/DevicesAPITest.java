@@ -166,6 +166,148 @@ public class DevicesAPITest extends APIBaseTest {
     }
 
     @Test
+    public void getDevicesWithSortingByMultiFields1() throws Exception {
+        login(admin.email, admin.pass);
+
+        int productId = createProduct();
+
+        Device newDevice = new Device();
+        newDevice.name = "B";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 1;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "C";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 2;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "A";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 3;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=dataReceivedAt&orderField=name&order=ASC");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertNull(devices[0].name);
+            assertEquals("B", devices[1].name);
+            assertEquals("C", devices[2].name);
+            assertEquals("A", devices[3].name);
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=dataReceivedAt&orderField=name&order=DESC");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertEquals("A", devices[0].name);
+            assertEquals("C", devices[1].name);
+            assertEquals("B", devices[2].name);
+            assertNull(devices[3].name);
+        }
+    }
+
+    @Test
+    public void getDevicesWithSortingByMultiFields2() throws Exception {
+        login(admin.email, admin.pass);
+
+        int productId = createProduct();
+
+        Device newDevice = new Device();
+        newDevice.name = "B";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 2;
+        newDevice.disconnectTime = 0;
+
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "C";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 1;
+        newDevice.disconnectTime = 2;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newDevice = new Device();
+        newDevice.name = "A";
+        newDevice.productId = productId;
+        newDevice.dataReceivedAt = 1;
+        newDevice.disconnectTime = 1;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=dataReceivedAt&orderField=disconnectTime&orderField=name&order=ASC");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertNull(devices[0].name);
+            assertEquals("A", devices[1].name);
+            assertEquals("C", devices[2].name);
+            assertEquals("B", devices[3].name);
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1?orderField=dataReceivedAt&orderField=disconnectTime&orderField=name&order=DESC");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(4, devices.length);
+            assertEquals("B", devices[0].name);
+            assertEquals("C", devices[1].name);
+            assertEquals("A", devices[2].name);
+            assertNull(devices[3].name);
+        }
+    }
+
+    @Test
     public void getDeviceById() throws Exception {
         login(admin.email, admin.pass);
 
