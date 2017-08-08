@@ -27,6 +27,6 @@ public class TimeMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new TimeMetaField(id, name, role, (Date) time.clone());
+        return new TimeMetaField(id, name, role, time == null ? null : (Date) time.clone());
     }
 }
