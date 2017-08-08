@@ -16,6 +16,9 @@ import AddressField from './components/AddressField';
 import DeviceNameField from './components/DeviceNameField';
 import LocationField from './components/LocationField';
 import DeviceOwnerField from './components/DeviceOwnerField';
+import ManufacturerField from './components/ManufacturerField';
+import ModelNameField from './components/ModelNameField';
+import TimezoneOfDeviceField from './components/TimezoneOfDeviceField';
 
 const Metadata = {
   Item: Item,
@@ -34,7 +37,10 @@ const Metadata = {
     AddressField,
     DeviceNameField,
     LocationField,
-    DeviceOwnerField
+    DeviceOwnerField,
+    ManufacturerField,
+    ModelNameField,
+    TimezoneOfDeviceField
   }
 };
 

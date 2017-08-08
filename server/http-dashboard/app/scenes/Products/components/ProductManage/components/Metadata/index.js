@@ -417,6 +417,24 @@ class ProductMetadata extends React.Component {
         );
       }
 
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.Manufacturer) {
+        elements.push(
+          <MetadataFields.ManufacturerField {...props}/>
+        );
+      }
+
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.ModelName) {
+        elements.push(
+          <MetadataFields.ModelNameField {...props}/>
+        );
+      }
+
+      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
+        elements.push(
+          <MetadataFields.TimezoneOfDeviceField {...props}/>
+        );
+      }
+
     });
 
     return elements;

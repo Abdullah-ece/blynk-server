@@ -1,4 +1,5 @@
 import React from 'react';
+import {fromJS, Map} from 'immutable';
 import './styles.less';
 import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {connect} from 'react-redux';
@@ -6,7 +7,7 @@ import {submit, getFormSyncErrors} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
-import {prepareProductForSave, exampleMetadataField, hardcodedRequiredMetadataFields} from 'services/Products';
+import {prepareProductForSave, exampleMetadataField, getHardcodedRequiredMetadataFields} from 'services/Products';
 import {OrganizationFetch} from 'data/Organization/actions';
 import * as API from 'data/Product/api';
 import {
@@ -34,6 +35,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   }
 
   return {
+    organization: fromJS(state.Organization),
     orgId: state.Account.orgId,
     product: state.Product.edit,
     products: state.Product.products,
@@ -81,6 +83,7 @@ class Create extends React.Component {
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldsUpdate: React.PropTypes.func,
 
+    organization: React.PropTypes.instanceOf(Map),
     params: React.PropTypes.object,
     products: React.PropTypes.array,
     eventsForms: React.PropTypes.array,
@@ -106,10 +109,15 @@ class Create extends React.Component {
       checkForPermission(this.props.Organization);
     }
 
+    const hardcodedMetadataPredefinedValues = {
+      timezoneDefaultValue: this.props.organization.get('tzName'),
+      manufacturerDefaultValue: this.props.organization.get('name')
+    };
+
     this.props.ProductSetEdit({
       boardType: HARDWARES["Particle Electron"].key,
       connectionType: CONNECTIONS_TYPES["GSM"].key,
-      metaFields: this.props.isMetadataFirstTime ? hardcodedRequiredMetadataFields.concat(exampleMetadataField) : hardcodedRequiredMetadataFields,
+      metaFields: this.props.isMetadataFirstTime ? getHardcodedRequiredMetadataFields(hardcodedMetadataPredefinedValues).concat(exampleMetadataField) : getHardcodedRequiredMetadataFields(hardcodedMetadataPredefinedValues),
       events: [
         {
           id: 1,

@@ -66,7 +66,10 @@ export const Metadata = {
 export const hardcodedRequiredMetadataFieldsNames = {
   DeviceName: 'Device Name',
   DeviceOwner: 'Device Owner',
-  LocationName: 'Location Name'
+  LocationName: 'Location Name',
+  Manufacturer: 'Manufacturer',
+  ModelName: 'Model Name',
+  TimezoneOfTheDevice: 'Timezone of the device'
 };
 
 export const filterMetadataFields = (fields, filterHardcoded = true) => {
@@ -81,29 +84,54 @@ export const filterDynamicMetadataFields = (fields) => {
   return filterMetadataFields(fields, false);
 };
 
-export const hardcodedRequiredMetadataFields = [
-  {
-    id: 1,
-    type: Metadata.Fields.TEXT,
-    name: 'Device Name',
-    role: 'ADMIN',
-    hardcoded: true
-  },
-  {
-    id: 2,
-    type: Metadata.Fields.TEXT,
-    name: 'Device Owner',
-    role: 'ADMIN',
-    hardcoded: true
-  },
-  {
-    id: 3,
-    type: Metadata.Fields.TEXT,
-    name: 'Location Name',
-    role: 'ADMIN',
-    hardcoded: true
-  }
-];
+export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufacturerDefaultValue}) => {
+  return [
+    {
+      id: 1,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.DeviceName,
+      role: 'ADMIN',
+      hardcoded: true
+    },
+    {
+      id: 2,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+      role: 'ADMIN',
+      hardcoded: true
+    },
+    {
+      id: 3,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.LocationName,
+      role: 'ADMIN',
+      hardcoded: true
+    },
+    {
+      id: 4,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
+      value: manufacturerDefaultValue,
+      role: 'STAFF',
+      hardcoded: true
+    },
+    {
+      id: 5,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.ModelName,
+      role: 'ADMIN',
+      hardcoded: true
+    },
+    {
+      id: 6,
+      type: Metadata.Fields.TEXT,
+      name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
+      value: timezoneDefaultValue || null,
+      role: 'USER',
+      hardcoded: true
+    }
+  ];
+};
 
 export const exampleMetadataField = {
   type: Metadata.Fields.TEXT,

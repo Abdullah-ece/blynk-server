@@ -92,7 +92,7 @@ Store().then((store) => {
               <Route path="/organizations/edit/:id" component={Organizations.Edit}/>
               <Route path="/organizations/:id" component={Organizations.Details}/>
               <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
-              <Route path="/products/create" component={ProductCreate}/>
+              <Route path="/products/create" component={ProductCreate} onEnter={OrganizationPreloader(store)}/>
               <Route path="/products/create/:tab" component={ProductCreate}/>
               <Route path="/products/edit/:id" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
               <Route path="/products/edit/:id/:tab" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
