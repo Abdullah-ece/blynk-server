@@ -23,6 +23,24 @@ export const EVENT_TYPES = {
   CRITICAL: 'CRITICAL'
 };
 
+export const getEventDefaultName = (type) => {
+  if (EVENT_TYPES.ONLINE === type) {
+    return 'Device Online';
+  }
+  if (EVENT_TYPES.OFFLINE === type) {
+    return 'Device Offline';
+  }
+  if (EVENT_TYPES.CRITICAL === type) {
+    return 'Critical Event';
+  }
+  if (EVENT_TYPES.WARNING === type) {
+    return 'Warning Event';
+  }
+  if (EVENT_TYPES.INFO === type) {
+    return 'Information Event';
+  }
+};
+
 export const DEVICE_FORCE_UPDATE = {
   UPDATE_DEVICES: 'update_devices',
   SAVE_WITHOUT_UPDATE: 'save_without_update',

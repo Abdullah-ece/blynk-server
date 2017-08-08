@@ -1,8 +1,8 @@
-import React                  from 'react';
-import classnames             from 'classnames';
-import moment                 from 'moment';
-import {Timeline, Button}     from 'antd';
-import {EVENT_TYPES}          from 'services/Products';
+import React                              from 'react';
+import classnames                         from 'classnames';
+import moment                             from 'moment';
+import {Timeline, Button}                 from 'antd';
+import {EVENT_TYPES, getEventDefaultName} from 'services/Products';
 
 class Simple extends React.Component {
 
@@ -39,7 +39,7 @@ class Simple extends React.Component {
       <Timeline.Item className={className}>
         <div className="devices--device-timeline--event-header">
           <div className="devices--device-timeline--event-header-name">
-            { this.props.event.get('name') }
+            { this.props.event.get('name') || getEventDefaultName(this.props.event.get('eventType')) }
           </div>
           <div className="devices--device-timeline--event-header-time">
             {time}

@@ -1,8 +1,8 @@
-import React                     from 'react';
-import classnames                from 'classnames';
-import moment                    from 'moment';
-import {Timeline}                from 'antd';
-import {EVENT_TYPES}             from 'services/Products';
+import React                              from 'react';
+import classnames                         from 'classnames';
+import moment                             from 'moment';
+import {Timeline}                         from 'antd';
+import {EVENT_TYPES, getEventDefaultName} from 'services/Products';
 
 class Resolved extends React.Component {
 
@@ -42,7 +42,7 @@ class Resolved extends React.Component {
         <div className="devices--device-timeline--event-content">
           <div className="devices--device-timeline--event-resolved-content">
             <div className={className}>
-              { this.props.event.get('name') }
+              { this.props.event.get('name') || getEventDefaultName(this.props.event.get('eventType')) }
             </div>
             <div className="devices--device-timeline--event-resolved-content-time">
               {time}
