@@ -12,7 +12,7 @@ class Resolved extends React.Component {
 
   render() {
 
-    const resolvedTime = moment(this.props.event.get('resolvedTs') || new Date().getTime()).calendar(null, {
+    const resolvedTime = moment(this.props.event.get('resolvedAt') || 0).calendar(null, {
       sameDay: '[today], hh:mm A',
       lastDay: '[yesterday], hh:mm A',
       lastWeek: 'dddd, hh:mm A',
