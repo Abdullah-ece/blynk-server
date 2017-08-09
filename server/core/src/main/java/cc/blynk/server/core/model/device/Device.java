@@ -30,13 +30,21 @@ public class Device implements Target {
 
     public volatile Status status = Status.OFFLINE;
 
-    public long createdAt;
+    public final long createdAt;
+
+    public volatile long activatedAt;
+
+    public volatile String activatedBy;
 
     public volatile long disconnectTime;
 
     public volatile String lastLoggedIP;
 
     public volatile long dataReceivedAt;
+
+    public volatile long metadataUpdatedAt;
+
+    public volatile String metadataUpdatedBy;
 
     public volatile MetaField[] metaFields;
 
@@ -80,7 +88,7 @@ public class Device implements Target {
     public void deleteMetaFields(MetaField[] metaFields) {
         List<MetaField> updatedSet = arrayToList(this.metaFields);
         updatedSet.removeAll(arrayToList(metaFields));
-        this.metaFields = (MetaField[]) updatedSet.toArray(new MetaField[0]);
+        this.metaFields = updatedSet.toArray(new MetaField[0]);
     }
 
     @Override

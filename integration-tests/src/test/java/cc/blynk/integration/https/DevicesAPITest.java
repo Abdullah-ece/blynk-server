@@ -52,6 +52,8 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
             assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
         }
 
         httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -69,6 +71,8 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
             assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
         }
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
