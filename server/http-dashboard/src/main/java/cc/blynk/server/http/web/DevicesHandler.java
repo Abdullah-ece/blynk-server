@@ -149,18 +149,17 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{orgId}/{deviceId}/updateMetaField/{metaFieldId}")
+    @Path("/{orgId}/{deviceId}/updateMetaField")
     public Response updateDeviceMetafield(@ContextUser User user,
                                           @PathParam("deviceId") int deviceId,
-                                          @PathParam("metaFieldId") int metaFieldId,
                                           MetaField updatedMetaField) {
 
         Device existingDevice = deviceDao.getById(deviceId);
         verifyUserAccessToDevice(user, existingDevice);
 
-        int fieldIndex = existingDevice.findMetaFieldIndex(metaFieldId);
+        int fieldIndex = existingDevice.findMetaFieldIndex(updatedMetaField.id);
         if (fieldIndex == -1) {
-            log.error("MetaField with id {} not found for device id {}.", metaFieldId, deviceId);
+            log.error("MetaField with id {} not found for device id {}.", updatedMetaField.id, deviceId);
             throw new WebException("MetaField with passed id not found.");
         }
 

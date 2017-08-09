@@ -123,7 +123,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, 123D);
 
-        HttpPost update = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField/1");
+        HttpPost update = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
         update.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(update)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -139,8 +139,10 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(regularUser.email, device.metadataUpdatedBy);
         }
 
-        HttpPost update2 = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField/2");
-        update2.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField), ContentType.APPLICATION_JSON));
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, 123D);
+
+        HttpPost update2 = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
+        update2.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField2), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(update2)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
         }
