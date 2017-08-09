@@ -436,44 +436,52 @@ export const TIMELINE_ITEMS_PER_PAGE = 25;
 export const DEVICES_SORT = {
   REQUIRE_ATTENTION: {
     key: 'REQUIRE_ATTENTION',
-    compare: () => {
-
+    compare: (a, b) => {
+      const aCritical = a.get('criticalSinceLastView') || 0;
+      const aWarning = a.get('warningSinceLastView') || 0;
+      const bCritical = b.get('criticalSinceLastView') || 0;
+      const bWarning = b.get('warningSinceLastView') || 0;
+      if (aCritical === bCritical) {
+        return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
+      } else {
+        return (aCritical > bCritical) ? -1 : 1;
+      }
     }
   },
   AZ: {
     key: 'AZ',
-    compare: () => {
-
+    compare: (a, b) => {
+      return String(a.get('name')) > String(b.get('name')) ? 1 : -1;
     }
   },
   ZA: {
     key: 'ZA',
-    compare: () => {
-
+    compare: (a, b) => {
+      return String(a.get('name')) > String(b.get('name')) ? -1 : 1;
     }
   },
   DATE_ADDED_ASC: {
     key: 'DATE_ADDED_ASC',
-    compare: () => {
-
+    compare: (a, b) => {
+      return Number(a.get('createdAt')) > Number(b.get('createdAt')) ? -1 : 1;
     }
   },
   DATE_ADDED_DESC: {
     key: 'DATE_ADDED_DESC',
-    compare: () => {
-
+    compare: (a, b) => {
+      return Number(a.get('createdAt')) > Number(b.get('createdAt')) ? 1 : -1;
     }
   },
   LAST_REPORTED_ASC: {
     key: 'LAST_REPORTED_ASC',
-    compare: () => {
-
+    compare: (a, b) => {
+      return Number(a.get('dataReceivedAt')) > Number(b.get('dataReceivedAt')) ? -1 : 1;
     }
   },
   LAST_REPORTED_DESC: {
     key: 'LAST_REPORTED_DESC',
-    compare: () => {
-
+    compare: (a, b) => {
+      return Number(a.get('dataReceivedAt')) > Number(b.get('dataReceivedAt')) ? 1 : -1;
     }
   },
 

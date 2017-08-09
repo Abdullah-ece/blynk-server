@@ -3,6 +3,9 @@ import {Index, NoDevices} from './components';
 import {
   DevicesSortChange
 } from 'data/Devices/actions';
+import {
+  DEVICES_SORT
+} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {List} from "immutable";
@@ -36,6 +39,10 @@ class Devices extends React.Component {
     this.devicesSortChange = this.devicesSortChange.bind(this);
   }
 
+  componentWillUnmount() {
+    this.props.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
+  }
+
   devicesSortChange(value) {
     this.props.devicesSortChange(value);
   }
@@ -48,9 +55,12 @@ class Devices extends React.Component {
                    location={this.props.location}
                    params={this.props.params}/>);
     } else {
+
+      let devices = this.props.devices.sort((a, b) => DEVICES_SORT[this.props.devicesSortValue].compare(a, b));
+
       return (<Index devicesSortValue={this.props.devicesSortValue}
                      devicesSortChange={this.devicesSortChange}
-                     devices={this.props.devices}
+                     devices={devices}
                      location={this.props.location}
                      products={this.props.products}
                      params={this.props.params}/>);
