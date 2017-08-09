@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import {
   DEVICES_SORT
 } from 'services/Devices';
@@ -11,6 +12,11 @@ import './styles.less';
 
 class DevicesSearch extends React.Component {
 
+  static propTypes = {
+    devicesSortValue: propTypes.string,
+    devicesSortChange: propTypes.func,
+  };
+
   render() {
     return (
       <div className="devices-search">
@@ -18,9 +24,8 @@ class DevicesSearch extends React.Component {
           <Select style={{width: '100%'}} placeholder="Search..." mode="multiple"
                   notFoundContent="Search is on development"/>
           <Select style={{width: '100px', maxWidth: '100px', minWidth: '100px'}} optionLabelProp={'label'}
-                  onChange={() => {
-
-                  }}
+                  value={this.props.devicesSortValue}
+                  onChange={this.props.devicesSortChange}
                   dropdownMatchSelectWidth={false}>
             <Select.Option key={DEVICES_SORT.REQUIRE_ATTENTION.key}
                            label={<span><Icon type="arrow-down"/> Attention</span>}>

@@ -18,6 +18,9 @@ class Index extends React.Component {
     products: React.PropTypes.array,
     location: React.PropTypes.object,
     params: React.PropTypes.object,
+
+    devicesSortValue: React.PropTypes.string,
+    devicesSortChange: React.PropTypes.func,
   };
 
 
@@ -26,7 +29,7 @@ class Index extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
+    return !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
   }
 
   componentDidUpdate() {
@@ -57,7 +60,8 @@ class Index extends React.Component {
     return (
       <PageLayout>
         <PageLayout.Navigation>
-          <DevicesSearch />
+          <DevicesSearch devicesSortValue={this.props.devicesSortValue}
+                         devicesSortChange={this.props.devicesSortChange}/>
           <DevicesToolbar location={this.props.location} params={this.props.params}/>
           <DevicesList devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>

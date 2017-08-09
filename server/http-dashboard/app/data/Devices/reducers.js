@@ -1,8 +1,14 @@
 import {fromJS} from 'immutable';
+import {
+  DEVICES_SORT
+} from 'services/Devices';
 
 const initialState = fromJS({
   devices: [],
-  timeline: {}
+  timeline: {},
+  sorting: {
+    value: DEVICES_SORT.REQUIRE_ATTENTION.key
+  },
 });
 
 export default function Devices(state = initialState, action) {
@@ -24,6 +30,9 @@ export default function Devices(state = initialState, action) {
 
     case "API_TIMELINE_FETCH_SUCCESS":
       return state.set('timeline', fromJS(action.payload.data));
+
+    case "DEVICES_SORT_CHANGE":
+      return state.setIn(['sorting', 'value'], action.value);
 
     case "API_DEVICE_UPDATE_SUCCESS":
       return state.update('devices', (devices) => {
