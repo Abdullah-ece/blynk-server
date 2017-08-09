@@ -81,6 +81,15 @@ public class Device implements Target {
         return null;
     }
 
+    public int findMetaFieldIndex(int id) {
+        for (int i = 0; i < metaFields.length; i++) {
+            if (metaFields[i].id == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void addMetaFields(MetaField[] metaFields) {
         this.metaFields = concat(this.metaFields, metaFields);
     }

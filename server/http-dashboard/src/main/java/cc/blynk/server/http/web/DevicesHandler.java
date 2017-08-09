@@ -13,8 +13,10 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
+import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
@@ -143,6 +145,32 @@ public class DevicesHandler extends BaseHttpHandler {
         user.lastModifiedTs = System.currentTimeMillis();
 
         return ok(joinProductAndOrgInfo(newDevice));
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{orgId}/{deviceId}/updateMetaField/{metaFieldId}")
+    public Response updateDeviceMetafield(@ContextUser User user,
+                                          @PathParam("deviceId") int deviceId,
+                                          @PathParam("metaFieldId") int metaFieldId,
+                                          MetaField updatedMetaField) {
+
+        Device existingDevice = deviceDao.getById(deviceId);
+        verifyUserAccessToDevice(user, existingDevice);
+
+        int fieldIndex = existingDevice.findMetaFieldIndex(metaFieldId);
+        if (fieldIndex == -1) {
+            log.error("MetaField with id {} not found for device id {}.", metaFieldId, deviceId);
+            throw new WebException("MetaField with passed id not found.");
+        }
+
+        MetaField[] updatedMetaFields = Arrays.copyOf(existingDevice.metaFields, existingDevice.metaFields.length);
+        updatedMetaFields[fieldIndex] = updatedMetaField;
+        existingDevice.metaFields = updatedMetaFields;
+        existingDevice.metadataUpdatedAt = System.currentTimeMillis();
+        existingDevice.metadataUpdatedBy = user.email;
+
+        return ok();
     }
 
     @GET

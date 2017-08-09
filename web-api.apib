@@ -728,6 +728,14 @@ HOST: https://knight-qa.blynk.cc/
           } ]
         }
 
++ Response 400 (application/json)
+
+    Device not found.
+
++ Response 403 (application/json)
+
+    You have no access to this device.
+
 ## Create New Device [PUT] [/api/devices/{orgId}]
 
 + Request (application/json)
@@ -754,6 +762,24 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
         Full device json
+
+## Update Device MetaField [POST] [/api/devices/{orgId}/{deviceId}/updateMetaField/{metaFieldId}]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+    MetaField with passed id not found.
+
++ Response 400 (application/json)
+
+    Device not found.
+
++ Response 403 (application/json)
+
+    You have no access to this device.
 
 ## Delete Device [DELETE] [/api/devices/{orgId}/{deviceId}]
 
