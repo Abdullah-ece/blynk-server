@@ -432,3 +432,49 @@ export const TIMELINE_TIME_FILTERS = {
   }
 };
 export const TIMELINE_ITEMS_PER_PAGE = 25;
+
+export const DEVICES_SORT = {
+  REQUIRE_ATTENTION: {
+    key: 'REQUIRE_ATTENTION',
+    compare: () => {
+
+    }
+  },
+  AZ: {
+    key: 'AZ',
+    compare: () => {
+
+    }
+  },
+  ZA: {
+    key: 'ZA',
+    compare: () => {
+
+    }
+  },
+  DATE_ADDED_ASC: {
+    key: 'DATE_ADDED_ASC',
+    compare: () => {
+
+    }
+  },
+  DATE_ADDED_DESC: {
+    key: 'DATE_ADDED_DESC',
+    compare: () => {
+
+    }
+  },
+  LAST_REPORTED_ASC: {
+    key: 'LAST_REPORTED_ASC',
+    compare: () => {
+
+    }
+  },
+  LAST_REPORTED_DESC: {
+    key: 'LAST_REPORTED_DESC',
+    compare: () => {
+
+    }
+  },
+
+};
