@@ -1,8 +1,9 @@
 package cc.blynk.server.core.model.web.product.events;
 
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -11,18 +12,23 @@ import cc.blynk.server.core.model.web.product.EventType;
  */
 public class OfflineEvent extends SystemEvent {
 
-    public int ignorePeriod;
+    public final int ignorePeriod;
 
     @Override
     public EventType getType() {
         return EventType.OFFLINE;
     }
 
-    public OfflineEvent() {
-    }
-
-    public OfflineEvent(int id, String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications, int ignorePeriod) {
-        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+    @JsonCreator
+    public OfflineEvent(@JsonProperty("id")int id,
+                        @JsonProperty("name") String name,
+                        @JsonProperty("description") String description,
+                        @JsonProperty("isNotificationsEnabled") boolean isNotificationsEnabled,
+                        @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
+                        @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
+                        @JsonProperty("smsNotifications") EventReceiver[] smsNotifications,
+                        @JsonProperty("ignorePeriod") int ignorePeriod) {
+        super(id, name, description, isNotificationsEnabled, EventType.OFFLINE.name(), emailNotifications, pushNotifications, smsNotifications);
         this.ignorePeriod = ignorePeriod;
     }
 

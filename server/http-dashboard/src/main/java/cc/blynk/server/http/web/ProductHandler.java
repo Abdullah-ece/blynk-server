@@ -124,6 +124,8 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest("Product with this name already exists.");
         }
 
+        product.checkEvents();
+
         product = organizationDao.createProduct(webProductAndOrgId.orgId, product);
 
         return ok(product);

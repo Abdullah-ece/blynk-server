@@ -11,6 +11,8 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
@@ -146,6 +148,44 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertFalse(logEvents[0].isResolved);
             assertEquals("Temp is super high", logEvents[0].name);
             assertEquals("This is my description", logEvents[0].description);
+        }
+    }
+
+    @Test
+    public void testSystemLogEventViaHttpApi() throws Exception {
+        String token = createProductAndDevice();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=ONLINE");
+        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        long now = System.currentTimeMillis();
+
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=ONLINE&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalWarning);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(timeLineResponse.logEvents);
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.ONLINE, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Device is online!", logEvents[0].name);
         }
     }
 
@@ -532,15 +572,35 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false)
         };
-        CriticalEvent event = new CriticalEvent();
-        event.name = "Temp is super high";
-        event.eventCode = "temp_is_high";
-        event.description = "This is my description";
-        event.emailNotifications = new EventReceiver[] {
-                new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
-        };
+
+        CriticalEvent criticalEvent = new CriticalEvent(
+                1,
+                "Temp is super high",
+                "This is my description",
+                false,
+                "temp_is_high" ,
+                new EventReceiver[] {
+                    new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null
+        );
+
+        OnlineEvent onlineEvent = new OnlineEvent(
+                2,
+                "Device is online!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null
+        );
+
         product.events = new Event[] {
-                event
+                criticalEvent,
+                onlineEvent
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -552,7 +612,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertNotNull(fromApi.events);
-            assertEquals(1, fromApi.events.length);
+            assertEquals(2, fromApi.events.length);
         }
 
         Device device = new Device();

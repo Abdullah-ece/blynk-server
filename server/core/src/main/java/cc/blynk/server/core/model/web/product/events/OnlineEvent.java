@@ -1,8 +1,9 @@
 package cc.blynk.server.core.model.web.product.events;
 
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -16,11 +17,15 @@ public class OnlineEvent extends SystemEvent {
         return EventType.ONLINE;
     }
 
-    public OnlineEvent() {
-    }
-
-    public OnlineEvent(int id, String name, String description, boolean isNotificationsEnabled, EventReceiver[] emailNotifications, EventReceiver[] pushNotifications, EventReceiver[] smsNotifications) {
-        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+    @JsonCreator
+    public OnlineEvent(@JsonProperty("id")int id,
+                       @JsonProperty("name") String name,
+                       @JsonProperty("description") String description,
+                       @JsonProperty("isNotificationsEnabled") boolean isNotificationsEnabled,
+                       @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
+                       @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
+                       @JsonProperty("smsNotifications") EventReceiver[] smsNotifications) {
+        super(id, name, description, isNotificationsEnabled, EventType.ONLINE.name(), emailNotifications, pushNotifications, smsNotifications);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package cc.blynk.server.core.model.web.product.events;
 
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -16,18 +17,21 @@ public class InformationEvent extends UserEvent {
         return EventType.INFORMATION;
     }
 
-    public InformationEvent() {
-    }
-
-    public InformationEvent(int id, String name, String description,
-                            boolean isNotificationsEnabled, EventReceiver[] emailNotifications,
-                            EventReceiver[] pushNotifications, EventReceiver[] smsNotifications, String eventCode) {
-        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
+    @JsonCreator
+    public InformationEvent(@JsonProperty("id")int id,
+                            @JsonProperty("name") String name,
+                            @JsonProperty("description") String description,
+                            @JsonProperty("isNotificationsEnabled") boolean isNotificationsEnabled,
+                            @JsonProperty("eventCode") String eventCode,
+                            @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
+                            @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
+                            @JsonProperty("smsNotifications") EventReceiver[] smsNotifications) {
+        super(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
     }
 
     @Override
     public Event copy() {
-        return new InformationEvent(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, eventCode);
+        return new InformationEvent(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
     }
 
 }

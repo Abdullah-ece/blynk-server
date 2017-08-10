@@ -4,7 +4,11 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.web.product.*;
+import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDataStream;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 
