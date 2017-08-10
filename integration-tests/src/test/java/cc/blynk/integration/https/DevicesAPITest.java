@@ -11,6 +11,7 @@ import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -52,6 +53,8 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
             assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
         }
 
         httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -69,6 +72,8 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
             assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
         }
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
@@ -80,6 +85,66 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(3, devices.length);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+        }
+    }
+
+    @Test
+    public void createDeviceAndUpdateMetafield() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        NumberMetaField numberMetaField;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+
+            numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals(1, numberMetaField.id);
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertEquals(0, device.metadataUpdatedAt);
+            assertNull(device.metadataUpdatedBy);
+        }
+
+        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, 123D);
+
+        HttpPost update = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
+        update.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(update)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(device);
+            assertEquals(System.currentTimeMillis(), device.metadataUpdatedAt, 5000);
+            assertEquals(regularUser.email, device.metadataUpdatedBy);
+        }
+
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, 123D);
+
+        HttpPost update2 = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
+        update2.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField2), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(update2)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 

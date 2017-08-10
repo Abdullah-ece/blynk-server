@@ -35,11 +35,19 @@ public class WebDevice {
 
     public long createdAt;
 
+    public long activatedAt;
+
+    public String activatedBy;
+
     public long disconnectTime;
 
     public String lastLoggedIP;
 
     public long dataReceivedAt;
+
+    public long metadataUpdatedAt;
+
+    public String metadataUpdatedBy;
 
     public MetaField[] metaFields;
 
@@ -69,6 +77,10 @@ public class WebDevice {
         this.lastLoggedIP = device.lastLoggedIP;
         this.dataReceivedAt = device.dataReceivedAt;
         this.metaFields = device.metaFields;
+        this.activatedAt = device.activatedAt;
+        this.activatedBy = device.activatedBy;
+        this.metadataUpdatedAt = device.metadataUpdatedAt;
+        this.metadataUpdatedBy = device.metadataUpdatedBy;
 
         if (product != null) {
             this.productName = product.name;

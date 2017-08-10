@@ -661,8 +661,12 @@ HOST: https://knight-qa.blynk.cc/
           "status" : "OFFLINE",
           "disconnectTime" : 0,
           "updatedAt" : 0,
+          "activatedAt" : 0,
+          "activatedBy" : "pupkin@gmail.com",
           "criticalSinceLastView" : 1,
           "warningSinceLastView" : 2,
+          "metadataUpdatedAt" : 0,
+          "metadataUpdatedBy" : "pupkin@gmail.com",
           "metaFields" : [ {
             "type" : "Number",
             "name" : "Jopa",
@@ -678,6 +682,10 @@ HOST: https://knight-qa.blynk.cc/
           "status" : "OFFLINE",
           "disconnectTime" : 0,
           "updatedAt" : 0,
+          "activatedAt" : 0,
+          "activatedBy" : "pupkin@gmail.com",
+          "metadataUpdatedAt" : 0,
+          "metadataUpdatedBy" : "pupkin@gmail.com",
           "metaFields" : [ {
             "type" : "Number",
             "name" : "Jopa",
@@ -720,6 +728,14 @@ HOST: https://knight-qa.blynk.cc/
           } ]
         }
 
++ Response 400 (application/json)
+
+    Device not found.
+
++ Response 403 (application/json)
+
+    You have no access to this device.
+
 ## Create New Device [PUT] [/api/devices/{orgId}]
 
 + Request (application/json)
@@ -746,6 +762,26 @@ HOST: https://knight-qa.blynk.cc/
 + Response 200 (application/json)
 
         Full device json
+
+## Update Device MetaField [POST] [/api/devices/{orgId}/{deviceId}/updateMetaField]
+
++ Request (application/json)
+
+   Json of modified metaField.
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+
+    MetaField with passed id not found.
+
++ Response 400 (application/json)
+
+    Device not found.
+
++ Response 403 (application/json)
+
+    You have no access to this device.
 
 ## Delete Device [DELETE] [/api/devices/{orgId}/{deviceId}]
 

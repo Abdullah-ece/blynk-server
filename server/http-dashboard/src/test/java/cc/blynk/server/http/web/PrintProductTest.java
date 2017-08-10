@@ -53,44 +53,42 @@ public class PrintProductTest {
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");
 
-        OnlineEvent onlineEvent = new OnlineEvent();
-        onlineEvent.name = "Your device is online.";
-        onlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
-        onlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
-        onlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
+        OnlineEvent onlineEvent = new OnlineEvent(
+                1, "Your device is online.", null, false,
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver}
+         );
 
 
-        OfflineEvent offlineEvent = new OfflineEvent();
-        offlineEvent.name = "Your device is offline.";
-        offlineEvent.ignorePeriod = 1000;
-        offlineEvent.emailNotifications = new EventReceiver[]{eventReceiver};
-        offlineEvent.pushNotifications = new EventReceiver[]{eventReceiver};
-        offlineEvent.smsNotifications = new EventReceiver[]{eventReceiver};
+        OfflineEvent offlineEvent = new OfflineEvent(
+                2, "Your device is offline.", null , false,
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                1000
+        );
 
-        InformationEvent infoEvent = new InformationEvent();
-        infoEvent.name = "Door is opened";
-        infoEvent.eventCode = "door_opened";
-        infoEvent.description = "Kitchen door is opened.";
-        infoEvent.emailNotifications = new EventReceiver[]{eventReceiver};
-        infoEvent.pushNotifications = new EventReceiver[]{eventReceiver};
-        infoEvent.smsNotifications = new EventReceiver[]{eventReceiver};
+        InformationEvent infoEvent = new InformationEvent(
+                3, "Door is opened", "Kitchen door is opened.", false, "door_opened",
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver}
+        );
 
-        WarningEvent warningEvent = new WarningEvent();
-        warningEvent.name = "Temperature is high!";
-        warningEvent.eventCode = "temp_is_high";
-        warningEvent.description = "Room temp is high";
-        warningEvent.emailNotifications = new EventReceiver[]{eventReceiver};
-        warningEvent.pushNotifications = new EventReceiver[]{eventReceiver};
-        warningEvent.smsNotifications = new EventReceiver[]{eventReceiver};
+        WarningEvent warningEvent = new WarningEvent(
+                4, "Temperature is high!", "Room temp is high", false, "temp_is_high",
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver}
+        );
 
-        CriticalEvent criticalEvent = new CriticalEvent();
-        criticalEvent.name = "Temperature is super high!";
-        criticalEvent.eventCode = "temp_is_super_high";
-        criticalEvent.description = "Room temp is super high";
-        criticalEvent.emailNotifications = new EventReceiver[]{eventReceiver};
-        criticalEvent.pushNotifications = new EventReceiver[]{eventReceiver};
-        criticalEvent.smsNotifications = new EventReceiver[]{eventReceiver};
-
+        CriticalEvent criticalEvent = new CriticalEvent(
+                5, "Temperature is super high!", "Room temp is super high", false, "temp_is_super_high",
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver},
+                new EventReceiver[]{eventReceiver}
+        );
 
         product.events = new Event[] {
                 onlineEvent,

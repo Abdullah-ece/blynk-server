@@ -1,7 +1,7 @@
 package cc.blynk.server.db.model;
 
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.events.Event;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

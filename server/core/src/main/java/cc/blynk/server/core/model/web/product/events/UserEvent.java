@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.events;
 
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 
 /**
@@ -10,28 +9,12 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
  */
 public abstract class UserEvent extends Event {
 
-    public String eventCode;
-
-    @Override
-    public boolean isSame(int hashcode) {
-        return this.eventCode.hashCode() == hashcode;
-    }
-
-    @Override
-    public int hashCode() {
-        return eventCode == null ? 0 : eventCode.hashCode();
-    }
-
-    UserEvent() {
-    }
-
-    UserEvent(int id, String name, String description, boolean isNotificationsEnabled,
-                     EventReceiver[] emailNotifications,
-                     EventReceiver[] pushNotifications,
-                     EventReceiver[] smsNotifications,
-                     String eventCode) {
-        super(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
-        this.eventCode = eventCode;
+    UserEvent(int id, String name, String description,
+              boolean isNotificationsEnabled, String eventCode,
+              EventReceiver[] emailNotifications,
+              EventReceiver[] pushNotifications,
+              EventReceiver[] smsNotifications) {
+        super(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
     }
 
 }

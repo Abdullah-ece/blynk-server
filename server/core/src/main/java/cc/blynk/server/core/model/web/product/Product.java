@@ -1,12 +1,16 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.exceptions.WebException;
+import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static cc.blynk.utils.ArrayUtil.*;
 
@@ -83,6 +87,17 @@ public class Product {
         this.version++;
     }
 
+    public void checkEvents() {
+        Set<Integer> set = new HashSet<>();
+        for (Event event : events) {
+            String eventCode = event.eventCode;
+            set.add(eventCode == null ? 0 : event.eventCode.hashCode());
+        }
+        if (set.size() != events.length) {
+            throw new WebException("Events with this event codes are not allowed.");
+        }
+    }
+
     public void addMetafield(MetaField metafield) {
         this.metaFields = ArrayUtil.add(metaFields, metafield, MetaField.class);
         this.lastModifiedTs = System.currentTimeMillis();
@@ -104,6 +119,17 @@ public class Product {
             }
         }
         return null;
+    }
+
+    public Event findEventByCodeOrType(int hashcode, EventType eventType) {
+        Event event = findEventByCode(hashcode);
+
+        //special case for system events
+        if (event == null) {
+            event = findEventByType(eventType);
+        }
+
+        return event;
     }
 
     public int getIgnorePeriod() {

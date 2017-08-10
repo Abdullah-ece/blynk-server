@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.Event;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -175,27 +174,11 @@ public class ServerLauncher {
     }
 
     private static Event[] createDefaultEvents() {
-        OnlineEvent onlineEvent = new OnlineEvent();
-        onlineEvent.name = "Your device is online.";
-
-        OfflineEvent offlineEvent = new OfflineEvent();
-        offlineEvent.name = "Your device is offline.";
-        offlineEvent.ignorePeriod = 1000;
-
-        InformationEvent infoEvent = new InformationEvent();
-        infoEvent.name = "Door is opened";
-        infoEvent.eventCode = "door_opened";
-        infoEvent.description = "Kitchen door is opened.";
-
-        WarningEvent warningEvent = new WarningEvent();
-        warningEvent.name = "Temperature is high!";
-        warningEvent.eventCode = "temp_is_high";
-        warningEvent.description = "Room temp is high";
-
-        CriticalEvent criticalEvent = new CriticalEvent();
-        criticalEvent.name = "Temperature is super high!";
-        criticalEvent.eventCode = "temp_is_super_high";
-        criticalEvent.description = "Room temp is super high";
+        OnlineEvent onlineEvent = new OnlineEvent(1, "Your device is online.", null, false, null, null, null);
+        OfflineEvent offlineEvent = new OfflineEvent(2, "Your device is offline.", null, false, null, null, null, 1000);
+        InformationEvent infoEvent = new InformationEvent(3, "Door is opened", "Kitchen door is opened.", false, "door_opened", null, null, null);
+        WarningEvent warningEvent = new WarningEvent(4, "Temperature is high!", "Room temp is high", false, "temp_is_high", null, null, null);
+        CriticalEvent criticalEvent = new CriticalEvent(5, "Temperature is super high!", "Room temp is super high",false,"temp_is_super_high", null, null, null);
 
         return new Event[] {
                 onlineEvent,

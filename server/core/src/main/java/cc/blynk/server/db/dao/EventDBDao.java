@@ -29,7 +29,7 @@ public class EventDBDao {
 
     private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ?, resolved_comment = ? where id = ?";
     private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
-    private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type) values (?, ?)";
+    private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type, event_hashcode) values (?, ?, ?)";
 
     private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
     private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
@@ -235,6 +235,7 @@ public class EventDBDao {
 
             ps.setInt(1, deviceId);
             ps.setInt(2, eventType.ordinal());
+            ps.setInt(3, eventType.name().hashCode());
 
             ps.executeUpdate();
             connection.commit();
