@@ -6,3 +6,10 @@ export function DevicesSortChange(value) {
     value: value
   };
 }
+
+export function DeviceDetailsUpdate(value) {
+  return {
+    type: 'DEVICES_DEVICE_DETAILS_UPDATE',
+    value: value
+  };
+}

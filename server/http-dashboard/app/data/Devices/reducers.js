@@ -9,6 +9,18 @@ const initialState = fromJS({
   sorting: {
     value: DEVICES_SORT.REQUIRE_ATTENTION.key
   },
+  deviceDetails: {
+    info: {
+      loading: true,
+      data: null
+    },
+    timeline: {
+      loading: true,
+      data: null
+    },
+    dashboard: {},
+    labels: {}
+  }
 });
 
 export default function Devices(state = initialState, action) {
@@ -33,6 +45,12 @@ export default function Devices(state = initialState, action) {
 
     case "DEVICES_SORT_CHANGE":
       return state.setIn(['sorting', 'value'], action.value);
+
+    case "API_DEVICE_DETAILS_FETCH_SUCCESS":
+      return state.setIn(['deviceDetails', 'info', 'data'], fromJS(action.payload.data));
+
+    case "DEVICES_DEVICE_DETAILS_UPDATE":
+      return state.set('deviceDetails', action.value);
 
     case "API_DEVICE_UPDATE_SUCCESS":
       return state.update('devices', (devices) => {

@@ -36,25 +36,6 @@ export const Devices = (store) => {
   };
 };
 
-export const Device = (store) => {
-  return (nextState, replaceWith, callback) => {
-
-    const {start, finish, deviceFetch} = getActions(store);
-
-    start();
-
-    deviceFetch({
-      orgId: getOrgId(store)
-    }, {
-      id: nextState.params.id
-    }).then(() => {
-      callback();
-      finish();
-    });
-
-  };
-};
-
 export const DeviceCreate = (store) => {
   return (nextState, replaceWith, callback) => {
 
@@ -64,27 +45,6 @@ export const DeviceCreate = (store) => {
 
     devicesFetch({
       orgId: getOrgId(store)
-    }).then(() => {
-      productsFetch().then(() => {
-        callback();
-        finish();
-      });
-    });
-
-  };
-};
-
-export const DeviceByIdCreate = (store) => {
-  return (nextState, replaceWith, callback) => {
-
-    const {start, finish, deviceFetch, productsFetch} = getActions(store);
-
-    start();
-
-    deviceFetch({
-      orgId: getOrgId(store)
-    }, {
-      id: nextState.params.id
     }).then(() => {
       productsFetch().then(() => {
         callback();

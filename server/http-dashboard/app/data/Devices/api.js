@@ -116,3 +116,20 @@ export const TimelineResolve = (params) => {
     }
   };
 };
+
+export const DeviceDetailsFetch = (params, data) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
+  return {
+    type: 'API_DEVICE_DETAILS_FETCH',
+
+    payload: {
+      request: {
+        method: 'get',
+        url: `/devices/${params.orgId}/${data.id}`
+      }
+    }
+  };
+};

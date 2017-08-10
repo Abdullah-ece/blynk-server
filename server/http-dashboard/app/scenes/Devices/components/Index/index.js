@@ -1,9 +1,11 @@
 import React from 'react';
-import Device from './../Device';
 import DevicesList from './../DevicesList';
 import PageLayout from 'components/PageLayout';
 import DevicesSearch from './../DevicesSearch';
 import DevicesToolbar from './../DevicesToolbar';
+import {
+  DeviceDetails as DeviceDetailsScene
+} from 'scenes/Devices/scenes';
 import _ from 'lodash';
 import {List} from "immutable";
 
@@ -52,9 +54,7 @@ class Index extends React.Component {
 
   render() {
 
-    const selectedDevice = this.getDeviceById(this.props.params.id);
-
-    if (!this.props.params.id || !selectedDevice)
+    if (!this.props.params.id)
       return null;
 
     return (
@@ -67,7 +67,7 @@ class Index extends React.Component {
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <Device device={selectedDevice} params={this.props.params} location={this.props.location}/>
+          <DeviceDetailsScene params={this.props.params} location={this.props.location}/>
         </PageLayout.Content>
       </PageLayout>
     );
