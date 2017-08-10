@@ -43,20 +43,23 @@ class DeviceInfo extends React.Component {
 
     let time = this.props.device.get('dataReceivedAt');
     let disconnectTime = this.props.device.get('disconnectTime');
+    let activatedAt = this.props.device.get('activatedAt');
+    let metadataUpdatedAt = this.props.device.get('metadataUpdatedAt');
 
-    let lastReported = Number(time) ? moment(Number(time)).calendar(null, {
+    const timeConfig = {
       sameDay: '[Today], hh:mm A',
       lastDay: '[Yesterday], hh:mm A',
       lastWeek: 'dddd, hh:mm A',
       sameElse: 'hh:mm A, YYYY.MM.DD'
-    }) : 'Not reported yet';
+    };
 
-    let lastOnlineTime = moment(Number(disconnectTime || 0)).calendar(null, {
-      sameDay: '[Today], hh:mm A',
-      lastDay: '[Yesterday], hh:mm A',
-      lastWeek: 'dddd, hh:mm A',
-      sameElse: 'hh:mm A, YYYY.MM.DD'
-    });
+    let lastReported = Number(time) ? moment(Number(time)).calendar(null, timeConfig) : 'Not reported yet';
+
+    let lastOnlineTime = moment(Number(disconnectTime || 0)).calendar(null, timeConfig);
+
+    let deviceActivatedTime = moment(Number(activatedAt || 0)).calendar(null, timeConfig);
+
+    let metadataUpdatedTime = moment(Number(metadataUpdatedAt || 0)).calendar(null, timeConfig);
 
     return (
       <div className="device--device-info">
@@ -66,12 +69,16 @@ class DeviceInfo extends React.Component {
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
             </Fieldset>
-            { !!Number(disconnectTime) && this.props.device.get('status') === 'OFFLINE' && (
+            {!!Number(disconnectTime) && this.props.device.get('status') === 'OFFLINE' && (
               <Fieldset>
                 <Fieldset.Legend>Last Online</Fieldset.Legend>
-                { lastOnlineTime }
+                {lastOnlineTime}
               </Fieldset>
             )}
+            <Fieldset>
+              <Fieldset.Legend>Device Activated</Fieldset.Legend>
+              {deviceActivatedTime} by {this.props.device.get('activatedBy')}
+            </Fieldset>
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
               <DeviceAuthToken authToken={this.props.device.get('token')}/>
@@ -80,18 +87,24 @@ class DeviceInfo extends React.Component {
           <Col span={8}>
             <Fieldset>
               <Fieldset.Legend>Last Reported</Fieldset.Legend>
-              { lastReported }
+              {lastReported}
             </Fieldset>
-            { this.props.device.has('orgName') && (
+            {this.props.device.has('metadataUpdatedAt') && metadataUpdatedAt > 0 && (
+              <Fieldset>
+                <Fieldset.Legend>Latest Metadata update</Fieldset.Legend>
+                {metadataUpdatedTime} by {this.props.device.get('metadataUpdatedBy')}
+              </Fieldset>
+            )}
+            {this.props.device.has('orgName') && (
               <Fieldset>
                 <Fieldset.Legend>Organization</Fieldset.Legend>
-                { this.props.device.get('orgName') }
+                {this.props.device.get('orgName')}
               </Fieldset>
             )}
           </Col>
           <Col span={8}>
             <div className="device--device-info-logo">
-              { this.props.device.has('productLogoUrl') && (
+              {this.props.device.has('productLogoUrl') && (
                 <img src={this.props.device.get('productLogoUrl')}/>
               )}
             </div>
@@ -99,9 +112,9 @@ class DeviceInfo extends React.Component {
         </Row>
         <Row>
           <Col span={24}>
-            { this.props.device.has('metaFields') && (<Section title="Metadata">
+            {this.props.device.has('metaFields') && (<Section title="Metadata">
               <div className="device--device-info-metadata-list">
-                { this.props.device.get('metaFields').map((field, key) => {
+                {this.props.device.get('metaFields').map((field, key) => {
 
                   const form = `devicemetadataedit${field.get('name')}`;
 
@@ -185,7 +198,7 @@ class DeviceInfo extends React.Component {
                 }
                 <BackTop/>
               </div>
-            </Section>) }
+            </Section>)}
           </Col>
         </Row>
       </div>
