@@ -13,7 +13,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
+import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.exceptions.WebException;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -65,6 +67,8 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
+        organizationDao.hasAccess(user, orgId);
+
         //default dash for all devices...
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);
@@ -74,10 +78,16 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Product product = organizationDao.getProductById(newDevice.productId);
+        Organization org = organizationDao.getOrgById(orgId);
+        Product product = org.getProduct(newDevice.productId);
+        if (product == null) {
+            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
+            throw new ProductNotFoundException("Product with passed id " + newDevice.productId + " not found.");
+        }
+
         newDevice.metaFields = product.copyNonDefaultMetaFields();
 
-        deviceDao.create(user.orgId, newDevice);
+        deviceDao.create(orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
@@ -180,7 +190,9 @@ public class DevicesHandler extends BaseHttpHandler {
                            @QueryParam("order") SortOrder order) {
         User user = getUser(ctx);
 
-        Collection<Device> devices = deviceDao.getAllByUser(user);
+        organizationDao.hasAccess(user, orgId);
+
+        Collection<Device> devices = deviceDao.getAllByUser(orgId);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
@@ -216,10 +228,12 @@ public class DevicesHandler extends BaseHttpHandler {
     @GET
     @Path("/{orgId}/{deviceId}")
     public Response getDeviceById(@ContextUser User user,
-                                  @PathParam("orgId") int userOrgId,
+                                  @PathParam("orgId") int orgId,
                                   @PathParam("deviceId") int deviceId) {
         Device device = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(user, device);
+        if (!organizationDao.hasAccess(user, orgId)) {
+            throw new ForbiddenWebException("User has no rights for this device.");
+        }
 
         return ok(joinProductAndOrgInfo(device));
     }

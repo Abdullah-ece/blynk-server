@@ -64,11 +64,11 @@ public class DeviceDao {
         return device;
     }
 
-    public Collection<Device> getAllByUser(User user) {
+    public Collection<Device> getAllByUser(int orgId) {
         List<Device> result = new ArrayList<>();
         for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
             DeviceKey key = entry.getKey();
-            if (user.orgId == key.orgId) {
+            if (orgId == key.orgId) {
                 result.add(entry.getValue());
             }
         }

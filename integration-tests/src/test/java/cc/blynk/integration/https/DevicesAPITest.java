@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -85,6 +86,77 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(3, devices.length);
 
             System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+        }
+    }
+
+    @Test
+    public void createDeviceForAnotherOrganization() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        int productId = createProduct();
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{productId};
+
+        HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
+        createOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        int orgId = 2;
+        int newProductId = 2;
+
+        try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(orgId, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertEquals(organization.name, fromApi.name);
+            assertEquals(organization.tzName, fromApi.tzName);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+            assertEquals(newProductId, fromApi.products[0].id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = newProductId;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/" + orgId);
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularAdmin.email, device.activatedBy);
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/" + orgId);
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(1, devices.length);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/" + orgId + "/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(device);
+            assertEquals(1, device.id);
         }
     }
 
