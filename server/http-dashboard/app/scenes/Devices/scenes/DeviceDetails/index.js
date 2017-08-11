@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  message
+} from 'antd';
+import {
   Device
 } from 'scenes/Devices/components';
 import {connect} from 'react-redux';
-import {DeviceDetailsFetch} from 'data/Devices/api';
+import {
+  DeviceDetailsFetch,
+  DeviceMetadataUpdate,
+  DeviceDetailsUpdate as updateDevice,
+} from 'data/Devices/api';
 import {DeviceDetailsUpdate} from 'data/Devices/actions';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 import {bindActionCreators} from 'redux';
@@ -18,6 +25,8 @@ import {Map} from 'immutable';
   FinishLoading: bindActionCreators(FinishLoading, dispatch),
   updateDeviceDetails: bindActionCreators(DeviceDetailsUpdate, dispatch),
   fetchDeviceInfo: bindActionCreators(DeviceDetailsFetch, dispatch),
+  DeviceMetadataUpdate: bindActionCreators(DeviceMetadataUpdate, dispatch),
+  updateDevice: bindActionCreators(updateDevice, dispatch),
 }))
 class DeviceDetailsScene extends React.Component {
 
@@ -29,18 +38,27 @@ class DeviceDetailsScene extends React.Component {
 
     fetchDeviceInfo: PropTypes.func,
     updateDeviceDetails: PropTypes.func,
+    DeviceMetadataUpdate: PropTypes.func,
+    updateDevice: PropTypes.func,
     StartLoading: PropTypes.func,
     FinishLoading: PropTypes.func,
 
     deviceDetails: PropTypes.instanceOf(Map),
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onDeviceChange = this.onDeviceChange.bind(this);
+    this.onMetadataChange = this.onMetadataChange.bind(this);
+  }
+
   componentWillMount() {
     this.fetchDevice();
   }
 
   componentWillUpdate(nextProps) {
-    if(nextProps.params.id !== this.props.params.id) {
+    if (nextProps.params.id !== this.props.params.id) {
       this.props.StartLoading();
       this.fetchDevice(nextProps.params.id).then(() => {
         this.props.FinishLoading();
@@ -74,12 +92,35 @@ class DeviceDetailsScene extends React.Component {
     );
   }
 
+  onDeviceChange(device) {
+    return this.props.updateDevice({
+      orgId: this.props.orgId
+    }, device);
+  }
+
+  onMetadataChange(metadata) {
+    return new Promise((resolve, reject) => {
+      this.props.DeviceMetadataUpdate({
+        orgId: this.props.orgId,
+        deviceId: this.props.params.id
+      }, metadata).then(() => {
+        this.fetchDevice(this.props.params.id).then(() => {
+          resolve();
+        }).catch((err) => reject(err));
+      }).catch((err) => reject(err));
+    }).catch(() => {
+      message.error('Error happened during metadata updating');
+    });
+  }
+
   render() {
     if (!this.props.deviceDetails.getIn(['info', 'data']))
       return null;
 
     return (
-      <Device deviceInfoLoading={this.props.deviceDetails.getIn(['info', 'loading'])}
+      <Device onDeviceChange={this.onDeviceChange}
+              onMetadataChange={this.onMetadataChange}
+              deviceInfoLoading={this.props.deviceDetails.getIn(['info', 'loading'])}
               device={this.props.deviceDetails.getIn(['info', 'data'])}
               params={this.props.params}
               location={this.props.location}

@@ -136,6 +136,23 @@ export const DeviceDetailsFetch = (params, data) => {
   };
 };
 
+export const DeviceDetailsUpdate = (params, data) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
+  return {
+    type: 'API_DEVICE_DETAILS_UPDATE',
+    payload: {
+      request: {
+        method: 'post',
+        url: API_URL.device().update(params),
+        data: data
+      }
+    }
+  };
+};
+
 export const DeviceAvailableOrganizationsFetch = () => {
 
   return {
@@ -145,6 +162,27 @@ export const DeviceAvailableOrganizationsFetch = () => {
       request: {
         method: 'get',
         url: API_URL.organization()
+      }
+    }
+  };
+};
+
+export const DeviceMetadataUpdate = (params, metadata) => {
+
+  if (!params.orgId)
+    throw new Error('orgId parameter is missed');
+
+  if (!params.deviceId)
+    throw new Error('deviceId parameter is missed');
+
+  return {
+    type: 'API_DEVICE_METADATA_UPDATE',
+
+    payload: {
+      request: {
+        method: 'post',
+        url: API_URL.device().metadata().update(params),
+        data: metadata
       }
     }
   };

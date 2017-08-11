@@ -59,6 +59,19 @@ export default function Devices(state = initialState, action) {
     case "DEVICES_DEVICE_DETAILS_UPDATE":
       return state.set('deviceDetails', action.value);
 
+    case "API_DEVICE_DETAILS_UPDATE_SUCCESS":
+      // this is call back fires when user updates
+      // device name. update device name only to keep
+      // critical & warning state
+      return state.update('devices', (devices) => {
+        return devices.map((device) => {
+          if (Number(device.get('id')) === Number(action.payload.data.id)) {
+            return device.set('name', action.payload.data.name);
+          }
+          return device;
+        });
+      });
+
     case "API_DEVICE_UPDATE_SUCCESS":
       return state.update('devices', (devices) => {
         return devices.map((device) => (

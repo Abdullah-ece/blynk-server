@@ -19,5 +19,11 @@ export const applyResponseTransformers = (transformers) => {
 };
 
 export const API_URL = {
-  organization: () => `/organization`
+  organization: () => `/organization`,
+  device: () => ({
+    update: (params) => `/devices/${params.orgId}`,
+    metadata: () => ({
+      update: (params) => `/devices/${params.orgId}/${params.deviceId}/updateMetaField`
+    })
+  })
 };

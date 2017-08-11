@@ -42,6 +42,7 @@ class Base extends React.Component {
 
   onOk(metafield) {
     this.props.onChange(metafield).then(() => {
+      this.stopLoading();
       this.props.initialize(this.props.form, this.props.data.toJS());
       this.closeModal();
     });
@@ -59,6 +60,7 @@ class Base extends React.Component {
 
   handleOkClick() {
     if (this.onOk) {
+      this.startLoading();
       this.onOk(fromJS(this.props.values));
     }
   }

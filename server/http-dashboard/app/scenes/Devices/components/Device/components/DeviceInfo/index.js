@@ -10,7 +10,7 @@ class DeviceInfo extends React.Component {
 
   static propTypes = {
     device: React.PropTypes.object,
-    onChange: React.PropTypes.func
+    onMetadataChange: React.PropTypes.func
   };
 
   shouldComponentUpdate(nextProps) {
@@ -28,15 +28,8 @@ class DeviceInfo extends React.Component {
     }
   }
 
-  onChange(metafield) {
-
-    const device = this.props.device.update('metaFields', (metafields) => metafields.map((value) => {
-      if (metafield.get('name') === value.get('name'))
-        return metafield;
-      return value;
-    }));
-
-    return this.props.onChange(device);
+  onChange(metadata) {
+    return this.props.onMetadataChange(metadata);
   }
 
   render() {

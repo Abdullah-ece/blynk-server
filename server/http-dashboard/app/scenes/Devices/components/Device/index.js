@@ -21,18 +21,28 @@ class Device extends React.Component {
     params: React.PropTypes.object,
     location: React.PropTypes.object,
     onChange: React.PropTypes.func,
-    updateDevice: React.PropTypes.func
+    updateDevice: React.PropTypes.func,
+    onDeviceChange: React.PropTypes.func,
+    onMetadataChange: React.PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.onMetadataChange = this.onMetadataChange.bind(this);
+  }
 
   shouldComponentUpdate(nextProps) {
     return !(_.isEqual(nextProps.device, this.props.device)) ||
       !(_.isEqual(nextProps.location, this.props.location));
   }
 
+  onMetadataChange(metadata) {
+    return this.props.onMetadataChange(metadata);
+  }
+
   onDeviceChange(device) {
-    return this.props.updateDevice({
-      orgId: this.props.account.orgId
-    }, device);
+    return this.props.onDeviceChange(device);
   }
 
   handleDeviceNameChange(value) {
@@ -56,7 +66,7 @@ class Device extends React.Component {
             <Timeline params={this.props.params} location={this.props.location}/>
           </TabPane>
           <TabPane tab="Device Info" key="3">
-            <DeviceInfo onChange={this.onDeviceChange.bind(this)} device={this.props.device}/>
+            <DeviceInfo onMetadataChange={this.onMetadataChange} device={this.props.device}/>
           </TabPane>
           <TabPane tab="Labels" key="4">
             <div style={{padding: '12px 32px'}}>Labels</div>
