@@ -192,7 +192,7 @@ class DeviceCreateModal extends React.Component {
       }
     }
 
-    if (this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.formValues.orgId)) {
+    if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.formValues.orgId)) {
       products.unshift({
         key: this.SETUP_PRODUCT_KEY,
         value: 'New product'
