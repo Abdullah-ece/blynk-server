@@ -1,3 +1,5 @@
+import {API_URL} from "services/API/index";
+
 export const DevicesFetch = (data) => {
 
   if (!data.orgId)
@@ -129,6 +131,20 @@ export const DeviceDetailsFetch = (params, data) => {
       request: {
         method: 'get',
         url: `/devices/${params.orgId}/${data.id}`
+      }
+    }
+  };
+};
+
+export const DeviceAvailableOrganizationsFetch = () => {
+
+  return {
+    type: 'API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH',
+
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.organization()
       }
     }
   };

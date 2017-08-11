@@ -20,6 +20,10 @@ const initialState = fromJS({
     },
     dashboard: {},
     labels: {}
+  },
+  deviceCreate: {
+    organizationLoading: false,
+    data: null
   }
 });
 
@@ -48,6 +52,9 @@ export default function Devices(state = initialState, action) {
 
     case "API_DEVICE_DETAILS_FETCH_SUCCESS":
       return state.setIn(['deviceDetails', 'info', 'data'], fromJS(action.payload.data));
+
+    case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH_SUCCESS":
+      return state.setIn(['deviceCreate', 'data'], fromJS(action.payload.data));
 
     case "DEVICES_DEVICE_DETAILS_UPDATE":
       return state.set('deviceDetails', action.value);

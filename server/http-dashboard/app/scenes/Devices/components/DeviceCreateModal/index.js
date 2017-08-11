@@ -5,16 +5,26 @@ import {Row, Col, Button} from 'antd';
 import {Item, Input} from 'components/UI';
 import {MetadataSelect} from 'components/Form';
 import {connect} from 'react-redux';
+import {Map, fromJS} from 'immutable';
 import {bindActionCreators} from 'redux';
 import Validation from 'services/Validation';
 import {reduxForm, getFormSyncErrors, getFormValues, reset, change} from 'redux-form';
-import {DeviceCreate, DevicesFetch} from 'data/Devices/api';
+import {
+  DeviceCreate,
+  DevicesFetch,
+  DeviceAvailableOrganizationsFetch,
+} from 'data/Devices/api';
+import {
+  DeviceCreateUpdate,
+} from 'data/Devices/actions';
 import {ProductCreate} from 'data/Product/api';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES, STATUS} from 'services/Devices';
 import './styles.less';
 
 @connect((state) => ({
+  deviceCreate: state.Devices.get('deviceCreate'),
   account: state.Account,
+  organization: state.Organization,
   products: state.Product.products,
   errors: getFormSyncErrors('DeviceCreate')(state),
   formValues: getFormValues('DeviceCreate')(state)
@@ -24,6 +34,8 @@ import './styles.less';
   fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   createDevice: bindActionCreators(DeviceCreate, dispatch),
   createProduct: bindActionCreators(ProductCreate, dispatch),
+  DeviceCreateUpdate: bindActionCreators(DeviceCreateUpdate, dispatch),
+  DeviceAvailableOrganizationsFetch: bindActionCreators(DeviceAvailableOrganizationsFetch, dispatch),
 }))
 @reduxForm({
   form: "DeviceCreate",
@@ -34,9 +46,11 @@ import './styles.less';
 class DeviceCreateModal extends React.Component {
 
   static propTypes = {
+    deviceCreate: React.PropTypes.instanceOf(Map),
     visible: React.PropTypes.bool,
     onClose: React.PropTypes.func,
     errors: React.PropTypes.object,
+    organization: React.PropTypes.object,
     account: React.PropTypes.object,
     formValues: React.PropTypes.object,
     products: React.PropTypes.array,
@@ -46,6 +60,8 @@ class DeviceCreateModal extends React.Component {
     createProduct: React.PropTypes.func,
     fetchDevices: React.PropTypes.func,
     change: React.PropTypes.func,
+    DeviceCreateUpdate: React.PropTypes.func,
+    DeviceAvailableOrganizationsFetch: React.PropTypes.func,
   };
 
   state = {
@@ -54,6 +70,10 @@ class DeviceCreateModal extends React.Component {
     previousBoardType: null,
     previousConnectionType: null
   };
+
+  componentWillMount() {
+    this.props.DeviceAvailableOrganizationsFetch().then();
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps && nextProps.formValues && nextProps.formValues.productId !== this.state.productId) {
@@ -82,6 +102,14 @@ class DeviceCreateModal extends React.Component {
         this.props.change('connectionType', product.connectionType);
       }
     }
+
+    if (this.props.formValues && this.props.formValues.orgId && this.props.formValues.orgId !== nextProps.formValues.orgId) {
+      this.props.change('productId', '');
+    }
+
+    if (this.props.formValues && !nextProps.formValues.orgId) {
+      this.props.change('orgId', this.props.organization.id);
+    }
   }
 
   SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
@@ -95,7 +123,7 @@ class DeviceCreateModal extends React.Component {
 
     const createDevice = (productId) => {
       this.props.createDevice({
-        orgId: this.props.account.orgId
+        orgId: this.props.formValues.orgId
       }, {
         ...this.props.formValues,
         productId: productId || this.props.formValues.productId,
@@ -118,9 +146,12 @@ class DeviceCreateModal extends React.Component {
 
     if (this.props.formValues.productId === this.SETUP_PRODUCT_KEY) {
       this.props.createProduct({
-        "name": "New Product",
-        "boardType": this.props.formValues.boardType,
-        "connectionType": this.props.formValues.connectionType,
+        orgId: this.props.organization.id,
+        product: {
+          "name": `New Product ${_.random(1,999999999)}`,
+          "boardType": this.props.formValues.boardType,
+          "connectionType": this.props.formValues.connectionType,
+        }
       }).then((response) => {
         createDevice(response.payload.data.id);
       });
@@ -131,15 +162,42 @@ class DeviceCreateModal extends React.Component {
 
   render() {
 
-    const products = this.props.products.map((product) => ({
-      key: String(product.id),
-      value: product.name
-    }));
+    let organizations = [];
 
-    products.unshift({
-      key: this.SETUP_PRODUCT_KEY,
-      value: 'New product'
-    });
+    let products = [];
+
+    if (this.props.deviceCreate.get('data')) {
+      organizations = this.props.deviceCreate.get('data').push(fromJS(this.props.organization)).map((org) => ({
+        key: String(org.get('id')),
+        value: org.get('name')
+      })).toJS();
+    }
+
+    if (this.props.formValues && this.props.formValues.orgId && this.props.deviceCreate.get('data')) {
+      if (Number(this.props.formValues.orgId) === Number(this.props.organization.id)) {
+
+        products = this.props.products.map((product) => ({
+          key: String(product.id),
+          value: product.name
+        }));
+
+      } else if (this.props.formValues) {
+
+        let index = this.props.deviceCreate.get('data').findIndex((org) => Number(org.get('id')) === Number(this.props.formValues.orgId));
+        products = this.props.deviceCreate.getIn(['data', index, 'products']).map((product) => ({
+          key: String(product.get('id')),
+          value: product.get('name')
+        })).toJS();
+
+      }
+    }
+
+    if (this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.formValues.orgId)) {
+      products.unshift({
+        key: this.SETUP_PRODUCT_KEY,
+        value: 'New product'
+      });
+    }
 
     const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === this.SETUP_PRODUCT_KEY;
 
@@ -168,13 +226,25 @@ class DeviceCreateModal extends React.Component {
           </Row>
           <Row>
             <Col span={24}>
-              <Item label="Product Template" offset={isAdvancedOptionShouldBeDisplayed ? 'large' : 'none'}>
-                <MetadataSelect displayError={false} name="productId" values={products} placeholder="Choose product"
+              <Item label="Organization owner of this device"
+                    offset={this.props.formValues && this.props.formValues.orgId ? 'large' : 'none'}>
+                <MetadataSelect displayError={false} name="orgId" values={organizations}
+                                placeholder="Choose organization"
                                 validate={[Validation.Rules.required]}/>
               </Item>
             </Col>
           </Row>
-          { isAdvancedOptionShouldBeDisplayed && (
+          {this.props.formValues && this.props.formValues.orgId && (
+            <Row>
+              <Col span={24}>
+                <Item label="Product Template" offset={isAdvancedOptionShouldBeDisplayed ? 'large' : 'none'}>
+                  <MetadataSelect displayError={false} name="productId" values={products} placeholder="Choose product"
+                                  validate={[Validation.Rules.required]}/>
+                </Item>
+              </Col>
+            </Row>)
+          }
+          {isAdvancedOptionShouldBeDisplayed && (
             <Row>
               <Col span={10}>
                 <Item label="Hardware" offset="none">

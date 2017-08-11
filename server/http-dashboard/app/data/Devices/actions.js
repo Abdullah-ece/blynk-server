@@ -13,3 +13,10 @@ export function DeviceDetailsUpdate(value) {
     value: value
   };
 }
+
+export function DeviceCreateUpdate(value) {
+  return {
+    type: 'DeviceCreateUpdate',
+    value: value
+  };
+}

@@ -18,3 +18,6 @@ export const applyResponseTransformers = (transformers) => {
   };
 };
 
+export const API_URL = {
+  organization: () => `/organization`
+};
