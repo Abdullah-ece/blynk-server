@@ -11,11 +11,15 @@ export const Messages = {
   imageRequired: 'Image is required',
   minLength: (n) => `Minimal length should be ${n} symbols`,
   number: 'Field should contain number',
+  numberLong: 'Number max length is 15 symbols. Use instead Text Metadata Field.',
   latitude: 'Latitude is not correct',
   longitude: 'Longitude is not correct',
   metafieldName: 'Field is not correct',
   eventsEventCode: 'Event code is not correct'
 };
+
+const MAX_NUMBER = 999999999999999;
+const MIN_NUMBER = -MAX_NUMBER;
 
 export const Rules = {
   username: (value) => !/^[a-z0-9]+$/.test(value) ? Messages.username : undefined,
@@ -29,7 +33,7 @@ export const Rules = {
   minLength: (n) => (value) => !value || value.length < n ? Messages.minLength(n) : undefined,
   required: (value) => !value ? Messages.required : undefined,
   imageRequired: (value) => !value ? Messages.imageRequired : undefined,
-  number: (value) => value && isNaN(Number(value)) ? Messages.number : undefined,
+  number: (value) => value && isNaN(Number(value)) ? Messages.number : Number(value) > MAX_NUMBER || Number(value) < MIN_NUMBER ? Messages.numberLong : undefined,
   // latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
   // longitude: (value) => value && !/^([-+]?\d{1,3}[.]\d+)$/.test(value) ? Messages.longitude : undefined,
   latitude: (value) => value && isNaN(Number(value)) ? Messages.latitude : undefined,
