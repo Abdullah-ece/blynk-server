@@ -6,18 +6,25 @@ import {
 import {
   DEVICES_SORT,
   DEVICES_SEARCH_FORM_NAME,
+  DEVICES_FILTER_FORM_NAME,
+  DEVICES_FILTERS,
 } from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {getFormValues} from 'redux-form';
+import {
+  getFormValues,
+  change,
+} from 'redux-form';
 import {List, fromJS, Map} from "immutable";
 
 @connect((state) => ({
   products: state.Product.products,
   devices: state.Devices.get('devices'),
   devicesSortValue: state.Devices.getIn(['sorting', 'value']),
-  devicesSearchFormValues: fromJS(getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {})
+  devicesSearchFormValues: fromJS(getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {}),
+  devicesFilterFormValues: fromJS(getFormValues(DEVICES_FILTER_FORM_NAME)(state) || {filter: DEVICES_FILTERS.DEFAULT}),
 }), (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch),
   devicesSortChange: bindActionCreators(DevicesSortChange, dispatch)
 }))
 class Devices extends React.Component {
@@ -29,11 +36,13 @@ class Devices extends React.Component {
   static propTypes = {
     devices: React.PropTypes.instanceOf(List),
     devicesSearchFormValues: React.PropTypes.instanceOf(Map),
+    devicesFilterFormValues: React.PropTypes.instanceOf(Map),
     products: React.PropTypes.array,
     location: React.PropTypes.object,
     params: React.PropTypes.object,
 
     devicesSortValue: React.PropTypes.string,
+    changeForm: React.PropTypes.func,
     devicesSortChange: React.PropTypes.func,
   };
 
@@ -41,6 +50,7 @@ class Devices extends React.Component {
     super(props);
 
     this.devicesSortChange = this.devicesSortChange.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
   componentWillMount() {
@@ -57,6 +67,10 @@ class Devices extends React.Component {
 
   devicesSortChange(value) {
     this.props.devicesSortChange(value);
+  }
+
+  handleFilterChange(value) {
+    this.props.changeForm(DEVICES_FILTER_FORM_NAME, 'filter', value);
   }
 
   getDeviceById(id) {
@@ -90,7 +104,11 @@ class Devices extends React.Component {
 
       let devices = this.getDevicesList();
 
-      return (<Index devicesSortValue={this.props.devicesSortValue}
+      const devicesFilterValue = this.props.devicesFilterFormValues.get('filter');
+
+      return (<Index filterValue={devicesFilterValue}
+                     onFilterChange={this.handleFilterChange}
+                     devicesSortValue={this.props.devicesSortValue}
                      devicesSortChange={this.devicesSortChange}
                      devices={devices}
                      location={this.props.location}

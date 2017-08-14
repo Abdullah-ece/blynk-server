@@ -488,3 +488,12 @@ export const DEVICES_SORT = {
 };
 
 export const DEVICES_SEARCH_FORM_NAME = 'devicesSearchForm';
+
+export const DEVICES_FILTER_FORM_NAME = 'devicesFilterForm';
+
+export const DEVICES_FILTERS = {
+  DEFAULT: 'ALL_DEVICES',
+  ALL_DEVICES: 'ALL_DEVICES',
+  BY_LOCATION: 'BY_LOCATION',
+  BY_PRODUCT: 'BY_PRODUCT'
+};
