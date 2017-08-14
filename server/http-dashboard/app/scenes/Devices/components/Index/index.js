@@ -25,31 +25,12 @@ class Index extends React.Component {
     devicesSortChange: React.PropTypes.func,
   };
 
-
-  componentWillMount() {
-    this.redirectToFirstDeviceIfIdParameterMissed();
-  }
-
   shouldComponentUpdate(nextProps) {
     return !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
   }
 
-  componentDidUpdate() {
-    this.redirectToFirstDeviceIfIdParameterMissed();
-  }
-
-  redirectToFirstDeviceIfIdParameterMissed() {
-    if (isNaN(Number(this.props.params.id)) || !this.getDeviceById(this.props.params.id)) {
-      this.context.router.push('/devices/' + this.props.devices.first().get('id'));
-    }
-  }
-
   handleDeviceSelect(device) {
     this.context.router.push(`/devices/${device.get('id')}`);
-  }
-
-  getDeviceById(id) {
-    return this.props.devices.find(device => Number(device.get('id')) === Number(id));
   }
 
   render() {

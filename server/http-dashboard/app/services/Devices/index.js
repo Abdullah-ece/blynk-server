@@ -486,3 +486,5 @@ export const DEVICES_SORT = {
   },
 
 };
+
+export const DEVICES_SEARCH_FORM_NAME = 'devicesSearchForm';

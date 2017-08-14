@@ -39,6 +39,9 @@ class DevicesList extends React.Component {
                       device={device}
                       active={isActive(device)}/>
         ))}
+        { this.props.devices && !this.props.devices.size && (
+          <p>No any device found</p>
+        )}
       </div>
     );
   }
