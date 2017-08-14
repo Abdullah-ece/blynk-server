@@ -1,8 +1,12 @@
 import React from 'react';
+import _ from 'lodash';
 import {Index, NoDevices} from './components';
 import {
   DevicesSortChange
 } from 'data/Devices/actions';
+import {
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
 import {
   DEVICES_SORT,
   DEVICES_SEARCH_FORM_NAME,
@@ -93,6 +97,72 @@ class Devices extends React.Component {
     return devices;
   }
 
+  applyAllDevicesFilter(devices) {
+    return devices;
+  }
+
+  applyByLocationFilter(devices) {
+
+    const getLocationName = (device) => {
+      if (device && device.get('metaFields')) {
+        const index = device.get('metaFields').findIndex((field) => field.get('name') === hardcodedRequiredMetadataFieldsNames.LocationName);
+
+        if (index === -1) {
+          return false;
+        } else {
+          return device.getIn(['metaFields', index, 'value']);
+        }
+      }
+      return false;
+    };
+
+    let filteredDevices = {};
+    let devicesWithoutLocation = [];
+
+    devices.forEach((device) => {
+      const name = getLocationName(device);
+      if (name) {
+        filteredDevices[name] ? filteredDevices[name].push(device) : filteredDevices[name] = [device];
+      } else {
+        devicesWithoutLocation.push(device);
+      }
+    });
+
+    let filteredDevicesList = [];
+
+    _.forEach(filteredDevices, (value, key) => {
+      filteredDevicesList.push({
+        name: key,
+        items: value
+      });
+    });
+
+    filteredDevicesList.push({
+      name: 'Other Devices',
+      isOthers: true,
+      items: devicesWithoutLocation
+    });
+
+    return fromJS(filteredDevicesList);
+
+  }
+
+  applyByProductFilter() {
+
+  }
+
+  applyDevicesFilter(type, devices) {
+    if (type === DEVICES_FILTERS.ALL_DEVICES)
+      return this.applyAllDevicesFilter(devices);
+
+    if (type === DEVICES_FILTERS.BY_LOCATION)
+      return this.applyByLocationFilter(devices);
+
+    if (type === DEVICES_FILTERS.ALL_DEVICES)
+      return this.applyByProductFilter(devices);
+
+  }
+
   render() {
 
     if (!this.props.devices.size) {
@@ -102,9 +172,11 @@ class Devices extends React.Component {
                    params={this.props.params}/>);
     } else {
 
+      const devicesFilterValue = this.props.devicesFilterFormValues.get('filter');
+
       let devices = this.getDevicesList();
 
-      const devicesFilterValue = this.props.devicesFilterFormValues.get('filter');
+      devices = this.applyDevicesFilter(devicesFilterValue, devices);
 
       return (<Index filterValue={devicesFilterValue}
                      onFilterChange={this.handleFilterChange}

@@ -31,7 +31,7 @@ class DevicesSearch extends React.Component {
         <ItemsGroup>
           <Item>
             <Input style={{width: '100%'}} name="name"
-                   placeholder="Search..."
+                   placeholder="Search by device name"
                    mode="multiple"
                    notFoundContent="Search is on development"/>
           </Item>

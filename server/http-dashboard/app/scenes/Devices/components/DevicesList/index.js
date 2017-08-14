@@ -1,15 +1,23 @@
 import React from 'react';
-import {DeviceItem} from './components';
+import {
+  AllDevices,
+  ByLocation
+} from './components';
+import {DEVICES_FILTERS} from "services/Devices";
 
 import './styles.less';
-import {List} from "immutable";
+import {List, Map} from "immutable";
 
 class DevicesList extends React.Component {
 
   static propTypes = {
-    devices: React.PropTypes.instanceOf(List),
-    activeId: React.PropTypes.number,
+    devices: React.PropTypes.oneOfType([
+      React.PropTypes.instanceOf(Map),
+      React.PropTypes.instanceOf(List),
+    ]),
 
+    activeId: React.PropTypes.number,
+    type: React.PropTypes.string,
     onDeviceSelect: React.PropTypes.func,
   };
 
@@ -19,31 +27,40 @@ class DevicesList extends React.Component {
   // console.log(node.scrollTop, node.scrollHeight, (node));
   // }
 
+  constructor(props) {
+    super(props);
+
+    this.isActive = this.isActive.bind(this);
+    this.handleDeviceSelect = this.handleDeviceSelect.bind(this);
+  }
+
   handleDeviceSelect(device) {
     if (typeof this.props.onDeviceSelect === 'function') {
       this.props.onDeviceSelect(device);
     }
   }
 
+  isActive(device) {
+    return device.get('id') === this.props.activeId;
+  }
+
   render() {
 
-    const isActive = (device) => {
-      return device.get('id') === this.props.activeId;
+    const props = {
+      isActive: this.isActive,
+      devices: this.props.devices,
+      handleDeviceSelect: this.handleDeviceSelect,
     };
 
-    return (
-      <div className="navigation-devices-list">
-        { this.props.devices && this.props.devices.map((device) => (
-          <DeviceItem key={device.get('id')}
-                      onClick={this.handleDeviceSelect.bind(this, device)}
-                      device={device}
-                      active={isActive(device)}/>
-        ))}
-        { this.props.devices && !this.props.devices.size && (
-          <p>No any device found</p>
-        )}
-      </div>
-    );
+    if (!this.props.devices || this.props.devices && !this.props.devices.size)
+      return (<div className="navigation-devices-list">No any device found</div>);
+
+    if (this.props.devices.size && !this.props.type || this.props.type && this.props.type === DEVICES_FILTERS.ALL_DEVICES)
+      return (<AllDevices {...props}/>);
+
+    if (this.props.devices.size && this.props.type && this.props.type === DEVICES_FILTERS.BY_LOCATION)
+      return (<ByLocation {...props}/>);
+
   }
 
 }

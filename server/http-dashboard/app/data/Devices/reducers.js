@@ -51,7 +51,20 @@ export default function Devices(state = initialState, action) {
       return state.setIn(['sorting', 'value'], action.value);
 
     case "API_DEVICE_DETAILS_FETCH_SUCCESS":
-      return state.setIn(['deviceDetails', 'info', 'data'], fromJS(action.payload.data));
+      return state.setIn(['deviceDetails', 'info', 'data'], fromJS(action.payload.data)).update('devices', (devices) => {
+        return devices.map((device) => {
+
+          if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
+
+          const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
+          const warningSinceLastView = device.get('warningSinceLastView') || 0;
+
+          return fromJS(action.payload.data)
+            .set('criticalSinceLastView', criticalSinceLastView)
+            .set('warningSinceLastView', warningSinceLastView);
+
+        });
+      });
 
     case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH_SUCCESS":
       return state.setIn(['deviceCreate', 'data'], fromJS(action.payload.data));
@@ -65,10 +78,16 @@ export default function Devices(state = initialState, action) {
       // critical & warning state
       return state.update('devices', (devices) => {
         return devices.map((device) => {
-          if (Number(device.get('id')) === Number(action.payload.data.id)) {
-            return device.set('name', action.payload.data.name);
-          }
-          return device;
+
+          if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
+
+          const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
+          const warningSinceLastView = device.get('warningSinceLastView') || 0;
+
+          return fromJS(action.payload.data)
+            .set('criticalSinceLastView', criticalSinceLastView)
+            .set('warningSinceLastView', warningSinceLastView);
+
         });
       });
 

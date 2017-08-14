@@ -49,7 +49,8 @@ class Index extends React.Component {
           <DevicesToolbar filterValue={this.props.filterValue}
                           onFilterChange={this.props.onFilterChange}
                           location={this.props.location} params={this.props.params}/>
-          <DevicesList devices={this.props.devices} activeId={Number(this.props.params.id)}
+          <DevicesList type={this.props.filterValue}
+                       devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>
         <PageLayout.Content>

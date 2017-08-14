@@ -12,6 +12,16 @@ class DeviceItem extends React.Component {
     active: React.PropTypes.bool
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleDeviceClick = this.handleDeviceClick.bind(this);
+  }
+
+  handleDeviceClick() {
+    this.props.onClick(this.props.device);
+  }
+
   render() {
     const className = classnames({
       'navigation-devices-list-item': true,
@@ -19,20 +29,20 @@ class DeviceItem extends React.Component {
     });
 
     return (
-      <div className={className} onClick={this.props.onClick}>
+      <div className={className} onClick={this.handleDeviceClick}>
         <div className="navigation-devices-list-item-inner">
           <div className="navigation-devices-list-item-name">
             <Dotdotdot clamp={1}>{this.props.device.get('name')}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-product-name">
             <Dotdotdot clamp={1}>{this.props.device.has('productName') && this.props.device.get('productName') || (
-              <i>No Product Name</i>) }</Dotdotdot>
+              <i>No Product Name</i>)}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-events">
-            { this.props.device.has('criticalSinceLastView') && (
+            {this.props.device.has('criticalSinceLastView') && (
               <Badge count={this.props.device.get('criticalSinceLastView')} className="criticalSinceLastView"/>
             )}
-            { !this.props.device.has('criticalSinceLastView') && this.props.device.has('warningSinceLastView') && (
+            {!this.props.device.has('criticalSinceLastView') && this.props.device.has('warningSinceLastView') && (
               <Badge count={this.props.device.get('warningSinceLastView')} className="warning"/>
             )}
           </div>
