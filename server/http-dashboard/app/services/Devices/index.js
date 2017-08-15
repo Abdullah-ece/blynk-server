@@ -482,10 +482,49 @@ export const DEVICES_SORT = {
     key: 'LAST_REPORTED_DESC',
     compare: (a, b) => {
       return Number(a.get('dataReceivedAt')) > Number(b.get('dataReceivedAt')) ? 1 : -1;
-    }
+    },
   },
 
 };
+
+export const FILTERED_DEVICES_SORT = {
+  REQUIRE_ATTENTION: {
+    key: 'REQUIRE_ATTENTION',
+    compare: (a, b) => {
+      const aCritical = a.get('items').reduce((val, device) => val + (device.get('criticalSinceLastView') || 0), 0);
+      const bCritical = b.get('items').reduce((val, device) => val + (device.get('criticalSinceLastView') || 0), 0);
+      const aWarning = a.get('items').reduce((val, device) => val + (device.get('warningSinceLastView') || 0), 0);
+      const bWarning = b.get('items').reduce((val, device) => val + (device.get('warningSinceLastView') || 0), 0);
+
+      if (aCritical === bCritical) {
+        return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
+      } else {
+        return (aCritical > bCritical) ? -1 : 1;
+      }
+    }
+  },
+  AZ: {
+    key: 'AZ',
+    compare: (a, b) => {
+      if(a.get('isOthers'))
+        return 1;
+      if(b.get('isOthers'))
+        return -1;
+      return String(a.get('name')) > String(b.get('name')) ? 1 : -1;
+    }
+  },
+  ZA: {
+    key: 'ZA',
+    compare: (a, b) => {
+      if(a.get('isOthers'))
+        return 1;
+      if(b.get('isOthers'))
+        return -1;
+      return String(a.get('name')) > String(b.get('name')) ? -1 : 1;
+    }
+  },
+};
+
 
 export const DEVICES_SEARCH_FORM_NAME = 'devicesSearchForm';
 

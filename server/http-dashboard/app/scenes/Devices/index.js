@@ -9,6 +9,7 @@ import {
 } from 'services/Products';
 import {
   DEVICES_SORT,
+  FILTERED_DEVICES_SORT,
   DEVICES_SEARCH_FORM_NAME,
   DEVICES_FILTER_FORM_NAME,
   DEVICES_FILTERS,
@@ -82,6 +83,27 @@ class Devices extends React.Component {
     this.redirectToFirstDeviceIfIdParameterMissed();
   }
 
+  componentWillUpdate(nextProps) {
+
+    const sortingUnavailableOnSpecificFilters = [
+      DEVICES_SORT.DATE_ADDED_ASC.key,
+      DEVICES_SORT.DATE_ADDED_DESC.key,
+      DEVICES_SORT.LAST_REPORTED_ASC.key,
+      DEVICES_SORT.LAST_REPORTED_DESC.key,
+    ];
+
+    const specificFilters = [
+      DEVICES_FILTERS.BY_PRODUCT,
+      DEVICES_FILTERS.BY_LOCATION,
+    ];
+
+    const devicesFilterValue = nextProps.devicesFilterFormValues.get('filter');
+
+    if (devicesFilterValue && nextProps.devicesSortValue && specificFilters.indexOf(devicesFilterValue) !== -1 && sortingUnavailableOnSpecificFilters.indexOf(nextProps.devicesSortValue) !== -1) {
+      nextProps.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
+    }
+  }
+
   componentDidUpdate() {
     this.redirectToFirstDeviceIfIdParameterMissed();
   }
@@ -108,8 +130,31 @@ class Devices extends React.Component {
     }
   }
 
+  sortDevicesMap(devices, sort) {
+    if (!FILTERED_DEVICES_SORT[sort])
+      return null;
+
+    devices = devices.sort((a, b) => FILTERED_DEVICES_SORT[sort].compare(a, b));
+
+    return devices.map(device => device.set('items', this.sortDevicesList(device.get('items'), sort)));
+  }
+
+  sortDevicesList(devices, sort) {
+    return devices.sort((a, b) => DEVICES_SORT[sort].compare(a, b));
+  }
+
+  sortDevicesBasedOnFilter(devices, sort, filter) {
+
+    if (filter === DEVICES_FILTERS.ALL_DEVICES)
+      return this.sortDevicesList(devices, sort);
+
+    if (filter === DEVICES_FILTERS.BY_LOCATION || filter === DEVICES_FILTERS.BY_PRODUCT)
+      return this.sortDevicesMap(devices, sort);
+
+  }
+
   getDevicesList() {
-    let devices = this.props.devices.sort((a, b) => DEVICES_SORT[this.props.devicesSortValue].compare(a, b));
+    let devices = this.props.devices;
 
     if (this.props.devicesSearchFormValues.get('name')) {
       devices = devices.filter(device => device.get('name').trim().toLowerCase().indexOf(this.props.devicesSearchFormValues.get('name').trim().toLowerCase()) !== -1);
@@ -189,6 +234,8 @@ class Devices extends React.Component {
       let devices = this.getDevicesList();
 
       devices = this.applyDevicesFilter(devicesFilterValue, devices);
+
+      devices = this.sortDevicesBasedOnFilter(devices, this.props.devicesSortValue, devicesFilterValue);
 
       return (<Index filterValue={devicesFilterValue}
                      onFilterChange={this.handleFilterChange}
