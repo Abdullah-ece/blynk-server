@@ -89,23 +89,23 @@ class DevicesToolbar extends React.Component {
 
     return (
       <div className="devices--toolbar">
-        <Tooltip placement="bottomRight" title="All Devices" mouseEnterDelay={.75}>
+        <Tooltip placement="topRight" title="All Devices" mouseEnterDelay={.75}>
           <Button icon="switcher" size="small"
                   onClick={this.handleAllDevicesSelect}
                   className={filterValue === DEVICES_FILTERS.ALL_DEVICES ? 'active' : null}/>
         </Tooltip>
-        <Tooltip placement="bottomRight" title="Filter By Location"  mouseEnterDelay={.75}>
+        <Tooltip placement="top" title="Filter By Location"  mouseEnterDelay={.75}>
           <Button icon="environment-o" size="small"
                   onClick={this.handleByLocationSelect}
                   className={filterValue === DEVICES_FILTERS.BY_LOCATION ? 'active' : null}/>
         </Tooltip>
-        <Tooltip placement="bottom" title="Filter By Product"  mouseEnterDelay={.75}>
+        <Tooltip placement="top" title="Filter By Product"  mouseEnterDelay={.75}>
           <Button icon="appstore-o" size="small"
                   onClick={this.handleByProductSelect}
                   className={filterValue === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
         </Tooltip>
         <span/>
-        <Tooltip placement="bottomRight" title="Create new device">
+        <Tooltip placement="top" title="Create new device">
           <Button icon="plus-square-o" size="small" onClick={this.handleDeviceCreateClick.bind(this)}/>
         </Tooltip>
 
