@@ -100,7 +100,7 @@ class DevicesToolbar extends React.Component {
                   className={filterValue === DEVICES_FILTERS.BY_LOCATION ? 'active' : null}/>
         </Tooltip>
         <Tooltip placement="bottom" title="Filter By Product"  mouseEnterDelay={.75}>
-          <Button icon="appstore-o" size="small" disabled={true}
+          <Button icon="appstore-o" size="small"
                   onClick={this.handleByProductSelect}
                   className={filterValue === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
         </Tooltip>

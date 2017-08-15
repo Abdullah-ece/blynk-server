@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   AllDevices,
-  ByLocation
+  ByLocation,
+  ByProduct
 } from './components';
 import {DEVICES_FILTERS} from "services/Devices";
 
@@ -60,6 +61,9 @@ class DevicesList extends React.Component {
 
     if (this.props.devices.size && this.props.type && this.props.type === DEVICES_FILTERS.BY_LOCATION)
       return (<ByLocation {...props}/>);
+
+    if (this.props.devices.size && this.props.type && this.props.type === DEVICES_FILTERS.BY_PRODUCT)
+      return (<ByProduct {...props}/>);
 
   }
 

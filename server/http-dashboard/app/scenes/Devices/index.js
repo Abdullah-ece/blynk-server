@@ -50,6 +50,27 @@ class Devices extends React.Component {
     devicesSortChange: React.PropTypes.func,
   };
 
+  static getLocationName(device) {
+    if (device && device.get('metaFields')) {
+      const index = device.get('metaFields').findIndex((field) => field.get('name') === hardcodedRequiredMetadataFieldsNames.LocationName);
+
+      if (index === -1) {
+        return false;
+      } else {
+        return device.getIn(['metaFields', index, 'value']);
+      }
+    }
+    return false;
+  }
+
+  static getProductName(device) {
+    if (device.get('productName')) {
+      return device.get('productName');
+    } else {
+      return false;
+    }
+  }
+
   constructor(props) {
     super(props);
 
@@ -97,30 +118,13 @@ class Devices extends React.Component {
     return devices;
   }
 
-  applyAllDevicesFilter(devices) {
-    return devices;
-  }
-
-  applyByLocationFilter(devices) {
-
-    const getLocationName = (device) => {
-      if (device && device.get('metaFields')) {
-        const index = device.get('metaFields').findIndex((field) => field.get('name') === hardcodedRequiredMetadataFieldsNames.LocationName);
-
-        if (index === -1) {
-          return false;
-        } else {
-          return device.getIn(['metaFields', index, 'value']);
-        }
-      }
-      return false;
-    };
+  applyFilterForDevices(devices, filter) {
 
     let filteredDevices = {};
     let devicesWithoutLocation = [];
 
     devices.forEach((device) => {
-      const name = getLocationName(device);
+      const name = filter(device);
       if (name) {
         filteredDevices[name] ? filteredDevices[name].push(device) : filteredDevices[name] = [device];
       } else {
@@ -147,8 +151,16 @@ class Devices extends React.Component {
 
   }
 
-  applyByProductFilter() {
+  applyAllDevicesFilter(devices) {
+    return devices;
+  }
 
+  applyByLocationFilter(devices) {
+    return this.applyFilterForDevices(devices, Devices.getLocationName);
+  }
+
+  applyByProductFilter(devices) {
+    return this.applyFilterForDevices(devices, Devices.getProductName);
   }
 
   applyDevicesFilter(type, devices) {
@@ -158,7 +170,7 @@ class Devices extends React.Component {
     if (type === DEVICES_FILTERS.BY_LOCATION)
       return this.applyByLocationFilter(devices);
 
-    if (type === DEVICES_FILTERS.ALL_DEVICES)
+    if (type === DEVICES_FILTERS.BY_PRODUCT)
       return this.applyByProductFilter(devices);
 
   }
