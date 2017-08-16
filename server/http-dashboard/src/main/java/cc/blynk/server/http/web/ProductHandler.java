@@ -163,7 +163,7 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/updateDevices")
-    public Response updateProductAndDevices(WebProductAndOrgId webProductAndOrgId) {
+    public Response updateProductAndDevices(@ContextUser User user, WebProductAndOrgId webProductAndOrgId) {
         Product updatedProduct = webProductAndOrgId.product;
         if (updatedProduct == null) {
             log.error("No product for update.");
@@ -179,8 +179,8 @@ public class ProductHandler extends BaseHttpHandler {
 
         existingProduct.update(updatedProduct);
 
-        //todo persist?
         List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
+        long now = System.currentTimeMillis();
         for (Device device : devices) {
             device.updateMetaFields(updatedProduct.metaFields);
 
@@ -189,6 +189,9 @@ public class ProductHandler extends BaseHttpHandler {
 
             MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields);
             device.deleteMetaFields(deletedMetaFields);
+
+            device.metadataUpdatedAt = now;
+            device.metadataUpdatedBy = user.email;
         }
 
         return ok(existingProduct);

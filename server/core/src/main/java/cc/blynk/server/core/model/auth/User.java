@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
@@ -149,6 +150,11 @@ public class User {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (lastStart <= dashBoard.updatedAt) {
                 return true;
+            }
+            for (Device device : dashBoard.devices) {
+                if (lastStart <= device.metadataUpdatedAt || lastStart <= device.dataReceivedAt) {
+                    return true;
+                }
             }
         }
         return false;
