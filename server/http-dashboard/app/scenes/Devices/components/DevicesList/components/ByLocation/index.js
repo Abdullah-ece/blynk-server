@@ -16,6 +16,7 @@ class ByProduct extends React.Component {
 
     return (
       <FilteredBy icon={(<Icon type="environment-o"/>)}
+                  othersLabel={'Devices Without Location'}
                   devices={this.props.devices}
                   isActive={this.props.isActive}
                   handleDeviceSelect={this.props.handleDeviceSelect}/>

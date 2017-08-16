@@ -9,6 +9,8 @@ class FilteredBy extends React.Component {
   static propTypes = {
     devices: PropTypes.instanceOf(List),
 
+    othersLabel: PropTypes.string,
+
     isActive: PropTypes.func,
     handleDeviceSelect: PropTypes.func,
 
@@ -32,7 +34,7 @@ class FilteredBy extends React.Component {
             let header = '';
 
             if (group.get('isOthers')) {
-              header = (<span>Devices Without Location</span>);
+              header = (<span>{this.props.othersLabel}</span>);
             } else {
               header = (<div>{this.props.icon || null} {group.get('name')}</div>);
             }
