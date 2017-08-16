@@ -182,6 +182,8 @@ public class ProductHandler extends BaseHttpHandler {
         //todo persist?
         List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
         for (Device device : devices) {
+            device.updateMetaFields(updatedProduct.metaFields);
+
             MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields);
             device.addMetaFields(addedMetaFields);
 

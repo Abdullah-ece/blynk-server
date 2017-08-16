@@ -34,9 +34,9 @@ public abstract class MetaField {
 
     public final int id;
 
-    public final String name;
+    public String name;
 
-    public final Role role;
+    public Role role;
 
     public MetaField(int id, String name, Role role) {
         this.id = id;
@@ -45,6 +45,11 @@ public abstract class MetaField {
     }
 
     public abstract MetaField copy();
+
+    public void update(MetaField metaField) {
+        this.name = metaField.name;
+        this.role = metaField.role;
+    }
 
     public boolean isDefault() {
         return DEFAULT_DEVICE_NAME_FIELD.equals(name);

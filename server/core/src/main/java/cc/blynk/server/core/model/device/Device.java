@@ -90,6 +90,17 @@ public class Device implements Target {
         return -1;
     }
 
+    public void updateMetaFields(MetaField[] updatedMetaFields) {
+        for (MetaField updatedMetaField : updatedMetaFields) {
+            for (MetaField existingMetaField : metaFields) {
+                if (existingMetaField.id == updatedMetaField.id) {
+                    existingMetaField.update(updatedMetaField);
+                    break;
+                }
+            }
+        }
+    }
+
     public void addMetaFields(MetaField[] metaFields) {
         this.metaFields = concat(this.metaFields, metaFields);
     }
