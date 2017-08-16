@@ -48,11 +48,9 @@ class Resolved extends React.Component {
               {time}
             </div>
           </div>
-          { this.props.event.has('description') && (
-            <div className="devices--device-timeline--event-resolved-description">
-              { this.props.event.get('resolvedComment') || 'No comments provided' }
-            </div>
-          )}
+          <div className="devices--device-timeline--event-resolved-description">
+            {this.props.event.get('resolvedComment') || 'No comments provided'}
+          </div>
         </div>
       </Timeline.Item>
     );
