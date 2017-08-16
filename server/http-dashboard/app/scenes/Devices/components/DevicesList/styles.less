@@ -133,8 +133,15 @@
         border: 0;
 
         border-radius: 5px;
-        padding: 0 8px;
+        padding: 0 48px 0 8px;
         margin: 0 18px;
+
+        > div {
+          max-width: 100%;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
 
         > i.arrow {
           left: auto;

@@ -34,7 +34,7 @@ class FilteredBy extends React.Component {
             if (group.get('isOthers')) {
               header = (<span>Devices Without Location</span>);
             } else {
-              header = (<span>{this.props.icon || null} {group.get('name')}</span>);
+              header = (<div>{this.props.icon || null} {group.get('name')}</div>);
             }
 
             return (
