@@ -565,8 +565,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, 123D),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, "Tech Support",
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, 123D),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,

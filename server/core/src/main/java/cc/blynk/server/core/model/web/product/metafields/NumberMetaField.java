@@ -18,13 +18,14 @@ public class NumberMetaField extends MetaField {
     public NumberMetaField(@JsonProperty("id") int id,
                            @JsonProperty("name") String name,
                            @JsonProperty("role") Role role,
+                           @JsonProperty("isDefault") boolean isDefault,
                            @JsonProperty("value") double value) {
-        super(id, name, role);
+        super(id, name, role, isDefault);
         this.value = value;
     }
 
     @Override
     public MetaField copy() {
-        return new NumberMetaField(id, name, role, value);
+        return new NumberMetaField(id, name, role, isDefault, value);
     }
 }

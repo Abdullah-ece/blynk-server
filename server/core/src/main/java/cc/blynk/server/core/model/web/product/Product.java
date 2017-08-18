@@ -179,7 +179,7 @@ public class Product {
 
         List<MetaField> result = new ArrayList<>(metaFields.length);
         for (MetaField metaField : metaFields) {
-            if (!metaField.isDefault()) {
+            if (!metaField.isDefault) {
                 result.add(metaField.copy());
             }
         }

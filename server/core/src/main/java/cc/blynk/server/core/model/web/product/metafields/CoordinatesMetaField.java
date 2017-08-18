@@ -20,15 +20,16 @@ public class CoordinatesMetaField extends MetaField {
     public CoordinatesMetaField(@JsonProperty("id") int id,
                                 @JsonProperty("name") String name,
                                 @JsonProperty("role") Role role,
+                                @JsonProperty("isDefault") boolean isDefault,
                                 @JsonProperty("lat") double lat,
                                 @JsonProperty("lon") double lon) {
-        super(id, name, role);
+        super(id, name, role, isDefault);
         this.lat = lat;
         this.lon = lon;
     }
 
     @Override
     public MetaField copy() {
-        return new CoordinatesMetaField(id, name, role, lat, lon);
+        return new CoordinatesMetaField(id, name, role, isDefault, lat, lon);
     }
 }

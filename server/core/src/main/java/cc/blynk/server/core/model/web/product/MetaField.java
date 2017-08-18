@@ -30,18 +30,19 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class MetaField {
 
-    private static final String DEFAULT_DEVICE_NAME_FIELD = "Device Name";
-
     public final int id;
 
     public String name;
 
     public Role role;
 
-    public MetaField(int id, String name, Role role) {
+    public boolean isDefault;
+
+    public MetaField(int id, String name, Role role, boolean isDefault) {
         this.id = id;
         this.name = name;
         this.role = role;
+        this.isDefault = isDefault;
     }
 
     public abstract MetaField copy();
@@ -49,10 +50,7 @@ public abstract class MetaField {
     public void update(MetaField metaField) {
         this.name = metaField.name;
         this.role = metaField.role;
-    }
-
-    public boolean isDefault() {
-        return DEFAULT_DEVICE_NAME_FIELD.equals(name);
+        this.isDefault = metaField.isDefault;
     }
 
     @Override

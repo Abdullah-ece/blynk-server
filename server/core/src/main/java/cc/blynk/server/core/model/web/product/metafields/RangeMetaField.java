@@ -20,15 +20,16 @@ public class RangeMetaField extends MetaField {
     public RangeMetaField(@JsonProperty("id") int id,
                           @JsonProperty("name") String name,
                           @JsonProperty("role") Role role,
+                          @JsonProperty("isDefault") boolean isDefault,
                           @JsonProperty("from") int from,
                           @JsonProperty("to") int to) {
-        super(id, name, role);
+        super(id, name, role, isDefault);
         this.from = from;
         this.to = to;
     }
 
     @Override
     public MetaField copy() {
-        return new RangeMetaField(id, name ,role, from, to);
+        return new RangeMetaField(id, name ,role, isDefault, from, to);
     }
 }
