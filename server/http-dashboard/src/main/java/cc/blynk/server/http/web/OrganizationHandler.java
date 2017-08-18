@@ -13,7 +13,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -24,6 +26,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static cc.blynk.core.http.Response.*;
@@ -96,18 +100,39 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{orgId}/users")
-    public Response getUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-
-        if (!httpSession.user.isSuperAdmin()) {
-            if (orgId != httpSession.user.orgId) {
+    public Response getUsers(@ContextUser User user, @PathParam("orgId") int orgId) {
+        if (!user.isSuperAdmin()) {
+            if (orgId != user.orgId) {
                 log.error("User {} tries to access organization he has no access.");
                 return forbidden("You are not allowed to access this organization.");
             }
         }
 
-        return ok(userDao.getUsersByOrgId(orgId, httpSession.user.email));
+        return ok(userDao.getUsersByOrgId(orgId, user.email));
     }
+
+
+    @GET
+    @Path("/{orgId}/locations")
+    public Response getExistingLocations(@ContextUser User user, @PathParam("orgId") int orgId)  {
+        if (!organizationDao.hasAccess(user, orgId)) {
+            log.error("User {} tries to access organization he has no access.", user.email);
+            return forbidden("You are not access this organization.");
+        }
+
+        List<String> existingLocations = new ArrayList<>();
+        Organization org = organizationDao.getOrgById(orgId);
+        for (Product product : org.products) {
+            for (MetaField metaField : product.metaFields) {
+                if (metaField.isDefault && "Location Name".equalsIgnoreCase(metaField.name)) {
+                    existingLocations.add(((TextMetaField) metaField).value);
+                }
+            }
+        }
+
+        return ok(existingLocations);
+    }
+
 
     @POST
     @Path("/{orgId}/canInviteUser")
@@ -131,7 +156,6 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(orgId);
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {
@@ -161,7 +185,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Admin
     public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, String[] emailsToDelete) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(orgId);
 
         if (!httpSession.user.isSuperAdmin()) {
             if (orgId != httpSession.user.orgId) {

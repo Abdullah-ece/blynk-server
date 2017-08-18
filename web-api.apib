@@ -123,6 +123,23 @@ HOST: https://knight-qa.blynk.cc/
 
         Unexpected error.
 
+
+## Get existing locations of organization [GET] [/api/organization/{orgId}/locations]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        [
+            "Kyiv",
+            "Kyiv 2"
+        ]
+
++ Response 403 (application/json)
+
+        You are not allowed to access this organization.
+
+
 ## Create New Organization [PUT] [/api/organization]
 
 + Request (application/json)
