@@ -106,16 +106,15 @@ public class OrganizationDao {
         if (user.isSuperAdmin()) {
             return true;
         }
+        if (user.orgId == orgId) {
+            return true;
+        }
         if (user.isAdmin()) {
-            if (user.orgId == orgId) {
+            //user is admin of parent org, so he can perform admin action on child org
+            List<Organization> childOrgs = getOrgsByParentId(user.orgId);
+            Organization org = getOrgById(childOrgs, orgId);
+            if (org != null) {
                 return true;
-            } else {
-                //user is admin of parent org, so he can perform admin action on child org
-                List<Organization> childOrgs = getOrgsByParentId(user.orgId);
-                Organization org = getOrgById(childOrgs, orgId);
-                if (org != null) {
-                    return true;
-                }
             }
         }
         return false;
