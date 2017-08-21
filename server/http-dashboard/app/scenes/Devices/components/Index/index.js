@@ -30,6 +30,7 @@ class Index extends React.Component {
 
     filterValue: React.PropTypes.string,
     devicesSortValue: React.PropTypes.string,
+    devicesSearchValue: React.PropTypes.string,
 
     onFilterChange: React.PropTypes.func,
     devicesSortChange: React.PropTypes.func,
@@ -74,7 +75,7 @@ class Index extends React.Component {
   };
 
   shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.filterValue, this.props.filterValue)) || !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
+    return !(_.isEqual(nextProps.devicesSearchValue, this.props.devicesSearchValue)) || !(_.isEqual(nextProps.filterValue, this.props.filterValue)) || !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
   }
 
   handleDeviceSelect(device) {
@@ -116,6 +117,7 @@ class Index extends React.Component {
                           onFilterChange={this.props.onFilterChange}
                           location={this.props.location} params={this.props.params}/>
           <DevicesList type={this.props.filterValue}
+                       devicesSearchValue={this.props.devicesSearchValue}
                        devices={this.props.devices} activeId={Number(this.props.params.id)}
                        onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
         </PageLayout.Navigation>

@@ -238,6 +238,7 @@ class Devices extends React.Component {
       devices = this.sortDevicesBasedOnFilter(devices, this.props.devicesSortValue, devicesFilterValue);
 
       return (<Index filterValue={devicesFilterValue}
+                     devicesSearchValue={this.props.devicesSearchFormValues.get('name') || ''}
                      onFilterChange={this.handleFilterChange}
                      devicesSortValue={this.props.devicesSortValue}
                      devicesSortChange={this.devicesSortChange}

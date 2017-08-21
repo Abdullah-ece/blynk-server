@@ -20,6 +20,7 @@ class DevicesList extends React.Component {
     activeId: React.PropTypes.number,
     type: React.PropTypes.string,
     onDeviceSelect: React.PropTypes.func,
+    devicesSearchValue: React.PropTypes.string,
   };
 
   // track scroll to display go top button
@@ -54,7 +55,7 @@ class DevicesList extends React.Component {
     };
 
     if (!this.props.devices || this.props.devices && !this.props.devices.size)
-      return (<div className="navigation-devices-list">No any device found</div>);
+      return (<div className="navigation-devices-list">No devices found for "{this.props.devicesSearchValue}"</div>);
 
     if (this.props.devices.size && !this.props.type || this.props.type && this.props.type === DEVICES_FILTERS.ALL_DEVICES)
       return (<AllDevices {...props}/>);
