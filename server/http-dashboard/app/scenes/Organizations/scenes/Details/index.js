@@ -215,7 +215,7 @@ class Details extends React.Component {
             <TabPane tab="Products"
                      key={this.TABS.PRODUCTS}>
               <div className="organizations-manage-tab-wrapper">
-                <Products products={organization.get('products')}/>
+                <Products products={organization.get('products')} companyName={organization.get('name')}/>
               </div>
             </TabPane>
             <TabPane tab="Admins"

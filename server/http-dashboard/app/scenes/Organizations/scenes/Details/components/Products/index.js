@@ -7,7 +7,8 @@ import './styles.less';
 class Products extends React.Component {
 
   static propTypes = {
-    products: PropTypes.instanceOf(List)
+    products: PropTypes.instanceOf(List),
+    companyName: PropTypes.string
   };
 
   render() {
@@ -23,7 +24,7 @@ class Products extends React.Component {
         ))}
 
         { (!this.props.products || !this.props.products.size) && (
-          <div>You don't have any products</div>
+          <div>{this.props.companyName} doesn't have assigned Products yet.<br/>Click Edit button to assign products to this Organization</div>
         ) }
 
       </MainList>
