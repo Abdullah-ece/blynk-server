@@ -1,5 +1,8 @@
 import React from 'react';
-import {Metadata} from 'services/Products';
+import {
+  Metadata,
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
 import {Switch, Select} from 'antd';
 import {Field} from 'redux-form';
 import FormItem from 'components/FormItem';
@@ -47,12 +50,22 @@ class Notifications extends React.Component {
     ));
   }
 
+  getDeviceOwnerField() {
+    return this.props.metadata.filter((field) => {
+      return field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner;
+    }).map((field) => (
+      <Select.Option key={field.values.name} value={(field.id).toString()}>{field.values.name}</Select.Option>
+    ));
+  }
+
   switcher(props) {
     return <Switch size="small" onChange={props.input.onChange} checked={!!props.input.value}/>;
   }
 
   render() {
-    let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail();
+    let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail().concat(
+      this.getDeviceOwnerField()
+    );
 
     return (
       <FormItem>
