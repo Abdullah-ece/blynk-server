@@ -101,11 +101,9 @@ public class OrganizationHandler extends BaseHttpHandler {
     @GET
     @Path("/{orgId}/users")
     public Response getUsers(@ContextUser User user, @PathParam("orgId") int orgId) {
-        if (!user.isSuperAdmin()) {
-            if (orgId != user.orgId) {
-                log.error("User {} tries to access organization he has no access.");
-                return forbidden("You are not allowed to access this organization.");
-            }
+        if (!organizationDao.hasAccess(user, orgId)) {
+            log.error("User {} tries to access organization he has no access.");
+            return forbidden("You are not allowed to access this organization.");
         }
 
         return ok(userDao.getUsersByOrgId(orgId, user.email));
