@@ -80,7 +80,7 @@ class Base extends React.Component {
     const field = this.props.data;
 
     return (
-      <Item onEditClick={this.handleEdit.bind(this)}>
+      <Item onEditClick={this.handleEdit.bind(this)} fieldName={field.get('name')}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName="device-metadata-modal"
