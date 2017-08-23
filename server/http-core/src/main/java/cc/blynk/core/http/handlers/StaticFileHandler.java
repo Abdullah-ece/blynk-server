@@ -3,7 +3,6 @@ package cc.blynk.core.http.handlers;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -165,6 +164,11 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         Path path;
         String uri = request.uri();
+
+        if (uri.contains("?")) {
+            uri = uri.split("\\?")[0];
+        }
+
         //running from jar
         if (isUnpacked) {
             log.debug("Is unpacked.");

@@ -6,7 +6,6 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -23,8 +22,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static cc.blynk.core.http.Response.forbidden;
-import static cc.blynk.core.http.Response.serverError;
-
 import static cc.blynk.core.http.Response.serverError;
 
 /**
@@ -79,9 +76,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             } finally {
                 ReferenceCountUtil.release(req);
             }
+            return true;
+        }
 
-return true;        }
-           return false;
+        return false;
     }
 
     private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerWrapper handler, Map<String, String> extractedParams){

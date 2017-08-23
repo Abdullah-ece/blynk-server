@@ -2,10 +2,6 @@ package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.*;
-import cc.blynk.core.http.annotation.DELETE;
-import cc.blynk.core.http.annotation.Metric;
-import cc.blynk.core.http.annotation.POST;
-import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.WebException;
@@ -21,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static cc.blynk.core.http.Response.*;
-
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_TOTAL;
 
 /**

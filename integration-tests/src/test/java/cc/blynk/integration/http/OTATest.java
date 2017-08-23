@@ -1,16 +1,16 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.https.HttpsAdminServerTest;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -41,7 +41,8 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import static cc.blynk.integration.IntegrationBase.*;
+import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.*;
@@ -88,7 +89,7 @@ public class OTATest extends BaseTest {
 
         String pass = "admin";
         User user = new User();
-        user.isSuperAdmin = true;
+        user.role = Role.SUPER_ADMIN;
         user.email = "admin@blynk.cc";
         user.pass = SHA256Util.makeHash(pass, user.email);
         holder.userDao.add(user);
@@ -97,7 +98,7 @@ public class OTATest extends BaseTest {
 
         // Allow TLSv1 protocol only
         SSLContext sslcontext = initUnsecuredSSLContext();
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new HttpsAdminServerTest.MyHostVerifier());
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
         this.httpclient = HttpClients.custom()
                 .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())

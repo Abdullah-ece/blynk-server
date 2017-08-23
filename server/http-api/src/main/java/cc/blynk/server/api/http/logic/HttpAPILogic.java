@@ -60,7 +60,6 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
 
-
     public HttpAPILogic(Holder holder) {
         super(holder.tokenManager, holder.sessionDao, holder.stats, "");
         this.blockingIOProcessor = holder.blockingIOProcessor;

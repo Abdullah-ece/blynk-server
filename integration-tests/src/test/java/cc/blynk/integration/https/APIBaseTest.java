@@ -27,9 +27,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import javax.net.ssl.*;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,30 +112,6 @@ public abstract class APIBaseTest extends BaseTest {
     @Override
     public String getDataFolder() {
         return getRelativeDataFolder("/profiles");
-    }
-
-    protected SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
-        X509TrustManager tm = new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        };
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new TrustManager[]{ tm }, null);
-
-        return context;
     }
 
     protected void login(String name, String pass) throws Exception {

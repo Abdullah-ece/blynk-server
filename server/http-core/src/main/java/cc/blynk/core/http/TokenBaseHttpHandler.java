@@ -48,7 +48,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         }
     }
 
-    private void completeLogin(Channel channel, Handler handler, Object[] params) {
+    private void completeLogin(Channel channel, HandlerWrapper handler, Object[] params) {
         log.debug("Re registering http channel finished.");
 
         FullHttpResponse response = handler.invoke(params);

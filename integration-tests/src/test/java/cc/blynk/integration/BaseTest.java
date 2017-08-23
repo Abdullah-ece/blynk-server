@@ -86,7 +86,6 @@ public abstract class BaseTest {
         }
     }
 
-
     public SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
         X509TrustManager tm = new X509TrustManager() {
             @Override
