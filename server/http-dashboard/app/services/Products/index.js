@@ -6,7 +6,12 @@ export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',
   DATA_STREAMS: 'datastreams',
-  EVENTS: 'events'
+  EVENTS: 'events',
+  DASHBOARD: 'dashboard'
+};
+
+export const FORMS = {
+  DASHBOARD: 'products-manage-dashboard-form'
 };
 
 export const convertUserFriendlyEventCode = (userFriendlyCode) => {

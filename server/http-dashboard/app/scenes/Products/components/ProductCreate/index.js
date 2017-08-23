@@ -13,6 +13,8 @@ import {
   Metadata    as MetadataTab,
   DataStreams as DataStreamsTab,
 }                                           from '../ProductManage';
+
+import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
 import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 
 class ProductCreate extends React.Component {
@@ -183,6 +185,10 @@ class ProductCreate extends React.Component {
               <EventsTab fields={this.props.product.events.fields}
                          onFieldsChange={this.props.onEventsFieldsChange}/*
                onFieldsChange={this.props.onDataStreamsFieldsChange}*//>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>Dashboard</span>} key={TABS.DASHBOARD}>
+              <DashboardTab/>
             </Tabs.TabPane>
 
           </Tabs>

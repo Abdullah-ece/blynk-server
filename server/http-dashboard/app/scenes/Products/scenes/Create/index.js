@@ -3,11 +3,21 @@ import {fromJS, Map} from 'immutable';
 import './styles.less';
 import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {connect} from 'react-redux';
-import {submit, getFormSyncErrors} from 'redux-form';
+import {
+  submit,
+  getFormSyncErrors,
+  initialize,
+  destroy,
+} from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
-import {prepareProductForSave, exampleMetadataField, getHardcodedRequiredMetadataFields} from 'services/Products';
+import {
+  FORMS,
+  prepareProductForSave,
+  exampleMetadataField,
+  getHardcodedRequiredMetadataFields
+} from 'services/Products';
 import {OrganizationFetch} from 'data/Organization/actions';
 import * as API from 'data/Product/api';
 import {
@@ -42,12 +52,14 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     eventsForms: eventsForms,
     Organization: state.Organization,
     isProductInfoInvalid: state.Product.edit.info.invalid,
-    isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+    isMetadataFirstTime: state.Storage.products.metadataFirstTime
   };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
+  destroyForm: bindActionCreators(destroy, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
@@ -71,6 +83,8 @@ class Create extends React.Component {
 
     Fetch: React.PropTypes.func,
     Create: React.PropTypes.func,
+    destroyForm: React.PropTypes.func,
+    initializeForm: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
     OrganizationFetch: React.PropTypes.func,
@@ -132,9 +146,14 @@ class Create extends React.Component {
         }
       ]
     });
+
+    this.props.initializeForm(FORMS.DASHBOARD, {
+      widgets: []
+    });
   }
 
   componentWillUnmount() {
+    this.props.destroyForm(FORMS.DASHBOARD);
     this.props.ProductEditClearFields();
   }
 
