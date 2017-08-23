@@ -1,7 +1,7 @@
 package cc.blynk.core.http;
 
-import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.HandlerHolder;
+import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
@@ -19,9 +19,12 @@ import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import static cc.blynk.core.http.Response.forbidden;
+import static cc.blynk.core.http.Response.serverError;
+
 import static cc.blynk.core.http.Response.serverError;
 
 /**
@@ -35,8 +38,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     protected final TokenManager tokenManager;
     protected final SessionDao sessionDao;
-    protected final GlobalStats globalStats;
-    protected final Handler[] handlers;
+    protected final HandlerWrapper[] handlers;
     protected final String rootPath;
 
     public BaseHttpHandler(Holder holder, String rootPath) {
@@ -46,9 +48,8 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
-        this.globalStats = globalStats;
         this.rootPath = rootPath;
-        this.handlers = AnnotationsUtil.register(rootPath, this);
+        this.handlers = AnnotationsUtil.register(rootPath, this, globalStats);
     }
 
     @Override
@@ -56,17 +57,19 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            process(ctx, req);
+            if (!process(ctx, req)) {
+                ctx.fireChannelRead(req);
+            }
         }
     }
 
-    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+    public boolean process(ChannelHandlerContext ctx, HttpRequest req) {
         HandlerHolder handlerHolder = lookupHandler(req);
 
         if (handlerHolder != null) {
             try {
                 if (handlerHolder.hasAccess(ctx)) {
-                    invokeHandler(ctx, req, handlerHolder);
+                    invokeHandler(ctx, req, handlerHolder.handler, handlerHolder.extractedParams);
                 } else {
                     ctx.writeAndFlush(forbidden("You are not allowed to perform this action."));
                 }
@@ -76,21 +79,19 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             } finally {
                 ReferenceCountUtil.release(req);
             }
-        } else {
-            ctx.fireChannelRead(req);
-        }
+
+return true;        }
+           return false;
     }
 
-    public void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerHolder handlerHolder) {
-        log.debug("Incoming {}: {}", req.method(), req.uri());
-        globalStats.mark(Command.HTTP_TOTAL);
-        URIDecoder uriDecoder = new URIDecoder(req);
-        uriDecoder.pathData = handlerHolder.extractParameters();
-        Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
-        finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
+    private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerWrapper handler, Map<String, String> extractedParams){
+        log.debug("{} : {}", req.method().name(), req.uri());
+        URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
+        Object[] params = handler.fetchParams(ctx, uriDecoder);
+        finishHttp(ctx, uriDecoder, handler, params);
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
         if (response != null) {
             log.trace("Sending response {}", response);
@@ -99,11 +100,12 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     }
 
     private HandlerHolder lookupHandler(HttpRequest req) {
-        for (Handler handler : handlers) {
+        for (HandlerWrapper handler : handlers) {
             if (handler.httpMethod == req.method()) {
                 Matcher matcher = handler.uriTemplate.matcher(req.uri());
                 if (matcher.matches()) {
-                    return new HandlerHolder(handler, matcher);
+                    Map<String, String> extractedParams = handler.uriTemplate.extractParameters(matcher);
+                    return new HandlerHolder(handler, extractedParams);
                 }
             }
         }

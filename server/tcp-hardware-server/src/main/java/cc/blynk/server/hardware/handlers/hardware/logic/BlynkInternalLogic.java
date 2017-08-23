@@ -1,7 +1,9 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareInfo;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -31,9 +33,11 @@ public class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
+    private final OTAManager otaManager;
     private final int hardwareIdleTimeout;
 
-    public BlynkInternalLogic(int hardwareIdleTimeout) {
+    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
+        this.otaManager = otaManager;
         this.hardwareIdleTimeout = hardwareIdleTimeout;
     }
 
@@ -77,15 +81,23 @@ public class BlynkInternalLogic {
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
-            final int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
+            int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
             ctx.pipeline().replace(ReadTimeoutHandler.class, "H_ReadTimeout", new ReadTimeoutHandler(newReadTimeout));
         }
 
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
-        //this info is not important, so we don't mark dash as updated.
-        //this update will be stored only in case hardware sends real data to pins
-        dashBoard.hardwareInfo = hardwareInfo;
+        Device device = dashBoard.getDeviceById(state.deviceId);
+
+        if (device != null) {
+            if (otaManager.isUpdateRequired(hardwareInfo)) {
+                otaManager.sendOtaCommand(ctx, device);
+                log.info("Ota command is sent for user {} and device {}:{}.", state.user.email, device.name, device.id);
+            }
+
+            device.hardwareInfo = hardwareInfo;
+            dashBoard.updatedAt = System.currentTimeMillis();
+        }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
     }

@@ -7,24 +7,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
-import java.util.regex.Matcher;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 12.03.17.
  */
-public class HandlerHolder {
+public final class HandlerHolder {
 
     private static final Logger log = LogManager.getLogger(HandlerHolder.class);
 
-    public final Handler handler;
+    public final HandlerWrapper handler;
 
-    private final Matcher matcher;
+    public final Map<String, String> extractedParams;
 
-    public HandlerHolder(Handler handler, Matcher matcher) {
+    public HandlerHolder(HandlerWrapper handler, Map<String, String> extractedParams) {
         this.handler = handler;
-        this.matcher = matcher;
+        this.extractedParams = extractedParams;
     }
 
     private boolean isRestrictedAccess() {
@@ -45,7 +44,4 @@ public class HandlerHolder {
         return true;
     }
 
-    public Map<String, String> extractParameters() {
-        return handler.uriTemplate.extractParameters(matcher);
-    }
 }

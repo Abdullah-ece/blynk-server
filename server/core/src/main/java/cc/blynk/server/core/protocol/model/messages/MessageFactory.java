@@ -75,6 +75,8 @@ public class MessageFactory {
                 return new HardwareMessage(messageId, body);
             case HARDWARE_LOG_EVENT :
                 return new HardwareLogEventMessage(messageId, body);
+            case HARDWARE_RESEND_FROM_BLUETOOTH :
+                return new HardwareResendFromBluetoothMessage(messageId, body);
             case HARDWARE_CONNECTED :
                 return new HardwareConnectedMessage(messageId, body);
             case REDEEM :

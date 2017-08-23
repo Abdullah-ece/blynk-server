@@ -48,6 +48,10 @@ public class Device implements Target {
 
     public volatile MetaField[] metaFields;
 
+    public volatile HardwareInfo hardwareInfo;
+
+    public volatile DeviceOtaInfo deviceOtaInfo;
+
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
     }
@@ -126,6 +130,9 @@ public class Device implements Target {
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+        //that's fine. leave this fields as it is. It cannot be update from app client.
+        //this.hardwareInfo = newDevice.hardwareInfo;
+        //this.deviceOtaInfo = newDevice.deviceOtaInfo;
         this.metaFields = newDevice.metaFields;
     }
 
@@ -139,6 +146,14 @@ public class Device implements Target {
         this.disconnectTime = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
+        this.hardwareInfo = null;
+        this.deviceOtaInfo = null;
+    }
+
+    //for single device update device always updated when ota is initiated.
+    public void updateOTAInfo(String initiatedBy) {
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
     }
 
     public void connected() {

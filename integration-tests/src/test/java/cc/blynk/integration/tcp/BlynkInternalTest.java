@@ -6,8 +6,8 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -94,7 +94,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         Profile profile = parseProfile(clientPair.appClient.getBody());
 
-        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].hardwareInfo));
+        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].devices[0].hardwareInfo));
 
 
         hardClient2.stop().awaitUninterruptibly();

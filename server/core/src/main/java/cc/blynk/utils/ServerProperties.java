@@ -57,10 +57,6 @@ public class ServerProperties extends Properties {
         }
     }
 
-    public static Path getFileInCurrentDir(String filename) {
-        return Paths.get(jarPath, filename);
-    }
-
     /**
      * First loads properties file from class path after that from current folder.
      * So properties file in current folder is always overrides properties in classpath.
@@ -70,7 +66,7 @@ public class ServerProperties extends Properties {
     private void initProperties(String filePropertiesName) {
         readFromClassPath(filePropertiesName);
 
-        Path curDirPath = getFileInCurrentDir(filePropertiesName);
+        Path curDirPath = Paths.get(jarPath, filePropertiesName);
         if (Files.exists(curDirPath)) {
             try (InputStream curFolder = Files.newInputStream(curDirPath)) {
                 if (curFolder != null) {

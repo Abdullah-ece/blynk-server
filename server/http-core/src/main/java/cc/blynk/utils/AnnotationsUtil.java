@@ -3,12 +3,13 @@ package cc.blynk.utils;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.*;
-import cc.blynk.core.http.rest.Handler;
+import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.params.*;
 import cc.blynk.core.http.rest.params.FormParam;
 import cc.blynk.core.http.rest.params.PathParam;
 import cc.blynk.core.http.rest.params.QueryParam;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.lang.annotation.Annotation;
@@ -24,20 +25,16 @@ import java.util.List;
  */
 public class AnnotationsUtil {
 
-    public static Handler[] register(String rootPath, Object o) {
-        return registerHandler(rootPath, o);
+    public static HandlerWrapper[] register(String rootPath, Object o, GlobalStats globalStats) {
+        return registerHandler(rootPath, o, globalStats);
     }
 
-    public static Handler[] register(Object o) {
-        return registerHandler("", o);
-    }
-
-    private static Handler[] registerHandler(String rootPath, Object handler) {
+    private static HandlerWrapper[] registerHandler(String rootPath, Object handler, GlobalStats globalStats) {
         Class<?> handlerClass = handler.getClass();
         Annotation pathAnnotation = handlerClass.getAnnotation(Path.class);
         String handlerMainPath = ((Path) pathAnnotation).value();
 
-        List<Handler> processors = new ArrayList<>();
+        List<HandlerWrapper> processors = new ArrayList<>();
 
         for (Method method : handlerClass.getMethods()) {
             Annotation consumes = method.getAnnotation(Consumes.class);
@@ -51,24 +48,24 @@ public class AnnotationsUtil {
                 String fullPath = rootPath + handlerMainPath + ((Path) path).value();
                 UriTemplate uriTemplate = new UriTemplate(fullPath);
 
-                Handler handlerHolder = new Handler(uriTemplate, method, handler);
+                HandlerWrapper handlerHolder = new HandlerWrapper(uriTemplate, method, handler, globalStats);
 
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
 
-                    Annotation queryParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
+                    cc.blynk.core.http.annotation.QueryParam queryParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
                     if (queryParamAnnotation != null) {
-                        handlerHolder.params[i] = new QueryParam(((cc.blynk.core.http.annotation.QueryParam) queryParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new QueryParam(queryParamAnnotation.value(), parameter.getType());
                     }
 
-                    Annotation pathParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
+                    cc.blynk.core.http.annotation.PathParam pathParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
                     if (pathParamAnnotation != null) {
-                        handlerHolder.params[i] = new PathParam(((cc.blynk.core.http.annotation.PathParam) pathParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new PathParam(pathParamAnnotation.value(), parameter.getType());
                     }
 
-                    Annotation formParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
+                    cc.blynk.core.http.annotation.FormParam formParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
                     if (formParamAnnotation != null) {
-                        handlerHolder.params[i] = new FormParam(((cc.blynk.core.http.annotation.FormParam) formParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new FormParam(formParamAnnotation.value(), parameter.getType());
                     }
 
                     Annotation contextAnnotation = parameter.getAnnotation(Context.class);
@@ -96,7 +93,7 @@ public class AnnotationsUtil {
             }
         }
 
-        return processors.toArray(new Handler[processors.size()]);
+        return processors.toArray(new HandlerWrapper[processors.size()]);
     }
 
 }

@@ -100,6 +100,7 @@ public final class Command {
     public static final short GET_PROJECT_BY_CLONE_CODE = 63;
 
     public static final short HARDWARE_LOG_EVENT = 64;
+    public static final short HARDWARE_RESEND_FROM_BLUETOOTH = 65;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
@@ -111,7 +112,8 @@ public final class Command {
     public static final short HTTP_GET_PROJECT = 88;
     public static final short HTTP_QR = 89;
     public static final short HTTP_GET_HISTORY_DATA = 90;
-    public static final short HTTP_TOTAL = 91;
+    public static final short HTTP_START_OTA = 91;
+    public static final short HTTP_TOTAL = 92;
 
 
     //all this code just to make logging more user-friendly
@@ -179,6 +181,9 @@ public final class Command {
                 put(EMAIL_QR, "MailQRs");
                 put(UPDATE_FACE, "UpdateFace");
 
+                put(HARDWARE_LOG_EVENT, "HardwareLogEvent");
+                put(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth");
+
                 put(GET_CLONE_CODE, "GetCloneCode");
                 put(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode");
 
@@ -191,6 +196,7 @@ public final class Command {
                 put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_QR, "QR");
                 put(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData");
+                put(HTTP_START_OTA, "HttpStartOTA");
                 put(HTTP_TOTAL, "HttpTotal");
 
                 put(WEB_SOCKETS, "WebSockets");

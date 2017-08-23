@@ -2,6 +2,8 @@ package cc.blynk.core.http.handlers;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
+import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -34,10 +36,12 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 @ChannelHandler.Sharable
 public class StaticFileHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
+    private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
+
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 24 * 60 * 60;
-    private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
+
     private static final String[] possibleLocalPaths =  new String[] {
             "./server/http-dashboard/target/classes",
             "./server/http-api/target/classes",
@@ -51,10 +55,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
      */
     private final boolean isUnpacked;
     private final StaticFile[] staticPaths;
+    private final String jarPath;
 
     public StaticFileHandler(boolean isUnpacked, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
         this.isUnpacked = isUnpacked;
+        this.jarPath = ServerProperties.jarPath;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -159,26 +165,29 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         Path path;
         String uri = request.uri();
-
-        if (uri.contains("?")) {
-            uri = uri.split("\\?")[0];
-        }
-
         //running from jar
         if (isUnpacked) {
+            log.debug("Is unpacked.");
             if (staticFile instanceof StaticFileEdsWith) {
                 StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
                 path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
             } else {
-                path = ServerProperties.getFileInCurrentDir(uri);
+                path = Paths.get(jarPath, uri);
             }
         } else {
             //for local mode / running from ide
-            path = getPathForLocalRun(uri);
+            path = FileUtils.getPathForLocalRun(uri);
         }
+
+        log.debug("Getting file from path {}", path);
 
         if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);
+            return;
+        }
+
+        if (Files.isDirectory(path)) {
+            sendError(ctx, FORBIDDEN);
             return;
         }
 
@@ -245,16 +254,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
-    }
-
-    private Path getPathForLocalRun(String uri) {
-        for (String possiblePath : possibleLocalPaths) {
-            Path path = Paths.get(possiblePath, uri);
-            if (Files.exists(path)) {
-                return path;
-            }
-        }
-        return null;
     }
 
     @Override

@@ -17,6 +17,8 @@ public class CommandParser {
                 return HARDWARE;
             case "logevent" :
                 return HARDWARE_LOG_EVENT;
+            case "hardwarebt" :
+                return HARDWARE_RESEND_FROM_BLUETOOTH;
             case "ping" :
                 return PING;
             case "loadprofilegzipped" :
