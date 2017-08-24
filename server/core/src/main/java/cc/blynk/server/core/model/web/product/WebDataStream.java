@@ -14,7 +14,7 @@ public class WebDataStream implements CopyObject<WebDataStream> {
 
     public final int id;
 
-    public final String name;
+    public final String label;
 
     public final MeasurementUnit units;
 
@@ -26,13 +26,13 @@ public class WebDataStream implements CopyObject<WebDataStream> {
 
     @JsonCreator
     public WebDataStream(@JsonProperty("id") int id,
-                         @JsonProperty("name") String name,
+                         @JsonProperty("label") String label,
                          @JsonProperty("units") MeasurementUnit units,
                          @JsonProperty("min") double min,
                          @JsonProperty("max") double max,
                          @JsonProperty("pin") byte pin) {
         this.id = id;
-        this.name = name;
+        this.label = label;
         this.units = units;
         this.min = min;
         this.max = max;
@@ -41,6 +41,6 @@ public class WebDataStream implements CopyObject<WebDataStream> {
 
     @Override
     public WebDataStream copy() {
-        return new WebDataStream(id, name, units, min, max, pin);
+        return new WebDataStream(id, label, units, min, max, pin);
     }
 }
