@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
 import java.util.List;
@@ -51,6 +53,8 @@ public class Device implements Target {
     public volatile HardwareInfo hardwareInfo;
 
     public volatile DeviceOtaInfo deviceOtaInfo;
+
+    public volatile Widget[] widgets = ArrayUtil.EMPTY_WIDGETS;
 
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
@@ -134,6 +138,7 @@ public class Device implements Target {
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
         this.metaFields = newDevice.metaFields;
+        this.widgets = newDevice.widgets;
     }
 
     public void disconnected() {
@@ -148,6 +153,7 @@ public class Device implements Target {
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
         this.deviceOtaInfo = null;
+        this.widgets = null;
     }
 
     //for single device update device always updated when ota is initiated.

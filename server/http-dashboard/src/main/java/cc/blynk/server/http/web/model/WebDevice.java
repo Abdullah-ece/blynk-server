@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.db.model.LogEventCountKey;
 
 import java.util.Map;
@@ -51,6 +52,8 @@ public class WebDevice {
 
     public MetaField[] metaFields;
 
+    public Widget[] widgets;
+
     public String productName;
 
     public String productLogoUrl;
@@ -77,6 +80,7 @@ public class WebDevice {
         this.lastLoggedIP = device.lastLoggedIP;
         this.dataReceivedAt = device.dataReceivedAt;
         this.metaFields = device.metaFields;
+        this.widgets = device.widgets;
         this.activatedAt = device.activatedAt;
         this.activatedBy = device.activatedBy;
         this.metadataUpdatedAt = device.metadataUpdatedAt;

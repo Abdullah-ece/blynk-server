@@ -20,6 +20,7 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
@@ -86,6 +87,7 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         newDevice.metaFields = product.copyNonDefaultMetaFields();
+        newDevice.widgets = ArrayUtil.copy(product.widgets, Widget.class);
 
         deviceDao.create(orgId, newDevice);
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
