@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
@@ -45,6 +46,8 @@ public class Product {
 
     public volatile Event[] events = EMPTY_EVENTS;
 
+    public volatile Widget[] widgets = EMPTY_WIDGETS;
+
     public int deviceCount;
 
     public volatile int version;
@@ -64,6 +67,7 @@ public class Product {
         this.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
         this.dataStreams = ArrayUtil.copy(product.dataStreams, WebDataStream.class);
         this.events = ArrayUtil.copy(product.events, Event.class);
+        this.widgets = ArrayUtil.copy(product.widgets, Widget.class);
     }
 
     public void update(Product updatedProduct) {
@@ -75,6 +79,7 @@ public class Product {
         this.metaFields = updatedProduct.metaFields;
         this.dataStreams = updatedProduct.dataStreams;
         this.events = updatedProduct.events;
+        this.widgets = updatedProduct.widgets;
         this.lastModifiedTs = System.currentTimeMillis();
         this.version++;
     }

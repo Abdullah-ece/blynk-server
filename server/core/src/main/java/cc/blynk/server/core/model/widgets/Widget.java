@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.sensors.*;
 import cc.blynk.server.core.model.widgets.ui.*;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
+import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
@@ -32,6 +33,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
+
+        //web widgets
+        @JsonSubTypes.Type(value = WebLabel.class, name = "WEB_LABEL"),
+        @JsonSubTypes.Type(value = WebLabel.class, name = "WEB_GRAPH"),
 
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),

@@ -8,6 +8,8 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.*;
@@ -185,6 +187,112 @@ public class ProductAPITest extends APIBaseTest {
             assertNotNull(fromApi.metaFields);
             assertEquals(10, fromApi.metaFields.length);
         }
+    }
+
+    @Test
+    public void createProductWithWidgets() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, "0", "1", "Farm of Smith"),
+                new RangeMetaField(2, "Farm of Smith", Role.ADMIN, false, 60, 120),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                        "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                        "+38063673333",  false, "My street", false,
+                        "Ukraine", false,
+                        "Kyiv", false, "Ukraine", false, "03322", false, false),
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, "My street", false,
+                        "San Diego", false, "CA", false, "03322", false, "US", false, false),
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date())
+        };
+
+        product.dataStreams = new WebDataStream[] {
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+        };
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.x = 1;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        product.widgets = new Widget[] {
+                webLabel
+        };
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertEquals(product.boardType, fromApi.boardType);
+            assertEquals(product.connectionType, fromApi.connectionType);
+            assertEquals(product.logoUrl, fromApi.logoUrl);
+            assertEquals(0, fromApi.version);
+            assertNotEquals(0, fromApi.lastModifiedTs);
+            assertNotNull(fromApi.dataStreams);
+            assertNotNull(fromApi.metaFields);
+            assertEquals(10, fromApi.metaFields.length);
+            assertNotNull(fromApi.widgets);
+            assertEquals(1, fromApi.widgets.length);
+            assertEquals("123", fromApi.widgets[0].label);
+            assertEquals(1, fromApi.widgets[0].x);
+            assertEquals(2, fromApi.widgets[0].y);
+            assertEquals(10, fromApi.widgets[0].height);
+            assertEquals(20, fromApi.widgets[0].width);
+        }
+
+        product.id = 1;
+        product.description = "Description2";
+
+        webLabel = new WebLabel();
+        webLabel.label = "updated";
+        webLabel.x = 1;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        product.widgets = new Widget[] {
+                webLabel
+        };
+
+        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertEquals(1, fromApi.widgets.length);
+            assertEquals("updated", fromApi.widgets[0].label);
+            assertEquals(1, fromApi.widgets[0].x);
+            assertEquals(2, fromApi.widgets[0].y);
+            assertEquals(10, fromApi.widgets[0].height);
+            assertEquals(20, fromApi.widgets[0].width);
+
+            System.out.println(product);
+        }
+
+
     }
 
     @Test
