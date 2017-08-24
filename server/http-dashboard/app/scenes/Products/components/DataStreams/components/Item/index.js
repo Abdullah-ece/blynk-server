@@ -1,19 +1,18 @@
 import React from 'react';
 import Scroll from 'react-scroll';
 import classnames from 'classnames';
-import {Row, Col, Popconfirm, Button, Icon} from 'antd';
+import {Button, Col, Icon, Popconfirm, Row} from 'antd';
 import {SortableHandle} from 'react-sortable-hoc';
-import {
-  MetadataSelect as MetadataFormSelect
-} from 'components/Form';
+import {MetadataSelect as MetadataFormSelect} from 'components/Form';
 import {Form, reduxForm, touch} from 'redux-form';
 import Preview from 'scenes/Products/components/Preview';
 import FormItem from 'components/FormItem';
-const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Static from './static';
 import Validation from 'services/Validation';
+
+const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 
 @connect(() => ({}), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
@@ -97,8 +96,7 @@ class DataStreamItem extends React.Component {
 
   Pins() {
     const pins = [];
-    [...Array(151).keys()].map((i, k) => {
-      if (k === 0) return;
+    [...Array(128).keys()].map((i, k) => {
       pins.push({
         key: `${k}`,
         value: `V${k}`
