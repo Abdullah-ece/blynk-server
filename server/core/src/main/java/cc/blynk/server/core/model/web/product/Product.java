@@ -54,24 +54,16 @@ public class Product {
         this.lastModifiedTs = createdAt;
     }
 
-    public Product(String name, String boardType, ConnectionType connectionType,
-                   String description, String logoUrl,
-                   MetaField[] metaFields, WebDataStream[] dataStreams, Event[] events) {
-        this();
-        this.name = name;
-        this.boardType = boardType;
-        this.connectionType = connectionType;
-        this.description = description;
-        this.logoUrl = logoUrl;
-        this.metaFields = metaFields;
-        this.dataStreams = dataStreams;
-        this.events = events;
-    }
-
     public Product(Product product) {
-        this(product.name, product.boardType, product.connectionType,
-                product.description, product.logoUrl,
-                product.copyMetaFields(), product.copyDataStreams(), product.copyEvents());
+        this();
+        this.name = product.name;
+        this.boardType = product.boardType;
+        this.connectionType = product.connectionType;
+        this.description = product.description;
+        this.logoUrl = product.logoUrl;
+        this.metaFields = product.copyMetaFields();
+        this.dataStreams = product.copyDataStreams();
+        this.events = product.copyEvents();
     }
 
     public void update(Product updatedProduct) {
