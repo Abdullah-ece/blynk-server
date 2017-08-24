@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.widgets.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 20.04.17.
  */
-public class WebDataStream {
+public class WebDataStream implements CopyObject<WebDataStream> {
 
     public final int id;
 
@@ -38,7 +39,8 @@ public class WebDataStream {
         this.pin = pin;
     }
 
-    public WebDataStream(WebDataStream webDataStream) {
-        this(webDataStream.id, webDataStream.name, webDataStream.units, webDataStream.min, webDataStream.max, webDataStream.pin);
+    @Override
+    public WebDataStream copy() {
+        return new WebDataStream(id, name, units, min, max, pin);
     }
 }

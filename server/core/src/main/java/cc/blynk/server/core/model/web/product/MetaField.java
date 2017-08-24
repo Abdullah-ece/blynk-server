@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.widgets.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address")
 
 })
-public abstract class MetaField {
+public abstract class MetaField implements CopyObject<MetaField> {
 
     public final int id;
 
@@ -44,8 +45,6 @@ public abstract class MetaField {
         this.role = role;
         this.isDefault = isDefault;
     }
-
-    public abstract MetaField copy();
 
     public void update(MetaField metaField) {
         this.name = metaField.name;

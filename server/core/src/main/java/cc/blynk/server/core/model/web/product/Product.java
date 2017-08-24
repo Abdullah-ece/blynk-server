@@ -61,9 +61,9 @@ public class Product {
         this.connectionType = product.connectionType;
         this.description = product.description;
         this.logoUrl = product.logoUrl;
-        this.metaFields = product.copyMetaFields();
-        this.dataStreams = product.copyDataStreams();
-        this.events = product.copyEvents();
+        this.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
+        this.dataStreams = ArrayUtil.copy(product.dataStreams, WebDataStream.class);
+        this.events = ArrayUtil.copy(product.events, Event.class);
     }
 
     public void update(Product updatedProduct) {
@@ -90,11 +90,6 @@ public class Product {
         }
     }
 
-    public void addMetafield(MetaField metafield) {
-        this.metaFields = ArrayUtil.add(metaFields, metafield, MetaField.class);
-        this.lastModifiedTs = System.currentTimeMillis();
-    }
-
     public Event findEventByType(EventType eventType) {
         for (Event event : events) {
             if (event.getType() == eventType) {
@@ -113,17 +108,6 @@ public class Product {
         return null;
     }
 
-    public Event findEventByCodeOrType(int hashcode, EventType eventType) {
-        Event event = findEventByCode(hashcode);
-
-        //special case for system events
-        if (event == null) {
-            event = findEventByType(eventType);
-        }
-
-        return event;
-    }
-
     public int getIgnorePeriod() {
         for (Event event : events) {
             if (event instanceof OfflineEvent) {
@@ -131,37 +115,6 @@ public class Product {
             }
         }
         return 0;
-    }
-
-    public WebDataStream[] copyDataStreams() {
-        return ArrayUtil.cloneArray(dataStreams, WebDataStream.class);
-    }
-
-    //todo a bit ugly. do cleanup
-    public MetaField[] copyMetaFields() {
-        if (metaFields == null || metaFields.length == 0) {
-            return ArrayUtil.EMPTY_META_FIELDS;
-        }
-
-        MetaField[] result = new MetaField[metaFields.length];
-        int i = 0;
-        for (MetaField metaField : metaFields) {
-            result[i++] = metaField.copy();
-        }
-        return result;
-    }
-
-    public Event[] copyEvents() {
-        if (events == null || events.length == 0) {
-            return ArrayUtil.EMPTY_EVENTS;
-        }
-
-        Event[] result = new Event[events.length];
-        int i = 0;
-        for (Event event : events) {
-            result[i++] = event.copy();
-        }
-        return result;
     }
 
     public MetaField[] copyNonDefaultMetaFields() {

@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.widgets.CopyObject;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,7 +27,7 @@ import static cc.blynk.utils.ArrayUtil.EMPTY_RECEIVERS;
         @JsonSubTypes.Type(value = CriticalEvent.class, name = "CRITICAL")
 
 })
-public abstract class Event {
+public abstract class Event implements CopyObject<Event> {
 
     public final int id;
 
@@ -46,8 +47,6 @@ public abstract class Event {
 
     public abstract EventType getType();
 
-    public abstract Event copy();
-
     public Event(int id, String name, String description,
                  boolean isNotificationsEnabled, String eventCode,
                  EventReceiver[] emailNotifications,
@@ -61,17 +60,17 @@ public abstract class Event {
         if (emailNotifications == null || emailNotifications.length == 0) {
             this.emailNotifications = EMPTY_RECEIVERS;
         } else {
-            this.emailNotifications = ArrayUtil.cloneArray(emailNotifications, EventReceiver.class);
+            this.emailNotifications = ArrayUtil.copy(emailNotifications, EventReceiver.class);
         }
         if (pushNotifications == null || pushNotifications.length == 0) {
             this.pushNotifications = EMPTY_RECEIVERS;
         } else {
-            this.pushNotifications = ArrayUtil.cloneArray(pushNotifications, EventReceiver.class);
+            this.pushNotifications = ArrayUtil.copy(pushNotifications, EventReceiver.class);
         }
         if (smsNotifications == null || smsNotifications.length == 0) {
             this.smsNotifications = EMPTY_RECEIVERS;
         } else {
-            this.smsNotifications = ArrayUtil.cloneArray(smsNotifications, EventReceiver.class);
+            this.smsNotifications = ArrayUtil.copy(smsNotifications, EventReceiver.class);
         }
     }
 

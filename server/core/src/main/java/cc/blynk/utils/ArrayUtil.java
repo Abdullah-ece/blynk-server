@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.widgets.CopyObject;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 
@@ -59,24 +60,6 @@ public class ArrayUtil {
             System.arraycopy(array, index + 1, result, index, array.length - index - 1);
         }
 
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T[] cloneArray(T[] array, Class<T> type) {
-        if (array == null || array.length == 0) {
-            return (T[]) Array.newInstance(type, 0);
-        }
-
-        T[] result = (T[]) Array.newInstance(type, array.length);
-        int i = 0;
-        for (T value : array) {
-            try {
-                result[i++] = type.getConstructor(type).newInstance(value);
-            } catch (Exception e){
-                throw new RuntimeException("Error cloning array.");
-            }
-        }
         return result;
     }
 
@@ -145,6 +128,20 @@ public class ArrayUtil {
             a[i++] = val;
         }
         return a;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] copy(CopyObject[] copyObjects, Class<T> clazz) {
+        if (copyObjects == null || copyObjects.length == 0) {
+            return (T[]) Array.newInstance(clazz, 0);
+        }
+
+        T[] result = (T[]) Array.newInstance(clazz, copyObjects.length);
+        int i = 0;
+        for (CopyObject obj : copyObjects) {
+            result[i++] = (T) obj.copy();
+        }
+        return result;
     }
 
 }
