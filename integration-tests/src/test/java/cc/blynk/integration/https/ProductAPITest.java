@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -228,9 +229,9 @@ public class ProductAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        product.widgets = new Widget[] {
+        product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel
-        };
+        });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
         req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
@@ -250,13 +251,13 @@ public class ProductAPITest extends APIBaseTest {
             assertNotNull(fromApi.dataStreams);
             assertNotNull(fromApi.metaFields);
             assertEquals(10, fromApi.metaFields.length);
-            assertNotNull(fromApi.widgets);
-            assertEquals(1, fromApi.widgets.length);
-            assertEquals("123", fromApi.widgets[0].label);
-            assertEquals(1, fromApi.widgets[0].x);
-            assertEquals(2, fromApi.widgets[0].y);
-            assertEquals(10, fromApi.widgets[0].height);
-            assertEquals(20, fromApi.widgets[0].width);
+            assertNotNull(fromApi.webDashboard);
+            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals("123", fromApi.webDashboard.widgets[0].label);
+            assertEquals(1, fromApi.webDashboard.widgets[0].x);
+            assertEquals(2, fromApi.webDashboard.widgets[0].y);
+            assertEquals(10, fromApi.webDashboard.widgets[0].height);
+            assertEquals(20, fromApi.webDashboard.widgets[0].width);
         }
 
         product.id = 1;
@@ -268,9 +269,9 @@ public class ProductAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        product.widgets = new Widget[] {
+        product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel
-        };
+        });
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
         updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
@@ -282,12 +283,13 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(1, fromApi.id);
             assertEquals(product.name, fromApi.name);
             assertEquals(product.description, fromApi.description);
-            assertEquals(1, fromApi.widgets.length);
-            assertEquals("updated", fromApi.widgets[0].label);
-            assertEquals(1, fromApi.widgets[0].x);
-            assertEquals(2, fromApi.widgets[0].y);
-            assertEquals(10, fromApi.widgets[0].height);
-            assertEquals(20, fromApi.widgets[0].width);
+            assertNotNull(fromApi.webDashboard);
+            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals("updated", fromApi.webDashboard.widgets[0].label);
+            assertEquals(1, fromApi.webDashboard.widgets[0].x);
+            assertEquals(2, fromApi.webDashboard.widgets[0].y);
+            assertEquals(10, fromApi.webDashboard.widgets[0].height);
+            assertEquals(20, fromApi.webDashboard.widgets[0].width);
 
             System.out.println(product);
         }

@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -56,9 +57,9 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
-            assertNotNull(device.widgets);
-            assertEquals(1, device.widgets.length);
-            assertEquals("123", device.widgets[0].label);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals("123", device.webDashboard.widgets[0].label);
         }
     }
 
@@ -80,9 +81,9 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        product.widgets = new Widget[] {
+        product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel
-        };
+        });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
         req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
