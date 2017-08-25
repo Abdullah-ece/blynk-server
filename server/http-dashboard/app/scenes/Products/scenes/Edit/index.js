@@ -52,7 +52,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
     isProductInfoInvalid: state.Product.edit.info.invalid,
     eventsForms: eventsForms,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
-    dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
+    dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {widgets: []}),
     isFormDirty: (() => {
 
       const getIds = (entity) => {
@@ -124,7 +124,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   ProductEditDataStreamsFieldUpdate: bindActionCreators(ProductEditDataStreamsFieldUpdate, dispatch),
   ProductEditDataStreamsFieldsUpdate: bindActionCreators(ProductEditDataStreamsFieldsUpdate, dispatch),
 }))
-class ProductCreate extends React.Component {
+class Edit extends React.Component {
 
   static contextTypes = {
     router: React.PropTypes.object
@@ -137,7 +137,7 @@ class ProductCreate extends React.Component {
 
     metadataFields: React.PropTypes.array,
 
-    dashboard: React.PropTypes.instanceOf(Map),
+    dashboard: React.PropTypes.any,
     Fetch: React.PropTypes.func,
     Update: React.PropTypes.func,
     Create: React.PropTypes.func,
@@ -211,7 +211,7 @@ class ProductCreate extends React.Component {
           static: false,
           moved: false
         }))
-      });
+      } || []);
 
     });
   }
@@ -488,6 +488,4 @@ class ProductCreate extends React.Component {
   }
 }
 
-export
-default
-ProductCreate;
+export default Edit;

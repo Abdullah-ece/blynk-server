@@ -13,6 +13,9 @@ class Dashboard extends React.Component {
     if (!this.props.widgets)
       return null;
 
+    if (!this.props.widgets.length)
+      return (<div className="product-no-fields">No Dashboard widgets</div>);
+
     let widgets = {
       lg: this.props.widgets.map((item) => ({
         i: String(item.id),

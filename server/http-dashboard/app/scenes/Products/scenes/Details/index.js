@@ -2,7 +2,6 @@ import React                    from 'react';
 import {
   Button, Tabs, message
 }                               from 'antd';
-import {fromJS}                 from 'immutable';
 import Info                     from './scenes/Info';
 import Metadata                 from './scenes/Metadata';
 import DataStreams              from './scenes/DataStreams';
@@ -152,7 +151,7 @@ class ProductDetails extends React.Component {
               <Events fields={this.state.product.events}/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="Dashboard" key={TABS.DASHBOARD}>
-              <Dashboard widgets={this.state.product.webDashboard && this.state.product.webDashboard.widgets || fromJS([])}/>
+              <Dashboard widgets={(this.state.product.webDashboard && this.state.product.webDashboard.widgets) || []}/>
             </Tabs.TabPane>
           </Tabs>
           <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}
