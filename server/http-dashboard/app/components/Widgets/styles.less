@@ -5,20 +5,12 @@
   margin: @style-size-3 0;
   transition: height 200ms ease;
   height: 500px;
+}
 
-  .widget {
-    padding: @style-size-3;
-    background: #fff;
-    box-shadow: 0 0 10px 0 @color-dark-grey-12;
-    border-radius: 5px;
+.widgets-editable {
+  .widgets--widget {
+    cursor: grab;
   }
-
-  &.editable {
-    .widget {
-      cursor: grab;
-    }
-  }
-
 }
 
 .widgets-widget-delete {
