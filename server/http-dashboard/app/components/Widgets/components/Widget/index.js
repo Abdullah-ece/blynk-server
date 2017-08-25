@@ -20,6 +20,8 @@ class Widget extends React.Component {
 
     id: PropTypes.number,
 
+    editable: PropTypes.bool,
+
     onMouseUp: PropTypes.func,
     onTouchEnd: PropTypes.func,
     onMouseDown: PropTypes.func,
@@ -57,19 +59,22 @@ class Widget extends React.Component {
       >
         <div className="widgets--widget-label">
           <Dotdotdot clamp={1}>Widget is there</Dotdotdot>
-          <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop} onMouseUp={this.preventDragNDrop}>
+          {this.props.editable && (
+            <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
+                 onMouseUp={this.preventDragNDrop}>
 
-            <Button icon="delete" size="small" onClick={this.handleWidgetDelete}/>
+              <Button icon="delete" size="small" onClick={this.handleWidgetDelete}/>
 
-            <Tooltip placement="top" title={'This feature is not avail right now'}>
-              <Button icon="copy" size="small" disabled={true}/>
-            </Tooltip>
+              <Tooltip placement="top" title={'This feature is not avail right now'}>
+                <Button icon="copy" size="small" disabled={true}/>
+              </Tooltip>
 
-            <Tooltip placement="top" title={'This feature is not avail right now'}>
-              <Button icon="setting" size="small" disabled={true}/>
-            </Tooltip>
+              <Tooltip placement="top" title={'This feature is not avail right now'}>
+                <Button icon="setting" size="small" disabled={true}/>
+              </Tooltip>
 
-          </div>
+            </div>
+          )}
         </div>
         {this.props.children}
       </div>

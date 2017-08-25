@@ -48,13 +48,16 @@ class Widgets extends React.Component {
   }
 
   onLayoutChange(layout) {
-    this.props.onChange(layout);
+    if (this.props.onChange)
+      this.props.onChange(layout);
   }
 
-  handleWidgetDelete(i) {
-    this.props.onChange(
-      this.props.data.lg.filter((widget) => Number(widget.i) !== Number(i))
-    );
+  handleWidgetDelete(id) {
+
+    if (this.props.onChange)
+      this.props.onChange(
+        this.props.data.lg.filter((widget) => Number(widget.id) !== Number(id))
+      );
   }
 
   generateDOM() {
@@ -63,6 +66,7 @@ class Widgets extends React.Component {
       return (
         <Widget key={l.id}
                 id={Number(l.id)}
+                editable={this.props.editable}
                 onWidgetDelete={this.handleWidgetDelete}/>
       );
     });

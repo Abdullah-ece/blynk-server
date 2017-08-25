@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import {fromJS, Map} from 'immutable';
 
 import {
@@ -48,13 +47,12 @@ class DashboardScene extends React.Component {
 
   handleWidgetsChange(widgets) {
 
-    let updatedWidgets = this.props.dashboard.get('widgets').map((widget) => {
-      // widget widget where i = widget.id (i is dashboard widget id and update updated fields)
-      let data = _.find(widgets, (w) => Number(w.i) === Number(widget.get('id')));
+    let updatedWidgets = widgets.map((widget) => {
+      let data = this.props.dashboard.get('widgets').find((w) => Number(w.get('id')) === Number(widget.i));
 
       return fromJS({
-        ...widget.toJS(),
-        ...data,
+        ...data.toJS(),
+        ...widget
       });
     });
 
