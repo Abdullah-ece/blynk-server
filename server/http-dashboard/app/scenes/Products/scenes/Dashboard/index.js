@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import {fromJS, Map} from 'immutable';
 
 import {
@@ -37,11 +38,27 @@ class DashboardScene extends React.Component {
   }
 
   handleWidgetAdd(widget) {
+
+    widget.id = this.props.dashboard.get('widgets').reduce((acc, item) => {
+      return Number(item.get('id')) > acc ? Number(item.get('id')) : acc;
+    }, 0) + 1;
+
     this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', this.props.dashboard.get('widgets').push(fromJS(widget)));
   }
 
   handleWidgetsChange(widgets) {
-    this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', widgets);
+
+    let updatedWidgets = this.props.dashboard.get('widgets').map((widget) => {
+      // widget widget where i = widget.id (i is dashboard widget id and update updated fields)
+      let data = _.find(widgets, (w) => Number(w.i) === Number(widget.get('id')));
+
+      return fromJS({
+        ...widget.toJS(),
+        ...data,
+      });
+    });
+
+    this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', updatedWidgets);
   }
 
   render() {

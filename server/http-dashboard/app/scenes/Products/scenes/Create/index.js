@@ -8,6 +8,7 @@ import {
   getFormSyncErrors,
   initialize,
   destroy,
+  getFormValues,
 } from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
@@ -52,7 +53,8 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     eventsForms: eventsForms,
     Organization: state.Organization,
     isProductInfoInvalid: state.Product.edit.info.invalid,
-    isMetadataFirstTime: state.Storage.products.metadataFirstTime
+    isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+    dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
   };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
@@ -97,6 +99,7 @@ class Create extends React.Component {
     ProductEditDataStreamsFieldUpdate: React.PropTypes.func,
     ProductEditDataStreamsFieldsUpdate: React.PropTypes.func,
 
+    dashboard: React.PropTypes.instanceOf(Map),
     organization: React.PropTypes.instanceOf(Map),
     params: React.PropTypes.object,
     products: React.PropTypes.array,
@@ -219,7 +222,22 @@ class Create extends React.Component {
     if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
 
       this.props.Create({
-        product: prepareProductForSave(this.props.product),
+        product: prepareProductForSave({
+          ...this.props.product,
+          webDashboard: {
+            ...this.props.dashboard.updateIn(['widgets'], (widgets) => (
+              widgets.map((widget) => ({
+                label: 'Widget',
+                type: 'WEB_LABEL',
+                id: widget.get('id'),
+                x: widget.get('x'),
+                y: widget.get('y'),
+                width: widget.get('w'),
+                height: widget.get('h'),
+              }))
+            )).toJS()
+          }
+        }),
         orgId: this.props.orgId
       }).then(() => {
         this.context.router.push(`/products/?success=true`);

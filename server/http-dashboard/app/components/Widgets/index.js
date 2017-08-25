@@ -61,8 +61,8 @@ class Widgets extends React.Component {
 
     return _.map(this.props.data[this.state.currentBreakpoint], (l) => {
       return (
-        <Widget key={l.i}
-                id={Number(l.i)}
+        <Widget key={l.id}
+                id={Number(l.id)}
                 onWidgetDelete={this.handleWidgetDelete}/>
       );
     });

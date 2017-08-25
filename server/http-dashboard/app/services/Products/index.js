@@ -432,7 +432,8 @@ export const prepareProductForSave = (data) => {
     ...data.info.values,
     metaFields: [],
     dataStreams: [],
-    events: []
+    events: [],
+    webDashboard: data.webDashboard
   };
 
   if (Array.isArray(data.events.fields) && Array.isArray(data.metadata.fields)) {
