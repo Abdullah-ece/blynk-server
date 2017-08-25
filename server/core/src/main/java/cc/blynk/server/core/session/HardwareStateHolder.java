@@ -28,9 +28,9 @@ public final class HardwareStateHolder extends StateHolderBase {
     @Override
     public String toString() {
         return "HardwareStateHolder{" +
-                "dashId=" + dashId +
-                ", deviceId=" + deviceId +
-                ", token='" + token + '\'' +
+                "dashId=" + dash.id +
+                ", deviceId=" + device.id +
+                ", token=" + device.token +
                 '}';
     }
 }

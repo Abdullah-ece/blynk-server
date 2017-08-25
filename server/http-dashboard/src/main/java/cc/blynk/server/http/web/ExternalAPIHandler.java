@@ -51,11 +51,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
-        Device device = deviceDao.getById(tokenValue.deviceId);
-        if (device == null) {
-            log.error("Device with id {} not exists!", tokenValue.deviceId);
-            return (badRequest("Device not exists."));
-        }
+        Device device = tokenValue.device;
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);
         if (product == null) {

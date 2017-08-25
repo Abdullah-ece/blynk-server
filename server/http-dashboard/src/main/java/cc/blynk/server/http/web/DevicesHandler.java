@@ -92,7 +92,7 @@ public class DevicesHandler extends BaseHttpHandler {
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, dashId, newDevice.id, newToken);
+        tokenManager.assignToken(user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

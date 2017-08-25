@@ -64,7 +64,7 @@ class RegularTokenManager {
         return null;
     }
 
-    TokenValue getUserByToken(String token) {
+    TokenValue getTokenValue(String token) {
         return cache.get(token);
     }
 

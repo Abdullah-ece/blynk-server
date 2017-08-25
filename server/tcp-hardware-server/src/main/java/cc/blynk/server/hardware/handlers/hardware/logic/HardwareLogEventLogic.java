@@ -59,12 +59,7 @@ public class HardwareLogEventLogic {
             return;
         }
 
-        Device device = deviceDao.getById(state.deviceId);
-        if (device == null) {
-            log.error("Device with id {} not exists!", state.deviceId);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
-            return;
-        }
+        Device device = state.device;
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);
         if (product == null) {
@@ -113,18 +108,14 @@ public class HardwareLogEventLogic {
     }
 
     private void push(HardwareStateHolder state, String message) {
-        DashBoard dash = state.user.profile.getDashById(state.dashId);
-        if (dash == null) {
-            log.debug("User has no access dashboard for pushes for event log");
-            return;
-        }
+        DashBoard dash = state.dash;
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget for event log.");
             return;
         }
-        widget.push(gcmWrapper, message, state.dashId);
+        widget.push(gcmWrapper, message, state.dash.id);
     }
 
     private void mail(String to, String subj, String body) {
