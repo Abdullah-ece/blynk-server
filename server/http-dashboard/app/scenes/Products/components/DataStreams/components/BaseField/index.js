@@ -121,7 +121,7 @@ class BaseField extends React.Component {
   }
 
   getPreviewValues() {
-    const name = this.props.fields.name;
+    const name = this.props.fields.label;
     const min = this.props.fields.min;
     const max = this.props.fields.max;
     const units = this.props.fields.units;
@@ -158,7 +158,7 @@ class BaseField extends React.Component {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} validateOnBlur={true}
-                               name="name" type="text" placeholder="Field Name"
+                               name="label" type="text" placeholder="Field Name"
                                style={{width: '200%'}} className={`datastream-name-field-${this.props.field.id}`}
                                validate={[
               Validation.Rules.metafieldName,

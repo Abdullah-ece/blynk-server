@@ -14,7 +14,7 @@ class BaseField extends React.Component {
     pin: React.PropTypes.number,
 
     form: React.PropTypes.string,
-    name: React.PropTypes.string,
+    label: React.PropTypes.string,
     units: React.PropTypes.string,
 
     fields: React.PropTypes.object,
@@ -68,7 +68,7 @@ class BaseField extends React.Component {
   };
 
   getPreviewValues() {
-    const name = this.props.name;
+    const name = this.props.label;
     const min = this.props.min;
     const max = this.props.max;
     const units = this.props.units;
@@ -107,7 +107,7 @@ class BaseField extends React.Component {
         <FormItem.Content>
           <Input.Group compact>
             <div className="product-metadata-static-field" style={{width: '200%'}}>
-              {this.props.name}
+              {this.props.label}
             </div>
             <div className="product-metadata-static-field">
               {this.props.units || '--'}

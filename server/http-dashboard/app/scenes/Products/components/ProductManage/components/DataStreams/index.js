@@ -55,7 +55,7 @@ class DataStreams extends React.Component {
       onClone: this.handleCloneField.bind(this),
       field: field,
       initialValues: {
-        name: field.values.name,
+        label: field.values.label,
         units: field.values.units,
         min: field.values.min,
         max: field.values.max,

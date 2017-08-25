@@ -24,7 +24,7 @@ class DataStreams extends React.Component {
 
       const props = {
         key: key,
-        name: field.name,
+        label: field.label,
         units: field.units,
         min: field.min,
         max: field.max,
