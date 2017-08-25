@@ -55,8 +55,6 @@ public class UpdateDeviceLogic {
         }
 
         existingDevice.update(newDevice);
-        dash.updatedAt = System.currentTimeMillis();
-        user.lastModifiedTs = dash.updatedAt;
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

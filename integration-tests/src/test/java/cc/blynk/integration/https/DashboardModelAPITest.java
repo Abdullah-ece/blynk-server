@@ -13,6 +13,8 @@ import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -60,6 +62,172 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertNotNull(device.webDashboard);
             assertEquals(1, device.webDashboard.widgets.length);
             assertEquals("123", device.webDashboard.widgets[0].label);
+        }
+    }
+
+    @Test
+    public void testDashboardIsInheritedByAllDevicesNotUpdated() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals("123", device.webDashboard.widgets[0].label);
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
+
+        Product product;
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+            product = fromApi[0];
+        }
+
+        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertNotNull(fromApi.webDashboard);
+            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals("123", fromApi.webDashboard.widgets[0].label);
+            assertEquals(1, fromApi.webDashboard.widgets[0].x);
+            assertEquals(2, fromApi.webDashboard.widgets[0].y);
+            assertEquals(10, fromApi.webDashboard.widgets[0].height);
+            assertEquals(20, fromApi.webDashboard.widgets[0].width);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals("123", device.webDashboard.widgets[0].label);
+            assertEquals(1, device.webDashboard.widgets[0].x);
+            assertEquals(2, device.webDashboard.widgets[0].y);
+            assertEquals(10, device.webDashboard.widgets[0].height);
+            assertEquals(20, device.webDashboard.widgets[0].width);
+        }
+    }
+
+    @Test
+    public void testDashboardUpdateIsInheritedByAllDevices() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals("123", device.webDashboard.widgets[0].label);
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/product");
+
+        Product product;
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+            product = fromApi[0];
+        }
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "updated";
+        webLabel.x = 3;
+        webLabel.y = 4;
+        webLabel.height = 50;
+        webLabel.width = 60;
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
+        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertNotNull(fromApi.webDashboard);
+            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals("updated", fromApi.webDashboard.widgets[0].label);
+            assertEquals(3, fromApi.webDashboard.widgets[0].x);
+            assertEquals(4, fromApi.webDashboard.widgets[0].y);
+            assertEquals(50, fromApi.webDashboard.widgets[0].height);
+            assertEquals(60, fromApi.webDashboard.widgets[0].width);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals("updated", device.webDashboard.widgets[0].label);
+            assertEquals(3, device.webDashboard.widgets[0].x);
+            assertEquals(4, device.webDashboard.widgets[0].y);
+            assertEquals(50, device.webDashboard.widgets[0].height);
+            assertEquals(60, device.webDashboard.widgets[0].width);
         }
     }
 

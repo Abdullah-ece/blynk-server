@@ -45,6 +45,8 @@ public class Device implements Target {
 
     public volatile long metadataUpdatedAt;
 
+    public volatile long updatedAt;
+
     public volatile String metadataUpdatedBy;
 
     public volatile MetaField[] metaFields;
@@ -53,7 +55,7 @@ public class Device implements Target {
 
     public volatile DeviceOtaInfo deviceOtaInfo;
 
-    public volatile WebDashboard webDashboard;
+    public volatile WebDashboard webDashboard = new WebDashboard();
 
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
@@ -138,6 +140,7 @@ public class Device implements Target {
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
         this.metaFields = newDevice.metaFields;
         this.webDashboard = newDevice.webDashboard;
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void disconnected() {
@@ -153,6 +156,10 @@ public class Device implements Target {
         this.hardwareInfo = null;
         this.deviceOtaInfo = null;
         this.webDashboard = null;
+        this.dataReceivedAt = 0;
+        this.metadataUpdatedAt = 0;
+        this.metadataUpdatedBy = null;
+        this.updatedAt = 0;
     }
 
     //for single device update device always updated when ota is initiated.

@@ -153,8 +153,6 @@ public class DevicesHandler extends BaseHttpHandler {
 
         existingDevice.update(newDevice);
 
-        user.lastModifiedTs = System.currentTimeMillis();
-
         return ok(joinProductAndOrgInfo(newDevice));
     }
 

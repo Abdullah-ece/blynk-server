@@ -45,7 +45,7 @@ public class Product {
 
     public volatile Event[] events = EMPTY_EVENTS;
 
-    public WebDashboard webDashboard = new WebDashboard(ArrayUtil.EMPTY_WIDGETS);
+    public WebDashboard webDashboard = new WebDashboard();
 
     public int deviceCount;
 

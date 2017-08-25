@@ -152,7 +152,9 @@ public class User {
                 return true;
             }
             for (Device device : dashBoard.devices) {
-                if (lastStart <= device.metadataUpdatedAt || lastStart <= device.dataReceivedAt) {
+                if (lastStart <= device.metadataUpdatedAt ||
+                    lastStart <= device.dataReceivedAt ||
+                    lastStart <= device.updatedAt) {
                     return true;
                 }
             }

@@ -155,6 +155,18 @@ public class ProductHandler extends BaseHttpHandler {
         }
 
         Product existingProduct = organizationDao.getProduct(webProductAndOrgId.orgId, updatedProduct.id);
+
+        if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {
+            log.info("Dashboard was changed. Updating all devices.");
+            List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
+            long now = System.currentTimeMillis();
+            for (Device device : devices) {
+                device.webDashboard.update(updatedProduct.webDashboard);
+                device.updatedAt = now;
+            }
+            log.info("{} devices updated with new dashboard.", devices.size());
+        }
+
         existingProduct.update(updatedProduct);
 
         return ok(existingProduct);

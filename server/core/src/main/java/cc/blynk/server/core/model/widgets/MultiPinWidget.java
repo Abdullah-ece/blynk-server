@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 
+import java.util.Arrays;
 import java.util.StringJoiner;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -117,4 +118,23 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
         return sj.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MultiPinWidget)) return false;
+        if (!super.equals(o)) return false;
+
+        MultiPinWidget that = (MultiPinWidget) o;
+
+        if (deviceId != that.deviceId) return false;
+        return Arrays.equals(pins, that.pins);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + deviceId;
+        result = 31 * result + Arrays.hashCode(pins);
+        return result;
+    }
 }

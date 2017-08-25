@@ -190,4 +190,30 @@ public abstract class Widget implements CopyObject<Widget> {
                 return true;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Widget)) return false;
+
+        Widget widget = (Widget) o;
+
+        if (id != widget.id) return false;
+        if (x != widget.x) return false;
+        if (y != widget.y) return false;
+        if (width != widget.width) return false;
+        if (height != widget.height) return false;
+        return label != null ? label.equals(widget.label) : widget.label == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + width;
+        result = 31 * result + height;
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        return result;
+    }
 }

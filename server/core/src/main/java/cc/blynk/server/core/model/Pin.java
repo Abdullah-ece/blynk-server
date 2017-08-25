@@ -89,4 +89,33 @@ public class Pin {
     public boolean notEmpty() {
         return value != null && !isNotValid();
     }
+
+    //HAVE IN MIND : value is not compared as it is updated in realtime.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Pin)) return false;
+
+        Pin pin1 = (Pin) o;
+
+        if (pin != pin1.pin) return false;
+        if (pwmMode != pin1.pwmMode) return false;
+        if (rangeMappingOn != pin1.rangeMappingOn) return false;
+        if (min != pin1.min) return false;
+        if (max != pin1.max) return false;
+        if (pinType != pin1.pinType) return false;
+        return label != null ? label.equals(pin1.label) : pin1.label == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) pin;
+        result = 31 * result + (pwmMode ? 1 : 0);
+        result = 31 * result + (rangeMappingOn ? 1 : 0);
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
+        result = 31 * result + min;
+        result = 31 * result + max;
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        return result;
+    }
 }
