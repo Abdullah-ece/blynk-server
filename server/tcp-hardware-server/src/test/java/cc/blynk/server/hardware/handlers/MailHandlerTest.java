@@ -1,11 +1,10 @@
 package cc.blynk.server.hardware.handlers;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -15,8 +14,6 @@ import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.ServerProperties;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,15 +41,6 @@ public class MailHandlerTest {
 	@Mock
 	private ChannelHandlerContext ctx;
 
-	@Mock
-	private UserDao userDao;
-
-	@Mock
-	private SessionDao sessionDao;
-
-	@Mock
-	private ServerProperties serverProperties;
-
     @Mock
     private User user;
 
@@ -63,7 +51,7 @@ public class MailHandlerTest {
     private DashBoard dashBoard;
 
     @Mock
-    private Channel channel;
+    private Device device;
 
     @Test(expected = NotAllowedException.class)
 	public void testNoEmailWidget() throws InterruptedException {
@@ -73,7 +61,7 @@ public class MailHandlerTest {
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
-        HardwareStateHolder state = new HardwareStateHolder(1, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -87,7 +75,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(1, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -100,7 +88,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(1, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 

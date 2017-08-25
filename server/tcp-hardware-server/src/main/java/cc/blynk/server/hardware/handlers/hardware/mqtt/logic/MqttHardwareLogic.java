@@ -57,10 +57,10 @@ public class MqttHardwareLogic {
             return;
         }
 
-        final int dashId = state.dashId;
-        final int deviceId = state.deviceId;
+        int dashId = state.dash.id;
+        int deviceId = state.device.id;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.dash;
 
         if (isWriteOperation(body)) {
             //" |\0" - to simplify demonstration
@@ -71,16 +71,16 @@ public class MqttHardwareLogic {
                 return;
             }
 
-            final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            final byte pin = ParseUtil.parseByte(splitBody[1]);
-            final String value = splitBody[2];
+            PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+            byte pin = ParseUtil.parseByte(splitBody[1]);
+            String value = splitBody[2];
 
             if (value.length() == 0) {
                 //throw new IllegalCommandException("Hardware write command doesn't have value for pin.");
                 return;
             }
 
-            final long now = System.currentTimeMillis();
+            long now = System.currentTimeMillis();
 
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
 

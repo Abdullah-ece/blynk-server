@@ -67,7 +67,7 @@ public class BlynkInternalLogic {
     }
 
     private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
-        DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
+        DashBoard dashBoard = state.dash;
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()), ctx.voidPromise());
@@ -86,8 +86,8 @@ public class BlynkInternalLogic {
             ctx.pipeline().replace(ReadTimeoutHandler.class, "H_ReadTimeout", new ReadTimeoutHandler(newReadTimeout));
         }
 
-        DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
-        Device device = dashBoard.getDeviceById(state.deviceId);
+        DashBoard dashBoard = state.dash;
+        Device device = state.device;
 
         if (device != null) {
             if (otaManager.isUpdateRequired(hardwareInfo)) {

@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -43,13 +44,13 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         this.holder = holder;
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
         channel.writeAndFlush(ACCEPTED);
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, device.id);
 
         log.info("{} mqtt hardware joined.", user.email);
     }
@@ -65,7 +66,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         String username = message.payload().userName().toLowerCase();
         String token = message.payload().password();
 
-        final TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
+        TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equalsIgnoreCase(username)) {
             log.debug("MqttHardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
@@ -73,29 +74,22 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
             return;
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
-
-        DashBoard dash = user.profile.getDashById(dashId);
-        if (dash == null) {
-            log.warn("User : {} requested token {} for non-existing {} dash id.", user.email, token, dashId);
-            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
-            return;
-        }
+        User user = tokenValue.user;
+        Device device = tokenValue.device;
+        DashBoard dash = tokenValue.dash;
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(HardwareNotLoggedHandler.class);
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, deviceId, user, token);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
         ctx.pipeline().addLast("HHArdwareMqttHandler", new MqttHardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, deviceId, -1));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, device, -1));
         } else {
-            completeLogin(ctx.channel(), session, user, dash, deviceId, -1);
+            completeLogin(ctx.channel(), session, user, dash, device, -1);
         }
     }
 

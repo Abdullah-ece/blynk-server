@@ -44,14 +44,12 @@ public class GetTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
+            //todo back compatibility code. remove in future
             device = new Device(deviceId, "ESP8266", "ESP8266");
-            deviceDao.create(user.orgId, device);
-            dash.devices = new Device[] {
-                    device
-            };
+            dash.devices = new Device[] {device};
 
             token = TokenGeneratorUtil.generateNewToken();
-            tokenManager.assignToken(user, dashId, deviceId, token);
+            tokenManager.assignToken(user, dash, device, token);
         }
 
         if (ctx.channel().isWritable()) {

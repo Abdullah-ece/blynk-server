@@ -28,7 +28,7 @@ class RegularTokenManager {
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
                             if (device.token != null) {
-                                put(device.token, new TokenValue(user, dashBoard.id, device.id));
+                                put(device.token, new TokenValue(user, dashBoard, device));
                             }
                         }
                     }
@@ -37,30 +37,26 @@ class RegularTokenManager {
         }};
     }
 
-    String assignToken(User user, int dashId, int deviceId, String newToken) {
+    String assignToken(User user, DashBoard dash, Device device, String newToken) {
         // Clean old token from cache if exists.
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = dash.getDeviceById(deviceId);
-
         String oldToken = deleteDeviceToken(device);
 
         //assign new token
         device.token = newToken;
-
         //device activated when new token is assigned
         device.activatedAt = System.currentTimeMillis();
         device.activatedBy = user.email;
 
-        cache.put(newToken, new TokenValue(user, dashId, deviceId));
+        cache.put(newToken, new TokenValue(user, dash, device));
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.email, dashId, deviceId, newToken);
+        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.email, dash.id, device.id, newToken);
 
         return oldToken;
     }
 
-    public String deleteDeviceToken(Device device) {
+    String deleteDeviceToken(Device device) {
         if (device != null && device.token != null) {
             cache.remove(device.token);
             return device.token;
@@ -68,7 +64,7 @@ class RegularTokenManager {
         return null;
     }
 
-    public TokenValue getTokenValue(String token) {
+    TokenValue getUserByToken(String token) {
         return cache.get(token);
     }
 
