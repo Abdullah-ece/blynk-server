@@ -2,13 +2,21 @@ import React from 'react';
 import './styles.less';
 
 import {connect} from 'react-redux';
-import {submit, getFormSyncErrors, isDirty} from 'redux-form';
+import {
+  submit,
+  getFormSyncErrors,
+  initialize,
+  destroy,
+  getFormValues,
+  isDirty,
+} from 'redux-form';
+import {fromJS} from 'immutable';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
-import {MainLayout}         from 'components';
+import {MainLayout} from 'components';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {OrganizationFetch} from 'data/Organization/actions';
-import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE} from 'services/Products';
+import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE, FORMS} from 'services/Products';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -44,6 +52,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
     isProductInfoInvalid: state.Product.edit.info.invalid,
     eventsForms: eventsForms,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
+    dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
     isFormDirty: (() => {
 
       const getIds = (entity) => {
@@ -63,7 +72,8 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
       };
 
       const forms = [
-        'product-edit-info'
+        'product-edit-info',
+        FORMS.DASHBOARD,
       ];
 
       const entity = state.Product.edit.entity || {};
@@ -99,6 +109,8 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
+  destroyForm: bindActionCreators(destroy, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
   updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
   ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
@@ -125,9 +137,12 @@ class ProductCreate extends React.Component {
 
     metadataFields: React.PropTypes.array,
 
+    dashboard: React.PropTypes.instanceOf(Map),
     Fetch: React.PropTypes.func,
     Update: React.PropTypes.func,
     Create: React.PropTypes.func,
+    destroyForm: React.PropTypes.func,
+    initializeForm: React.PropTypes.func,
     ProductSetEdit: React.PropTypes.func,
     submitFormById: React.PropTypes.func,
     OrganizationFetch: React.PropTypes.func,
@@ -178,10 +193,26 @@ class ProductCreate extends React.Component {
     }
 
     this.props.Fetch().then(() => {
-      if (!this.getProduct())
+
+      const product = this.getProduct();
+
+      if (!product)
         this.context.router.push('/products?notFound=true');
 
-      this.props.ProductSetEdit(this.getProduct());
+      this.props.ProductSetEdit(product);
+
+      this.props.initializeForm(FORMS.DASHBOARD, {
+        widgets: product.webDashboard && product.webDashboard.widgets && product.webDashboard.widgets.map((widget) => ({
+          ...widget,
+          w: widget.width,
+          h: widget.height,
+          minW: 2,
+          i: widget.id.toString(),
+          static: false,
+          moved: false
+        }))
+      });
+
     });
   }
 
@@ -338,8 +369,26 @@ class ProductCreate extends React.Component {
     }
   }
 
+  getDashboardValues() {
+    return {
+      webDashboard: {
+        ...this.props.dashboard.updateIn(['widgets'], (widgets) => (
+          widgets.map((widget) => ({
+            label: 'Widget',
+            type: 'WEB_LABEL',
+            id: widget.get('id'),
+            x: widget.get('x'),
+            y: widget.get('y'),
+            width: widget.get('w'),
+            height: widget.get('h'),
+          }))
+        )).toJS()
+      }
+    };
+  }
+
   saveProductAndUpdateDevices() {
-    let product = prepareProductForSave(this.props.product);
+    let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
 
     this.saveProduct({
       product: product,
@@ -365,7 +414,7 @@ class ProductCreate extends React.Component {
   }
 
   saveProductWithoutDevicesUpdate() {
-    let product = prepareProductForSave(this.props.product);
+    let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
 
     this.saveProduct({
       product: product,
@@ -381,7 +430,7 @@ class ProductCreate extends React.Component {
   }
 
   cloneProductWithoutSaving() {
-    let product = prepareProductForSave(this.props.product);
+    let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
 
     product.name = `${product.name} Copy`;
 

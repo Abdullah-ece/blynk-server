@@ -28,6 +28,9 @@ class Grid extends React.Component {
 
   render() {
 
+    if(!this.props.widgets)
+      return null;
+
     const widgets = {
       lg: this.props.widgets.map(
         (item) => item.set('i', (item.get('id')).toString()).set('minW', 2)

@@ -13,6 +13,8 @@ import {
   Metadata    as MetadataTab,
   DataStreams as DataStreamsTab,
 }                                           from '../ProductManage';
+
+import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
 import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 
 class ProductEdit extends React.Component {
@@ -182,6 +184,10 @@ class ProductEdit extends React.Component {
             <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS}>
               <EventsTab fields={this.props.product.events.fields}
                          onFieldsChange={this.props.onEventsFieldsChange}/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>Dashboard</span>} key={TABS.DASHBOARD}>
+              <DashboardTab/>
             </Tabs.TabPane>
 
           </Tabs>
