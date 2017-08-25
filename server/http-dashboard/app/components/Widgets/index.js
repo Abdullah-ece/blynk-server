@@ -36,6 +36,7 @@ class Widgets extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
+    this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
@@ -50,10 +51,20 @@ class Widgets extends React.Component {
     this.props.onChange(layout);
   }
 
+  handleWidgetDelete(i) {
+    this.props.onChange(
+      this.props.data.lg.filter((widget) => Number(widget.i) !== Number(i))
+    );
+  }
+
   generateDOM() {
 
-    return _.map(this.props.data[this.state.currentBreakpoint], (l, i) => {
-      return (<Widget key={i}/>);
+    return _.map(this.props.data[this.state.currentBreakpoint], (l) => {
+      return (
+        <Widget key={l.i}
+                id={Number(l.i)}
+                onWidgetDelete={this.handleWidgetDelete}/>
+      );
     });
   }
 
