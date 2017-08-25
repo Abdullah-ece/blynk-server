@@ -486,13 +486,21 @@ export const prepareProductForSave = (data) => {
         values = value.values;
       }
 
+      let field = {};
 
-      const field = {
+      if (values.hardcoded)
+        field.isDefault = true;
+
+      field = {
+        ...field,
         id: value.id,
         name: value.name,
         type: value.type,
-        ...values
+        ...values,
       };
+
+      delete field.hardcoded;
+      delete field.isSavedBefore;
 
       product.metaFields.push(field);
     });
