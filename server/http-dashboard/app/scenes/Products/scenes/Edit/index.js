@@ -201,17 +201,19 @@ class Edit extends React.Component {
 
       this.props.ProductSetEdit(product);
 
+      let widgets = product.webDashboard && product.webDashboard.widgets && product.webDashboard.widgets.map((widget) => ({
+        ...widget,
+        w: widget.width,
+        h: widget.height,
+        minW: 2,
+        i: widget.id.toString(),
+        static: false,
+        moved: false
+      })) || [];
+
       this.props.initializeForm(FORMS.DASHBOARD, {
-        widgets: product.webDashboard && product.webDashboard.widgets && product.webDashboard.widgets.map((widget) => ({
-          ...widget,
-          w: widget.width,
-          h: widget.height,
-          minW: 2,
-          i: widget.id.toString(),
-          static: false,
-          moved: false
-        }))
-      } || []);
+        widgets: widgets
+      });
 
     });
   }
