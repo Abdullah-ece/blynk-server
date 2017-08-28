@@ -80,7 +80,6 @@ public class DashBoard {
         }
 
         this.updatedAt = now;
-        updateDeviceTs(deviceId, now);
     }
 
     public String getNameOrEmpty() {
@@ -196,16 +195,6 @@ public class DashBoard {
         }
 
         return null;
-    }
-
-    //todo raplace with dao lookup?
-    public void updateDeviceTs(int id, long now) {
-        for (Device device : devices) {
-            if (device.id == id) {
-                device.dataReceivedAt = now;
-                break;
-            }
-        }
     }
 
     public Device getDeviceById(int id) {

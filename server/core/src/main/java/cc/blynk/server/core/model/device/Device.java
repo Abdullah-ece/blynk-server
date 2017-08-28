@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
@@ -141,6 +142,11 @@ public class Device implements Target {
         this.metaFields = newDevice.metaFields;
         this.webDashboard = newDevice.webDashboard;
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void updateWebDashboard(byte pin, PinType type, String value, long now) {
+        webDashboard.update(id, pin, type, value);
+        this.dataReceivedAt = now;
     }
 
     public void disconnected() {

@@ -1,7 +1,14 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -10,6 +17,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
+import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,12 +26,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -32,6 +45,27 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DashboardModelAPITest extends APIBaseTest {
+
+    private BaseServer appServer;
+    private BaseServer hardwareServer;
+    private ClientPair clientPair;
+
+    @Before
+    public void init() throws Exception {
+        super.init();
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
+
+        this.clientPair = IntegrationBase.initAppAndHardPair();
+    }
+
+    @After
+    public void shutdown() {
+        this.appServer.close();
+        this.hardwareServer.close();
+        this.clientPair.stop();
+        super.shutdown();
+    }
 
     @Test
     public void createDeviceWithWidgets() throws Exception {
@@ -64,6 +98,75 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("123", device.webDashboard.widgets[0].label);
         }
     }
+
+    @Test
+    public void createDeviceWithWidgetsAndValueUpdated() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        String token;
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertNotNull(device.token);
+            token = device.token;
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
+            WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
+            assertEquals("123", webLabel.label);
+            assertEquals(1, webLabel.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webLabel.dataStream.pinType);
+            assertEquals(null, webLabel.dataStream.value);
+        }
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("hardware vw 1 121");
+        //todo ok for now. but could be better.
+        sleep(500);
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
+            WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
+            assertEquals("123", webLabel.label);
+            assertEquals(1, webLabel.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webLabel.dataStream.pinType);
+            assertEquals("121", webLabel.dataStream.value);
+
+        }
+    }
+
 
     @Test
     public void testDashboardIsInheritedByAllDevicesNotUpdated() throws Exception {
@@ -249,6 +352,8 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
+        webLabel.dataStream = new Pin((byte) 1, PinType.VIRTUAL);
+
         product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel
         });
