@@ -2,8 +2,14 @@ import React from 'react';
 import {Button} from 'antd';
 import {Widgets} from 'components';
 import './styles.less';
+import {Map} from 'immutable';
+import PropTypes from 'prop-types';
 
 class Dashboard extends React.Component {
+
+  static propTypes = {
+    dashboard: PropTypes.instanceOf(Map)
+  };
 
   constructor(props) {
     super(props);
@@ -24,16 +30,16 @@ class Dashboard extends React.Component {
 
   FILTER_BUTTONS = [{
     key: this.FILTERS.HOUR,
-    value: '1 hour'
+    value: 'Last hour'
   }, {
     key: this.FILTERS.DAY,
-    value: '1 day'
+    value: 'Last day'
   }, {
     key: this.FILTERS.WEEK,
-    value: '1 Week'
+    value: 'Last Week'
   }, {
     key: this.FILTERS.MONTH,
-    value: 'Month'
+    value: 'Last Month'
   }, {
     key: this.FILTERS.CUSTOM,
     value: 'Custom Range'
@@ -58,12 +64,42 @@ class Dashboard extends React.Component {
   }
 
   render() {
+
+    let widgets;
+
+    if (this.props.dashboard.has('widgets')) {
+
+      widgets = {
+        lg: this.props.dashboard.get('widgets').map((item) => {
+          return ({
+            i: String(item.get('id')),
+            id: String(item.get('id')),
+            w: item.get('width'),
+            h: item.get('height'),
+            x: item.get('x'),
+            y: item.get('y')
+          });
+        }).toJS()
+      };
+    } else {
+      widgets = {
+        lg: []
+      };
+    }
+
+    if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
+      return (
+        <div className="devices--device-dashboard">
+          <div className="product-no-fields" style={{padding:0}}>No Dashboard widgets</div>
+        </div>
+      );
+
     return (
       <div className="devices--device-dashboard">
 
         <div>
           <Button.Group size="default" className="devices-device-dashboard-time-filter">
-            { this.FILTER_BUTTONS.map((button, key) => (
+            {this.FILTER_BUTTONS.map((button, key) => (
               <Button key={key}
                       onClick={this.filterBy.bind(this, button.key)}
                       type={button.key === this.state.filter && 'primary' || 'default'}>
@@ -71,18 +107,18 @@ class Dashboard extends React.Component {
               </Button>
             ))}
           </Button.Group>
-          <Button.Group className="dashboard-tools">
-            { this.state.editable && (
-              <Button icon="check" onClick={this.finishEditDashboard.bind(this)}/>
-            )}
-            { !this.state.editable && (
-              <Button icon="tool" className="transparent" onClick={this.startEditDashboard.bind(this)}/>
-            )}
+          {/*<Button.Group className="dashboard-tools">*/}
+          {/*{ this.state.editable && (*/}
+          {/*<Button icon="check" onClick={this.finishEditDashboard.bind(this)}/>*/}
+          {/*)}*/}
+          {/*{ !this.state.editable && (*/}
+          {/*<Button icon="tool" className="transparent" onClick={this.startEditDashboard.bind(this)}/>*/}
+          {/*)}*/}
 
-          </Button.Group>
+          {/*</Button.Group>*/}
         </div>
 
-        <Widgets editable={this.state.editable}/>
+        <Widgets editable={this.state.editable} data={widgets}/>
 
       </div>
     );

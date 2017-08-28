@@ -50,6 +50,7 @@ class Device extends React.Component {
   }
 
   render() {
+
     const TabPane = Tabs.TabPane;
     return (
       <div className="devices--device">
@@ -59,7 +60,7 @@ class Device extends React.Component {
         <Tabs defaultActiveKey="2" className="page-layout-tabs-navigation">
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
-              <Dashboard />
+              <Dashboard dashboard={this.props.device.get('webDashboard')}/>
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
