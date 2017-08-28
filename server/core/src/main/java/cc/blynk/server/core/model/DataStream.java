@@ -94,9 +94,9 @@ public class DataStream {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Pin)) return false;
+        if (!(o instanceof DataStream)) return false;
 
-        Pin pin1 = (Pin) o;
+        DataStream pin1 = (DataStream) o;
 
         if (pin != pin1.pin) return false;
         if (pwmMode != pin1.pwmMode) return false;

@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.web;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.JsonParser;
@@ -12,7 +12,7 @@ import cc.blynk.utils.JsonParser;
  */
 public abstract class WebWidget extends Widget {
 
-    public Pin dataStream;
+    public DataStream dataStream;
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {

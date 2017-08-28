@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
@@ -352,7 +352,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        webLabel.dataStream = new Pin((byte) 1, PinType.VIRTUAL);
+        webLabel.dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
 
         product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel

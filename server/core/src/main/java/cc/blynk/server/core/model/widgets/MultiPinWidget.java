@@ -129,14 +129,14 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
         MultiPinWidget that = (MultiPinWidget) o;
 
         if (deviceId != that.deviceId) return false;
-        return Arrays.equals(pins, that.pins);
+        return Arrays.equals(dataStreams, that.dataStreams);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + deviceId;
-        result = 31 * result + Arrays.hashCode(pins);
+        result = 31 * result + Arrays.hashCode(dataStreams);
         return result;
     }
 }
