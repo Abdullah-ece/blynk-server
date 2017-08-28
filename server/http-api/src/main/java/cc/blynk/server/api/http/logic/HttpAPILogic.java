@@ -13,7 +13,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -72,7 +72,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
         Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
         if (widget == null) {
-            return Pin.makeHardwareBody(pinType, pin, pinValue);
+            return DataStream.makeHardwareBody(pinType, pin, pinValue);
         } else {
             if (widget instanceof OnePinWidget) {
                 return ((OnePinWidget) widget).makeHardwareBody();

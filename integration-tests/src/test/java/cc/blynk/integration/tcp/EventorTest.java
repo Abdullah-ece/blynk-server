@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -27,6 +27,7 @@ import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -52,21 +53,21 @@ public class EventorTest extends IntegrationBase {
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
-    private static Rule buildRule(String s) {
+    private static Rule buildRule(String s, boolean isActive) {
         //example "if V1 > 37 then setpin V2 123"
 
         String[] splitted = s.split(" ");
 
         //"V1"
-        Pin triggerPin = parsePin(splitted[1]);
+        DataStream triggerDataStream = parsePin(splitted[1]);
                                                        //>                               37
         BaseCondition ifCondition = resolveCondition(splitted[2], Double.parseDouble(splitted[3]));
 
-        Pin pin = null;
+        DataStream dataStream = null;
         String value;
         try {
             //V2
-            pin = parsePin(splitted[6]);
+            dataStream = parsePin(splitted[6]);
             //123
             value = splitted[7];
         } catch (IllegalCommandBodyException e) {
@@ -74,23 +75,21 @@ public class EventorTest extends IntegrationBase {
         }
 
                                             //setpin
-        BaseAction action = resolveAction(splitted[5], pin, value);
+        BaseAction action = resolveAction(splitted[5], dataStream, value);
 
-        Rule rule = new Rule(triggerPin, ifCondition, new BaseAction[] { action });
-        rule.isActive = true;
-        return rule;
+        return new Rule(triggerDataStream, null, ifCondition, new BaseAction[] { action }, isActive);
     }
 
-    private static Pin parsePin(String pinString) {
+    private static DataStream parsePin(String pinString) {
         PinType pinType = PinType.getPinType(pinString.charAt(0));
         byte pin = Byte.parseByte(pinString.substring(1));
-        return new Pin(pin, pinType);
+        return new DataStream(pin, pinType);
     }
 
-    private static BaseAction resolveAction(String action, Pin pin, String value) {
+    private static BaseAction resolveAction(String action, DataStream dataStream, String value) {
         switch (action) {
             case "setpin" :
-                return new SetPinAction(pin.pin, pin.pinType, value);
+                return new SetPinAction(dataStream.pin, dataStream.pinType, value);
             case "wait" :
                 return new WaitAction();
             case "notify" :
@@ -123,8 +122,13 @@ public class EventorTest extends IntegrationBase {
         }
     }
 
+    public static Eventor oneRuleEventor(String ruleString, boolean isActive) {
+        Rule rule = buildRule(ruleString, isActive);
+        return new Eventor(new Rule[] {rule});
+    }
+
     public static Eventor oneRuleEventor(String ruleString) {
-        Rule rule = buildRule(ruleString);
+        Rule rule = buildRule(ruleString, true);
         return new Eventor(new Rule[] {rule});
     }
 
@@ -143,14 +147,15 @@ public class EventorTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void printAllInJson() throws Exception {
         Eventor tempEventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
         //replace with between
-        tempEventor.rules[0].condition = new Between(10, 12);
+        //tempEventor.rules[0].condition = new Between(10, 12);
 
         Eventor tempEventor2 = oneRuleEventor("if v1 != 37 then setpin v2 123");
         //replace with between
-        tempEventor2.rules[0].condition = new NotBetween(10, 12);
+        //tempEventor2.rules[0].condition = new NotBetween(10, 12);
 
 
         Eventor[] eventors = new Eventor[]{
@@ -168,11 +173,11 @@ public class EventorTest extends IntegrationBase {
             System.out.println(JsonParser.mapper.writeValueAsString(eventor));
         }
 
-        Pin pin = new Pin((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
 
         BaseAction[] actions = new BaseAction[] {
-                new SetPinAction(pin.pin, pin.pinType, "pinValuetoSEt"),
-                new WaitAction(360, new SetPinAction(pin.pin, pin.pinType, "pinValueToSet")),
+                new SetPinAction(dataStream.pin, dataStream.pinType, "pinValuetoSEt"),
+                new WaitAction(360, new SetPinAction(dataStream.pin, dataStream.pinType, "pinValueToSet")),
                 new NotifyAction("Hello!!!"),
                 new MailAction("Subj", "Hello mail")
         };
@@ -197,8 +202,7 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testInactiveEventsNotTriggered() throws Exception {
-        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123");
-        eventor.rules[0].isActive = false;
+        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123", false);
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -297,10 +301,12 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testSimpleRule7() throws Exception {
-        Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
+        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte)2, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
+        Rule rule = new Rule(triggerDataStream, null, new Between(10, 12), new BaseAction[] {setPinAction}, true);
 
-        //replace with between
-        eventor.rules[0].condition = new Between(10, 12);
+        Eventor eventor = new Eventor(new Rule[] {rule});
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -313,10 +319,12 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testSimpleRule8() throws Exception {
-        Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
+        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte)2, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
+        Rule rule = new Rule(triggerDataStream, null, new NotBetween(10, 12), new BaseAction[] {setPinAction}, true);
 
-        //replace with between
-        eventor.rules[0].condition = new NotBetween(10, 12);
+        Eventor eventor = new Eventor(new Rule[] {rule});
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -527,9 +535,9 @@ public class EventorTest extends IntegrationBase {
         //here is special case. right now eventor for digital pins supports only LOW/HIGH values
         //that's why eventor doesn't work with PWM pins, as they handled as analog, where HIGH doesn't work.
         SetPinAction setPinAction = (SetPinAction) eventor.rules[0].actions[0];
-        Pin pin = setPinAction.pin;
+        DataStream dataStream = setPinAction.dataStream;
         eventor.rules[0].actions[0] = new SetPinAction(
-                new Pin(pin.pin, true, false, pin.pinType, null, 0, 255, null),
+                new DataStream(dataStream.pin, true, false, dataStream.pinType, null, 0, 255, null),
                 setPinAction.value,
                 SetPinActionType.CUSTOM
         );
@@ -561,11 +569,15 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testSimpleRuleWith2Actions() throws Exception {
-        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123");
-        eventor.rules[0].actions = new BaseAction[] {
-                new SetPinAction((byte)0, PinType.VIRTUAL, "0"),
-                new SetPinAction((byte)1, PinType.VIRTUAL, "1")
-        };
+        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
+        Rule rule = new Rule(triggerDataStream, null, new GreaterThan(37),
+                new BaseAction[] {
+                        new SetPinAction((byte)0, PinType.VIRTUAL, "0"),
+                        new SetPinAction((byte)1, PinType.VIRTUAL, "1")
+                },
+                true);
+
+        Eventor eventor = new Eventor(new Rule[] {rule});
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
