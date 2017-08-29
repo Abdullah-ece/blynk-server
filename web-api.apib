@@ -875,6 +875,34 @@ HOST: https://knight-qa.blynk.cc/
         Error marking event as resolved.
 
 
+## Get graph history for 1 data stream [GET] [/api/data/{deviceId}/history?dataStream=V1&offset=0&limit=1000]
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        [
+            {
+                "V1" :
+                        {
+                           "data" :
+                              [
+                                 {"1504015510046":124.0},
+                                 {"1504015510045":123.0}
+                              ]
+                        }
+            }
+        ]
+
++ Response 400 (application/json)
+
+    Device not found.
+
++ Response 403 (application/json)
+
+    You have no access to this device.
+
+
 #External API
 
 ## Create Log Event [GET] [/external/api/{token}/logEvent?code={code}]
