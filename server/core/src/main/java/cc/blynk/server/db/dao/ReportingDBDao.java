@@ -96,6 +96,26 @@ public class ReportingDBDao {
         }
     }
 
+    public void insertSingleEntryRaw(AggregationKey key, Double value) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
+
+            ps.setString(1, key.getEmail());
+            ps.setInt(2, key.getDashId());
+            ps.setInt(3, key.getDeviceId());
+            ps.setByte(4, key.getPin());
+            ps.setString(5, PinType.getPinTypeString(key.getPinType()));
+            ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
+            ps.setNull(7, Types.VARCHAR);
+            ps.setDouble(8, value);
+
+            ps.executeUpdate();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting raw reporting data in DB.", e);
+        }
+    }
+
     public void insertRawData(Map<AggregationKey, Object> rawData) {
         long start = System.currentTimeMillis();
 
@@ -108,8 +128,8 @@ public class ReportingDBDao {
             for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry<AggregationKey, Object> entry = iter.next();
 
-                final AggregationKey key = entry.getKey();
-                final Object value = entry.getValue();
+                AggregationKey key = entry.getKey();
+                Object value = entry.getValue();
 
                 ps.setString(1, key.getEmail());
                 ps.setInt(2, key.getDashId());

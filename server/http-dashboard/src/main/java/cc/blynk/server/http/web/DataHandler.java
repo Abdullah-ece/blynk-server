@@ -10,6 +10,8 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.average.AggregationKey;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandler;
@@ -43,15 +45,41 @@ public class DataHandler extends BaseHttpHandler {
         this.dbManager = holder.dbManager;
     }
 
+    @GET
+    @Path("/{deviceId}/insert")
+    public Response insertSinglePoint(@Context ChannelHandlerContext ctx,
+                                      @ContextUser User user,
+                                      @PathParam("deviceId") int deviceId,
+                                      @QueryParam("dataStream") String dataStream,
+                                      @QueryParam("value") Double value,
+                                      @QueryParam("ts") Long inTs) {
+
+        Device device = deviceDao.getById(deviceId);
+        organizationDao.verifyUserAccessToDevice(user, device);
+
+        PinType pinType = PinType.getPinType(dataStream.charAt(0));
+        byte pin = ParseUtil.parseByte(dataStream.substring(1));
+
+        long ts = (inTs == null ? System.currentTimeMillis() : inTs);
+
+        AggregationKey key = new AggregationKey(new BaseReportingKey(user.email, user.appName, 0, deviceId, pinType, pin), ts);
+
+        blockingIOProcessor.executeDB(() -> {
+            dbManager.insertSingleEntryRaw(key, value);
+            ctx.writeAndFlush(ok(), ctx.voidPromise());
+        });
+
+        return null;
+    }
 
     @GET
     @Path("/{deviceId}/history")
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @ContextUser User user,
+                           @PathParam("deviceId") int deviceId,
                            @QueryParam("dataStream") String dataStream,
                            @QueryParam("offset") int offset,
-                           @QueryParam("limit") int limit,
-                           @PathParam("deviceId") int deviceId) {
+                           @QueryParam("limit") int limit) {
 
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);

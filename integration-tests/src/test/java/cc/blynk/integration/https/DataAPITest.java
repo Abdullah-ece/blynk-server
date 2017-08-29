@@ -120,6 +120,51 @@ public class DataAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void testInsertAPIWorks() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet insertPoint = new HttpGet(httpsAdminServerUrl + "/data/1/insert?dataStream=V1&value=123");
+        try (CloseableHttpResponse response = httpclient.execute(insertPoint)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&offset=0&limit=1000");
+        try (CloseableHttpResponse response = httpclient.execute(getData)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+
+            //expected string is
+            //[{"V1":{"data":[{"1504015510046":123.0}]}}]
+
+            String responseString = consumeText(response);
+            List l = JsonParser.mapper.readValue(responseString, List.class);
+            assertNotNull(l);
+            assertEquals(1, l.size());
+            LinkedHashMap<String, List> map = (LinkedHashMap) l.get(0);
+            LinkedHashMap dataField = (LinkedHashMap) map.get("V1");
+            assertNotNull(dataField);
+            assertEquals(1, dataField.size());
+
+            List data = (List) dataField.get("data");
+            assertEquals(1, data.size());
+            LinkedHashMap point0 = (LinkedHashMap) data.get(0);
+            assertEquals(123, (Double) point0.values().iterator().next(), 0.0001);
+
+            System.out.println(responseString);
+        }
+    }
+
     private int createProduct() throws Exception {
         Product product = new Product();
         product.name = "My product";

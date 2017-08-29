@@ -35,6 +35,9 @@ public abstract class Param {
         if (type == boolean.class || type == Boolean.class) {
             return Boolean.valueOf(value);
         }
+        if (type == double.class || type == Double.class) {
+            return Double.valueOf(value);
+        }
         if (type.isEnum()) {
             return Enum.valueOf((Class<Enum>) type, value);
         }

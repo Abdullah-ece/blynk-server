@@ -156,6 +156,12 @@ public class DBManager implements Closeable {
         }
     }
 
+    public void insertSingleEntryRaw(AggregationKey key, Double val) {
+        if (isDBEnabled()) {
+            reportingDBDao.insertSingleEntryRaw(key, val);
+        }
+    }
+
     public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
         if (isDBEnabled() && rawData.size() > 0) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
