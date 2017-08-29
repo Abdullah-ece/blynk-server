@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebGraph;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
@@ -94,7 +95,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertEquals("123", device.webDashboard.widgets[0].label);
         }
     }
@@ -130,13 +131,13 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
             WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
             assertEquals("123", webLabel.label);
-            assertEquals(1, webLabel.dataStream.pin);
-            assertEquals(PinType.VIRTUAL, webLabel.dataStream.pinType);
-            assertEquals(null, webLabel.dataStream.value);
+            assertEquals(1, webLabel.dataStreams[0].pin);
+            assertEquals(PinType.VIRTUAL, webLabel.dataStreams[0].pinType);
+            assertEquals(null, webLabel.dataStreams[0].value);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
@@ -156,17 +157,16 @@ public class DashboardModelAPITest extends APIBaseTest {
             Device device = JsonParser.parseDevice(responseString);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
             WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
             assertEquals("123", webLabel.label);
-            assertEquals(1, webLabel.dataStream.pin);
-            assertEquals(PinType.VIRTUAL, webLabel.dataStream.pinType);
-            assertEquals("121", webLabel.dataStream.value);
+            assertEquals(1, webLabel.dataStreams[0].pin);
+            assertEquals(PinType.VIRTUAL, webLabel.dataStreams[0].pinType);
+            assertEquals("121", webLabel.dataStreams[0].value);
 
         }
     }
-
 
     @Test
     public void testDashboardIsInheritedByAllDevicesNotUpdated() throws Exception {
@@ -195,7 +195,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertEquals("123", device.webDashboard.widgets[0].label);
         }
 
@@ -221,7 +221,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(product.name, fromApi.name);
             assertEquals(product.description, fromApi.description);
             assertNotNull(fromApi.webDashboard);
-            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals(2, fromApi.webDashboard.widgets.length);
             assertEquals("123", fromApi.webDashboard.widgets[0].label);
             assertEquals(1, fromApi.webDashboard.widgets[0].x);
             assertEquals(2, fromApi.webDashboard.widgets[0].y);
@@ -237,7 +237,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             Device device = JsonParser.parseDevice(responseString);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertEquals("123", device.webDashboard.widgets[0].label);
             assertEquals(1, device.webDashboard.widgets[0].x);
             assertEquals(2, device.webDashboard.widgets[0].y);
@@ -273,7 +273,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertEquals("123", device.webDashboard.widgets[0].label);
         }
 
@@ -352,10 +352,24 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        webLabel.dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        webLabel.dataStreams = new DataStream[] {
+                new DataStream((byte) 1, PinType.VIRTUAL)
+        };
+
+        WebGraph webGraph = new WebGraph();
+        webGraph.label = "graph";
+        webGraph.x = 3;
+        webGraph.y = 4;
+        webGraph.height = 10;
+        webGraph.width = 20;
+        webGraph.dataStreams = new DataStream[] {
+                new DataStream((byte) 1, PinType.VIRTUAL),
+                new DataStream((byte) 2, PinType.VIRTUAL)
+        };
 
         product.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
+                webLabel,
+                webGraph
         });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -364,6 +378,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Product fromApi = JsonParser.parseProduct(consumeText(response));
+            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(fromApi));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             return fromApi.id;

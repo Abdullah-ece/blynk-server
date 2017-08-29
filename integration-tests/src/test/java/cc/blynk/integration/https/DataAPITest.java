@@ -138,7 +138,9 @@ public class DataAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        webLabel.dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        webLabel.dataStreams = new DataStream[] {
+                new DataStream((byte) 1, PinType.VIRTUAL)
+        };
 
         product.webDashboard = new WebDashboard(new Widget[] {
                 webLabel

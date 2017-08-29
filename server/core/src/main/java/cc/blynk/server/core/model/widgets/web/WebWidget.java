@@ -3,7 +3,8 @@ package cc.blynk.server.core.model.widgets.web;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.utils.JsonParser;
+
+import java.util.Arrays;
 
 /**
  * The Blynk Project.
@@ -12,13 +13,15 @@ import cc.blynk.utils.JsonParser;
  */
 public abstract class WebWidget extends Widget {
 
-    public DataStream dataStream;
+    public DataStream[] dataStreams;
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
-        if (dataStream.isSame(pin, type)) {
-            dataStream.value = value;
-            return true;
+        for (DataStream dataStream : dataStreams) {
+            if (dataStream.isSame(pin, type)) {
+                dataStream.value = value;
+                return true;
+            }
         }
         return false;
     }
@@ -29,23 +32,21 @@ public abstract class WebWidget extends Widget {
 
     @Override
     public String getJsonValue() {
-        if (dataStream.value == null) {
-            return "[]";
-        }
-        return JsonParser.valueToJsonAsString(dataStream.value);
+        return null;
     }
 
     @Override
     public void append(StringBuilder sb, int deviceId) {
-        append(sb, dataStream.pin, dataStream.pinType, getModeType());
+        //append(sb, dataStream.pin, dataStream.pinType, getModeType());
     }
 
     @Override
     public boolean isSame(int deviceId, byte pin, PinType type) {
-        return dataStream.isSame(pin, type);
+        return false;
     }
 
     //HAVE IN MIND : value is not compared as it is updated in realtime.
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,13 +55,14 @@ public abstract class WebWidget extends Widget {
 
         WebWidget webWidget = (WebWidget) o;
 
-        return dataStream != null ? dataStream.equals(webWidget.dataStream) : webWidget.dataStream == null;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(dataStreams, webWidget.dataStreams);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (dataStream != null ? dataStream.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(dataStreams);
         return result;
     }
 }
