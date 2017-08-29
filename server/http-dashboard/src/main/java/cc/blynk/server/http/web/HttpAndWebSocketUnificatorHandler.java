@@ -28,6 +28,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final WebLoginHandler webLoginHandler;
     private final AccountHandler accountHandler;
     private final DevicesHandler devicesHandler;
+    private final DataHandler dataHandler;
     private final ProductHandler productHandler;
     private final OrganizationHandler organizationHandler;
 
@@ -41,6 +42,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
         this.devicesHandler = new DevicesHandler(holder, rootPath);
+        this.dataHandler = new DataHandler(holder, rootPath);
         this.productHandler = new ProductHandler(holder, rootPath);
         this.organizationHandler = new OrganizationHandler(holder, rootPath);
     }
@@ -59,6 +61,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         .addLast(new UploadHandler(rootPath))
         .addLast(accountHandler)
         .addLast(devicesHandler)
+        .addLast(dataHandler)
         .addLast(productHandler)
         .addLast(organizationHandler)
         .addLast(noMatchHandler)

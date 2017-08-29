@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
@@ -237,6 +238,15 @@ public class OrganizationDao {
             }
         }
         return null;
+    }
+
+    public void verifyUserAccessToDevice(User user, Device device) {
+        int orgId = getOrganizationIdByProductId(device.productId);
+
+        if (!user.hasAccess(orgId)) {
+            log.error("User {} tries to access device he has no access.", user.email);
+            throw new ForbiddenWebException("You have no access to this device.");
+        }
     }
 
 }

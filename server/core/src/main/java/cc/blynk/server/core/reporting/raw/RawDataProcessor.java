@@ -38,4 +38,12 @@ public class RawDataProcessor {
         }
     }
 
+    public void collect(BaseReportingKey key, long ts, String stringValue) {
+        rawStorage.put(new AggregationKey(key, ts), stringValue);
+    }
+
+    public void collect(BaseReportingKey key, long ts, double doubleValue) {
+        rawStorage.put(new AggregationKey(key, ts), doubleValue);
+    }
+
 }

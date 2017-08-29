@@ -3,6 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
@@ -23,9 +24,7 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The Blynk Project.
@@ -43,7 +42,7 @@ public class DBManager implements Closeable {
     public InvitationTokensDBDao invitationTokensDBDao;
     public UserDBDao userDBDao;
     public EventDBDao eventDBDao;
-    ReportingDBDao reportingDBDao;
+    public ReportingDBDao reportingDBDao;
     RedeemDBDao redeemDBDao;
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
@@ -161,6 +160,13 @@ public class DBManager implements Closeable {
         if (isDBEnabled() && rawData.size() > 0) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
         }
+    }
+
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, int offset, int limit) {
+        if (isDBEnabled()) {
+            return reportingDBDao.getRawData(deviceId, pinType,  pin, offset, limit);
+        }
+        return Collections.emptyList();
     }
 
     public void cleanOldReportingRecords(Instant now) {

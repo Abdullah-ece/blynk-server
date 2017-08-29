@@ -109,7 +109,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                     WebComment comment) {
         User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(user, device);
+        organizationDao.verifyUserAccessToDevice(user, device);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
@@ -149,7 +149,7 @@ public class DevicesHandler extends BaseHttpHandler {
         }
 
         Device existingDevice = deviceDao.getById(newDevice.id);
-        verifyUserAccessToDevice(user, existingDevice);
+        organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         existingDevice.update(newDevice);
 
@@ -164,7 +164,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                           MetaField updatedMetaField) {
 
         Device existingDevice = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(user, existingDevice);
+        organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         int fieldIndex = existingDevice.findMetaFieldIndex(updatedMetaField.id);
         if (fieldIndex == -1) {
@@ -237,15 +237,6 @@ public class DevicesHandler extends BaseHttpHandler {
         return ok(joinProductAndOrgInfo(device));
     }
 
-    private void verifyUserAccessToDevice(User user, Device device) {
-        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-
-        if (!user.hasAccess(orgId)) {
-            log.error("User {} tries to access device he has no access.", user.email);
-            throw new ForbiddenWebException("You have no access to this device.");
-        }
-    }
-
     @DELETE
     @Path("/{orgId}/{deviceId}")
     @Admin
@@ -253,7 +244,7 @@ public class DevicesHandler extends BaseHttpHandler {
                            @PathParam("orgId") int userOrgId,
                            @PathParam("deviceId") int deviceId) {
         Device device = deviceDao.getById(deviceId);
-        verifyUserAccessToDevice(user, device);
+        organizationDao.verifyUserAccessToDevice(user, device);
 
         deviceDao.delete(user.orgId, deviceId);
 
@@ -289,7 +280,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
         User user = getUser(ctx);
-        verifyUserAccessToDevice(user, device);
+        organizationDao.verifyUserAccessToDevice(user, device);
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);
 

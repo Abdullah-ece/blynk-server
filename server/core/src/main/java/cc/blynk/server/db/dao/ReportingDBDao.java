@@ -16,8 +16,9 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+
+import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 
 /**
  * The Blynk Project.
@@ -31,6 +32,7 @@ public class ReportingDBDao {
     private static final String insertDaily = "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String insertRawData = "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, stringValue, doubleValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String selectDoubleRawData = "SELECT ts, doubleValue from reporting_raw_data WHERE device_id = ? and pin = ? and pinType = ? ORDER BY ts DESC offset ? limit ?";
 
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -284,6 +286,40 @@ public class ReportingDBDao {
         }
         log.info("Removing finished. Minute records {}, hour records {}. Time {}",
                 minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
+    }
+
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, int offset, int limit) {
+        List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {
+
+            statement.setInt(1, deviceId);
+            statement.setByte(2, pin);
+            statement.setString(3, pinType.pinTypeString);
+            statement.setInt(4, offset);
+            statement.setInt(5, limit);
+
+            log.debug(statement);
+
+            try (ResultSet rs = statement.executeQuery()) {
+
+                while (rs.next()) {
+                    result.add(
+                            new AbstractMap.SimpleEntry<>(
+                                    rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
+                                    rs.getDouble("doubleValue")
+                            )
+                    );
+                }
+
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error("Error getting raw data from DB.", e);
+        }
+
+        return result;
     }
 
 }
