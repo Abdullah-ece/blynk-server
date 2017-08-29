@@ -33,7 +33,7 @@ class Grid extends React.Component {
 
     const widgets = {
       lg: this.props.widgets.map(
-        (item) => item.set('i', (item.get('id')).toString()).set('minW', 2)
+        (item) => item.set('i', (item.get('id')).toString())
       ).toJS()
     };
 

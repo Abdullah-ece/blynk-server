@@ -6,6 +6,12 @@ import {
 import Dotdotdot from 'react-dotdotdot';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import {
+  WIDGET_TYPES
+} from 'services/Widgets';
+import {
+  LinearWidget
+} from 'components/Widgets/components';
 import './styles.less';
 
 class Widget extends React.Component {
@@ -16,6 +22,7 @@ class Widget extends React.Component {
       PropTypes.array,
     ]),
     style: PropTypes.object,
+    data: PropTypes.object,
     className: PropTypes.string,
 
     id: PropTypes.number,
@@ -32,6 +39,17 @@ class Widget extends React.Component {
     super(props);
 
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+  }
+
+  getWidgetByType(type, widget) {
+    if (type === WIDGET_TYPES.LINEAR)
+      return (
+        <LinearWidget key={widget.id}
+                      data={widget}
+                      editable={this.props.editable}
+                      onWidgetDelete={this.handleWidgetDelete}/>
+      );
+
   }
 
   handleWidgetDelete() {
@@ -58,7 +76,7 @@ class Widget extends React.Component {
            style={this.props.style}
       >
         <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>Widget is there</Dotdotdot>
+          <Dotdotdot clamp={1}>{ this.props.data.title }</Dotdotdot>
           {this.props.editable && (
             <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
                  onMouseUp={this.preventDragNDrop}>
@@ -76,7 +94,8 @@ class Widget extends React.Component {
             </div>
           )}
         </div>
-        {this.props.children}
+        { this.getWidgetByType(this.props.data.type, this.props.data) }
+        { this.props.children }
       </div>
     );
   }

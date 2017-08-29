@@ -4,6 +4,10 @@ import {
   Icon
 } from 'antd';
 import PropTypes from 'prop-types';
+import {
+  WIDGET_TYPES,
+  WIDGETS_PREDEFINED_OPTIONS,
+} from 'services/Widgets';
 import './styles.less';
 
 class AddWidgetTools extends React.Component {
@@ -16,14 +20,13 @@ class AddWidgetTools extends React.Component {
     super(props);
 
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
+
+    this.handleLinearWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LINEAR);
   }
 
-  handleWidgetAdd() {
+  handleWidgetAdd(type) {
     const widget = {
-      x: 0,
-      y: 0,
-      w: 3,
-      h: 2
+      ...WIDGETS_PREDEFINED_OPTIONS[type]
     };
 
     this.props.onWidgetAdd(widget);
@@ -35,7 +38,7 @@ class AddWidgetTools extends React.Component {
         <div className="product-manage-dashboard--add-widget-tools-title">+ Add New Widget:</div>
         <div className="product-manage-dashboard--add-widget-tools-buttons">
           <Button.Group>
-            <Button onClick={this.handleWidgetAdd}><Icon type="area-chart"/></Button>
+            <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
             <Button disabled={true}><Icon type="pie-chart"/></Button>
             <Button disabled={true}><Icon type="dot-chart"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>

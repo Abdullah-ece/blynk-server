@@ -62,12 +62,14 @@ class Widgets extends React.Component {
 
   generateDOM() {
 
-    return _.map(this.props.data[this.state.currentBreakpoint], (l) => {
+    return _.map(this.props.data[this.state.currentBreakpoint], (widget) => {
       return (
-        <Widget key={l.id}
-                id={Number(l.id)}
+        <Widget id={Number(widget.id)}
+                key={widget.id}
+                data={widget}
                 editable={this.props.editable}
-                onWidgetDelete={this.handleWidgetDelete}/>
+                onWidgetDelete={this.handleWidgetDelete}
+        />
       );
     });
   }

@@ -205,7 +205,6 @@ class Edit extends React.Component {
         ...widget,
         w: widget.width,
         h: widget.height,
-        minW: 2,
         i: widget.id.toString(),
         static: false,
         moved: false
