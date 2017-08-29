@@ -25,6 +25,9 @@ export default {
     publicPath: '/',
     filename: 'bundle.js'
   },
+  externals: {
+    'plotly': 'Plotly'
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
