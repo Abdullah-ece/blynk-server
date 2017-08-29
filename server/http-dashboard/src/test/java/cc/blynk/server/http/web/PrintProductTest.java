@@ -1,6 +1,7 @@
 package cc.blynk.server.http.web;
 
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.*;
 import cc.blynk.server.core.model.web.product.events.*;
@@ -48,7 +49,7 @@ public class PrintProductTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
         };
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");

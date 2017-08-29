@@ -28,11 +28,6 @@ public abstract class WebWidget extends Widget {
     }
 
     @Override
-    public String getValue(byte pin, PinType type) {
-        return dataStream.value;
-    }
-
-    @Override
     public String getJsonValue() {
         if (dataStream.value == null) {
             return "[]";

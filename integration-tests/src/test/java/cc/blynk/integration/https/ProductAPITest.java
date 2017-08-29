@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -166,7 +167,7 @@ public class ProductAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -220,7 +221,7 @@ public class ProductAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0)
+                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
         };
 
         WebLabel webLabel = new WebLabel();
