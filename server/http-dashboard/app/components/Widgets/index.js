@@ -91,7 +91,7 @@ class Widgets extends React.Component {
         onLayoutChange={this.onLayoutChange}
         onBreakpointChange={this.onBreakpointChange}
 
-        autoSize={false}
+        autoSize={true}
         measureBeforeMount={true}
       >
         {this.generateDOM()}
