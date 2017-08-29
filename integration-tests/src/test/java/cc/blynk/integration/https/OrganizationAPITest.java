@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -11,7 +12,6 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
@@ -530,8 +530,8 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date())
         };
 
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -630,8 +630,8 @@ public class OrganizationAPITest extends APIBaseTest {
         product.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -653,8 +653,8 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
-        product2.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product2.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
@@ -759,8 +759,8 @@ public class OrganizationAPITest extends APIBaseTest {
         product.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -782,8 +782,8 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
-        product2.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product2.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");

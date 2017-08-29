@@ -1,9 +1,13 @@
 package cc.blynk.server.http.web;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.*;
+import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.MetadataType;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.*;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.JsonParser;
@@ -48,8 +52,8 @@ public class PrintProductTest {
                 new TimeMetaField(9,"Some Time", Role.ADMIN, false, new Date())
         };
 
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         EventReceiver eventReceiver = new EventReceiver(1, MetadataType.Contact, "Farm Owner");

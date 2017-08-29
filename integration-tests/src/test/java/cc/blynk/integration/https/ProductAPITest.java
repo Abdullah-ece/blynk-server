@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
@@ -8,7 +9,6 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
-import cc.blynk.server.core.model.web.product.WebDataStream;
 import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
@@ -166,8 +166,8 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date())
         };
 
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -220,8 +220,8 @@ public class ProductAPITest extends APIBaseTest {
                 new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date())
         };
 
-        product.dataStreams = new WebDataStream[] {
-                new WebDataStream(1, "Temperature", MeasurementUnit.Celsius, 0, 50, (byte) 0, PinType.VIRTUAL)
+        product.dataStreams = new DataStream[] {
+                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         WebLabel webLabel = new WebLabel();

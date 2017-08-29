@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.product.events.Event;
@@ -41,7 +42,7 @@ public class Product {
 
     public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
 
-    public volatile WebDataStream[] dataStreams = EMPTY_WEB_DATA_STREAMS;
+    public volatile DataStream[] dataStreams = EMPTY_DATA_STREAMS;
 
     public volatile Event[] events = EMPTY_EVENTS;
 
@@ -64,7 +65,7 @@ public class Product {
         this.description = product.description;
         this.logoUrl = product.logoUrl;
         this.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
-        this.dataStreams = ArrayUtil.copy(product.dataStreams, WebDataStream.class);
+        this.dataStreams = ArrayUtil.copy(product.dataStreams, DataStream.class);
         this.events = ArrayUtil.copy(product.events, Event.class);
         this.webDashboard = webDashboard.copy();
     }

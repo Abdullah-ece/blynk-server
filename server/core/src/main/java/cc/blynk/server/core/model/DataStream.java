@@ -1,6 +1,8 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.widgets.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +13,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.07.15.
  */
-public class DataStream {
+public class DataStream implements CopyObject<DataStream> {
 
     public static final int NO_PIN = -1;
 
@@ -31,6 +33,8 @@ public class DataStream {
 
     public final String label;
 
+    public final MeasurementUnit units;
+
     @JsonCreator
     public DataStream(@JsonProperty("pin") byte pin,
                       @JsonProperty("pwmMode") boolean pwmMode,
@@ -39,7 +43,8 @@ public class DataStream {
                       @JsonProperty("value") String value,
                       @JsonProperty("min") int min,
                       @JsonProperty("max") int max,
-                      @JsonProperty("label") String label) {
+                      @JsonProperty("label") String label,
+                      @JsonProperty("units") MeasurementUnit units) {
         this.pin = pin;
         this.pwmMode = pwmMode;
         this.rangeMappingOn = rangeMappingOn;
@@ -48,10 +53,11 @@ public class DataStream {
         this.min = min;
         this.max = max;
         this.label = label;
+        this.units = units;
     }
 
     public DataStream(byte pin, PinType pinType) {
-        this(pin, false, false, pinType, null, 0, 255, null);
+        this(pin, false, false, pinType, null, 0, 255, null, null);
     }
 
     public static String makeReadingHardwareBody(char pinType, byte pin) {
@@ -90,21 +96,28 @@ public class DataStream {
         return value != null && !isNotValid();
     }
 
+    @Override
+    public DataStream copy() {
+        return null;
+    }
+
     //HAVE IN MIND : value is not compared as it is updated in realtime.
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DataStream)) return false;
 
-        DataStream pin1 = (DataStream) o;
+        DataStream that = (DataStream) o;
 
-        if (pin != pin1.pin) return false;
-        if (pwmMode != pin1.pwmMode) return false;
-        if (rangeMappingOn != pin1.rangeMappingOn) return false;
-        if (min != pin1.min) return false;
-        if (max != pin1.max) return false;
-        if (pinType != pin1.pinType) return false;
-        return label != null ? label.equals(pin1.label) : pin1.label == null;
+        if (pin != that.pin) return false;
+        if (pwmMode != that.pwmMode) return false;
+        if (rangeMappingOn != that.rangeMappingOn) return false;
+        if (min != that.min) return false;
+        if (max != that.max) return false;
+        if (pinType != that.pinType) return false;
+        if (label != null ? !label.equals(that.label) : that.label != null) return false;
+        return units == that.units;
     }
 
     @Override
@@ -116,6 +129,7 @@ public class DataStream {
         result = 31 * result + min;
         result = 31 * result + max;
         result = 31 * result + (label != null ? label.hashCode() : 0);
+        result = 31 * result + (units != null ? units.hashCode() : 0);
         return result;
     }
 }

@@ -56,9 +56,9 @@ public class DataStreamValuesUpdateCorrectTest {
 
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[3];
-        rgb.dataStreams[0] = new DataStream((byte)0, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[1] = new DataStream((byte)1, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[2] = new DataStream((byte)2, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[0] = new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        rgb.dataStreams[1] = new DataStream((byte) 1, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        rgb.dataStreams[2] = new DataStream((byte) 2, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
 
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
@@ -73,9 +73,9 @@ public class DataStreamValuesUpdateCorrectTest {
 
         rgb = new RGB();
         rgb.dataStreams = new DataStream[3];
-        rgb.dataStreams[0] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[1] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[2] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[0] = new DataStream((byte) 4, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        rgb.dataStreams[1] = new DataStream((byte) 4, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        rgb.dataStreams[2] = new DataStream((byte) 4, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
