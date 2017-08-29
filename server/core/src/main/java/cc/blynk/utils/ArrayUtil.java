@@ -37,7 +37,7 @@ public class ArrayUtil {
     public static final Event[] EMPTY_EVENTS = {};
     public static final WebDataStream[] EMPTY_WEB_DATA_STREAMS = {};
     public static final EventReceiver[] EMPTY_RECEIVERS = {};
-    public static final GraphDataStream[] EMPTY_DATA_STREAMS = {};
+    public static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
