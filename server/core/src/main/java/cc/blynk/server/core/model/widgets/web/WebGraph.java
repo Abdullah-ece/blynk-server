@@ -8,6 +8,10 @@ package cc.blynk.server.core.model.widgets.web;
 
 public class WebGraph extends WebWidget {
 
+    public boolean isShowTitleEnabled;
+
+    public boolean isShowLegendEnabled;
+
     @Override
     public String getModeType() {
         return "in";

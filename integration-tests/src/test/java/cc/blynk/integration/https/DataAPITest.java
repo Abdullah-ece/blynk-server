@@ -15,7 +15,10 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
+import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.hardware.HardwareServer;
@@ -183,8 +186,8 @@ public class DataAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        webLabel.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, PinType.VIRTUAL)
+        webLabel.sources = new WebSource[] {
+                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL))
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

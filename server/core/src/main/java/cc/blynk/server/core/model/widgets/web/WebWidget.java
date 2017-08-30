@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.web;
 
-import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 
@@ -13,13 +12,13 @@ import java.util.Arrays;
  */
 public abstract class WebWidget extends Widget {
 
-    public DataStream[] dataStreams;
+    public WebSource[] sources;
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
-        for (DataStream dataStream : dataStreams) {
-            if (dataStream.isSame(pin, type)) {
-                dataStream.value = value;
+        for (WebSource source : sources) {
+            if (source.dataStream.isSame(pin, type)) {
+                source.dataStream.value = value;
                 return true;
             }
         }
@@ -46,7 +45,6 @@ public abstract class WebWidget extends Widget {
     }
 
     //HAVE IN MIND : value is not compared as it is updated in realtime.
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,13 +54,13 @@ public abstract class WebWidget extends Widget {
         WebWidget webWidget = (WebWidget) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(dataStreams, webWidget.dataStreams);
+        return Arrays.equals(sources, webWidget.sources);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + Arrays.hashCode(dataStreams);
+        result = 31 * result + Arrays.hashCode(sources);
         return result;
     }
 }

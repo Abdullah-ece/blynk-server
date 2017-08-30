@@ -559,13 +559,19 @@ HOST: https://knight-qa.blynk.cc/
                   "width" : 20,
                   "height" : 10,
                   "label" : "123",
-                  "dataStreams" : [ {
-                    "pin" : 1,
-                    "pwmMode" : false,
-                    "rangeMappingOn" : false,
-                    "pinType" : "VIRTUAL",
-                    "min" : 0,
-                    "max" : 255
+                  "sources" : [ {
+                    "sourceType" : "RAW_DATA",
+                    "color" : 0,
+                    "graphType" : "LINE",
+                    "connectMissingPointsEnabled" : false,
+                    "dataStream" : {
+                      "pin" : 1,
+                      "pwmMode" : false,
+                      "rangeMappingOn" : false,
+                      "pinType" : "VIRTUAL",
+                      "min" : 0,
+                      "max" : 255
+                    }
                   } ]
                 }, {
                   "type" : "WEB_GRAPH",
@@ -576,21 +582,35 @@ HOST: https://knight-qa.blynk.cc/
                   "width" : 20,
                   "height" : 10,
                   "label" : "graph",
-                  "dataStreams" : [ {
-                    "pin" : 1,
-                    "pwmMode" : false,
-                    "rangeMappingOn" : false,
-                    "pinType" : "VIRTUAL",
-                    "min" : 0,
-                    "max" : 255
+                  "sources" : [ {
+                    "sourceType" : "RAW_DATA",
+                    "color" : 0,
+                    "graphType" : "LINE",
+                    "connectMissingPointsEnabled" : false,
+                    "dataStream" : {
+                      "pin" : 1,
+                      "pwmMode" : false,
+                      "rangeMappingOn" : false,
+                      "pinType" : "VIRTUAL",
+                      "min" : 0,
+                      "max" : 255
+                    }
                   }, {
-                    "pin" : 2,
-                    "pwmMode" : false,
-                    "rangeMappingOn" : false,
-                    "pinType" : "VIRTUAL",
-                    "min" : 0,
-                    "max" : 255
-                  } ]
+                    "sourceType" : "RAW_DATA",
+                    "color" : 0,
+                    "graphType" : "LINE",
+                    "connectMissingPointsEnabled" : false,
+                    "dataStream" : {
+                      "pin" : 2,
+                      "pwmMode" : false,
+                      "rangeMappingOn" : false,
+                      "pinType" : "VIRTUAL",
+                      "min" : 0,
+                      "max" : 255
+                    }
+                  } ],
+                  "isShowTitleEnabled" : false,
+                  "isShowLegendEnabled" : false
                 } ]
               },
               "deviceCount" : 0,

@@ -16,8 +16,11 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.model.widgets.web.WebGraph;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
+import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
@@ -135,9 +138,9 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
             WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
             assertEquals("123", webLabel.label);
-            assertEquals(1, webLabel.dataStreams[0].pin);
-            assertEquals(PinType.VIRTUAL, webLabel.dataStreams[0].pinType);
-            assertEquals(null, webLabel.dataStreams[0].value);
+            assertEquals(1, webLabel.sources[0].dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
+            assertEquals(null, webLabel.sources[0].dataStream.value);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
@@ -161,9 +164,9 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertTrue(device.webDashboard.widgets[0] instanceof WebLabel);
             WebLabel webLabel = (WebLabel) device.webDashboard.widgets[0];
             assertEquals("123", webLabel.label);
-            assertEquals(1, webLabel.dataStreams[0].pin);
-            assertEquals(PinType.VIRTUAL, webLabel.dataStreams[0].pinType);
-            assertEquals("121", webLabel.dataStreams[0].value);
+            assertEquals(1, webLabel.sources[0].dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
+            assertEquals("121", webLabel.sources[0].dataStream.value);
 
         }
     }
@@ -352,8 +355,8 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.y = 2;
         webLabel.height = 10;
         webLabel.width = 20;
-        webLabel.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, PinType.VIRTUAL)
+        webLabel.sources = new WebSource[] {
+                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL))
         };
 
         WebGraph webGraph = new WebGraph();
@@ -362,9 +365,9 @@ public class DashboardModelAPITest extends APIBaseTest {
         webGraph.y = 4;
         webGraph.height = 10;
         webGraph.width = 20;
-        webGraph.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, PinType.VIRTUAL),
-                new DataStream((byte) 2, PinType.VIRTUAL)
+        webGraph.sources = new WebSource[] {
+                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL)),
+                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 2, PinType.VIRTUAL))
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {
