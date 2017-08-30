@@ -3,8 +3,14 @@ import {
   Modal,
   SimpleContentEditable
 } from 'components';
+import {MetadataSelect as Select} from 'components/Form';
+import {Item, ItemsGroup}      from "components/UI";
 import {Row, Col, Button} from 'antd';
+import {reduxForm} from 'redux-form';
 
+@reduxForm({
+  form: 'settings'
+})
 class LinearWidgetSettings extends React.Component {
 
   constructor(props) {
@@ -39,6 +45,28 @@ class LinearWidgetSettings extends React.Component {
   }
 
   render() {
+
+    const types = [
+      {
+        key: 'Raw Data',
+        value: 'Raw Data',
+      },
+      {
+        key: 'AVG Value',
+        value: 'AVG Value',
+      }
+    ];
+    const sources = [
+      {
+        key: 'DataStream 1',
+        value: 'DataStream 1',
+      },
+      {
+        key: 'DataStream 2',
+        value: 'DataStream 2',
+      },
+    ];
+
     return (
       <Modal width={'auto'}
              wrapClassName="modal-window-widget-settings"
@@ -69,6 +97,20 @@ class LinearWidgetSettings extends React.Component {
                     <Button size="small" icon="copy"/>
                     <Button size="small" icon="bars"/>
                   </div>
+                </div>
+                <div className="modal-window-widget-settings-config-column-sources-source-type-select">
+                  <ItemsGroup>
+                    <Item label="Source" offset="medium">
+                      <Select name="type" displayError={false} values={types} placeholder="Source"
+                              validate={[]}
+                              style={{width: '100px'}}/>
+                    </Item>
+                    <Item label=" " offset="medium">
+                      <Select name="source" displayError={false} values={sources} placeholder="Product"
+                              validate={[]}
+                              style={{width: '100%'}}/>
+                    </Item>
+                  </ItemsGroup>
                 </div>
               </div>
             </div>
