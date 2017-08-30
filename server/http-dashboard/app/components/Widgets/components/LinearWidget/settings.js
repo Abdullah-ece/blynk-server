@@ -74,7 +74,7 @@ class LinearWidgetSettings extends React.Component {
              closable={false}
              okText={'Save'}
              cancelText={'Close'}>
-        <Row>
+        <Row type="flex">
           <Col span={12} className="modal-window-widget-settings-config-column">
             <div className="modal-window-widget-settings-config-column-header">
               <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
