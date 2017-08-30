@@ -52,6 +52,13 @@ class Widget extends React.Component {
 
   }
 
+  getWidgetSettingsByType(type, widget) {
+    if (type === WIDGET_TYPES.LINEAR)
+      return (
+        <LinearWidget.Settings data={widget}/>
+      );
+  }
+
   handleWidgetDelete() {
     this.props.onWidgetDelete(this.props.id);
   }
@@ -76,7 +83,7 @@ class Widget extends React.Component {
            style={this.props.style}
       >
         <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{ this.props.data.title }</Dotdotdot>
+          <Dotdotdot clamp={1}>{this.props.data.title}</Dotdotdot>
           {this.props.editable && (
             <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
                  onMouseUp={this.preventDragNDrop}>
@@ -94,8 +101,9 @@ class Widget extends React.Component {
             </div>
           )}
         </div>
-        { this.getWidgetByType(this.props.data.type, this.props.data) }
-        { this.props.children }
+        {this.getWidgetByType(this.props.data.type, this.props.data)}
+        {this.getWidgetSettingsByType(this.props.data.type, this.props.data)}
+        {this.props.children}
       </div>
     );
   }

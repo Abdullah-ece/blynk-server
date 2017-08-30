@@ -11,3 +11,4 @@ export BackTop          from './BackTop';
 export MainList         from './MainList';
 export MainLayout       from './MainLayout';
 export Plotly           from './Plotly';
+export SimpleContentEditable from './SimpleContentEditable';

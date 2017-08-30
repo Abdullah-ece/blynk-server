@@ -4,6 +4,7 @@ import React from 'react';
 // } from 'components';
 // import Widget from '../Widget';
 import PropTypes from 'prop-types';
+import LinearWidgetSettings from './settings';
 import './styles.less';
 
 class LinearWidget extends React.Component {
@@ -31,5 +32,7 @@ class LinearWidget extends React.Component {
   }
 
 }
+
+LinearWidget.Settings = LinearWidgetSettings;
 
 export default LinearWidget;

@@ -59,3 +59,49 @@
     background-repeat: no-repeat;
   }
 }
+
+.modal-window-widget-settings {
+  .ant-modal {
+    max-width: 1032px !important;
+    width: 90% !important;
+  }
+  .ant-modal-body {
+    padding: 0 !important;
+  }
+}
+
+.modal-window-widget-settings-config-column,
+.modal-window-widget-settings-preview-column {
+  padding: 32px;
+}
+
+.modal-window-widget-settings-preview-column {
+  background-color: #fafafa;
+}
+
+.modal-window-widget-settings-config-widget-name {
+  .font-h2;
+  font-size: 24px;
+  color: #212227;
+  font-weight: 300;
+  display: inline-block;
+
+  button {
+    opacity: 0;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    button {
+      opacity: 1;
+    }
+  }
+
+  span {
+    border-bottom: 1px dashed @color-dark-grey-25;
+  }
+}
+
+.modal-window-widget-settings-config-add-source {
+  text-align: right;
+}
