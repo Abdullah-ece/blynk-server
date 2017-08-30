@@ -61,7 +61,7 @@ public abstract class APIBaseTest extends BaseTest {
         this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
-        this.httpsAdminServer = new HttpsAPIServer(holder, false).start();
+        this.httpsAdminServer = new HttpsAPIServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, httpsPort);
 

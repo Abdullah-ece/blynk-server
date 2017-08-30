@@ -60,7 +60,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareServer(holder).start();
         this.appServer = new AppServer(holder).start();
-        this.httpServer = new HttpAPIServer(holder, false).start();
+        this.httpServer = new HttpAPIServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case

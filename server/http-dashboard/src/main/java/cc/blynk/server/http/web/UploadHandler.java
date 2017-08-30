@@ -16,7 +16,6 @@
 package cc.blynk.server.http.web;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -126,12 +125,12 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                         String finalName = tmpFile.getFileName().toString() + extension;
 
                         //this is just to make it work on team city.
-                        Path staticPath = Paths.get(ServerProperties.staticFilesFolder);
+                        Path staticPath = Paths.get("");
                         if (!Files.exists(staticPath)) {
                             Files.createDirectories(staticPath);
                         }
 
-                        Files.move(tmpFile, Paths.get(ServerProperties.staticFilesFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
+                        Files.move(tmpFile, Paths.get("", finalName), StandardCopyOption.REPLACE_EXISTING);
                         pathTo =  "/static/" + finalName;
                     }
                     data.release();
