@@ -5,7 +5,7 @@ import {
 } from 'components';
 import {MetadataSelect as Select} from 'components/Form';
 import {Item, ItemsGroup}      from "components/UI";
-import {Row, Col, Button} from 'antd';
+import {Row, Col, Button, Radio, Icon} from 'antd';
 import {reduxForm} from 'redux-form';
 
 @reduxForm({
@@ -111,6 +111,23 @@ class LinearWidgetSettings extends React.Component {
                               style={{width: '100%'}}/>
                     </Item>
                   </ItemsGroup>
+                </div>
+                <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
+                  <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
+                    <Item label="Chart Type: LINE" offset="medium">
+                      <Radio.Group onChange={() => {}} defaultValue="a">
+                        <Radio.Button value="a">
+                          <Icon type="area-chart" />
+                        </Radio.Button>
+                        <Radio.Button value="c">
+                          <Icon type="dot-chart" />
+                        </Radio.Button>
+                        <Radio.Button value="d">
+                          <Icon type="bar-chart" />
+                        </Radio.Button>
+                      </Radio.Group>
+                    </Item>
+                  </div>
                 </div>
               </div>
             </div>
