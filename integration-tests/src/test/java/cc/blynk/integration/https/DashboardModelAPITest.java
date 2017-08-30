@@ -356,7 +356,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.height = 10;
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
-                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL))
+                new WebSource("some Label", SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL))
         };
 
         WebGraph webGraph = new WebGraph();
@@ -366,8 +366,8 @@ public class DashboardModelAPITest extends APIBaseTest {
         webGraph.height = 10;
         webGraph.width = 20;
         webGraph.sources = new WebSource[] {
-                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL)),
-                new WebSource(SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 2, PinType.VIRTUAL))
+                new WebSource("some Label", SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL)),
+                new WebSource("some Label", SourceType.RAW_DATA, 0, GraphType.LINE, false, new DataStream((byte) 2, PinType.VIRTUAL))
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

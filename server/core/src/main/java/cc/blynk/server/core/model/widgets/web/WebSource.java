@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class WebSource {
 
+    public final String label;
+
     public final SourceType sourceType;
 
     public final int color;
@@ -23,11 +25,13 @@ public class WebSource {
     public final DataStream dataStream;
 
     @JsonCreator
-    public WebSource(@JsonProperty("sourceType") SourceType sourceType,
+    public WebSource(@JsonProperty("label") String label,
+                     @JsonProperty("sourceType") SourceType sourceType,
                      @JsonProperty("color") int color,
                      @JsonProperty("graphType") GraphType graphType,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
                      @JsonProperty("dataStream") DataStream dataStream) {
+        this.label = label;
         this.sourceType = sourceType;
         this.color = color;
         this.graphType = graphType;
@@ -40,18 +44,20 @@ public class WebSource {
         if (this == o) return true;
         if (!(o instanceof WebSource)) return false;
 
-        WebSource that = (WebSource) o;
+        WebSource webSource = (WebSource) o;
 
-        if (color != that.color) return false;
-        if (connectMissingPointsEnabled != that.connectMissingPointsEnabled) return false;
-        if (sourceType != that.sourceType) return false;
-        if (graphType != that.graphType) return false;
-        return dataStream != null ? dataStream.equals(that.dataStream) : that.dataStream == null;
+        if (color != webSource.color) return false;
+        if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) return false;
+        if (label != null ? !label.equals(webSource.label) : webSource.label != null) return false;
+        if (sourceType != webSource.sourceType) return false;
+        if (graphType != webSource.graphType) return false;
+        return dataStream != null ? dataStream.equals(webSource.dataStream) : webSource.dataStream == null;
     }
 
     @Override
     public int hashCode() {
-        int result = sourceType != null ? sourceType.hashCode() : 0;
+        int result = label != null ? label.hashCode() : 0;
+        result = 31 * result + (sourceType != null ? sourceType.hashCode() : 0);
         result = 31 * result + color;
         result = 31 * result + (graphType != null ? graphType.hashCode() : 0);
         result = 31 * result + (connectMissingPointsEnabled ? 1 : 0);
