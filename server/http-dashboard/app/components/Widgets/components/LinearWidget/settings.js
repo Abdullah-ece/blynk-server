@@ -40,16 +40,15 @@ class LinearWidgetSettings extends React.Component {
              cancelText={'Close'}>
         <Row>
           <Col span={12} className="modal-window-widget-settings-config-column">
-            <Row>
-              <Col span={12}>
-                <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
-                                 value={this.state.value}
-                                 onChange={this.onChange}/>
-              </Col>
-              <Col span={12} className="modal-window-widget-settings-config-add-source">
+            <div className="modal-window-widget-settings-config-column-header">
+              <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
+                                     value={this.state.value}
+                                     onChange={this.onChange}/>
+
+              <div className="modal-window-widget-settings-config-add-source">
                 <Button type="dashed" onClick={this.handleClick}>Add source</Button>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">
             Awesome
