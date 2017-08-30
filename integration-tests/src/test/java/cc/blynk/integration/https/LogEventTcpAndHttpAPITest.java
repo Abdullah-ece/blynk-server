@@ -349,9 +349,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(0, timeLineResponse.totalWarning);
             assertEquals(0, timeLineResponse.totalResolved);
             LogEvent[] logEvents = timeLineResponse.logEvents;
-            assertNotNull(timeLineResponse.logEvents);
-            assertNotNull(logEvents);
-            assertEquals(0, logEvents.length);
+            assertNull(logEvents);
         }
     }
 
@@ -458,8 +456,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(0, timeLineResponse.totalWarning);
             assertEquals(1, timeLineResponse.totalResolved);
             LogEvent[] logEvents = timeLineResponse.logEvents;
-            assertNotNull(timeLineResponse.logEvents);
-            assertEquals(0, logEvents.length);
+            assertNull(logEvents);
         }
     }
 

@@ -1,9 +1,11 @@
 package cc.blynk.server.http.web;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -32,6 +34,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ProductHandler productHandler;
     private final OrganizationHandler organizationHandler;
 
+    private final ServerProperties props;
+
     public HttpAndWebSocketUnificatorHandler(Holder holder, String rootPath) {
         this.rootPath = rootPath;
 
@@ -45,6 +49,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.dataHandler = new DataHandler(holder, rootPath);
         this.productHandler = new ProductHandler(holder, rootPath);
         this.organizationHandler = new OrganizationHandler(holder, rootPath);
+
+        this.props = holder.props;
     }
 
     @Override
@@ -58,7 +64,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         .addLast(externalAPILogic)
         .addLast(webLoginHandler)
         .addLast(authCookieHandler)
-        .addLast(new UploadHandler(rootPath))
+        .addLast(new UploadHandler(props.jarPath, "/api/upload", "/" + ServerProperties.STATIC_FILES_FOLDER))
         .addLast(accountHandler)
         .addLast(devicesHandler)
         .addLast(dataHandler)
