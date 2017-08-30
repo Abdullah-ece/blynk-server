@@ -12,6 +12,7 @@ class ContentEditable extends React.Component {
   };
 
   componentDidMount() {
+    ReactDOM.findDOMNode(this).innerHTML = this.props.html;
     ReactDOM.findDOMNode(this.refs.editable).focus();
   }
 
