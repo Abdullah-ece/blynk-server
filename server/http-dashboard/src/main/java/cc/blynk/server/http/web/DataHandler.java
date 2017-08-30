@@ -77,20 +77,21 @@ public class DataHandler extends BaseHttpHandler {
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @ContextUser User user,
                            @PathParam("deviceId") int deviceId,
-                           @QueryParam("dataStream") String dataStream,
+                           @QueryParam("dataStream") String[] dataStreams,
                            @QueryParam("offset") int offset,
                            @QueryParam("limit") int limit) {
 
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
-        PinType pinType = PinType.getPinType(dataStream.charAt(0));
-        byte pin = ParseUtil.parseByte(dataStream.substring(1));
-
         blockingIOProcessor.executeDB(() -> {
-            List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, offset, limit);
             List<AbstractMap.SimpleEntry<String, Data>> finalModel = new ArrayList<>();
-            finalModel.add(new AbstractMap.SimpleEntry<>("V1", new Data(data)));
+            for (String dataStream : dataStreams) {
+                PinType pinType = PinType.getPinType(dataStream.charAt(0));
+                byte pin = ParseUtil.parseByte(dataStream.substring(1));
+                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, offset, limit);
+                finalModel.add(new AbstractMap.SimpleEntry<>(dataStream, new Data(data)));
+            }
             ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
         });
 

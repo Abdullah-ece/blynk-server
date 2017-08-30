@@ -124,6 +124,64 @@ public class DataAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testMultiPinRequest() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
+        long now = System.currentTimeMillis();
+        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 1), now, 123);
+        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 2), now, 124);
+
+        //invoking directly dao to avoid separate thread execution
+        holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
+
+        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&dataStream=V2&offset=0&limit=1000");
+        try (CloseableHttpResponse response = httpclient.execute(getData)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            //expected string is
+            //[{"V1":{"data":[{"1504102495921":123.0}]}},{"V2":{"data":[{"1504102495921":124.0}]}}]
+            System.out.println(responseString);
+
+            List l = JsonParser.mapper.readValue(responseString, List.class);
+            assertNotNull(l);
+            assertEquals(2, l.size());
+            LinkedHashMap<String, List> map = (LinkedHashMap) l.get(0);
+            LinkedHashMap dataField = (LinkedHashMap) map.get("V1");
+            assertNotNull(dataField);
+            assertEquals(1, dataField.size());
+
+            List data = (List) dataField.get("data");
+            assertEquals(1, data.size());
+            LinkedHashMap point0 = (LinkedHashMap) data.get(0);
+            assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
+
+            map = (LinkedHashMap) l.get(1);
+            dataField = (LinkedHashMap) map.get("V2");
+            assertNotNull(dataField);
+            assertEquals(1, dataField.size());
+
+            data = (List) dataField.get("data");
+            assertEquals(1, data.size());
+            point0 = (LinkedHashMap) data.get(0);
+            assertEquals(124, (Double) point0.get(String.valueOf(now)), 0.0001);
+
+
+        }
+    }
+
+    @Test
     public void testInsertAPIWorks() throws Exception {
         login(regularUser.email, regularUser.pass);
 
