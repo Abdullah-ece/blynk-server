@@ -16,7 +16,7 @@ public class WebSource {
 
     public final SourceType sourceType;
 
-    public final int color;
+    public final String color;
 
     public final GraphType graphType;
 
@@ -27,7 +27,7 @@ public class WebSource {
     @JsonCreator
     public WebSource(@JsonProperty("label") String label,
                      @JsonProperty("sourceType") SourceType sourceType,
-                     @JsonProperty("color") int color,
+                     @JsonProperty("color") String color,
                      @JsonProperty("graphType") GraphType graphType,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
                      @JsonProperty("dataStream") DataStream dataStream) {
@@ -46,10 +46,10 @@ public class WebSource {
 
         WebSource webSource = (WebSource) o;
 
-        if (color != webSource.color) return false;
         if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) return false;
         if (label != null ? !label.equals(webSource.label) : webSource.label != null) return false;
         if (sourceType != webSource.sourceType) return false;
+        if (color != null ? !color.equals(webSource.color) : webSource.color != null) return false;
         if (graphType != webSource.graphType) return false;
         return dataStream != null ? dataStream.equals(webSource.dataStream) : webSource.dataStream == null;
     }
@@ -58,7 +58,7 @@ public class WebSource {
     public int hashCode() {
         int result = label != null ? label.hashCode() : 0;
         result = 31 * result + (sourceType != null ? sourceType.hashCode() : 0);
-        result = 31 * result + color;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
         result = 31 * result + (graphType != null ? graphType.hashCode() : 0);
         result = 31 * result + (connectMissingPointsEnabled ? 1 : 0);
         result = 31 * result + (dataStream != null ? dataStream.hashCode() : 0);
