@@ -41,14 +41,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 24 * 60 * 60;
 
-    private static final String[] possibleLocalPaths =  new String[] {
-            "./server/http-dashboard/target/classes",
-            "./server/http-api/target/classes",
-            "../server/http-dashboard/target/classes",
-            "../server/http-core/target/classes",
-            "../server/core/target",
-            "/tmp/blynk",
-    };
     /**
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
      */
@@ -56,10 +48,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     private final StaticFile[] staticPaths;
     private final String jarPath;
 
-    public StaticFileHandler(boolean isUnpacked, StaticFile... staticPaths) {
+    public StaticFileHandler(ServerProperties props, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
-        this.isUnpacked = isUnpacked;
-        this.jarPath = ServerProperties.jarPath;
+        this.isUnpacked = props.isUnpacked;
+        this.jarPath = props.jarPath;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -231,6 +223,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
         setDateAndCacheHeaders(response, file);
 
+        //todo setup caching for files.
+        setDateAndCacheHeaders(response, file);
         if (HttpUtil.isKeepAlive(request)) {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }

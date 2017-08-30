@@ -199,7 +199,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.hardwareClient.stop().awaitUninterruptibly();
+        clientPair.hardwareClient.stop();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 

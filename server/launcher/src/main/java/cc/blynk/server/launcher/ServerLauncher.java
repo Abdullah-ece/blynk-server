@@ -20,10 +20,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.HttpsAPIServer;
-import cc.blynk.utils.JarUtil;
-import cc.blynk.utils.LoggerUtil;
-import cc.blynk.utils.SHA256Util;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.*;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -75,29 +72,27 @@ public class ServerLauncher {
         System.setProperty("terminal.strings.pool.size", serverProperties.getProperty("terminal.strings.pool.size", "25"));
         System.setProperty("initial.energy", serverProperties.getProperty("initial.energy", "2000"));
 
-        boolean isUnpacked = JarUtil.unpackStaticFiles(ServerProperties.jarPath, "static/");
-
-        ServerProperties mailProperties = new MailProperties(cmdProperties);
-        ServerProperties smsProperties = new SmsProperties(cmdProperties);
-        ServerProperties gcmProperties = new GCMProperties(cmdProperties);
+        BaseProperties mailProperties = new MailProperties(cmdProperties);
+        BaseProperties smsProperties = new SmsProperties(cmdProperties);
+        BaseProperties gcmProperties = new GCMProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked, restore);
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
     }
 
-    private static void start(ServerProperties serverProperties, ServerProperties mailProperties,
-                              ServerProperties smsProperties, ServerProperties gcmProperties,
-                              boolean isUnpacked, boolean restore) {
-        final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+    private static void start(ServerProperties serverProperties, BaseProperties mailProperties,
+                              BaseProperties smsProperties, BaseProperties gcmProperties,
+                              boolean restore) {
+        Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
 
-        final BaseServer[] servers = new BaseServer[] {
+        BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
-                new HttpAPIServer(holder, isUnpacked),
-                new HttpsAPIServer(holder, isUnpacked),
+                new HttpAPIServer(holder),
+                new HttpsAPIServer(holder),
                 new MQTTHardwareServer(holder)
         };
 

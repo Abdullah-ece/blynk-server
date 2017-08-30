@@ -28,7 +28,7 @@ public class HttpsAPIServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsAPIServer(Holder holder, boolean isUnpacked) {
+    public HttpsAPIServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
         HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
@@ -38,7 +38,7 @@ public class HttpsAPIServer extends BaseServer {
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper("/", "/static/index.html"),
                 new UrlStartWithMapper("/dashboard", "/static/index.html"));
-        StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+        StaticFileHandler staticFileHandler = new StaticFileHandler(holder.props, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
 
         LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);

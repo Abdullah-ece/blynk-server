@@ -7,7 +7,7 @@ package cc.blynk.core.http.handlers;
  */
 public class StaticFileEdsWith extends StaticFile {
 
-    public final String folderPathForStatic;
+    final String folderPathForStatic;
 
     public StaticFileEdsWith(String folderPathForStatic, String path) {
         super(path);

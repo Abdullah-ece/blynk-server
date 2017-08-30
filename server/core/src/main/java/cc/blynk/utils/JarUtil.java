@@ -1,8 +1,5 @@
 package cc.blynk.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -25,33 +22,34 @@ import java.util.zip.ZipInputStream;
  */
 public final class JarUtil {
 
-    private static final Logger log = LogManager.getLogger(JarUtil.class);
-
     /**
      * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.
      *
      * @param staticFolder - path to resources
-     * @throws Exception
      */
-    public static boolean unpackStaticFiles(String jarPath, String staticFolder) throws Exception {
-        ArrayList<String> staticResources = find(staticFolder);
+    static boolean unpackStaticFiles(String jarPath, String staticFolder) {
+        try {
+            ArrayList<String> staticResources = find(staticFolder);
 
-        if (staticResources.size() == 0) {
-            return false;
-        }
-
-        for (String staticFile : staticResources) {
-            try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
-                Path newStaticFile = Paths.get(jarPath, staticFile);
-
-                Files.deleteIfExists(newStaticFile);
-                Files.createDirectories(newStaticFile);
-
-                Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+            if (staticResources.size() == 0) {
+                return false;
             }
-        }
 
-        return true;
+            for (String staticFile : staticResources) {
+                try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
+                    Path newStaticFile = Paths.get(jarPath, staticFile);
+
+                    Files.deleteIfExists(newStaticFile);
+                    Files.createDirectories(newStaticFile);
+
+                    Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error unpacking static files.", e);
+        }
     }
 
     /**
@@ -62,6 +60,9 @@ public final class JarUtil {
      * @throws Exception
      */
     private static ArrayList<String> find(String staticResourcesFolder) throws Exception {
+        if (!staticResourcesFolder.endsWith("/")) {
+            staticResourcesFolder = staticResourcesFolder + "/";
+        }
         CodeSource src = JarUtil.class.getProtectionDomain().getCodeSource();
         ArrayList<String> staticResources = new ArrayList<>();
 
@@ -73,7 +74,8 @@ public final class JarUtil {
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (!ze.isDirectory() && entryName.startsWith(staticResourcesFolder)) {
-                        log.debug("Unpacking : {}", entryName);
+                        //logging is disabled as logger is created later
+                        //log.debug("Unpacking : {}", entryName);
                         staticResources.add(entryName);
                     }
                 }

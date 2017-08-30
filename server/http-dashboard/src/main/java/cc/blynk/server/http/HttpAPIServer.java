@@ -20,10 +20,12 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  */
 public class HttpAPIServer extends BaseServer {
 
+    static final int HTTP_REQUEST_SIZE_MAX = 10 * 1024 * 1024;
+
     public static final String WEBSOCKET_PATH = "/websocket";
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpAPIServer(Holder holder, boolean isUnpacked) {
+    public HttpAPIServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
@@ -32,7 +34,7 @@ public class HttpAPIServer extends BaseServer {
 
         UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"));
-        StaticFileHandler staticFileHandler = new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+        StaticFileHandler staticFileHandler = new StaticFileHandler(holder.props, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));
         NoMatchHandler noMatchHandler = new NoMatchHandler();
 
@@ -42,7 +44,7 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline()
                 .addLast("HttpServerCodec", new HttpServerCodec())
                 .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
+                .addLast("HttpObjectAggregator", new HttpObjectAggregator(HTTP_REQUEST_SIZE_MAX, true))
                 .addLast(letsEncryptHandler)
                 .addLast(new ChunkedWriteHandler())
                 .addLast(favIconUrlRewriter)
