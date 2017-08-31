@@ -88,6 +88,13 @@ class Source extends React.Component {
 
   render() {
 
+    const getNotFoundDataStreamContent = () => {
+
+      if(this.props.dataStreams.length) return 'No Data Streams match your request';
+
+      return 'Add Data Stream before setup chart';
+    };
+
     const getLabelForChartTypeItem = () => {
 
       const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.formValues.get('graphType')));
@@ -124,7 +131,8 @@ class Source extends React.Component {
                       style={{width: '100px'}}/>
             </Item>
             <Item label=" " offset="medium">
-              <Select name="dataStreamId" displayError={false} values={sources} placeholder="Choose Source"
+              <Select notFoundContent={getNotFoundDataStreamContent()}
+                      name="dataStreamId" displayError={false} values={sources} placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>
             </Item>

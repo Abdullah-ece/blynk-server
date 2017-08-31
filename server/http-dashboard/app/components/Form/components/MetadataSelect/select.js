@@ -57,7 +57,7 @@ export default class SelectField extends React.Component {
 
   render() {
 
-    const {dropdownClassName, dropdownStyle, displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}} = this.props;
+    const {notFoundContent, dropdownClassName, dropdownStyle, displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}} = this.props;
 
     let validateStatus = 'success';
     let help = '';
@@ -83,6 +83,7 @@ export default class SelectField extends React.Component {
           style={{width: '100%'}}
           onChange={input.onChange}
           placeholder={placeholder}
+          notFoundContent={notFoundContent || null}
           optionFilterProp="children"
           value={input.value ? String(input.value) : defaultValue ? String(defaultValue) : undefined}
           filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
