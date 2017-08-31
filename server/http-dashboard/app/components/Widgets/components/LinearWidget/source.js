@@ -24,9 +24,7 @@ import {
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
-@reduxForm({
-
-})
+@reduxForm({})
 class Source extends React.Component {
 
   static propTypes = {
@@ -37,6 +35,12 @@ class Source extends React.Component {
 
     changeForm: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.labelComponent = this.labelComponent.bind(this);
+  }
 
   componentWillUpdate(nextProps) {
     if (nextProps.formValues.get('dataStreamId') !== this.props.formValues.get('dataStreamId') && this.props.dataStreams.length) {
@@ -59,6 +63,15 @@ class Source extends React.Component {
 
   }
 
+  labelComponent({input}) {
+    return (
+      <SimpleContentEditable
+        className="modal-window-widget-settings-config-column-sources-source-header-name"
+        value={input.value}
+        onChange={input.onChange}/>
+    );
+  }
+
   chartTypeSelectComponent({input, getIconForChartByType}) {
     return (
       <Radio.Group value={input.value} onChange={input.onChange}>
@@ -75,7 +88,7 @@ class Source extends React.Component {
 
     const getNotFoundDataStreamContent = () => {
 
-      if(this.props.dataStreams.length) return 'No Data Streams match your request';
+      if (this.props.dataStreams.length) return 'No Data Streams match your request';
 
       return 'Add Data Stream before setup chart';
     };
@@ -84,7 +97,7 @@ class Source extends React.Component {
 
       const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.formValues.get('graphType')));
 
-      if(!name) return `Please, select chart type`;
+      if (!name) return `Please, select chart type`;
 
       return `Chart Type: ${name.value}`;
     };
@@ -97,10 +110,8 @@ class Source extends React.Component {
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
         <div className="modal-window-widget-settings-config-column-sources-source-header">
-          <SimpleContentEditable
-            className="modal-window-widget-settings-config-column-sources-source-header-name"
-            value={this.props.formValues.get('label')}
-            onChange={this.onChange2}/>
+          <Field name="label" component={this.labelComponent}/>
+
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
             <Button size="small" icon="delete"/>
             <Button size="small" icon="copy"/>
@@ -126,7 +137,8 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
           <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
             <Item label={getLabelForChartTypeItem()} offset="medium">
-              <Field component={this.chartTypeSelectComponent} name="graphType" getIconForChartByType={this.getIconForChartByType}/>
+              <Field component={this.chartTypeSelectComponent} name="graphType"
+                     getIconForChartByType={this.getIconForChartByType}/>
             </Item>
           </div>
         </div>
