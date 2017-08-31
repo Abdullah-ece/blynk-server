@@ -17,7 +17,7 @@ import _ from 'lodash';
   const selector = formValueSelector(ownProps.form);
   return {
     fields: {
-      name: selector(state, 'name'),
+      label: selector(state, 'label'),
       units: selector(state, 'units'),
       min: selector(state, 'min'),
       max: selector(state, 'max'),
