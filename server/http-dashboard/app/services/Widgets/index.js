@@ -2,14 +2,8 @@ export const WIDGET_TYPES = {
   LINEAR: 'WEB_GRAPH'
 };
 
-export const WIDGETS_PREDEFINED_OPTIONS = {
+export const WIDGETS_CONFIGS = {
   [WIDGET_TYPES.LINEAR]: {
-    type: WIDGET_TYPES.LINEAR,
-    title: 'Line Chart',
-    x: 0,
-    y: 0,
-    w: 3,
-    h: 2,
     minW: 3,
     minH: 2
   }
@@ -78,4 +72,29 @@ export const WIDGETS_SOURCE_TYPES_LIST = [
 
 
 ];
+
+export const WIDGETS_PREDEFINED_OPTIONS = {
+  [WIDGET_TYPES.LINEAR]: {
+    id: 0,
+    type: WIDGET_TYPES.LINEAR,
+    label: 'Chart',
+    x: 0,
+    y: 0,
+    w: 3,
+    h: 2,
+    sources: [
+      {
+        label: 'Source Label',
+        sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+        color: '',
+        graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+        connectMissingPointsEnabled: false,
+        dataStream: {}
+      }
+    ],
+    isShowTitleEnabled: false,
+    isShowLegendEnabled: false,
+    ...WIDGETS_CONFIGS[WIDGET_TYPES.LINEAR],
+  }
+};
 

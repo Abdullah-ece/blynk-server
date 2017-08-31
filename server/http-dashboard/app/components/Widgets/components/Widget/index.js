@@ -39,6 +39,12 @@ class Widget extends React.Component {
     super(props);
 
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+    this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
+    this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
+
+    this.state = {
+      isConfigVisible: false
+    };
   }
 
   getWidgetByType(type, widget) {
@@ -52,10 +58,16 @@ class Widget extends React.Component {
 
   }
 
+  toggleSettingsVisibility() {
+    this.setState({
+      isConfigVisible: !this.state.isConfigVisible
+    });
+  }
+
   getWidgetSettingsByType(type, widget) {
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings data={widget} form="widget-settings"/>
+        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget} form="widget-settings" onClose={this.toggleSettingsVisibility}/>
       );
   }
 
@@ -83,7 +95,7 @@ class Widget extends React.Component {
            style={this.props.style}
       >
         <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{this.props.data.title}</Dotdotdot>
+          <Dotdotdot clamp={1}>{this.props.data.label}</Dotdotdot>
           {this.props.editable && (
             <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
                  onMouseUp={this.preventDragNDrop}>
@@ -94,9 +106,7 @@ class Widget extends React.Component {
                 <Button icon="copy" size="small" disabled={true}/>
               </Tooltip>
 
-              <Tooltip placement="top" title={'This feature is not avail right now'}>
-                <Button icon="setting" size="small" disabled={true}/>
-              </Tooltip>
+              <Button icon="setting" size="small" onClick={this.toggleSettingsVisibility}/>
 
             </div>
           )}

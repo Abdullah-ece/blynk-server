@@ -15,30 +15,14 @@ import PropTypes from 'prop-types';
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {})
 }))
-@reduxForm({
-  initialValues: {
-    "type": "WEB_GRAPH",
-    "id": 0,
-    "x": 3,
-    "y": 4,
-    "color": 0,
-    "width": 20,
-    "height": 10,
-    "label": "graph",
-    "dataStreams": [{
-      "pin": 1,
-      "pwmMode": false,
-      "rangeMappingOn": false,
-      "pinType": "VIRTUAL",
-      "min": 0,
-      "max": 255
-    }]
-  }
-})
+@reduxForm()
 class LinearWidgetSettings extends React.Component {
 
   static propTypes = {
-    formValues: PropTypes.instanceOf(Map)
+    formValues: PropTypes.instanceOf(Map),
+    visible: PropTypes.bool,
+
+    onClose: PropTypes.func,
   };
 
   constructor(props) {
@@ -85,8 +69,9 @@ class LinearWidgetSettings extends React.Component {
     return (
       <Modal width={'auto'}
              wrapClassName="modal-window-widget-settings"
-             visible={true}
+             visible={this.props.visible}
              closable={false}
+             onCancel={this.props.onClose}
              okText={'Save'}
              cancelText={'Close'}>
         <Row type="flex">
@@ -95,12 +80,16 @@ class LinearWidgetSettings extends React.Component {
               <Field name="label" component={this.labelNameComponent}/>
 
               {/*<div className="modal-window-widget-settings-config-add-source">*/}
-                {/*<Button type="dashed" onClick={this.handleClick}>Add source</Button>*/}
+              {/*<Button type="dashed" onClick={this.handleClick}>Add source</Button>*/}
               {/*</div>*/}
 
             </div>
             <div className="modal-window-widget-settings-config-column-sources">
-              <Source form="source1"/>
+
+              {this.props.formValues.has('sources') && this.props.formValues.get('sources').map((source, key) => (
+                <Source form={`source${key}`} initialValues={source.toJS()} key={key}/>
+              ))}
+
             </div>
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">

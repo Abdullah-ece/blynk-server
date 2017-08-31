@@ -25,22 +25,7 @@ import {
   changeForm: bindActionCreators(change, dispatch)
 }))
 @reduxForm({
-  initialValues: {
-    "label": "Some Label",
-    "sourceType": "RAW_DATA",
-    "color": 0,
-    "graphType": "LINE", //LINE, FILLED_LINE, BAR, BINARY
-    "connectMissingPointsEnabled": false,
-    "dataStreamId": null,
-    "dataStream": {
-      "pin": 1,
-      "pwmMode": false,
-      "rangeMappingOn": false,
-      "pinType": "VIRTUAL",
-      "min": 0,
-      "max": 255
-    }
-  }
+
 })
 class Source extends React.Component {
 
