@@ -43,7 +43,7 @@ class Source extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (nextProps.source.get('dataStreamId') !== this.props.source.get('dataStreamId') && this.props.dataStreams.length) {
+    if (Number(nextProps.source.get('dataStreamId')) && Number(nextProps.source.get('dataStreamId')) !== Number(this.props.source.get('dataStreamId')) && nextProps.dataStreams.size) {
       const stream = this.props.dataStreams.find(
         stream => parseInt(stream.get('id')) === parseInt(nextProps.source.get('dataStreamId'))
       );

@@ -99,3 +99,31 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
   }
 };
 
+
+export const prepareWidgetForProductEdit = (widget) => {
+  let sources = widget.sources;
+
+  if (sources.length)
+    sources = sources.map((source) => {
+
+      let dataStreamId = null;
+
+      if (source.dataStream && source.dataStream.id)
+        dataStreamId = source.dataStream.id;
+
+      return {
+        ...source,
+        dataStreamId
+      };
+    });
+
+  return {
+    ...widget,
+    w: widget.width,
+    h: widget.height,
+    i: widget.id.toString(),
+    static: false,
+    moved: false,
+    sources
+  };
+};

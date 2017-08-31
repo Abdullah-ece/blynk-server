@@ -17,6 +17,7 @@ import {MainLayout} from 'components';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {OrganizationFetch} from 'data/Organization/actions';
 import {prepareProductForSave, TABS, DEVICE_FORCE_UPDATE, FORMS} from 'services/Products';
+import {prepareWidgetForProductEdit} from 'services/Widgets';
 import * as API from 'data/Product/api';
 import {
   ProductSetEdit,
@@ -201,14 +202,7 @@ class Edit extends React.Component {
 
       this.props.ProductSetEdit(product);
 
-      let widgets = product.webDashboard && product.webDashboard.widgets && product.webDashboard.widgets.map((widget) => ({
-        ...widget,
-        w: widget.width,
-        h: widget.height,
-        i: widget.id.toString(),
-        static: false,
-        moved: false
-      })) || [];
+      let widgets = product.webDashboard && product.webDashboard.widgets && product.webDashboard.widgets.map(prepareWidgetForProductEdit) || [];
 
       this.props.initializeForm(FORMS.DASHBOARD, {
         widgets: widgets

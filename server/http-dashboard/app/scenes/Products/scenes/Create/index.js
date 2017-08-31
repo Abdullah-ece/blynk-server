@@ -227,11 +227,7 @@ class Create extends React.Component {
           webDashboard: {
             ...this.props.dashboard.updateIn(['widgets'], (widgets) => (
               widgets.map((widget) => ({
-                label: 'Widget',
-                type: 'WEB_LABEL',
-                id: widget.get('id'),
-                x: widget.get('x'),
-                y: widget.get('y'),
+                ...widget.toJS(),
                 width: widget.get('w'),
                 height: widget.get('h'),
               }))
