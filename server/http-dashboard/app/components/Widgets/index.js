@@ -36,6 +36,7 @@ class Widgets extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
+    this.handleWidgetChange = this.handleWidgetChange.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
   }
 
@@ -50,6 +51,16 @@ class Widgets extends React.Component {
   onLayoutChange(layout) {
     if (this.props.onChange)
       this.props.onChange(layout);
+  }
+
+  handleWidgetChange(widget) {
+    this.props.onChange(
+      this.props.data.lg.map((w) => {
+        if (Number(w.id) === Number(widget.id))
+          return widget;
+        return w;
+      })
+    );
   }
 
   handleWidgetDelete(id) {
@@ -68,6 +79,7 @@ class Widgets extends React.Component {
                 key={widget.id}
                 data={widget}
                 editable={this.props.editable}
+                onWidgetChange={this.handleWidgetChange}
                 onWidgetDelete={this.handleWidgetDelete}
         />
       );

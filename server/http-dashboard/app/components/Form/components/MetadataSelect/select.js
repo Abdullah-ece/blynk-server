@@ -14,7 +14,8 @@ export default class SelectField extends React.Component {
     style: React.PropTypes.any,
     placeholder: React.PropTypes.any,
     input: React.PropTypes.any,
-    meta: React.PropTypes.any
+    meta: React.PropTypes.any,
+    notFoundContent: React.PropTypes.string,
   };
 
   getFields(array) {

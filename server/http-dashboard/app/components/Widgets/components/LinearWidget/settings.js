@@ -4,9 +4,11 @@ import {
   SimpleContentEditable
 } from 'components';
 import Source from './source';
+import _ from 'lodash';
 import {Row, Col} from 'antd';
-import {reduxForm, Field, getFormValues} from 'redux-form';
+import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {fromJS, Map} from 'immutable';
 import PropTypes from 'prop-types';
 
@@ -14,6 +16,11 @@ import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {})
+}), (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch),
+  resetForm: bindActionCreators(reset, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
+  destroyForm: bindActionCreators(destroy, dispatch),
 }))
 @reduxForm()
 class LinearWidgetSettings extends React.Component {
@@ -22,14 +29,24 @@ class LinearWidgetSettings extends React.Component {
     formValues: PropTypes.instanceOf(Map),
     visible: PropTypes.bool,
 
+    initialValues: PropTypes.object,
+
+    form: PropTypes.string,
+
     onClose: PropTypes.func,
+    resetForm: PropTypes.func,
+    changeForm: PropTypes.func,
+    destroyForm: PropTypes.func,
+    handleSubmit: PropTypes.func,
+    initializeForm: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    this.onChange = this.onChange.bind(this);
-    this.onChange2 = this.onChange2.bind(this);
+    this.handleSave = this.handleSave.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleSourceChange = this.handleSourceChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -38,16 +55,30 @@ class LinearWidgetSettings extends React.Component {
     value2: 'Temperature',
   };
 
-  onChange(value) {
-    this.setState({
-      value: value
+  componentWillUpdate(nextProps) {
+
+    if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
+      this.props.initializeForm(nextProps.form, nextProps.initialValues);
+      this.props.resetForm(nextProps.form, nextProps.initialValues);
+    }
+  }
+
+  getSourceFormName(id) {
+    return `${this.props.form}-source${id}`;
+  }
+
+  handleCancel() {
+    this.props.onClose();
+
+    this.props.resetForm(this.props.form);
+
+    this.props.formValues.get('sources').forEach((source) => {
+      this.props.resetForm(this.getSourceFormName(source.get('id')));
     });
   }
 
-  onChange2(value) {
-    this.setState({
-      value2: value
-    });
+  handleSave() {
+    this.props.handleSubmit();
   }
 
   handleClick() {
@@ -64,6 +95,17 @@ class LinearWidgetSettings extends React.Component {
     );
   }
 
+  handleSourceChange(source) {
+
+    const sources = this.props.formValues.get('sources').map((s) => {
+      if (s.get('id') === source.id)
+        return fromJS(source);
+      return s;
+    });
+
+    this.props.changeForm(this.props.form, 'sources', sources);
+  }
+
   render() {
 
     return (
@@ -71,7 +113,8 @@ class LinearWidgetSettings extends React.Component {
              wrapClassName="modal-window-widget-settings"
              visible={this.props.visible}
              closable={false}
-             onCancel={this.props.onClose}
+             onCancel={this.handleCancel}
+             onOk={this.handleSave}
              okText={'Save'}
              cancelText={'Close'}>
         <Row type="flex">
@@ -87,7 +130,9 @@ class LinearWidgetSettings extends React.Component {
             <div className="modal-window-widget-settings-config-column-sources">
 
               {this.props.formValues.has('sources') && this.props.formValues.get('sources').map((source, key) => (
-                <Source form={`source${key}`} initialValues={source.toJS()} key={key}/>
+                <Source form={this.getSourceFormName(source.get('id'))}
+                        initialValues={source.toJS()} key={key}
+                        onChange={this.handleSourceChange}/>
               ))}
 
             </div>

@@ -75,7 +75,7 @@ export const WIDGETS_SOURCE_TYPES_LIST = [
 
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
-    id: 0,
+    id: 1,
     type: WIDGET_TYPES.LINEAR,
     label: 'Chart',
     x: 0,
@@ -84,6 +84,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     h: 2,
     sources: [
       {
+        id: 1,
         label: 'Source Label',
         sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
         color: '',

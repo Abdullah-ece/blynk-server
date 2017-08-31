@@ -29,6 +29,7 @@ class Widget extends React.Component {
 
     editable: PropTypes.bool,
 
+    onWidgetChange: PropTypes.func,
     onMouseUp: PropTypes.func,
     onTouchEnd: PropTypes.func,
     onMouseDown: PropTypes.func,
@@ -38,6 +39,7 @@ class Widget extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
     this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
@@ -58,6 +60,11 @@ class Widget extends React.Component {
 
   }
 
+  handleSaveChanges(values) {
+    this.props.onWidgetChange(values);
+    this.toggleSettingsVisibility();
+  }
+
   toggleSettingsVisibility() {
     this.setState({
       isConfigVisible: !this.state.isConfigVisible
@@ -67,7 +74,7 @@ class Widget extends React.Component {
   getWidgetSettingsByType(type, widget) {
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget} form="widget-settings" onClose={this.toggleSettingsVisibility}/>
+        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget} form={`widget-settings-${widget.id}`} onClose={this.toggleSettingsVisibility} onSubmit={this.handleSaveChanges}/>
       );
   }
 
