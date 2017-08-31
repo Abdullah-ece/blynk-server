@@ -5,14 +5,12 @@ import {
 } from 'components';
 import Source from './source';
 import _ from 'lodash';
-import {Row, Col} from 'antd';
+import {Row, Col, Button} from 'antd';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS, Map} from 'immutable';
 import PropTypes from 'prop-types';
-
-// import {bindActionCreators} from 'redux';
 
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {})
@@ -27,7 +25,9 @@ class LinearWidgetSettings extends React.Component {
 
   static propTypes = {
     formValues: PropTypes.instanceOf(Map),
+
     visible: PropTypes.bool,
+    pristine: PropTypes.bool,
 
     initialValues: PropTypes.object,
 
@@ -63,18 +63,10 @@ class LinearWidgetSettings extends React.Component {
     }
   }
 
-  getSourceFormName(id) {
-    return `${this.props.form}-source${id}`;
-  }
-
   handleCancel() {
     this.props.onClose();
 
     this.props.resetForm(this.props.form);
-
-    this.props.formValues.get('sources').forEach((source) => {
-      this.props.resetForm(this.getSourceFormName(source.get('id')));
-    });
   }
 
   handleSave() {
@@ -113,10 +105,14 @@ class LinearWidgetSettings extends React.Component {
              wrapClassName="modal-window-widget-settings"
              visible={this.props.visible}
              closable={false}
-             onCancel={this.handleCancel}
-             onOk={this.handleSave}
-             okText={'Save'}
-             cancelText={'Close'}>
+             footer={[
+               <Button key="back" onClick={this.handleCancel}>
+                 Close
+               </Button>,
+               <Button key="submit" type="primary" onClick={this.handleSave} disabled={this.props.pristine}>
+                 Save
+               </Button>,
+             ]}>
         <Row type="flex">
           <Col span={12} className="modal-window-widget-settings-config-column">
             <div className="modal-window-widget-settings-config-column-header">
@@ -130,8 +126,9 @@ class LinearWidgetSettings extends React.Component {
             <div className="modal-window-widget-settings-config-column-sources">
 
               {this.props.formValues.has('sources') && this.props.formValues.get('sources').map((source, key) => (
-                <Source form={this.getSourceFormName(source.get('id'))}
-                        initialValues={source.toJS()} key={key}
+                <Source form={this.props.form}
+                        index={key}
+                        source={source} key={key}
                         onChange={this.handleSourceChange}/>
               ))}
 

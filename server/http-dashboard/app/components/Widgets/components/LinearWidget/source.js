@@ -2,10 +2,10 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import {Item, ItemsGroup} from "components/UI";
 import {Button, Radio, Icon} from 'antd';
-import {reduxForm, getFormValues, change, Field} from 'redux-form';
+import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
-import _ from 'lodash';
 import {bindActionCreators} from 'redux';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
 import {fromJS, Map, List} from 'immutable';
@@ -18,19 +18,19 @@ import {
   SimpleContentEditable
 } from 'components';
 
-@connect((state, ownProps) => ({
+@connect((state) => ({
   dataStreams: fromJS(state.Product.edit.dataStreams.fields || []),
-  formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
-@reduxForm({})
 class Source extends React.Component {
 
   static propTypes = {
     form: PropTypes.string,
 
-    formValues: PropTypes.instanceOf(Map),
+    index: PropTypes.number,
+
+    source: PropTypes.instanceOf(Map),
     dataStreams: PropTypes.instanceOf(List),
 
     changeForm: PropTypes.func,
@@ -43,12 +43,12 @@ class Source extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (nextProps.formValues.get('dataStreamId') !== this.props.formValues.get('dataStreamId') && this.props.dataStreams.length) {
+    if (nextProps.source.get('dataStreamId') !== this.props.source.get('dataStreamId') && this.props.dataStreams.length) {
       const stream = this.props.dataStreams.find(
-        stream => parseInt(stream.get('id')) === parseInt(nextProps.formValues.get('dataStreamId'))
+        stream => parseInt(stream.get('id')) === parseInt(nextProps.source.get('dataStreamId'))
       );
 
-      this.props.changeForm(this.props.form, 'dataStream', stream.get('values'));
+      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
     }
   }
 
@@ -95,7 +95,7 @@ class Source extends React.Component {
 
     const getLabelForChartTypeItem = () => {
 
-      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.formValues.get('graphType')));
+      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
 
       if (!name) return `Please, select chart type`;
 
@@ -110,7 +110,7 @@ class Source extends React.Component {
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
         <div className="modal-window-widget-settings-config-column-sources-source-header">
-          <Field name="label" component={this.labelComponent}/>
+          <Field name={`sources.${this.props.index}.label`} component={this.labelComponent}/>
 
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
             <Button size="small" icon="delete"/>
@@ -121,14 +121,16 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-type-select">
           <ItemsGroup>
             <Item label="Source" offset="medium">
-              <Select name="sourceType" displayError={false} values={WIDGETS_SOURCE_TYPES_LIST}
+              <Select name={`sources.${this.props.index}.sourceType`}
+                      values={WIDGETS_SOURCE_TYPES_LIST}
                       placeholder="Choose Type"
                       validate={[Validation.Rules.required]}
                       style={{width: '100px'}}/>
             </Item>
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
-                      name="dataStreamId" displayError={false} values={sources} placeholder="Choose Source"
+                      name={`sources.${this.props.index}.dataStreamId`} values={sources}
+                      placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>
             </Item>
@@ -137,7 +139,7 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
           <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
             <Item label={getLabelForChartTypeItem()} offset="medium">
-              <Field component={this.chartTypeSelectComponent} name="graphType"
+              <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}
                      getIconForChartByType={this.getIconForChartByType}/>
             </Item>
           </div>
