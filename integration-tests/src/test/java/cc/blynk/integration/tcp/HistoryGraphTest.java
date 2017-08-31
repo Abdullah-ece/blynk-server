@@ -1,5 +1,6 @@
 package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.application.AppServer;
@@ -17,7 +18,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
@@ -92,7 +92,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -215,7 +215,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -283,7 +283,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -351,7 +351,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -419,7 +419,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -487,7 +487,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -555,7 +555,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -635,7 +635,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -712,7 +712,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -761,7 +761,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -843,7 +843,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -865,7 +865,7 @@ public class HistoryGraphTest extends IntegrationBase {
         graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -915,7 +915,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -937,7 +937,7 @@ public class HistoryGraphTest extends IntegrationBase {
         graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -955,7 +955,7 @@ public class HistoryGraphTest extends IntegrationBase {
         graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -976,7 +976,7 @@ public class HistoryGraphTest extends IntegrationBase {
         graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -1029,7 +1029,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
 
@@ -1080,7 +1080,7 @@ public class HistoryGraphTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
 
@@ -1229,10 +1229,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_0_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_0_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 
@@ -1295,10 +1295,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 432");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_d8_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_d8_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 
@@ -1381,10 +1381,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 

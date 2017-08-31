@@ -18,7 +18,7 @@ class SharedTokenManager {
     private static final Logger log = LogManager.getLogger(SharedTokenManager.class);
     private final ConcurrentMap<String, SharedTokenValue> cache;
 
-    public SharedTokenManager(Iterable<User> users) {
+    SharedTokenManager(Iterable<User> users) {
         this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {{
             for (User user : users) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
@@ -47,7 +47,7 @@ class SharedTokenManager {
         log.info("Generated shared token for user {} and dashId {} is {}.", user.email, dash.id, newToken);
     }
 
-    public SharedTokenValue getUserByToken(String token) {
+    SharedTokenValue getUserByToken(String token) {
         return cache.get(token);
     }
 
