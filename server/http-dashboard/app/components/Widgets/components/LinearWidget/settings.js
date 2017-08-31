@@ -3,15 +3,43 @@ import {
   Modal,
   SimpleContentEditable
 } from 'components';
-import {MetadataSelect as Select} from 'components/Form';
-import {Item, ItemsGroup}      from "components/UI";
-import {Row, Col, Button, Radio, Icon} from 'antd';
-import {reduxForm} from 'redux-form';
+import Source from './source';
+import {Row, Col} from 'antd';
+import {reduxForm, Field, getFormValues} from 'redux-form';
+import {connect} from 'react-redux';
+import {fromJS, Map} from 'immutable';
+import PropTypes from 'prop-types';
 
+// import {bindActionCreators} from 'redux';
+
+@connect((state, ownProps) => ({
+  formValues: fromJS(getFormValues(ownProps.form)(state) || {})
+}))
 @reduxForm({
-  form: 'settings'
+  initialValues: {
+    "type": "WEB_GRAPH",
+    "id": 0,
+    "x": 3,
+    "y": 4,
+    "color": 0,
+    "width": 20,
+    "height": 10,
+    "label": "graph",
+    "dataStreams": [{
+      "pin": 1,
+      "pwmMode": false,
+      "rangeMappingOn": false,
+      "pinType": "VIRTUAL",
+      "min": 0,
+      "max": 255
+    }]
+  }
 })
 class LinearWidgetSettings extends React.Component {
+
+  static propTypes = {
+    formValues: PropTypes.instanceOf(Map)
+  };
 
   constructor(props) {
     super(props);
@@ -44,28 +72,15 @@ class LinearWidgetSettings extends React.Component {
     });
   }
 
-  render() {
+  labelNameComponent({input}) {
+    return (
+      <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
+                             value={input.value}
+                             onChange={input.onChange}/>
+    );
+  }
 
-    const types = [
-      {
-        key: 'Raw Data',
-        value: 'Raw Data',
-      },
-      {
-        key: 'AVG Value',
-        value: 'AVG Value',
-      }
-    ];
-    const sources = [
-      {
-        key: 'DataStream 1',
-        value: 'DataStream 1',
-      },
-      {
-        key: 'DataStream 2',
-        value: 'DataStream 2',
-      },
-    ];
+  render() {
 
     return (
       <Modal width={'auto'}
@@ -77,59 +92,15 @@ class LinearWidgetSettings extends React.Component {
         <Row type="flex">
           <Col span={12} className="modal-window-widget-settings-config-column">
             <div className="modal-window-widget-settings-config-column-header">
-              <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
-                                     value={this.state.value}
-                                     onChange={this.onChange}/>
+              <Field name="label" component={this.labelNameComponent}/>
 
-              <div className="modal-window-widget-settings-config-add-source">
-                <Button type="dashed" onClick={this.handleClick}>Add source</Button>
-              </div>
+              {/*<div className="modal-window-widget-settings-config-add-source">*/}
+                {/*<Button type="dashed" onClick={this.handleClick}>Add source</Button>*/}
+              {/*</div>*/}
+
             </div>
             <div className="modal-window-widget-settings-config-column-sources">
-              <div className="modal-window-widget-settings-config-column-sources-source">
-                <div className="modal-window-widget-settings-config-column-sources-source-header">
-                  <SimpleContentEditable
-                    className="modal-window-widget-settings-config-column-sources-source-header-name"
-                    value={this.state.value2}
-                    onChange={this.onChange2}/>
-                  <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
-                    <Button size="small" icon="delete"/>
-                    <Button size="small" icon="copy"/>
-                    <Button size="small" icon="bars"/>
-                  </div>
-                </div>
-                <div className="modal-window-widget-settings-config-column-sources-source-type-select">
-                  <ItemsGroup>
-                    <Item label="Source" offset="medium">
-                      <Select name="type" displayError={false} values={types} placeholder="Source"
-                              validate={[]}
-                              style={{width: '100px'}}/>
-                    </Item>
-                    <Item label=" " offset="medium">
-                      <Select name="source" displayError={false} values={sources} placeholder="Product"
-                              validate={[]}
-                              style={{width: '100%'}}/>
-                    </Item>
-                  </ItemsGroup>
-                </div>
-                <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
-                  <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
-                    <Item label="Chart Type: LINE" offset="medium">
-                      <Radio.Group onChange={() => {}} defaultValue="a">
-                        <Radio.Button value="a">
-                          <Icon type="area-chart" />
-                        </Radio.Button>
-                        <Radio.Button value="c">
-                          <Icon type="dot-chart" />
-                        </Radio.Button>
-                        <Radio.Button value="d">
-                          <Icon type="bar-chart" />
-                        </Radio.Button>
-                      </Radio.Group>
-                    </Item>
-                  </div>
-                </div>
-              </div>
+              <Source form="source1"/>
             </div>
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">

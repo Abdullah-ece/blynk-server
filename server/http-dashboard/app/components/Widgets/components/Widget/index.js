@@ -55,7 +55,7 @@ class Widget extends React.Component {
   getWidgetSettingsByType(type, widget) {
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings data={widget}/>
+        <LinearWidget.Settings data={widget} form="widget-settings"/>
       );
   }
 
