@@ -120,14 +120,14 @@ export const prepareWidgetForProductEdit = (widget) => {
   if (sources && sources.length)
     sources = sources.map((source) => {
 
-      let dataStreamId = null;
+      let dataStreamPin = null;
 
-      if (source.dataStream && source.dataStream.id)
-        dataStreamId = source.dataStream.id;
+      if (source.dataStream && source.dataStream.pin !== undefined)
+        dataStreamPin = source.dataStream.pin;
 
       return {
         ...source,
-        dataStreamId
+        dataStreamPin
       };
     });
 

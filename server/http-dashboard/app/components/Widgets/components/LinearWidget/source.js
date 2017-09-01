@@ -43,9 +43,9 @@ class Source extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (Number(nextProps.source.get('dataStreamId')) && Number(nextProps.source.get('dataStreamId')) !== Number(this.props.source.get('dataStreamId')) && nextProps.dataStreams.size) {
+    if (Number(nextProps.source.get('dataStreamPin')) && Number(nextProps.source.get('dataStreamPin')) !== Number(this.props.source.get('dataStreamPin')) && nextProps.dataStreams.size) {
       const stream = this.props.dataStreams.find(
-        stream => parseInt(stream.get('id')) === parseInt(nextProps.source.get('dataStreamId'))
+        stream => parseInt(stream.getIn(['values','pin'])) === parseInt(nextProps.source.get('dataStreamPin'))
       );
 
       this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
@@ -129,7 +129,7 @@ class Source extends React.Component {
             </Item>
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
-                      name={`sources.${this.props.index}.dataStreamId`} values={sources}
+                      name={`sources.${this.props.index}.dataStreamPin`} values={sources}
                       placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>
