@@ -78,6 +78,8 @@ public class DataHandler extends BaseHttpHandler {
                            @ContextUser User user,
                            @PathParam("deviceId") int deviceId,
                            @QueryParam("dataStream") String[] dataStreams,
+                           @QueryParam("from") long from,
+                           @QueryParam("to") long to,
                            @QueryParam("offset") int offset,
                            @QueryParam("limit") int limit) {
 
@@ -89,7 +91,7 @@ public class DataHandler extends BaseHttpHandler {
             for (String dataStream : dataStreams) {
                 PinType pinType = PinType.getPinType(dataStream.charAt(0));
                 byte pin = ParseUtil.parseByte(dataStream.substring(1));
-                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, offset, limit);
+                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, from, to, offset, limit);
                 finalModel.add(new AbstractMap.SimpleEntry<>(dataStream, new Data(data)));
             }
             ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());

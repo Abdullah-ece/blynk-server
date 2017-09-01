@@ -96,7 +96,7 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&offset=0&limit=1000");
+        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&from=0&to=" + now+1 + "&offset=0&limit=1000");
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -146,7 +146,7 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&dataStream=V2&offset=0&limit=1000");
+        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&dataStream=V2&from=0&to=" + now + "&offset=0&limit=1000");
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -201,7 +201,9 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&offset=0&limit=1000");
+        long now = System.currentTimeMillis();
+
+        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&from=0&to=" + now + "&offset=0&limit=1000");
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
 

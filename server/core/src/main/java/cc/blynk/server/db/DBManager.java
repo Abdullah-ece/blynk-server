@@ -168,9 +168,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, int offset, int limit) {
         if (isDBEnabled()) {
-            return reportingDBDao.getRawData(deviceId, pinType,  pin, offset, limit);
+            return reportingDBDao.getRawData(deviceId, pinType,  pin, from, to, offset, limit);
         }
         return Collections.emptyList();
     }
