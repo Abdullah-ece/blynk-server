@@ -19,10 +19,12 @@ class Widgets extends React.Component {
   };
 
   static propTypes = {
+    fetchRealData: React.PropTypes.bool,
     editable: React.PropTypes.bool,
 
     data: React.PropTypes.object,
     breakpoints: React.PropTypes.object,
+    params: React.PropTypes.object,
 
     onChange: React.PropTypes.func,
   };
@@ -77,6 +79,8 @@ class Widgets extends React.Component {
       return (
         <Widget id={Number(widget.id)}
                 key={widget.id}
+                fetchRealData={this.props.fetchRealData}
+                params={this.props.params}
                 data={widget}
                 editable={this.props.editable}
                 onWidgetChange={this.handleWidgetChange}

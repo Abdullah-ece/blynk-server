@@ -127,3 +127,5 @@ export const prepareWidgetForProductEdit = (widget) => {
     sources
   };
 };
+
+export const VIRTUAL_PIN_PREFIX = 'V';

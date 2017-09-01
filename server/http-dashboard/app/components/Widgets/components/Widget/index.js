@@ -22,12 +22,14 @@ class Widget extends React.Component {
       PropTypes.array,
     ]),
     style: PropTypes.object,
+    params: PropTypes.object,
     data: PropTypes.object,
     className: PropTypes.string,
 
     id: PropTypes.number,
 
     editable: PropTypes.bool,
+    fetchRealData: PropTypes.bool,
 
     onWidgetChange: PropTypes.func,
     onMouseUp: PropTypes.func,
@@ -53,6 +55,8 @@ class Widget extends React.Component {
     if (type === WIDGET_TYPES.LINEAR)
       return (
         <LinearWidget key={widget.id}
+                      fetchRealData={this.props.fetchRealData}
+                      params={this.props.params}
                       data={widget}
                       editable={this.props.editable}
                       onWidgetDelete={this.handleWidgetDelete}/>
@@ -74,7 +78,9 @@ class Widget extends React.Component {
   getWidgetSettingsByType(type, widget) {
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget} form={`widget-settings-${widget.id}`} onClose={this.toggleSettingsVisibility} onSubmit={this.handleSaveChanges}/>
+        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget}
+                               form={`widget-settings-${widget.id}`} onClose={this.toggleSettingsVisibility}
+                               onSubmit={this.handleSaveChanges}/>
       );
   }
 

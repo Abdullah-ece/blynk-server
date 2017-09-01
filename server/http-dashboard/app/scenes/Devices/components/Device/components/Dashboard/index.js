@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 class Dashboard extends React.Component {
 
   static propTypes = {
-    dashboard: PropTypes.instanceOf(Map)
+    dashboard: PropTypes.instanceOf(Map),
+    params: PropTypes.object,
   };
 
   constructor(props) {
@@ -119,7 +120,7 @@ class Dashboard extends React.Component {
           {/*</Button.Group>*/}
         </div>
 
-        <Widgets editable={this.state.editable} data={widgets}/>
+        <Widgets params={this.props.params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
 
       </div>
     );

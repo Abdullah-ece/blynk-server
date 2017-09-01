@@ -25,5 +25,8 @@ export const API_URL = {
     metadata: () => ({
       update: (params) => `/devices/${params.orgId}/${params.deviceId}/updateMetaField`
     })
+  }),
+  widgets: () => ({
+    historyByPin: (params) => `/data/${params.deviceId}/history?dataStream=${params.pin}&limit=10000&offset=0`
   })
 };

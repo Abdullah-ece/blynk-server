@@ -4,81 +4,117 @@ import {
 } from 'components';
 import moment from 'moment';
 // import Widget from '../Widget';
+import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {Map} from 'immutable';
+import {
+  WidgetHistoryByPinFetch
+} from 'data/Widgets/api';
 
+@connect((state) => ({
+  widgets: state.Widgets.get('widgetsData'),
+}), (dispatch) => ({
+  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
+}))
 class LinearWidget extends React.Component {
 
   static propTypes = {
     data: PropTypes.object,
+    params: PropTypes.object,
 
     editable: PropTypes.bool,
 
+    fetchRealData: PropTypes.bool,
+
     onWidgetDelete: PropTypes.func,
+
+    widgets: PropTypes.instanceOf(Map),
+
+    fetchWidgetHistoryByPin: PropTypes.func
   };
+
+  componentWillMount() {
+
+    if (this.props.fetchRealData && this.props.data.sources.length) {
+
+      this.props.data.sources.forEach((source) => {
+
+        if (!source || !source.dataStream)
+          return null;
+
+        this.props.fetchWidgetHistoryByPin({
+          deviceId: this.props.params.id,
+          widgetId: this.props.data.id,
+          pin: `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`
+        });
+      });
+
+    }
+
+  }
 
   render() {
 
-    const PIN_DATA = {
-      "V1": {
-        "data": [
-          {
-            "1504220810168": 5
-          },
-          {
-            "1504220808441": 92
-          },
-          {
-            "1504220803611": 523
-          },
-          {
-            "1504220801358": 143
-          },
-          {
-            "1504220798471": 123
-          }
-        ]
-      }
-    };
+    if (!this.props.data.sources || !this.props.data.sources.length)
+      return null;
+
+    let isAnyLoading = false;
 
     const data = [];
+
+    this.props.data.sources.forEach((source) => {
+
+      const PIN = this.props.widgets.getIn([this.props.params.id, this.props.data.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
+
+      if (!PIN) {
+        isAnyLoading = true;
+        return;
+      }
+
+      const loading = PIN.get('loading');
+
+      if (loading || isAnyLoading) {
+        isAnyLoading = true;
+        return;
+      }
+
+      let x = [];
+      let y = [];
+
+      PIN.get('data').forEach((item) => {
+        x.push(moment(Number(item.get('x'))).format('HH:mm:ss'));
+        y.push(item.get('y'));
+      });
+
+      data.push({
+        name: source.label,
+        x: x,
+        y: y,
+        mode: 'lines+markers',
+      });
+
+    });
+
+    if (isAnyLoading)
+      return null;
+
     const config = {
       displayModeBar: false
     };
+
     const layout = {
       autosize: true,
       margin: {
-        t: 0,
+        t: 15,
         r: 0,
         l: 10,
         b: 30,
-      },
-      yaxis: {
-        'title': 'Water Level'
       }
     };
-
-    const getFirstKey = (obj) => Object.keys(obj)[0];
-
-    const x = PIN_DATA.V1.data.map((v) => {
-      return moment(Number(getFirstKey(v))).format('HH:mm:ss MM-DD-YYYY');
-    });
-
-    const y = [];
-
-    PIN_DATA.V1.data.forEach((v) => {
-      return y.push(v[getFirstKey(v)]);
-    });
-
-    data.push({
-      name: 'Water Level',
-      x: x,
-      y: y,
-
-      mode: 'lines+markers',
-    });
-
 
     return (
       <div className="grid-linear-widget">
@@ -92,3 +128,11 @@ class LinearWidget extends React.Component {
 LinearWidget.Settings = LinearWidgetSettings;
 
 export default LinearWidget;
+
+
+/*
+* 1) Get data for own PINS
+* 2) Draw data for these own PINS
+* 3) Display labels for these PINS
+* 4) Fix DataStreams
+* 5) Multiple sources support */

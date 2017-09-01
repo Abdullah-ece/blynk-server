@@ -57,10 +57,10 @@ class Device extends React.Component {
         <div className="devices--device-name">
           <ContentEditable value={this.props.device.get('name')} onChange={this.handleDeviceNameChange.bind(this)}/>
         </div>
-        <Tabs defaultActiveKey="2" className="page-layout-tabs-navigation">
+        <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
-              <Dashboard dashboard={this.props.device.get('webDashboard')}/>
+              <Dashboard params={this.props.params} dashboard={this.props.device.get('webDashboard')}/>
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
