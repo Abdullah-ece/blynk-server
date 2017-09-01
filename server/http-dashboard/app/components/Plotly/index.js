@@ -11,16 +11,30 @@ class Plotly extends React.Component {
   };
 
   componentDidMount() {
-    Plotlyjs.newPlot(this.container, this.props.data || [], this.props.layout || {}, this.props.config || {});
+
+    let d3 = Plotlyjs.d3;
+
+    let WIDTH_IN_PERCENT_OF_PARENT = 100,
+      HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+    let gd3 = d3.select(this.container)
+      .style({
+        width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+        'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+        height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+        'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+      });
+
+    Plotlyjs.plot(gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
   }
 
-  componentDidUpdate() {
-    Plotlyjs.newPlot(this.container, this.props.data || [], this.props.layout || {}, this.props.config || {});
-  }
+  // componentDidUpdate() {
+  // }
 
   render() {
     return (
-      <div ref={(node) => this.container = node}/>
+      <div id="fefefwefwe2323" ref={(node) => this.container = node}/>
     );
   }
 
