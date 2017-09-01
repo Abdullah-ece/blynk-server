@@ -110,9 +110,10 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
 
 
 export const prepareWidgetForProductEdit = (widget) => {
-  let sources = widget.sources;
 
-  if (sources.length)
+  let sources = widget.sources || [];
+
+  if (sources && sources.length)
     sources = sources.map((source) => {
 
       let dataStreamId = null;

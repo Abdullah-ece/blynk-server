@@ -11,6 +11,7 @@ import './styles.less';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
+import _ from 'lodash';
 import {
   WidgetHistoryByPinFetch
 } from 'data/Widgets/api';
@@ -126,11 +127,21 @@ class LinearWidget extends React.Component {
 
     const data = [];
 
-    data.push({
-      name: 'Some Label',
-      x: [1,2,3,4,5],
-      y: [10,23,12,35,54],
-      mode: 'lines+markers',
+    this.props.data.sources.forEach((source) => {
+
+      const y = [];
+
+      for(let i = 0; i < 5; i++) {
+        y.push(_.random(0, 10));
+      }
+
+      data.push({
+        name: source.label,
+        x: [1,2,3,4,5],
+        y: y,
+        mode: 'lines+markers',
+      });
+
     });
 
     return (
