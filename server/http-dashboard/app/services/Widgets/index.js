@@ -73,6 +73,15 @@ export const WIDGETS_SOURCE_TYPES_LIST = [
 
 ];
 
+export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
+  label: 'Source Label',
+  sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+  color: '',
+  graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+  connectMissingPointsEnabled: false,
+  dataStream: {}
+};
+
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     id: 1,

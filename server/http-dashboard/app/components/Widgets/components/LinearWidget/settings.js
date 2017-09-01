@@ -4,6 +4,9 @@ import {
   SimpleContentEditable
 } from 'components';
 import Source from './source';
+import {
+  WIDGETS_PREDEFINED_SOURCE_OPTIONS
+} from 'services/Widgets';
 import _ from 'lodash';
 import {Row, Col, Button} from 'antd';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
@@ -47,7 +50,7 @@ class LinearWidgetSettings extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleAddSource = this.handleAddSource.bind(this);
   }
 
   state = {
@@ -73,10 +76,16 @@ class LinearWidgetSettings extends React.Component {
     this.props.handleSubmit();
   }
 
-  handleClick() {
-    this.setState({
-      value: (Math.random()).toString()
-    });
+  handleAddSource() {
+
+    const id = _.random(1, 999999999);
+
+    const sources = this.props.formValues.get('sources').push(fromJS({
+      ...WIDGETS_PREDEFINED_SOURCE_OPTIONS,
+      id: id
+    }));
+
+    this.props.changeForm(this.props.form, 'sources', sources.toJS());
   }
 
   labelNameComponent({input}) {
@@ -118,9 +127,9 @@ class LinearWidgetSettings extends React.Component {
             <div className="modal-window-widget-settings-config-column-header">
               <Field name="label" component={this.labelNameComponent}/>
 
-              {/*<div className="modal-window-widget-settings-config-add-source">*/}
-              {/*<Button type="dashed" onClick={this.handleClick}>Add source</Button>*/}
-              {/*</div>*/}
+              <div className="modal-window-widget-settings-config-add-source">
+                <Button type="dashed" onClick={this.handleAddSource}>Add source</Button>
+              </div>
 
             </div>
             <div className="modal-window-widget-settings-config-column-sources">
