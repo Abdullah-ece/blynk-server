@@ -60,33 +60,41 @@ class LinearWidget extends React.Component {
 
     }
 
+    if(!this.props.fetchRealData) {
+      this.generateFakeData();
+    }
+
   }
 
   componentDidUpdate() {
     if(!this.props.fetchRealData && this.state.data.length !== this.props.data.sources.length) {
-      const data = [];
-
-      this.props.data.sources.forEach((source) => {
-
-        const y = [];
-
-        for(let i = 0; i < 5; i++) {
-          y.push(_.random(0, 10));
-        }
-
-        data.push({
-          name: source.label,
-          x: [1,2,3,4,5],
-          y: y,
-          mode: 'lines+markers',
-        });
-
-      });
-
-      this.setState({
-        data: data
-      });
+      this.generateFakeData();
     }
+  }
+
+  generateFakeData() {
+    const data = [];
+
+    this.props.data.sources.forEach((source) => {
+
+      const y = [];
+
+      for(let i = 0; i < 5; i++) {
+        y.push(_.random(0, 10));
+      }
+
+      data.push({
+        name: source.label,
+        x: [1,2,3,4,5],
+        y: y,
+        mode: 'lines+markers',
+      });
+
+    });
+
+    this.setState({
+      data: data
+    });
   }
 
   layout = {

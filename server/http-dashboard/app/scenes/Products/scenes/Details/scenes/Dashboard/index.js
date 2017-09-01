@@ -18,6 +18,7 @@ class Dashboard extends React.Component {
 
     let widgets = {
       lg: this.props.widgets.map((item) => ({
+        ...item,
         i: String(item.id),
         id: String(item.id),
         w: item.width,
