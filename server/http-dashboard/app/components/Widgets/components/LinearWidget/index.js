@@ -66,8 +66,12 @@ class LinearWidget extends React.Component {
 
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if(!this.props.fetchRealData && this.state.data.length !== this.props.data.sources.length) {
+      this.generateFakeData();
+    }
+
+    if(!_.isEqual(prevProps.data.sources, this.props.data.sources)) {
       this.generateFakeData();
     }
   }
@@ -88,6 +92,9 @@ class LinearWidget extends React.Component {
         x: [1,2,3,4,5],
         y: y,
         mode: 'lines+markers',
+        marker: {
+          color: source.color
+        }
       });
 
     });
@@ -148,6 +155,9 @@ class LinearWidget extends React.Component {
         x: x,
         y: y,
         mode: 'lines+markers',
+        marker: {
+          color: source.color
+        }
       });
 
     });
