@@ -27,6 +27,6 @@ export const API_URL = {
     })
   }),
   widgets: () => ({
-    historyByPin: (params) => `/data/${params.deviceId}/history?dataStream=${params.pin}&limit=10000&offset=0`
+    historyByPin: (params) => `/data/${params.deviceId}/history?dataStream=${params.pin}&limit=10000&offset=0&from=0&to=${new Date().getTime()}`
   })
 };
