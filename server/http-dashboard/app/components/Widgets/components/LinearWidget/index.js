@@ -38,6 +38,10 @@ class LinearWidget extends React.Component {
     fetchWidgetHistoryByPin: PropTypes.func
   };
 
+  state = {
+    data: []
+  };
+
   componentWillMount() {
 
     if (this.props.fetchRealData && this.props.data.sources.length) {
@@ -56,6 +60,33 @@ class LinearWidget extends React.Component {
 
     }
 
+  }
+
+  componentDidUpdate() {
+    if(!this.props.fetchRealData && this.state.data.length !== this.props.data.sources.length) {
+      const data = [];
+
+      this.props.data.sources.forEach((source) => {
+
+        const y = [];
+
+        for(let i = 0; i < 5; i++) {
+          y.push(_.random(0, 10));
+        }
+
+        data.push({
+          name: source.label,
+          x: [1,2,3,4,5],
+          y: y,
+          mode: 'lines+markers',
+        });
+
+      });
+
+      this.setState({
+        data: data
+      });
+    }
   }
 
   layout = {
@@ -125,28 +156,9 @@ class LinearWidget extends React.Component {
 
   renderFakeDataChart() {
 
-    const data = [];
-
-    this.props.data.sources.forEach((source) => {
-
-      const y = [];
-
-      for(let i = 0; i < 5; i++) {
-        y.push(_.random(0, 10));
-      }
-
-      data.push({
-        name: source.label,
-        x: [1,2,3,4,5],
-        y: y,
-        mode: 'lines+markers',
-      });
-
-    });
-
     return (
       <div className="grid-linear-widget">
-        <Plotly data={data} config={this.config} layout={this.layout}/>
+        <Plotly data={this.state.data} config={this.config} layout={this.layout}/>
       </div>
     );
   }
