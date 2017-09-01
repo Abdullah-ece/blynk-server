@@ -51,6 +51,8 @@ class LinearWidgetSettings extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
     this.handleAddSource = this.handleAddSource.bind(this);
+    this.handleSourceCopy = this.handleSourceCopy.bind(this);
+    this.handleSourceDelete = this.handleSourceDelete.bind(this);
   }
 
   state = {
@@ -64,6 +66,27 @@ class LinearWidgetSettings extends React.Component {
       this.props.initializeForm(nextProps.form, nextProps.initialValues);
       this.props.resetForm(nextProps.form, nextProps.initialValues);
     }
+  }
+
+  handleSourceCopy(id) {
+    const nextId = _.random(1, 999999999);
+
+    const sourceIndex = this.props.formValues.get('sources').findIndex((source) => Number(source.get('id')) === Number(id));
+
+    const source = this.props.formValues.getIn(['sources', sourceIndex]);
+
+    const sources = this.props.formValues.get('sources').insert(sourceIndex + 1, fromJS({
+      ...source.toJS(),
+      id: nextId
+    }));
+
+    this.props.changeForm(this.props.form, 'sources', sources.toJS());
+  }
+
+  handleSourceDelete(id) {
+    const sources = this.props.formValues.get('sources').update(sources => sources.filter((source) => Number(source.get('id')) !== Number(id)));
+
+    this.props.changeForm(this.props.form, 'sources', sources.toJS());
   }
 
   handleCancel() {
@@ -91,7 +114,7 @@ class LinearWidgetSettings extends React.Component {
   labelNameComponent({input}) {
     return (
       <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
-                             value={input.value}
+                             value={input.value} o
                              onChange={input.onChange}/>
     );
   }
@@ -138,7 +161,10 @@ class LinearWidgetSettings extends React.Component {
                 <Source form={this.props.form}
                         index={key}
                         source={source} key={key}
-                        onChange={this.handleSourceChange}/>
+                        onChange={this.handleSourceChange}
+                        onDelete={this.handleSourceDelete}
+                        onCopy={this.handleSourceCopy}
+                />
               ))}
 
             </div>

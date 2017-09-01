@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const WIDGET_TYPES = {
   LINEAR: 'WEB_GRAPH'
 };
@@ -126,6 +128,7 @@ export const prepareWidgetForProductEdit = (widget) => {
         dataStreamPin = source.dataStream.pin;
 
       return {
+        id: _.random(1,999999999),
         ...source,
         dataStreamPin
       };

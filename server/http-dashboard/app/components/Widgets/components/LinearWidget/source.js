@@ -33,19 +33,23 @@ class Source extends React.Component {
     source: PropTypes.instanceOf(Map),
     dataStreams: PropTypes.instanceOf(List),
 
+    onCopy: PropTypes.func,
+    onDelete: PropTypes.func,
     changeForm: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
+    this.handleCopy = this.handleCopy.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.labelComponent = this.labelComponent.bind(this);
   }
 
   componentWillUpdate(nextProps) {
     if (Number(nextProps.source.get('dataStreamPin')) && Number(nextProps.source.get('dataStreamPin')) !== Number(this.props.source.get('dataStreamPin')) && nextProps.dataStreams.size) {
       const stream = this.props.dataStreams.find(
-        stream => parseInt(stream.getIn(['values','pin'])) === parseInt(nextProps.source.get('dataStreamPin'))
+        stream => parseInt(stream.getIn(['values', 'pin'])) === parseInt(nextProps.source.get('dataStreamPin'))
       );
 
       this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
@@ -84,6 +88,17 @@ class Source extends React.Component {
     );
   }
 
+  handleDelete() {
+
+    if(this.props.onDelete)
+      this.props.onDelete(this.props.source.get('id'));
+  }
+
+  handleCopy() {
+    if(this.props.onCopy)
+      this.props.onCopy(this.props.source.get('id'));
+  }
+
   render() {
 
     const getNotFoundDataStreamContent = () => {
@@ -113,9 +128,9 @@ class Source extends React.Component {
           <Field name={`sources.${this.props.index}.label`} component={this.labelComponent}/>
 
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
-            <Button size="small" icon="delete"/>
-            <Button size="small" icon="copy"/>
-            <Button size="small" icon="bars"/>
+            <Button size="small" icon="delete" onClick={this.handleDelete}/>
+            <Button size="small" icon="copy" onClick={this.handleCopy}/>
+            <Button size="small" icon="bars" disabled={true}/>
           </div>
         </div>
         <div className="modal-window-widget-settings-config-column-sources-source-type-select">

@@ -17,7 +17,7 @@ import {
 } from 'data/Widgets/api';
 
 @connect((state) => ({
-  widgets: state.Widgets.get('widgetsData'),
+  widgets: state.Widgets && state.Widgets.get('widgetsData'),
 }), (dispatch) => ({
   fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
 }))
