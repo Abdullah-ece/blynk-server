@@ -12,12 +12,12 @@ class Plotly extends React.Component {
 
   componentDidMount() {
 
-    let d3 = Plotlyjs.d3;
+    this.d3 = Plotlyjs.d3;
 
     let WIDTH_IN_PERCENT_OF_PARENT = 100,
       HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
-    let gd3 = d3.select(this.container)
+    this.gd3 = this.d3.select(this.container)
       .style({
         width: WIDTH_IN_PERCENT_OF_PARENT + '%',
         'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
@@ -26,11 +26,14 @@ class Plotly extends React.Component {
         'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
       });
 
-    Plotlyjs.plot(gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
+    Plotlyjs.newPlot(this.gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
   }
 
-  // componentDidUpdate() {
-  // }
+  componentDidUpdate() {
+
+    Plotlyjs.newPlot(this.gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
+
+  }
 
   render() {
     return (
