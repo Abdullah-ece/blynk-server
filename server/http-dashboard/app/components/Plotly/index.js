@@ -37,7 +37,7 @@ class Plotly extends React.Component {
 
   render() {
     return (
-      <div id="fefefwefwe2323" ref={(node) => this.container = node}/>
+      <div ref={(node) => this.container = node}/>
     );
   }
 
