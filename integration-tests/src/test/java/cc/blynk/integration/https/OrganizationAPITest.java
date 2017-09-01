@@ -531,7 +531,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -631,7 +631,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -654,7 +654,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
@@ -760,7 +760,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -783,7 +783,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");

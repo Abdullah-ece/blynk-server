@@ -533,7 +533,7 @@ public class EventorTest extends IntegrationBase {
         SetPinAction setPinAction = (SetPinAction) eventor.rules[0].actions[0];
         DataStream dataStream = setPinAction.dataStream;
         eventor.rules[0].actions[0] = new SetPinAction(
-                new DataStream(dataStream.pin, true, false, dataStream.pinType, null, 0, 255, null, null),
+                new DataStream(0, dataStream.pin, true, false, dataStream.pinType, null, 0, 255, null, null),
                 setPinAction.value,
                 SetPinActionType.CUSTOM
         );

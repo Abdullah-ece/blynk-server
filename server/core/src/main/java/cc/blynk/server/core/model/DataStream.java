@@ -17,6 +17,8 @@ public class DataStream implements CopyObject<DataStream> {
 
     public static final int NO_PIN = -1;
 
+    public final int id;
+
     public final byte pin;
 
     public final boolean pwmMode;
@@ -36,7 +38,8 @@ public class DataStream implements CopyObject<DataStream> {
     public final MeasurementUnit units;
 
     @JsonCreator
-    public DataStream(@JsonProperty("pin") byte pin,
+    public DataStream(@JsonProperty("id") int id,
+                      @JsonProperty("pin") byte pin,
                       @JsonProperty("pwmMode") boolean pwmMode,
                       @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
                       @JsonProperty("pinType") PinType pinType,
@@ -45,6 +48,7 @@ public class DataStream implements CopyObject<DataStream> {
                       @JsonProperty("max") int max,
                       @JsonProperty("label") String label,
                       @JsonProperty("units") MeasurementUnit units) {
+        this.id = id;
         this.pin = pin;
         this.pwmMode = pwmMode;
         this.rangeMappingOn = rangeMappingOn;
@@ -56,8 +60,9 @@ public class DataStream implements CopyObject<DataStream> {
         this.units = units;
     }
 
+
     public DataStream(byte pin, PinType pinType) {
-        this(pin, false, false, pinType, null, 0, 255, null, null);
+        this(0, pin, false, false, pinType, null, 0, 255, null, null);
     }
 
     public static String makeReadingHardwareBody(char pinType, byte pin) {

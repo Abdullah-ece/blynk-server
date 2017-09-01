@@ -167,7 +167,7 @@ public class ProductAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -221,7 +221,7 @@ public class ProductAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream((byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
         WebLabel webLabel = new WebLabel();
