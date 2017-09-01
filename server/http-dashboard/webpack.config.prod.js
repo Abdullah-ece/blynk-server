@@ -28,6 +28,9 @@ export default {
     publicPath: '/static/',
     filename: '[name].[chunkhash].js'
   },
+  externals: {
+    'plotly': 'Plotly'
+  },
   plugins: [
     // Hash the files using MD5 so that their names change when the content changes.
     new WebpackMd5Hash(),
