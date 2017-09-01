@@ -1,6 +1,8 @@
 import {fromJS} from 'immutable';
 
 const parseWidgetData = (data) => {
+  if (!data) return [];
+
   return data.map((item) => {
     const key = Object.keys(item)[0];
     const value = item[key];

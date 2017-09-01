@@ -57,8 +57,21 @@ class LinearWidget extends React.Component {
 
   }
 
-  render() {
+  layout = {
+    autosize: true,
+    margin: {
+      t: 15,
+      r: 15,
+      l: 15,
+      b: 30,
+    }
+  };
 
+  config = {
+    displayModeBar: false
+  };
+
+  renderRealDataChart() {
     if (!this.props.data.sources || !this.props.data.sources.length)
       return null;
 
@@ -102,25 +115,37 @@ class LinearWidget extends React.Component {
     if (isAnyLoading)
       return null;
 
-    const config = {
-      displayModeBar: false
-    };
+    return (
+      <div className="grid-linear-widget">
+        <Plotly data={data} config={this.config} layout={this.layout}/>
+      </div>
+    );
+  }
 
-    const layout = {
-      autosize: true,
-      margin: {
-        t: 15,
-        r: 0,
-        l: 10,
-        b: 30,
-      }
-    };
+  renderFakeDataChart() {
+
+    const data = [];
+
+    data.push({
+      name: 'Some Label',
+      x: [1,2,3,4,5],
+      y: [10,23,12,35,54],
+      mode: 'lines+markers',
+    });
 
     return (
       <div className="grid-linear-widget">
-        <Plotly data={data} config={config} layout={layout}/>
+        <Plotly data={data} config={this.config} layout={this.layout}/>
       </div>
     );
+  }
+
+  render() {
+
+    if (!this.props.fetchRealData)
+      return this.renderFakeDataChart();
+
+    return this.renderRealDataChart();
   }
 
 }
