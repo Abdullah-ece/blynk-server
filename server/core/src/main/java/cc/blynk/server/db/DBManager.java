@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
@@ -168,9 +169,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, SourceType sourceType, int offset, int limit) {
         if (isDBEnabled()) {
-            return reportingDBDao.getRawData(deviceId, pinType,  pin, from, to, offset, limit);
+            return reportingDBDao.getRawData(deviceId, pinType,  pin, from, to, sourceType, offset, limit);
         }
         return Collections.emptyList();
     }

@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -308,8 +309,10 @@ public class ReportingDBDao {
                 minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, SourceType sourceType, int offset, int limit) {
         List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
+
+        //for now supported only RAW_TYPE
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {

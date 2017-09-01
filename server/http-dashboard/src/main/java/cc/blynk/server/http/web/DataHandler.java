@@ -10,6 +10,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
@@ -80,6 +81,7 @@ public class DataHandler extends BaseHttpHandler {
                            @QueryParam("dataStream") String[] dataStreams,
                            @QueryParam("from") long from,
                            @QueryParam("to") long to,
+                           @QueryParam("sourceType") SourceType sourceType,
                            @QueryParam("offset") int offset,
                            @QueryParam("limit") int limit) {
 
@@ -91,7 +93,7 @@ public class DataHandler extends BaseHttpHandler {
             for (String dataStream : dataStreams) {
                 PinType pinType = PinType.getPinType(dataStream.charAt(0));
                 byte pin = ParseUtil.parseByte(dataStream.substring(1));
-                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, from, to, offset, limit);
+                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
                 finalModel.add(new AbstractMap.SimpleEntry<>(dataStream, new Data(data)));
             }
             ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());

@@ -4,6 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import org.junit.AfterClass;
@@ -60,7 +61,7 @@ public class RawDataDBTest {
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        List<AbstractMap.SimpleEntry<Long, Double>> result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now, 0, 10);
+        List<AbstractMap.SimpleEntry<Long, Double>> result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now, SourceType.RAW_DATA, 0, 10);
         assertNotNull(result);
         Map.Entry<Long, Double> entry = result.iterator().next();
         assertEquals(now, entry.getKey().longValue());
@@ -78,7 +79,9 @@ public class RawDataDBTest {
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        List<AbstractMap.SimpleEntry<Long, Double>> result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now+2, 0, 10);
+        List<AbstractMap.SimpleEntry<Long, Double>> result = dbManager.reportingDBDao.getRawData(2,
+                PinType.VIRTUAL, (byte) 3, 0, now+2, SourceType.RAW_DATA, 0, 10);
+
         assertNotNull(result);
         assertEquals(3, result.size());
 
@@ -96,7 +99,7 @@ public class RawDataDBTest {
         assertEquals(123, entry.getValue(), 0.0001);
 
         //test limit
-        result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now + 2, 0, 1);
+        result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now + 2, SourceType.RAW_DATA, 0, 1);
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -106,7 +109,7 @@ public class RawDataDBTest {
         assertEquals(125, entry.getValue(), 0.0001);
 
         //test offset
-        result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now + 2, 2, 10);
+        result = dbManager.reportingDBDao.getRawData(2, PinType.VIRTUAL, (byte) 3, 0, now + 2, SourceType.RAW_DATA, 2, 10);
         assertNotNull(result);
         assertEquals(1, result.size());
 

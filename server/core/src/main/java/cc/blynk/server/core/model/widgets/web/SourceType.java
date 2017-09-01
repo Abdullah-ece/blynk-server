@@ -7,6 +7,6 @@ package cc.blynk.server.core.model.widgets.web;
  */
 public enum SourceType {
 
-    RAW_DATA
+    RAW_DATA, SUM, AVG, MED, MIN, MAX, COUNT, CUMULATIVE_COUNT
 
 }
