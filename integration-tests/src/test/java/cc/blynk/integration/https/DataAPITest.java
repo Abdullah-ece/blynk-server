@@ -116,8 +116,8 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(2, data.size());
             LinkedHashMap point0 = (LinkedHashMap) data.get(0);
             LinkedHashMap point1 = (LinkedHashMap) data.get(1);
-            assertEquals(124, (Double) point0.get(String.valueOf(now + 1)), 0.0001);
-            assertEquals(123, (Double) point1.get(String.valueOf(now)), 0.0001);
+            assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
+            assertEquals(124, (Double) point1.get(String.valueOf(now + 1)), 0.0001);
 
             System.out.println(responseString);
         }

@@ -341,6 +341,7 @@ public class ReportingDBDao {
             log.error("Error getting raw data from DB.", e);
         }
 
+        Collections.reverse(result);
         return result;
     }
 
