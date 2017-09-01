@@ -111,6 +111,10 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
 
 export const prepareWidgetForProductEdit = (widget) => {
 
+  const getConfigByWidgetType = (type) => {
+    return WIDGETS_CONFIGS[type] || {};
+  };
+
   let sources = widget.sources || [];
 
   if (sources && sources.length)
@@ -134,7 +138,8 @@ export const prepareWidgetForProductEdit = (widget) => {
     i: widget.id.toString(),
     static: false,
     moved: false,
-    sources
+    ...getConfigByWidgetType(widget.type),
+    sources,
   };
 };
 
