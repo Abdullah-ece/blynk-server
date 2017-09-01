@@ -103,12 +103,14 @@ class Dashboard extends React.Component {
           <Button.Group size="default" className="devices-device-dashboard-time-filter">
             {this.FILTER_BUTTONS.map((button, key) => (
               <Button key={key}
+                      disabled={true}
                       onClick={this.filterBy.bind(this, button.key)}
                       type={button.key === this.state.filter && 'primary' || 'default'}>
                 {button.value}
               </Button>
             ))}
           </Button.Group>
+          (will come soon)
           {/*<Button.Group className="dashboard-tools">*/}
           {/*{ this.state.editable && (*/}
           {/*<Button icon="check" onClick={this.finishEditDashboard.bind(this)}/>*/}
