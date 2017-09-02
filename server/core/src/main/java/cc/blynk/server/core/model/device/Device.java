@@ -8,8 +8,7 @@ import cc.blynk.utils.JsonParser;
 
 import java.util.List;
 
-import static cc.blynk.utils.ArrayUtil.arrayToList;
-import static cc.blynk.utils.ArrayUtil.concat;
+import static cc.blynk.utils.ArrayUtil.*;
 
 /**
  * The Blynk Project.
@@ -50,7 +49,7 @@ public class Device implements Target {
 
     public volatile String metadataUpdatedBy;
 
-    public volatile MetaField[] metaFields;
+    public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
 
     public volatile HardwareInfo hardwareInfo;
 
