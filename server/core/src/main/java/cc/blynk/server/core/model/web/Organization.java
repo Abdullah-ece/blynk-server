@@ -111,7 +111,16 @@ public class Organization {
     }
 
     public boolean isUpdated(long lastStart) {
-        return lastStart <= lastModifiedTs;
+        return lastStart <= lastModifiedTs || productUpdated(lastStart);
+    }
+
+    private boolean productUpdated(long lastStart) {
+        for (Product product : products) {
+            if (lastStart <= product.lastModifiedTs) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

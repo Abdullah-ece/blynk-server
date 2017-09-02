@@ -40,4 +40,13 @@ public class LogEventCountKey {
         result = 31 * result + (isResolved ? 1 : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "LogEventCountKey{" +
+                "deviceId=" + deviceId +
+                ", eventType=" + eventType +
+                ", isResolved=" + isResolved +
+                '}';
+    }
 }
