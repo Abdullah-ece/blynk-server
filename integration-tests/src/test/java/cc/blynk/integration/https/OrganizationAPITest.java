@@ -12,7 +12,17 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
@@ -22,7 +32,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -39,7 +53,12 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -193,7 +212,7 @@ public class OrganizationAPITest extends APIBaseTest {
         Role role = Role.ADMIN;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, name, role));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, name, role));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -886,7 +905,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String[] fromApi = JsonParser.mapper.readValue(consumeText(response), String[].class);
+            String[] fromApi = JsonParser.MAPPER.readValue(consumeText(response), String[].class);
             assertNotNull(fromApi);
             assertEquals(0, fromApi.length);
         }
@@ -936,7 +955,7 @@ public class OrganizationAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            String[] fromApi = JsonParser.mapper.readValue(responseString, String[].class);
+            String[] fromApi = JsonParser.MAPPER.readValue(responseString, String[].class);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.length);
             assertEquals("Kyiv", fromApi[0]);
@@ -1006,7 +1025,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
+            User[] fromApi = JsonParser.MAPPER.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.length);
             for (User user : fromApi) {
@@ -1023,7 +1042,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
-        String body = JsonParser.mapper.writeValueAsString(new String[]{"user@blynk.cc"});
+        String body = JsonParser.MAPPER.writeValueAsString(new String[]{"user@blynk.cc"});
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
@@ -1034,7 +1053,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
+            User[] fromApi = JsonParser.MAPPER.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
             assertEquals(1, fromApi.length);
             for (User user : fromApi) {
@@ -1049,7 +1068,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
-        String body = JsonParser.mapper.writeValueAsString(new String[]{admin.email});
+        String body = JsonParser.MAPPER.writeValueAsString(new String[]{admin.email});
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
@@ -1062,7 +1081,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(regularUser.email, regularUser.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/delete");
-        String body = JsonParser.mapper.writeValueAsString(new String[]{"user@blynk.cc"});
+        String body = JsonParser.MAPPER.writeValueAsString(new String[]{"user@blynk.cc"});
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
@@ -1076,7 +1095,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = JsonParser.mapper.writeValueAsString(new UserInvite("user@blynk.cc", "123", Role.ADMIN));
+        String body = JsonParser.MAPPER.writeValueAsString(new UserInvite("user@blynk.cc", "123", Role.ADMIN));
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 
@@ -1088,7 +1107,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            User[] fromApi = JsonParser.mapper.readValue(consumeText(response), User[].class);
+            User[] fromApi = JsonParser.MAPPER.readValue(consumeText(response), User[].class);
             assertNotNull(fromApi);
             assertEquals(3, fromApi.length);
             for (User user : fromApi) {
@@ -1104,7 +1123,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = JsonParser.mapper.writeValueAsString(new UserInvite("userzzz@blynk.cc", "123", Role.ADMIN));
+        String body = JsonParser.MAPPER.writeValueAsString(new UserInvite("userzzz@blynk.cc", "123", Role.ADMIN));
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 

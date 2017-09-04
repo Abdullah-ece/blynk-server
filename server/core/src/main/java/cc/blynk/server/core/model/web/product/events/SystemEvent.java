@@ -9,12 +9,13 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
  */
 public abstract class SystemEvent extends Event {
 
-    public SystemEvent(int id, String name, String description,
+    SystemEvent(int id, String name, String description,
                        boolean isNotificationsEnabled, String eventCode,
                        EventReceiver[] emailNotifications,
                        EventReceiver[] pushNotifications,
                        EventReceiver[] smsNotifications) {
-        super(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, eventCode,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 
 }

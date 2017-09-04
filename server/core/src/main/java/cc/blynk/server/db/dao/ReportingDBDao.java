@@ -16,12 +16,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 
@@ -46,7 +52,9 @@ public class ReportingDBDao {
             "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, "
                     + "stringValue, doubleValue) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String selectDoubleRawData = "SELECT ts, doubleValue from reporting_raw_data WHERE device_id = ? and pin = ? and pinType = ? and ts BETWEEN ? and ? ORDER BY ts DESC offset ? limit ?";
+    private static final String selectDoubleRawData =
+            "SELECT ts, doubleValue from reporting_raw_data WHERE device_id = ? and pin = ? and "
+                    + "pinType = ? and ts BETWEEN ? and ? ORDER BY ts DESC offset ? limit ?";
 
     public static final String selectMinute =
             "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -350,7 +358,9 @@ public class ReportingDBDao {
                 minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType, byte pin, long from, long to, SourceType sourceType, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType,
+                                                                  byte pin, long from, long to,
+                                                                  SourceType sourceType, int offset, int limit) {
         List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
 
         //for now supported only RAW_TYPE

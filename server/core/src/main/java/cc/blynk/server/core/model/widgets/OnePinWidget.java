@@ -143,18 +143,36 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     //HAVE IN MIND : value is not compared as it is updated in realtime.
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OnePinWidget)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OnePinWidget)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         OnePinWidget that = (OnePinWidget) o;
 
-        if (deviceId != that.deviceId) return false;
-        if (pin != that.pin) return false;
-        if (pwmMode != that.pwmMode) return false;
-        if (rangeMappingOn != that.rangeMappingOn) return false;
-        if (min != that.min) return false;
-        if (max != that.max) return false;
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (pin != that.pin) {
+            return false;
+        }
+        if (pwmMode != that.pwmMode) {
+            return false;
+        }
+        if (rangeMappingOn != that.rangeMappingOn) {
+            return false;
+        }
+        if (min != that.min) {
+            return false;
+        }
+        if (max != that.max) {
+            return false;
+        }
         return pinType == that.pinType;
     }
 

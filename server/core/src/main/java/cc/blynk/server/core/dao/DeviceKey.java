@@ -19,8 +19,12 @@ public class DeviceKey {
     //orgId is not used by purpose!!!
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DeviceKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DeviceKey)) {
+            return false;
+        }
 
         DeviceKey deviceKey = (DeviceKey) o;
 

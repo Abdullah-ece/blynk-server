@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static cc.blynk.utils.ArrayUtil.*;
+import static cc.blynk.utils.ArrayUtil.EMPTY_DATA_STREAMS;
+import static cc.blynk.utils.ArrayUtil.EMPTY_EVENTS;
+import static cc.blynk.utils.ArrayUtil.EMPTY_META_FIELDS;
 
 /**
  * The Blynk Project.
@@ -142,8 +144,12 @@ public class Product {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Product)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Product)) {
+            return false;
+        }
 
         Product product = (Product) o;
 

@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -23,7 +22,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.utils.BlynkByteBufUtil.invalidToken;
@@ -111,22 +109,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         } else {
             completeLogin(ctx.channel(), session, user, dash, device, message.id);
         }
-    }
-
-    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
-        blockingIOProcessor.executeDB(() -> {
-            String server = dbManager.getServerByToken(token);
-            // no server found, that's means token is wrong.
-            if (server == null || server.equals(holder.host)) {
-                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-                ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
-            } else {
-                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
-                ctx.writeAndFlush(makeASCIIStringMessage(
-                        CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort),
-                        ctx.voidPromise());
-            }
-        });
     }
 
     @Override

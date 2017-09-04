@@ -35,7 +35,9 @@ public final class HandlerHolder {
             HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
             if (httpSession.user.role.ordinal() > handler.allowedRoleAccess.ordinal()) {
                 log.error("User {} is not allowed to call {}.{}. Required {}. User has {}.",
-                        httpSession.user.email, handler.handler.getClass().getSimpleName(), handler.classMethod.getName(),
+                        httpSession.user.email,
+                        handler.handler.getClass().getSimpleName(),
+                        handler.classMethod.getName(),
                         handler.allowedRoleAccess.name(), httpSession.user.role.name());
                 return false;
             }

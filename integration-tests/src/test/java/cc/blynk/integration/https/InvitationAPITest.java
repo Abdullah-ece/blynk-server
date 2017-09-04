@@ -28,7 +28,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -63,7 +65,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/100/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -83,7 +85,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -98,7 +100,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "user@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, "Dmitriy", Role.USER));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -113,7 +115,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, "Dmitriy", Role.STAFF));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -141,7 +143,7 @@ public class InvitationAPITest extends APIBaseTest {
         Role role = Role.STAFF;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = JsonParser.mapper.writeValueAsString(new UserInvite(email, name, role));
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, name, role));
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {

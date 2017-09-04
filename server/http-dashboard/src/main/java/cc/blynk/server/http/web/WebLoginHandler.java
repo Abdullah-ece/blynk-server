@@ -3,7 +3,12 @@ package cc.blynk.server.http.web;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.CookieHeader;
+import cc.blynk.core.http.annotation.FormParam;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -26,7 +31,9 @@ import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 
 import java.net.URLEncoder;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.redirect;
 import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
 
 /**
@@ -117,7 +124,8 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.error("User not found.");
-            return badRequest("Look like your invitation is expired or is used already. Please request the invitation again.");
+            return badRequest("Look like your invitation is expired or is used already. "
+                    + "Please request the invitation again.");
         }
 
         user.pass = password;
@@ -210,7 +218,8 @@ public class WebLoginHandler extends BaseHttpHandler {
                         .replace("{organization}", organization.name)
                         .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
-                String subject = "Reset your {organization} Dashboard password".replace("{organization}", organization.name);
+                String subject = "Reset your {organization} Dashboard password".replace("{organization}",
+                        organization.name);
 
                 mailWrapper.sendHtml(email, subject, body);
                 log.info("Reset email sent to {}.", email);

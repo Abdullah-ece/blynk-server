@@ -120,9 +120,9 @@ public final class AdminHttpUtil {
                 return Long.compare((long) v1, (long) v2);
             }
             if (returnType == String.class) {
-                return v1 == null ?
-                      (v2 == null ? 0 : Integer.MIN_VALUE) :
-                      (v2 == null ? Integer.MAX_VALUE : ((String) v1).compareTo((String) v2));
+                return v1 == null
+                        ? (v2 == null ? 0 : Integer.MIN_VALUE)
+                        : (v2 == null ? Integer.MAX_VALUE : ((String) v1).compareTo((String) v2));
             }
 
             throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());

@@ -24,7 +24,7 @@ public class ErrorMessage {
 
         public final String message;
 
-        public Error(String message) {
+        Error(String message) {
             this.message = message;
         }
 

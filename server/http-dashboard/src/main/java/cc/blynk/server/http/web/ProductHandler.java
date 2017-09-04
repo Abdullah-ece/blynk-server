@@ -3,7 +3,16 @@ package cc.blynk.server.http.web;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Admin;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.DELETE;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.HttpSession;
@@ -24,7 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.forbidden;
+import static cc.blynk.core.http.Response.notFound;
+import static cc.blynk.core.http.Response.ok;
 
 /**
  * The Blynk Project.
@@ -38,7 +50,7 @@ public class ProductHandler extends BaseHttpHandler {
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public ProductHandler(Holder holder, String rootPath) {
+    ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;

@@ -2,10 +2,16 @@ package cc.blynk.utils;
 
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.UriTemplate;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.CookieHeader;
+import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.params.BodyParam;
 import cc.blynk.core.http.rest.params.ContextParam;
+import cc.blynk.core.http.rest.params.ContextUserParam;
+import cc.blynk.core.http.rest.params.CookieRequestParam;
 import cc.blynk.core.http.rest.params.FormParam;
 import cc.blynk.core.http.rest.params.PathParam;
 import cc.blynk.core.http.rest.params.QueryParam;
@@ -87,7 +93,9 @@ public final class AnnotationsUtil {
 
                     Annotation cookieAnnotation = parameter.getAnnotation(CookieHeader.class);
                     if (cookieAnnotation != null) {
-                        handlerHolder.params[i] = new CookieRequestParam(((cc.blynk.core.http.annotation.CookieHeader) cookieAnnotation).value());
+                        handlerHolder.params[i] =
+                                new CookieRequestParam(
+                                        ((cc.blynk.core.http.annotation.CookieHeader) cookieAnnotation).value());
                     }
 
                     if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null

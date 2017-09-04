@@ -32,7 +32,10 @@ public class User {
     public Role role;
 
     //key fields
-	@JsonView(Views.WebUser.class)public String email;@JsonView(Views.WebUser.class)
+    @JsonView(Views.WebUser.class)
+    public String email;
+
+    @JsonView(Views.WebUser.class)
     public String appName;
 
     public String region;
@@ -151,9 +154,9 @@ public class User {
                 return true;
             }
             for (Device device : dashBoard.devices) {
-                if (lastStart <= device.metadataUpdatedAt ||
-                    lastStart <= device.dataReceivedAt ||
-                    lastStart <= device.updatedAt) {
+                if (lastStart <= device.metadataUpdatedAt
+                        || lastStart <= device.dataReceivedAt
+                        || lastStart <= device.updatedAt) {
                     return true;
                 }
             }

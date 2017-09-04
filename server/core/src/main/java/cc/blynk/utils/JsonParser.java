@@ -25,7 +25,11 @@ import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,8 +48,6 @@ import java.util.zip.DeflaterOutputStream;
  */
 public final class JsonParser {
 
-    private static final Logger log = LogManager.getLogger(JsonParser.class);
-
     private JsonParser() {
     }
 
@@ -54,7 +56,7 @@ public final class JsonParser {
 
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = MAPPER.readerFor(User.class);
-    private static final ObjectReader organizationReader = mapper.readerFor(Organization.class);
+    private static final ObjectReader organizationReader = MAPPER.readerFor(Organization.class);
     private static final ObjectReader profileReader = MAPPER.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = MAPPER.readerFor(DashBoard.class);
     private static final ObjectReader dashboardSettingsReader = MAPPER.readerFor(DashboardSettings.class);
@@ -63,17 +65,19 @@ public final class JsonParser {
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
     private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
-    private static final ObjectReader productReader = mapper.readerFor(Product.class);
+    private static final ObjectReader productReader = MAPPER.readerFor(Product.class);
 
-    private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
-    private static final ObjectWriter errorMessageWriter = mapper.writerFor(ErrorMessage.class);
-    private static final ObjectWriter okMessageWriter = mapper.writerFor(OkMessage.class);
+    private static final ObjectWriter organizationWriter = MAPPER.writerFor(Organization.class);
+    private static final ObjectWriter errorMessageWriter = MAPPER.writerFor(ErrorMessage.class);
+    private static final ObjectWriter okMessageWriter = MAPPER.writerFor(OkMessage.class);
     private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
-    private static final ObjectWriter userWebWriter = init().disable(MapperFeature.DEFAULT_VIEW_INCLUSION).writerWithView(Views.WebUser.class);
+    private static final ObjectWriter userWebWriter = init()
+            .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+            .writerWithView(Views.WebUser.class);
     private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
-    private static final ObjectWriter productWriter = mapper.writerFor(Product.class);
+    private static final ObjectWriter productWriter = MAPPER.writerFor(Product.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
@@ -319,11 +323,11 @@ public final class JsonParser {
     }
 
     public static String valueToJsonAsString(String value) {
-        return "[\"" + value  + "\"]";
+        return "[\"" + value + "\"]";
     }
 
     private static String makeJsonStringValue(String value) {
-        return "\"" + value  + "\"";
+        return "\"" + value + "\"";
     }
 
 }

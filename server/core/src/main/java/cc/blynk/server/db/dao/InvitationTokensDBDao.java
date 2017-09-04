@@ -18,8 +18,10 @@ import java.sql.ResultSet;
 public class InvitationTokensDBDao {
 
     public static final String selectToken = "SELECT * from invitation_tokens where token = ?";
-    public static final String activateToken = "UPDATE invitation_tokens SET is_activated = true, activated_ts = NOW() WHERE token = ? and email = ?";
-    public static final String insertToken = "INSERT INTO invitation_tokens (token, email, name, role) values (?, ?, ?, ?)";
+    public static final String activateToken = "UPDATE invitation_tokens SET is_activated = true, "
+            + "activated_ts = NOW() WHERE token = ? and email = ?";
+    public static final String insertToken =
+            "INSERT INTO invitation_tokens (token, email, name, role) values (?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(InvitationTokensDBDao.class);
     private final HikariDataSource ds;

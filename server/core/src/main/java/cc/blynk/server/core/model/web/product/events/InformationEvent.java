@@ -26,12 +26,14 @@ public class InformationEvent extends UserEvent {
                             @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
                             @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
                             @JsonProperty("smsNotifications") EventReceiver[] smsNotifications) {
-        super(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, eventCode,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 
     @Override
     public Event copy() {
-        return new InformationEvent(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
+        return new InformationEvent(id, name, description, isNotificationsEnabled, eventCode,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 
 }

@@ -25,6 +25,7 @@ public class UserInvite {
     }
 
     public boolean isNotValid() {
-        return email == null || email.isEmpty() || role == null || role == Role.SUPER_ADMIN || BlynkEmailValidator.isNotValidEmail(email);
+        return email == null || email.isEmpty() || role == null
+                || role == Role.SUPER_ADMIN || BlynkEmailValidator.isNotValidEmail(email);
     }
 }

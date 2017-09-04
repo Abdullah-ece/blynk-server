@@ -28,12 +28,14 @@ public class OfflineEvent extends SystemEvent {
                         @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
                         @JsonProperty("smsNotifications") EventReceiver[] smsNotifications,
                         @JsonProperty("ignorePeriod") int ignorePeriod) {
-        super(id, name, description, isNotificationsEnabled, EventType.OFFLINE.name(), emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, EventType.OFFLINE.name(),
+                emailNotifications, pushNotifications, smsNotifications);
         this.ignorePeriod = ignorePeriod;
     }
 
     @Override
     public Event copy() {
-        return new OfflineEvent(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications, ignorePeriod);
+        return new OfflineEvent(id, name, description, isNotificationsEnabled,
+                emailNotifications, pushNotifications, smsNotifications, ignorePeriod);
     }
 }

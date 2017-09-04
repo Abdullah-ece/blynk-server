@@ -51,8 +51,12 @@ public class WebDashboard implements CopyObject<WebDashboard> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebDashboard)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebDashboard)) {
+            return false;
+        }
 
         WebDashboard that = (WebDashboard) o;
 

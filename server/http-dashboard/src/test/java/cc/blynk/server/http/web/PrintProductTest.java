@@ -8,8 +8,22 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.MetadataType;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.events.*;
-import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.web.product.events.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.events.InformationEvent;
+import cc.blynk.server.core.model.web.product.events.OfflineEvent;
+import cc.blynk.server.core.model.web.product.events.OnlineEvent;
+import cc.blynk.server.core.model.web.product.events.WarningEvent;
+import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,7 +117,7 @@ public class PrintProductTest {
                 criticalEvent
         };
 
-        System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
+        System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(product));
     }
 
 }

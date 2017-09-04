@@ -8,7 +8,9 @@ import cc.blynk.utils.JsonParser;
 
 import java.util.List;
 
-import static cc.blynk.utils.ArrayUtil.*;
+import static cc.blynk.utils.ArrayUtil.EMPTY_META_FIELDS;
+import static cc.blynk.utils.ArrayUtil.arrayToList;
+import static cc.blynk.utils.ArrayUtil.concat;
 
 /**
  * The Blynk Project.

@@ -13,7 +13,12 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.events.*;
+import cc.blynk.server.core.model.web.product.events.CriticalEvent;
+import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.events.InformationEvent;
+import cc.blynk.server.core.model.web.product.events.OfflineEvent;
+import cc.blynk.server.core.model.web.product.events.OnlineEvent;
+import cc.blynk.server.core.model.web.product.events.WarningEvent;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
@@ -133,7 +138,9 @@ public final class ServerLauncher {
             Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
             Organization mainOrg = holder.organizationDao.create(superOrg);
             mainOrg.isActive = true;
-            holder.organizationDao.create(new Organization("New Organization Inc. (orgId=2)", "Europe/Kiev", "/static/logo.png", false, superOrg.id));
+            holder.organizationDao.create(
+                    new Organization("New Organization Inc. (orgId=2)",
+                            "Europe/Kiev", "/static/logo.png", false, superOrg.id));
             Product product = new Product();
             product.boardType = "Particle Photon";
             product.connectionType = ConnectionType.WI_FI;
@@ -152,12 +159,14 @@ public final class ServerLauncher {
             };
 
             for (int i = 0; i < 20; i++) {
-                Device device = new Device("My Device " + i, "Particle Photon", "auth_123", product.id, ConnectionType.WI_FI);
+                Device device = new Device("My Device " + i, "Particle Photon", "auth_123",
+                        product.id, ConnectionType.WI_FI);
                 holder.deviceDao.create(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {
                         Event event = product.findEventByType(eventType);
-                        holder.dbManager.insertEvent(device.id, eventType, System.currentTimeMillis(), event.hashCode(), null);
+                        holder.dbManager.insertEvent(device.id, eventType,
+                                System.currentTimeMillis(), event.hashCode(), null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -178,11 +187,19 @@ public final class ServerLauncher {
     }
 
     private static Event[] createDefaultEvents() {
-        OnlineEvent onlineEvent = new OnlineEvent(1, "Your device is online.", null, false, null, null, null);
-        OfflineEvent offlineEvent = new OfflineEvent(2, "Your device is offline.", null, false, null, null, null, 1000);
-        InformationEvent infoEvent = new InformationEvent(3, "Door is opened", "Kitchen door is opened.", false, "door_opened", null, null, null);
-        WarningEvent warningEvent = new WarningEvent(4, "Temperature is high!", "Room temp is high", false, "temp_is_high", null, null, null);
-        CriticalEvent criticalEvent = new CriticalEvent(5, "Temperature is super high!", "Room temp is super high",false,"temp_is_super_high", null, null, null);
+        OnlineEvent onlineEvent =
+                new OnlineEvent(1, "Your device is online.", null, false, null, null, null);
+        OfflineEvent offlineEvent =
+                new OfflineEvent(2, "Your device is offline.", null, false, null, null, null, 1000);
+        InformationEvent infoEvent =
+                new InformationEvent(3, "Door is opened", "Kitchen door is opened.",
+                        false, "door_opened", null, null, null);
+        WarningEvent warningEvent =
+                new WarningEvent(4, "Temperature is high!", "Room temp is high",
+                        false, "temp_is_high", null, null, null);
+        CriticalEvent criticalEvent =
+                new CriticalEvent(5, "Temperature is super high!", "Room temp is super high",
+                        false, "temp_is_super_high", null, null, null);
 
         return new Event[] {
                 onlineEvent,

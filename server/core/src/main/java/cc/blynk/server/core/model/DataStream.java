@@ -110,18 +110,36 @@ public class DataStream implements CopyObject<DataStream> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DataStream)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DataStream)) {
+            return false;
+        }
 
         DataStream that = (DataStream) o;
 
-        if (pin != that.pin) return false;
-        if (pwmMode != that.pwmMode) return false;
-        if (rangeMappingOn != that.rangeMappingOn) return false;
-        if (min != that.min) return false;
-        if (max != that.max) return false;
-        if (pinType != that.pinType) return false;
-        if (label != null ? !label.equals(that.label) : that.label != null) return false;
+        if (pin != that.pin) {
+            return false;
+        }
+        if (pwmMode != that.pwmMode) {
+            return false;
+        }
+        if (rangeMappingOn != that.rangeMappingOn) {
+            return false;
+        }
+        if (min != that.min) {
+            return false;
+        }
+        if (max != that.max) {
+            return false;
+        }
+        if (pinType != that.pinType) {
+            return false;
+        }
+        if (label != null ? !label.equals(that.label) : that.label != null) {
+            return false;
+        }
         return units == that.units;
     }
 

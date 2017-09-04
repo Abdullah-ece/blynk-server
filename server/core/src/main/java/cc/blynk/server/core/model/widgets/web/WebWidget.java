@@ -47,9 +47,15 @@ public abstract class WebWidget extends Widget {
     //HAVE IN MIND : value is not compared as it is updated in realtime.
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebWidget)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebWidget)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         WebWidget webWidget = (WebWidget) o;
 

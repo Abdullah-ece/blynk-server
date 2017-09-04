@@ -25,11 +25,13 @@ public class OnlineEvent extends SystemEvent {
                        @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
                        @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
                        @JsonProperty("smsNotifications") EventReceiver[] smsNotifications) {
-        super(id, name, description, isNotificationsEnabled, EventType.ONLINE.name(), emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, EventType.ONLINE.name(),
+                emailNotifications, pushNotifications, smsNotifications);
     }
 
     @Override
     public Event copy() {
-        return new OnlineEvent(id, name, description, isNotificationsEnabled, emailNotifications, pushNotifications, smsNotifications);
+        return new OnlineEvent(id, name, description, isNotificationsEnabled,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 }

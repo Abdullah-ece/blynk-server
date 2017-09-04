@@ -12,7 +12,10 @@ import java.util.Set;
  * Created by Dmitriy Dumanskiy.
  * Created on 31.03.17.
  */
-public class CookieUtil {
+public final class CookieUtil {
+
+    private CookieUtil() {
+    }
 
     public static Cookie findCookieByName(HttpRequest request, String cookieName) {
         String cookieString = request.headers().get(HttpHeaderNames.COOKIE);

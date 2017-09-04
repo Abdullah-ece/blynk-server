@@ -1,7 +1,16 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -54,8 +63,12 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MetaField)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MetaField)) {
+            return false;
+        }
 
         MetaField metaField = (MetaField) o;
 

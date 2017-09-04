@@ -72,7 +72,8 @@ public class OrganizationDao {
             }
         }
         log.error("Product with passed id {} not found in organization with id {}.", productId, orgId);
-        throw new ProductNotFoundException("Product with passed id " + productId + " not found in organization with id " + orgId);
+        throw new ProductNotFoundException("Product with passed id " + productId
+                + " not found in organization with id " + orgId);
     }
 
     public Collection<Organization> getAll(User user) {

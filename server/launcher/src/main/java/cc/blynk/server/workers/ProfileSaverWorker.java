@@ -33,7 +33,8 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private long lastStart;
     private long backupTs;
 
-    public ProfileSaverWorker(UserDao userDao, FileManager fileManager, DBManager dbManager, OrganizationDao organizationDao) {
+    public ProfileSaverWorker(UserDao userDao, FileManager fileManager,
+                              DBManager dbManager, OrganizationDao organizationDao) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.dbManager = dbManager;

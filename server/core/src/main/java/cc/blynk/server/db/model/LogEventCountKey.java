@@ -23,13 +23,21 @@ public class LogEventCountKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LogEventCountKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LogEventCountKey)) {
+            return false;
+        }
 
         LogEventCountKey that = (LogEventCountKey) o;
 
-        if (deviceId != that.deviceId) return false;
-        if (isResolved != that.isResolved) return false;
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (isResolved != that.isResolved) {
+            return false;
+        }
         return eventType == that.eventType;
     }
 
@@ -43,10 +51,10 @@ public class LogEventCountKey {
 
     @Override
     public String toString() {
-        return "LogEventCountKey{" +
-                "deviceId=" + deviceId +
-                ", eventType=" + eventType +
-                ", isResolved=" + isResolved +
-                '}';
+        return "LogEventCountKey{"
+                + "deviceId=" + deviceId
+                + ", eventType=" + eventType
+                + ", isResolved=" + isResolved
+                + '}';
     }
 }

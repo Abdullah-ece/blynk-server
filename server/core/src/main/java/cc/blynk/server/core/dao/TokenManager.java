@@ -23,9 +23,10 @@ public class TokenManager {
     private final DBManager dbManager;
     private final String currentIp;
 
-    public TokenManager(ConcurrentMap<UserKey, User> users, BlockingIOProcessor blockingIOProcessor,DeviceDao deviceDao, DBManager dbManager, String currentIp) {
+    public TokenManager(ConcurrentMap<UserKey, User> users, BlockingIOProcessor blockingIOProcessor,
+                        DeviceDao deviceDao, DBManager dbManager, String currentIp) {
         Collection<User> allUsers = users.values();
-        this.regularTokenManager = new RegularTokenManager(allUsers, deviceDao);
+        this.regularTokenManager = new RegularTokenManager(allUsers);
         this.sharedTokenManager = new SharedTokenManager(allUsers);
         this.blockingIOProcessor = blockingIOProcessor;
         this.dbManager = dbManager;

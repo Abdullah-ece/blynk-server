@@ -70,17 +70,18 @@ public class LogEvent {
 
     @Override
     public String toString() {
-        return "LogEvent{" +
-                "id=" + id +
-                ", deviceId=" + deviceId +
-                ", eventType=" + eventType +
-                ", ts=" + ts +
-                ", eventHashcode=" + eventHashcode +
-                ", isResolved=" + isResolved +
-                ", resolvedBy='" + resolvedBy + '\'' +
-                ", resolvedAt=" + resolvedAt +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "LogEvent{"
+                + "id=" + id
+                + ", deviceId=" + deviceId
+                + ", eventType=" + eventType
+                + ", ts=" + ts
+                + ", eventHashcode=" + eventHashcode
+                + ", isResolved=" + isResolved
+                + ", resolvedBy='" + resolvedBy + '\''
+                + ", resolvedAt=" + resolvedAt
+                + ", resolvedComment='" + resolvedComment + '\''
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + '}';
     }
 }

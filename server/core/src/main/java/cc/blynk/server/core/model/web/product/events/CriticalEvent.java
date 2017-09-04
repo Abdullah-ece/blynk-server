@@ -26,11 +26,13 @@ public class CriticalEvent extends UserEvent {
                          @JsonProperty("emailNotifications") EventReceiver[] emailNotifications,
                          @JsonProperty("pushNotifications") EventReceiver[] pushNotifications,
                          @JsonProperty("smsNotifications") EventReceiver[] smsNotifications) {
-        super(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
+        super(id, name, description, isNotificationsEnabled, eventCode,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 
     @Override
     public Event copy() {
-        return new CriticalEvent(id, name, description, isNotificationsEnabled, eventCode, emailNotifications, pushNotifications, smsNotifications);
+        return new CriticalEvent(id, name, description, isNotificationsEnabled, eventCode,
+                emailNotifications, pushNotifications, smsNotifications);
     }
 }

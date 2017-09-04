@@ -2,7 +2,12 @@ package cc.blynk.server.http.web;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
@@ -38,7 +43,7 @@ public class DataHandler extends BaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
 
-    public DataHandler(Holder holder, String rootPath) {
+    DataHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
@@ -63,7 +68,8 @@ public class DataHandler extends BaseHttpHandler {
 
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
 
-        AggregationKey key = new AggregationKey(new BaseReportingKey(user.email, user.appName, 0, deviceId, pinType, pin), ts);
+        AggregationKey key = new AggregationKey(new BaseReportingKey(user.email,
+                user.appName, 0, deviceId, pinType, pin), ts);
 
         blockingIOProcessor.executeDB(() -> {
             dbManager.insertSingleEntryRaw(key, value);
@@ -93,7 +99,8 @@ public class DataHandler extends BaseHttpHandler {
             for (String dataStream : dataStreams) {
                 PinType pinType = PinType.getPinType(dataStream.charAt(0));
                 byte pin = ParseUtil.parseByte(dataStream.substring(1));
-                List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
+                List<AbstractMap.SimpleEntry<Long, Double>> data =
+                        dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
                 finalModel.add(new AbstractMap.SimpleEntry<>(dataStream, new Data(data)));
             }
             ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
@@ -106,7 +113,7 @@ public class DataHandler extends BaseHttpHandler {
 
         private final List<AbstractMap.SimpleEntry<Long, Double>> data;
 
-        public Data(List<AbstractMap.SimpleEntry<Long, Double>> data) {
+        Data(List<AbstractMap.SimpleEntry<Long, Double>> data) {
             this.data = data;
         }
     }

@@ -36,7 +36,8 @@ public class InvitationToken {
         this.activatedTs = null;
     }
 
-    public InvitationToken(String token, String email, String name, Role role, boolean isActivated, Date createdTs, Date activatedTs) {
+    public InvitationToken(String token, String email, String name, Role role,
+                           boolean isActivated, Date createdTs, Date activatedTs) {
         this.token = token;
         this.email = email;
         this.name = name;

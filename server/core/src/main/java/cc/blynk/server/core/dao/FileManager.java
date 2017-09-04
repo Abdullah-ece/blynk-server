@@ -40,7 +40,7 @@ public class FileManager {
     private static final Logger log = LogManager.getLogger(FileManager.class);
     private static final String USER_FILE_EXTENSION = ".user";
     private static final String ORG_FILE_EXTENSION = ".org";
-    
+
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
     private static final String ORGANIZATION_DATA_DIR_NAME = "organizations";

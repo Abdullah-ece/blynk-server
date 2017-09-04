@@ -43,7 +43,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
         this(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
     }
 
-    BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
                            GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
@@ -85,7 +85,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
     }
 
     private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req,
-                               HandlerWrapper handler, Map<String, String> extractedParams){
+                               HandlerWrapper handler, Map<String, String> extractedParams) {
         log.debug("{} : {}", req.method().name(), req.uri());
         URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
         Object[] params = handler.fetchParams(ctx, uriDecoder);

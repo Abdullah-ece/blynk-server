@@ -3,7 +3,17 @@ package cc.blynk.server.http.web;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Admin;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.DELETE;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
@@ -31,9 +41,16 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
@@ -50,7 +67,7 @@ public class DevicesHandler extends BaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
 
-    public DevicesHandler(Holder holder, String rootPath) {
+    DevicesHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
@@ -198,7 +215,7 @@ public class DevicesHandler extends BaseHttpHandler {
             try {
                 List<WebDevice> result = joinEventsCountSinceLastView(devices, user.email);
                 response = ok(sort(result, orderFields, order));
-            } catch (Exception e){
+            } catch (Exception e) {
                 log.error("Error getting counters for devices.", e);
                 response = serverError("Error getting counters for devices.");
             }
@@ -297,7 +314,8 @@ public class DevicesHandler extends BaseHttpHandler {
                     } else if (isResolved == null) {
                         eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
                     } else {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit, isResolved);
+                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit,
+                                isResolved);
                     }
                 }
 
@@ -307,18 +325,22 @@ public class DevicesHandler extends BaseHttpHandler {
                     joinLogEventName(product, eventList);
                 }
 
-                Map<LogEventCountKey, Integer> totalCounters = dbManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
+                Map<LogEventCountKey, Integer> totalCounters =
+                        dbManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
 
                 response = ok(new HashMap<String, Object>() {
                     {
-                        put("totalCritical", totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.CRITICAL, false), 0));
-                        put("totalWarning", totalCounters.getOrDefault(new LogEventCountKey(deviceId, EventType.WARNING, false), 0));
+                        put("totalCritical", totalCounters.getOrDefault(
+                                new LogEventCountKey(deviceId, EventType.CRITICAL, false), 0));
+                        put("totalWarning", totalCounters.getOrDefault(
+                                new LogEventCountKey(deviceId, EventType.WARNING, false), 0));
                         put("totalResolved", totalResolved(totalCounters));
                         put("logEvents", eventList);
                     }
                 });
             } catch (Exception e) {
-                log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.", deviceId, limit, offset, e);
+                log.error("Error retrieving timeline for deviceId {}, limit {}, offset {}.",
+                        deviceId, limit, offset, e);
                 response = serverError("Error retrieving timeline for device.");
             }
             ctx.writeAndFlush(response, ctx.voidPromise());

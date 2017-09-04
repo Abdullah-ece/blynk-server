@@ -30,6 +30,6 @@ public class RangeMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new RangeMetaField(id, name ,role, isDefault, from, to);
+        return new RangeMetaField(id, name, role, isDefault, from, to);
     }
 }

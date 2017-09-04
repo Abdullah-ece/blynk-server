@@ -21,7 +21,7 @@ class RegularTokenManager {
 
     private final ConcurrentMap<String, TokenValue> cache;
 
-    public RegularTokenManager(Iterable<User> users, DeviceDao deviceDao) {
+    RegularTokenManager(Iterable<User> users) {
         this.cache = new ConcurrentHashMap<String, TokenValue>() {
             {
                 for (User user : users) {

@@ -34,7 +34,7 @@ public class SwitchMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new SwitchMetaField(id, name ,role, isDefault, from, to, value);
+        return new SwitchMetaField(id, name, role, isDefault, from, to, value);
     }
 
 }

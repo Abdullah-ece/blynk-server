@@ -104,7 +104,7 @@ public class DataAPITest extends APIBaseTest {
             //[{"V1":{"data":[{"1504015510046":124.0},{"1504015510045":123.0}]}}]
 
             String responseString = consumeText(response);
-            List l = JsonParser.mapper.readValue(responseString, List.class);
+            List l = JsonParser.MAPPER.readValue(responseString, List.class);
             assertNotNull(l);
             assertEquals(1, l.size());
             LinkedHashMap<String, List> map = (LinkedHashMap) l.get(0);
@@ -154,7 +154,7 @@ public class DataAPITest extends APIBaseTest {
             //[{"V1":{"data":[{"1504102495921":123.0}]}},{"V2":{"data":[{"1504102495921":124.0}]}}]
             System.out.println(responseString);
 
-            List l = JsonParser.mapper.readValue(responseString, List.class);
+            List l = JsonParser.MAPPER.readValue(responseString, List.class);
             assertNotNull(l);
             assertEquals(2, l.size());
             LinkedHashMap<String, List> map = (LinkedHashMap) l.get(0);
@@ -211,7 +211,7 @@ public class DataAPITest extends APIBaseTest {
             //[{"V1":{"data":[{"1504015510046":123.0}]}}]
 
             String responseString = consumeText(response);
-            List l = JsonParser.mapper.readValue(responseString, List.class);
+            List l = JsonParser.MAPPER.readValue(responseString, List.class);
             assertNotNull(l);
             assertEquals(1, l.size());
             LinkedHashMap<String, List> map = (LinkedHashMap) l.get(0);

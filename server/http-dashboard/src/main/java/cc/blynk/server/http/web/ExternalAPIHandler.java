@@ -2,10 +2,13 @@ package cc.blynk.server.http.web;
 
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.TokenBaseHttpHandler;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.device.Device;
@@ -17,7 +20,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
 
 /**
  * The Blynk Project.
@@ -30,14 +35,12 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ExternalAPIHandler.class);
     private final BlockingIOProcessor blockingIOProcessor;
-    private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
     private final DBManager dbManager;
 
-    public ExternalAPIHandler(Holder holder) {
+    ExternalAPIHandler(Holder holder) {
         super(holder.tokenManager, holder.sessionDao, holder.stats, "/external/api");
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.dbManager = holder.dbManager;
     }

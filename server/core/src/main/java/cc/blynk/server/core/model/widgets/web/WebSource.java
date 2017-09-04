@@ -41,16 +41,30 @@ public class WebSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebSource)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebSource)) {
+            return false;
+        }
 
         WebSource webSource = (WebSource) o;
 
-        if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) return false;
-        if (label != null ? !label.equals(webSource.label) : webSource.label != null) return false;
-        if (sourceType != webSource.sourceType) return false;
-        if (color != null ? !color.equals(webSource.color) : webSource.color != null) return false;
-        if (graphType != webSource.graphType) return false;
+        if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) {
+            return false;
+        }
+        if (label != null ? !label.equals(webSource.label) : webSource.label != null) {
+            return false;
+        }
+        if (sourceType != webSource.sourceType) {
+            return false;
+        }
+        if (color != null ? !color.equals(webSource.color) : webSource.color != null) {
+            return false;
+        }
+        if (graphType != webSource.graphType) {
+            return false;
+        }
         return dataStream != null ? dataStream.equals(webSource.dataStream) : webSource.dataStream == null;
     }
 

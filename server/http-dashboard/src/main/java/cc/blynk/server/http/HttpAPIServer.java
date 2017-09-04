@@ -1,6 +1,10 @@
 package cc.blynk.server.http;
 
-import cc.blynk.core.http.handlers.*;
+import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileEdsWith;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
@@ -31,7 +35,10 @@ public class HttpAPIServer extends BaseServer {
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-         LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+         LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(
+                 holder.sslContextHolder.contentHolder);
+         UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
+                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"));
         StaticFileHandler staticFileHandler = new StaticFileHandler(holder.props, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));

@@ -227,16 +227,30 @@ public abstract class Widget implements CopyObject<Widget> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Widget)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Widget)) {
+            return false;
+        }
 
         Widget widget = (Widget) o;
 
-        if (id != widget.id) return false;
-        if (x != widget.x) return false;
-        if (y != widget.y) return false;
-        if (width != widget.width) return false;
-        if (height != widget.height) return false;
+        if (id != widget.id) {
+            return false;
+        }
+        if (x != widget.x) {
+            return false;
+        }
+        if (y != widget.y) {
+            return false;
+        }
+        if (width != widget.width) {
+            return false;
+        }
+        if (height != widget.height) {
+            return false;
+        }
         return label != null ? label.equals(widget.label) : widget.label == null;
     }
 

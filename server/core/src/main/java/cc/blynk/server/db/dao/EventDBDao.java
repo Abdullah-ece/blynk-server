@@ -27,26 +27,40 @@ public class EventDBDao {
 
     private static final Logger log = LogManager.getLogger(EventDBDao.class);
 
-    private static final String resolveLogEvent = "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, resolved_at = ?, resolved_comment = ? where id = ?";
-    private static final String insertEvent = "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) values (?, ?, ?, ?, ?, ?)";
-    private static final String insertSystemEvent = "INSERT INTO reporting_events (device_id, type, event_hashcode) values (?, ?, ?)";
+    private static final String resolveLogEvent =
+            "UPDATE reporting_events SET is_resolved = TRUE, resolved_by = ?, "
+                    + "resolved_at = ?, resolved_comment = ? where id = ?";
+    private static final String insertEvent =
+            "INSERT INTO reporting_events (device_id, type, ts, event_hashcode, description, is_resolved) "
+                    + "values (?, ?, ?, ?, ?, ?)";
+    private static final String insertSystemEvent =
+            "INSERT INTO reporting_events (device_id, type, event_hashcode) values (?, ?, ?)";
 
-    private static final String selectEvents = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
-    private static final String selectEventsResolvedFilter = "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
-    private static final String selectEventsTypeAndResolvedFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
-    private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEvents =
+            "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? "
+                    + "order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsResolvedFilter =
+            "select * from reporting_events where device_id = ? and ts BETWEEN ? and ? and is_resolved = ? "
+                    + "order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsTypeAndResolvedFilter =
+            "select * from reporting_events where device_id = ? and type = ? and ts BETWEEN ? and ? "
+                    + "and is_resolved = ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
+    private static final String selectEventsTypeFilter = "select * from reporting_events where device_id = ? "
+            + "and type = ? and ts BETWEEN ? and ? order by COALESCE(resolved_at, ts) desc offset ? limit ?";
 
     private static final String selectEventsCountSinceLastView =
-            "select ev.device_id, ev.type, count(*) " +
-            "from reporting_events ev LEFT JOIN reporting_events_last_seen ls " +
-            "ON (ev.device_id = ls.device_id and ls.email=?) " +
-            "where ls.ts IS NULL OR ev.ts > ls.ts and " +
-                  "ev.is_resolved = false " +
-            "group by ev.device_id, ev.type";
+            "select ev.device_id, ev.type, count(*) "
+            + "from reporting_events ev LEFT JOIN reporting_events_last_seen ls "
+            + "ON (ev.device_id = ls.device_id and ls.email=?) "
+            + "where ls.ts IS NULL OR ev.ts > ls.ts and "
+            + "ev.is_resolved = false "
+            + "group by ev.device_id, ev.type";
 
-    private static final String selectEventsCountTotalForPeriod = "select type, is_resolved, count(*) from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
+    private static final String selectEventsCountTotalForPeriod = "select type, is_resolved, count(*) "
+            + "from reporting_events where ts BETWEEN ? and ? and device_id = ? group by type, is_resolved";
 
-    private static final String upsertLastSeen = "INSERT INTO reporting_events_last_seen (device_id, email) VALUES (?, ?) ON CONFLICT (device_id, email) DO UPDATE SET ts = NOW() at time zone 'utc'";
+    private static final String upsertLastSeen = "INSERT INTO reporting_events_last_seen (device_id, email) "
+            + "VALUES (?, ?) ON CONFLICT (device_id, email) DO UPDATE SET ts = NOW() at time zone 'utc'";
 
     private final HikariDataSource ds;
 
@@ -109,7 +123,8 @@ public class EventDBDao {
         return events;
     }
 
-    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
+    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to,
+                                    int offset, int limit, boolean isResolved) throws Exception {
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -136,7 +151,8 @@ public class EventDBDao {
         return events;
     }
 
-    public List<LogEvent> getEvents(int deviceId, long from, long to, int offset, int limit, boolean isResolved) throws Exception {
+    public List<LogEvent> getEvents(int deviceId, long from, long to, int offset,
+                                    int limit, boolean isResolved) throws Exception {
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -187,7 +203,8 @@ public class EventDBDao {
         return events;
     }
 
-    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to, int offset, int limit) throws Exception {
+    public List<LogEvent> getEvents(int deviceId, EventType eventType, long from, long to,
+                                    int offset, int limit) throws Exception {
         List<LogEvent> events = new ArrayList<>(limit);
 
         try (Connection connection = ds.getConnection();
@@ -239,12 +256,13 @@ public class EventDBDao {
 
             ps.executeUpdate();
             connection.commit();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error insert system event. Reason: {}", e.getMessage());
         }
     }
 
-    public void insert(int deviceId, EventType eventType, long ts, int eventHashcode, String description, boolean isResolved) throws Exception {
+    public void insert(int deviceId, EventType eventType, long ts, int eventHashcode,
+                       String description, boolean isResolved) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertEvent)) {
 
@@ -287,6 +305,7 @@ public class EventDBDao {
     }
 
     public void insert(LogEvent logEvent) throws Exception {
-        insert(logEvent.deviceId, logEvent.eventType, logEvent.ts, logEvent.eventHashcode, logEvent.description, logEvent.isResolved);
+        insert(logEvent.deviceId, logEvent.eventType, logEvent.ts, logEvent.eventHashcode,
+                logEvent.description, logEvent.isResolved);
     }
 }

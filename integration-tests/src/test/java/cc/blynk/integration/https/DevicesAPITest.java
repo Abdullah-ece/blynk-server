@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -85,7 +87,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(devices);
             assertEquals(3, devices.length);
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
     }
 
@@ -232,7 +234,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(devices);
             assertEquals(1, devices.length);
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
     }
 
@@ -483,7 +485,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            TestDevice device = JsonParser.mapper.readValue(responseString, TestDevice.class);
+            TestDevice device = JsonParser.MAPPER.readValue(responseString, TestDevice.class);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertEquals(1, device.productId);

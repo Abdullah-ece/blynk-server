@@ -56,6 +56,7 @@ import cc.blynk.server.core.protocol.model.messages.hardware.AppConnectedMessage
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.PushMessage;
@@ -100,6 +101,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;

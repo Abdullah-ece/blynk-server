@@ -110,13 +110,21 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MultiPinWidget)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MultiPinWidget)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         MultiPinWidget that = (MultiPinWidget) o;
 
-        if (deviceId != that.deviceId) return false;
+        if (deviceId != that.deviceId) {
+            return false;
+        }
         return Arrays.equals(dataStreams, that.dataStreams);
     }
 

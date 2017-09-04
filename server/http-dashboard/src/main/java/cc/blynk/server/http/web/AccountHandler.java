@@ -3,7 +3,11 @@ package cc.blynk.server.http.web;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.SessionDao;
@@ -25,7 +29,7 @@ public class AccountHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
 
-    public AccountHandler(Holder holder, String rootPath) {
+    AccountHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
     }

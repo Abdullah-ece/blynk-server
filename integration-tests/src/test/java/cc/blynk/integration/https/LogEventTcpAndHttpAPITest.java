@@ -9,7 +9,11 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.*;
+import cc.blynk.server.core.model.web.product.EventReceiver;
+import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.MetadataType;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
@@ -24,7 +28,11 @@ import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -36,7 +44,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -108,7 +120,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("Temp is super high", logEvents[0].name);
             assertEquals("This is my description", logEvents[0].description);
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(timeLineResponse));
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(timeLineResponse));
         }
     }
 
@@ -549,7 +561,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
                 }
             }
 
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
     }
 
@@ -624,7 +636,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            device = JsonParser.mapper.readValue(responseString, Device.class);
+            device = JsonParser.MAPPER.readValue(responseString, Device.class);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);

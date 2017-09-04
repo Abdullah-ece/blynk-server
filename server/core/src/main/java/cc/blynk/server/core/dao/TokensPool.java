@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,12 +16,12 @@ public final class TokensPool {
 
     private static final Logger log = LogManager.getLogger(TokensPool.class);
 
-    private final int TOKEN_EXPIRATION_PERIOD_MILLIS;
+    private final int tokenExpirationPeriodMillis;
     private final ConcurrentMap<TokenHolder, User> holder;
 
     public TokensPool(int expirationPeriodMillis) {
         this.holder = new ConcurrentHashMap<>();
-        this.TOKEN_EXPIRATION_PERIOD_MILLIS = expirationPeriodMillis;
+        this.tokenExpirationPeriodMillis = expirationPeriodMillis;
     }
 
     public void addToken(String token, User user) {
@@ -46,28 +44,27 @@ public final class TokensPool {
     }
 
     private void cleanupOldTokens() {
-        final long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<TokenHolder, User>> iterator = holder.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<TokenHolder, User> entry = iterator.next();
-            if (entry.getKey().createdAt + TOKEN_EXPIRATION_PERIOD_MILLIS < now) {
-                iterator.remove();
-            }
-        }
+        long now = System.currentTimeMillis();
+        holder.entrySet().removeIf(entry -> entry.getKey().createdAt + tokenExpirationPeriodMillis < now);
     }
 
     private class TokenHolder {
         private long createdAt;
         private String token;
 
-        public TokenHolder(String token) {
+        TokenHolder(String token) {
             this.createdAt = System.currentTimeMillis();
             this.token = token;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TokenHolder)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TokenHolder)) {
+                return false;
+            }
 
             TokenHolder that = (TokenHolder) o;
 

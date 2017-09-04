@@ -36,7 +36,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -381,7 +383,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             Product fromApi = JsonParser.parseProduct(consumeText(response));
-            System.out.println(JsonParser.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(fromApi));
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(fromApi));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             return fromApi.id;

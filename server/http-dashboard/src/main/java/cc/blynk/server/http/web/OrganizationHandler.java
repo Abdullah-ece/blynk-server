@@ -3,10 +3,27 @@ package cc.blynk.server.http.web;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Admin;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.DELETE;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.Staff;
+import cc.blynk.core.http.annotation.SuperAdmin;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.HttpSession;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.TokensPool;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -30,7 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.forbidden;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
 
 /**
  * The Blynk Project.
@@ -46,7 +66,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     private final FileManager fileManager;
     private final DBManager dbManager;
 
-    private final String INVITE_TEMPLATE;
+    private final String inviteTemplate;
     private final MailWrapper mailWrapper;
     private final String inviteURL;
     private final String host;
@@ -60,7 +80,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.fileManager = holder.fileManager;
         this.dbManager = holder.dbManager;
 
-        this.INVITE_TEMPLATE = FileLoaderUtil.readInviteMailBody();
+        this.inviteTemplate = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
         this.mailWrapper = holder.mailWrapper;
         String host = holder.props.getProperty("server.host", "localhost");
@@ -147,7 +167,8 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/users/update")
     @Admin
-    public Response updateUserInfo(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, UserInvite user) {
+    public Response updateUserInfo(@Context ChannelHandlerContext ctx,
+                                   @PathParam("orgId") int orgId, UserInvite user) {
         if (user.isNotValid()) {
             log.error("Bad data for account update.");
             return badRequest("Bad data for account update.");
@@ -181,7 +202,8 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/users/delete")
     @Admin
-    public Response deleteUsers(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, String[] emailsToDelete) {
+    public Response deleteUsers(@Context ChannelHandlerContext ctx,
+                                @PathParam("orgId") int orgId, String[] emailsToDelete) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
 
         if (!httpSession.user.isSuperAdmin()) {
@@ -291,10 +313,12 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         existingOrganization.update(newOrganization);
 
-        int[] addedProducts = ArrayUtil.substruct(newOrganization.selectedProducts, existingOrganization.selectedProducts);
+        int[] addedProducts = ArrayUtil.substruct(
+                newOrganization.selectedProducts, existingOrganization.selectedProducts);
         createProductsFromParentOrg(newOrganization.id, newOrganization.name, addedProducts);
 
-        int[] removedProducts = ArrayUtil.substruct(existingOrganization.selectedProducts, newOrganization.selectedProducts);
+        int[] removedProducts = ArrayUtil.substruct(
+                existingOrganization.selectedProducts, newOrganization.selectedProducts);
         deleteRemovedProducts(newOrganization.id, newOrganization.name, removedProducts);
 
         existingOrganization.selectedProducts = newOrganization.selectedProducts;
@@ -325,7 +349,8 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/invite")
     @Staff
-    public Response sendInviteEmail(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId, UserInvite userInvite) {
+    public Response sendInviteEmail(@Context ChannelHandlerContext ctx,
+                                    @PathParam("orgId") int orgId, UserInvite userInvite) {
         if (orgId == 0 || userInvite.isNotValid()) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
             return badRequest("Invalid invitation.");
@@ -339,12 +364,14 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         //if user is not super admin, check organization is correct
         if (!organizationDao.hasAccess(httpSession.user, orgId)) {
-            log.error("{} (orgId = {}) tries to send invite to another organization with id = {}", httpSession.user.email, httpSession.user.orgId, orgId);
+            log.error("{} (orgId = {}) tries to send invite to another organization with id = {}",
+                    httpSession.user.email, httpSession.user.orgId, orgId);
             return forbidden();
         }
 
         if (httpSession.user.role.ordinal() > userInvite.role.ordinal()) {
-            log.error("User {} with role {} has no right to invite role {}.", httpSession.user.email,  httpSession.user.role, userInvite.role);
+            log.error("User {} with role {} has no right to invite role {}.",
+                    httpSession.user.email, httpSession.user.role, userInvite.role);
             return forbidden();
         }
 
@@ -366,10 +393,11 @@ public class OrganizationHandler extends BaseHttpHandler {
             Response response;
             try {
                 tokensPool.addToken(token, invitedUser);
-                String message = INVITE_TEMPLATE
+                String message = inviteTemplate
                         .replace("{productName}", org.name)
                         .replace("{host}", this.host)
-                        .replace("{link}", inviteURL + token + "&email=" + URLEncoder.encode(userInvite.email, "UTF-8"));
+                        .replace("{link}", inviteURL + token + "&email="
+                                + URLEncoder.encode(userInvite.email, "UTF-8"));
                 mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);
                 response = ok();

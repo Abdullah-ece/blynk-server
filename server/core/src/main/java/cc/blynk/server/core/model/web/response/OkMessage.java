@@ -24,7 +24,7 @@ public class OkMessage {
 
         public final String message;
 
-        public Success(String message) {
+        Success(String message) {
             this.message = message;
         }
 
