@@ -32,10 +32,7 @@ public class User {
     public Role role;
 
     //key fields
-    @JsonView(Views.WebUser.class)
-	public String email;
-
-    @JsonView(Views.WebUser.class)
+	@JsonView(Views.WebUser.class)public String email;@JsonView(Views.WebUser.class)
     public String appName;
 
     public String region;
@@ -46,7 +43,8 @@ public class User {
     @JsonView(Views.WebUser.class)
     public UserStatus status;
 
-    //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
+    //used mostly to understand if user profile was changed,
+    // all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
 
     public String lastLoggedIP;
@@ -70,7 +68,8 @@ public class User {
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
-    public User(String email, String pass, String appName, String region, boolean isFacebookUser, Role role) {
+    public User(String email, String pass, String appName, String region,
+                boolean isFacebookUser, Role role) {
         this();
         this.email = email;
         this.name = email;
@@ -164,12 +163,18 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
 
         User user = (User) o;
 
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) {
+            return false;
+        }
         return !(appName != null ? !appName.equals(user.appName) : user.appName != null);
 
     }

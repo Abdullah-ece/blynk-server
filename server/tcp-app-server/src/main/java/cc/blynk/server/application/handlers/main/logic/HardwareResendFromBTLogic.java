@@ -14,7 +14,9 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split2Device;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Handler responsible for processing messages that are forwarded
@@ -32,9 +34,9 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
 
     public HardwareResendFromBTLogic(Holder holder, String email) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
-                holder.limits.WEBHOOK_PERIOD_LIMITATION,
-                holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
-                holder.limits.WEBHOOK_FAILURE_LIMIT,
+                holder.limits.webhookPeriodLimitation,
+                holder.limits.webhookResponseSuzeLimitBytes,
+                holder.limits.webhookFailureLimit,
                 holder.stats,
                 email));
         this.sessionDao = holder.sessionDao;

@@ -19,15 +19,17 @@ class SharedTokenManager {
     private final ConcurrentMap<String, SharedTokenValue> cache;
 
     SharedTokenManager(Iterable<User> users) {
-        this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {{
-            for (User user : users) {
-                for (DashBoard dashBoard : user.profile.dashBoards) {
-                    if (dashBoard.sharedToken != null) {
-                        put(dashBoard.sharedToken, new SharedTokenValue(user, dashBoard.id));
+        this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {
+            {
+                for (User user : users) {
+                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                        if (dashBoard.sharedToken != null) {
+                            put(dashBoard.sharedToken, new SharedTokenValue(user, dashBoard.id));
+                        }
                     }
                 }
             }
-        }};
+        };
     }
 
     public void assignToken(User user, DashBoard dash, String newToken) {

@@ -44,32 +44,37 @@ import java.util.zip.DeflaterOutputStream;
  */
 public final class JsonParser {
 
+    private static final Logger log = LogManager.getLogger(JsonParser.class);
+
+    private JsonParser() {
+    }
+
     //it is threadsafe
-    public static final ObjectMapper mapper = init();
+    public static final ObjectMapper MAPPER = init();
 
     private static final Logger log = LogManager.getLogger(JsonParser.class);
-    private static final ObjectReader userReader = mapper.readerFor(User.class);
+    private static final ObjectReader userReader = MAPPER.readerFor(User.class);
     private static final ObjectReader organizationReader = mapper.readerFor(Organization.class);
-    private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
-    private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
-    private static final ObjectReader dashboardSettingsReader = mapper.readerFor(DashboardSettings.class);
-    private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
-    private static final ObjectReader appReader = mapper.readerFor(App.class);
-    private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
-    private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
-    private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
+    private static final ObjectReader profileReader = MAPPER.readerFor(Profile.class);
+    private static final ObjectReader dashboardReader = MAPPER.readerFor(DashBoard.class);
+    private static final ObjectReader dashboardSettingsReader = MAPPER.readerFor(DashboardSettings.class);
+    private static final ObjectReader widgetReader = MAPPER.readerFor(Widget.class);
+    private static final ObjectReader appReader = MAPPER.readerFor(App.class);
+    private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
+    private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
+    private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader productReader = mapper.readerFor(Product.class);
 
     private static final ObjectWriter organizationWriter = mapper.writerFor(Organization.class);
     private static final ObjectWriter errorMessageWriter = mapper.writerFor(ErrorMessage.class);
     private static final ObjectWriter okMessageWriter = mapper.writerFor(OkMessage.class);
-    private static final ObjectWriter userWriter = mapper.writerFor(User.class);
+    private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
     private static final ObjectWriter userWebWriter = init().disable(MapperFeature.DEFAULT_VIEW_INCLUSION).writerWithView(Views.WebUser.class);
-    private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
-    private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
-    private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
+    private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
+    private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
+    private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
     private static final ObjectWriter productWriter = mapper.writerFor(Product.class);
-    private static final ObjectWriter appWriter = mapper.writerFor(App.class);
+    private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
@@ -206,7 +211,7 @@ public final class JsonParser {
 
     public static String toJson(Object o) {
         try {
-            return mapper.writeValueAsString(o);
+            return MAPPER.writeValueAsString(o);
         } catch (Exception e) {
             log.error("Error jsoning object.", e);
         }
@@ -215,7 +220,7 @@ public final class JsonParser {
 
     public static <T> T readAny(String val, Class<T> c) {
         try {
-            return mapper.readValue(val, c);
+            return MAPPER.readValue(val, c);
         } catch (Exception e) {
             log.error("Error reading json object.", e);
         }

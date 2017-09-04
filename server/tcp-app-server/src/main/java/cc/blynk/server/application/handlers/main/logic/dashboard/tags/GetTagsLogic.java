@@ -17,12 +17,15 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class GetTagsLogic {
+public final class GetTagsLogic {
 
     private static final Logger log = LogManager.getLogger(GetTagsLogic.class);
 
+    private GetTagsLogic() {
+    }
+
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body) ;
+        int dashId = ParseUtil.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 

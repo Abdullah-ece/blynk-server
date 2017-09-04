@@ -3,7 +3,11 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.workers.*;
+import cc.blynk.server.workers.CertificateRenewalWorker;
+import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.ReportingWorker;
+import cc.blynk.server.workers.ShutdownHookWorker;
+import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
@@ -17,7 +21,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 28.09.15.
  */
-class JobLauncher {
+final class JobLauncher {
+
+    private JobLauncher() {
+    }
 
     public static void start(Holder holder, BaseServer[] servers) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -31,10 +38,13 @@ class JobLauncher {
         );
 
         //to start at the beggining of an minute
-        startDelay = AverageAggregatorProcessor.MINUTE - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
-        scheduler.scheduleAtFixedRate(reportingWorker, startDelay, AverageAggregatorProcessor.MINUTE, TimeUnit.MILLISECONDS);
+        startDelay = AverageAggregatorProcessor.MINUTE
+                - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
+        scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
+                AverageAggregatorProcessor.MINUTE, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
+        ProfileSaverWorker profileSaverWorker =
+                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,

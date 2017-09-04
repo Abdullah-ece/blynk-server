@@ -20,7 +20,11 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.HttpsAPIServer;
-import cc.blynk.utils.*;
+import cc.blynk.utils.BaseProperties;
+import cc.blynk.utils.JarUtil;
+import cc.blynk.utils.LoggerUtil;
+import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -51,12 +55,15 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/16/2015.
  */
-public class ServerLauncher {
+public final class ServerLauncher {
 
     //required for QR generation
     static {
         System.setProperty("java.awt.headless", "true");
         System.setProperty("io.netty.leakDetection.maxRecords", "20");
+    }
+
+    private ServerLauncher() {
     }
 
     public static void main(String[] args) throws Exception {
@@ -69,8 +76,10 @@ public class ServerLauncher {
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
         //required to avoid dependencies within model to server.properties
-        System.setProperty("terminal.strings.pool.size", serverProperties.getProperty("terminal.strings.pool.size", "25"));
-        System.setProperty("initial.energy", serverProperties.getProperty("initial.energy", "2000"));
+        System.setProperty("terminal.strings.pool.size",
+                serverProperties.getProperty("terminal.strings.pool.size", "25"));
+        System.setProperty("initial.energy",
+                serverProperties.getProperty("initial.energy", "2000"));
 
         BaseProperties mailProperties = new MailProperties(cmdProperties);
         BaseProperties smsProperties = new SmsProperties(cmdProperties);
@@ -192,8 +201,8 @@ public class ServerLauncher {
             }
             return true;
         } catch (BindException bindException) {
-            System.out.println("Server ports are busy. Most probably server already launched. See " +
-                    new File(System.getProperty("logs.folder")).getAbsolutePath() + " for more info.");
+            System.out.println("Server ports are busy. Most probably server already launched. See "
+                    + new File(System.getProperty("logs.folder")).getAbsolutePath() + " for more info.");
         } catch (Exception e) {
             System.out.println("Error starting Blynk server. Stopping.");
         }

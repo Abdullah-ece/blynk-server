@@ -27,7 +27,10 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class HardwareSyncLogic {
+public final class HardwareSyncLogic {
+
+    private HardwareSyncLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         int deviceId = state.device.id;
@@ -62,7 +65,8 @@ public class HardwareSyncLogic {
 
     //message format is "vr 22 33"
     //return specific widget state
-    private static void syncSpecificPins(ChannelHandlerContext ctx, String messageBody, int msgId, DashBoard dash, int deviceId) {
+    private static void syncSpecificPins(ChannelHandlerContext ctx, String messageBody,
+                                         int msgId, DashBoard dash, int deviceId) {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {

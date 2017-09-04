@@ -23,13 +23,15 @@ public class HardwareSSLServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareSSLServer(Holder holder) {
-        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("hardware.ssl.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"),
+                holder.props.getIntProperty("hardware.ssl.port"), holder.transportTypeHolder);
 
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
-        final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
+        HardwareChannelStateHandler hardwareChannelStateHandler =
+                new HardwareChannelStateHandler(holder);
+        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
-        final int hardTimeoutSecs = holder.limits.HARDWARE_IDLE_TIMEOUT;
+        final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

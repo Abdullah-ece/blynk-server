@@ -30,11 +30,11 @@ public class UpdateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateWidgetLogic.class);
 
-    private final int MAX_WIDGET_SIZE;
+    private final int maxWidgetSize;
     private final TimerWorker timerWorker;
 
     public UpdateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
-        this.MAX_WIDGET_SIZE = maxWidgetSize;
+        this.maxWidgetSize = maxWidgetSize;
         this.timerWorker = timerWorker;
     }
 
@@ -45,18 +45,18 @@ public class UpdateWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > MAX_WIDGET_SIZE) {
+        if (widgetString.length() > maxWidgetSize) {
             throw new NotAllowedException("Widget is larger then limit.");
         }
 
-        final User user = state.user;
+        User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString);

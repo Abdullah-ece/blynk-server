@@ -8,7 +8,6 @@ import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -16,7 +15,8 @@ import io.netty.util.ReferenceCountUtil;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter
+        implements DefaultExceptionHandler {
 
     /*
      * in case of consistent quota limit exceed during long term, sending warning response back to exceeding channel
@@ -26,14 +26,14 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      */
     private final static int USER_QUOTA_LIMIT_WARN_PERIOD = 60_000;
 
-    private final int USER_QUOTA_LIMIT;
+    private final int userQuotaLimit;
     private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
     protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
         this.type = type;
-        this.USER_QUOTA_LIMIT = limits.USER_QUOTA_LIMIT;
+        this.userQuotaLimit = limits.userQuotaLimit;
         this.quotaMeter = new InstanceLoadMeter();
     }
 
@@ -49,7 +49,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (type.isInstance(msg)) {
             try {
-                if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
+                if (quotaMeter.getOneMinuteRate() > userQuotaLimit) {
                     sendErrorResponseIfTicked();
                     return;
                 }
@@ -78,7 +78,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      *
      * Is called for each message of type {@link I}.
      *
-     * @param ctx           the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
+     * @param ctx           the {@link ChannelHandlerContext} which this SimpleChannelInboundHandler
      *                      belongs to
      * @param msg           the message to handle
      */

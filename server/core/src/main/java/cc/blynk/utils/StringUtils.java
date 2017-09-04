@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class StringUtils {
+public final class StringUtils {
 
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
@@ -29,14 +29,17 @@ public class StringUtils {
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
 
+    private StringUtils() {
+    }
+
     /**
      * Parses string similar to this : "xw 1 xxxx"
      * Every hard message has at least 3 starting chars we don't need.
      */
     private static final int START_INDEX = 3;
 
-    private static final String inData = "abcdefghijklmnopqrstuvwxyz";
-    private static final SecureRandom rnd = new SecureRandom();
+    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyz";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Efficient split method (instead of String.split).
@@ -125,9 +128,9 @@ public class StringUtils {
 
     public static String randomString(int len) {
         StringBuilder sb = new StringBuilder(len);
-        int inDataLen = inData.length();
+        int inDataLen = IN_DATA.length();
         for (int i = 0; i < len; i++) {
-            sb.append(inData.charAt(rnd.nextInt(inDataLen)));
+            sb.append(IN_DATA.charAt(SECURE_RANDOM.nextInt(inDataLen)));
         }
         return sb.toString();
     }

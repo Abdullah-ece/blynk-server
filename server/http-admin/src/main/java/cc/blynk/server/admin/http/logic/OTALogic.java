@@ -2,10 +2,15 @@ package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.core.http.AuthHeadersBaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Metric;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -14,7 +19,9 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_START_OTA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_STOP_OTA;
 
 
 /**
@@ -60,7 +67,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
         }
 
         String otaFile = OTA_DIR + (filename == null ? "firmware_ota.bin" : filename);
-        String body = otaManager.buildOTAInitCommandBody(otaFile);
+        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, otaFile);
         if (session.sendMessageToHardware(BLYNK_INTERNAL, 7777, body)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");

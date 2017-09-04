@@ -8,7 +8,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,7 +26,14 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
  */
 public class UserDBDao {
 
-    private static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, role, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, role = EXCLUDED.role, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
+    private static final String upsertUser =
+            "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged,"
+                    + " last_logged_ip, is_facebook_user, role, energy, json) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE "
+                    + "SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, "
+                    + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
+                    + "is_facebook_user = EXCLUDED.is_facebook_user, role = EXCLUDED.role, "
+                    + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";
     private static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 

@@ -69,7 +69,7 @@ public class TagCommandsTest extends IntegrationBase {
         clientPair.appClient.send("getTags 1");
         String response = clientPair.appClient.getBody();
 
-        Tag[] tags = JsonParser.mapper.readValue(response, Tag[].class);
+        Tag[] tags = JsonParser.MAPPER.readValue(response, Tag[].class);
         assertNotNull(tags);
         assertEquals(1, tags.length);
 
@@ -100,7 +100,7 @@ public class TagCommandsTest extends IntegrationBase {
         clientPair.appClient.send("getTags 1");
         String response = clientPair.appClient.getBody();
 
-        Tag[] tags = JsonParser.mapper.readValue(response, Tag[].class);
+        Tag[] tags = JsonParser.MAPPER.readValue(response, Tag[].class);
         assertNotNull(tags);
         assertEquals(1, tags.length);
 
@@ -150,7 +150,7 @@ public class TagCommandsTest extends IntegrationBase {
         clientPair.appClient.send("getTags 1");
         String response = clientPair.appClient.getBody();
 
-        Tag[] tags = JsonParser.mapper.readValue(response, Tag[].class);
+        Tag[] tags = JsonParser.MAPPER.readValue(response, Tag[].class);
         assertNotNull(tags);
         assertEquals(1, tags.length);
 
@@ -164,7 +164,7 @@ public class TagCommandsTest extends IntegrationBase {
 
         clientPair.appClient.send("getTags 1");
         response = clientPair.appClient.getBody();
-        tags = JsonParser.mapper.readValue(response, Tag[].class);
+        tags = JsonParser.MAPPER.readValue(response, Tag[].class);
 
         assertNotNull(tags);
         assertEquals(0, tags.length);

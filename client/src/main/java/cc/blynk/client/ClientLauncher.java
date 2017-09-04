@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.03.15.
  */
-public class ClientLauncher {
+public final class ClientLauncher {
 
     static final String DEFAULT_HOST = "localhost";
     static final int DEFAULT_HARDWARE_PORT = 8442;
@@ -33,13 +33,18 @@ public class ClientLauncher {
                .addOption("tokens", true, "Tokens");
     }
 
+    private ClientLauncher() {
+    }
+
     public static void main(String[] args) throws ParseException {
         CommandLine cmd = new DefaultParser().parse(options, args);
 
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
         String host = cmd.getOptionValue("host", DEFAULT_HOST);
         int port = ParseUtil.parseInt(cmd.getOptionValue("port",
-                        (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
+                        (mode == ClientMode.APP
+                                ? String.valueOf(DEFAULT_APPLICATION_PORT)
+                                : String.valueOf(DEFAULT_HARDWARE_PORT)))
         );
 
         switch (mode) {

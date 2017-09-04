@@ -23,9 +23,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.invalidToken;
+import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -37,7 +40,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
+        implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
@@ -45,15 +49,14 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private final Holder holder;
     private final DBManager dbManager;
-    private final DeviceDao deviceDao;
 
     public HardwareLoginHandler(Holder holder) {
         this.holder = holder;
         this.dbManager = holder.dbManager;
-        this.deviceDao = holder.deviceDao;
     }
 
-    private void completeLogin(Channel channel, Session session, User user, DashBoard dash, Device device, int msgId) {
+    private void completeLogin(Channel channel, Session session, User user,
+                                      DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
@@ -98,14 +101,32 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
         ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(
+                hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
+            reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
         } else {
             completeLogin(ctx.channel(), session, user, dash, device, message.id);
         }
+    }
+
+    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
+        blockingIOProcessor.executeDB(() -> {
+            String server = dbManager.getServerByToken(token);
+            // no server found, that's means token is wrong.
+            if (server == null || server.equals(holder.host)) {
+                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+                ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
+            } else {
+                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
+                ctx.writeAndFlush(makeASCIIStringMessage(
+                        CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort),
+                        ctx.voidPromise());
+            }
+        });
     }
 
     @Override

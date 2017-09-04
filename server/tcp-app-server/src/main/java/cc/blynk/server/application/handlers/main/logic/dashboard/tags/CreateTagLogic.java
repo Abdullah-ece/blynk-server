@@ -21,9 +21,12 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class CreateTagLogic {
+public final class CreateTagLogic {
 
     private static final Logger log = LogManager.getLogger(CreateTagLogic.class);
+
+    private CreateTagLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
@@ -32,7 +35,7 @@ public class CreateTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {

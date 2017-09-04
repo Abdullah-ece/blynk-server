@@ -116,9 +116,11 @@ public final class Command {
     public static final short HTTP_STOP_OTA = 92;
     public static final short HTTP_TOTAL = 93;
 
+    private Command() {
+    }
 
     //all this code just to make logging more user-friendly
-    public static final Map<Short, String> valuesName = Collections.unmodifiableMap(new HashMap<Short, String>() {
+    public static final Map<Short, String> VALUES_NAME = Collections.unmodifiableMap(new HashMap<Short, String>() {
             {
                 put(RESPONSE, "Response");
                 put(REDEEM, "Redeem");
@@ -208,7 +210,7 @@ public final class Command {
     });
 
     public static String getNameByValue(short val) {
-        return valuesName.get(val);
+        return VALUES_NAME.get(val);
     }
     //--------------------------------------------------------
 

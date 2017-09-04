@@ -4,7 +4,8 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.rest.HandlerWrapper;
-import cc.blynk.core.http.rest.params.*;
+import cc.blynk.core.http.rest.params.BodyParam;
+import cc.blynk.core.http.rest.params.ContextParam;
 import cc.blynk.core.http.rest.params.FormParam;
 import cc.blynk.core.http.rest.params.PathParam;
 import cc.blynk.core.http.rest.params.QueryParam;
@@ -23,7 +24,10 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class AnnotationsUtil {
+public final class AnnotationsUtil {
+
+    private AnnotationsUtil() {
+    }
 
     public static HandlerWrapper[] register(String rootPath, Object o, GlobalStats globalStats) {
         return registerHandler(rootPath, o, globalStats);
@@ -53,17 +57,20 @@ public class AnnotationsUtil {
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
 
-                    cc.blynk.core.http.annotation.QueryParam queryParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
+                    cc.blynk.core.http.annotation.QueryParam queryParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
                     if (queryParamAnnotation != null) {
                         handlerHolder.params[i] = new QueryParam(queryParamAnnotation.value(), parameter.getType());
                     }
 
-                    cc.blynk.core.http.annotation.PathParam pathParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
+                    cc.blynk.core.http.annotation.PathParam pathParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
                     if (pathParamAnnotation != null) {
                         handlerHolder.params[i] = new PathParam(pathParamAnnotation.value(), parameter.getType());
                     }
 
-                    cc.blynk.core.http.annotation.FormParam formParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
+                    cc.blynk.core.http.annotation.FormParam formParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
                     if (formParamAnnotation != null) {
                         handlerHolder.params[i] = new FormParam(formParamAnnotation.value(), parameter.getType());
                     }
@@ -83,9 +90,10 @@ public class AnnotationsUtil {
                         handlerHolder.params[i] = new CookieRequestParam(((cc.blynk.core.http.annotation.CookieHeader) cookieAnnotation).value());
                     }
 
-                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&
-                            contextAnnotation == null && cookieAnnotation == null && contextUserAnnotation == null) {
-                        handlerHolder.params[i] = new BodyParam(parameter.getName(), parameter.getType(), contentType);
+                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null
+                            && contextAnnotation == null && cookieAnnotation == null && contextUserAnnotation == null) {
+                        handlerHolder.params[i] =
+                                new BodyParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }
 

@@ -30,11 +30,11 @@ public class CreateDeviceLogic {
     private static final Logger log = LogManager.getLogger(CreateDeviceLogic.class);
 
     private final TokenManager tokenManager;
-    private final int DEVICE_LIMIT;
+    private final int deviceLimit;
 
     public CreateDeviceLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
-        this.DEVICE_LIMIT = holder.limits.DEVICE_LIMIT;
+        this.deviceLimit = holder.limits.deviceLimit;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -44,7 +44,7 @@ public class CreateDeviceLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
@@ -53,7 +53,7 @@ public class CreateDeviceLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (dash.devices.length > DEVICE_LIMIT) {
+        if (dash.devices.length > deviceLimit) {
             throw new NotAllowedException("Device limit is reached.");
         }
 
@@ -80,7 +80,8 @@ public class CreateDeviceLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
+            ctx.writeAndFlush(
+                    makeUTF8StringMessage(CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
         }
     }
 

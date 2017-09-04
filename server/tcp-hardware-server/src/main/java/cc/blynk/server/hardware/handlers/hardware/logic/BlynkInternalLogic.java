@@ -15,7 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -70,11 +72,13 @@ public class BlynkInternalLogic {
         DashBoard dashBoard = state.dash;
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()), ctx.voidPromise());
+            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
+                    ctx.voidPromise());
         }
     }
 
-    private void parseHardwareInfo(ChannelHandlerContext ctx, String[] messageParts, HardwareStateHolder state, int msgId) {
+    private void parseHardwareInfo(ChannelHandlerContext ctx, String[] messageParts,
+                                   HardwareStateHolder state, int msgId) {
         HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
         int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
@@ -90,11 +94,7 @@ public class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            if (otaManager.isUpdateRequired(hardwareInfo)) {
-                otaManager.sendOtaCommand(ctx, device);
-                log.info("Ota command is sent for user {} and device {}:{}.", state.user.email, device.name, device.id);
-            }
-
+            otaManager.initiateHardwareUpdate(ctx, state.userKey, hardwareInfo, dashBoard, device);
             device.hardwareInfo = hardwareInfo;
             dashBoard.updatedAt = System.currentTimeMillis();
         }

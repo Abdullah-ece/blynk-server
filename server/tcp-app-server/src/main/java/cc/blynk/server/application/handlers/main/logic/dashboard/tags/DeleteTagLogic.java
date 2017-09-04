@@ -19,9 +19,12 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class DeleteTagLogic {
+public final class DeleteTagLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteTagLogic.class);
+
+    private DeleteTagLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
@@ -30,7 +33,7 @@ public class DeleteTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         int tagId = ParseUtil.parseInt(split[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);

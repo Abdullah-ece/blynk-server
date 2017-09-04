@@ -26,13 +26,12 @@ public class HttpAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpAPIServer(Holder holder) {
-        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"),
+                holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         String rootPath = holder.props.getProperty("admin.rootPath", "/dashboard");
 
-        LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-
-        UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+         LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper(rootPath, "/static/index.html"));
         StaticFileHandler staticFileHandler = new StaticFileHandler(holder.props, new StaticFile("/static"),
                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz"));

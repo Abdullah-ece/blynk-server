@@ -102,7 +102,8 @@ public class UserDao {
             return new ArrayList<>(users.values());
         }
 
-        return users.values().stream().filter(user -> user.email.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
+        return users.values().stream().filter(user -> user.email.contains(name)
+                && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
     public List<User> getUsersByOrgId(int orgId, String filterMail) {
@@ -153,7 +154,11 @@ public class UserDao {
     public Map<String, Integer> getFacebookLogin() {
         Map<String, Integer> facebookLogin = new HashMap<>();
         for (User user : users.values()) {
-            facebookLogin.compute(user.isFacebookUser ? AppName.FACEBOOK : AppName.BLYNK, (k, v) -> v == null ? 1 : v++);
+            facebookLogin.compute(
+                    user.isFacebookUser
+                            ? AppName.FACEBOOK
+                            : AppName.BLYNK, (k, v) -> v == null ? 1 : v++
+            );
         }
         return facebookLogin;
     }
@@ -289,6 +294,30 @@ public class UserDao {
             }
         }
         return data;
+    }
+
+    /**
+     * Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com
+     */
+    private static String getHost(String url) {
+        if (url == null || url.length() == 0) {
+            return "";
+        }
+
+        int doubleslash = url.indexOf("//");
+        if (doubleslash == -1) {
+            doubleslash = 0;
+        } else {
+            doubleslash += 2;
+        }
+
+        int end = url.indexOf('/', doubleslash);
+        end = end >= 0 ? end : url.length();
+
+        int port = url.indexOf(':', doubleslash);
+        end = (port > 0 && port < end) ? port : end;
+
+        return url.substring(doubleslash, end);
     }
 
     public User addFacebookUser(String email, String appName) {
