@@ -909,14 +909,6 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
 
-        product.metaFields = new MetaField[]{
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
-        };
-
-        product.dataStreams = new DataStream[]{
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
-        };
-
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
         req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
 
@@ -968,6 +960,113 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(product);
             assertEquals(1, product.id);
             assertEquals(1, product.deviceCount);
+        }
+    }
+
+    @Test
+    public void createSubOrganizationWithProductsAssignedAndDeviceCountIsCorrectWithMultipleOrgs() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+        }
+
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{1};
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(2, productFromApi.id);
+        }
+
+        Organization organization2 = new Organization("Sub Org 2", "Some TimeZone", "/static/logo.png", false);
+        organization2.selectedProducts = new int[]{1};
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization2.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(3, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+
+            Product productFromApi = fromApi.products[0];
+            assertEquals(3, productFromApi.id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 2;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/2");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        Device newDevice2 = new Device();
+        newDevice2.name = "My New Device";
+        newDevice2.productId = 3;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/3");
+        httpPut.setEntity(new StringEntity(newDevice2.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        Device newDevice3 = new Device();
+        newDevice3.name = "My New Device";
+        newDevice3.productId = 3;
+
+        httpPut = new HttpPut(httpsAdminServerUrl + "/devices/3");
+        httpPut.setEntity(new StringEntity(newDevice3.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+
+        HttpGet getProducts = new HttpGet(httpsAdminServerUrl + "/product");
+
+        try (CloseableHttpResponse response = httpclient.execute(getProducts)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product[] fromApi = JsonParser.readAny(consumeText(response), Product[].class);
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.length);
+            product = fromApi[0];
+            assertNotNull(product);
+            assertEquals(1, product.id);
+            assertEquals(3, product.deviceCount);
         }
     }
 

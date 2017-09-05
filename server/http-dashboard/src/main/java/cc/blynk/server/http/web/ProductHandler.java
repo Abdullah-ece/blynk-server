@@ -110,7 +110,7 @@ public class ProductHandler extends BaseHttpHandler {
             Integer childProductId = entries.getKey();
             Product childProduct = organizationDao.getProductByIdOrNull(childProductId);
             if (childProduct != null) {
-                Integer parentCounter = productIdCount.getOrDefault(childProduct.parentId, 0);
+                Integer parentCounter = result.getOrDefault(childProduct.parentId, 0);
                 result.put(childProduct.parentId, parentCounter + entries.getValue());
             }
         }
