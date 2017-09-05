@@ -53,7 +53,9 @@ class Source extends React.Component {
         stream => parseInt(stream.getIn(['values', 'pin'])) === parseInt(nextProps.source.get('dataStreamPin'))
       );
 
-      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
+      if (stream) {
+        this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
+      }
     }
   }
 
@@ -126,7 +128,7 @@ class Source extends React.Component {
     };
 
     const sources = this.props.dataStreams.map((dataStream) => ({
-      key: String(dataStream.get('id')),
+      key: String(dataStream.getIn(['values', 'pin'])),
       value: dataStream.getIn(['values', 'label']),
     })).toJS();
 

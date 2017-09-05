@@ -128,6 +128,9 @@ class LinearWidget extends React.Component {
 
     this.props.data.sources.forEach((source) => {
 
+      if (!source.dataStream || source.dataStream.pin === -1)
+        return null;
+
       const PIN = this.props.widgets.getIn([this.props.params.id, this.props.data.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
 
       if (!PIN) {
