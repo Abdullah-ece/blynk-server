@@ -7,12 +7,14 @@ import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,6 +86,28 @@ public class OrganizationDao {
         }
     }
 
+    public Collection<Device> getAllDevicesByOrgId(int orgId) {
+        List<Device> result = new ArrayList<>();
+        //getting org and all it child orgs
+        int[] orgIds = orgListToIdList(getOrgsByParentId(orgId));
+        for (Map.Entry<DeviceKey, Device> entry : deviceDao.devices.entrySet()) {
+            DeviceKey key = entry.getKey();
+            if (ArrayUtil.contains(orgIds, key.orgId)) {
+                result.add(entry.getValue());
+            }
+        }
+        return result;
+    }
+
+    private int[] orgListToIdList(List<Organization> orgs) {
+        int[] ar = new int[orgs.size()];
+        int i = 0;
+        for (Organization org : orgs) {
+            ar[i++] = org.id;
+        }
+        return ar;
+    }
+
     private List<Organization> getOrgsByParentId(int parentId) {
         List<Organization> orgs = new ArrayList<>();
         Organization org = organizations.get(parentId);
@@ -126,7 +150,7 @@ public class OrganizationDao {
         return organizations.values();
     }
 
-    public static Organization getOrgById(List<Organization> orgs, int id) {
+    private static Organization getOrgById(List<Organization> orgs, int id) {
         for (Organization org : orgs) {
             if (org.id == id) {
                 return org;
@@ -230,7 +254,7 @@ public class OrganizationDao {
         return null;
     }
 
-    public Product getProductByParentIdOrNull(int newOrgId, int parentProductId) {
+    private Product getProductByParentIdOrNull(int newOrgId, int parentProductId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
                 if (org.id == newOrgId && product.parentId == parentProductId) {

@@ -5,7 +5,6 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.ContextUser;
 import cc.blynk.core.http.annotation.DELETE;
 import cc.blynk.core.http.annotation.GET;
@@ -15,9 +14,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
@@ -27,7 +24,6 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,12 +54,11 @@ public class ProductHandler extends BaseHttpHandler {
 
     @GET
     @Path("")
-    public Response getAll(@Context ChannelHandlerContext ctx) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
-        Organization organization = organizationDao.getOrgById(httpSession.user.orgId);
+    public Response getAll(@ContextUser User user) {
+        Organization organization = organizationDao.getOrgById(user.orgId);
 
         if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", httpSession.user.orgId, httpSession.user.email);
+            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
             return badRequest();
         }
 
@@ -98,10 +93,26 @@ public class ProductHandler extends BaseHttpHandler {
 
     private Product[] calcDeviceCount(Organization org) {
         Map<Integer, Integer> productIdCount = productDeviceCount();
+        attachChildCounter(productIdCount);
         for (Product product : org.products) {
             product.deviceCount = productIdCount.getOrDefault(product.id, 0);
         }
         return org.products;
+    }
+
+    /*
+     This is special case. Some products may have child products and
+     thus we need to add child counters to such products.
+     */
+    private void attachChildCounter(Map<Integer, Integer> productIdCount) {
+        for (Map.Entry<Integer, Integer> entries : productIdCount.entrySet()) {
+            Integer childProductId = entries.getKey();
+            Product childProduct = organizationDao.getProductByIdOrNull(childProductId);
+            if (childProduct != null) {
+                Integer parentCounter = productIdCount.getOrDefault(childProduct.parentId, 0);
+                productIdCount.put(childProduct.parentId, parentCounter + entries.getValue());
+            }
+        }
     }
 
     private Map<Integer, Integer> productDeviceCount() {

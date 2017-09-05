@@ -163,6 +163,67 @@ public class DevicesAPITest extends APIBaseTest {
     }
 
     @Test
+    public void createDeviceForAnotherOrganizationAndIsVisibleForParentOrg() throws Exception {
+        login(regularAdmin.email, regularAdmin.pass);
+
+        int productId = createProduct();
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{productId};
+
+        HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
+        createOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        int orgId = 2;
+        int newProductId = 2;
+
+        try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(orgId, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+            assertNotNull(fromApi.products);
+            assertEquals(1, fromApi.products.length);
+            assertEquals(newProductId, fromApi.products[0].id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = newProductId;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/" + orgId);
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            Device device = JsonParser.parseDevice(responseString);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/" + 1);
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(2, devices.length);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/" + 1 + "/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(device);
+            assertEquals(1, device.id);
+        }
+    }
+
+    @Test
     public void createDeviceAndUpdateMetafield() throws Exception {
         login(regularUser.email, regularUser.pass);
 

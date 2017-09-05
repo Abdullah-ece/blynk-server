@@ -208,7 +208,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         organizationDao.hasAccess(user, orgId);
 
-        Collection<Device> devices = deviceDao.getAllByUser(orgId);
+        Collection<Device> devices = organizationDao.getAllDevicesByOrgId(orgId);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;
@@ -263,7 +263,7 @@ public class DevicesHandler extends BaseHttpHandler {
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
-        deviceDao.delete(user.orgId, deviceId);
+        deviceDao.delete(deviceId);
 
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);

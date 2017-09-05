@@ -24,7 +24,7 @@ public class DeviceDao {
 
     private static final Logger log = LogManager.getLogger(DeviceDao.class);
 
-    private final ConcurrentMap<DeviceKey, Device> devices;
+    final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
 
     public DeviceDao(ConcurrentMap<UserKey, User> users) {
@@ -35,7 +35,7 @@ public class DeviceDao {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
                     maxDeviceId = Math.max(maxDeviceId, device.id);
-                    devices.put(new DeviceKey(user.orgId, device.id), device);
+                    devices.put(new DeviceKey(user.orgId, device.productId, device.id), device);
                 }
             }
 
@@ -47,32 +47,21 @@ public class DeviceDao {
 
     public Device create(int orgId, Device device) {
         device.id = deviceSequence.incrementAndGet();
-        devices.put(new DeviceKey(orgId, device.id), device);
+        devices.put(new DeviceKey(orgId, device.productId, device.id), device);
         return device;
     }
 
-    public Device delete(int orgId, int deviceId) {
-        return devices.remove(new DeviceKey(orgId, deviceId));
+    public Device delete(int deviceId) {
+        return devices.remove(new DeviceKey(0, 0, deviceId));
     }
 
     public Device getById(int deviceId) {
-        Device device = devices.get(new DeviceKey(0, deviceId));
+        Device device = devices.get(new DeviceKey(0, 0, deviceId));
         if (device == null) {
             log.error("Device with id {} not found.", deviceId);
             throw new DeviceNotFoundException("Requested device not exists.");
         }
         return device;
-    }
-
-    public Collection<Device> getAllByUser(int orgId) {
-        List<Device> result = new ArrayList<>();
-        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
-            DeviceKey key = entry.getKey();
-            if (orgId == key.orgId) {
-                result.add(entry.getValue());
-            }
-        }
-        return result;
     }
 
     public Collection<Device> getAll() {

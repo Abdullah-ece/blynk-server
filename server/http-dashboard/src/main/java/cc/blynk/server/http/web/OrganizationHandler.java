@@ -93,13 +93,13 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{orgId}")
-    public Response get(@Context ChannelHandlerContext ctx, @PathParam("orgId") int orgId) {
-        HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
+    public Response get(@ContextUser User user,
+                        @PathParam("orgId") int orgId) {
         Organization organization = organizationDao.getOrgById(orgId);
 
-        if (!httpSession.user.isSuperAdmin()) {
-            if (orgId != httpSession.user.orgId) {
-                log.error("User {} tries to access organization he has no access.", httpSession.user.email);
+        if (!user.isSuperAdmin()) {
+            if (orgId != user.orgId) {
+                log.error("User {} tries to access organization he has no access.", user.email);
                 return forbidden("You are not allowed to access this organization.");
             }
         }
