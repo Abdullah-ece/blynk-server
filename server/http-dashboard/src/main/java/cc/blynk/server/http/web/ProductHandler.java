@@ -93,7 +93,7 @@ public class ProductHandler extends BaseHttpHandler {
 
     private Product[] calcDeviceCount(Organization org) {
         Map<Integer, Integer> productIdCount = productDeviceCount();
-        attachChildCounter(productIdCount);
+        productIdCount = attachChildCounter(productIdCount);
         for (Product product : org.products) {
             product.deviceCount = productIdCount.getOrDefault(product.id, 0);
         }
@@ -104,15 +104,17 @@ public class ProductHandler extends BaseHttpHandler {
      This is special case. Some products may have child products and
      thus we need to add child counters to such products.
      */
-    private void attachChildCounter(Map<Integer, Integer> productIdCount) {
+    private Map<Integer, Integer> attachChildCounter(Map<Integer, Integer> productIdCount) {
+        Map<Integer, Integer> result = new HashMap<>(productIdCount);
         for (Map.Entry<Integer, Integer> entries : productIdCount.entrySet()) {
             Integer childProductId = entries.getKey();
             Product childProduct = organizationDao.getProductByIdOrNull(childProductId);
             if (childProduct != null) {
                 Integer parentCounter = productIdCount.getOrDefault(childProduct.parentId, 0);
-                productIdCount.put(childProduct.parentId, parentCounter + entries.getValue());
+                result.put(childProduct.parentId, parentCounter + entries.getValue());
             }
         }
+        return result;
     }
 
     private Map<Integer, Integer> productDeviceCount() {
