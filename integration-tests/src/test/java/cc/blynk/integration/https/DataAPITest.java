@@ -73,6 +73,33 @@ public class DataAPITest extends APIBaseTest {
         this.clientPair.stop();
     }
 
+    @Test
+    public void testInvalidRequestNoDataStream() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        HttpGet getData = new HttpGet(httpsAdminServerUrl
+                + "/data/1/history?from=0&to="
+                + System.currentTimeMillis()
+                + "&offset=0&limit=1000");
+        try (CloseableHttpResponse response = httpclient.execute(getData)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"No data stream provided for request.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
+    public void testInvalidRequestNoDevice() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        HttpGet getData = new HttpGet(httpsAdminServerUrl
+                + "/data/1/history?dataStream=V1&from=0&to="
+                + System.currentTimeMillis()
+                + "&offset=0&limit=1000");
+        try (CloseableHttpResponse response = httpclient.execute(getData)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Requested device not exists.\"}}", consumeText(response));
+        }
+    }
 
     @Test
     public void testSinglePinRequest() throws Exception {

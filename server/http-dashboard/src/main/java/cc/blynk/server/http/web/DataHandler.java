@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
 
 /**
  * The Blynk Project.
@@ -92,19 +94,28 @@ public class DataHandler extends BaseHttpHandler {
                            @QueryParam("offset") int offset,
                            @QueryParam("limit") int limit) {
 
+        if (dataStreams == null || dataStreams.length == 0) {
+            return badRequest("No data stream provided for request.");
+        }
+
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
         blockingIOProcessor.executeDB(() -> {
-            Map<String, Data> finalModel = new HashMap<>();
-            for (String dataStream : dataStreams) {
-                PinType pinType = PinType.getPinType(dataStream.charAt(0));
-                byte pin = ParseUtil.parseByte(dataStream.substring(1));
-                List<AbstractMap.SimpleEntry<Long, Double>> data =
-                        dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
-                finalModel.put(dataStream, new Data(data));
+            try {
+                Map<String, Data> finalModel = new HashMap<>();
+                for (String dataStream : dataStreams) {
+                    PinType pinType = PinType.getPinType(dataStream.charAt(0));
+                    byte pin = ParseUtil.parseByte(dataStream.substring(1));
+                    List<AbstractMap.SimpleEntry<Long, Double>> data =
+                            dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
+                    finalModel.put(dataStream, new Data(data));
+                }
+                ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
+            } catch (Exception e) {
+                log.error("Error fetching history data.", e);
+                ctx.writeAndFlush(serverError("Error fetching history data."), ctx.voidPromise());
             }
-            ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
         });
 
         return null;
