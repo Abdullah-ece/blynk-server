@@ -9,7 +9,7 @@ import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
-import {Map} from 'immutable';
+import {Map, List} from 'immutable';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
   WIDGETS_CHART_TYPES_LIST,
@@ -30,7 +30,7 @@ class Source extends React.Component {
     index: PropTypes.number,
 
     source: PropTypes.instanceOf(Map),
-    dataStreams: PropTypes.array,
+    dataStreams: PropTypes.instanceOf(List),
 
     onCopy: PropTypes.func,
     onDelete: PropTypes.func,
@@ -54,6 +54,15 @@ class Source extends React.Component {
       if (stream) {
         this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
       }
+    }
+
+    const dataStreamNotFound = !nextProps.dataStreams.size || !nextProps.dataStreams.find(stream => {
+      return Number(stream.get('key')) === Number(nextProps.source.get('dataStreamPin'));
+    });
+
+    if (dataStreamNotFound) {
+      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, {});
+      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStreamPin`, null);
     }
   }
 
@@ -147,7 +156,7 @@ class Source extends React.Component {
             </Item>
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
-                      name={`sources.${this.props.index}.dataStreamPin`} values={this.props.dataStreams}
+                      name={`sources.${this.props.index}.dataStreamPin`} values={this.props.dataStreams.toJS()}
                       placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>
