@@ -48,7 +48,7 @@ class Source extends React.Component {
   componentWillUpdate(nextProps) {
     if (Number(nextProps.source.get('dataStreamPin')) && Number(nextProps.source.get('dataStreamPin')) !== Number(this.props.source.get('dataStreamPin')) && nextProps.dataStreams.size) {
       const stream = this.props.dataStreams.find(
-        stream => parseInt(stream.getIn(['values', 'pin'])) === parseInt(nextProps.source.get('dataStreamPin'))
+        stream => parseInt(stream.get('key')) === parseInt(nextProps.source.get('dataStreamPin'))
       );
 
       if (stream) {

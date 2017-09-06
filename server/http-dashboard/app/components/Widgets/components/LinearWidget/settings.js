@@ -134,11 +134,12 @@ class LinearWidgetSettings extends React.Component {
 
   render() {
 
-    const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.hasIn(['values','label']) && dataStream.getIn(['values','label']).length)
+    const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.hasIn(['values', 'label']) && dataStream.getIn(['values', 'label']).length)
       .map((dataStream) => (fromJS({
-      key: String(dataStream.getIn(['values', 'pin'])),
-      value: dataStream.getIn(['values', 'label']),
-    })));
+        key: String(dataStream.getIn(['values', 'pin'])),
+        value: dataStream.getIn(['values', 'label']),
+        values: dataStream.get('values'),
+      })));
 
     return (
       <Modal width={'auto'}
