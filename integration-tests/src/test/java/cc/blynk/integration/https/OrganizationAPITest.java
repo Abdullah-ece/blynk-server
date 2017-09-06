@@ -1068,6 +1068,25 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, product.id);
             assertEquals(3, product.deviceCount);
         }
+
+        HttpGet getOrgs = new HttpGet(httpsAdminServerUrl + "/organization");
+
+        try (CloseableHttpResponse response = httpclient.execute(getOrgs)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization[] orgs = JsonParser.readAny(consumeText(response), Organization[].class);
+            assertNotNull(orgs);
+            assertEquals(2, orgs.length);
+
+            Organization org2 = orgs[0];
+            assertNotNull(org2);
+            assertEquals(2, org2.id);
+            assertEquals(1, org2.products[0].deviceCount);
+
+            Organization org3 = orgs[1];
+            assertNotNull(org3);
+            assertEquals(3, org3.id);
+            assertEquals(2, org3.products[0].deviceCount);
+        }
     }
 
     @Test

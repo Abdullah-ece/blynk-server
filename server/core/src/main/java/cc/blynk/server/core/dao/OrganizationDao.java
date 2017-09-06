@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -84,6 +85,46 @@ public class OrganizationDao {
         } else {
             return getOrgsByParentId(user.orgId);
         }
+    }
+
+    public void calcDeviceCount(List<Organization> orgs) {
+        for (Organization org : orgs) {
+            calcDeviceCount(org);
+        }
+    }
+
+    public void calcDeviceCount(Organization org) {
+        Map<Integer, Integer> productIdCount = productDeviceCount();
+        productIdCount = attachChildCounter(productIdCount);
+        for (Product product : org.products) {
+            product.deviceCount = productIdCount.getOrDefault(product.id, 0);
+        }
+    }
+
+    private Map<Integer, Integer> productDeviceCount() {
+        Map<Integer, Integer> productIdCount =  new HashMap<>();
+        for (Device device : deviceDao.getAll()) {
+            Integer count = productIdCount.getOrDefault(device.productId, 0);
+            productIdCount.put(device.productId, count + 1);
+        }
+        return productIdCount;
+    }
+
+    /*
+     This is special case. Some products may have child products and
+     thus we need to add child counters to such products.
+     */
+    private Map<Integer, Integer> attachChildCounter(Map<Integer, Integer> productIdCount) {
+        Map<Integer, Integer> result = new HashMap<>(productIdCount);
+        for (Map.Entry<Integer, Integer> entries : productIdCount.entrySet()) {
+            Integer childProductId = entries.getKey();
+            Product childProduct = getProductByIdOrNull(childProductId);
+            if (childProduct != null) {
+                Integer parentCounter = result.getOrDefault(childProduct.parentId, 0);
+                result.put(childProduct.parentId, parentCounter + entries.getValue());
+            }
+        }
+        return result;
     }
 
     public Collection<Device> getAllDevicesByOrgId(int orgId) {

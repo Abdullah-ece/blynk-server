@@ -110,12 +110,14 @@ public class OrganizationHandler extends BaseHttpHandler {
     @GET
     @Path("")
     public Response getListOfOrganizations(@ContextUser User user) {
-        return ok(
-                organizationDao.getAll(user)
-                    .stream()
-                    .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
-                    .collect(Collectors.toList())
-        );
+        List<Organization> orgs = organizationDao.getAll(user)
+                .stream()
+                .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
+                .collect(Collectors.toList());
+
+        organizationDao.calcDeviceCount(orgs);
+
+        return ok(orgs);
     }
 
     @GET
