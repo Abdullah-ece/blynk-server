@@ -44,24 +44,6 @@ class LinearWidget extends React.Component {
 
   componentWillMount() {
 
-    if (this.props.fetchRealData && this.props.data.sources.length) {
-
-      const pins = [];
-
-      this.props.data.sources.forEach((source) => {
-        if (!source || !source.dataStream)
-          return null;
-
-        pins.push(`${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`);
-      });
-
-      this.props.fetchWidgetHistoryByPin({
-        deviceId: this.props.params.id,
-        pins: pins
-      });
-
-    }
-
     if(!this.props.fetchRealData) {
       this.generateFakeData();
     }

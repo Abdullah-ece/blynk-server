@@ -4,12 +4,20 @@ import {Widgets} from 'components';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
+import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {WidgetHistoryByPinFetch} from 'data/Widgets/api';
 
+@connect(() => ({}), (dispatch) => ({
+  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
+}))
 class Dashboard extends React.Component {
 
   static propTypes = {
     dashboard: PropTypes.instanceOf(Map),
     params: PropTypes.object,
+    fetchWidgetHistoryByPin: PropTypes.func
   };
 
   constructor(props) {
@@ -19,6 +27,31 @@ class Dashboard extends React.Component {
       filter: this.FILTERS.HOUR,
       editable: false
     };
+  }
+
+  componentWillMount() {
+
+    const pins = [];
+
+    this.props.dashboard.get('widgets').forEach((widget) => {
+      if (widget.get('sources').size) {
+
+        widget.get('sources').forEach((source) => {
+          if (!source || !source.get('dataStream'))
+            return null;
+
+          let pin = `${VIRTUAL_PIN_PREFIX}${source.getIn(['dataStream', 'pin'])}`;
+
+          if (pins.indexOf(pin) === -1)
+            pins.push(pin);
+        });
+      }
+    });
+
+    this.props.fetchWidgetHistoryByPin({
+      deviceId: this.props.params.id,
+      pins: pins
+    });
   }
 
   FILTERS = {
