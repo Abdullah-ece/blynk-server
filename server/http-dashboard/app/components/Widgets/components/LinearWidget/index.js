@@ -112,7 +112,12 @@ class LinearWidget extends React.Component {
       t: 30,
       r: 30,
       l: 30,
-      b: 30,
+      b: 60,
+    },
+    xaxis: {
+      ticklen: 0,
+      tickangle: 40,
+      nticks: 12,
     }
   };
 
@@ -158,6 +163,18 @@ class LinearWidget extends React.Component {
       });
 
     });
+
+    if(this.props.data.width <= 8 && this.props.data.width >= 6)
+      this.layout.xaxis.nticks = 15;
+
+    if(this.props.data.width === 5)
+      this.layout.xaxis.nticks = 12;
+
+    if(this.props.data.width <= 4 && this.props.data.width > 3)
+      this.layout.xaxis.nticks = 8;
+
+    if(this.props.data.width === 3)
+      this.layout.xaxis.nticks = 6;
 
     return (
       <div className="grid-linear-widget">
