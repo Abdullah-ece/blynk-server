@@ -33,20 +33,24 @@ class Dashboard extends React.Component {
 
     const pins = [];
 
-    this.props.dashboard.get('widgets').forEach((widget) => {
-      if (widget.get('sources').size) {
+    const dashboard = this.props.dashboard;
 
-        widget.get('sources').forEach((source) => {
-          if (!source || !source.get('dataStream'))
-            return null;
+    if (dashboard.has('widgets') && dashboard.get('widgets').size)
 
-          let pin = `${VIRTUAL_PIN_PREFIX}${source.getIn(['dataStream', 'pin'])}`;
+      dashboard.get('widgets').forEach((widget) => {
+        if (widget.has('sources') && widget.get('sources').size) {
 
-          if (pins.indexOf(pin) === -1)
-            pins.push(pin);
-        });
-      }
-    });
+          widget.get('sources').forEach((source) => {
+            if (!source || !source.get('dataStream'))
+              return null;
+
+            let pin = `${VIRTUAL_PIN_PREFIX}${source.getIn(['dataStream', 'pin'])}`;
+
+            if (pins.indexOf(pin) === -1)
+              pins.push(pin);
+          });
+        }
+      });
 
     this.props.fetchWidgetHistoryByPin({
       deviceId: this.props.params.id,
