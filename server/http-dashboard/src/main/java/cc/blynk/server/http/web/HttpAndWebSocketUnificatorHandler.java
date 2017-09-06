@@ -21,12 +21,10 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 @ChannelHandler.Sharable
 public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    private final String rootPath;
     private final AuthCookieHandler authCookieHandler;
 
     private final NoMatchHandler noMatchHandler;
 
-    private final ExternalAPIHandler externalAPILogic;
     private final WebLoginHandler webLoginHandler;
     private final AccountHandler accountHandler;
     private final DevicesHandler devicesHandler;
@@ -37,11 +35,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ServerProperties props;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, String rootPath) {
-        this.rootPath = rootPath;
-
         this.noMatchHandler = new NoMatchHandler();
 
-        this.externalAPILogic = new ExternalAPIHandler(holder);
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         this.accountHandler = new AccountHandler(holder, rootPath);
@@ -61,7 +56,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initUserPipeline(ChannelHandlerContext ctx) {
         ctx.pipeline()
-        .addLast(externalAPILogic)
         .addLast(webLoginHandler)
         .addLast(authCookieHandler)
         .addLast(new UploadHandler(props.jarPath, "/api/upload", "/" + ServerProperties.STATIC_FILES_FOLDER))

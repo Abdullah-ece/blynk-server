@@ -8,6 +8,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.CSVGenerator;
+import cc.blynk.server.http.web.ExternalAPIHandler;
 import cc.blynk.server.http.web.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.utils.UrlMapper;
 import cc.blynk.utils.UrlStartWithMapper;
@@ -35,6 +36,8 @@ public class HttpsAPIServer extends BaseServer {
         HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, "/api");
 
+        ExternalAPIHandler externalAPILogic = new ExternalAPIHandler(holder, "/external/api");
+
         UrlReWriterHandler favIconUrlRewriter = new UrlReWriterHandler(
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper("/", "/static/index.html"),
@@ -57,6 +60,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast(favIconUrlRewriter)
                 .addLast(staticFileHandler)
                 .addLast(new HttpContentCompressor())
+                .addLast(externalAPILogic)
                 .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };

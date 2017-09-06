@@ -33,7 +33,10 @@ import javax.net.ssl.SSLSession;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -146,7 +149,7 @@ public abstract class APIBaseTest extends BaseTest {
                 .build();
     }
 
-    protected class MyHostVerifier implements HostnameVerifier {
+    public static class MyHostVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String s, SSLSession sslSession) {
             return true;

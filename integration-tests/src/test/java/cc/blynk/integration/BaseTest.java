@@ -18,8 +18,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
 
-import javax.net.ssl.*;
-import java.io.*;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -89,7 +97,7 @@ public abstract class BaseTest {
         }
     }
 
-    public SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+    public static SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
         X509TrustManager tm = new X509TrustManager() {
             @Override
             public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
