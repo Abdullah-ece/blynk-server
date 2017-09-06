@@ -9,7 +9,7 @@ import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
-import {fromJS, Map, List} from 'immutable';
+import {Map} from 'immutable';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
   WIDGETS_CHART_TYPES_LIST,
@@ -19,9 +19,7 @@ import {
   SimpleContentEditable
 } from 'components';
 
-@connect((state) => ({
-  dataStreams: fromJS(state.Product.edit.dataStreams.fields || []),
-}), (dispatch) => ({
+@connect(() => ({}), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
 class Source extends React.Component {
@@ -32,7 +30,7 @@ class Source extends React.Component {
     index: PropTypes.number,
 
     source: PropTypes.instanceOf(Map),
-    dataStreams: PropTypes.instanceOf(List),
+    dataStreams: PropTypes.array,
 
     onCopy: PropTypes.func,
     onDelete: PropTypes.func,
@@ -127,11 +125,6 @@ class Source extends React.Component {
       return `Chart Type: ${name.value}`;
     };
 
-    const sources = this.props.dataStreams.map((dataStream) => ({
-      key: String(dataStream.getIn(['values', 'pin'])),
-      value: dataStream.getIn(['values', 'label']),
-    })).toJS();
-
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
         <div className="modal-window-widget-settings-config-column-sources-source-header">
@@ -154,7 +147,7 @@ class Source extends React.Component {
             </Item>
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
-                      name={`sources.${this.props.index}.dataStreamPin`} values={sources}
+                      name={`sources.${this.props.index}.dataStreamPin`} values={this.props.dataStreams}
                       placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>

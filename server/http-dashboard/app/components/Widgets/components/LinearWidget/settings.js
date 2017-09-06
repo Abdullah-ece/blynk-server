@@ -12,11 +12,12 @@ import {Row, Col, Button} from 'antd';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fromJS, Map} from 'immutable';
+import {fromJS, Map, List} from 'immutable';
 import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => ({
-  formValues: fromJS(getFormValues(ownProps.form)(state) || {})
+  formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
+  dataStreams: fromJS(state.Product.edit.dataStreams.fields || []),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -28,6 +29,7 @@ class LinearWidgetSettings extends React.Component {
 
   static propTypes = {
     formValues: PropTypes.instanceOf(Map),
+    dataStreams: PropTypes.instanceOf(List),
 
     visible: PropTypes.bool,
     pristine: PropTypes.bool,
@@ -132,6 +134,12 @@ class LinearWidgetSettings extends React.Component {
 
   render() {
 
+    const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.hasIn(['values','label']) && dataStream.getIn(['values','label']).length)
+      .map((dataStream) => ({
+      key: String(dataStream.getIn(['values', 'pin'])),
+      value: dataStream.getIn(['values', 'label']),
+    })).toJS();
+
     return (
       <Modal width={'auto'}
              wrapClassName="modal-window-widget-settings"
@@ -159,6 +167,7 @@ class LinearWidgetSettings extends React.Component {
 
               {this.props.formValues.has('sources') && this.props.formValues.get('sources').map((source, key) => (
                 <Source form={this.props.form}
+                        dataStreams={dataStreams}
                         index={key}
                         source={source} key={key}
                         onChange={this.handleSourceChange}
