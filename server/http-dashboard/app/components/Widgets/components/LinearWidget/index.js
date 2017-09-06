@@ -9,17 +9,11 @@ import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
 import _ from 'lodash';
-import {
-  WidgetHistoryByPinFetch
-} from 'data/Widgets/api';
 
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
-}), (dispatch) => ({
-  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
 }))
 class LinearWidget extends React.Component {
 
@@ -34,8 +28,6 @@ class LinearWidget extends React.Component {
     onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
-
-    fetchWidgetHistoryByPin: PropTypes.func
   };
 
   state = {
