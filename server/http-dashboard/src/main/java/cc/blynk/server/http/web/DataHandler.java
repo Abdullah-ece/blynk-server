@@ -24,8 +24,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.core.http.Response.ok;
 
@@ -95,13 +96,13 @@ public class DataHandler extends BaseHttpHandler {
         organizationDao.verifyUserAccessToDevice(user, device);
 
         blockingIOProcessor.executeDB(() -> {
-            List<AbstractMap.SimpleEntry<String, Data>> finalModel = new ArrayList<>();
+            Map<String, Data> finalModel = new HashMap<>();
             for (String dataStream : dataStreams) {
                 PinType pinType = PinType.getPinType(dataStream.charAt(0));
                 byte pin = ParseUtil.parseByte(dataStream.substring(1));
                 List<AbstractMap.SimpleEntry<Long, Double>> data =
                         dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
-                finalModel.add(new AbstractMap.SimpleEntry<>(dataStream, new Data(data)));
+                finalModel.put(dataStream, new Data(data));
             }
             ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
         });
