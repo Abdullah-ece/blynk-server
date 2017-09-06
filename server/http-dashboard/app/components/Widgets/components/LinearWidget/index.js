@@ -109,9 +109,9 @@ class LinearWidget extends React.Component {
   layout = {
     autosize: true,
     margin: {
-      t: 15,
-      r: 15,
-      l: 15,
+      t: 30,
+      r: 30,
+      l: 30,
       b: 30,
     }
   };
@@ -135,6 +135,9 @@ class LinearWidget extends React.Component {
         return null;
 
       const PIN = this.props.widgets.getIn([this.props.params.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
+
+      if(!PIN)
+        return null;
 
       let x = [];
       let y = [];
