@@ -46,16 +46,18 @@ class LinearWidget extends React.Component {
 
     if (this.props.fetchRealData && this.props.data.sources.length) {
 
-      this.props.data.sources.forEach((source) => {
+      const pins = [];
 
+      this.props.data.sources.forEach((source) => {
         if (!source || !source.dataStream)
           return null;
 
-        this.props.fetchWidgetHistoryByPin({
-          deviceId: this.props.params.id,
-          widgetId: this.props.data.id,
-          pin: `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`
-        });
+        pins.push(`${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`);
+      });
+
+      this.props.fetchWidgetHistoryByPin({
+        deviceId: this.props.params.id,
+        pins: pins
       });
 
     }
@@ -122,28 +124,17 @@ class LinearWidget extends React.Component {
     if (!this.props.data.sources || !this.props.data.sources.length)
       return null;
 
-    let isAnyLoading = false;
-
     const data = [];
+
+    if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
+      return null;
 
     this.props.data.sources.forEach((source) => {
 
       if (!source.dataStream || source.dataStream.pin === -1)
         return null;
 
-      const PIN = this.props.widgets.getIn([this.props.params.id, this.props.data.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
-
-      if (!PIN) {
-        isAnyLoading = true;
-        return;
-      }
-
-      const loading = PIN.get('loading');
-
-      if (loading || isAnyLoading) {
-        isAnyLoading = true;
-        return;
-      }
+      const PIN = this.props.widgets.getIn([this.props.params.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
 
       let x = [];
       let y = [];
@@ -164,9 +155,6 @@ class LinearWidget extends React.Component {
       });
 
     });
-
-    if (isAnyLoading)
-      return null;
 
     return (
       <div className="grid-linear-widget">
