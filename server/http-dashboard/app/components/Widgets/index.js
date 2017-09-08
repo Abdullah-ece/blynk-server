@@ -38,6 +38,7 @@ class Widgets extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
+    this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.handleWidgetChange = this.handleWidgetChange.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
   }
@@ -65,6 +66,23 @@ class Widgets extends React.Component {
     );
   }
 
+  handleWidgetClone(widget) {
+
+    const widgets = [...this.props.data.lg];
+
+    widgets.push({
+      ...widget,
+      id: _.random(1, 999999999),
+      label: `${widget.label} Copy`,
+      x: 0,
+      y: 0
+    });
+
+    this.props.onChange(
+      widgets
+    );
+  }
+
   handleWidgetDelete(id) {
 
     if (this.props.onChange)
@@ -85,6 +103,7 @@ class Widgets extends React.Component {
                 editable={this.props.editable}
                 onWidgetChange={this.handleWidgetChange}
                 onWidgetDelete={this.handleWidgetDelete}
+                onWidgetClone={this.handleWidgetClone}
         />
       );
     });

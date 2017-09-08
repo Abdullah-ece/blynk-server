@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Button,
-  Tooltip,
 } from 'antd';
 import Dotdotdot from 'react-dotdotdot';
 import PropTypes from 'prop-types';
@@ -31,6 +30,7 @@ class Widget extends React.Component {
     editable: PropTypes.bool,
     fetchRealData: PropTypes.bool,
 
+    onWidgetClone: PropTypes.func,
     onWidgetChange: PropTypes.func,
     onMouseUp: PropTypes.func,
     onTouchEnd: PropTypes.func,
@@ -42,6 +42,7 @@ class Widget extends React.Component {
     super(props);
 
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
+    this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
     this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
@@ -84,6 +85,10 @@ class Widget extends React.Component {
       );
   }
 
+  handleWidgetClone() {
+    this.props.onWidgetClone(this.props.data);
+  }
+
   handleWidgetDelete() {
     this.props.onWidgetDelete(this.props.id);
   }
@@ -115,9 +120,7 @@ class Widget extends React.Component {
 
               <Button icon="delete" size="small" onClick={this.handleWidgetDelete}/>
 
-              <Tooltip placement="top" title={'This feature is not avail right now'}>
-                <Button icon="copy" size="small" disabled={true}/>
-              </Tooltip>
+              <Button icon="copy" size="small" onClick={this.handleWidgetClone}/>
 
               <Button icon="setting" size="small" onClick={this.toggleSettingsVisibility}/>
 
