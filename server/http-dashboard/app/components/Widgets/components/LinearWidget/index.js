@@ -122,7 +122,7 @@ class LinearWidget extends React.Component {
       let y = [];
 
       PIN.get('data').forEach((item) => {
-        x.push(moment(Number(item.get('x'))).format('HH:mm:ss'));
+        x.push(moment(Number(item.get('x'))).format('YYYY-MM-DD HH:mm:ss'));
         y.push(item.get('y'));
       });
 

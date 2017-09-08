@@ -1,15 +1,22 @@
 import React from 'react';
-import {Button} from 'antd';
 import {Widgets} from 'components';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
 import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
+import {TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {WidgetHistoryByPinFetch} from 'data/Widgets/api';
+import {TimeFiltering} from './scenes';
+import {getFormValues, initialize} from 'redux-form';
 
-@connect(() => ({}), (dispatch) => ({
+const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
+
+@connect((state) => ({
+  timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
+}), (dispatch) => ({
+  initializeForm: bindActionCreators(initialize, dispatch),
   fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
 }))
 class Dashboard extends React.Component {
@@ -17,7 +24,9 @@ class Dashboard extends React.Component {
   static propTypes = {
     dashboard: PropTypes.instanceOf(Map),
     params: PropTypes.object,
-    fetchWidgetHistoryByPin: PropTypes.func
+    timeFilteringValues: PropTypes.object,
+    fetchWidgetHistoryByPin: PropTypes.func,
+    initializeForm: PropTypes.func,
   };
 
   constructor(props) {
@@ -27,9 +36,21 @@ class Dashboard extends React.Component {
       filter: this.FILTERS.HOUR,
       editable: false
     };
+
+    this.handleTimeFilterChange = this.handleTimeFilterChange.bind(this);
   }
 
   componentWillMount() {
+
+    this.props.initializeForm(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME, {
+      time: 'HOUR',
+      customTime: [(new Date().getTime()) - 1000*60*60*24*7, (new Date().getTime())]
+    });
+
+    this.fetchWidgetsData();
+  }
+
+  fetchWidgetsData(params = {}) {
 
     const pins = [];
 
@@ -52,9 +73,17 @@ class Dashboard extends React.Component {
         }
       });
 
+    if (params.from === undefined) {
+      params = {
+        ...params,
+        ...this.getTimeOffsetForData({time: 'HOUR'})
+      };
+    }
+
     this.props.fetchWidgetHistoryByPin({
       deviceId: this.props.params.id,
-      pins: pins
+      pins: pins,
+      ...params,
     });
   }
 
@@ -101,6 +130,32 @@ class Dashboard extends React.Component {
     });
   }
 
+  getTimeOffsetForData(values) {
+
+    const params = {};
+
+    if (values.time === TIMELINE_TIME_FILTERS.CUSTOM.key) {
+      if (!values.customTime || !values.customTime.length)
+        return false;
+      params.from = values.customTime[0];
+      params.to = values.customTime[1];
+    } else {
+      params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+    }
+
+    return params;
+  }
+
+  handleTimeFilterChange(values) {
+
+    const params = {
+      ...this.getTimeOffsetForData(values) || {}
+    };
+
+    this.fetchWidgetsData(params);
+
+  }
+
   render() {
 
     let widgets;
@@ -129,7 +184,7 @@ class Dashboard extends React.Component {
     if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
       return (
         <div className="devices--device-dashboard">
-          <div className="product-no-fields" style={{padding:0}}>No Dashboard widgets</div>
+          <div className="product-no-fields" style={{padding: 0}}>No Dashboard widgets</div>
         </div>
       );
 
@@ -137,26 +192,8 @@ class Dashboard extends React.Component {
       <div className="devices--device-dashboard">
 
         <div>
-          <Button.Group size="default" className="devices-device-dashboard-time-filter">
-            {this.FILTER_BUTTONS.map((button, key) => (
-              <Button key={key}
-                      disabled={true}
-                      onClick={this.filterBy.bind(this, button.key)}
-                      type={button.key === this.state.filter && 'primary' || 'default'}>
-                {button.value}
-              </Button>
-            ))}
-          </Button.Group>
-          (will come soon)
-          {/*<Button.Group className="dashboard-tools">*/}
-          {/*{ this.state.editable && (*/}
-          {/*<Button icon="check" onClick={this.finishEditDashboard.bind(this)}/>*/}
-          {/*)}*/}
-          {/*{ !this.state.editable && (*/}
-          {/*<Button icon="tool" className="transparent" onClick={this.startEditDashboard.bind(this)}/>*/}
-          {/*)}*/}
-
-          {/*</Button.Group>*/}
+          <TimeFiltering onChange={this.handleTimeFilterChange} form={DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME}
+                         formValues={this.props.timeFilteringValues}/>
         </div>
 
         <Widgets params={this.props.params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
