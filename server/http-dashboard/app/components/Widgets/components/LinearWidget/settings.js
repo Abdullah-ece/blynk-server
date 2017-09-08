@@ -14,6 +14,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS, Map, List} from 'immutable';
 import PropTypes from 'prop-types';
+import Widget from '../Widget';
 
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
@@ -180,7 +181,12 @@ class LinearWidgetSettings extends React.Component {
             </div>
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">
-            Awesome
+            <div className="widgets">
+              <Widget style={{height: '200px'}}
+                      fetchRealData={false}
+                      params={{}}
+                      data={this.props.formValues.toJS()} />
+            </div>
           </Col>
         </Row>
       </Modal>

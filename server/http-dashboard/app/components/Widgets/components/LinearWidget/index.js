@@ -63,10 +63,12 @@ class LinearWidget extends React.Component {
         y.push(_.random(0, 10));
       }
 
+      let item = _.find(this.state.data, (data) => data.name === source.label);
+
       data.push({
         name: source.label,
         x: [1,2,3,4,5],
-        y: y,
+        y: item ? item.y : y,
         mode: 'lines+markers',
         marker: {
           color: source.color
