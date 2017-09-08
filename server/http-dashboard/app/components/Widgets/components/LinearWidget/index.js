@@ -159,6 +159,18 @@ class LinearWidget extends React.Component {
 
   renderFakeDataChart() {
 
+    if(this.props.data.width <= 8 && this.props.data.width >= 6)
+      this.layout.xaxis.nticks = 15;
+
+    if(this.props.data.width === 5)
+      this.layout.xaxis.nticks = 12;
+
+    if(this.props.data.width <= 4 && this.props.data.width > 3)
+      this.layout.xaxis.nticks = 8;
+
+    if(this.props.data.width === 3)
+      this.layout.xaxis.nticks = 6;
+
     return (
       <div className="grid-linear-widget">
         <Plotly data={this.state.data} config={this.config} layout={this.layout}/>
