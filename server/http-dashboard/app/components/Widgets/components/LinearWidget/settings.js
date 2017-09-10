@@ -182,7 +182,8 @@ class LinearWidgetSettings extends React.Component {
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">
             <div className="widgets">
-              <Widget style={{height: '200px'}}
+              <Widget isPreviewOnly={true}
+                      style={{height: '200px'}}
                       fetchRealData={false}
                       params={{}}
                       data={this.props.formValues.toJS()} />

@@ -28,6 +28,7 @@ class Widget extends React.Component {
     id: PropTypes.number,
 
     editable: PropTypes.bool,
+    isPreviewOnly: PropTypes.bool,
     fetchRealData: PropTypes.bool,
 
     onWidgetClone: PropTypes.func,
@@ -128,7 +129,7 @@ class Widget extends React.Component {
           )}
         </div>
         {this.getWidgetByType(this.props.data.type, this.props.data)}
-        {this.getWidgetSettingsByType(this.props.data.type, this.props.data)}
+        {!this.props.isPreviewOnly && this.getWidgetSettingsByType(this.props.data.type, this.props.data) || null}
         {this.props.children}
       </div>
     );
