@@ -85,15 +85,36 @@ class LinearWidget extends React.Component {
   layout = {
     autosize: true,
     margin: {
-      t: 30,
+      t: 10,
       r: 30,
       l: 30,
-      b: 60,
+      b: 30,
+    },
+    yaxis: {
+      showline: true,
+      linecolor: 'rgb(204,204,204)',
+      ticklen: 3,
+      tickcolor: '#fff',
+      tickfont: {
+        family: 'PF DinDisplay Pro',
+        size: '13',
+        color: '#9a9a9a'
+      },
     },
     xaxis: {
-      ticklen: 0,
-      tickangle: 40,
+      showline: true,
+      linecolor: 'rgb(204,204,204)',
+      tickfont: {
+        family: 'PF DinDisplay Pro',
+        size: '13',
+        color: '#9a9a9a'
+      },
+      tickformat: '%I:%M %p',
+      hoverformat: '%d %b %Y %I:%M:%S %p',
+      ticklen: 3,
+      tickangle: 0,
       nticks: 12,
+      tickcolor: '#fff'
     }
   };
 
@@ -140,17 +161,7 @@ class LinearWidget extends React.Component {
 
     });
 
-    if(this.props.data.width <= 8 && this.props.data.width >= 6)
-      this.layout.xaxis.nticks = 15;
-
-    if(this.props.data.width === 5)
-      this.layout.xaxis.nticks = 12;
-
-    if(this.props.data.width <= 4 && this.props.data.width > 3)
-      this.layout.xaxis.nticks = 8;
-
-    if(this.props.data.width === 3)
-      this.layout.xaxis.nticks = 6;
+    this.layout.xaxis.nticks = this.getNTicks(this.props.data.width);
 
     return (
       <div className="grid-linear-widget">
@@ -159,19 +170,38 @@ class LinearWidget extends React.Component {
     );
   }
 
+  getNTicks(width) {
+    const defaultValue = 6;
+
+    width = parseInt(width);
+
+    if (width === 8)
+      return 12 ;
+
+    if (width === 7)
+      return 9;
+
+    if (width === 6)
+      return 8;
+
+    if (width === 5)
+      return 4;
+
+    if (width === 4)
+      return 4;
+
+    if (width === 3)
+      return 3;
+
+    if (width === 2)
+      return 3;
+
+    return defaultValue;
+  }
+
   renderFakeDataChart() {
 
-    if(this.props.data.width <= 8 && this.props.data.width >= 6)
-      this.layout.xaxis.nticks = 15;
-
-    if(this.props.data.width === 5)
-      this.layout.xaxis.nticks = 12;
-
-    if(this.props.data.width <= 4 && this.props.data.width > 3)
-      this.layout.xaxis.nticks = 8;
-
-    if(this.props.data.width === 3)
-      this.layout.xaxis.nticks = 6;
+    this.layout.xaxis.nticks = this.getNTicks(this.props.data.width);
 
     return (
       <div className="grid-linear-widget">
