@@ -88,9 +88,10 @@ class LinearWidget extends React.Component {
       t: 10,
       r: 30,
       l: 30,
-      b: 30,
+      b: 5,
     },
     yaxis: {
+      fixedrange: true,
       showline: true,
       linecolor: 'rgb(204,204,204)',
       ticklen: 3,
@@ -114,7 +115,13 @@ class LinearWidget extends React.Component {
       ticklen: 3,
       tickangle: 0,
       nticks: 12,
-      tickcolor: '#fff'
+      tickcolor: '#fff',
+      // range selector
+      rangeselector: {
+        x: 0,
+        y: 3
+      },
+      rangeslider: {}
     }
   };
 
