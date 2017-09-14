@@ -59,17 +59,27 @@ class LinearWidget extends React.Component {
 
       const y = [];
 
-      for(let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         y.push(_.random(0, 10));
       }
 
       let item = _.find(this.state.data, (data) => data.name === source.label);
 
+      const date = new Date().getTime();
+
+      const format = (x) => moment(Number(x)).format('YYYY-MM-DD HH:mm:ss');
+
       data.push({
+        ...this.dataChartConfig,
         name: source.label,
-        x: [1,2,3,4,5],
+        x: [
+          format(date-1000*60*40),
+          format(date-1000*60*30),
+          format(date-1000*60*20),
+          format(date-1000*60*10),
+          format(date),
+        ],
         y: item ? item.y : y,
-        mode: 'lines+markers',
         marker: {
           color: source.color
         }
@@ -127,6 +137,14 @@ class LinearWidget extends React.Component {
     }
   };
 
+  dataChartConfig = {
+    line: {
+      width: 1.5,
+      shape: 'linear'
+    },
+    mode: 'lines',
+  };
+
   config = {
     displayModeBar: false
   };
@@ -150,7 +168,7 @@ class LinearWidget extends React.Component {
 
       const PIN = this.props.widgets.getIn([this.props.params.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
 
-      if(!PIN)
+      if (!PIN)
         return null;
 
       let x = [];
@@ -158,10 +176,10 @@ class LinearWidget extends React.Component {
 
       PIN.get('data').forEach((item) => {
 
-        if(minY === false || parseInt(item.get('x')) < minY)
+        if (minY === false || parseInt(item.get('x')) < minY)
           minY = parseInt(item.get('x'));
 
-        if(maxY === false || parseInt(item.get('x')) > maxY)
+        if (maxY === false || parseInt(item.get('x')) > maxY)
           maxY = parseInt(item.get('x'));
 
         x.push(moment(Number(item.get('x'))).format('YYYY-MM-DD HH:mm:ss'));
@@ -169,13 +187,13 @@ class LinearWidget extends React.Component {
       });
 
       data.push({
+        ...this.dataChartConfig,
         name: source.label,
         x: x,
         y: y,
-        mode: 'lines+markers',
         marker: {
           color: source.color
-        }
+        },
       });
 
     });
@@ -205,7 +223,7 @@ class LinearWidget extends React.Component {
     width = parseInt(width);
 
     if (width === 8)
-      return 12 ;
+      return 12;
 
     if (width === 7)
       return 9;
@@ -230,11 +248,23 @@ class LinearWidget extends React.Component {
 
   renderFakeDataChart() {
 
-    this.layout.xaxis.nticks = this.getNTicks(this.props.data.width);
+    const layout = {
+      ...this.layout,
+      xaxis: {
+        ...this.layout.xaxis,
+        nticks: this.getNTicks(this.props.data.width),
+        rangeslider: undefined,
+        rangeselector: undefined,
+      },
+      margin: {
+        ...this.layout.margin,
+        b: 30,
+      }
+    };
 
     return (
       <div className="grid-linear-widget">
-        <Plotly data={this.state.data} config={this.config} layout={this.layout}/>
+        <Plotly data={this.state.data} config={this.config} layout={layout}/>
       </div>
     );
   }
