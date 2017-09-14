@@ -121,7 +121,9 @@ class LinearWidget extends React.Component {
         x: 0,
         y: 3
       },
-      rangeslider: {}
+      rangeslider: {
+        range: []
+      }
     }
   };
 
@@ -138,6 +140,9 @@ class LinearWidget extends React.Component {
     if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
       return null;
 
+    let minY = false;
+    let maxY = false;
+
     this.props.data.sources.forEach((source) => {
 
       if (!source.dataStream || source.dataStream.pin === -1)
@@ -152,6 +157,13 @@ class LinearWidget extends React.Component {
       let y = [];
 
       PIN.get('data').forEach((item) => {
+
+        if(minY === false || parseInt(item.get('x')) < minY)
+          minY = parseInt(item.get('x'));
+
+        if(maxY === false || parseInt(item.get('x')) > maxY)
+          maxY = parseInt(item.get('x'));
+
         x.push(moment(Number(item.get('x'))).format('YYYY-MM-DD HH:mm:ss'));
         y.push(item.get('y'));
       });
@@ -168,11 +180,21 @@ class LinearWidget extends React.Component {
 
     });
 
-    this.layout.xaxis.nticks = this.getNTicks(this.props.data.width);
+    const layout = {
+      ...this.layout,
+      xaxis: {
+        ...this.layout.xaxis,
+        nticks: this.getNTicks(this.props.data.width),
+        rangeslider: {
+          ...this.layout.rangeslider,
+          range: minY === false || maxY === false ? [] : [minY, maxY]
+        }
+      }
+    };
 
     return (
       <div className="grid-linear-widget">
-        <Plotly data={data} config={this.config} layout={this.layout}/>
+        <Plotly data={data} config={this.config} layout={layout}/>
       </div>
     );
   }

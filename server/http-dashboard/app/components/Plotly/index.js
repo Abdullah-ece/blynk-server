@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Plotlyjs from 'plotly';
-import './styles.less'
+import './styles.less';
 
 class Plotly extends React.Component {
 
