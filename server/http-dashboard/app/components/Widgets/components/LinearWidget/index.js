@@ -108,16 +108,18 @@ class LinearWidget extends React.Component {
       tickcolor: '#fff',
       tickfont: {
         family: 'PF DinDisplay Pro',
-        size: '13',
+        size: '12',
         color: '#9a9a9a'
       },
+      zerolinecolor: 'rgb(204,204,204)',
     },
     xaxis: {
+      zerolinecolor: 'rgb(204,204,204)',
       showline: true,
       linecolor: 'rgb(204,204,204)',
       tickfont: {
         family: 'PF DinDisplay Pro',
-        size: '13',
+        size: '10',
         color: '#9a9a9a'
       },
       tickformat: '%I:%M %p',
