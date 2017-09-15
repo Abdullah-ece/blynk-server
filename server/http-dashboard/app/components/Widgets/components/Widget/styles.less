@@ -1,7 +1,7 @@
 @import "components/Layout/style-guide";
 
 .widgets--widget {
-  padding: @style-size-2;
+  padding: @style-size-2 @style-size-3;
   background: #fff;
   box-shadow: 0 0 10px 0 @color-dark-grey-12;
   border-radius: 5px;
@@ -15,16 +15,22 @@
 
 .widgets--widget-label {
   padding-right: 70px;
-  line-height: 16px;
-  flex-basis: 16px;
-  height: 16px;
+  line-height: 44px;
+  vertical-align: bottom;
+  flex-basis: 32px;
+  height: 32px;
+  font-size: @style-font-size-4;
+  font-weight: 400;
+  > div {
+    height: 32px;
+  }
 }
 
 .widgets--widget-tools {
   line-height: 16px;
   position: absolute;
-  top: @style-size-1;
-  right: @style-size-1;
+  top: @style-size-1-1;
+  right: @style-size-1-1;
   .ant-btn-sm i {
     font-size: 14px;
     &.anticon-delete {

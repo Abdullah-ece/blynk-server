@@ -136,7 +136,15 @@ class LinearWidget extends React.Component {
       rangeslider: {
         range: []
       }
-    }
+    },
+    legend: {
+      font: {
+        family: 'PF DinDisplay Pro',
+        size: '12',
+        color: '#212227',
+      },
+    },
+    showlegend: true,
   };
 
   dataChartConfig = {
