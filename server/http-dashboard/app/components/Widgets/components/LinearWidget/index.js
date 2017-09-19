@@ -168,6 +168,9 @@ class LinearWidget extends React.Component {
     if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
       return null;
 
+    let minX = false;
+    let maxX = false;
+
     let minY = false;
     let maxY = false;
 
@@ -184,13 +187,25 @@ class LinearWidget extends React.Component {
       let x = [];
       let y = [];
 
+      if(source.dataStream.max)
+        maxY = source.dataStream.max;
+
+      if(source.dataStream.min)
+        minY = source.dataStream.min;
+
       PIN.get('data').forEach((item) => {
 
-        if (minY === false || parseInt(item.get('x')) < minY)
-          minY = parseInt(item.get('x'));
+        if (minX === false || parseInt(item.get('x')) < minX)
+          minX = parseInt(item.get('x'));
 
-        if (maxY === false || parseInt(item.get('x')) > maxY)
-          maxY = parseInt(item.get('x'));
+        if (maxX === false || parseInt(item.get('x')) > maxX)
+          maxX = parseInt(item.get('x'));
+
+        if (maxY === false || parseInt(item.get('y')) > maxY)
+          maxY = parseInt(item.get('y'));
+
+        if (minY === false || parseInt(item.get('y')) < minY)
+          minY = parseInt(item.get('y'));
 
         x.push(moment(Number(item.get('x'))).format('YYYY-MM-DD HH:mm:ss'));
         y.push(item.get('y'));
@@ -215,8 +230,12 @@ class LinearWidget extends React.Component {
         nticks: this.getNTicks(this.props.data.width),
         rangeslider: {
           ...this.layout.rangeslider,
-          range: minY === false || maxY === false ? [] : [minY, maxY]
+          range: minX === false || maxX === false ? [] : [minX, maxX]
         }
+      },
+      yaxis: {
+        ...this.layout.yaxis,
+        range: [minY, maxY]
       }
     };
 
