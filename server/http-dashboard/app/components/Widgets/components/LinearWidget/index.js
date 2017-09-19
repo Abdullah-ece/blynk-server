@@ -240,8 +240,6 @@ class LinearWidget extends React.Component {
       }
     };
 
-    console.log(data, layout);
-
     return (
       <div className="grid-linear-widget">
         <Plotly data={data} config={this.config} layout={layout}/>
