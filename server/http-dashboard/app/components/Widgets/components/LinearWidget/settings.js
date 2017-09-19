@@ -161,7 +161,7 @@ class LinearWidgetSettings extends React.Component {
               <Field name="label" component={this.labelNameComponent}/>
 
               <div className="modal-window-widget-settings-config-add-source">
-                <Button type="dashed" onClick={this.handleAddSource}>Add source</Button>
+                {/*<Button type="dashed" onClick={this.handleAddSource}>Add source</Button>*/}
               </div>
 
             </div>
