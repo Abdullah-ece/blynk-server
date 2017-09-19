@@ -228,6 +228,7 @@ class LinearWidget extends React.Component {
       xaxis: {
         ...this.layout.xaxis,
         nticks: this.getNTicks(this.props.data.width),
+        tickformat: (data[0] && data[0].x.length ? this.layout.xaxis.tickformat : null),
         rangeslider: {
           ...this.layout.rangeslider,
           range: minX === false || maxX === false ? [] : [minX, maxX]
@@ -238,6 +239,8 @@ class LinearWidget extends React.Component {
         range: [minY, maxY]
       }
     };
+
+    console.log(data, layout);
 
     return (
       <div className="grid-linear-widget">
