@@ -287,6 +287,7 @@ class LinearWidget extends React.Component {
         rangeslider: undefined,
         rangeselector: undefined,
       },
+      dragmode: "zoom",
       margin: {
         ...this.layout.margin,
         b: 30,
