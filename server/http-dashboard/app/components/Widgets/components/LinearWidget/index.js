@@ -113,6 +113,7 @@ class LinearWidget extends React.Component {
       },
       zerolinecolor: 'rgb(204,204,204)',
     },
+    dragmode: 'pan',
     xaxis: {
       zerolinecolor: 'rgb(204,204,204)',
       showline: true,
