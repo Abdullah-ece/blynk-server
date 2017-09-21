@@ -5,6 +5,12 @@
   background: #fff;
   box-shadow: 0 0 10px 0 @color-dark-grey-12;
   border-radius: 5px;
+
+  &:hover {
+    .widgets--widget-tools {
+      opacity: 1;
+    }
+  }
 }
 
 .widgets--widget.react-draggable-dragging {
@@ -27,6 +33,8 @@
 }
 
 .widgets--widget-tools {
+  transition: .3s ease;
+  opacity: 0;
   line-height: 16px;
   position: absolute;
   top: @style-size-1-1;
