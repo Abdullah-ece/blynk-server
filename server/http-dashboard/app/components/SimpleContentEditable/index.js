@@ -20,13 +20,17 @@ class SimpleContentEditable extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   state = {
     isFocused: false
   };
 
   handleChange(event) {
     if (this.props.onChange)
-      this.props.onChange(event.target.value);
+      this.props.onChange(event.target.value.replace(/&nbsp;/g, ' '));
   }
 
   handleBlur(event) {
