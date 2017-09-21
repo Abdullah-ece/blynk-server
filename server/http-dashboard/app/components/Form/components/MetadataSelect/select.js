@@ -15,6 +15,7 @@ export default class SelectField extends React.Component {
     placeholder: React.PropTypes.any,
     input: React.PropTypes.any,
     meta: React.PropTypes.any,
+    dropdownMatchSelectWidth: React.PropTypes.bool,
     notFoundContent: React.PropTypes.string,
   };
 
@@ -58,7 +59,7 @@ export default class SelectField extends React.Component {
 
   render() {
 
-    const {notFoundContent, dropdownClassName, dropdownStyle, displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}} = this.props;
+    const {dropdownMatchSelectWidth, notFoundContent, dropdownClassName, dropdownStyle, displayError = true, values, defaultValue, style, placeholder, input, meta: {touched, error, warning}} = this.props;
 
     let validateStatus = 'success';
     let help = '';
@@ -78,6 +79,7 @@ export default class SelectField extends React.Component {
                  style={style}>
         <Select
           {...input}
+          dropdownMatchSelectWidth={dropdownMatchSelectWidth === undefined ? true : dropdownMatchSelectWidth}
           dropdownClassName={dropdownClassName}
           dropdownStyle={dropdownStyle}
           showSearch

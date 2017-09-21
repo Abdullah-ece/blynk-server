@@ -148,7 +148,8 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-type-select">
           <ItemsGroup>
             <Item label="Source" offset="medium">
-              <Select name={`sources.${this.props.index}.sourceType`}
+              <Select dropdownMatchSelectWidth={false}
+                      name={`sources.${this.props.index}.sourceType`}
                       values={WIDGETS_SOURCE_TYPES_LIST}
                       placeholder="Choose Type"
                       validate={[Validation.Rules.required]}
@@ -156,6 +157,7 @@ class Source extends React.Component {
             </Item>
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
+                      dropdownMatchSelectWidth={false}
                       name={`sources.${this.props.index}.dataStreamPin`} values={this.props.dataStreams.toJS()}
                       placeholder="Choose Source"
                       validate={[Validation.Rules.required]}

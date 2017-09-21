@@ -20,13 +20,13 @@ class SimpleContentEditable extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   state = {
     isFocused: false
   };
+
+  shouldComponentUpdate() {
+    return false;
+  }
 
   handleChange(event) {
     if (this.props.onChange)
