@@ -80,11 +80,13 @@ class Dashboard extends React.Component {
       };
     }
 
-    this.props.fetchWidgetHistoryByPin({
-      deviceId: this.props.params.id,
-      pins: pins,
-      ...params,
-    });
+    if (pins.length)
+      this.props.fetchWidgetHistoryByPin({
+        deviceId: this.props.params.id,
+        pins: pins,
+        ...params,
+      });
+
   }
 
   FILTERS = {
@@ -181,12 +183,48 @@ class Dashboard extends React.Component {
       };
     }
 
-    if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
-      return (
-        <div className="devices--device-dashboard">
-          <div className="product-no-fields" style={{padding: 0}}>No Dashboard widgets</div>
-        </div>
-      );
+    widgets.lg.push({
+      label: 'Devices By Organization',
+      type: 'BAR',
+      i: '999',
+      id: 999,
+      w: 5,
+      h: 3,
+      x: 0,
+      y: 1,
+    });
+
+    widgets.lg.push({
+      label: 'Devices By Product',
+      type: 'BAR',
+      i: '9992',
+      id: 9992,
+      w: 5,
+      h: 3,
+      x: 0,
+      y: 4,
+    });
+
+    widgets.lg.push({
+      label: 'Products By Organization',
+      type: 'BAR',
+      i: '9993',
+      id: 9993,
+      w: 5,
+      h: 3,
+      x: 0,
+      y: 7,
+    });
+
+    // uncomment when start to use real data
+
+    // if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
+    //   return (
+    //     <div className="devices--device-dashboard">
+    //       <div className="product-no-fields" style={{padding: 0}}>No Dashboard widgets</div>
+    //     </div>
+    //   );
+
 
     return (
       <div className="devices--device-dashboard">

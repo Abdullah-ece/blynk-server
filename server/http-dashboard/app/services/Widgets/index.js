@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
 export const WIDGET_TYPES = {
-  LINEAR: 'WEB_GRAPH'
+  LINEAR: 'WEB_GRAPH',
+  BAR: 'BAR',
 };
 
 export const WIDGETS_CONFIGS = {

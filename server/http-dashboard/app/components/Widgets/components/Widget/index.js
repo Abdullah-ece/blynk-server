@@ -9,7 +9,8 @@ import {
   WIDGET_TYPES
 } from 'services/Widgets';
 import {
-  LinearWidget
+  LinearWidget,
+  BarWidget
 } from 'components/Widgets/components';
 import './styles.less';
 
@@ -57,6 +58,16 @@ class Widget extends React.Component {
     if (type === WIDGET_TYPES.LINEAR)
       return (
         <LinearWidget key={widget.id}
+                      fetchRealData={this.props.fetchRealData}
+                      params={this.props.params}
+                      data={widget}
+                      editable={this.props.editable}
+                      onWidgetDelete={this.handleWidgetDelete}/>
+      );
+
+    if (type === WIDGET_TYPES.BAR)
+      return (
+        <BarWidget key={widget.id}
                       fetchRealData={this.props.fetchRealData}
                       params={this.props.params}
                       data={widget}
