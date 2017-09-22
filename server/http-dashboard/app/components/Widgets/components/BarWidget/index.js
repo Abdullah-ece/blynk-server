@@ -178,11 +178,43 @@ class BarWidget extends React.Component {
 
     const data = [
       {
-        x: [345, 321, 24],
-        y: ['Blynk Inc.', 'Knight LLC', 'Goooogle'],
+        x: [],
+        y: [],
         ...this.legendConfig,
       }
     ];
+
+    const addOrgToChart = (organization) => {
+
+      const productsCount = organization && organization.get('products') && organization.get('products').size || 0;
+
+      if(productsCount) {
+
+        let devicesCount = 0;
+
+        organization.get('products').forEach((product) => {
+          devicesCount += product.get('deviceCount') || 0;
+        });
+
+        data[0].x.push(devicesCount);
+
+      } else {
+        data[0].x.push(0);
+      }
+
+
+      data[0].y.push(organization.get('name'));
+    };
+
+    const orgs = this.props.widgets.getIn([String(this.props.data.id), 'organizations']);
+    const currentOrg = this.props.widgets.getIn([String(this.props.data.id), 'organization']);
+
+    if (orgs && orgs.forEach)
+      orgs.forEach(addOrgToChart);
+
+    if (currentOrg && currentOrg.get('name'))
+      addOrgToChart(currentOrg);
+
 
     const config = {
       ...this.config,
