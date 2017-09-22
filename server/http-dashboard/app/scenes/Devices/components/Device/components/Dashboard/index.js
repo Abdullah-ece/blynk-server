@@ -184,17 +184,19 @@ class Dashboard extends React.Component {
     }
 
     widgets.lg.push({
+      typeOfData: 1,
       label: 'Devices By Organization',
       type: 'BAR',
       i: '999',
       id: 999,
-      w: 5,
-      h: 3,
+      w: 4,
+      h: 5,
       x: 0,
       y: 1,
     });
 
     widgets.lg.push({
+      typeOfData: 2,
       label: 'Devices By Product',
       type: 'BAR',
       i: '9992',
@@ -206,6 +208,7 @@ class Dashboard extends React.Component {
     });
 
     widgets.lg.push({
+      typeOfData: 3,
       label: 'Products By Organization',
       type: 'BAR',
       i: '9993',
