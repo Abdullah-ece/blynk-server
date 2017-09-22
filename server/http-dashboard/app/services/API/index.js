@@ -20,7 +20,7 @@ export const applyResponseTransformers = (transformers) => {
 
 export const API_URL = {
   products: () => `/product`,
-  organization: () => `/organization`,
+  organization: (params = {}) => `/organization${params.id ? `/${params.id}` : ''}`,
   device: () => ({
     update: (params) => `/devices/${params.orgId}`,
     metadata: () => ({

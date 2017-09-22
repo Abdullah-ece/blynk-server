@@ -9,13 +9,18 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
 import {
-  WidgetProductsFetch
+  WidgetProductsFetch,
+  WidgetOrganizationFetch,
+  WidgetOrganizationsFetch,
 } from 'data/Widgets/api';
 
 @connect((state) => ({
+  orgId: state.Account.orgId,
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
 }), (dispatch) => ({
-  fetchProductsForWidget: bindActionCreators(WidgetProductsFetch, dispatch)
+  fetchProductsForWidget: bindActionCreators(WidgetProductsFetch, dispatch),
+  fetchOrganization: bindActionCreators(WidgetOrganizationFetch, dispatch),
+  fetchOrganizationsList: bindActionCreators(WidgetOrganizationsFetch, dispatch),
 }))
 class BarWidget extends React.Component {
 
@@ -27,9 +32,12 @@ class BarWidget extends React.Component {
 
     fetchRealData: PropTypes.bool,
 
+    orgId: PropTypes.number,
     typeOfData: PropTypes.number,
 
     fetchProductsForWidget: PropTypes.func,
+    fetchOrganizationsList: PropTypes.func,
+    fetchOrganization: PropTypes.func,
     onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
@@ -45,8 +53,24 @@ class BarWidget extends React.Component {
       loading: true
     });
 
-    if(this.props.data.typeOfData === 2) {
+    if (this.props.data.typeOfData === 2) {
       this.props.fetchProductsForWidget().then(() => {
+        this.setState({
+          loading: false
+        });
+      });
+    }
+
+    if (this.props.data.typeOfData === 1 || this.props.data.typeOfData === 3) {
+      const params = {
+        orgId: this.props.orgId,
+        deviceId: this.props.data.id
+      };
+
+      Promise.all([
+        this.props.fetchOrganization(params),
+        this.props.fetchOrganizationsList(params),
+      ]).then(() => {
         this.setState({
           loading: false
         });
@@ -200,11 +224,29 @@ class BarWidget extends React.Component {
   renderProductByOrganization() {
     const data = [
       {
-        x: [50, 15, 15],
-        y: ['Blynk Inc.', 'Knight LLC', 'Ecolab'],
+        x: [],
+        y: [],
         ...this.legendConfig,
       }
     ];
+
+    const addOrgToChart = (organization) => {
+
+      const productsCount = organization && organization.get('products') && organization.get('products').size || 0;
+
+      data[0].x.push(productsCount);
+      data[0].y.push(organization.get('name'));
+    };
+
+    const orgs = this.props.widgets.getIn([String(this.props.data.id), 'organizations']);
+    const currentOrg = this.props.widgets.getIn([String(this.props.data.id), 'organization']);
+
+    if (orgs && orgs.forEach)
+      orgs.forEach(addOrgToChart);
+
+    if (currentOrg && currentOrg.get('name'))
+      addOrgToChart(currentOrg);
+
 
     const config = {
       ...this.config,

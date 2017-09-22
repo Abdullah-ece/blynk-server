@@ -37,3 +37,33 @@ export function WidgetProductsFetch(data) {
     }
   };
 }
+
+export function WidgetOrganizationsFetch(data) {
+
+  return {
+    type: 'API_WIDGETS_ORGANIZATIONS_FETCH',
+    value: data,
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.organization()
+      }
+    }
+  };
+}
+
+export function WidgetOrganizationFetch(data) {
+
+  return {
+    type: 'API_WIDGETS_ORGANIZATION_FETCH',
+    value: data,
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.organization({
+          id: data.orgId
+        })
+      }
+    }
+  };
+}

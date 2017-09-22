@@ -65,6 +65,12 @@ export default function Product(state = initialState, action) {
         data: action.payload.data || []
       }));
 
+    case "API_WIDGETS_ORGANIZATION_FETCH_SUCCESS":
+      return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), 'organization'], fromJS(action.payload.data || []));
+
+    case "API_WIDGETS_ORGANIZATIONS_FETCH_SUCCESS":
+      return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), 'organizations'], fromJS(action.payload.data || []));
+
     default:
       return state;
   }
