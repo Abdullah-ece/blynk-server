@@ -190,7 +190,7 @@ class Dashboard extends React.Component {
       i: '999',
       id: 999,
       w: 4,
-      h: 5,
+      h: 3,
       x: 0,
       y: 1,
     });
@@ -202,7 +202,7 @@ class Dashboard extends React.Component {
       i: '9992',
       id: 9992,
       w: 5,
-      h: 3,
+      h: 4,
       x: 0,
       y: 4,
     });
