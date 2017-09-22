@@ -1,4 +1,5 @@
 import React from 'react';
+import {Icon} from 'antd';
 import {
   Plotly
 } from 'components';
@@ -28,8 +29,18 @@ class BarWidget extends React.Component {
   };
 
   state = {
+    loading: true,
     data: []
   };
+
+  componentWillMount() {
+    this.setState({
+      loading: true
+    });
+
+
+
+  }
 
   layout = {
     margin: {
@@ -188,7 +199,18 @@ class BarWidget extends React.Component {
     return this.renderChartByParams(data, config, layout);
   }
 
+  renderChartPreload() {
+    return (
+      <div className="grid-linear-widget">
+        <div className="widget--chart-loading"><Icon type="loading"/></div>
+      </div>
+    );
+  }
+
   render() {
+
+    if (this.state.loading)
+      return this.renderChartPreload();
 
     if (parseInt(this.props.data.typeOfData) === 1)
       return this.renderDevicesByOrganization();
@@ -199,7 +221,6 @@ class BarWidget extends React.Component {
     // otherwise
     return this.renderProductByOrganization();
   }
-
 }
 
 export default BarWidget;
