@@ -144,8 +144,7 @@ class LinearWidget extends React.Component {
         size: '12',
         color: '#212227',
       },
-    },
-    showlegend: true,
+    }
   };
 
   dataChartConfig = {
