@@ -6,10 +6,16 @@ import {
 import PropTypes from 'prop-types';
 import './styles.less';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
+import {
+  WidgetProductsFetch
+} from 'data/Widgets/api';
 
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
+}), (dispatch) => ({
+  fetchProductsForWidget: bindActionCreators(WidgetProductsFetch, dispatch)
 }))
 class BarWidget extends React.Component {
 
@@ -23,6 +29,7 @@ class BarWidget extends React.Component {
 
     typeOfData: PropTypes.number,
 
+    fetchProductsForWidget: PropTypes.func,
     onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
@@ -38,7 +45,13 @@ class BarWidget extends React.Component {
       loading: true
     });
 
-
+    if(this.props.data.typeOfData === 2) {
+      this.props.fetchProductsForWidget().then(() => {
+        this.setState({
+          loading: false
+        });
+      });
+    }
 
   }
 
@@ -162,11 +175,16 @@ class BarWidget extends React.Component {
   renderDevicesByProduct() {
     const data = [
       {
-        x: [345, 321, 24],
-        y: ['Test Product', 'Some My Product', 'Dispenser v2'],
+        x: [],
+        y: [],
         ...this.legendConfig,
       }
     ];
+
+    this.props.widgets.getIn([String(this.props.data.id), 'data']).forEach((item) => {
+      data[0].x.push(item.get('deviceCount'));
+      data[0].y.push(item.get('name'));
+    });
 
     const config = {
       ...this.config,

@@ -23,3 +23,17 @@ export function WidgetHistoryByPinFetch(data) {
     }
   };
 }
+
+export function WidgetProductsFetch(data) {
+
+  return {
+    type: 'API_WIDGETS_PRODUCTS_FETCH',
+    value: data,
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.products()
+      }
+    }
+  };
+}

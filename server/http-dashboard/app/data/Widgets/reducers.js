@@ -59,6 +59,11 @@ export default function Product(state = initialState, action) {
         ));
       }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
 
+    case "API_WIDGETS_PRODUCTS_FETCH_SUCCESS":
+      // hardcoded id for bar chart
+      return state.setIn(['widgetsData', '9992'], fromJS({
+        data: action.payload.data || []
+      }));
 
     default:
       return state;
