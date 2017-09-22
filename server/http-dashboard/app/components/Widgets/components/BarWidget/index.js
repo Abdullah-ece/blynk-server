@@ -184,6 +184,8 @@ class BarWidget extends React.Component {
       }
     ];
 
+    const devicesByOrganizationData = [];
+
     const addOrgToChart = (organization) => {
 
       const productsCount = organization && organization.get('products') && organization.get('products').size || 0;
@@ -196,14 +198,16 @@ class BarWidget extends React.Component {
           devicesCount += product.get('deviceCount') || 0;
         });
 
-        data[0].x.push(devicesCount);
-
+        devicesByOrganizationData.push({
+          x: devicesCount,
+          y: organization.get('name')
+        });
       } else {
-        data[0].x.push(0);
+        devicesByOrganizationData.push({
+          x: 0,
+          y: organization.get('name')
+        });
       }
-
-
-      data[0].y.push(organization.get('name'));
     };
 
     const orgs = this.props.widgets.getIn([String(this.props.data.id), 'organizations']);
@@ -215,6 +219,10 @@ class BarWidget extends React.Component {
     if (currentOrg && currentOrg.get('name'))
       addOrgToChart(currentOrg);
 
+    devicesByOrganizationData.sort((a, b) => a.x > b.x ? 1 : -1).forEach((item) => {
+      data[0].x.push(item.x);
+      data[0].y.push(item.y);
+    });
 
     const config = {
       ...this.config,
@@ -237,9 +245,18 @@ class BarWidget extends React.Component {
       }
     ];
 
+    const devicesByOrganizationData = [];
+
     this.props.widgets.getIn([String(this.props.data.id), 'data']).forEach((item) => {
-      data[0].x.push(item.get('deviceCount'));
-      data[0].y.push(item.get('name'));
+      devicesByOrganizationData.push({
+        x: item.get('deviceCount'),
+        y: item.get('name')
+      });
+    });
+
+    devicesByOrganizationData.sort((a, b) => a.x > b.x ? 1 : -1).forEach((item) => {
+      data[0].x.push(item.x);
+      data[0].y.push(item.y);
     });
 
     const config = {
@@ -262,12 +279,16 @@ class BarWidget extends React.Component {
       }
     ];
 
+    const devicesByOrganizationData = [];
+
     const addOrgToChart = (organization) => {
 
       const productsCount = organization && organization.get('products') && organization.get('products').size || 0;
 
-      data[0].x.push(productsCount);
-      data[0].y.push(organization.get('name'));
+      devicesByOrganizationData.push({
+        x: productsCount,
+        y: organization.get('name')
+      });
     };
 
     const orgs = this.props.widgets.getIn([String(this.props.data.id), 'organizations']);
@@ -279,6 +300,10 @@ class BarWidget extends React.Component {
     if (currentOrg && currentOrg.get('name'))
       addOrgToChart(currentOrg);
 
+    devicesByOrganizationData.sort((a, b) => a.x > b.x ? 1 : -1).forEach((item) => {
+      data[0].x.push(item.x);
+      data[0].y.push(item.y);
+    });
 
     const config = {
       ...this.config,

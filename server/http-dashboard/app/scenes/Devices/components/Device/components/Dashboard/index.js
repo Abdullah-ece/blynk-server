@@ -192,7 +192,7 @@ class Dashboard extends React.Component {
       w: 4,
       h: 3,
       x: 0,
-      y: 1,
+      y: 8,
     });
 
     widgets.lg.push({
@@ -201,10 +201,10 @@ class Dashboard extends React.Component {
       type: 'BAR',
       i: '9992',
       id: 9992,
-      w: 5,
-      h: 4,
-      x: 0,
-      y: 4,
+      w: 4,
+      h: 3,
+      x: 4,
+      y: 8,
     });
 
     widgets.lg.push({
@@ -213,10 +213,10 @@ class Dashboard extends React.Component {
       type: 'BAR',
       i: '9993',
       id: 9993,
-      w: 5,
-      h: 3,
+      w: 8,
+      h: 4,
       x: 0,
-      y: 7,
+      y: 12,
     });
 
     // uncomment when start to use real data
