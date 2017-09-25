@@ -158,7 +158,7 @@ class Source extends React.Component {
             <Item label=" " offset="medium">
               <Select notFoundContent={getNotFoundDataStreamContent()}
                       dropdownMatchSelectWidth={false}
-                      name={`sources.${this.props.index}.dataStreamPin`} values={this.props.dataStreams.toJS()}
+                      name={`sources.${this.props.index}.dataStreamPin`} values={{ 'Data Streams': this.props.dataStreams.toJS()}}
                       placeholder="Choose Source"
                       validate={[Validation.Rules.required]}
                       style={{width: '100%'}}/>
