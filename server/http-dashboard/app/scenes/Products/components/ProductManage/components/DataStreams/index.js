@@ -91,7 +91,10 @@ class DataStreams extends React.Component {
 
       this.props.onFieldChange({
         ...field,
-        values
+        values: {
+          ...field.values,
+          ...values,
+        }
       });
     }
   }
@@ -195,7 +198,8 @@ class DataStreams extends React.Component {
           ...params.values,
           pin: this.generatePin(),
           units: Unit.Inch.key,
-          isRecentlyCreated: true
+          isRecentlyCreated: true,
+          pinType: 'VIRTUAL',
         }
       }
     ]);
