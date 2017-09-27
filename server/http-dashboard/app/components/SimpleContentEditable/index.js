@@ -1,5 +1,5 @@
 import React from 'react';
-import ContentEditable from './components/ContentEditable';
+import AutosizeInput from 'react-input-autosize';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import './styles.less';
@@ -9,6 +9,7 @@ class SimpleContentEditable extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     value: PropTypes.string,
+    maxLength: PropTypes.number,
 
     onChange: PropTypes.func,
   };
@@ -24,17 +25,16 @@ class SimpleContentEditable extends React.Component {
     isFocused: false
   };
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   handleChange(event) {
-    if (this.props.onChange)
-      this.props.onChange(event.target.value.replace(/&nbsp;/g, ' '));
+    if (this.props.onChange) {
+      if (this.props.maxLength === undefined || event.target.value.length <= this.props.maxLength) {
+        this.props.onChange(event.target.value);
+      }
+    }
   }
 
   handleBlur(event) {
-    const value = event.target.value.replace(/&nbsp;/g, ' ').replace(/ /g, '');
+    const value = event.target.value;
     if (!value.trim()) {
       this.props.onChange('No Name');
     }
@@ -49,7 +49,7 @@ class SimpleContentEditable extends React.Component {
 
     return (
       <div className={className}>
-        <ContentEditable html={this.props.value} onChange={this.handleChange} onBlur={this.handleBlur}/>
+        <AutosizeInput type="text" value={this.props.value} onChange={this.handleChange} onBlur={this.handleBlur}/>
       </div>
     );
   }

@@ -116,7 +116,8 @@ class LinearWidgetSettings extends React.Component {
 
   labelNameComponent({input}) {
     return (
-      <SimpleContentEditable className="modal-window-widget-settings-config-widget-name"
+      <SimpleContentEditable maxLength={35}
+                             className="modal-window-widget-settings-config-widget-name"
                              value={input.value} o
                              onChange={input.onChange}/>
     );

@@ -19,7 +19,7 @@
   justify-content: center;
   align-items: center;
   i {
-   font-size: 32px;
+    font-size: 32px;
   }
 }
 
@@ -160,9 +160,14 @@
   .font-h2;
   min-height: 36px;
   overflow: hidden;
-  font-size: 24px;
-  color: #212227;
-  font-weight: 300;
+
+  input {
+    font-size: 24px;
+    color: #212227;
+    font-weight: 300;
+    border: 0;
+    border-bottom: 1px dashed @color-dark-grey-25;
+  }
 
   button {
     opacity: 0;
@@ -175,9 +180,6 @@
     }
   }
 
-  span {
-    border-bottom: 1px dashed @color-dark-grey-25;
-  }
 }
 
 .modal-window-widget-settings-config-add-source {
@@ -188,10 +190,8 @@
 
 .modal-window-widget-settings-config-column-header {
   position: relative;
-  padding-right: 120px;
+  //padding-right: 120px; uncomment when return Add Source button
   margin-top: -10px;
-  //height: 36px;
-  //flex-basis: 36px;
 }
 
 .modal-window-widget-settings-config-column-sources {
@@ -201,13 +201,13 @@
   margin-bottom: 0;
   padding: @style-size-2 @style-size-3-2 @style-size-3-1;
   .inset-top-shadow {
-    box-shadow: inset 0 12px 20px -20px rgba(0,0,0,0.5);
+    box-shadow: inset 0 12px 20px -20px rgba(0, 0, 0, 0.5);
   }
   .inset-bottom-shadow {
-    box-shadow: inset 0 -6px 20px -12px rgba(0,0,0,0.5);
+    box-shadow: inset 0 -6px 20px -12px rgba(0, 0, 0, 0.5);
   }
   .inset-top-bottom-shadow {
-    box-shadow: inset 0 12px 20px -20px rgba(0,0,0,0.5), inset 0 -6px 20px -12px rgba(0,0,0,0.5);
+    box-shadow: inset 0 12px 20px -20px rgba(0, 0, 0, 0.5), inset 0 -6px 20px -12px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -233,9 +233,10 @@
 }
 
 .modal-window-widget-settings-config-column-sources-source-header-name {
-  .font-active-tab;
-  font-weight: 300;
-  span {
+  input {
+    .font-active-tab;
+    font-weight: 300;
+    border: 0;
     border-bottom: 1px dashed @color-dark-grey-25;
   }
 }
