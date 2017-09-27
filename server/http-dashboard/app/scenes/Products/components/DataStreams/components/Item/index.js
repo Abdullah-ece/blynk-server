@@ -18,6 +18,7 @@ const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-mov
   touchFormById: bindActionCreators(touch, dispatch)
 }))
 @reduxForm({
+  shouldValidate: () => true, // dirty hack
   touchOnChange: true
 })
 class DataStreamItem extends React.Component {
