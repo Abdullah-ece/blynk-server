@@ -2,6 +2,7 @@ package cc.blynk.server.core.reporting.raw;
 
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.utils.NumberUtil;
+import cc.blynk.utils.StringUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +33,9 @@ public class RawDataProcessor {
     public void collect(BaseReportingKey key, long ts, String stringValue, double doubleValue) {
         final AggregationKey aggregationKey = new AggregationKey(key, ts);
         if (doubleValue == NumberUtil.NO_RESULT) {
-            rawStorage.put(aggregationKey, stringValue);
+            //storing for now just first part
+            String part1 = stringValue.split(StringUtils.BODY_SEPARATOR_STRING)[0];
+            rawStorage.put(aggregationKey, part1);
         } else {
             rawStorage.put(aggregationKey, doubleValue);
         }
