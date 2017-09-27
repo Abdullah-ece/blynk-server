@@ -80,6 +80,7 @@ class Source extends React.Component {
   labelComponent({input}) {
     return (
       <SimpleContentEditable
+        maxLength={30}
         className="modal-window-widget-settings-config-column-sources-source-header-name"
         value={input.value}
         onChange={input.onChange}/>
