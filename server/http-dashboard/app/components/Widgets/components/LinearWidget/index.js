@@ -1,4 +1,5 @@
 import React from 'react';
+import Plotlyjs from 'plotly';
 import {
   Plotly
 } from 'components';
@@ -30,6 +31,14 @@ class LinearWidget extends React.Component {
     widgets: PropTypes.instanceOf(Map),
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleHover = this.handleHover.bind(this);
+    this.handleUnHover = this.handleUnHover.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+  }
+
   state = {
     data: []
   };
@@ -42,6 +51,12 @@ class LinearWidget extends React.Component {
 
   }
 
+  componentDidMount() {
+    const body = document.querySelector('body');
+
+    body.parentNode.appendChild(this.hoverElement);
+  }
+
   componentDidUpdate(prevProps) {
     if(!this.props.fetchRealData && this.state.data.length !== this.props.data.sources.length) {
       this.generateFakeData();
@@ -50,6 +65,10 @@ class LinearWidget extends React.Component {
     if(!_.isEqual(prevProps.data.sources, this.props.data.sources)) {
       this.generateFakeData();
     }
+  }
+
+  componentWillUnmount() {
+    this.hoverElement.parentNode.removeChild(this.hoverElement);
   }
 
   generateFakeData() {
@@ -82,7 +101,9 @@ class LinearWidget extends React.Component {
         y: item ? item.y : y,
         marker: {
           color: source.color
-        }
+        },
+        hoveron: 'points',
+        hoverinfo: 'x',
       });
 
     });
@@ -93,6 +114,16 @@ class LinearWidget extends React.Component {
   }
 
   layout = {
+    hovermode: 'x',
+    hoverlabel: {
+      bgcolor: 'transparent',
+      bordercolor: 'transparent',
+      font: {
+        color: 'transparent'
+      },
+      bgcolorsrc: 'transparent',
+    },
+    hoveron: 'tonext',
     autosize: true,
     margin: {
       t: 10,
@@ -115,6 +146,14 @@ class LinearWidget extends React.Component {
     },
     dragmode: 'pan',
     xaxis: {
+      hoverlabel: {
+        bgcolor: 'transparent',
+        bordercolor: 'transparent',
+        font: {
+          color: 'transparent'
+        },
+        bgcolorsrc: 'transparent',
+      },
       zerolinecolor: 'rgb(204,204,204)',
       showline: true,
       linecolor: 'rgb(204,204,204)',
@@ -124,7 +163,7 @@ class LinearWidget extends React.Component {
         color: '#9a9a9a'
       },
       tickformat: '%I:%M %p',
-      hoverformat: '%d %b %Y %I:%M:%S %p',
+      hoverformat: '%I:%M %p',
       ticklen: 3,
       tickangle: 0,
       nticks: 12,
@@ -240,11 +279,12 @@ class LinearWidget extends React.Component {
       }
     };
 
-    return (
-      <div className="grid-linear-widget">
-        <Plotly data={data} config={this.config} layout={layout}/>
-      </div>
-    );
+    return this.renderChartByParams({
+      data: data,
+      config: this.config,
+      layout: layout,
+      handleHover: this.handleHover,
+    });
   }
 
   getNTicks(width) {
@@ -293,11 +333,111 @@ class LinearWidget extends React.Component {
       }
     };
 
+    return this.renderChartByParams({
+      data: this.state.data,
+      config: this.config,
+      layout: layout,
+      handleHover: this.handleHover,
+    });
+  }
+
+  renderChartByParams(params) {
     return (
-      <div className="grid-linear-widget">
-        <Plotly data={this.state.data} config={this.config} layout={layout}/>
+      <div onMouseLeave={this.handleUnHover} onMouseMove={this.handleMouseMove} className="grid-linear-widget"
+           ref={(element) => (this.chartElement = element)}>
+
+        <Plotly data={params.data || []}
+                config={params.config || {}}
+                layout={params.layout || {}}
+                handleHover={this.handleHover}
+        />
+
+        <div className="grid-linear-widget-chart-hover-container"
+             ref={(element) => (this.hoverElement = element)}/>
+
+        <div className="grid-linear-widget-chart-hover-line"
+             ref={(element) => (this.hoverLine = element)}/>
+
       </div>
     );
+  }
+
+  handleMouseMove(event) {
+    const x = event.clientX;
+
+    const chartBoundingClient = this.chartElement.getBoundingClientRect();
+    const hoverBoundingClient = this.hoverElement.getBoundingClientRect();
+
+    if(x - chartBoundingClient.left <= 29) {
+      this.handleUnHover();
+    }
+
+    this.hoverElement.style.top = `${chartBoundingClient.top - hoverBoundingClient.height}px`;
+    this.hoverElement.style.left = `${x - (hoverBoundingClient.width / 2)}px`;
+    this.hoverLine.style.left = `${x - chartBoundingClient.left + 15}px`;
+  }
+
+  handleHover(data) {
+
+    const getXValue = (data) => {
+      if (data.points.length)
+        return data.points[0].x;
+    };
+
+    const getYValues = (data) => {
+      const points = [];
+      if (data.points.length)
+        data.points.forEach((point) => {
+          points.push({
+            name: point.data.name,
+            color: point.data.marker.color,
+            value: point.y,
+          });
+        });
+
+      return points;
+    };
+
+    const getHoverFormat = (data) => {
+
+      if (data.points.length)
+        return data.points[0].xaxis.hoverformat;
+    };
+
+    const formatXValue = (value, format) => {
+      return Plotlyjs.d3.time.format(format)(new Date(value));
+    };
+
+    this.hoverElement.innerHTML = `\
+      <div class="chart-tooltip-name">${formatXValue(getXValue(data), getHoverFormat(data))}</div> \
+    `;
+
+    getYValues(data).forEach((point) => {
+      this.hoverElement.innerHTML = this.hoverElement.innerHTML + `\
+      <div class="chart-tooltip-legend">
+        <div class="chart-tooltip-legend-dot" style="background: #${point.color}"></div>
+        <div class="chart-tooltip-legend-name">${point.name}:</div>
+        <div class="chart-tooltip-legend-value">${point.value}</div>
+      </div>
+      `;
+    });
+
+    const boundingClient = this.chartElement.getBoundingClientRect();
+    const hoverElementBoundingClient = this.hoverElement.getBoundingClientRect();
+
+    this.hoverLine.style.display = 'block';
+    this.hoverElement.style.display = 'block';
+
+    let x = data.event.clientX;
+
+    this.hoverElement.style.top = `${boundingClient.top - hoverElementBoundingClient.height}px`;
+    this.hoverElement.style.left = `${x}px`;
+
+  }
+
+  handleUnHover() {
+    this.hoverElement.style.display = 'none';
+    this.hoverLine.style.display = 'none';
   }
 
   render() {

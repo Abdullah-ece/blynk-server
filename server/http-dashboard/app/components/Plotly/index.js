@@ -9,7 +9,16 @@ class Plotly extends React.Component {
     data: PropTypes.array,
     layout: PropTypes.object,
     config: PropTypes.object,
+    handleHover: PropTypes.func,
+    handleUnHover: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.handleHover = this.handleHover.bind(this);
+    this.handleUnHover = this.handleUnHover.bind(this);
+  }
 
   componentDidMount() {
 
@@ -28,17 +37,28 @@ class Plotly extends React.Component {
       });
 
     Plotlyjs.newPlot(this.gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
+
+    this.container.on('plotly_hover', this.handleHover).on('plotly_unhover', this.handleUnHover);
   }
 
   componentDidUpdate() {
-
     Plotlyjs.newPlot(this.gd3.node(), this.props.data || [], this.props.layout || {}, this.props.config || {});
+    this.container.on('plotly_hover', this.handleHover).on('plotly_unhover', this.handleUnHover);
+  }
 
+  handleHover(data) {
+    if(typeof this.props.handleHover === 'function')
+      this.props.handleHover(data);
+  }
+
+  handleUnHover(data) {
+    if(typeof this.props.handleUnHover === 'function')
+      this.props.handleUnHover(data);
   }
 
   render() {
     return (
-      <div ref={(node) => this.container = node}/>
+      <div id="div" ref={(node) => this.container = node}/>
     );
   }
 
