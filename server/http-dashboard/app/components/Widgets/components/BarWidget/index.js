@@ -168,7 +168,7 @@ class BarWidget extends React.Component {
 
   handleHover(data, container, plotly) {
 
-    const hoverColor = 'rgba(33,179,130, .5)';
+    const hoverColor = 'rgba(33,179,130, .28)';
     const staticColor = 'rgba(33,179,130, 1)';
 
     const color = new Array(data.points[0].data.x.length).fill(true).map((color, i) => i === data.points[0].pointNumber ? staticColor : hoverColor);
