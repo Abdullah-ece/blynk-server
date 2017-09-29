@@ -47,13 +47,20 @@ class Plotly extends React.Component {
   }
 
   handleHover(data) {
+
     if(typeof this.props.handleHover === 'function')
-      this.props.handleHover(data);
+      this.props.handleHover(data, this.container, {
+        restyle: Plotlyjs.restyle,
+        animate: Plotlyjs.animate,
+      });
   }
 
   handleUnHover(data) {
     if(typeof this.props.handleUnHover === 'function')
-      this.props.handleUnHover(data);
+      this.props.handleUnHover(data, this.container, {
+        restyle: Plotlyjs.restyle,
+        animate: Plotlyjs.animate,
+      });
   }
 
   render() {

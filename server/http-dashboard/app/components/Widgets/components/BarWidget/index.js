@@ -43,6 +43,13 @@ class BarWidget extends React.Component {
     widgets: PropTypes.instanceOf(Map),
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleHover = this.handleHover.bind(this);
+    this.handleUnhover = this.handleUnhover.bind(this);
+  }
+
   state = {
     loading: true,
     data: []
@@ -87,27 +94,28 @@ class BarWidget extends React.Component {
       l: 65,
     },
     yaxis: {
-      showline: true,
+      showline: false,
       linecolor: 'rgb(204,204,204)',
-      ticklen: 3,
+      ticklen: 8,
       tickcolor: '#fff',
+      tickfont: {
+        family: 'PF DinDisplay Pro',
+        size: '12',
+        color: '#212227',
+      },
+      zeroline: false,
+    },
+    xaxis: {
+      zeroline: true,
+      showline: false,
+      zerolinecolor: '#e2e2e2',
+      linecolor: 'rgb(204,204,204)',
       tickfont: {
         family: 'PF DinDisplay Pro',
         size: '12',
         color: '#9a9a9a'
       },
-      zeroline: false,
-    },
-    xaxis: {
-      zeroline: false,
-      showline: true,
-      linecolor: 'rgb(204,204,204)',
-      tickfont: {
-        family: 'PF DinDisplay Pro',
-        size: '10',
-        color: '#9a9a9a'
-      },
-      ticklen: 3,
+      ticklen: 8,
       tickangle: 0,
       nticks: 12,
       tickcolor: '#fff',
@@ -123,8 +131,40 @@ class BarWidget extends React.Component {
   legendConfig = {
     width: [0.27, 0.27, 0.27],
     type: 'bar',
-    orientation: 'h'
+    orientation: 'h',
+    marker: {color: 'rgba(33,179,130, 1)'},
   };
+
+  handleHover(data, container, plotly) {
+
+    const hoverColor = 'rgba(33,179,130, .5)';
+    const staticColor = 'rgba(33,179,130, 1)';
+
+    const color = new Array(data.points[0].data.x.length).fill(true).map((color, i) => i === data.points[0].pointNumber ? staticColor : hoverColor);
+
+    const update = {
+      marker: {
+        color: color
+      }
+    };
+
+    plotly.restyle(container, update, 0);
+
+  }
+
+  handleUnhover(data, container, plotly) {
+
+    const staticColor = 'rgba(33,179,130, 1)';
+
+    const update = {
+      marker: {
+        color: staticColor
+      }
+    };
+
+    plotly.restyle(container, update, 0);
+
+  }
 
   renderChartByParams(data = [], config = {}, layout = {}) {
 
@@ -147,29 +187,50 @@ class BarWidget extends React.Component {
       const TOP_PADDING = 50;
       const BOTTOM_PADDING = 30;
       const CHART_HEIGHT = this.props.data.h * CELL_HEIGHT - TOP_PADDING - BOTTOM_PADDING;
-      const PREFERED_BAR_WIDTH = 20;
-      const MIN_RATIO_BAR_WIDTH_TO_CHART = 0.25;
+      const MAX_RATIO_BAR_WIDTH_TO_CHART = 0.9;
 
-      const percentageWidthOfBar = PREFERED_BAR_WIDTH / (CHART_HEIGHT / countOfYLabels);
+      const MIN_BAR_WIDTH_PX = 8;
+      const MAX_BAR_WIDTH_PX = 40;
 
-      if (percentageWidthOfBar <= MIN_RATIO_BAR_WIDTH_TO_CHART) {
+      const MIN_BAR_OFFSET_PX = 8;
+      const MAX_BAR_OFFSET_PX = 16;
 
-        legend.width = (new Array(countOfYLabels)).fill(MIN_RATIO_BAR_WIDTH_TO_CHART);
+      const maxHeightForBar = CHART_HEIGHT / countOfYLabels;
 
-      } else {
-        legend.width = (new Array(countOfYLabels)).fill(percentageWidthOfBar);
+      if (maxHeightForBar < MIN_BAR_WIDTH_PX + MIN_BAR_OFFSET_PX) {
+        // if height is smaller then min height of bar
+        legend.width = (new Array(countOfYLabels)).fill(MAX_RATIO_BAR_WIDTH_TO_CHART);
+      } else if (maxHeightForBar >= (MIN_BAR_WIDTH_PX + MIN_BAR_OFFSET_PX) && maxHeightForBar <= (MAX_BAR_WIDTH_PX + MAX_BAR_OFFSET_PX)) {
+        // if height is smaller than max and bigger then min
+
+        let barHeight = maxHeightForBar / (MAX_BAR_WIDTH_PX + MAX_BAR_OFFSET_PX) * MAX_BAR_WIDTH_PX;
+
+        let barWidthPercent = barHeight / maxHeightForBar;
+
+        legend.width = (new Array(countOfYLabels)).fill(barWidthPercent);
+
+
+      } else if (maxHeightForBar > (MAX_BAR_WIDTH_PX + MAX_BAR_OFFSET_PX)) {
+        // if height is bigger than max
+
+        let barHeightPercent = MAX_BAR_WIDTH_PX / maxHeightForBar;
+
+        legend.width = (new Array(countOfYLabels)).fill(barHeightPercent);
       }
 
       return legend;
     });
 
     if (layout && layout.margin && layout.margin.l) {
-      layout.margin.l = Math.round(maxYLabelWidth * 6);
+
+      const AVG_SYMBOL_LENGTH = 6;
+
+      layout.margin.l = Math.round(maxYLabelWidth * AVG_SYMBOL_LENGTH);
     }
 
     return (
       <div className="grid-linear-widget">
-        <Plotly data={data} config={config} layout={layout}/>
+        <Plotly data={data} config={config} layout={layout} handleHover={this.handleHover} handleUnHover={this.handleUnhover}/>
       </div>
     );
   }
@@ -200,12 +261,12 @@ class BarWidget extends React.Component {
 
         devicesByOrganizationData.push({
           x: devicesCount,
-          y: organization.get('name')
+          y: organization.get('name'),
         });
       } else {
         devicesByOrganizationData.push({
           x: 0,
-          y: organization.get('name')
+          y: organization.get('name'),
         });
       }
     };
@@ -250,7 +311,7 @@ class BarWidget extends React.Component {
     this.props.widgets.getIn([String(this.props.data.id), 'data']).forEach((item) => {
       devicesByOrganizationData.push({
         x: item.get('deviceCount'),
-        y: item.get('name')
+        y: item.get('name'),
       });
     });
 
@@ -281,13 +342,14 @@ class BarWidget extends React.Component {
 
     const devicesByOrganizationData = [];
 
-    const addOrgToChart = (organization) => {
+    const addOrgToChart = (organization, i) => {
 
       const productsCount = organization && organization.get('products') && organization.get('products').size || 0;
 
       devicesByOrganizationData.push({
         x: productsCount,
-        y: organization.get('name')
+        // y: organization.get('name'),
+        y: i === 0 ? 'Saphire' : organization.get('name'),
       });
     };
 

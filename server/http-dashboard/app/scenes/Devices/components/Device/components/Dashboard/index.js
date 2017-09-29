@@ -214,7 +214,7 @@ class Dashboard extends React.Component {
       i: '9993',
       id: 9993,
       w: 8,
-      h: 3,
+      h: 4,
       x: 0,
       y: 12,
     });
