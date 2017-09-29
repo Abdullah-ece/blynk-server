@@ -101,8 +101,8 @@ class BarWidget extends React.Component {
     },
     hoveron: 'tonext',
     margin: {
-      t: 0,
-      b: 25,
+      t: 25,
+      b: 10,
       r: 15,
       l: 65,
     },
@@ -127,6 +127,7 @@ class BarWidget extends React.Component {
       },
     },
     xaxis: {
+      side: 'top',
       zeroline: true,
       showline: false,
       zerolinecolor: '#e2e2e2',
