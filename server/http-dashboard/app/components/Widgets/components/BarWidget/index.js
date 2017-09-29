@@ -48,6 +48,9 @@ class BarWidget extends React.Component {
 
     this.handleHover = this.handleHover.bind(this);
     this.handleUnhover = this.handleUnhover.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleChartMouseEnter = this.handleChartMouseEnter.bind(this);
+    this.handleChartMouseLeave = this.handleChartMouseLeave.bind(this);
   }
 
   state = {
@@ -155,6 +158,14 @@ class BarWidget extends React.Component {
     hoverinfo: 'y',
   };
 
+  handleChartMouseEnter() {
+    this.hoverElement.style.display = 'block';
+  }
+
+  handleChartMouseLeave() {
+    this.hoverElement.style.display = 'none';
+  }
+
   handleHover(data, container, plotly) {
 
     const hoverColor = 'rgba(33,179,130, .5)';
@@ -170,6 +181,23 @@ class BarWidget extends React.Component {
 
     plotly.restyle(container, update, 0);
 
+    this.hoverElement.innerHTML = `${data.points[0].x}`;
+
+    this.hoverElement.style.opacity = 1;
+
+    this.repositionHoverElement(data.event);
+
+  }
+
+  repositionHoverElement(event) {
+    const boundingClient = this.chartElement.getBoundingClientRect();
+    const hoverBoundingClient = this.hoverElement.getBoundingClientRect();
+
+    let x = event.clientX - boundingClient.left;
+    let y = event.clientY - boundingClient.top;
+
+    this.hoverElement.style.top = `${y + 10 + (hoverBoundingClient.height / 2)}px`;
+    this.hoverElement.style.left = `${x + 40}px`;
   }
 
   handleUnhover(data, container, plotly) {
@@ -184,6 +212,11 @@ class BarWidget extends React.Component {
 
     plotly.restyle(container, update, 0);
 
+    this.hoverElement.style.opacity = 0;
+  }
+
+  handleMouseMove(event) {
+    this.repositionHoverElement(event);
   }
 
   renderChartByParams(data = [], config = {}, layout = {}) {
@@ -249,8 +282,17 @@ class BarWidget extends React.Component {
     }
 
     return (
-      <div className="grid-linear-widget">
-        <Plotly data={data} config={config} layout={layout} handleHover={this.handleHover} handleUnHover={this.handleUnhover}/>
+      <div onMouseEnter={this.handleChartMouseEnter}
+           onMouseLeave={this.handleChartMouseLeave}
+           className="grid-linear-widget"
+           ref={(element) => this.chartElement = element}
+           onMouseMove={this.handleMouseMove}>
+        <Plotly data={data} config={config} layout={layout} handleHover={this.handleHover}
+                handleUnHover={this.handleUnhover}/>
+
+        <div className="grid-bar-widget-chart-hover-container"
+             ref={(element) => (this.hoverElement = element)}/>
+
       </div>
     );
   }
