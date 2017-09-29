@@ -107,6 +107,7 @@ class BarWidget extends React.Component {
       l: 65,
     },
     yaxis: {
+      fixedrange: true,
       showline: false,
       linecolor: 'rgb(204,204,204)',
       ticklen: 8,
@@ -127,6 +128,7 @@ class BarWidget extends React.Component {
       },
     },
     xaxis: {
+      fixedrange: true,
       side: 'top',
       zeroline: true,
       showline: false,
