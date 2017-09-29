@@ -87,6 +87,16 @@ class BarWidget extends React.Component {
   }
 
   layout = {
+    hovermode: 'y',
+    hoverlabel: {
+      bgcolor: 'transparent',
+      bordercolor: 'transparent',
+      font: {
+        color: 'transparent'
+      },
+      bgcolorsrc: 'transparent',
+    },
+    hoveron: 'tonext',
     margin: {
       t: 0,
       b: 25,
@@ -104,6 +114,14 @@ class BarWidget extends React.Component {
         color: '#212227',
       },
       zeroline: false,
+      hoverlabel: {
+        bgcolor: 'transparent',
+        bordercolor: 'transparent',
+        font: {
+          color: 'transparent'
+        },
+        bgcolorsrc: 'transparent',
+      },
     },
     xaxis: {
       zeroline: true,
@@ -133,6 +151,8 @@ class BarWidget extends React.Component {
     type: 'bar',
     orientation: 'h',
     marker: {color: 'rgba(33,179,130, 1)'},
+    hoveron: 'points',
+    hoverinfo: 'y',
   };
 
   handleHover(data, container, plotly) {
