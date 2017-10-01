@@ -3,11 +3,11 @@ package cc.blynk.core.http;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.response.ErrorMessage;
 import cc.blynk.server.core.model.web.response.OkMessage;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -76,10 +76,6 @@ public final class Response extends DefaultFullHttpResponse {
                  .set(CONTENT_TYPE, contentType)
                  .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
                  .set(CONTENT_LENGTH, content().readableBytes());
-    }
-
-    public static Response noResponse() {
-        return NO_RESPONSE;
     }
 
     public static Response ok() {
@@ -202,10 +198,4 @@ public final class Response extends DefaultFullHttpResponse {
         return response;
     }
 
-    private void fillHeaders(String contentType) {
-        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        headers().set(CONTENT_TYPE, contentType);
-        headers().set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers().set(CONTENT_LENGTH, content().readableBytes());
-    }
 }

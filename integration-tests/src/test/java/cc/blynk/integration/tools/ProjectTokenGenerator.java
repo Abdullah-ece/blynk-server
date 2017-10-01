@@ -5,8 +5,8 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.Theme;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 

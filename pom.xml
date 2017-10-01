@@ -62,34 +62,6 @@
     <profiles>
 
         <profile>
-            <id>java9</id>
-            <activation>
-                <jdk>9</jdk>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jarClassifier>java9</jarClassifier>
-                <source>9</source>
-                <target>9</target>
-                <!-- just fake property. means do not exclude anything -->
-                <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>java8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <properties>
-                <jarClassifier>java8</jarClassifier>
-                <source>1.8</source>
-                <target>1.8</target>
-                <version.specific.exclusions>**/module-info.java</version.specific.exclusions>
-            </properties>
-        </profile>
-
-        <profile>
             <id>win</id>
             <activation>
                 <os>
@@ -125,11 +97,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${source}</source>
-                    <target>${target}</target>
-                    <excludes>
-                        <exclude>${version.specific.exclusions}</exclude>
-                    </excludes>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
 

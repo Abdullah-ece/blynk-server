@@ -1,9 +1,11 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.JsonParser;
 
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.utils.ArrayUtil.remove;
 
 /**
@@ -37,9 +39,9 @@ public class Organization {
 
     public volatile long lastModifiedTs;
 
-    public volatile Product[] products = ArrayUtil.EMPTY_PRODUCTS;
+    public volatile Product[] products = EMPTY_PRODUCTS;
 
-    public volatile int[] selectedProducts = ArrayUtil.EMPTY_INTS;
+    public volatile int[] selectedProducts = EMPTY_INTS;
 
     public volatile int parentId = SUPER_ORG_PARENT_ID;
 

@@ -3,19 +3,19 @@ package cc.blynk.server.core.model.web.product;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.exceptions.WebException;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_DATA_STREAMS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_EVENTS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_EVENTS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
 
 /**
  * The Blynk Project.
@@ -126,7 +126,7 @@ public class Product {
 
     public MetaField[] copyNonDefaultMetaFields() {
         if (metaFields == null || metaFields.length == 0) {
-            return ArrayUtil.EMPTY_META_FIELDS;
+            return EMPTY_META_FIELDS;
         }
 
         List<MetaField> result = new ArrayList<>(metaFields.length);

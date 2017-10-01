@@ -3,7 +3,6 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -25,7 +24,6 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.HttpsAPIServer;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
@@ -42,6 +40,8 @@ import java.lang.reflect.Field;
 import java.net.BindException;
 import java.security.Security;
 import java.util.Map;
+
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 
 /**
  * Entry point for server launch.
@@ -156,7 +156,7 @@ public final class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppNameUtil.BLYNK, Role.SUPER_ADMIN);
+            holder.userDao.add(email, hash, BLYNK, Role.SUPER_ADMIN);
             Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
             Organization mainOrg = holder.organizationDao.create(superOrg);
             mainOrg.isActive = true;
@@ -175,7 +175,7 @@ public final class ServerLauncher {
 
             holder.organizationDao.createProduct(mainOrg.id, product);
 
-            User user = holder.userDao.getByName(email, AppName.BLYNK);
+            User user = holder.userDao.getByName(email, BLYNK);
             user.profile.dashBoards = new DashBoard[] {
                     new DashBoard()
             };
@@ -204,7 +204,7 @@ public final class ServerLauncher {
         for (int i = 0; i < 20; i++) {
             email = name.replace("{i}", "" + i);
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppName.BLYNK, Role.STAFF);
+            holder.userDao.add(email, hash, BLYNK, Role.STAFF);
         }
     }
 

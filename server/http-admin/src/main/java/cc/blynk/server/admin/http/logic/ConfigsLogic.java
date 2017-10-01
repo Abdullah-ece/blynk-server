@@ -12,8 +12,8 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.SortOrder;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 
 import java.io.IOException;

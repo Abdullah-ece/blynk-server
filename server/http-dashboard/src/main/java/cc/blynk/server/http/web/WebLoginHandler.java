@@ -15,7 +15,6 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
@@ -34,6 +33,7 @@ import java.net.URLEncoder;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
 
 /**
@@ -89,7 +89,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         email = email.toLowerCase();
 
-        User user = userDao.getByName(email, AppName.BLYNK);
+        User user = userDao.getByName(email, BLYNK);
 
         if (user == null) {
             log.error("User not found.");
@@ -197,7 +197,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("{} trying to reset pass.", email);
 
-        User user = userDao.getByName(email, AppName.BLYNK);
+        User user = userDao.getByName(email, BLYNK);
 
         if (user == null) {
             log.info("User with passed email {} not found.", email);

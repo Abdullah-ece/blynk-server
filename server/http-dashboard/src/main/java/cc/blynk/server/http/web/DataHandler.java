@@ -19,7 +19,7 @@ import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 

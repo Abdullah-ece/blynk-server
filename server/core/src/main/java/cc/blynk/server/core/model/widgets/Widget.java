@@ -56,6 +56,7 @@ import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.web.WebGraph;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.CopyObject;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

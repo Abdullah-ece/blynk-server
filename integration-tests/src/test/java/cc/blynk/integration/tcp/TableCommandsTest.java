@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.ui.table.Row;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

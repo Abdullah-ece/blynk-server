@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.web.response;
 
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 
 /**
  * The Blynk Project.

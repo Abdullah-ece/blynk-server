@@ -2,12 +2,13 @@ package cc.blynk.server.core.model.web.product.events;
 
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.widgets.CopyObject;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_RECEIVERS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_RECEIVERS;
+
 
 /**
  * The Blynk Project.

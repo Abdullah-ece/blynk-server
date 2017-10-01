@@ -61,11 +61,11 @@ public final class ArrayUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static MetaField[] substruct(MetaField[] in, MetaField[] in2) {
-        List<MetaField> inSet = arrayToList(in);
-        List<MetaField> existingSet = arrayToList(in2);
+    public static <T> List<T> substruct(T[] in, T[] in2) {
+        List<T> inSet = arrayToList(in);
+        List<T> existingSet = arrayToList(in2);
         inSet.removeAll(existingSet);
-        return inSet.toArray(new MetaField[0]);
+        return inSet;
     }
 
     public static <T> List<T> arrayToList(T[] array) {

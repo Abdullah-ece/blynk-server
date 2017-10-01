@@ -186,10 +186,12 @@ public class ProductHandler extends BaseHttpHandler {
         for (Device device : devices) {
             device.updateMetaFields(updatedProduct.metaFields);
 
-            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields);
+            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields)
+                    .toArray(new MetaField[0]);
             device.addMetaFields(addedMetaFields);
 
-            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields);
+            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields)
+                    .toArray(new MetaField[0]);
             device.deleteMetaFields(deletedMetaFields);
 
             device.metadataUpdatedAt = now;

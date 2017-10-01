@@ -1,7 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 

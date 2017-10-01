@@ -1,13 +1,12 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.server.internal.ParseUtil;

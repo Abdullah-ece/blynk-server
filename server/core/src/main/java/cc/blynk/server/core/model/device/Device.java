@@ -1,14 +1,14 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
 
 import java.util.List;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_META_FIELDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
 import static cc.blynk.utils.ArrayUtil.arrayToList;
 import static cc.blynk.utils.ArrayUtil.concat;
 

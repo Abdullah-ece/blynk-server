@@ -19,7 +19,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 

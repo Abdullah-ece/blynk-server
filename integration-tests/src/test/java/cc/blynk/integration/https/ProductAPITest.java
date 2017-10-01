@@ -4,27 +4,43 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
-import cc.blynk.server.core.model.web.product.metafields.*;
+import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
+import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
-import cc.blynk.utils.JsonParser;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Currency;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.

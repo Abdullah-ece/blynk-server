@@ -1,11 +1,10 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -13,9 +12,12 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static cc.blynk.utils.AppNameUtil.BLYNK;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -58,7 +60,7 @@ public class AccountAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals("admin@blynk.cc", user.email);
             assertEquals("admin@blynk.cc", user.name);
-            assertEquals(AppName.BLYNK, user.appName);
+            assertEquals(BLYNK, user.appName);
             assertNull(user.pass);
             assertEquals(Role.SUPER_ADMIN, user.role);
             assertEquals(UserStatus.Active, user.status);

@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets;
+package cc.blynk.utils;
 
 /**
  * The Blynk Project.

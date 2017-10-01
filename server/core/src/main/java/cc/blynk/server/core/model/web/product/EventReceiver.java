@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
-import cc.blynk.server.core.model.widgets.CopyObject;
+import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

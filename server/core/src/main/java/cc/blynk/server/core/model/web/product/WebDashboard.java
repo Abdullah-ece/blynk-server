@@ -1,13 +1,15 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.CopyObject;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
+
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
  * The Blynk Project.
@@ -16,10 +18,10 @@ import java.util.Arrays;
  */
 public class WebDashboard implements CopyObject<WebDashboard> {
 
-    public volatile Widget[] widgets = ArrayUtil.EMPTY_WIDGETS;
+    public volatile Widget[] widgets = EMPTY_WIDGETS;
 
     public WebDashboard() {
-        this.widgets = ArrayUtil.EMPTY_WIDGETS;
+        this.widgets = EMPTY_WIDGETS;
     }
 
     @JsonCreator

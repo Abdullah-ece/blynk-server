@@ -1,6 +1,5 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
@@ -8,6 +7,7 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
@@ -26,7 +26,6 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.http.web.model.WebEmail;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -47,21 +46,22 @@ import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -288,7 +288,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.parentId);
         }
 
-        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), AppName.BLYNK, "local", false, Role.ADMIN);
+        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), BLYNK, "local", false, Role.ADMIN);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -407,7 +407,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.SUPER_ADMIN);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
@@ -451,7 +451,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.SUPER_ADMIN);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()

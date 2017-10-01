@@ -3,14 +3,13 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.http.HttpsAPIServer;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -33,6 +32,7 @@ import javax.net.ssl.SSLSession;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -79,7 +79,7 @@ public abstract class APIBaseTest extends BaseTest {
 
         String name = "admin@blynk.cc";
         String pass = "admin";
-        admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.SUPER_ADMIN);
+        admin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.SUPER_ADMIN);
         admin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -88,7 +88,7 @@ public abstract class APIBaseTest extends BaseTest {
 
         name = "admin2@blynk.cc";
         pass = "admin2";
-        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.ADMIN);
+        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.ADMIN);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -97,7 +97,7 @@ public abstract class APIBaseTest extends BaseTest {
 
         name = "user@blynk.cc";
         pass = "user";
-        regularUser = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, Role.STAFF);
+        regularUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.STAFF);
         regularUser.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };

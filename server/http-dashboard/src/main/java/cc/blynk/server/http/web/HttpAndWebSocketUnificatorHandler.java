@@ -5,7 +5,7 @@ import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

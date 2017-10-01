@@ -24,7 +24,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
@@ -51,6 +50,7 @@ import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.forbidden;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 
 /**
  * The Blynk Project.
@@ -158,7 +158,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{orgId}/canInviteUser")
     @Admin
     public Response checkUserEmail(WebEmail webEmail) {
-        if (userDao.contains(webEmail.email, AppName.BLYNK)) {
+        if (userDao.contains(webEmail.email, BLYNK)) {
             return badRequest("User already exists in system.");
         } else {
             return ok();
@@ -377,7 +377,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return forbidden();
         }
 
-        User invitedUser = userDao.invite(userInvite, orgId, AppName.BLYNK);
+        User invitedUser = userDao.invite(userInvite, orgId, BLYNK);
 
         if (invitedUser == null) {
             log.error("User {} is already in a system.", userInvite.email);
