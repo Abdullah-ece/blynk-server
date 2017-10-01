@@ -1,21 +1,21 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -45,7 +45,7 @@ public class CreateAppLogic {
 
         App newApp = JsonParser.parseApp(appString);
 
-        newApp.id = AppName.BLYNK_LOWERCASE + StringUtils.randomString(8);
+        newApp.id = AppNameUtil.BLYNK_LOWERCASE + StringUtils.randomString(8);
 
         newApp.validate();
 

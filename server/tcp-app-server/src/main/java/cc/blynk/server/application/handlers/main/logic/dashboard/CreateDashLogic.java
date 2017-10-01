@@ -5,20 +5,21 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -84,7 +85,7 @@ public class CreateDashLogic {
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
         if (newDash.devices == null) {
-            newDash.devices = ArrayUtil.EMPTY_DEVICES;
+            newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
         } else {
             for (Device device : newDash.devices) {
                 //this case only possible for clone,

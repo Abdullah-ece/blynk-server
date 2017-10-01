@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,7 +30,7 @@ public class Tag implements Target {
     public Tag(int id, String name) {
         this.id = id;
         this.name = name;
-        this.deviceIds = ArrayUtil.EMPTY_INTS;
+        this.deviceIds = EmptyArraysUtil.EMPTY_INTS;
     }
 
     @JsonCreator
@@ -39,7 +39,7 @@ public class Tag implements Target {
                @JsonProperty("deviceIds") int[] deviceIds) {
         this.id = id;
         this.name = name;
-        this.deviceIds = deviceIds == null ? ArrayUtil.EMPTY_INTS : deviceIds;
+        this.deviceIds = deviceIds == null ? EmptyArraysUtil.EMPTY_INTS : deviceIds;
     }
 
     @Override

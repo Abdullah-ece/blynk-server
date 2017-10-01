@@ -5,8 +5,8 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

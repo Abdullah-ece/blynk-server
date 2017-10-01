@@ -57,25 +57,25 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 8 required (OpenJDK, Oracle) 
+- Java 8/9 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
-For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
+For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
 
 ## Quick local server setup
 
-+ Make sure you are using Java 8
++ Make sure you are using Java 9
 
         java -version
-        Output: java version "1.8.0_40"
+        Output: java version "9"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.27.1.jar -dataFolder /path
+        java -jar server-0.28.0.jar -dataFolder /path
         
 That's it! 
 
@@ -96,15 +96,15 @@ That's it!
 + Make sure you are using Java 8
 
         java -version
-        Output: java version "1.8.0_40"
+        Output: java version "1.8"
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.27.1/server-0.27.1.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.28.0/server-0.28.0-java8.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.27.1.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.28.0-java8.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -117,7 +117,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.27.1.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.28.0.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -125,7 +125,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.27.1.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.28.0.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -137,7 +137,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.27.1.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.28.0.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -154,7 +154,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.27.1.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.28.0.jar   
         
 + Kill the old process
 
@@ -253,7 +253,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.27.1.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.28.0.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -546,16 +546,19 @@ Raw data may consume your disk space very quickly!
 
 Data format is:
 
-        value,timestamp
+        value,timestamp,deviceId
         
 For example:
 
-        10,1438022081332
+        10,1438022081332,0
         
-Where 10 - value of pin, and 1438022081332 - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+Where ```10``` - value of pin.
+```1438022081332``` - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
 To display the date/time in excel you may use formula:
 
         =((COLUMN/(60*60*24)/1000+25569))
+        
+```0``` - device id
         
 ### Automatic Let's Encrypt certificates generation
 
@@ -616,7 +619,13 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
 
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
+        sudo apt-get install oracle-java9-installer
+        
+or 
+
         sudo apt-get install oracle-java8-installer
+        
+in case your system doesn't have Java 9 yet.
         
 ### Port forwarding for HTTP/S API
 

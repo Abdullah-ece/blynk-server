@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
@@ -9,6 +8,7 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.utils.AppNameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,7 +81,7 @@ public class UserDao {
         }
 
         return users.values().stream().filter(user -> user.email.contains(name)
-                && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
+                && (appName == null || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
     public List<User> getUsersByOrgId(int orgId, String filterMail) {
@@ -134,8 +134,8 @@ public class UserDao {
         for (User user : users.values()) {
             facebookLogin.compute(
                     user.isFacebookUser
-                            ? AppName.FACEBOOK
-                            : AppName.BLYNK, (k, v) -> v == null ? 1 : v++
+                            ? AppNameUtil.FACEBOOK
+                            : AppNameUtil.BLYNK, (k, v) -> v == null ? 1 : v++
             );
         }
         return facebookLogin;

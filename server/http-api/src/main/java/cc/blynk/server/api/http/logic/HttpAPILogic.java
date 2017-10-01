@@ -25,6 +25,7 @@ import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -36,7 +37,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
 import net.glxn.qrgen.core.image.ImageType;
@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Base64;
 
+import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -107,7 +108,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         return ok(tokenValue.dash.toString());
@@ -121,7 +122,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -141,7 +142,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -169,7 +170,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -184,7 +185,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
+            return badRequest("Wrong pin format.");
         }
 
         Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
@@ -193,7 +194,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             String value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
-                return Response.badRequest("Requested pin doesn't exist in the app.");
+                return badRequest("Requested pin doesn't exist in the app.");
             }
             return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
         }
@@ -209,7 +210,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -218,7 +219,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (rtc == null) {
             log.debug("Requested rtc widget not found. User {}", user.email);
-            return Response.badRequest("Requested rtc not exists in app.");
+            return badRequest("Requested rtc not exists in app.");
         }
 
         return ok(rtc.getJsonValue());
@@ -232,7 +233,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         DashBoard dashBoard = tokenValue.dash;
@@ -244,7 +245,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return ok(qrDataBinary, "image/png");
         } catch (Throwable e) {
             log.error("Error generating QR. Reason : {}", e.getMessage());
-            return Response.badRequest("Error generating QR.");
+            return badRequest("Error generating QR.");
         }
     }
 
@@ -257,7 +258,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -272,7 +273,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
+            return badRequest("Wrong pin format.");
         }
 
         //todo may be optimized
@@ -282,13 +283,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());
-            return Response.badRequest(e1.getMessage());
+            return badRequest(e1.getMessage());
         } catch (NoDataException noData) {
             log.debug("No data for pin.");
-            return Response.badRequest("No data for pin.");
+            return badRequest("No data for pin.");
         } catch (Exception e) {
-            log.debug("Error getting pin data.");
-            return Response.badRequest("Error getting pin data.");
+            log.debug("Error getting pin data.", e);
+            return badRequest("Error getting pin data.");
         }
     }
 
@@ -298,14 +299,14 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
                                          String... values) {
         if (values.length == 0) {
             log.debug("No properties for update provided.");
-            return Response.badRequest("No properties for update provided.");
+            return badRequest("No properties for update provided.");
         }
 
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -314,7 +315,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         //todo add test for this use case
         if (!dash.isActive) {
-            return Response.badRequest("Project is not active.");
+            return badRequest("Project is not active.");
         }
 
         PinType pinType;
@@ -324,7 +325,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
+            return badRequest("Wrong pin format.");
         }
 
         //for now supporting only virtual pins
@@ -332,7 +333,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (widget == null || pinType != PinType.VIRTUAL) {
             log.debug("No widget for SetWidgetProperty command.");
-            return Response.badRequest("No widget for SetWidgetProperty command.");
+            return badRequest("No widget for SetWidgetProperty command.");
         }
 
         try {
@@ -340,7 +341,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             widget.setProperty(property, values[0]);
         } catch (Exception e) {
             log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            return Response.badRequest("Error setting widget property.");
+            return badRequest("Error setting widget property.");
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
@@ -386,7 +387,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return updateWidgetProperty(token, pinString, "isOnPlay", isOnPlay);
         }
 
-        return Response.badRequest("Wrong request format.");
+        return badRequest("Wrong request format.");
     }
 
     @PUT
@@ -410,14 +411,14 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (pinValues.length == 0) {
             log.debug("No pin for update provided.");
-            return Response.badRequest("No pin for update provided.");
+            return badRequest("No pin for update provided.");
         }
 
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -434,7 +435,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
+            return badRequest("Wrong pin format.");
         }
 
         final long now = System.currentTimeMillis();
@@ -450,7 +451,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {
             log.debug("No session for user {}.", user.email);
-            return Response.ok();
+            return ok();
         }
 
         eventorProcessor.process(user, session, dash, deviceId, pin, pinType, pinValue, now);
@@ -461,7 +462,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
         }
 
-        return Response.ok();
+        return ok();
     }
 
     @PUT
@@ -474,14 +475,14 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (pinsData.length == 0) {
             log.debug("No pin for update provided.");
-            return Response.badRequest("No pin for update provided.");
+            return badRequest("No pin for update provided.");
         }
 
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
@@ -498,7 +499,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
+            return badRequest("Wrong pin format.");
         }
 
         for (PinData pinData : pinsData) {
@@ -514,7 +515,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             Session session = sessionDao.userSession.get(new UserKey(user));
             if (session == null) {
                 log.error("No session for user {}.", user.email);
-                return Response.ok();
+                return ok();
             }
             session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
@@ -523,7 +524,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             }
         }
 
-        return Response.ok();
+        return ok();
     }
 
     @POST
@@ -537,21 +538,26 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         User user = tokenValue.user;
 
         if (message == null || Notification.isWrongBody(message.body)) {
             log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
-            return Response.badRequest("Body is empty or larger than 255 chars.");
+            return badRequest("Body is empty or larger than 255 chars.");
         }
 
         DashBoard dash = tokenValue.dash;
 
         if (!dash.isActive) {
             log.debug("Project is not active.");
-            return Response.badRequest("Project is not active.");
+            return badRequest("Project is not active.");
+        }
+
+        if (user.isLoggedOut) {
+            log.debug("User is logged out.");
+            return badRequest("User is logged out.");
         }
 
         Notification notification = dash.getWidgetByType(Notification.class);
@@ -559,16 +565,16 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         if (notification == null || notification.hasNoToken()) {
             log.debug("No notification tokens.");
             if (notification == null) {
-                return Response.badRequest("No notification widget.");
+                return badRequest("No notification widget.");
             } else {
-                return Response.badRequest("Notification widget not initialized.");
+                return badRequest("Notification widget not initialized.");
             }
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.email, message.body);
         notification.push(gcmWrapper, message.body, dash.id);
 
-        return Response.ok();
+        return ok();
     }
 
     @POST
@@ -582,34 +588,34 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
+            return badRequest("Invalid token.");
         }
 
         DashBoard dash = tokenValue.dash;
 
         if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");
-            return Response.badRequest("Project is not active.");
+            return badRequest("Project is not active.");
         }
 
         Mail mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null) {
             log.debug("No email widget.");
-            return Response.badRequest("No email widget.");
+            return badRequest("No email widget.");
         }
 
         if (message == null
                 || message.subj == null || message.subj.isEmpty()
                 || message.to == null || message.to.isEmpty()) {
             log.debug("Email body empty. '{}'", message);
-            return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
+            return badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", tokenValue.user.email, message.subj);
         mail(tokenValue.user.email, message.to, message.subj, message.title);
 
-        return Response.ok();
+        return ok();
     }
 
     private void mail(String email, String to, String subj, String body) {

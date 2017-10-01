@@ -11,7 +11,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByClo
 import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -22,7 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -36,7 +38,6 @@ public class TestAppClient extends AppClient {
 
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), new ServerProperties(Collections.emptyMap()));
-        Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
     }
 
     public TestAppClient(String host, int port, ServerProperties properties) {
@@ -45,7 +46,6 @@ public class TestAppClient extends AppClient {
 
     public TestAppClient(String host, int port, ServerProperties properties, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class), properties);
-        Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
@@ -74,7 +74,7 @@ public class TestAppClient extends AppClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(

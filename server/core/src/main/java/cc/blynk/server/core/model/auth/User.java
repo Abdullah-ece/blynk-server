@@ -7,10 +7,11 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
-import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -62,12 +63,14 @@ public class User {
     public transient int emailMessages;
     private transient long emailSentTs;
 
+    public volatile boolean isLoggedOut;
+
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
-        this.appName = AppName.BLYNK;
+        this.appName = AppNameUtil.BLYNK;
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
@@ -93,7 +96,7 @@ public class User {
     }
 
     public void subtractEnergy(int price) {
-        if (AppName.BLYNK.equals(appName) && price > energy) {
+        if (AppNameUtil.BLYNK.equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.");
         }
         //non-atomic. we are fine with that

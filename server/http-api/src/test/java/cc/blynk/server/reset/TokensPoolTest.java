@@ -3,9 +3,12 @@ package cc.blynk.server.reset;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.api.http.pojo.TokenUser;
+import cc.blynk.server.api.http.pojo.TokensPool;
+import cc.blynk.utils.AppNameUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -17,9 +20,7 @@ public class TokensPoolTest {
 
     @Test
     public void addTokenTest() {
-        final User user = new User();
-        user.name = "test.gmail.com";
-        user.appName = AppName.BLYNK;
+        final TokenUser user = new TokenUser("test.gmail.com", AppNameUtil.BLYNK);
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
@@ -28,9 +29,7 @@ public class TokensPoolTest {
 
     @Test
     public void addTokenTwiceTest() {
-        final User user = new User();
-        user.name = "test.gmail.com";
-        user.appName = AppName.BLYNK;
+        final TokenUser user = new TokenUser("test.gmail.com", AppNameUtil.BLYNK);
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
@@ -40,9 +39,7 @@ public class TokensPoolTest {
 
     @Test
     public void remoteTokenTest() {
-        final User user = new User();
-        user.name = "test.gmail.com";
-        user.appName = AppName.BLYNK;
+        final TokenUser user = new TokenUser("test.gmail.com", AppNameUtil.BLYNK);
         final String token = "123";
         final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);

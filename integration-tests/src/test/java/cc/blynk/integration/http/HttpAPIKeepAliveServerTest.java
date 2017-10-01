@@ -16,7 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         }
     }
 
-    @Test(expected = NoHttpResponseException.class)
+    @Test(expected = Exception.class)
     public void keepAliveIsSupported()  throws Exception{
         String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 

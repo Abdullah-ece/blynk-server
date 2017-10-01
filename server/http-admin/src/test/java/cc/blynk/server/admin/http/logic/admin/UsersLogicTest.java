@@ -6,18 +6,18 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.EventLoop;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,8 +25,10 @@ import java.nio.file.Paths;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +52,7 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false, Role.STAFF);
+        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", false, Role.STAFF);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
@@ -66,7 +68,7 @@ public class UsersLogicTest {
 
     @Test
     public void deleteUserByName() throws Exception {
-        Response response = usersLogic.deleteUserByName(TEST_USER + "-" + AppName.BLYNK);
+        Response response = usersLogic.deleteUserByName(TEST_USER + "-" + AppNameUtil.BLYNK);
 
         assertEquals(OK, response.status());
         assertFalse(Files.exists(userFile));
@@ -75,7 +77,7 @@ public class UsersLogicTest {
 
     @Test
     public void deleteFakeUserByName() throws Exception {
-        Response response = usersLogic.deleteUserByName("fake user" + "-" + AppName.BLYNK);
+        Response response = usersLogic.deleteUserByName("fake user" + "-" + AppNameUtil.BLYNK);
 
         assertEquals(NOT_FOUND, response.status());
     }

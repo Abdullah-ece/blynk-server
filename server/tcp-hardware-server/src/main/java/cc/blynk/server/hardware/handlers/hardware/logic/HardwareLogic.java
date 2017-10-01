@@ -11,11 +11,11 @@ import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -86,7 +86,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             if (dash.isActive) {
                 session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
             } else {
-                log.debug("No active dashboard.");
+                log.trace("No active dashboard.");
             }
         }
     }

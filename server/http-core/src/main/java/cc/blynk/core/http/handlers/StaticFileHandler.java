@@ -3,7 +3,7 @@ package cc.blynk.core.http.handlers;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpChunkedInput;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -41,8 +42,10 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CACHE_CONTROL;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderNames.DATE;
 import static io.netty.handler.codec.http.HttpHeaderNames.EXPIRES;
@@ -137,9 +140,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         // Add cache headers
         time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
-        response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
-        response.headers().set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-        response.headers().set(LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
+        response.headers()
+                .set(EXPIRES, dateFormatter.format(time.getTime()))
+                .set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS)
+                .set(LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
 
     @Override
@@ -220,7 +224,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         // Cache Validation
         String ifModifiedSince = request.headers().get(IF_MODIFIED_SINCE);
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
+        if (ifModifiedSince != null && !ifModifiedSince.isEmpty() && !(staticFile instanceof NoCacheStaticFile)) {
             SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
             Date ifModifiedSinceDate = dateFormatter.parse(ifModifiedSince);
 
@@ -245,11 +249,11 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         }
         long fileLength = raf.length();
 
-        io.netty.handler.codec.http.HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-        HttpUtil.setContentLength(response, fileLength);
-
-        //setting content type
-        response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
+        HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
+        response.headers()
+                .set(CONTENT_LENGTH, fileLength)
+                .set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()))
+                .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         setDateAndCacheHeaders(response, file);
 
         //todo setup caching for files.

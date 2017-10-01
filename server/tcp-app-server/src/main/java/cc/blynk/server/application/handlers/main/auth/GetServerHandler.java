@@ -11,9 +11,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 
 
 /**
@@ -39,15 +39,15 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
-        final String[] parts = StringUtils.split2(msg.body);
+        String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
             return;
         }
 
-        final String email = parts[0];
-        final String appName = parts[1];
+        String email = parts[0];
+        String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());

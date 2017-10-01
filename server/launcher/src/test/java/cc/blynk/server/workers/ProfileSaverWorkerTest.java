@@ -5,15 +5,15 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.utils.AppNameUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,14 +21,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 3/3/2015.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ProfileSaverWorkerTest {
 
     @Mock
@@ -49,10 +53,10 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
 
-        User user1 = new User("1", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user2 = new User("2", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user3 = new User("3", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user4 = new User("4", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
 
         ConcurrentMap<UserKey, User> userMap = new ConcurrentHashMap<>();
         userMap.put(new UserKey(user1), user1);
@@ -72,16 +76,16 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user2 = new User("2", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user3 = new User("3", "", AppName.BLYNK, "local", false, Role.STAFF);
-        User user4 = new User("4", "", AppName.BLYNK, "local", false, Role.STAFF);
+        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", false, Role.STAFF);
 
         Map<UserKey, User> userMap = new HashMap<>();
-        userMap.put(new UserKey("1", AppName.BLYNK), user1);
-        userMap.put(new UserKey("2", AppName.BLYNK), user2);
-        userMap.put(new UserKey("3", AppName.BLYNK), user3);
-        userMap.put(new UserKey("4", AppName.BLYNK), user4);
+        userMap.put(new UserKey("1", AppNameUtil.BLYNK), user1);
+        userMap.put(new UserKey("2", AppNameUtil.BLYNK), user2);
+        userMap.put(new UserKey("3", AppNameUtil.BLYNK), user3);
+        userMap.put(new UserKey("4", AppNameUtil.BLYNK), user4);
 
         Thread.sleep(1);
 

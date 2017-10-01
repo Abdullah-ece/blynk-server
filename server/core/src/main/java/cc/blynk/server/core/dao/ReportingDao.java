@@ -14,7 +14,7 @@ import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.NumberUtil;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_BYTES;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_BYTES;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
@@ -85,7 +85,7 @@ public class ReportingDao implements Closeable {
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
-                FileUtils.getUserReportingDir(user),
+                FileUtils.getUserReportingDir(user.email, user.appName),
                 generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type)
         );
         if (Files.exists(userDataFile)) {
@@ -175,11 +175,14 @@ public class ReportingDao implements Closeable {
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
         Path userDataMinuteFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
         Path userDataHourlyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
         Path userDataDailyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);

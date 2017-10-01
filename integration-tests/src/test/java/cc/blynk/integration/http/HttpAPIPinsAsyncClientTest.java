@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +26,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.*;
+import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaderNames.LOCATION;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -208,14 +214,17 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v10").execute();
         Response response = f.get();
         assertEquals(301, response.getStatusCode());
-        String redirectLocation = response.getHeader("location");
+        String redirectLocation = response.getHeader(LOCATION);
         assertNotNull(redirectLocation);
         assertTrue(redirectLocation.contains("/dmitriy@blynk.cc_125564119_0_v10_"));
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
+        assertEquals("0", response.getHeader(CONTENT_LENGTH));
 
-        f = httpclient.prepareGet(httpsServerUrl + redirectLocation).execute();
+        f = httpclient.prepareGet(httpsServerUrl + redirectLocation.replaceFirst("/", "")).execute();
         response = f.get();
         assertEquals(200, response.getStatusCode());
-        assertEquals("application/x-gzip", response.getHeader("content-type"));
+        assertEquals("application/x-gzip", response.getHeader(CONTENT_TYPE));
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
 }

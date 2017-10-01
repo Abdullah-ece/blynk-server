@@ -1,13 +1,13 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_APPS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_DASHBOARDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
 
 /**
  * User: ddumanskiy

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>server</artifactId>
         <groupId>cc.blynk.server</groupId>
-        <version>0.27.2-SNAPSHOT</version>
+        <version>0.28.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -46,6 +46,11 @@
         <!-- -->
 
         <!-- notification modules -->
+        <dependency>
+            <groupId>cc.blynk.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>cc.blynk.server.notifications</groupId>
             <artifactId>email</artifactId>

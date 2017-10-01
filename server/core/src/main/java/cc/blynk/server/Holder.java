@@ -20,16 +20,18 @@ import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.BaseProperties;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.BaseProperties;
+import cc.blynk.utils.properties.ServerProperties;
+import io.netty.channel.epoll.Epoll;
+import io.netty.handler.ssl.OpenSsl;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.io.Closeable;
 
-import static cc.blynk.utils.ReportingUtil.getReportingFolder;
+import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
 /**
  * Just a holder for all necessary objects for server instance creation.
@@ -128,8 +130,9 @@ public class Holder implements Closeable {
 
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
-                .setEventLoopGroup(transportTypeHolder.workerGroup)
                 .setKeepAlive(true)
+                .setUseNativeTransport(Epoll.isAvailable())
+                .setUseOpenSsl(OpenSsl.isAvailable())
                 .build()
         );
 
@@ -194,8 +197,9 @@ public class Holder implements Closeable {
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
-                .setEventLoopGroup(transportTypeHolder.workerGroup)
-                .setKeepAlive(false)
+                .setKeepAlive(true)
+                .setUseNativeTransport(Epoll.isAvailable())
+                .setUseOpenSsl(OpenSsl.isAvailable())
                 .build()
         );
 

@@ -4,9 +4,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -180,7 +180,7 @@ public class FileManager {
                         } catch (IOException ioe) {
                             String errorMessage = ioe.getMessage();
                             log.error("Error parsing file '{}'. Error : {}", file, errorMessage);
-                            if (errorMessage != null && errorMessage.contains("Unexpected end-of-input")) {
+                            if (errorMessage != null && errorMessage.contains("end-of-input")) {
                                 return restoreFromBackup(file.getName());
                             }
                         }

@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import org.apache.logging.log4j.LogManager;
@@ -88,7 +88,7 @@ public class MqttHardwareLogic {
         }
 
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, msg.variableHeader().messageId(), dashId, deviceId, body);
+            session.sendToApps(HARDWARE, msg.variableHeader().packetId(), dashId, deviceId, body);
         } else {
             log.debug("No active dashboard.");
         }

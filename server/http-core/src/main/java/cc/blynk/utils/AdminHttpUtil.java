@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.core.http.model.NameCountResponse;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.stats.model.CommandStat;
 
 import java.lang.reflect.Field;
@@ -20,6 +21,7 @@ public final class AdminHttpUtil {
     private AdminHttpUtil() {
     }
 
+    @SuppressWarnings("unchecked")
     public static List<?> sortStringAsInt(List<?> list, String orderField, SortOrder order) {
         if (list.size() == 0) {
             return list;
@@ -39,6 +41,7 @@ public final class AdminHttpUtil {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> List<T> sort(List<T> list, String[] orderFields, SortOrder order) {
         if (list.size() == 0 || orderFields == null || orderFields.length == 0) {
             return list;
@@ -96,7 +99,7 @@ public final class AdminHttpUtil {
                 this.field = type.getField(sortField);
                 this.fieldType = field.getType();
             } catch (NoSuchFieldException nsfe) {
-                throw new RuntimeException("Can't find field.");
+                throw new RuntimeException("Can't find field " + sortField + " for " + type.getName());
             }
         }
 

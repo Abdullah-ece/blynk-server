@@ -3,21 +3,21 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.AppNameUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
 
 /**
  * The Blynk Project.
@@ -51,7 +51,7 @@ public class GetProjectByTokenLogic {
                 return;
             }
 
-            User publishUser = userDao.getByName(dbFlashedToken.email, AppName.BLYNK);
+            User publishUser = userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
 
             DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
 

@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -16,9 +17,8 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
-import static cc.blynk.utils.ArrayUtil.EMPTY_DEVICES;
-import static cc.blynk.utils.ArrayUtil.EMPTY_TAGS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_WIDGETS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
  * User: ddumanskiy

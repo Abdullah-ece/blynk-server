@@ -2,7 +2,6 @@ package cc.blynk.utils;
 
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Role;
 import org.junit.Before;
@@ -24,8 +23,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FileManagerIntegrationTest {
 
-    private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false, Role.ADMIN);
-    private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false, Role.ADMIN);
+    private final User user1 = new User("name1", "pass1", AppNameUtil.BLYNK, "local", false, Role.ADMIN);
+    private final User user2 = new User("name2", "pass2", AppNameUtil.BLYNK, "local", false, Role.ADMIN);
 
     private FileManager fileManager;
 
@@ -48,7 +47,7 @@ public class FileManagerIntegrationTest {
 
         Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
-        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppNameUtil.BLYNK)));
     }
 
     @Test
@@ -69,8 +68,8 @@ public class FileManagerIntegrationTest {
         Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
         assertEquals(2, users.size());
-        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
-        assertNotNull(users.get(new UserKey(user2.email, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppNameUtil.BLYNK)));
+        assertNotNull(users.get(new UserKey(user2.email, AppNameUtil.BLYNK)));
     }
 
     @Test
@@ -80,7 +79,7 @@ public class FileManagerIntegrationTest {
 
         Map<UserKey, User> users = fileManager.deserializeUsers();
         assertNotNull(users);
-        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppNameUtil.BLYNK)));
     }
 
 }

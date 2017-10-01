@@ -3,18 +3,18 @@ package cc.blynk.server.application.handlers.main.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
-import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,10 +32,10 @@ import java.util.NoSuchElementException;
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -84,7 +84,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
-        //warn: split may be optimized
         String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
@@ -93,20 +92,20 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             return;
         }
 
-        final String email = messageParts[0].toLowerCase();
-        final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
-        final String version = messageParts.length > 3 ? messageParts[3] : null;
+        String email = messageParts[0].toLowerCase();
+        OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
+        String version = messageParts.length > 3 ? messageParts[3] : null;
 
         if (messageParts.length == 5) {
-            if (AppName.FACEBOOK.equals(messageParts[4])) {
+            if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
                 facebookLogin(ctx, message.id, email, messageParts[1], osType, version);
             } else {
-                final String appName = messageParts[4];
+                String appName = messageParts[4];
                 blynkLogin(ctx, message.id, email, messageParts[1], osType, version, appName);
             }
         } else {
             //todo this is for back compatibility
-            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppName.BLYNK);
+            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppNameUtil.BLYNK);
         }
     }
 
@@ -132,9 +131,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                             FacebookTokenResponse facebookTokenResponse =
                                     JsonParser.parseFacebookTokenResponse(responseBody);
                             if (email.equalsIgnoreCase(facebookTokenResponse.email)) {
-                                User user = holder.userDao.getByName(email, AppName.BLYNK);
+                                User user = holder.userDao.getByName(email, AppNameUtil.BLYNK);
                                 if (user == null) {
-                                    user = holder.userDao.addFacebookUser(email, AppName.BLYNK);
+                                    user = holder.userDao.addFacebookUser(email, AppNameUtil.BLYNK);
                                 }
 
                                 login(ctx, messageId, user, osType, version);
@@ -183,16 +182,13 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
-        final ChannelPipeline pipeline = ctx.pipeline();
+        ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
         pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
-
-        user.lastLoggedIP = IPUtils.getIp(channel);
-        user.lastLoggedAt = System.currentTimeMillis();
 
         //todo back compatibility code. remove in future.
         if (user.region == null || user.region.isEmpty()) {
@@ -210,6 +206,10 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void completeLogin(Channel channel, Session session, User user, int msgId) {
+        user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        user.lastLoggedAt = System.currentTimeMillis();
+        user.isLoggedOut = false;
+
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         for (DashBoard dashBoard : user.profile.dashBoards) {

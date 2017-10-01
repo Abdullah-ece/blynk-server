@@ -1,11 +1,11 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.properties.ServerProperties;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.Collections;
 
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
-import static cc.blynk.utils.ReportingUtil.getReportingFolder;
+import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -41,7 +41,7 @@ public class AverageAggregatorTest {
         AverageAggregatorProcessor averageAggregator = new AverageAggregatorProcessor("");
         User user = new User();
         user.email = "test@test.com";
-        user.appName = AppName.BLYNK;
+        user.appName = AppNameUtil.BLYNK;
 
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
@@ -70,7 +70,7 @@ public class AverageAggregatorTest {
         AverageAggregatorProcessor averageAggregator = new AverageAggregatorProcessor("");
         User user = new User();
         user.email = "test@test.com";
-        user.appName = AppName.BLYNK;
+        user.appName = AppNameUtil.BLYNK;
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
         byte pin = 1;
@@ -112,7 +112,7 @@ public class AverageAggregatorTest {
 
         User user = new User();
         user.email = "test@test.com";
-        user.appName = AppName.BLYNK;
+        user.appName = AppNameUtil.BLYNK;
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
         byte pin = 1;

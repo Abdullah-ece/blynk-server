@@ -12,9 +12,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.noActiveDash;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.server.internal.BlynkByteBufUtil.noActiveDash;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.
@@ -49,6 +49,12 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
+        if (state.user.isLoggedOut) {
+            log.debug("User is logged out.");
+            ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
+            return;
+        }
+
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
@@ -57,7 +63,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        final long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);

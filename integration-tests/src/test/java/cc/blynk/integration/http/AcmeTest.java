@@ -8,14 +8,14 @@ import cc.blynk.server.acme.ContentHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

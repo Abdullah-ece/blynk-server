@@ -3,8 +3,8 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.utils.JsonParser;
 
 import java.util.List;
 
