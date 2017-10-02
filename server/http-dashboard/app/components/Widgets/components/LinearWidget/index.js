@@ -68,7 +68,8 @@ class LinearWidget extends React.Component {
   }
 
   componentWillUnmount() {
-    this.hoverElement.parentNode.removeChild(this.hoverElement);
+    if(this.hoverElement)
+      this.hoverElement.parentNode.removeChild(this.hoverElement);
   }
 
   generateFakeData() {
@@ -357,7 +358,7 @@ class LinearWidget extends React.Component {
         <div className="grid-linear-widget-chart-hover-container"
              ref={(element) => (this.hoverElement = element)}/>
 
-        <div className="grid-linear-widget-chart-hover-line"
+        <div className={`grid-linear-widget-chart-hover-line ${this.props.fetchRealData ? 'real-data-chart' : null}`}
              ref={(element) => (this.hoverLine = element)}/>
 
       </div>
