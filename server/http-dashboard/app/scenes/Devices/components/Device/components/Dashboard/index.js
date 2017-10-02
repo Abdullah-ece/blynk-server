@@ -3,6 +3,7 @@ import {Widgets} from 'components';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
+import {Icon} from 'antd';
 import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
 import {TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
@@ -14,6 +15,7 @@ import {getFormValues, initialize} from 'redux-form';
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
 @connect((state) => ({
+  widgets: state.Widgets && state.Widgets.get('widgetsData'),
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
@@ -23,6 +25,7 @@ class Dashboard extends React.Component {
 
   static propTypes = {
     dashboard: PropTypes.instanceOf(Map),
+    widgets: PropTypes.instanceOf(Map),
     params: PropTypes.object,
     timeFilteringValues: PropTypes.object,
     fetchWidgetHistoryByPin: PropTypes.func,
@@ -219,6 +222,10 @@ class Dashboard extends React.Component {
       y: 12,
     });
 
+    let isLoading = false;
+    if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
+      isLoading = true;
+
     // uncomment when start to use real data
 
     // if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
@@ -237,7 +244,11 @@ class Dashboard extends React.Component {
                          formValues={this.props.timeFilteringValues}/>
         </div>
 
-        <Widgets params={this.props.params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
+        { isLoading && (
+            <Icon type="loading" className="devices--device-dashboard-loading"/>
+        ) || (
+          <Widgets params={this.props.params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
+        )}
 
       </div>
     );
