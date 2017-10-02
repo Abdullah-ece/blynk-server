@@ -258,6 +258,8 @@ class LinearWidget extends React.Component {
         marker: {
           color: source.color
         },
+        hoveron: 'points',
+        hoverinfo: 'x',
       });
 
     });
