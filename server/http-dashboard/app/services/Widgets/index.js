@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export const WIDGET_TYPES = {
   LINEAR: 'WEB_GRAPH',
-  BAR: 'BAR',
+  BAR: 'WEB_BAR',
 };
 
 export const WIDGETS_CONFIGS = {
@@ -103,6 +103,22 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     isShowTitleEnabled: false,
     isShowLegendEnabled: false,
     ...WIDGETS_CONFIGS[WIDGET_TYPES.LINEAR],
+  },
+  [WIDGET_TYPES.BAR]: {
+    type: "WEB_BAR",
+    id: 0,
+    x: 0,
+    y: 0,
+    color: 0,
+    w: 3,
+    h: 2,
+    maxRows: 0,
+    dataType: "",  // raw data etc.
+    dataSource: "", // dropdown
+    groupDataBy: "", // dropdown
+    sortBy: "", // dropdown
+    sortType: "", // ASC or DESC
+    label: "",
   }
 };
 
