@@ -14,6 +14,13 @@ import {
   WidgetOrganizationsFetch,
 } from 'data/Widgets/api';
 
+
+/*
+
+  THIS IS TESTING STYLED BAR WIDGET. IT WON'T BE USED ON PRODUCTION.
+
+ */
+
 @connect((state) => ({
   orgId: state.Account.orgId,
   widgets: state.Widgets && state.Widgets.get('widgetsData'),

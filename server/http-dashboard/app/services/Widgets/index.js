@@ -118,7 +118,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     groupDataBy: "", // dropdown
     sortBy: "", // dropdown
     sortType: "", // ASC or DESC
-    label: "",
+    label: "Bar Chart",
   }
 };
 
