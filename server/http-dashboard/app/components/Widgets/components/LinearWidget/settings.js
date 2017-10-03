@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Modal,
   SimpleContentEditable
 } from 'components';
 import Source from './source';
@@ -8,13 +7,13 @@ import {
   WIDGETS_PREDEFINED_SOURCE_OPTIONS
 } from 'services/Widgets';
 import _ from 'lodash';
-import {Row, Col, Button} from 'antd';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS, Map, List} from 'immutable';
 import PropTypes from 'prop-types';
 import Widget from '../Widget';
+import WidgetSettings from '../WidgetSettings';
 
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
@@ -93,13 +92,15 @@ class LinearWidgetSettings extends React.Component {
   }
 
   handleCancel() {
-    this.props.onClose();
+    if (typeof this.props.onClose === 'function')
+      this.props.onClose();
 
     this.props.resetForm(this.props.form);
   }
 
   handleSave() {
-    this.props.handleSubmit();
+    if(typeof this.props.handleSubmit === 'function')
+      this.props.handleSubmit();
   }
 
   handleAddSource() {
@@ -144,20 +145,13 @@ class LinearWidgetSettings extends React.Component {
       })));
 
     return (
-      <Modal width={'auto'}
-             wrapClassName="modal-window-widget-settings"
-             visible={this.props.visible}
-             closable={false}
-             footer={[
-               <Button key="back" onClick={this.handleCancel}>
-                 Close
-               </Button>,
-               <Button key="submit" type="primary" onClick={this.handleSave} disabled={this.props.pristine}>
-                 Save
-               </Button>,
-             ]}>
-        <Row type="flex">
-          <Col span={12} className="modal-window-widget-settings-config-column">
+      <WidgetSettings
+        visible={this.props.visible}
+        onSave={this.handleSave}
+        onCancel={this.handleCancel}
+        isSaveDisabled={this.props.pristine}
+        config={(
+          <div>
             <div className="modal-window-widget-settings-config-column-header">
               <Field name="label" component={this.labelNameComponent}/>
 
@@ -180,18 +174,19 @@ class LinearWidgetSettings extends React.Component {
               ))}
 
             </div>
-          </Col>
-          <Col span={12} className="modal-window-widget-settings-preview-column">
-            <div className="widgets">
-              <Widget isPreviewOnly={true}
-                      style={{height: '200px'}}
-                      fetchRealData={false}
-                      params={{}}
-                      data={this.props.formValues.toJS()} />
-            </div>
-          </Col>
-        </Row>
-      </Modal>
+          </div>
+        )}
+
+        preview={(
+          <div className="widgets">
+            <Widget isPreviewOnly={true}
+                    style={{height: '200px'}}
+                    fetchRealData={false}
+                    params={{}}
+                    data={this.props.formValues.toJS()} />
+          </div>
+        )}
+      />
     );
   }
 

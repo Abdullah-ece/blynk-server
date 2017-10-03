@@ -68,11 +68,11 @@ class Widget extends React.Component {
     if (type === WIDGET_TYPES.BAR)
       return (
         <BarWidget key={widget.id}
-                      fetchRealData={this.props.fetchRealData}
-                      params={this.props.params}
-                      data={widget}
-                      editable={this.props.editable}
-                      onWidgetDelete={this.handleWidgetDelete}/>
+                   fetchRealData={this.props.fetchRealData}
+                   params={this.props.params}
+                   data={widget}
+                   editable={this.props.editable}
+                   onWidgetDelete={this.handleWidgetDelete}/>
       );
 
   }
@@ -145,7 +145,6 @@ class Widget extends React.Component {
       </div>
     );
   }
-
 }
 
 export default Widget;
