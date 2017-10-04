@@ -11,7 +11,8 @@ import {
 
 import {
   Row,
-  Col
+  Col,
+  Select as AntdSelect
 } from 'antd';
 
 import {
@@ -90,6 +91,31 @@ class BarChartSettings extends React.Component {
       this.props.handleSubmit();
   }
 
+  multipleTagsSelect(props) {
+    return (
+      <AntdSelect mode="multiple"
+                  onFocus={props.input.onFocus}
+                  onBlur={props.input.onBlur}
+                  onChange={props.input.onChange}
+                  value={props.input.value || []}
+                  style={{width: '100%'}}
+                  placeholder="Group By"
+                  allowClear={true}>
+        { Object.keys(BAR_CHART_PARAMS.GROUP_BY.list).map((key) => (
+            <AntdSelect.OptGroup key={key}>
+              {
+                BAR_CHART_PARAMS.GROUP_BY.list[key].map((item) => (
+                  <AntdSelect.Option value={item.key} key={item.key}>
+                    {item.value}
+                  </AntdSelect.Option>
+                ))
+              }
+            </AntdSelect.OptGroup>
+        )) }
+      </AntdSelect>
+    );
+  }
+
   render() {
 
     return (
@@ -131,14 +157,9 @@ class BarChartSettings extends React.Component {
                 </Item>
               </ItemsGroup>
               <Item label="Y: Group By" offset="large">
-                <Select mode="tags"
-                        displayError={false}
-                        dropdownMatchSelectWidth={false}
-                        name="groupDataBy"
-                        values={BAR_CHART_PARAMS.GROUP_BY.list}
-                        placeholder="Choose type"
-                        validate={[Validation.Rules.required]}
-                        style={{width: '100%'}}/>
+
+                <Field name="groupDataBy"
+                       component={this.multipleTagsSelect}/>
               </Item>
               <ItemsGroup>
                 <Item label="Sort By" offset="large">
