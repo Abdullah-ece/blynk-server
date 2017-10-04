@@ -6,6 +6,10 @@ import Validation     from 'services/Validation';
 import ColorPicker    from 'components/ColorPicker';
 
 import {
+  BAR_CHART_PARAMS
+} from 'services/Widgets';
+
+import {
   Row,
   Col
 } from 'antd';
@@ -110,8 +114,8 @@ class BarChartSettings extends React.Component {
                 <Item label="X: Data" offset="large">
                   <Select displayError={false}
                           dropdownMatchSelectWidth={false}
-                          name="x"
-                          values={[]}
+                          name="dataType"
+                          values={BAR_CHART_PARAMS.DATA_TYPE.list}
                           placeholder="Choose type"
                           validate={[Validation.Rules.required]}
                           style={{width: '100px'}}/>
@@ -119,8 +123,8 @@ class BarChartSettings extends React.Component {
                 <Item label=" " offset="large">
                   <Select displayError={false}
                           dropdownMatchSelectWidth={false}
-                          values={[{key: 'Raw', value: 'Raw data'}]}
-                          name="x2"
+                          values={BAR_CHART_PARAMS.DATA_SOURCE.list}
+                          name="dataSource"
                           placeholder="Choose Source"
                           validate={[Validation.Rules.required]}
                           style={{width: '100%'}}/>
@@ -130,8 +134,8 @@ class BarChartSettings extends React.Component {
                 <Select mode="tags"
                         displayError={false}
                         dropdownMatchSelectWidth={false}
-                        name="ygroupBy"
-                        values={[]}
+                        name="groupDataBy"
+                        values={BAR_CHART_PARAMS.GROUP_BY.list}
                         placeholder="Choose type"
                         validate={[Validation.Rules.required]}
                         style={{width: '100%'}}/>
@@ -140,8 +144,8 @@ class BarChartSettings extends React.Component {
                 <Item label="Sort By" offset="large">
                   <Select displayError={false}
                           dropdownMatchSelectWidth={false}
-                          name="sortby"
-                          values={[]}
+                          name="sortBy"
+                          values={BAR_CHART_PARAMS.SORT_BY.list}
                           placeholder="Choose type"
                           validate={[Validation.Rules.required]}
                           style={{width: '100%'}}
@@ -150,8 +154,8 @@ class BarChartSettings extends React.Component {
                 <Item label=" ">
                   <Select displayError={false}
                           dropdownMatchSelectWidth={false}
-                          values={[{key: 'Raw', value: 'Raw data'}]}
-                          name="sortbytype"
+                          values={BAR_CHART_PARAMS.SORT_BY_ORDER.list}
+                          name="sortType"
                           placeholder="Choose Source"
                           validate={[Validation.Rules.required]}
                           style={{width: '100px'}}
@@ -164,8 +168,8 @@ class BarChartSettings extends React.Component {
                   <Item label="Max rows">
                     <Select displayError={false}
                             dropdownMatchSelectWidth={false}
-                            values={[{key: 'Raw', value: 'Raw data'}]}
-                            name="maxrows"
+                            values={BAR_CHART_PARAMS.MAX_ROWS.list}
+                            name="maxRows"
                             placeholder="Choose Max Rows"
                             validate={[Validation.Rules.required]}
                             style={{width: '100px'}}

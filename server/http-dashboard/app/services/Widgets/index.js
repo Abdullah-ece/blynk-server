@@ -85,6 +85,207 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
   dataStream: {}
 };
 
+export const BAR_CHART_PARAMS = {
+
+  MAX_ROWS: {
+    list: [
+      {
+        key: '0',
+        value: 'None'
+      },
+      {
+        key: '5',
+        value: '5'
+      },
+      {
+        key: '10',
+        value: '10'
+      },
+      {
+        key: '15',
+        value: '15'
+      },
+      {
+        key: '20',
+        value: '20'
+      },
+    ],
+    defaultKey: '0'
+  },
+
+  DATA_TYPE: {
+    list: [
+      {
+        key: 'RAW_DATA',
+        value: 'Raw Data',
+      },
+      {
+        key: 'SUM_OF',
+        value: 'SUM of',
+      },
+      {
+        key: 'AVG_OF',
+        value: 'AVG of',
+      },
+      {
+        key: 'MED_OF',
+        value: 'MED of',
+      },
+      {
+        key: 'MIN_OF',
+        value: 'MIN of',
+      },
+      {
+        key: 'MAX_OF',
+        value: 'MAX of',
+      },
+    ],
+    defaultKey: 'RAW_DATA'
+  },
+
+  DATA_SOURCE: {
+    list: {
+      'Data Streams': [
+        {
+          key: 'Flow Rate',
+          value: 'Flow Rate'
+        },
+        {
+          key: 'Temperature',
+          value: 'Temperature'
+        },
+        {
+          key: 'Humidity',
+          value: 'Humidity'
+        },
+      ],
+      'Metadata': [
+        {
+          key: 'Cycles',
+          value: 'Cycles'
+        },
+        {
+          key: 'Shifts',
+          value: 'Shifts'
+        },
+        {
+          key: 'Formula Names',
+          value: 'Formula Names'
+        },
+        {
+          key: 'Pumps',
+          value: 'Pumps'
+        },
+      ],
+      'Platform': [
+        {
+          key: 'Devices',
+          value: 'Devices'
+        },
+        {
+          key: 'Products',
+          value: 'Products'
+        },
+        {
+          key: 'Organizations',
+          value: 'Organizations'
+        },
+      ]
+    }
+  },
+
+  GROUP_BY: {
+    list: {
+      'Data Streams': [
+        {
+          key: 'Flow Rate',
+          value: 'Flow Rate'
+        },
+        {
+          key: 'Temperature',
+          value: 'Temperature'
+        },
+        {
+          key: 'Humidity',
+          value: 'Humidity'
+        },
+      ],
+      'Metadata': [
+        {
+          key: 'Cycles',
+          value: 'Cycles'
+        },
+        {
+          key: 'Shifts',
+          value: 'Shifts'
+        },
+        {
+          key: 'Formula Names',
+          value: 'Formula Names'
+        },
+        {
+          key: 'Pumps',
+          value: 'Pumps'
+        },
+      ],
+      'Platform': [
+        {
+          key: 'Devices',
+          value: 'Devices'
+        },
+        {
+          key: 'Products',
+          value: 'Products'
+        },
+        {
+          key: 'Organizations',
+          value: 'Organizations'
+        },
+      ]
+    }
+  },
+
+  SORT_BY: {
+    list: [
+      {
+        key: 'Cycles',
+        value: 'Cycles'
+      },
+      {
+        key: 'Shifts',
+        value: 'Shifts'
+      },
+      {
+        key: 'Formula Names',
+        value: 'Formula Names'
+      },
+      {
+        key: 'Pumps',
+        value: 'Pumps'
+      },
+    ]
+  },
+
+  SORT_BY_ORDER: {
+    list: [
+      {
+        key: 'ASC',
+        value: 'Ascending'
+      },
+      {
+        key: 'DESC',
+        value: 'Descending'
+      },
+    ],
+    defaultKey: 'ASC'
+  },
+
+  COLOR: {
+    defaultKey: '007dc4'
+  }
+
+};
+
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     id: 1,
@@ -109,15 +310,15 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     id: 0,
     x: 0,
     y: 0,
-    color: 0,
+    color: BAR_CHART_PARAMS.COLOR.defaultKey,
     w: 3,
     h: 2,
-    maxRows: 0,
-    dataType: "",  // raw data etc.
-    dataSource: "", // dropdown
-    groupDataBy: "", // dropdown
-    sortBy: "", // dropdown
-    sortType: "", // ASC or DESC
+    maxRows: BAR_CHART_PARAMS.MAX_ROWS.defaultKey,
+    dataType: BAR_CHART_PARAMS.DATA_TYPE.defaultKey,  // raw data etc.
+    dataSource: '', // dropdown
+    groupDataBy: '', // dropdown
+    sortBy: '', // dropdown
+    sortType: BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey, // ASC or DESC
     label: "Bar Chart",
   }
 };
