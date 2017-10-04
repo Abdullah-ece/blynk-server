@@ -47,7 +47,6 @@ class Widget extends React.Component {
     this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
-    this.toggleSettingsVisibility = this.toggleSettingsVisibility.bind(this);
 
     this.state = {
       isConfigVisible: false
@@ -78,8 +77,9 @@ class Widget extends React.Component {
   }
 
   handleSaveChanges(values) {
-    this.props.onWidgetChange(values);
     this.toggleSettingsVisibility();
+
+    this.props.onWidgetChange(values);
   }
 
   toggleSettingsVisibility() {
@@ -91,8 +91,10 @@ class Widget extends React.Component {
   getWidgetSettingsByType(type, widget) {
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings visible={this.state.isConfigVisible} initialValues={widget}
-                               form={`widget-settings-${widget.id}`} onClose={this.toggleSettingsVisibility}
+        <LinearWidget.Settings visible={this.state.isConfigVisible}
+                               initialValues={widget}
+                               form={`widget-settings-${widget.id}`}
+                               onClose={this.toggleSettingsVisibility}
                                onSubmit={this.handleSaveChanges}/>
       );
 

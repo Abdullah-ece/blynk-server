@@ -5,6 +5,8 @@ import PropTypes      from 'prop-types';
 import Validation     from 'services/Validation';
 import ColorPicker    from 'components/ColorPicker';
 
+import _              from 'lodash';
+
 import {
   BAR_CHART_PARAMS
 } from 'services/Widgets';
@@ -28,6 +30,7 @@ import {
   reduxForm,
   Field,
   reset,
+  initialize,
 } from 'redux-form';
 
 import {
@@ -42,7 +45,8 @@ import {
 } from 'redux';
 
 @connect((/*state*/) => ({}), (dispatch) => ({
-  resetForm: bindActionCreators(reset, dispatch)
+  initializeForm: bindActionCreators(initialize, dispatch),
+  resetForm: bindActionCreators(reset, dispatch),
 }))
 @reduxForm()
 class BarChartSettings extends React.Component {
@@ -51,9 +55,15 @@ class BarChartSettings extends React.Component {
     visible: PropTypes.bool,
     pristine: PropTypes.bool,
 
+    form: PropTypes.string,
+
     onClose: PropTypes.func,
-    onSave: PropTypes.func,
+    onSubmit: PropTypes.func,
+    resetForm: PropTypes.func,
     handleSubmit: PropTypes.func,
+    initializeForm: PropTypes.func,
+
+    initialValues: PropTypes.object,
   };
 
   constructor(props) {
@@ -61,6 +71,14 @@ class BarChartSettings extends React.Component {
 
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+  }
+
+  componentWillUpdate(nextProps) {
+
+    if(!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
+      this.props.initializeForm(nextProps.form, nextProps.initialValues);
+    }
+
   }
 
   labelNameComponent({input}) {
@@ -83,7 +101,7 @@ class BarChartSettings extends React.Component {
     if (typeof this.props.onClose === 'function')
       this.props.onClose();
 
-    // this.props.resetForm(this.props.form);
+    this.props.resetForm(this.props.form);
   }
 
   handleSave() {
