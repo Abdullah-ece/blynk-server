@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.server.core.model.enums;
 
 /**
  * The Blynk Project.

@@ -7,7 +7,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.utils.SortOrder;
+import cc.blynk.server.core.model.enums.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import static cc.blynk.core.http.Response.ok;

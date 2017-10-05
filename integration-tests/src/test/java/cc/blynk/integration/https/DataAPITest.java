@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -274,7 +275,8 @@ public class DataAPITest extends APIBaseTest {
         webLabel.height = 10;
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE, false, new DataStream((byte) 1, PinType.VIRTUAL))
+                new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
+                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10, null, null, SortOrder.ASC)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

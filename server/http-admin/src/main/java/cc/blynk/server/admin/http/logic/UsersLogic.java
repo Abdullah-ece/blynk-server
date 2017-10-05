@@ -21,10 +21,10 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.SHA256Util;
-import cc.blynk.utils.SortOrder;
 import io.netty.channel.ChannelHandler;
 
 import java.util.List;

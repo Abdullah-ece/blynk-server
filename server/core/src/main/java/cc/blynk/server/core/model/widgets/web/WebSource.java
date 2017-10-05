@@ -1,9 +1,13 @@
 package cc.blynk.server.core.model.widgets.web;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * The Blynk Project.
@@ -24,19 +28,36 @@ public class WebSource {
 
     public final DataStream dataStream;
 
+    public final int maxRows;
+
+    public final String[] groupBy;
+
+    public final String[] sortBy;
+
+    public final SortOrder sortOrder;
+
     @JsonCreator
     public WebSource(@JsonProperty("label") String label,
                      @JsonProperty("sourceType") SourceType sourceType,
                      @JsonProperty("color") String color,
                      @JsonProperty("graphType") GraphType graphType,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
-                     @JsonProperty("dataStream") DataStream dataStream) {
+                     @JsonProperty("dataStream") DataStream dataStream,
+                     @JsonProperty("maxRows") int maxRows,
+                     @JsonProperty("groupBy") String[] groupBy,
+                     @JsonProperty("sortBy") String[] sortBy,
+                     @JsonProperty("sortOrder") SortOrder sortOrder) {
+
         this.label = label;
         this.sourceType = sourceType;
         this.color = color;
         this.graphType = graphType;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.dataStream = dataStream;
+        this.maxRows = maxRows;
+        this.groupBy = groupBy;
+        this.sortBy = sortBy;
+        this.sortOrder = sortOrder;
     }
 
     @Override
@@ -47,35 +68,23 @@ public class WebSource {
         if (!(o instanceof WebSource)) {
             return false;
         }
-
         WebSource webSource = (WebSource) o;
-
-        if (connectMissingPointsEnabled != webSource.connectMissingPointsEnabled) {
-            return false;
-        }
-        if (label != null ? !label.equals(webSource.label) : webSource.label != null) {
-            return false;
-        }
-        if (sourceType != webSource.sourceType) {
-            return false;
-        }
-        if (color != null ? !color.equals(webSource.color) : webSource.color != null) {
-            return false;
-        }
-        if (graphType != webSource.graphType) {
-            return false;
-        }
-        return dataStream != null ? dataStream.equals(webSource.dataStream) : webSource.dataStream == null;
+        return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled &&
+                maxRows == webSource.maxRows &&
+                Objects.equals(label, webSource.label) &&
+                sourceType == webSource.sourceType &&
+                Objects.equals(color, webSource.color) &&
+                graphType == webSource.graphType &&
+                Objects.equals(dataStream, webSource.dataStream) &&
+                Arrays.equals(groupBy, webSource.groupBy) &&
+                Arrays.equals(sortBy, webSource.sortBy) &&
+                sortOrder == webSource.sortOrder;
     }
 
     @Override
     public int hashCode() {
-        int result = label != null ? label.hashCode() : 0;
-        result = 31 * result + (sourceType != null ? sourceType.hashCode() : 0);
-        result = 31 * result + (color != null ? color.hashCode() : 0);
-        result = 31 * result + (graphType != null ? graphType.hashCode() : 0);
-        result = 31 * result + (connectMissingPointsEnabled ? 1 : 0);
-        result = 31 * result + (dataStream != null ? dataStream.hashCode() : 0);
-        return result;
+        return Objects.hash(label, sourceType, color, graphType,
+                connectMissingPointsEnabled, dataStream,
+                maxRows, groupBy, sortBy, sortOrder);
     }
 }
