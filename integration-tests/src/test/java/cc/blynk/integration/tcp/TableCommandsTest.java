@@ -37,14 +37,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class TableCommandsTest extends IntegrationBase {
 
-    private BaseServer httpServer;
     private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 
@@ -57,7 +55,6 @@ public class TableCommandsTest extends IntegrationBase {
 
     @After
     public void shutdown() {
-        httpServer.close();
         appServer.close();
         hardwareServer.close();
         clientPair.stop();

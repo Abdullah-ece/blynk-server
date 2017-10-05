@@ -55,6 +55,7 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.web.WebGraph;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.CopyObject;
 import cc.blynk.utils.StringUtils;
@@ -136,6 +137,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = Map.class, name = "MAP"),
         @JsonSubTypes.Type(value = DeviceSelector.class, name = "DEVICE_SELECTOR"),
+        @JsonSubTypes.Type(value = DeviceTiles.class, name = "DEVICE_TILES"),
 
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 

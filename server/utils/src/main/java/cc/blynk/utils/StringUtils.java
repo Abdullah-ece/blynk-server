@@ -87,18 +87,22 @@ public final class StringUtils {
      *
      *
      */
-    public static String[] split3(String body) {
-        final int i1 = body.indexOf(BODY_SEPARATOR, 1);
+    public static String[] split3(char separator, String body) {
+        final int i1 = body.indexOf(separator, 1);
         if (i1 == -1) {
             return new String[] {body};
         }
 
-        final int i2 = body.indexOf(BODY_SEPARATOR, i1 + 1);
+        final int i2 = body.indexOf(separator, i1 + 1);
         if (i2 == -1) {
             return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
         }
 
         return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
+    }
+
+    public static String[] split3(String body) {
+        return split3(BODY_SEPARATOR, body);
     }
 
     public static String[] split2Device(String body) {

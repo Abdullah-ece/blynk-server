@@ -61,6 +61,12 @@ public class DataStream implements CopyObject<DataStream> {
     }
 
 
+    public DataStream(DataStream dataStream) {
+        this(dataStream.id, dataStream.pin, dataStream.pwmMode, dataStream.rangeMappingOn,
+                dataStream.pinType, dataStream.value,
+                dataStream.min, dataStream.max, dataStream.label, dataStream.units);
+    }
+
     public DataStream(byte pin, PinType pinType) {
         this(0, pin, false, false, pinType, null, 0, 255, null, null);
     }
