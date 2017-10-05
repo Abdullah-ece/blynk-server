@@ -360,7 +360,8 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
-                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10, null, null, SortOrder.ASC)
+                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
+                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
         };
 
         WebGraph webGraph = new WebGraph();
@@ -371,9 +372,11 @@ public class DashboardModelAPITest extends APIBaseTest {
         webGraph.width = 20;
         webGraph.sources = new WebSource[] {
                 new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
-                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10, null, null, SortOrder.ASC),
+                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
+                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC),
                 new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
-                        false, new DataStream((byte) 2, PinType.VIRTUAL), 10, null, null, SortOrder.ASC)
+                        false, new DataStream((byte) 2, PinType.VIRTUAL), 10,
+                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {
