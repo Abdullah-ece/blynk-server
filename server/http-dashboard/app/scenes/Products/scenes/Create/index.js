@@ -3,12 +3,14 @@ import {fromJS, Map} from 'immutable';
 import './styles.less';
 import {HARDWARES, CONNECTIONS_TYPES} from 'services/Devices';
 import {connect} from 'react-redux';
+import _ from 'lodash';
 import {
   submit,
   getFormSyncErrors,
   initialize,
   destroy,
   getFormValues,
+  isDirty
 } from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
@@ -45,6 +47,58 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     });
   }
 
+  const isFormDirty = (() => {
+
+    const getIds = (entity) => {
+      return entity.map((entity) => entity.id);
+    };
+
+    const prefixes = {
+      'metadata': 'metadatafield',
+      'events': 'event',
+      'dataStreams': 'datastreamfield'
+    };
+
+    const ids = {
+      metadata: [],
+      dataStreams: [],
+      events: []
+    };
+
+    const forms = [
+      'product-edit-info',
+      FORMS.DASHBOARD,
+    ];
+
+    const entity = state.Product.edit.entity || {};
+
+    _.forEach(prefixes, (value, prefix) => {
+      if (state.Product.edit[prefix] && Array.isArray(state.Product.edit[prefix].fields)) {
+        state.Product.edit[prefix].fields.forEach((field) => {
+          ids[prefix].push(field.id);
+          forms.push(`${value}${field.id}`);
+        });
+      }
+    });
+
+    if (entity.metaFields && !_.isEqual(getIds(entity.metaFields).sort(), ids.metadata.sort())) {
+      return true;
+    }
+
+    if (entity.dataStreams && !_.isEqual(getIds(entity.dataStreams).sort(), ids.dataStreams.sort())) {
+      return true;
+    }
+
+    if (entity.events && !_.isEqual(getIds(entity.events).sort(), ids.events.sort())) {
+      return true;
+    }
+
+    return forms.some((formName) => {
+      return isDirty(formName)(state);
+    });
+
+  })();
+
   return {
     organization: fromJS(state.Organization),
     orgId: state.Account.orgId,
@@ -55,6 +109,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
     isProductInfoInvalid: state.Product.edit.info.invalid,
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
     dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
+    isFormDirty: isFormDirty,
   };
 }, (dispatch) => ({
   submitFormById: bindActionCreators(submit, dispatch),
@@ -80,6 +135,7 @@ class Create extends React.Component {
   };
 
   static propTypes = {
+    isFormDirty: React.PropTypes.bool,
     isMetadataFirstTime: React.PropTypes.bool,
     isProductInfoInvalid: React.PropTypes.bool,
 
@@ -106,9 +162,17 @@ class Create extends React.Component {
     eventsForms: React.PropTypes.array,
     product: React.PropTypes.object,
     Organization: React.PropTypes.object,
+    router: React.PropTypes.object,
+    route: React.PropTypes.object,
 
     orgId: React.PropTypes.any
   };
+
+  constructor(props) {
+    super(props);
+
+    this.routerWillLeave = this.routerWillLeave.bind(this);
+  }
 
   componentWillMount() {
 
@@ -153,11 +217,21 @@ class Create extends React.Component {
     this.props.initializeForm(FORMS.DASHBOARD, {
       widgets: []
     });
+
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave
+    );
   }
 
   componentWillUnmount() {
     this.props.destroyForm(FORMS.DASHBOARD);
     this.props.ProductEditClearFields();
+  }
+
+  routerWillLeave() {
+    if(!this.isProductCreated && this.props.isFormDirty)
+      return 'Are you sure you want to leave this page without saving?';
   }
 
   isMetadataFormInvalid() {
@@ -236,6 +310,7 @@ class Create extends React.Component {
         }),
         orgId: this.props.orgId
       }).then(() => {
+        this.isProductCreated = true;
         this.context.router.push(`/products/?success=true`);
       }).catch((response) => {
         message.error(response && response.error && response.error.response.message || 'Cannot create product');

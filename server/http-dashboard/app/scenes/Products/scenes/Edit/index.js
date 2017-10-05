@@ -163,6 +163,8 @@ class Edit extends React.Component {
     product: React.PropTypes.object,
     eventsForms: React.PropTypes.array,
     Organization: React.PropTypes.object,
+    router: React.PropTypes.object,
+    route: React.PropTypes.object,
 
     orgId: React.PropTypes.any
   };
@@ -175,6 +177,8 @@ class Edit extends React.Component {
       isDevicesForceUpdateVisible: false,
       deviceForceUpdateLoading: false
     };
+
+    this.routerWillLeave = this.routerWillLeave.bind(this);
   }
 
   componentWillMount() {
@@ -209,10 +213,20 @@ class Edit extends React.Component {
       });
 
     });
+
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave
+    );
   }
 
   componentWillUnmount() {
     this.props.ProductEditClearFields();
+  }
+
+  routerWillLeave() {
+    if(!this.isProductSaved && this.props.isFormDirty)
+      return 'Are you sure you want to leave this page without saving?';
   }
 
   getProduct() {
@@ -357,6 +371,7 @@ class Edit extends React.Component {
   }
 
   handleProductSaveSuccess(response) {
+    this.isProductSaved = true;
     if (this.state.activeTab) {
       this.context.router.push(`/product/${response.payload.data.id}/${this.state.activeTab}?save=true`);
     } else {
