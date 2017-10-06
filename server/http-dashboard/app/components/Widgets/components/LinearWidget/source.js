@@ -142,7 +142,7 @@ class Source extends React.Component {
 
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
             <Button size="small" icon="delete" onClick={this.handleDelete}/>
-            <Button size="small" icon="copy" onClick={this.handleCopy}/>
+            {/*<Button size="small" icon="copy" onClick={this.handleCopy}/>*/} { /* uncomment when start to support multiple sources*/}
             <Button size="small" icon="bars" disabled={true}/>
           </div>
         </div>
