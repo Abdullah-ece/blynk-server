@@ -18,10 +18,9 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.web.SourceType;
-import cc.blynk.server.core.model.widgets.web.WebGraph;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
+import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
@@ -359,22 +358,22 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.height = 10;
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
+                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
                         false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
                         new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
         };
 
-        WebGraph webGraph = new WebGraph();
+        WebLineGraph webGraph = new WebLineGraph();
         webGraph.label = "graph";
         webGraph.x = 3;
         webGraph.y = 4;
         webGraph.height = 10;
         webGraph.width = 20;
         webGraph.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
+                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
                         false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
                         new String[] {"name"}, new String[] {"name"}, SortOrder.ASC),
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455", GraphType.LINE,
+                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
                         false, new DataStream((byte) 2, PinType.VIRTUAL), 10,
                         new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
         };

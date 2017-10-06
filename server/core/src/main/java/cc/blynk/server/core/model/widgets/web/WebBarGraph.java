@@ -6,7 +6,7 @@ package cc.blynk.server.core.model.widgets.web;
  * Created on 24.08.17.
  */
 
-public class WebGraph extends WebWidget {
+public class WebBarGraph extends WebWidget {
 
     public boolean isShowTitleEnabled;
 

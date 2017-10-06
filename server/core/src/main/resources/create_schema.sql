@@ -222,6 +222,26 @@ CREATE TABLE reporting_events_last_seen (
   PRIMARY KEY(device_id, email)
 );
 
+CREATE TABLE knight_laundry (
+   start_date date,
+   start_time time,
+   end_date date,
+   end_time time,
+   system_id int4,
+   washer_id int4,
+   formula int4,
+   cycle_time time,
+   load_weight int4,
+   saphire int4,
+   boost int4,
+   emulsifier int4,
+   destain int4,
+   bleach int4,
+   sour int4,
+   supreme int4,
+   jasmine int4
+);
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

@@ -14,6 +14,7 @@ import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
+import cc.blynk.server.db.dao.KnightDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
@@ -55,6 +56,7 @@ public class DBManager implements Closeable {
     public UserDBDao userDBDao;
     public EventDBDao eventDBDao;
     public ReportingDBDao reportingDBDao;
+    public KnightDBDao knightDBDao;
     RedeemDBDao redeemDBDao;
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
@@ -113,6 +115,7 @@ public class DBManager implements Closeable {
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
+        this.knightDBDao = new KnightDBDao(hikariDataSource);
 
         checkDBVersion();
 

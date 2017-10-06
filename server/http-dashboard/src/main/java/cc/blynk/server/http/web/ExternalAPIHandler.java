@@ -41,6 +41,7 @@ import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.dao.table.TableDataMapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
@@ -479,6 +480,12 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
+        }
+
+        if (pin == 100 && pinType == PinType.VIRTUAL) {
+            TableDataMapper tableDataMapper = new TableDataMapper("knight_laundry", pinValues);
+            //dbManager.knightDBDao.insertDataPoint(tableDataMapper);
+            return Response.ok();
         }
 
         final long now = System.currentTimeMillis();

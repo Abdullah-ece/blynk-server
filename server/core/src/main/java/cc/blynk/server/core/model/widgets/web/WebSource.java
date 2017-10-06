@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets.web;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.SortOrder;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,8 +21,6 @@ public class WebSource {
 
     public final String color;
 
-    public final GraphType graphType;
-
     public final boolean connectMissingPointsEnabled;
 
     public final DataStream dataStream;
@@ -40,7 +37,6 @@ public class WebSource {
     public WebSource(@JsonProperty("label") String label,
                      @JsonProperty("sourceType") SourceType sourceType,
                      @JsonProperty("color") String color,
-                     @JsonProperty("graphType") GraphType graphType,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
                      @JsonProperty("dataStream") DataStream dataStream,
                      @JsonProperty("maxRows") int maxRows,
@@ -51,7 +47,6 @@ public class WebSource {
         this.label = label;
         this.sourceType = sourceType;
         this.color = color;
-        this.graphType = graphType;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.dataStream = dataStream;
         this.maxRows = maxRows;
@@ -74,7 +69,6 @@ public class WebSource {
                 Objects.equals(label, webSource.label) &&
                 sourceType == webSource.sourceType &&
                 Objects.equals(color, webSource.color) &&
-                graphType == webSource.graphType &&
                 Objects.equals(dataStream, webSource.dataStream) &&
                 Arrays.equals(groupBy, webSource.groupBy) &&
                 Arrays.equals(sortBy, webSource.sortBy) &&
@@ -83,7 +77,7 @@ public class WebSource {
 
     @Override
     public int hashCode() {
-        return Objects.hash(label, sourceType, color, graphType,
+        return Objects.hash(label, sourceType, color,
                 connectMissingPointsEnabled, dataStream,
                 maxRows, groupBy, sortBy, sortOrder);
     }
