@@ -1,6 +1,6 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.db.dao.table.ColumnEntry;
+import cc.blynk.server.db.dao.table.ColumnValue;
 import cc.blynk.server.db.dao.table.TableDataMapper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -16,9 +16,6 @@ import java.sql.PreparedStatement;
  */
 public class KnightDBDao {
 
-    public static final String insertDataPoint =
-            "INSERT INTO knight_laundry values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
     private static final Logger log = LogManager.getLogger(KnightDBDao.class);
     private final HikariDataSource ds;
 
@@ -26,17 +23,21 @@ public class KnightDBDao {
         this.ds = ds;
     }
 
-    public void insertDataPoint(TableDataMapper tableDataMapper) throws Exception {
+    public void insertDataPoint(TableDataMapper tableDataMapper) {
+        String query = tableDataMapper.insertQueryString;
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertDataPoint)) {
+             PreparedStatement ps = connection.prepareStatement(query)) {
 
             for (int i = 0; i < tableDataMapper.data.length; i++) {
-                ColumnEntry entry = tableDataMapper.data[i];
-                ps.setObject(i + 1, entry.value, entry.column.type);
+                ColumnValue entry = tableDataMapper.data[i];
+                log.trace("Index {}, value {}.", i + 1, entry.value);
+                ps.setObject(i + 1, entry.value);
             }
             ps.executeUpdate();
 
             connection.commit();
+        } catch (Exception e){
+            log.error("Error inserting knight data.", e);
         }
     }
 

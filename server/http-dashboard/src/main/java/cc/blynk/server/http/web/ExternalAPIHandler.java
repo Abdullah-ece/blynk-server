@@ -482,9 +482,10 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
+        //todo separate thread
         if (pin == 100 && pinType == PinType.VIRTUAL) {
-            TableDataMapper tableDataMapper = new TableDataMapper("knight_laundry", pinValues);
-            //dbManager.knightDBDao.insertDataPoint(tableDataMapper);
+            TableDataMapper tableDataMapper = new TableDataMapper(TableDataMapper.KNIGHT_TABLE_NAME, pinValues);
+            dbManager.knightDBDao.insertDataPoint(tableDataMapper);
             return Response.ok();
         }
 

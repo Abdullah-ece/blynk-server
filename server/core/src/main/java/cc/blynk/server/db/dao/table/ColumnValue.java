@@ -5,12 +5,13 @@ package cc.blynk.server.db.dao.table;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.10.17.
  */
-public class ColumnEntry {
-    public final Column column;
+public class ColumnValue {
+
+    public final String name;
     public final Object value;
 
-    ColumnEntry(Column column, Object value) {
-        this.column = column;
+    ColumnValue(String name, Object value) {
+        this.name = name;
         this.value = value;
     }
 }
