@@ -24,7 +24,7 @@ public class KnightDBDao {
     }
 
     public void insertDataPoint(TableDataMapper tableDataMapper) {
-        String query = tableDataMapper.insertQueryString;
+        String query = tableDataMapper.tableDescriptor.insertQueryString;
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
 

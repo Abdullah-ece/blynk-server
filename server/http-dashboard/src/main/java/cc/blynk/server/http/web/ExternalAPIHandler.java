@@ -42,6 +42,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.table.TableDataMapper;
+import cc.blynk.server.db.dao.table.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
@@ -399,7 +400,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinDataViaGet(@PathParam("token") String token,
+    public Response updateWidgetPinDataViaGet(@Context ChannelHandlerContext ctx,
+                                              @PathParam("token") String token,
                                               @PathParam("pin") String pinString,
                                               @QueryParam("value") String[] pinValues,
                                               @QueryParam("label") String labelValue,
@@ -410,7 +412,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                                               @QueryParam("isOnPlay") String isOnPlay) {
 
         if (pinValues != null) {
-            return updateWidgetPinData(token, pinString, pinValues);
+            return updateWidgetPinData(ctx, token, pinString, pinValues);
         }
         if (labelValue != null) {
             return updateWidgetProperty(token, pinString, "label", labelValue);
@@ -438,10 +440,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinDataNew(@PathParam("token") String token,
+    public Response updateWidgetPinDataNew(@Context ChannelHandlerContext ctx,
+                                           @PathParam("token") String token,
                                            @PathParam("pin") String pinString,
                                            String[] pinValues) {
-        return updateWidgetPinData(token, pinString, pinValues);
+        return updateWidgetPinData(ctx, token, pinString, pinValues);
     }
 
     //todo remove later?
@@ -449,7 +452,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     @Path("/{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinData(@PathParam("token") String token,
+    public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
+                                        @PathParam("token") String token,
                                         @PathParam("pin") String pinString,
                                         String[] pinValues) {
 
@@ -484,9 +488,17 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         //todo separate thread
         if (pin == 100 && pinType == PinType.VIRTUAL) {
-            TableDataMapper tableDataMapper = new TableDataMapper(TableDataMapper.KNIGHT_TABLE_NAME, pinValues);
-            dbManager.knightDBDao.insertDataPoint(tableDataMapper);
-            return Response.ok();
+            blockingIOProcessor.executeDB(() -> {
+                try {
+                    TableDataMapper tableDataMapper = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, pinValues);
+                    dbManager.knightDBDao.insertDataPoint(tableDataMapper);
+                    ctx.writeAndFlush(ok());
+                } catch (Exception e) {
+                    log.error("Error insert knight record.", e);
+                    ctx.writeAndFlush(serverError("Error insert knight record."));
+                }
+            });
+            return null;
         }
 
         final long now = System.currentTimeMillis();
@@ -513,7 +525,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
         }
 
-        return Response.ok();
+        return ok();
     }
 
     @PUT

@@ -1,6 +1,7 @@
 package cc.blynk.server.db.dao.table;
 
-import java.sql.ResultSet;
+import org.jooq.Record;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -73,20 +74,8 @@ public class Column {
         }
     }
 
-    public Object get(ResultSet rs) throws SQLException {
-        switch (type) {
-            case DATE :
-                return rs.getDate(columnName);
-            case TIME :
-                return rs.getTime(columnName);
-            case INTEGER :
-                return rs.getInt(columnName);
-            case DOUBLE :
-            case FLOAT :
-                return rs.getDouble(columnName);
-            default:
-                throw new RuntimeException("Datatype is not supported yet.");
-        }
+    public Object get(Record rs) throws SQLException {
+        return rs.get(columnName);
     }
 
     private void checkFormatter() {
