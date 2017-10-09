@@ -10,8 +10,15 @@
   &:hover {
     color: @color-warning;
     border-color: @color-warning;
+    background: @color-warning-25;
   }
   &:active {
+    color: @color-warning;
+    background-color: @color-warning-25;
+    box-shadow: 0 0 0 2px @color-warning-25;
+  }
+  &:focus {
+    color: @color-warning;
     background-color: @color-warning-25;
     box-shadow: 0 0 0 2px @color-warning-25;
   }
@@ -20,11 +27,13 @@
 .add-critical-event-button {
   color: @color-critical;
   border-color: @color-critical;
-  &:hover {
+  &:hover, &:focus {
     color: @color-critical;
     border-color: @color-critical;
+    background: @color-critical-25;
   }
   &:active {
+    color: @color-critical;
     background-color: @color-critical-25;
     box-shadow: 0 0 0 2px @color-critical-25;
   }
