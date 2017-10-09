@@ -59,7 +59,7 @@ class DataStreams extends React.Component {
         units: field.values.units,
         min: field.values.min,
         max: field.values.max,
-        pin: field.values.pin
+        pin: String(field.values.pin),
       }
     };
 
@@ -123,13 +123,15 @@ class DataStreams extends React.Component {
     let pinExist = true;
 
     while (pinExist) {
-      pin++;
       pinExist = false;
       this.props.fields.forEach((field) => {
         if (Number(field.values.pin) === Number(pin)) {
           pinExist = true;
         }
       });
+
+      if(pinExist)
+        pin++;
     }
     return pin;
   }
