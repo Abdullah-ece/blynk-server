@@ -22,7 +22,7 @@ import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import org.junit.Test;
@@ -31,6 +31,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Currency;
 import java.util.Date;
+
+import static java.time.LocalTime.ofSecondOfDay;
 
 /**
  * The Blynk Project.
@@ -52,7 +54,7 @@ public class PrintProductTest {
 
         product.metaFields = new MetaField[] {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
-                new RangeMetaField(2, "Farm of Smith", Role.ADMIN, false, 60, 120),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, ofSecondOfDay(60),  ofSecondOfDay(120)),
                 new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, 10.222),
                 new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, MeasurementUnit.Celsius, "36"),
                 new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),

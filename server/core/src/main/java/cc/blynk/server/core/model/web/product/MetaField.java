@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.RangeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
-        @JsonSubTypes.Type(value = RangeMetaField.class, name = "Range"),
+        @JsonSubTypes.Type(value = RangeTimeMetaField.class, name = "Range"),
         @JsonSubTypes.Type(value = SwitchMetaField.class, name = "Switch"),
         @JsonSubTypes.Type(value = CostMetaField.class, name = "Cost"),
         @JsonSubTypes.Type(value = ContactMetaField.class, name = "Contact"),
