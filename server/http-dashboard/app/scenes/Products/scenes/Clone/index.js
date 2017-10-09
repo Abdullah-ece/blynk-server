@@ -8,6 +8,7 @@ import {bindActionCreators} from 'redux';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {prepareProductForClone, prepareProductForSave} from 'services/Products';
 import * as API from 'data/Product/api';
+import {MainLayout} from 'components';
 import {
   ProductSetEdit,
   ProductEditEventsFieldsUpdate,
@@ -245,23 +246,25 @@ class Clone extends React.Component {
       return null;
 
     return (
-      <ProductEdit product={this.props.product}
-                   isInfoFormInvalid={this.props.isProductInfoInvalid}
-                   isEventsFormInvalid={this.isEventsFormInvalid()}
-                   isMetadataFormInvalid={this.isMetadataFormInvalid()}
-                   isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
-                   isMetadataInfoRead={!this.props.isMetadataFirstTime}
-                   updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
-                   onInfoValuesChange={this.onInfoValuesChange.bind(this)}
-                   onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
-                   onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
-                   onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
-                   onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
-                   onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
-                   handleSubmit={this.handleSubmit.bind(this)}
-                   handleCancel={this.handleCancel.bind(this)}
-                   onTabChange={this.onTabChange.bind(this)}
-                   params={this.props.params}/>
+      <MainLayout>
+        <ProductEdit product={this.props.product}
+                     isInfoFormInvalid={this.props.isProductInfoInvalid}
+                     isEventsFormInvalid={this.isEventsFormInvalid()}
+                     isMetadataFormInvalid={this.isMetadataFormInvalid()}
+                     isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
+                     isMetadataInfoRead={!this.props.isMetadataFirstTime}
+                     updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
+                     onInfoValuesChange={this.onInfoValuesChange.bind(this)}
+                     onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
+                     onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
+                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
+                     handleSubmit={this.handleSubmit.bind(this)}
+                     handleCancel={this.handleCancel.bind(this)}
+                     onTabChange={this.onTabChange.bind(this)}
+                     params={this.props.params}/>
+      </MainLayout>
     );
   }
 }
