@@ -491,7 +491,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             blockingIOProcessor.executeDB(() -> {
                 try {
                     TableDataMapper tableDataMapper = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, pinValues);
-                    dbManager.knightDBDao.insertDataPoint(tableDataMapper);
+                    dbManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
                     log.error("Error insert knight record.", e);

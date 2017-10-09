@@ -1,6 +1,11 @@
 package cc.blynk.server.db.dao.table;
 
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.internal.EmptyArraysUtil;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.SelectSelectStep;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -26,6 +31,7 @@ public class Column {
     public final int type;
     public final DateTimeFormatter formatter;
     public final Function<String, String> filterFunction;
+    public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
 
     public Column(String label, int type) {
         this.label = label;
@@ -49,6 +55,15 @@ public class Column {
         this.type = type;
         this.formatter = formatter;
         this.filterFunction = null;
+    }
+
+    public Column(String label, int type, DateTimeFormatter formatter, MetaField[] metaFields) {
+        this.label = label;
+        this.columnName = label.toLowerCase().replace(" ", "_");
+        this.type = type;
+        this.formatter = formatter;
+        this.filterFunction = null;
+        this.metaFields = metaFields;
     }
 
     public Column(String label, int type, Function<String, String> filterFunction) {
@@ -83,6 +98,19 @@ public class Column {
                 return Double.valueOf(filter);
             default:
                 throw new RuntimeException("Datatype is not supported yet.");
+        }
+    }
+
+    public void attachQuery(SelectSelectStep<Record> step, String[] groupBy) {
+        for (MetaField metaField : metaFields) {
+            if (metaField.isSameName(groupBy)) {
+                //special kind of grouping - range grouping...
+                //implementing via additional query
+                if (metaField instanceof RangeTimeMetaField) {
+                    Field<Integer> groupField = ((RangeTimeMetaField) metaField).attachQuery(step, columnName);
+                    step.select(groupField);
+                }
+            }
         }
     }
 

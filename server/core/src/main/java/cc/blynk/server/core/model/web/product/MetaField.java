@@ -14,6 +14,9 @@ import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectSelectStep;
 
 /**
  * The Blynk Project.
@@ -59,6 +62,19 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.name = metaField.name;
         this.role = metaField.role;
         this.isDefault = metaField.isDefault;
+    }
+
+    public boolean isSameName(String[] groupBy) {
+        for (String groupFieldName : groupBy) {
+            if (groupFieldName.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Field<?> attachQuery(SelectSelectStep<Record> query, String columnName) {
+        throw new RuntimeException("Not supported.");
     }
 
     @Override

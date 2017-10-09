@@ -1,13 +1,12 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.https.reporting;
 
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.db.DBManager;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -22,16 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import static cc.blynk.server.db.dao.table.TableDescriptor.KNIGHT_INSTANCE;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
-import static org.jooq.impl.DSL.count;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -42,7 +36,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalAPIForKnightTest extends APIBaseTest {
 
-    private ClientPair clientPair;
     private String httpsServerUrl;
     private DBManager dbManager;
 
@@ -142,59 +135,6 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
             assertEquals(1290, result);
             connection.commit();
         }
-    }
-
-    private static final DateTimeFormatter timeFormatter = ofPattern("HH:mm:ss");
-
-    private static LocalTime lc(String time) {
-        return LocalTime.parse(time, timeFormatter);
-    }
-
-    @Test
-    public void testCreateShiftQuery() throws Exception {
-        URL url = getClass().getResource("/2017_ISSA_Sample_IOT_Data.csv");
-        Path resPath = Paths.get(url.toURI());
-        List<String> lines = Files.readAllLines(resPath);
-
-        for (String line : lines) {
-            String[] split = line.split(",");
-
-            StringJoiner sj = new StringJoiner(",", "[", "]");
-            for (String splitPart : split) {
-                sj.add("\"" + splitPart + "\"");
-            }
-
-            String fixedLine = sj.toString();
-
-            HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v100");
-            put.setEntity(new StringEntity(fixedLine, ContentType.APPLICATION_JSON));
-
-            try (CloseableHttpResponse response = httpclient.execute(put)) {
-                assertEquals(200, response.getStatusLine().getStatusCode());
-            }
-        }
-
-        try (Connection connection = dbManager.getConnection()) {
-            DSLContext create = DSL.using(connection, POSTGRES_9_4);
-
-            Map<String, Object> result = create.select(
-                    subQuery("start_time", "shift1", "07:59:59", "16:00:00"),
-                    subQuery("start_time", "shift2", "15:59:59", "23:59:59"),
-                    subQuery("start_time", "shift3", "00:00:00", "08:00:00")
-            )
-            .from(KNIGHT_INSTANCE.tableName)
-            .fetchOne().intoMap();
-
-            assertEquals(588, result.get("shift1"));
-            assertEquals(507, result.get("shift2"));
-            assertEquals(195, result.get("shift3"));
-
-            connection.commit();
-        }
-    }
-
-    private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {
-        return count().filterWhere(DSL.field(fieldName).between(lc(timeFrom), lc(timeTo))).as(alias);
     }
 
 }

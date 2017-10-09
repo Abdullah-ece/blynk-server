@@ -1,6 +1,7 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;

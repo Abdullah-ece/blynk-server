@@ -85,6 +85,7 @@ public class DataHandler extends BaseHttpHandler {
 
     @GET
     @Path("/{deviceId}/history")
+    @SuppressWarnings("unckecked")
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @ContextUser User user,
                            @PathParam("deviceId") int deviceId,
@@ -92,6 +93,7 @@ public class DataHandler extends BaseHttpHandler {
                            @QueryParam("from") long from,
                            @QueryParam("to") long to,
                            @QueryParam("sourceType") SourceType sourceType,
+                           @QueryParam("groupBy") String[] groupBy,
                            @QueryParam("offset") int offset,
                            @QueryParam("limit") int limit) {
 
@@ -107,9 +109,10 @@ public class DataHandler extends BaseHttpHandler {
                 Map<String, Data> finalModel = new HashMap<>();
                 for (String dataStream : dataStreams) {
                     DataQueryRequest dataQueryRequest = new DataQueryRequest(
-                            deviceId, dataStream, from, to, sourceType, offset, limit);
+                            deviceId, dataStream, from, to, sourceType, groupBy, offset, limit);
 
-                    List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(dataQueryRequest);
+                    List<AbstractMap.SimpleEntry<Long, Double>> data =
+                            (List<AbstractMap.SimpleEntry<Long, Double>>) dbManager.getRawData(dataQueryRequest);
                     finalModel.put(dataStream, new Data(data));
                 }
                 ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());

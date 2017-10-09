@@ -8,12 +8,17 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.server.db.dao.table.Column;
+import cc.blynk.server.db.dao.table.ColumnValue;
 import cc.blynk.server.db.dao.table.DataQueryRequest;
+import cc.blynk.server.db.dao.table.TableDataMapper;
 import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
@@ -361,12 +366,29 @@ public class ReportingDBDao {
                 minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(DataQueryRequest dataQueryRequest) {
-        List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
+    public void insertDataPoint(TableDataMapper tableDataMapper) {
+        String query = tableDataMapper.tableDescriptor.insertQueryString;
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
 
+            for (int i = 0; i < tableDataMapper.data.length; i++) {
+                ColumnValue entry = tableDataMapper.data[i];
+                log.trace("Index {}, value {}.", i + 1, entry.value);
+                ps.setObject(i + 1, entry.value);
+            }
+            ps.executeUpdate();
+
+            connection.commit();
+        } catch (Exception e){
+            log.error("Error inserting knight data.", e);
+        }
+    }
+
+    public Object getRawData(DataQueryRequest dataQueryRequest) {
         switch (dataQueryRequest.sourceType) {
             //todo leaving it as it is for now. move to jooq
             case RAW_DATA:
+                List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
                 try (Connection connection = ds.getConnection();
                      PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {
 
@@ -398,21 +420,34 @@ public class ReportingDBDao {
                 }
 
                 Collections.reverse(result);
-                break;
+                return result;
             case COUNT:
+                Map<String, Object> map = Collections.emptyMap();
                 try (Connection connection = ds.getConnection()) {
                     DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
-                    //create.select().from
+                    SelectSelectStep<Record> step = create.select();
+
+                    if (dataQueryRequest.groupBy != null) {
+                        Column column = dataQueryRequest.getColumnWithGroupBy();
+                        if (column != null) {
+                            column.attachQuery(step, dataQueryRequest.groupBy);
+                        }
+                    }
+
+                    map = step
+                            .from(dataQueryRequest.tableDescriptor.tableName)
+                            .fetchOne().intoMap();
 
                     connection.commit();
                 } catch (Exception e) {
                     log.error("Error getting count data from DB.", e);
                 }
-                break;
-        }
+                return map;
+            default:
+                throw new RuntimeException("Other types of aggregation is not supported yet.");
 
-        return result;
+        }
     }
 
 }

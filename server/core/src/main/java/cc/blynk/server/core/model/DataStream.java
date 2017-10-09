@@ -2,6 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.db.dao.table.TableDescriptor;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,6 +38,8 @@ public class DataStream implements CopyObject<DataStream> {
 
     public final MeasurementUnit units;
 
+    public final TableDescriptor tableDescriptor;
+
     @JsonCreator
     public DataStream(@JsonProperty("id") int id,
                       @JsonProperty("pin") byte pin,
@@ -58,6 +61,12 @@ public class DataStream implements CopyObject<DataStream> {
         this.max = max;
         this.label = label;
         this.units = units;
+        //todo hardcode. remove
+        if (pin == 100 && pinType == PinType.VIRTUAL) {
+            tableDescriptor = TableDescriptor.KNIGHT_INSTANCE;
+        } else {
+            tableDescriptor = null;
+        }
     }
 
 

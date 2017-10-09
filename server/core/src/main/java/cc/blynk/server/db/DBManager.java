@@ -12,7 +12,6 @@ import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
-import cc.blynk.server.db.dao.KnightDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
@@ -32,7 +31,6 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +53,6 @@ public class DBManager implements Closeable {
     public UserDBDao userDBDao;
     public EventDBDao eventDBDao;
     public ReportingDBDao reportingDBDao;
-    public KnightDBDao knightDBDao;
     RedeemDBDao redeemDBDao;
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
@@ -114,7 +111,6 @@ public class DBManager implements Closeable {
         this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
-        this.knightDBDao = new KnightDBDao(hikariDataSource);
 
         checkDBVersion();
 
@@ -183,7 +179,7 @@ public class DBManager implements Closeable {
         }
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(DataQueryRequest dataQueryRequest) {
+    public Object getRawData(DataQueryRequest dataQueryRequest) {
         if (isDBEnabled()) {
             return reportingDBDao.getRawData(dataQueryRequest);
         }

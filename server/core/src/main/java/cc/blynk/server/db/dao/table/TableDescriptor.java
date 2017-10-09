@@ -1,5 +1,8 @@
 package cc.blynk.server.db.dao.table;
 
+import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,9 +29,15 @@ public class TableDescriptor {
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
     private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
 
+    public static final MetaField[] metafields = new MetaField[] {
+            new RangeTimeMetaField(1, "Shift 1", Role.ADMIN, false, "07:59:59", "16:00:00"),
+            new RangeTimeMetaField(2, "Shift 2", Role.ADMIN, false, "15:59:59", "23:59:59"),
+            new RangeTimeMetaField(3, "Shift 3", Role.ADMIN, false, "00:00:00", "08:00:00")
+    };
+
     public static final TableDescriptor KNIGHT_INSTANCE = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
             new Column("Start Date", DATE, ofPattern("MM/dd/yy")),
-            new Column("Start Time", TIME, ofPattern("HH:mm:ss")),
+            new Column("Start Time", TIME, ofPattern("HH:mm:ss"), metafields),
             new Column("End Date", DATE, ofPattern("MM/dd/yy")),
             new Column("End Time", TIME, ofPattern("HH:mm:ss")),
             new Column("System Id", INTEGER),
@@ -70,7 +79,7 @@ public class TableDescriptor {
     private String createInsertSQL() {
         String result = "INSERT INTO " + tableName + " "
                 + makeColumnsString(columns) + " VALUES " + makeQuestionMarksString(columns.length);
-        log.debug("insert sql : {}", result);
+        log.debug("Generated insert sql : {}", result);
         return result;
     }
 
