@@ -23,12 +23,14 @@ import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
+import cc.blynk.server.db.dao.table.DataQueryRequest;
+import cc.blynk.server.db.dao.table.DataQueryRequestGroup;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.model.WebProductAndOrgId;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
@@ -40,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -78,10 +81,10 @@ public class DataAPITest extends APIBaseTest {
     public void testInvalidRequestNoDataStream() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl
-                + "/data/1/history?from=0&to="
-                + System.currentTimeMillis()
-                + "&offset=0&limit=1000");
+        DataQueryRequestGroup dataQueryRequestGroup = makeReq(null, 0, 0, System.currentTimeMillis());
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
+
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
             assertEquals("{\"error\":{\"message\":\"No data stream provided for request.\"}}", consumeText(response));
@@ -92,10 +95,9 @@ public class DataAPITest extends APIBaseTest {
     public void testInvalidRequestNoDevice() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl
-                + "/data/1/history?dataStream=V1&from=0&to="
-                + System.currentTimeMillis()
-                + "&offset=0&limit=1000");
+        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
             assertEquals("{\"error\":{\"message\":\"Requested device not exists.\"}}", consumeText(response));
@@ -111,7 +113,7 @@ public class DataAPITest extends APIBaseTest {
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
-        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+        httpPut.setEntity(new StringEntity(newDevice.toString(), APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -125,7 +127,9 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&from=0&to=" + now+1 + "&offset=0&limit=1000");
+        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now+1);
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -152,6 +156,15 @@ public class DataAPITest extends APIBaseTest {
     }
 
     @Test
+    public void printRequest() throws Exception {
+        DataQueryRequestGroup dataQueryRequestGroup = new DataQueryRequestGroup(new DataQueryRequest[] {
+                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, "Load Weight",
+                        0, System.currentTimeMillis(), SourceType.RAW_DATA, new String[] {"Shift 1", "Shift 2", "Shift 3"}, 0, 1000),
+        });
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
+    }
+
+    @Test
     public void testMultiPinRequest() throws Exception {
         login(regularUser.email, regularUser.pass);
 
@@ -160,7 +173,7 @@ public class DataAPITest extends APIBaseTest {
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
-        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+        httpPut.setEntity(new StringEntity(newDevice.toString(), APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -174,7 +187,14 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&dataStream=V2&from=0&to=" + now + "&offset=0&limit=1000");
+        DataQueryRequestGroup dataQueryRequestGroup = new DataQueryRequestGroup(new DataQueryRequest[] {
+                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, null, 0, now, SourceType.RAW_DATA, null, 0, 1000),
+                new DataQueryRequest(PinType.VIRTUAL, (byte) 2, null, 0, now, SourceType.RAW_DATA, null, 0, 1000)
+        });
+
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
+
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -205,8 +225,6 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(1, data.size());
             point0 = (LinkedHashMap) data.get(0);
             assertEquals(124, (Double) point0.get(String.valueOf(now)), 0.0001);
-
-
         }
     }
 
@@ -219,7 +237,7 @@ public class DataAPITest extends APIBaseTest {
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
-        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+        httpPut.setEntity(new StringEntity(newDevice.toString(), APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -232,7 +250,11 @@ public class DataAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        HttpGet getData = new HttpGet(httpsAdminServerUrl + "/data/1/history?dataStream=V1&from=0&to=" + now + "&offset=0&limit=1000");
+        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now);
+
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
+
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -254,6 +276,12 @@ public class DataAPITest extends APIBaseTest {
 
             System.out.println(responseString);
         }
+    }
+
+    private static DataQueryRequestGroup makeReq(PinType pinType, int pin, long from, long to) {
+        return new DataQueryRequestGroup(new DataQueryRequest[] {
+                new DataQueryRequest(pinType, (byte) pin, null, from, to, SourceType.RAW_DATA, null, 0, 1000)
+        });
     }
 
     private int createProduct() throws Exception {
@@ -284,7 +312,7 @@ public class DataAPITest extends APIBaseTest {
         });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

@@ -40,7 +40,7 @@ public class WebSource {
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
                      @JsonProperty("dataStream") DataStream dataStream,
                      @JsonProperty("maxRows") int maxRows,
-                     @JsonProperty("groupBy") String[] groupBy,
+                     @JsonProperty("groupByFields") String[] groupBy,
                      @JsonProperty("sortBy") String[] sortBy,
                      @JsonProperty("sortOrder") SortOrder sortOrder) {
 

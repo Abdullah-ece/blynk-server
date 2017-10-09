@@ -3,7 +3,8 @@ package cc.blynk.server.db.dao.table;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.web.SourceType;
-import cc.blynk.server.internal.ParseUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -12,47 +13,72 @@ import cc.blynk.server.internal.ParseUtil;
  */
 public class DataQueryRequest {
 
-    public final int deviceId;
     public final PinType pinType;
     public final byte pin;
     public final String columnLabel;
     public final long from;
     public final long to;
     public final SourceType sourceType;
-    public final String[] groupBy;
+    public final String[] groupByFields;
     public final int offset;
     public final int limit;
-    public final TableDescriptor tableDescriptor;
+    public transient TableDescriptor tableDescriptor;
+    public int deviceId;
 
-    public DataQueryRequest(int deviceId, String dataStream,
-                            long from, long to, SourceType sourceType, String[] groupBy, int offset, int limit) {
+    public DataQueryRequest(int deviceId,
+                            PinType pinType,
+                            byte pin,
+                            String columnLabel,
+                            long from, long to,
+                            SourceType sourceType,
+                            String[] groupByFields,
+                            int offset, int limit,
+                            TableDescriptor tableDescriptor) {
+        this(pinType, pin, columnLabel, from, to, sourceType, groupByFields, offset, limit);
+        this.deviceId = deviceId;
+    }
 
-        String[] split = dataStream.split("\\."); //expecting something like "V1.Load Weight"
-        String dataStreamName = split[0]; //"V1" for example.
+    @JsonCreator
+    public DataQueryRequest(@JsonProperty("pinType") PinType pinType,
+                            @JsonProperty("pin") byte pin,
+                            @JsonProperty("columnLabel") String columnLabel,
+                            @JsonProperty("from") long from,
+                            @JsonProperty("to") long to,
+                            @JsonProperty("sourceType") SourceType sourceType,
+                            @JsonProperty("groupByFields") String[] groupByFields,
+                            @JsonProperty("offset") int offset,
+                            @JsonProperty("limit") int limit) {
 
         //todo remove hardcode
-        if (dataStreamName.equalsIgnoreCase("V100")) {
-            this.tableDescriptor = TableDescriptor.KNIGHT_INSTANCE;
+        if (tableDescriptor == null) {
+            if (pinType == PinType.VIRTUAL && pin == 100) {
+                this.tableDescriptor = TableDescriptor.KNIGHT_INSTANCE;
+            } else {
+                this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
+            }
         } else {
-            this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
+            this.tableDescriptor = tableDescriptor;
         }
 
-        this.deviceId = deviceId;
-        this.pinType = PinType.getPinType(dataStreamName.charAt(0));
-        this.pin = ParseUtil.parseByte(dataStreamName.substring(1));
-        this.columnLabel = split.length == 2 ? split[1] : null;
+        this.pinType = pinType;
+        this.pin = pin;
+        this.columnLabel = columnLabel;
         this.from = from;
         this.to = to;
         this.sourceType = sourceType == null ? SourceType.RAW_DATA : sourceType;
-        this.groupBy = groupBy;
+        this.groupByFields = groupByFields;
         this.offset = offset;
         this.limit = limit;
+    }
+
+    public void setDeviceId(int deviceId) {
+        this.deviceId = deviceId;
     }
 
     public Column getColumnWithGroupBy() {
         for (Column column : tableDescriptor.columns) {
             for (MetaField metaField : column.metaFields) {
-                if (metaField.isSameName(groupBy)) {
+                if (metaField.isSameName(groupByFields)) {
                     return column;
                 }
             }
@@ -60,4 +86,11 @@ public class DataQueryRequest {
         return null;
     }
 
+    public boolean isNotValid() {
+        return pinType == null || pin == -1;
+    }
+
+    public String name() {
+        return "" + Character.toUpperCase(pinType.pintTypeChar) + pin;
+    }
 }

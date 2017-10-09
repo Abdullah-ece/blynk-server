@@ -65,7 +65,7 @@ public class DataStream implements CopyObject<DataStream> {
         if (pin == 100 && pinType == PinType.VIRTUAL) {
             tableDescriptor = TableDescriptor.KNIGHT_INSTANCE;
         } else {
-            tableDescriptor = null;
+            tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
         }
     }
 

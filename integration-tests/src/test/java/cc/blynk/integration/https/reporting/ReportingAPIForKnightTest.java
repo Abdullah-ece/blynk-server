@@ -2,6 +2,7 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.table.ColumnValue;
@@ -56,7 +57,8 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
     @BeforeClass
     public static void prepareData() throws Exception {
-        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), "db-test.properties");
+        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class),
+                mock(GCMWrapper.class), mock(SMSWrapper.class), "db-test.properties");
         staticHolder.dbManager.executeSQL("DELETE FROM " + KNIGHT_INSTANCE.tableName);
 
         URL url = ExternalAPIForKnightTest.class.getResource("/2017_ISSA_Sample_IOT_Data.csv");
@@ -121,16 +123,16 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             Map<String, Object> result = create.select(
-                    subQuery("start_time", "shift1", "07:59:59", "16:00:00"),
-                    subQuery("start_time", "shift2", "15:59:59", "23:59:59"),
-                    subQuery("start_time", "shift3", "00:00:00", "08:00:00")
+                    subQuery("start_time", "Shift 1", "07:59:59", "16:00:00"),
+                    subQuery("start_time", "Shift 2", "15:59:59", "23:59:59"),
+                    subQuery("start_time", "Shift 3", "00:00:00", "08:00:00")
             )
             .from(KNIGHT_INSTANCE.tableName)
             .fetchOne().intoMap();
 
-            assertEquals(588, result.get("shift1"));
-            assertEquals(507, result.get("shift2"));
-            assertEquals(195, result.get("shift3"));
+            assertEquals(588, result.get("Shift 1"));
+            assertEquals(507, result.get("Shift 2"));
+            assertEquals(195, result.get("Shift 3"));
 
             connection.commit();
         }
@@ -139,9 +141,14 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     @Test
     public void testDynamicQuery() throws Exception {
         DataQueryRequest dataQueryRequest = new DataQueryRequest(
-                2, "V100", 0, Long.MAX_VALUE, SourceType.COUNT,
+                2,
+                PinType.VIRTUAL, (byte) 100,
+                null,
+                0, Long.MAX_VALUE,
+                SourceType.COUNT,
                 new String[] {"Shift 1", "Shift 2", "Shift 3"},
-                0, 10);
+                0, 10,
+                null);
 
         Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);

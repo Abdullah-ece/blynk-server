@@ -3,6 +3,8 @@ package cc.blynk.server.db.dao.table;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.internal.EmptyArraysUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
@@ -32,6 +34,21 @@ public class Column {
     public final DateTimeFormatter formatter;
     public final Function<String, String> filterFunction;
     public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
+
+    @JsonCreator
+    public Column(@JsonProperty("label") String label,
+                  @JsonProperty("columnName") String columnName,
+                  @JsonProperty("type") int type,
+                  @JsonProperty("formatter") DateTimeFormatter formatter,
+                  @JsonProperty("filterFunction") Function<String, String> filterFunction,
+                  @JsonProperty("metaFields") MetaField[] metaFields) {
+        this.label = label;
+        this.columnName = columnName;
+        this.type = type;
+        this.formatter = formatter;
+        this.filterFunction = filterFunction;
+        this.metaFields = metaFields;
+    }
 
     public Column(String label, int type) {
         this.label = label;

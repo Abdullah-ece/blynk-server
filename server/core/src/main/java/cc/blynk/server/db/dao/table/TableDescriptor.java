@@ -3,6 +3,9 @@ package cc.blynk.server.db.dao.table;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.db.dao.table.fucntions.ReplaceFunction;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +47,7 @@ public class TableDescriptor {
             new Column("Washer Id", INTEGER),
             new Column("Formula", INTEGER),
             new Column("Cycle Time", TIME, ofPattern("HH:mm:ss")),
-            new Column("Load Weight", INTEGER, value -> value.replace(" KG", "")),
+            new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
             new Column("Saphire", INTEGER),
             new Column("Boost", INTEGER),
             new Column("Emulsifier", INTEGER),
@@ -70,9 +73,12 @@ public class TableDescriptor {
     public final String insertQueryString;
     public final Column[] columns;
 
-    private TableDescriptor(String tableName, Column[] columns) {
+    @JsonCreator
+    public TableDescriptor(@JsonProperty("tableName") String tableName,
+                           @JsonProperty("columns") Column[] columns) {
         this.tableName = tableName;
         this.columns = columns;
+        //todo build on the fly
         this.insertQueryString = createInsertSQL();
     }
 

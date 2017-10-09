@@ -394,7 +394,7 @@ HOST: https://knight-qa.blynk.cc/
                       "max" : 255
                     },
                     "maxRows" : 10,
-                    "groupBy" : [ "name" ],
+                    "groupByFields" : [ "name" ],
                     "sortBy" : [ "name" ],
                     "sortOrder" : "ASC"
                   } ]
@@ -426,7 +426,7 @@ HOST: https://knight-qa.blynk.cc/
                       "max" : 255
                     },
                     "maxRows" : 10,
-                    "groupBy" : [ "name" ],
+                    "groupByFields" : [ "name" ],
                     "sortBy" : [ "name" ],
                     "sortOrder" : "ASC"
                   }, {
@@ -445,7 +445,7 @@ HOST: https://knight-qa.blynk.cc/
                       "max" : 255
                     },
                     "maxRows" : 10,
-                    "groupBy" : [ "name" ],
+                    "groupByFields" : [ "name" ],
                     "sortBy" : [ "name" ],
                     "sortOrder" : "ASC"
                   } ],
@@ -756,9 +756,23 @@ HOST: https://knight-qa.blynk.cc/
         Error marking event as resolved.
 
 
-## Get graph history for 1 data stream [GET] [/api/data/{deviceId}/history?dataStream=V1&from=0&to=12321312&offset=0&limit=1000]
+## Get graph history for 1 data stream [POST] [/api/data/{deviceId}/history]
 
 + Request (application/json)
+
+        {
+          "dataQueryRequests" : [ {
+            "pinType" : "VIRTUAL",
+            "pin" : 1,
+            "columnLabel" : "Load Weight",
+            "from" : 0,
+            "to" : 1507589071996,
+            "sourceType" : "RAW_DATA",
+            "groupByFields" : [ "Shift 1", "Shift 2", "Shift 3" ],
+            "offset" : 0,
+            "limit" : 1000
+          } ]
+        }
 
 + Response 200 (application/json)
 

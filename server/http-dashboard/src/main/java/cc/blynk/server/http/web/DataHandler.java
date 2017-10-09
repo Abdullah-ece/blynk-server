@@ -5,6 +5,7 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.ContextUser;
 import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
@@ -15,18 +16,16 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.table.DataQueryRequest;
+import cc.blynk.server.db.dao.table.DataQueryRequestGroup;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.core.http.Response.badRequest;
@@ -83,37 +82,28 @@ public class DataHandler extends BaseHttpHandler {
         return null;
     }
 
-    @GET
+    @POST
     @Path("/{deviceId}/history")
     @SuppressWarnings("unckecked")
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @ContextUser User user,
                            @PathParam("deviceId") int deviceId,
-                           @QueryParam("dataStream") String[] dataStreams,
-                           @QueryParam("from") long from,
-                           @QueryParam("to") long to,
-                           @QueryParam("sourceType") SourceType sourceType,
-                           @QueryParam("groupBy") String[] groupBy,
-                           @QueryParam("offset") int offset,
-                           @QueryParam("limit") int limit) {
+                           DataQueryRequestGroup dataQueryRequestGroup) {
 
-        if (dataStreams == null || dataStreams.length == 0) {
+        if (dataQueryRequestGroup == null || dataQueryRequestGroup.isNotValid()) {
             return badRequest("No data stream provided for request.");
         }
 
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
+        dataQueryRequestGroup.setDeviceId(deviceId);
 
         blockingIOProcessor.executeDB(() -> {
             try {
                 Map<String, Data> finalModel = new HashMap<>();
-                for (String dataStream : dataStreams) {
-                    DataQueryRequest dataQueryRequest = new DataQueryRequest(
-                            deviceId, dataStream, from, to, sourceType, groupBy, offset, limit);
-
-                    List<AbstractMap.SimpleEntry<Long, Double>> data =
-                            (List<AbstractMap.SimpleEntry<Long, Double>>) dbManager.getRawData(dataQueryRequest);
-                    finalModel.put(dataStream, new Data(data));
+                for (DataQueryRequest dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
+                    Object data = dbManager.getRawData(dataQueryRequest);
+                    finalModel.put(dataQueryRequest.name(), new Data(data));
                 }
                 ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
             } catch (Exception e) {
@@ -127,9 +117,9 @@ public class DataHandler extends BaseHttpHandler {
 
     private class Data {
 
-        private final List<AbstractMap.SimpleEntry<Long, Double>> data;
+        private final Object data;
 
-        Data(List<AbstractMap.SimpleEntry<Long, Double>> data) {
+        Data(Object data) {
             this.data = data;
         }
     }

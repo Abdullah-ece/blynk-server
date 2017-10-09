@@ -428,10 +428,10 @@ public class ReportingDBDao {
 
                     SelectSelectStep<Record> step = create.select();
 
-                    if (dataQueryRequest.groupBy != null) {
+                    if (dataQueryRequest.groupByFields != null) {
                         Column column = dataQueryRequest.getColumnWithGroupBy();
                         if (column != null) {
-                            column.attachQuery(step, dataQueryRequest.groupBy);
+                            column.attachQuery(step, dataQueryRequest.groupByFields);
                         }
                     }
 
