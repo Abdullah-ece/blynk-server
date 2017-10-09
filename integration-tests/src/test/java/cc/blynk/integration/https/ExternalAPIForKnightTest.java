@@ -7,8 +7,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.junit.After;
@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import static cc.blynk.server.db.dao.table.TableDescriptor.KNIGHT_INSTANCE;
@@ -175,21 +176,25 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
 
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
-            Result<Record3<Integer, Integer, Integer>> result = create.select(
-                    count().filterWhere(DSL.field("start_time").between(lc("07:59:59"), lc("16:00:00"))).as("shift1"),
-                    count().filterWhere(DSL.field("start_time").between(lc("15:59:59"), lc("23:59:59"))).as("shift2"),
-                    count().filterWhere(DSL.field("start_time").between(lc("00:00:00"), lc("08:00:00"))).as("shift3")
-            )
-            .from(KNIGHT_INSTANCE.tableName).fetch();
 
-            for (Record3<Integer, Integer, Integer> record3 : result) {
-                assertEquals(588, record3.get(0));
-                assertEquals(507, record3.get(1));
-                assertEquals(195, record3.get(2));
-            }
+            Map<String, Object> result = create.select(
+                    subQuery("start_time", "shift1", "07:59:59", "16:00:00"),
+                    subQuery("start_time", "shift2", "15:59:59", "23:59:59"),
+                    subQuery("start_time", "shift3", "00:00:00", "08:00:00")
+            )
+            .from(KNIGHT_INSTANCE.tableName)
+            .fetchOne().intoMap();
+
+            assertEquals(588, result.get("shift1"));
+            assertEquals(507, result.get("shift2"));
+            assertEquals(195, result.get("shift3"));
 
             connection.commit();
         }
+    }
+
+    private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {
+        return count().filterWhere(DSL.field(fieldName).between(lc(timeFrom), lc(timeTo))).as(alias);
     }
 
 }
