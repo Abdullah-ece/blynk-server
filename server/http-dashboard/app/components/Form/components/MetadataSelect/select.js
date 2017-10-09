@@ -11,6 +11,7 @@ export default class SelectField extends React.Component {
     displayError: React.PropTypes.any,
     values: React.PropTypes.any,
     defaultValue: React.PropTypes.any,
+    disabled: React.PropTypes.any,
     style: React.PropTypes.any,
     placeholder: React.PropTypes.any,
     mode: React.PropTypes.any,
@@ -68,6 +69,7 @@ export default class SelectField extends React.Component {
       dropdownStyle,
       displayError = true,
       values,
+      disabled = false,
       defaultValue,
       style,
       placeholder,
@@ -98,6 +100,7 @@ export default class SelectField extends React.Component {
         <Select
           mode={mode}
           {...input}
+          disabled={disabled}
           dropdownMatchSelectWidth={dropdownMatchSelectWidth === undefined ? true : dropdownMatchSelectWidth}
           dropdownClassName={dropdownClassName}
           dropdownStyle={dropdownStyle}

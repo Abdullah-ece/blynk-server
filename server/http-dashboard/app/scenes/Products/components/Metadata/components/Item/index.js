@@ -13,6 +13,7 @@ import {reduxForm, touch, Form, getFormSyncErrors} from 'redux-form';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
 import _ from 'lodash';
+import {hardcodedRequiredMetadataFieldsNames} from 'services/Products';
 
 @connect((state, ownProps) => ({
   events: state.Product.edit.events.fields,
@@ -133,6 +134,8 @@ class MetadataItem extends React.PureComponent {
       'product-metadata-item-active': this.props.isActive || this.state.isActive,
     });
 
+    const isRoleSelectDisabled = String(this.props.preview.name) === hardcodedRequiredMetadataFieldsNames.Manufacturer;
+
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
@@ -145,7 +148,7 @@ class MetadataItem extends React.PureComponent {
                 <FormItem offset={false}>
                   <FormItem.Title>Who can edit</FormItem.Title>
                   <FormItem.Content>
-                    <MetadataSelect onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                    <MetadataSelect disabled={isRoleSelectDisabled} onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
                                     name="role" style={{width: '100%'}} values={MetadataRoles}/>
                   </FormItem.Content>
                 </FormItem>
