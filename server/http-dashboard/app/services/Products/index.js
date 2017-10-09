@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
+import {Roles} from '../Roles';
 
 export const TABS = {
   INFO: 'info',
@@ -95,21 +96,21 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       id: 1,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
-      role: 'ADMIN',
+      role: Roles.USER,
       hardcoded: true
     },
     {
       id: 2,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-      role: 'ADMIN',
+      role: Roles.USER,
       hardcoded: true
     },
     {
       id: 3,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.LocationName,
-      role: 'ADMIN',
+      role: Roles.STAFF,
       hardcoded: true
     },
     {
@@ -117,14 +118,14 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
-      role: 'STAFF',
+      role: Roles.USER,
       hardcoded: true
     },
     {
       id: 5,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.ModelName,
-      role: 'ADMIN',
+      role: Roles.STAFF,
       hardcoded: true
     },
     {
@@ -132,7 +133,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
-      role: 'USER',
+      role: Roles.USER,
       hardcoded: true
     }
   ];
