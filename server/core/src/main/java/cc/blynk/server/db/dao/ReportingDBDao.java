@@ -2,17 +2,19 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.server.db.dao.table.DataQueryRequest;
 import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
+import static org.jooq.SQLDialect.POSTGRES_9_4;
 
 /**
  * The Blynk Project.
@@ -358,44 +361,57 @@ public class ReportingDBDao {
                 minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType,
-                                                                  byte pin, long from, long to,
-                                                                  SourceType sourceType, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(DataQueryRequest dataQueryRequest) {
         List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
 
-        //for now supported only RAW_TYPE
+        switch (dataQueryRequest.sourceType) {
+            //todo leaving it as it is for now. move to jooq
+            case RAW_DATA:
+                try (Connection connection = ds.getConnection();
+                     PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {
 
-        try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {
+                    statement.setInt(1, dataQueryRequest.deviceId);
+                    statement.setByte(2, dataQueryRequest.pin);
+                    statement.setString(3, dataQueryRequest.pinType.pinTypeString);
+                    statement.setTimestamp(4, new Timestamp(dataQueryRequest.from), UTC_CALENDAR);
+                    statement.setTimestamp(5, new Timestamp(dataQueryRequest.to), UTC_CALENDAR);
+                    statement.setInt(6, dataQueryRequest.offset);
+                    statement.setInt(7, dataQueryRequest.limit);
 
-            statement.setInt(1, deviceId);
-            statement.setByte(2, pin);
-            statement.setString(3, pinType.pinTypeString);
-            statement.setTimestamp(4, new Timestamp(from), UTC_CALENDAR);
-            statement.setTimestamp(5, new Timestamp(to), UTC_CALENDAR);
-            statement.setInt(6, offset);
-            statement.setInt(7, limit);
+                    log.debug(statement);
 
-            log.debug(statement);
+                    try (ResultSet rs = statement.executeQuery()) {
 
-            try (ResultSet rs = statement.executeQuery()) {
+                        while (rs.next()) {
+                            result.add(
+                                    new AbstractMap.SimpleEntry<>(
+                                            rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
+                                            rs.getDouble("doubleValue")
+                                    )
+                            );
+                        }
 
-                while (rs.next()) {
-                    result.add(
-                            new AbstractMap.SimpleEntry<>(
-                                    rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
-                                    rs.getDouble("doubleValue")
-                            )
-                    );
+                        connection.commit();
+                    }
+                } catch (Exception e) {
+                    log.error("Error getting raw data from DB.", e);
                 }
 
-                connection.commit();
-            }
-        } catch (Exception e) {
-            log.error("Error getting raw data from DB.", e);
+                Collections.reverse(result);
+                break;
+            case COUNT:
+                try (Connection connection = ds.getConnection()) {
+                    DSLContext create = DSL.using(connection, POSTGRES_9_4);
+
+                    //create.select().from
+
+                    connection.commit();
+                } catch (Exception e) {
+                    log.error("Error getting count data from DB.", e);
+                }
+                break;
         }
 
-        Collections.reverse(result);
         return result;
     }
 

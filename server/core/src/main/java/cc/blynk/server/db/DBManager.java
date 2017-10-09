@@ -3,10 +3,8 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
@@ -19,6 +17,7 @@ import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
+import cc.blynk.server.db.dao.table.DataQueryRequest;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.db.model.Purchase;
@@ -184,11 +183,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(int deviceId, PinType pinType,
-                                                                  byte pin, long from, long to,
-                                                                  SourceType sourceType, int offset, int limit) {
+    public List<AbstractMap.SimpleEntry<Long, Double>> getRawData(DataQueryRequest dataQueryRequest) {
         if (isDBEnabled()) {
-            return reportingDBDao.getRawData(deviceId, pinType,  pin, from, to, sourceType, offset, limit);
+            return reportingDBDao.getRawData(dataQueryRequest);
         }
         return Collections.emptyList();
     }

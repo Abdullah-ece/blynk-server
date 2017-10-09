@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.dao.table.DataQueryRequest;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -105,10 +106,10 @@ public class DataHandler extends BaseHttpHandler {
             try {
                 Map<String, Data> finalModel = new HashMap<>();
                 for (String dataStream : dataStreams) {
-                    PinType pinType = PinType.getPinType(dataStream.charAt(0));
-                    byte pin = ParseUtil.parseByte(dataStream.substring(1));
-                    List<AbstractMap.SimpleEntry<Long, Double>> data =
-                            dbManager.getRawData(deviceId, pinType, pin, from, to, sourceType, offset, limit);
+                    DataQueryRequest dataQueryRequest = new DataQueryRequest(
+                            deviceId, dataStream, from, to, sourceType, offset, limit);
+
+                    List<AbstractMap.SimpleEntry<Long, Double>> data = dbManager.getRawData(dataQueryRequest);
                     finalModel.put(dataStream, new Data(data));
                 }
                 ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());

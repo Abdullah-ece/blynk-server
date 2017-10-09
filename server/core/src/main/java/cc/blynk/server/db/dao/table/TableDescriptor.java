@@ -5,9 +5,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.StringJoiner;
 
+import static java.sql.Types.CHAR;
 import static java.sql.Types.DATE;
+import static java.sql.Types.DOUBLE;
 import static java.sql.Types.INTEGER;
 import static java.sql.Types.TIME;
+import static java.sql.Types.TIMESTAMP;
+import static java.sql.Types.VARCHAR;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 /**
@@ -20,6 +24,8 @@ public class TableDescriptor {
     private static final Logger log = LogManager.getLogger(TableDescriptor.class);
 
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
+    private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
+
     public static final TableDescriptor KNIGHT_INSTANCE = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
             new Column("Start Date", DATE, ofPattern("MM/dd/yy")),
             new Column("Start Time", TIME, ofPattern("HH:mm:ss")),
@@ -38,6 +44,17 @@ public class TableDescriptor {
             new Column("Sour", INTEGER),
             new Column("Supreme", INTEGER),
             new Column("Jasmine", INTEGER)
+    });
+
+    public static final TableDescriptor BLYNK_DEFAULT_INSTANCE = new TableDescriptor(BLYNK_DEFAULT_NAME, new Column[] {
+            new Column("Email", VARCHAR),
+            new Column("Project Id", INTEGER),
+            new Column("Device Id", INTEGER),
+            new Column("Pin", INTEGER),
+            new Column("Pin Type", "pinType", CHAR),
+            new Column("Timestamp", "ts", TIMESTAMP),
+            new Column("String value", "stringValue", VARCHAR),
+            new Column("Double value", "doubleValue", DOUBLE)
     });
 
     public final String tableName;

@@ -35,6 +35,14 @@ public class Column {
         this.filterFunction = null;
     }
 
+    public Column(String label, String columnName, int type) {
+        this.label = label;
+        this.columnName = columnName;
+        this.type = type;
+        this.formatter = null;
+        this.filterFunction = null;
+    }
+
     public Column(String label, int type, DateTimeFormatter formatter) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
