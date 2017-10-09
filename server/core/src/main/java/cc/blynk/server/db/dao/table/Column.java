@@ -21,27 +21,31 @@ import static java.sql.Types.TIME;
  */
 public class Column {
 
+    public final String label;
     public final String columnName;
     public final int type;
     public final DateTimeFormatter formatter;
     public final Function<String, String> filterFunction;
 
-    public Column(String columnName, int type) {
-        this.columnName = columnName;
+    public Column(String label, int type) {
+        this.label = label;
+        this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
         this.formatter = null;
         this.filterFunction = null;
     }
 
-    public Column(String columnName, int type, DateTimeFormatter formatter) {
-        this.columnName = columnName;
+    public Column(String label, int type, DateTimeFormatter formatter) {
+        this.label = label;
+        this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
         this.formatter = formatter;
         this.filterFunction = null;
     }
 
-    public Column(String columnName, int type, Function<String, String> filterFunction) {
-        this.columnName = columnName;
+    public Column(String label, int type, Function<String, String> filterFunction) {
+        this.label = label;
+        this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
         this.formatter = null;
         this.filterFunction = filterFunction;

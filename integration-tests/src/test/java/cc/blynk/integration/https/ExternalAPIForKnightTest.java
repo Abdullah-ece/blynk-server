@@ -178,7 +178,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
             Result<Record3<Integer, Integer, Integer>> result = create.select(
                     count().filterWhere(DSL.field("start_time").between(lc("07:59:59"), lc("16:00:00"))).as("shift1"),
                     count().filterWhere(DSL.field("start_time").between(lc("15:59:59"), lc("23:59:59"))).as("shift2"),
-                    count().filterWhere(DSL.field("start_time").betweenSymmetric(lc("00:00:00"), lc("08:00:00"))).as("shift3")
+                    count().filterWhere(DSL.field("start_time").between(lc("00:00:00"), lc("08:00:00"))).as("shift3")
             )
             .from(KNIGHT_INSTANCE.tableName).fetch();
 
