@@ -44,7 +44,7 @@ export default class ForgotPassForm extends React.Component {
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
                 disabled={invalid || pristine || submitting}>
-          Find
+          Send
         </Button>
 
       </FormItem>
