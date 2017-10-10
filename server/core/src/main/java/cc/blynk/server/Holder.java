@@ -24,7 +24,6 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.epoll.Epoll;
-import io.netty.handler.ssl.OpenSsl;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -132,7 +131,7 @@ public class Holder implements Closeable {
                 .setUserAgent(null)
                 .setKeepAlive(true)
                 .setUseNativeTransport(Epoll.isAvailable())
-                .setUseOpenSsl(OpenSsl.isAvailable())
+                .setUseOpenSsl(SslContextHolder.isOpenSslAvailable())
                 .build()
         );
 
@@ -199,7 +198,7 @@ public class Holder implements Closeable {
                 .setUserAgent(null)
                 .setKeepAlive(true)
                 .setUseNativeTransport(Epoll.isAvailable())
-                .setUseOpenSsl(OpenSsl.isAvailable())
+                .setUseOpenSsl(SslContextHolder.isOpenSslAvailable())
                 .build()
         );
 

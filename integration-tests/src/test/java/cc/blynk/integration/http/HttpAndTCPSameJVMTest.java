@@ -97,6 +97,17 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
+    //todo fix? - https://github.com/blynkkk/blynk-server/issues/754
+    public void testWrongPortHttpConnect() throws Exception {
+        HttpGet request = new HttpGet(String.format("http://localhost:%s/", tcpHardPort) + "robots.txt");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void testChangeNonWidgetPinValueViaHardwareAndGetViaHTTP() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 200");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 200"))));

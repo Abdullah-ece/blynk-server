@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -126,7 +127,7 @@ public class ReportingDao implements Closeable {
     private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType,
                                    ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
-            localByteBuf.flip();
+            ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();
@@ -241,6 +242,7 @@ public class ReportingDao implements Closeable {
 
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
+            log.debug("Getting data for graph pin : {}.", graphPinRequest);
             if (graphPinRequest.isValid()) {
                 ByteBuffer byteBuffer = graphPinRequest.isLiveData()
                         //live graph data is not on disk but in memory

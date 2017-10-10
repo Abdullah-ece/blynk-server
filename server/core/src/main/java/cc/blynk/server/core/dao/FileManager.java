@@ -267,7 +267,7 @@ public class FileManager {
             Files.write(path, json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
             return true;
         } catch (Exception e) {
-            log.error("Error saving cloned project to disk.", e);
+            log.error("Error saving cloned project to disk. {}", e.getMessage());
         }
         return false;
     }
@@ -277,7 +277,7 @@ public class FileManager {
             Path path = Paths.get(cloneDataDir, token);
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            log.error("Error saving cloned project to disk.", e);
+            log.warn("Didn't find cloned project on disk. {}", e.getMessage());
         }
         return null;
     }
