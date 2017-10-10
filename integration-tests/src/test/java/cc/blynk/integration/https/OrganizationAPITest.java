@@ -24,8 +24,8 @@ import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
-import cc.blynk.server.http.web.model.WebEmail;
-import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.server.http.web.dto.EmailDTO;
+import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -149,14 +149,14 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/canInviteUser");
-        req.setEntity(new StringEntity(new WebEmail("xxx@gmail.com").toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new EmailDTO("xxx@gmail.com").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
         req = new HttpPost(httpsAdminServerUrl + "/organization/1/canInviteUser");
-        req.setEntity(new StringEntity(new WebEmail("user@blynk.cc").toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new EmailDTO("user@blynk.cc").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -556,7 +556,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -656,7 +656,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
-        createProductReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        createProductReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(createProductReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -679,7 +679,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
-        req2.setEntity(new StringEntity(new WebProductAndOrgId(1, product2).toString(), ContentType.APPLICATION_JSON));
+        req2.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product2).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -785,7 +785,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
-        createProductReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        createProductReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(createProductReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -808,7 +808,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
-        req2.setEntity(new StringEntity(new WebProductAndOrgId(1, product2).toString(), ContentType.APPLICATION_JSON));
+        req2.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product2).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -911,7 +911,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -976,7 +976,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -1114,7 +1114,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
-        createProductReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        createProductReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(createProductReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -1134,7 +1134,7 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
-        req2.setEntity(new StringEntity(new WebProductAndOrgId(1, product2).toString(), ContentType.APPLICATION_JSON));
+        req2.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product2).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

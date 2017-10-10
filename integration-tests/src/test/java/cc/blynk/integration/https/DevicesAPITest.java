@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
-import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -588,7 +588,7 @@ public class DevicesAPITest extends APIBaseTest {
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

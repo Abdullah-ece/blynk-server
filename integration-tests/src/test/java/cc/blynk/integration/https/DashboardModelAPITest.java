@@ -23,7 +23,7 @@ import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -216,7 +216,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         }
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
-        updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        updateReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -304,7 +304,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         });
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
-        updateReq.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        updateReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -384,7 +384,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

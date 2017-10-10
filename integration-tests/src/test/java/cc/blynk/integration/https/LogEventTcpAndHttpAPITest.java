@@ -23,9 +23,9 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.web.model.WebComment;
-import cc.blynk.server.http.web.model.WebDevice;
-import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.server.http.web.dto.CommentDTO;
+import cc.blynk.server.http.web.dto.DeviceDTO;
+import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -433,7 +433,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/1/resolveEvent/" + logEventId);
-        post.setEntity(new StringEntity(new WebComment("123").toString(), ContentType.APPLICATION_JSON));
+        post.setEntity(new StringEntity(new CommentDTO("123").toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -509,7 +509,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/1/resolveEvent/" + logEventId);
-        post.setEntity(new StringEntity(new WebComment("123").toString(), ContentType.APPLICATION_JSON));
+        post.setEntity(new StringEntity(new CommentDTO("123").toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -613,7 +613,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new WebProductAndOrgId(1, product).toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -718,10 +718,10 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
             assertNotNull(devices);
             assertEquals(2, devices.length);
-            WebDevice device = devices[1];
+            DeviceDTO device = devices[1];
             assertEquals(1, device.id);
             assertNotNull(device.criticalSinceLastView);
             assertEquals(1, device.criticalSinceLastView.intValue());
@@ -751,10 +751,10 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
             assertNotNull(devices);
             assertEquals(2, devices.length);
-            WebDevice device = devices[1];
+            DeviceDTO device = devices[1];
             assertEquals(1, device.id);
             assertNull(device.criticalSinceLastView);
             assertNull(device.warningSinceLastView);
@@ -779,10 +779,10 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
             assertNotNull(devices);
             assertEquals(2, devices.length);
-            WebDevice device = devices[1];
+            DeviceDTO device = devices[1];
             assertEquals(1, device.id);
             assertNotNull(device.criticalSinceLastView);
             assertEquals(1, device.criticalSinceLastView.intValue());
@@ -812,10 +812,10 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
             assertNotNull(devices);
             assertEquals(2, devices.length);
-            WebDevice device = devices[1];
+            DeviceDTO device = devices[1];
             assertEquals(1, device.id);
             assertNull(device.criticalSinceLastView);
             assertNull(device.warningSinceLastView);
@@ -829,10 +829,10 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = newHttpClient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            WebDevice[] devices = JsonParser.readAny(responseString, WebDevice[].class);
+            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
             assertNotNull(devices);
             assertEquals(2, devices.length);
-            WebDevice device = devices[1];
+            DeviceDTO device = devices[1];
             assertEquals(1, device.id);
             assertNotNull(device.criticalSinceLastView);
             assertEquals(1, device.criticalSinceLastView.intValue());
