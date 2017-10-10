@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
+import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
@@ -151,7 +153,11 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 null,
                 0, Long.MAX_VALUE,
                 SourceType.COUNT,
-                new String[] {"Shift 1", "Shift 2", "Shift 3"},
+                new SelectedColumnDTO[] {
+                        metaDataFrom("Shift 1"),
+                        metaDataFrom("Shift 2"),
+                        metaDataFrom("Shift 3")
+                },
                 0, 10,
                 null);
 
@@ -177,14 +183,14 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 2,
                 PinType.VIRTUAL, (byte) 100,
                 new SelectedColumnDTO[] {
-                        new SelectedColumnDTO("saphire", "Saphire"),
-                        new SelectedColumnDTO("boost", "Boost"),
-                        new SelectedColumnDTO("emulsifier", "Emulsifier"),
-                        new SelectedColumnDTO("destain", "Destain"),
-                        new SelectedColumnDTO("bleach", "Bleach"),
-                        new SelectedColumnDTO("sour", "Sour"),
-                        new SelectedColumnDTO("supreme", "Supreme"),
-                        new SelectedColumnDTO("jasmine", "Jasmine")
+                        columnFrom("Saphire"),
+                        columnFrom("Boost"),
+                        columnFrom("Emulsifier"),
+                        columnFrom("Destain"),
+                        columnFrom("Bleach"),
+                        columnFrom("Sour"),
+                        columnFrom("Supreme"),
+                        columnFrom("Jasmine")
                 },
                 0, Long.MAX_VALUE,
                 SourceType.SUM,

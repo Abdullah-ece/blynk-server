@@ -12,13 +12,15 @@ public class SelectedColumnDTO {
 
     public final String name;
     public final String label;
+    public final FieldType type;
 
     @JsonCreator
     public SelectedColumnDTO(@JsonProperty("name") String name,
-                             @JsonProperty("label") String label) {
+                             @JsonProperty("label") String label,
+                             @JsonProperty("type") FieldType fieldType) {
         this.name = name;
         this.label = label;
+        this.type = fieldType;
     }
-
 
 }

@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -64,9 +65,9 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.isDefault = metaField.isDefault;
     }
 
-    public boolean isSameName(String[] groupBy) {
-        for (String groupFieldName : groupBy) {
-            if (groupFieldName.equalsIgnoreCase(name)) {
+    public boolean isSameName(SelectedColumnDTO[] groupBy) {
+        for (SelectedColumnDTO groupFieldName : groupBy) {
+            if (groupFieldName.name.equalsIgnoreCase(name)) {
                 return true;
             }
         }

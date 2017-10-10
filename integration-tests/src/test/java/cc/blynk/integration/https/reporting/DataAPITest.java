@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -42,6 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -159,7 +161,12 @@ public class DataAPITest extends APIBaseTest {
     public void printRequest() throws Exception {
         DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
                 new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 1, null,
-                        0, System.currentTimeMillis(), SourceType.RAW_DATA, new String[] {"Shift 1", "Shift 2", "Shift 3"}, 0, 1000),
+                        0, System.currentTimeMillis(), SourceType.RAW_DATA,
+                        new SelectedColumnDTO[] {
+                                metaDataFrom("Shift 1"),
+                                metaDataFrom("Shift 2"),
+                                metaDataFrom("Shift 3")
+                        }, 0, 1000),
         });
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
     }

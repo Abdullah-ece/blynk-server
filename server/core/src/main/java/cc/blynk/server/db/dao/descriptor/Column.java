@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -122,7 +123,7 @@ public class Column {
         }
     }
 
-    public void attachQuery(SelectSelectStep<Record> step, String[] groupBy) {
+    public void attachQuery(SelectSelectStep<Record> step, SelectedColumnDTO[] groupBy) {
         for (MetaField metaField : metaFields) {
             if (metaField.isSameName(groupBy)) {
                 //special kind of grouping - range grouping...
