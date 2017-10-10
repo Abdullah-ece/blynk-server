@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -421,6 +422,7 @@ public class ReportingDBDao {
 
                 Collections.reverse(result);
                 return result;
+            case SUM:
             case COUNT:
                 Map<String, Object> map = Collections.emptyMap();
                 try (Connection connection = ds.getConnection()) {
@@ -432,6 +434,12 @@ public class ReportingDBDao {
                         Column column = dataQueryRequest.getColumnWithGroupBy();
                         if (column != null) {
                             column.attachQuery(step, dataQueryRequest.groupByFields);
+                        }
+                    }
+
+                    if (dataQueryRequest.selectedColumns != null) {
+                        for (SelectedColumnDTO selectedColumn : dataQueryRequest.selectedColumns) {
+                            step.select(dataQueryRequest.sourceType.apply(selectedColumn));
                         }
                     }
 

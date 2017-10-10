@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao.table;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,35 +14,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DataQueryRequest {
 
+    public final SourceType sourceType;
     public final PinType pinType;
     public final byte pin;
-    public final String columnLabel;
+    public final SelectedColumnDTO[] selectedColumns;
+
     public final long from;
     public final long to;
-    public final SourceType sourceType;
+
     public final String[] groupByFields;
+
     public final int offset;
     public final int limit;
+
     public transient TableDescriptor tableDescriptor;
     public int deviceId;
 
     public DataQueryRequest(int deviceId,
                             PinType pinType,
                             byte pin,
-                            String columnLabel,
+                            SelectedColumnDTO[] selectedColumns,
                             long from, long to,
                             SourceType sourceType,
                             String[] groupByFields,
                             int offset, int limit,
                             TableDescriptor tableDescriptor) {
-        this(pinType, pin, columnLabel, from, to, sourceType, groupByFields, offset, limit);
+        this(pinType, pin, selectedColumns, from, to, sourceType, groupByFields, offset, limit);
         this.deviceId = deviceId;
     }
 
     @JsonCreator
     public DataQueryRequest(@JsonProperty("pinType") PinType pinType,
                             @JsonProperty("pin") byte pin,
-                            @JsonProperty("columnLabel") String columnLabel,
+                            @JsonProperty("selectedColumns") SelectedColumnDTO[] selectedColumns,
                             @JsonProperty("from") long from,
                             @JsonProperty("to") long to,
                             @JsonProperty("sourceType") SourceType sourceType,
@@ -62,7 +67,7 @@ public class DataQueryRequest {
 
         this.pinType = pinType;
         this.pin = pin;
-        this.columnLabel = columnLabel;
+        this.selectedColumns = selectedColumns;
         this.from = from;
         this.to = to;
         this.sourceType = sourceType == null ? SourceType.RAW_DATA : sourceType;

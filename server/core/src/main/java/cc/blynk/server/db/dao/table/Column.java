@@ -52,7 +52,7 @@ public class Column {
 
     public Column(String label, int type) {
         this.label = label;
-        this.columnName = label.toLowerCase().replace(" ", "_");
+        this.columnName = labelTrim(label);
         this.type = type;
         this.formatter = null;
         this.filterFunction = null;
@@ -89,6 +89,10 @@ public class Column {
         this.type = type;
         this.formatter = null;
         this.filterFunction = filterFunction;
+    }
+
+    public static String labelTrim(String columnLabel) {
+        return columnLabel.toLowerCase().replace(" ", "_");
     }
 
     public Object parse(String val) {

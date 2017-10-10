@@ -4,6 +4,7 @@ import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.table.ColumnValue;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -140,7 +142,9 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
-    public void testDynamicQuery() throws Exception {
+    //Number of Loads by Shift
+    //https://github.com/blynkkk/knight/issues/778
+    public void numberOfLoadsByShift() throws Exception {
         DataQueryRequest dataQueryRequest = new DataQueryRequest(
                 2,
                 PinType.VIRTUAL, (byte) 100,
@@ -150,6 +154,8 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 new String[] {"Shift 1", "Shift 2", "Shift 3"},
                 0, 10,
                 null);
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
         Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);
@@ -161,6 +167,49 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         assertEquals(588, map.get("Shift 1"));
         assertEquals(507, map.get("Shift 2"));
         assertEquals(195, map.get("Shift 3"));
+    }
+
+    @Test
+    //Number of Loads by Shift
+    //https://github.com/blynkkk/knight/issues/785
+    public void totalCostPerProduct() throws Exception {
+        DataQueryRequest dataQueryRequest = new DataQueryRequest(
+                2,
+                PinType.VIRTUAL, (byte) 100,
+                new SelectedColumnDTO[] {
+                        new SelectedColumnDTO("saphire", "Saphire"),
+                        new SelectedColumnDTO("boost", "Boost"),
+                        new SelectedColumnDTO("emulsifier", "Emulsifier"),
+                        new SelectedColumnDTO("destain", "Destain"),
+                        new SelectedColumnDTO("bleach", "Bleach"),
+                        new SelectedColumnDTO("sour", "Sour"),
+                        new SelectedColumnDTO("supreme", "Supreme"),
+                        new SelectedColumnDTO("jasmine", "Jasmine")
+                },
+                0, Long.MAX_VALUE,
+                SourceType.SUM,
+                null,
+                0, 10,
+                null);
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
+
+        Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        assertNotNull(resultObj);
+
+        Map map = (Map) resultObj;
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
+
+        assertEquals(8, map.size());
+        assertEquals(new BigDecimal(191120), map.get("Saphire"));
+        assertEquals(new BigDecimal(152155), map.get("Boost"));
+        assertEquals(new BigDecimal(178775), map.get("Emulsifier"));
+        assertEquals(new BigDecimal(153420), map.get("Destain"));
+        assertEquals(new BigDecimal(29914), map.get("Bleach"));
+        assertEquals(new BigDecimal(66127), map.get("Sour"));
+        assertEquals(new BigDecimal(62960), map.get("Supreme"));
+        assertEquals(new BigDecimal(3040), map.get("Jasmine"));
     }
 
     private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {

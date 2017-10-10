@@ -158,7 +158,7 @@ public class DataAPITest extends APIBaseTest {
     @Test
     public void printRequest() throws Exception {
         DataQueryRequestGroup dataQueryRequestGroup = new DataQueryRequestGroup(new DataQueryRequest[] {
-                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, "Load Weight",
+                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, null,
                         0, System.currentTimeMillis(), SourceType.RAW_DATA, new String[] {"Shift 1", "Shift 2", "Shift 3"}, 0, 1000),
         });
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
