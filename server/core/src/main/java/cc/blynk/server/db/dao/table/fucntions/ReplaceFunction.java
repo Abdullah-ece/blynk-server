@@ -19,11 +19,11 @@ public class ReplaceFunction implements Function<String, String> {
     public ReplaceFunction(@JsonProperty("replaceFrom") String replaceFrom,
                            @JsonProperty("replaceTo") String replaceTo) {
         this.replaceFrom = replaceFrom;
-        this.replaceTo = replaceTo;
+        this.replaceTo = replaceTo == null ? "" : null;
     }
 
     public ReplaceFunction(String replaceFrom) {
-        this(replaceFrom, "");
+        this(replaceFrom, null);
     }
 
     @Override

@@ -3,6 +3,7 @@ package cc.blynk.integration.https.reporting;
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.table.ColumnValue;
@@ -154,6 +155,8 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         assertNotNull(resultObj);
 
         Map map = (Map) resultObj;
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
 
         assertEquals(588, map.get("Shift 1"));
         assertEquals(507, map.get("Shift 2"));
