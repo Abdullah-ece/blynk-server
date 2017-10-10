@@ -375,7 +375,7 @@ public class ReportingDBDao {
                     .execute();
 
             connection.commit();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error inserting knight data.", e);
         }
     }

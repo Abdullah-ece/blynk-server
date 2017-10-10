@@ -68,16 +68,16 @@ public class WebSource {
             return false;
         }
         WebSource webSource = (WebSource) o;
-        return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled &&
-                limit == webSource.limit &&
-                Objects.equals(label, webSource.label) &&
-                Objects.equals(color, webSource.color) &&
-                sourceType == webSource.sourceType &&
-                Objects.equals(dataStream, webSource.dataStream) &&
-                Arrays.equals(selectedColumns, webSource.selectedColumns) &&
-                Arrays.equals(groupByFields, webSource.groupByFields) &&
-                Arrays.equals(sortByFields, webSource.sortByFields) &&
-                sortOrder == webSource.sortOrder;
+        return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled
+                && limit == webSource.limit
+                && Objects.equals(label, webSource.label)
+                && Objects.equals(color, webSource.color)
+                && sourceType == webSource.sourceType
+                && Objects.equals(dataStream, webSource.dataStream)
+                && Arrays.equals(selectedColumns, webSource.selectedColumns)
+                && Arrays.equals(groupByFields, webSource.groupByFields)
+                && Arrays.equals(sortByFields, webSource.sortByFields)
+                && sortOrder == webSource.sortOrder;
     }
 
     @Override
