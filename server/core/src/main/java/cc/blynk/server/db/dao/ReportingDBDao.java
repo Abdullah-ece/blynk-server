@@ -9,10 +9,10 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.server.db.dao.table.Column;
-import cc.blynk.server.db.dao.table.ColumnValue;
-import cc.blynk.server.db.dao.table.DataQueryRequest;
-import cc.blynk.server.db.dao.table.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.Column;
+import cc.blynk.server.db.dao.descriptor.ColumnValueDTO;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -373,7 +373,7 @@ public class ReportingDBDao {
              PreparedStatement ps = connection.prepareStatement(query)) {
 
             for (int i = 0; i < tableDataMapper.data.length; i++) {
-                ColumnValue entry = tableDataMapper.data[i];
+                ColumnValueDTO entry = tableDataMapper.data[i];
                 log.trace("Index {}, value {}.", i + 1, entry.value);
                 ps.setObject(i + 1, entry.value);
             }
@@ -385,7 +385,7 @@ public class ReportingDBDao {
         }
     }
 
-    public Object getRawData(DataQueryRequest dataQueryRequest) {
+    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
         switch (dataQueryRequest.sourceType) {
             //todo leaving it as it is for now. move to jooq
             case RAW_DATA:
@@ -431,7 +431,8 @@ public class ReportingDBDao {
                     SelectSelectStep<Record> step = create.select();
 
                     if (dataQueryRequest.groupByFields != null) {
-                        Column column = dataQueryRequest.getColumnWithGroupBy();
+                        Column column = dataQueryRequest.tableDescriptor
+                                .getColumnWithGroupBy(dataQueryRequest.groupByFields);
                         if (column != null) {
                             column.attachQuery(step, dataQueryRequest.groupByFields);
                         }

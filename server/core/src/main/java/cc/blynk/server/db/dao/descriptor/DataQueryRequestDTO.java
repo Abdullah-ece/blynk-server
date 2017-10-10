@@ -1,7 +1,6 @@
 package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -78,17 +77,6 @@ public class DataQueryRequestDTO {
 
     public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public Column getColumnWithGroupBy() {
-        for (Column column : tableDescriptor.columns) {
-            for (MetaField metaField : column.metaFields) {
-                if (metaField.isSameName(groupByFields)) {
-                    return column;
-                }
-            }
-        }
-        return null;
     }
 
     public boolean isNotValid() {

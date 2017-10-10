@@ -82,6 +82,17 @@ public class TableDescriptor {
         this.insertQueryString = createInsertSQL();
     }
 
+    public Column getColumnWithGroupBy(String[] groupByFields) {
+        for (Column column : columns) {
+            for (MetaField metaField : column.metaFields) {
+                if (metaField.isSameName(groupByFields)) {
+                    return column;
+                }
+            }
+        }
+        return null;
+    }
+
     private String createInsertSQL() {
         String result = "INSERT INTO " + tableName + " "
                 + makeColumnsString(columns) + " VALUES " + makeQuestionMarksString(columns.length);
