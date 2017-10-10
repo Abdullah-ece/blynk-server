@@ -34,8 +34,8 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
-import cc.blynk.server.http.web.model.WebComment;
-import cc.blynk.server.http.web.model.WebDevice;
+import cc.blynk.server.http.web.dto.CommentDTO;
+import cc.blynk.server.http.web.dto.DeviceDTO;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandler;
@@ -123,7 +123,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                     @PathParam("orgId") int orgId,
                                     @PathParam("deviceId") int deviceId,
                                     @PathParam("logEventId") int logEventId,
-                                    WebComment comment) {
+                                    CommentDTO comment) {
         User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
@@ -213,7 +213,7 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                List<WebDevice> result = joinEventsCountSinceLastView(devices, user.email);
+                List<DeviceDTO> result = joinEventsCountSinceLastView(devices, user.email);
                 response = ok(sort(result, orderFields, order));
             } catch (Exception e) {
                 log.error("Error getting counters for devices.", e);
@@ -225,18 +225,18 @@ public class DevicesHandler extends BaseHttpHandler {
         return null;
     }
 
-    private WebDevice joinProductAndOrgInfo(Device device) {
+    private DeviceDTO joinProductAndOrgInfo(Device device) {
         Product product = organizationDao.getProductByIdOrNull(device.productId);
         String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
-        return new WebDevice(device, product, orgName);
+        return new DeviceDTO(device, product, orgName);
     }
 
-    private List<WebDevice> joinEventsCountSinceLastView(Collection<Device> devices, String email) throws Exception {
-        List<WebDevice> result = new ArrayList<>(devices.size());
+    private List<DeviceDTO> joinEventsCountSinceLastView(Collection<Device> devices, String email) throws Exception {
+        List<DeviceDTO> result = new ArrayList<>(devices.size());
         Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastView(email);
         for (Device device : devices) {
             Product product = organizationDao.getProductByIdOrNull(device.productId);
-            result.add(new WebDevice(device, product, counters));
+            result.add(new DeviceDTO(device, product, counters));
         }
         return result;
     }

@@ -33,7 +33,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.http.web.model.WebEmail;
+import cc.blynk.server.http.web.dto.EmailDTO;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -157,7 +157,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Path("/{orgId}/canInviteUser")
     @Admin
-    public Response checkUserEmail(WebEmail webEmail) {
+    public Response checkUserEmail(EmailDTO webEmail) {
         if (userDao.contains(webEmail.email, BLYNK)) {
             return badRequest("User already exists in system.");
         } else {

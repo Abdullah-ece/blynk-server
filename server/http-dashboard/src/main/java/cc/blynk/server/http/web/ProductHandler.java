@@ -21,7 +21,7 @@ import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.http.web.model.WebProductAndOrgId;
+import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandler;
 
@@ -94,15 +94,15 @@ public class ProductHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response create(WebProductAndOrgId webProductAndOrgId) {
-        Product product = webProductAndOrgId.product;
+    public Response create(ProductAndOrgIdDTO productAndOrgIdDTO) {
+        Product product = productAndOrgIdDTO.product;
 
         if (product == null || product.notValid()) {
             log.error("Product is empty or has not name. {}", product);
             return badRequest("Product is empty or has not name.");
         }
 
-        Organization organization = organizationDao.getOrgById(webProductAndOrgId.orgId);
+        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
 
         if (organization.isSubOrg()) {
             log.error("You can't create products for sub organizations.");
@@ -116,7 +116,7 @@ public class ProductHandler extends BaseHttpHandler {
 
         product.checkEvents();
 
-        product = organizationDao.createProduct(webProductAndOrgId.orgId, product);
+        product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
 
         return ok(product);
     }
@@ -124,8 +124,8 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response updateProduct(WebProductAndOrgId webProductAndOrgId) {
-        Product updatedProduct = webProductAndOrgId.product;
+    public Response updateProduct(ProductAndOrgIdDTO productAndOrgIdDTO) {
+        Product updatedProduct = productAndOrgIdDTO.product;
 
         if (updatedProduct == null) {
             log.error("No product for update.");
@@ -137,14 +137,14 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Organization organization = organizationDao.getOrgById(webProductAndOrgId.orgId);
+        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
 
         if (!organization.isValidProductName(updatedProduct)) {
             log.error("Organization {} already has product with name {}.", organization.name, updatedProduct.name);
             return badRequest("Product with this name already exists.");
         }
 
-        Product existingProduct = organizationDao.getProduct(webProductAndOrgId.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
 
         if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {
             log.info("Dashboard was changed. Updating all devices.");
@@ -165,14 +165,14 @@ public class ProductHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/updateDevices")
-    public Response updateProductAndDevices(@ContextUser User user, WebProductAndOrgId webProductAndOrgId) {
-        Product updatedProduct = webProductAndOrgId.product;
+    public Response updateProductAndDevices(@ContextUser User user, ProductAndOrgIdDTO productAndOrgIdDTO) {
+        Product updatedProduct = productAndOrgIdDTO.product;
         if (updatedProduct == null) {
             log.error("No product for update.");
             return badRequest();
         }
 
-        Product existingProduct = organizationDao.getProduct(webProductAndOrgId.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
 
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);
