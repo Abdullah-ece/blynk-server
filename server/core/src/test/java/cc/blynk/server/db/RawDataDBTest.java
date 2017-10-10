@@ -3,7 +3,6 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -70,8 +70,8 @@ public class RawDataDBTest {
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(2,
-                PinType.VIRTUAL, (byte) 3, null, 0, now, SourceType.RAW_DATA, null, 0, 10, null);
+        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
+                PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 10, 0, now);
         List<AbstractMap.SimpleEntry<Long, Double>> result = (List<AbstractMap.SimpleEntry<Long, Double>>)
                 dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
@@ -92,8 +92,8 @@ public class RawDataDBTest {
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(2,
-                PinType.VIRTUAL, (byte) 3, null, 0, now+2, SourceType.RAW_DATA, null, 0, 10, null);
+        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
+                PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 10, 0, now+2);
         List<AbstractMap.SimpleEntry<Long, Double>> result = (List<AbstractMap.SimpleEntry<Long, Double>>)
                 dbManager.reportingDBDao.getRawData(dataQueryRequest);
 
@@ -102,20 +102,21 @@ public class RawDataDBTest {
 
         Iterator<AbstractMap.SimpleEntry<Long, Double>> iterator = result.iterator();
         Map.Entry<Long, Double> entry = iterator.next();
-        assertEquals(now + 2, entry.getKey().longValue());
-        assertEquals(125, entry.getValue(), 0.0001);
+
+        assertEquals(now, entry.getKey().longValue());
+        assertEquals(123, entry.getValue(), 0.0001);
 
         entry = iterator.next();
         assertEquals(now + 1, entry.getKey().longValue());
         assertEquals(124, entry.getValue(), 0.0001);
 
         entry = iterator.next();
-        assertEquals(now, entry.getKey().longValue());
-        assertEquals(123, entry.getValue(), 0.0001);
+        assertEquals(now + 2, entry.getKey().longValue());
+        assertEquals(125, entry.getValue(), 0.0001);
 
         //test limit
-        dataQueryRequest = new DataQueryRequestDTO(2,
-                PinType.VIRTUAL, (byte) 3, null, 0, now + 2, SourceType.RAW_DATA, null, 0, 1, null);
+        dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
+                PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 1, 0, now + 2);
         result = (List<AbstractMap.SimpleEntry<Long, Double>>) dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -126,8 +127,8 @@ public class RawDataDBTest {
         assertEquals(125, entry.getValue(), 0.0001);
 
         //test offset
-        dataQueryRequest = new DataQueryRequestDTO(2,
-                PinType.VIRTUAL, (byte) 3, null, 0, now + 2, SourceType.RAW_DATA, null, 2, 10, null);
+        dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
+                PinType.VIRTUAL, (byte) 3, null, null, null, null, 2, 10, 0, now + 2);
         result = (List<AbstractMap.SimpleEntry<Long, Double>>) dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         assertEquals(1, result.size());

@@ -4,7 +4,7 @@ import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.ColumnValueDTO;
@@ -41,6 +41,7 @@ import java.util.Map;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
+import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
@@ -148,19 +149,19 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //https://github.com/blynkkk/knight/issues/778
     public void numberOfLoadsByShift() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
+                COUNT,
                 2,
                 PinType.VIRTUAL, (byte) 100,
                 null,
-                0, Long.MAX_VALUE,
-                SourceType.COUNT,
-                new SelectedColumnDTO[] {
+                new SelectedColumn[] {
                         metaDataFrom("Shift 1"),
                         metaDataFrom("Shift 2"),
                         metaDataFrom("Shift 3")
                 },
+                null,
+                null,
                 0, 10,
-                null);
-
+                0, Long.MAX_VALUE);
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
         Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
@@ -180,9 +181,10 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //https://github.com/blynkkk/knight/issues/785
     public void totalCostPerProduct() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
+                SourceType.SUM,
                 2,
                 PinType.VIRTUAL, (byte) 100,
-                new SelectedColumnDTO[] {
+                new SelectedColumn[] {
                         columnFrom("Saphire"),
                         columnFrom("Boost"),
                         columnFrom("Emulsifier"),
@@ -192,11 +194,11 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                         columnFrom("Supreme"),
                         columnFrom("Jasmine")
                 },
-                0, Long.MAX_VALUE,
-                SourceType.SUM,
+                null,
+                null,
                 null,
                 0, 10,
-                null);
+                0, Long.MAX_VALUE);
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 

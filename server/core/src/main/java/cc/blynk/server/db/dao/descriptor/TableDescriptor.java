@@ -3,7 +3,7 @@ package cc.blynk.server.db.dao.descriptor;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
-import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -83,7 +83,7 @@ public class TableDescriptor {
         this.insertQueryString = createInsertSQL();
     }
 
-    public Column getColumnWithGroupBy(SelectedColumnDTO[] groupByFields) {
+    public Column getColumnWithGroupBy(SelectedColumn[] groupByFields) {
         for (Column column : columns) {
             for (MetaField metaField : column.metaFields) {
                 if (metaField.isSameName(groupByFields)) {

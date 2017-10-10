@@ -18,7 +18,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.web.SourceType;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -36,6 +36,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
+import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
+import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -341,7 +344,7 @@ public class DashboardModelAPITest extends APIBaseTest {
 
     private int createProduct() throws Exception {
         Product product = new Product();
-        product.name = "My product";
+        product.name = "My Product";
         product.description = "Description";
         product.boardType = "ESP8266";
         product.logoUrl = "/logoUrl";
@@ -358,9 +361,11 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.height = 10;
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
-                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
-                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
         };
 
         WebLineGraph webGraph = new WebLineGraph();
@@ -370,12 +375,12 @@ public class DashboardModelAPITest extends APIBaseTest {
         webGraph.height = 10;
         webGraph.width = 20;
         webGraph.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
-                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10,
-                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC),
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
-                        false, new DataStream((byte) 2, PinType.VIRTUAL), 10,
-                        new String[] {"name"}, new String[] {"name"}, SortOrder.ASC)
+                new WebSource("Some Label", "#334455", false,
+                        RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        new SelectedColumn[] {columnFrom("Load Weight")},
+                        new SelectedColumn[] {metaDataFrom("Shift 1"), metaDataFrom("Shift 2"), metaDataFrom("Shift 3")},
+                        new SelectedColumn[] {columnFrom("Load Weight")},
+                        SortOrder.ASC, 10)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

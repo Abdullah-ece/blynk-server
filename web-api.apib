@@ -351,19 +351,19 @@ HOST: https://knight-qa.blynk.cc/
               "lastModifiedTs" : 1493801505645,
               "createdAt" : 1493801505645,
               "metaFields" : [ {
-                "type" : "Text",
+                "type" : "Number",
                 "id" : 1,
-                "name" : "My Farm",
-                "role" : "ADMIN",
+                "name" : "Jopa",
+                "role" : "STAFF",
                 "isDefault" : false,
-                "value" : "Farm of Smith"
+                "value" : 123.0
               }, {
-                "type" : "Range",
+                "type" : "Text",
                 "id" : 2,
-                "name" : "Farm of Smith",
+                "name" : "Device Name",
                 "role" : "ADMIN",
                 "isDefault" : true,
-                "value" : "Farm of Smith"
+                "value" : "My Default device Name"
               } ],
               "webDashboard" : {
                 "widgets" : [ {
@@ -380,10 +380,9 @@ HOST: https://knight-qa.blynk.cc/
                   "isDefaultColor" : false,
                   "sources" : [ {
                     "label" : "some Label",
-                    "sourceType" : "RAW_DATA",
                     "color" : "#334455",
-                    "graphType" : "LINE",
                     "connectMissingPointsEnabled" : false,
+                    "sourceType" : "RAW_DATA",
                     "dataStream" : {
                       "id" : 0,
                       "pin" : 1,
@@ -393,13 +392,10 @@ HOST: https://knight-qa.blynk.cc/
                       "min" : 0,
                       "max" : 255
                     },
-                    "maxRows" : 10,
-                    "groupByFields" : [ "name" ],
-                    "sortBy" : [ "name" ],
-                    "sortOrder" : "ASC"
+                    "limit" : 10
                   } ]
                 }, {
-                  "type" : "WEB_BAR_GRAPH", //WEB_LINE_GRAPH
+                  "type" : "WEB_LINE_GRAPH",
                   "id" : 0,
                   "x" : 3,
                   "y" : 4,
@@ -412,10 +408,9 @@ HOST: https://knight-qa.blynk.cc/
                   "isDefaultColor" : false,
                   "sources" : [ {
                     "label" : "Some Label",
-                    "sourceType" : "RAW_DATA",
                     "color" : "#334455",
-                    "graphType" : "LINE", //LINE, FILLED_LINE, BAR, BINARY
                     "connectMissingPointsEnabled" : false,
+                    "sourceType" : "RAW_DATA",
                     "dataStream" : {
                       "id" : 0,
                       "pin" : 1,
@@ -425,29 +420,28 @@ HOST: https://knight-qa.blynk.cc/
                       "min" : 0,
                       "max" : 255
                     },
-                    "maxRows" : 10,
-                    "groupByFields" : [ "name" ],
-                    "sortBy" : [ "name" ],
-                    "sortOrder" : "ASC"
-                  }, {
-                    "label" : "Some Label",
-                    "sourceType" : "RAW_DATA",
-                    "color" : "#334455",
-                    "graphType" : "LINE",
-                    "connectMissingPointsEnabled" : false,
-                    "dataStream" : {
-                      "id" : 0,
-                      "pin" : 2,
-                      "pwmMode" : false,
-                      "rangeMappingOn" : false,
-                      "pinType" : "VIRTUAL",
-                      "min" : 0,
-                      "max" : 255
-                    },
-                    "maxRows" : 10,
-                    "groupByFields" : [ "name" ],
-                    "sortBy" : [ "name" ],
-                    "sortOrder" : "ASC"
+                    "selectedColumns" : [ {
+                      "name" : "load_weight",
+                      "label" : "Load Weight",
+                      "type" : "COLUMN"
+                    } ],
+                    "groupByFields" : [ {
+                      "name" : "Shift 1",
+                      "type" : "METADATA"
+                    }, {
+                      "name" : "Shift 2",
+                      "type" : "METADATA"
+                    }, {
+                      "name" : "Shift 3",
+                      "type" : "METADATA"
+                    } ],
+                    "sortByFields" : [ {
+                      "name" : "load_weight",
+                      "label" : "Load Weight",
+                      "type" : "COLUMN"
+                    } ],
+                    "sortOrder" : "ASC",
+                    "limit" : 10
                   } ],
                   "isShowTitleEnabled" : false,
                   "isShowLegendEnabled" : false

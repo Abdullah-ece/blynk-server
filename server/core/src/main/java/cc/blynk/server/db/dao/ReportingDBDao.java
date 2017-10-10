@@ -2,7 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -439,7 +439,7 @@ public class ReportingDBDao {
                     }
 
                     if (dataQueryRequest.selectedColumns != null) {
-                        for (SelectedColumnDTO selectedColumn : dataQueryRequest.selectedColumns) {
+                        for (SelectedColumn selectedColumn : dataQueryRequest.selectedColumns) {
                             step.select(dataQueryRequest.sourceType.apply(selectedColumn));
                         }
                     }

@@ -2,7 +2,7 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
-import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,49 +17,59 @@ public class DataQueryRequestDTO {
     public final SourceType sourceType;
     public final PinType pinType;
     public final byte pin;
-    public final SelectedColumnDTO[] selectedColumns;
-
-    public final long from;
-    public final long to;
-
-    public final SelectedColumnDTO[] groupByFields;
-    public final SelectedColumnDTO[] sortByFields;
+    public final SelectedColumn[] selectedColumns;
+    public final SelectedColumn[] groupByFields;
+    public final SelectedColumn[] sortByFields;
     public final SortOrder sortOrder;
 
     public final int offset;
     public final int limit;
 
+    public final long from;
+    public final long to;
+
     public transient TableDescriptor tableDescriptor;
     public int deviceId;
 
-    public DataQueryRequestDTO(int deviceId,
+    public DataQueryRequestDTO(SourceType sourceType,
+                               int deviceId,
                                PinType pinType,
                                byte pin,
-                               SelectedColumnDTO[] selectedColumns,
-                               long from, long to,
-                               SourceType sourceType,
-                               SelectedColumnDTO[] groupByFields,
-                               SelectedColumnDTO[] sortByFields,
+                               SelectedColumn[] selectedColumns,
+                               SelectedColumn[] groupByFields,
+                               SelectedColumn[] sortByFields,
                                SortOrder sortOrder,
                                int offset, int limit,
-                               TableDescriptor tableDescriptor) {
-        this(pinType, pin, selectedColumns, from, to, sourceType,
-                groupByFields, sortByFields, sortOrder, offset, limit);
+                               long from, long to) {
+        this(sourceType, pinType, pin, selectedColumns,
+                groupByFields, sortByFields, sortOrder, offset, limit, from, to);
         this.deviceId = deviceId;
     }
 
     @JsonCreator
-    public DataQueryRequestDTO(@JsonProperty("pinType") PinType pinType,
+    public DataQueryRequestDTO(@JsonProperty("sourceType") SourceType sourceType,
+                               @JsonProperty("pinType") PinType pinType,
                                @JsonProperty("pin") byte pin,
-                               @JsonProperty("selectedColumns") SelectedColumnDTO[] selectedColumns,
-                               @JsonProperty("from") long from,
-                               @JsonProperty("to") long to,
-                               @JsonProperty("sourceType") SourceType sourceType,
-                               @JsonProperty("groupByFields") SelectedColumnDTO[] groupByFields,
-                               @JsonProperty("sortByFields") SelectedColumnDTO[] sortByFields,
+                               @JsonProperty("selectedColumns") SelectedColumn[] selectedColumns,
+                               @JsonProperty("groupByFields") SelectedColumn[] groupByFields,
+                               @JsonProperty("sortByFields") SelectedColumn[] sortByFields,
                                @JsonProperty("sortOrder") SortOrder sortOrder,
                                @JsonProperty("offset") int offset,
-                               @JsonProperty("limit") int limit) {
+                               @JsonProperty("limit") int limit,
+                               @JsonProperty("from") long from,
+                               @JsonProperty("to") long to) {
+
+        this.sourceType = sourceType == null ? SourceType.RAW_DATA : sourceType;
+        this.pinType = pinType;
+        this.pin = pin;
+        this.selectedColumns = selectedColumns;
+        this.groupByFields = groupByFields;
+        this.sortByFields = sortByFields;
+        this.sortOrder = sortOrder;
+        this.offset = offset;
+        this.limit = limit;
+        this.from = from;
+        this.to = to;
 
         //todo remove hardcode
         if (tableDescriptor == null) {
@@ -69,18 +79,6 @@ public class DataQueryRequestDTO {
                 this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
             }
         }
-
-        this.pinType = pinType;
-        this.pin = pin;
-        this.selectedColumns = selectedColumns;
-        this.from = from;
-        this.to = to;
-        this.sourceType = sourceType == null ? SourceType.RAW_DATA : sourceType;
-        this.groupByFields = groupByFields;
-        this.sortByFields = sortByFields;
-        this.sortOrder = sortOrder;
-        this.offset = offset;
-        this.limit = limit;
     }
 
     public void setDeviceId(int deviceId) {

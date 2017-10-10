@@ -17,42 +17,46 @@ public class WebSource {
 
     public final String label;
 
-    public final SourceType sourceType;
-
     public final String color;
 
     public final boolean connectMissingPointsEnabled;
 
+    public final SourceType sourceType;
+
     public final DataStream dataStream;
 
-    public final int maxRows;
+    public final SelectedColumn[] selectedColumns;
 
-    public final String[] groupBy;
+    public final SelectedColumn[] groupByFields;
 
-    public final String[] sortBy;
+    public final SelectedColumn[] sortByFields;
 
     public final SortOrder sortOrder;
 
+    public final int limit;
+
     @JsonCreator
     public WebSource(@JsonProperty("label") String label,
-                     @JsonProperty("sourceType") SourceType sourceType,
                      @JsonProperty("color") String color,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
+                     @JsonProperty("sourceType") SourceType sourceType,
                      @JsonProperty("dataStream") DataStream dataStream,
-                     @JsonProperty("maxRows") int maxRows,
-                     @JsonProperty("groupByFields") String[] groupBy,
-                     @JsonProperty("sortBy") String[] sortBy,
-                     @JsonProperty("sortOrder") SortOrder sortOrder) {
+                     @JsonProperty("selectedColumns") SelectedColumn[] selectedColumns,
+                     @JsonProperty("groupByFields") SelectedColumn[] groupByFields,
+                     @JsonProperty("sortByFields") SelectedColumn[] sortByFields,
+                     @JsonProperty("sortOrder") SortOrder sortOrder,
+                     @JsonProperty("limit") int limit) {
 
         this.label = label;
-        this.sourceType = sourceType;
         this.color = color;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
+        this.sourceType = sourceType;
         this.dataStream = dataStream;
-        this.maxRows = maxRows;
-        this.groupBy = groupBy;
-        this.sortBy = sortBy;
+        this.selectedColumns = selectedColumns;
+        this.groupByFields = groupByFields;
+        this.sortByFields = sortByFields;
         this.sortOrder = sortOrder;
+        this.limit = limit;
     }
 
     @Override
@@ -65,20 +69,21 @@ public class WebSource {
         }
         WebSource webSource = (WebSource) o;
         return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled &&
-                maxRows == webSource.maxRows &&
+                limit == webSource.limit &&
                 Objects.equals(label, webSource.label) &&
-                sourceType == webSource.sourceType &&
                 Objects.equals(color, webSource.color) &&
+                sourceType == webSource.sourceType &&
                 Objects.equals(dataStream, webSource.dataStream) &&
-                Arrays.equals(groupBy, webSource.groupBy) &&
-                Arrays.equals(sortBy, webSource.sortBy) &&
+                Arrays.equals(selectedColumns, webSource.selectedColumns) &&
+                Arrays.equals(groupByFields, webSource.groupByFields) &&
+                Arrays.equals(sortByFields, webSource.sortByFields) &&
                 sortOrder == webSource.sortOrder;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(label, sourceType, color,
-                connectMissingPointsEnabled, dataStream,
-                maxRows, groupBy, sortBy, sortOrder);
+        return Objects.hash(label, color, connectMissingPointsEnabled,
+                sourceType, dataStream, selectedColumns,
+                groupByFields, sortByFields, sortOrder, limit);
     }
 }

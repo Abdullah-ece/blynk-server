@@ -12,7 +12,7 @@ public enum SourceType {
 
     RAW_DATA, SUM, AVG, MED, MIN, MAX, COUNT, CUMULATIVE_COUNT;
 
-    public Field<?> apply(SelectedColumnDTO selectedColumn) {
+    public Field<?> apply(SelectedColumn selectedColumn) {
         Field<Object> field = DSL.field(selectedColumn.name);
         return applyAggregation(field).as(selectedColumn.label);
     }

@@ -18,8 +18,7 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
-import cc.blynk.server.core.model.widgets.web.SourceType;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
+import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -160,13 +160,20 @@ public class DataAPITest extends APIBaseTest {
     @Test
     public void printRequest() throws Exception {
         DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 1, null,
-                        0, System.currentTimeMillis(), SourceType.RAW_DATA,
-                        new SelectedColumnDTO[] {
+                new DataQueryRequestDTO(
+                        RAW_DATA,
+                        PinType.VIRTUAL,
+                        (byte) 1,
+                        null,
+                        new SelectedColumn[] {
                                 metaDataFrom("Shift 1"),
                                 metaDataFrom("Shift 2"),
                                 metaDataFrom("Shift 3")
-                        }, 0, 1000),
+                        },
+                        null,
+                        null,
+                        0, 1000,
+                        0, System.currentTimeMillis())
         });
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
     }
@@ -201,8 +208,10 @@ public class DataAPITest extends APIBaseTest {
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
         DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 1, null, 0, now, SourceType.RAW_DATA, null, 0, 1000),
-                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 2, null, 0, now, SourceType.RAW_DATA, null, 0, 1000)
+                new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 1,
+                        null, null, null, null, 0, 1000, 0, now),
+                new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 2,
+                        null, null, null, null, 0, 1000, 0, now)
         });
 
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
@@ -293,7 +302,8 @@ public class DataAPITest extends APIBaseTest {
 
     private static DataQueryRequestGroupDTO makeReq(PinType pinType, int pin, long from, long to) {
         return new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(pinType, (byte) pin, null, from, to, SourceType.RAW_DATA, null, 0, 1000)
+                new DataQueryRequestDTO(RAW_DATA, pinType, (byte) pin,
+                        null, null, null, null, 0, 1000, from, to)
         });
     }
 
@@ -316,8 +326,8 @@ public class DataAPITest extends APIBaseTest {
         webLabel.height = 10;
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
-                new WebSource("some Label", SourceType.RAW_DATA, "#334455",
-                        false, new DataStream((byte) 1, PinType.VIRTUAL), 10, null, null, SortOrder.ASC)
+                new WebSource("some Label", "#334455", false,
+                        RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL), null, null, null, SortOrder.ASC, 10)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {
