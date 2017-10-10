@@ -1,5 +1,6 @@
-package cc.blynk.server.db.dao.table;
+package cc.blynk.server.http.web.dto;
 
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,17 +9,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.10.17.
  */
-public class DataQueryRequestGroup {
+public class DataQueryRequestGroupDTO {
 
-    public final DataQueryRequest[] dataQueryRequests;
+    public final DataQueryRequestDTO[] dataQueryRequests;
 
     @JsonCreator
-    public DataQueryRequestGroup(@JsonProperty("dataQueryRequests") DataQueryRequest[] dataQueryRequests) {
+    public DataQueryRequestGroupDTO(@JsonProperty("dataQueryRequests") DataQueryRequestDTO[] dataQueryRequests) {
         this.dataQueryRequests = dataQueryRequests;
     }
 
     public void setDeviceId(int deviceId) {
-        for (DataQueryRequest dataQueryRequest : dataQueryRequests) {
+        for (DataQueryRequestDTO dataQueryRequest : dataQueryRequests) {
             dataQueryRequest.setDeviceId(deviceId);
         }
     }
@@ -28,7 +29,7 @@ public class DataQueryRequestGroup {
             return true;
         }
 
-        for (DataQueryRequest dataQueryRequest : dataQueryRequests) {
+        for (DataQueryRequestDTO dataQueryRequest : dataQueryRequests) {
             if (dataQueryRequest.isNotValid()) {
                 return true;
             }

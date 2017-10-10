@@ -2,7 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
-import cc.blynk.server.db.dao.table.TableDescriptor;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

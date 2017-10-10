@@ -19,8 +19,8 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.dao.table.DataQueryRequest;
-import cc.blynk.server.db.dao.table.DataQueryRequestGroup;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -88,7 +88,7 @@ public class DataHandler extends BaseHttpHandler {
     public Response getAll(@Context ChannelHandlerContext ctx,
                            @ContextUser User user,
                            @PathParam("deviceId") int deviceId,
-                           DataQueryRequestGroup dataQueryRequestGroup) {
+                           DataQueryRequestGroupDTO dataQueryRequestGroup) {
 
         if (dataQueryRequestGroup == null || dataQueryRequestGroup.isNotValid()) {
             return badRequest("No data stream provided for request.");
@@ -101,7 +101,7 @@ public class DataHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             try {
                 Map<String, Data> finalModel = new HashMap<>();
-                for (DataQueryRequest dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
+                for (DataQueryRequestDTO dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
                     Object data = dbManager.getRawData(dataQueryRequest);
                     finalModel.put(dataQueryRequest.name(), new Data(data));
                 }

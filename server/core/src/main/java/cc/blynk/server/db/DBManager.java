@@ -16,7 +16,7 @@ import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
-import cc.blynk.server.db.dao.table.DataQueryRequest;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.db.model.Purchase;
@@ -179,7 +179,7 @@ public class DBManager implements Closeable {
         }
     }
 
-    public Object getRawData(DataQueryRequest dataQueryRequest) {
+    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
         if (isDBEnabled()) {
             return reportingDBDao.getRawData(dataQueryRequest);
         }

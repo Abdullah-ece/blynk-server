@@ -23,9 +23,9 @@ import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
-import cc.blynk.server.db.dao.table.DataQueryRequest;
-import cc.blynk.server.db.dao.table.DataQueryRequestGroup;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -81,7 +81,7 @@ public class DataAPITest extends APIBaseTest {
     public void testInvalidRequestNoDataStream() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        DataQueryRequestGroup dataQueryRequestGroup = makeReq(null, 0, 0, System.currentTimeMillis());
+        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(null, 0, 0, System.currentTimeMillis());
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
 
@@ -95,7 +95,7 @@ public class DataAPITest extends APIBaseTest {
     public void testInvalidRequestNoDevice() throws Exception {
         login(regularUser.email, regularUser.pass);
 
-        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
+        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
@@ -127,7 +127,7 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now+1);
+        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now+1);
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
@@ -157,8 +157,8 @@ public class DataAPITest extends APIBaseTest {
 
     @Test
     public void printRequest() throws Exception {
-        DataQueryRequestGroup dataQueryRequestGroup = new DataQueryRequestGroup(new DataQueryRequest[] {
-                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, null,
+        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 1, null,
                         0, System.currentTimeMillis(), SourceType.RAW_DATA, new String[] {"Shift 1", "Shift 2", "Shift 3"}, 0, 1000),
         });
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
@@ -193,9 +193,9 @@ public class DataAPITest extends APIBaseTest {
         //invoking directly dao to avoid separate thread execution
         holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        DataQueryRequestGroup dataQueryRequestGroup = new DataQueryRequestGroup(new DataQueryRequest[] {
-                new DataQueryRequest(PinType.VIRTUAL, (byte) 1, null, 0, now, SourceType.RAW_DATA, null, 0, 1000),
-                new DataQueryRequest(PinType.VIRTUAL, (byte) 2, null, 0, now, SourceType.RAW_DATA, null, 0, 1000)
+        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 1, null, 0, now, SourceType.RAW_DATA, null, 0, 1000),
+                new DataQueryRequestDTO(PinType.VIRTUAL, (byte) 2, null, 0, now, SourceType.RAW_DATA, null, 0, 1000)
         });
 
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
@@ -256,7 +256,7 @@ public class DataAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        DataQueryRequestGroup dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now);
+        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now);
 
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
@@ -284,9 +284,9 @@ public class DataAPITest extends APIBaseTest {
         }
     }
 
-    private static DataQueryRequestGroup makeReq(PinType pinType, int pin, long from, long to) {
-        return new DataQueryRequestGroup(new DataQueryRequest[] {
-                new DataQueryRequest(pinType, (byte) pin, null, from, to, SourceType.RAW_DATA, null, 0, 1000)
+    private static DataQueryRequestGroupDTO makeReq(PinType pinType, int pin, long from, long to) {
+        return new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(pinType, (byte) pin, null, from, to, SourceType.RAW_DATA, null, 0, 1000)
         });
     }
 

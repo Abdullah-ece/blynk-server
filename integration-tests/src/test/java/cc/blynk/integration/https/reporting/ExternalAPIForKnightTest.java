@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static cc.blynk.server.db.dao.table.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.junit.Assert.assertEquals;
 

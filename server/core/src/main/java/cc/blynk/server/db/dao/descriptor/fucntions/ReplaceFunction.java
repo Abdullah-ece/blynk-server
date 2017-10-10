@@ -1,4 +1,4 @@
-package cc.blynk.server.db.dao.table.fucntions;
+package cc.blynk.server.db.dao.descriptor.fucntions;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,9 +1,9 @@
-package cc.blynk.server.db.dao.table;
+package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
-import cc.blynk.server.db.dao.table.fucntions.ReplaceFunction;
+import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;

@@ -1,4 +1,4 @@
-package cc.blynk.server.db.dao.table;
+package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;

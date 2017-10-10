@@ -7,10 +7,10 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.web.SelectedColumnDTO;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.dao.table.ColumnValue;
-import cc.blynk.server.db.dao.table.DataQueryRequest;
-import cc.blynk.server.db.dao.table.TableDataMapper;
-import cc.blynk.server.db.dao.table.TableDescriptor;
+import cc.blynk.server.db.dao.descriptor.ColumnValueDTO;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
-import static cc.blynk.server.db.dao.table.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
@@ -96,7 +96,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
             for (String line : lines) {
                 String[] split = line.split(",");
                 TableDataMapper point = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, split);
-                ColumnValue[] data = point.data;
+                ColumnValueDTO[] data = point.data;
                 batchBindStep.bind(data[0].value, data[1].value, data[2].value, data[3].value, data[4].value,
                         data[5].value, data[6].value, data[7].value, data[8].value,
                         data[9].value, data[10].value, data[11].value, data[12].value, data[13].value,
@@ -145,7 +145,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //Number of Loads by Shift
     //https://github.com/blynkkk/knight/issues/778
     public void numberOfLoadsByShift() throws Exception {
-        DataQueryRequest dataQueryRequest = new DataQueryRequest(
+        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
                 2,
                 PinType.VIRTUAL, (byte) 100,
                 null,
@@ -173,7 +173,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //Number of Loads by Shift
     //https://github.com/blynkkk/knight/issues/785
     public void totalCostPerProduct() throws Exception {
-        DataQueryRequest dataQueryRequest = new DataQueryRequest(
+        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
                 2,
                 PinType.VIRTUAL, (byte) 100,
                 new SelectedColumnDTO[] {
