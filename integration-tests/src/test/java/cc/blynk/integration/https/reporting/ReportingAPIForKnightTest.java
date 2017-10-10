@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.dao.descriptor.ColumnValueDTO;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
@@ -99,16 +98,11 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
             for (String line : lines) {
                 String[] split = line.split(",");
                 TableDataMapper point = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, split);
-                ColumnValueDTO[] data = point.data;
-                batchBindStep.bind(data[0].value, data[1].value, data[2].value, data[3].value, data[4].value,
-                        data[5].value, data[6].value, data[7].value, data[8].value,
-                        data[9].value, data[10].value, data[11].value, data[12].value, data[13].value,
-                        data[14].value, data[15].value, data[16].value);
+                batchBindStep.bind(point.data.toArray());
             }
 
             batchBindStep.execute();
             connection.commit();
-
         }
     }
 

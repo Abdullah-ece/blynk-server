@@ -10,7 +10,6 @@ import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.descriptor.Column;
-import cc.blynk.server.db.dao.descriptor.ColumnValueDTO;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.utils.DateTimeUtils;
@@ -369,16 +368,11 @@ public class ReportingDBDao {
     }
 
     public void insertDataPoint(TableDataMapper tableDataMapper) {
-        try (Connection connection = ds.getConnection();
-             DSLContext create = DSL.using(connection, POSTGRES_9_4)) {
-
-            ArrayList<Object> values = new ArrayList<>();
-            for (ColumnValueDTO columnValue : tableDataMapper.data) {
-                values.add(columnValue.value);
-            }
-
-            create.insertInto(table(tableDataMapper.tableDescriptor.tableName))
-                  .values(values).execute();
+        try (Connection connection = ds.getConnection()) {
+            DSL.using(connection, POSTGRES_9_4)
+                    .insertInto(table(tableDataMapper.tableDescriptor.tableName))
+                    .values(tableDataMapper.data)
+                    .execute();
 
             connection.commit();
         } catch (Exception e){
