@@ -7,10 +7,6 @@ import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.StringJoiner;
 
 import static java.sql.Types.CHAR;
 import static java.sql.Types.DATE;
@@ -27,8 +23,6 @@ import static java.time.format.DateTimeFormatter.ofPattern;
  * Created on 06.10.17.
  */
 public class TableDescriptor {
-
-    private static final Logger log = LogManager.getLogger(TableDescriptor.class);
 
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
     private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
@@ -71,7 +65,6 @@ public class TableDescriptor {
     });
 
     public final String tableName;
-    public final String insertQueryString;
     public final Column[] columns;
 
     @JsonCreator
@@ -79,8 +72,6 @@ public class TableDescriptor {
                            @JsonProperty("columns") Column[] columns) {
         this.tableName = tableName;
         this.columns = columns;
-        //todo build on the fly
-        this.insertQueryString = createInsertSQL();
     }
 
     public Column getColumnWithGroupBy(SelectedColumn[] groupByFields) {
@@ -92,29 +83,6 @@ public class TableDescriptor {
             }
         }
         return null;
-    }
-
-    private String createInsertSQL() {
-        String result = "INSERT INTO " + tableName + " "
-                + makeColumnsString(columns) + " VALUES " + makeQuestionMarksString(columns.length);
-        log.debug("Generated insert sql : {}", result);
-        return result;
-    }
-
-    private static String makeColumnsString(Column[] columns) {
-        StringJoiner sj = new StringJoiner(", ", "(", ")");
-        for (Column column : columns) {
-            sj.add(column.columnName);
-        }
-        return sj.toString();
-    }
-
-    private static String makeQuestionMarksString(int length) {
-        StringJoiner sj = new StringJoiner(", ", "(", ")");
-        for (int i = 0; i < length; i++) {
-            sj.add("?");
-        }
-        return sj.toString();
     }
 
 }

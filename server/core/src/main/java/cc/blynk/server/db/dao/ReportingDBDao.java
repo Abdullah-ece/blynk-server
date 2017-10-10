@@ -39,6 +39,7 @@ import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
+import static org.jooq.impl.DSL.table;
 
 /**
  * The Blynk Project.
@@ -368,16 +369,16 @@ public class ReportingDBDao {
     }
 
     public void insertDataPoint(TableDataMapper tableDataMapper) {
-        String query = tableDataMapper.tableDescriptor.insertQueryString;
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
+             DSLContext create = DSL.using(connection, POSTGRES_9_4)) {
 
-            for (int i = 0; i < tableDataMapper.data.length; i++) {
-                ColumnValueDTO entry = tableDataMapper.data[i];
-                log.trace("Index {}, value {}.", i + 1, entry.value);
-                ps.setObject(i + 1, entry.value);
+            ArrayList<Object> values = new ArrayList<>();
+            for (ColumnValueDTO columnValue : tableDataMapper.data) {
+                values.add(columnValue.value);
             }
-            ps.executeUpdate();
+
+            create.insertInto(table(tableDataMapper.tableDescriptor.tableName))
+                  .values(values).execute();
 
             connection.commit();
         } catch (Exception e){
