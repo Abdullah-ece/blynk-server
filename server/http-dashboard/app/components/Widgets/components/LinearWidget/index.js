@@ -5,7 +5,6 @@ import {
 } from 'components';
 import moment from 'moment';
 // import Widget from '../Widget';
-import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
@@ -214,12 +213,16 @@ class LinearWidget extends React.Component {
     let minY = false;
     let maxY = false;
 
-    this.props.data.sources.forEach((source) => {
+    this.props.data.sources.forEach((source, sourceIndex) => {
 
       if (!source.dataStream || source.dataStream.pin === -1)
         return null;
 
-      const PIN = this.props.widgets.getIn([this.props.params.id, `${VIRTUAL_PIN_PREFIX}${source.dataStream.pin}`]);
+      const PIN = this.props.widgets.getIn([
+        String(this.props.params.id),
+        String(this.props.data.id),
+        String(sourceIndex),
+      ]);
 
       if (!PIN)
         return null;
