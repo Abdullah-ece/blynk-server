@@ -1,88 +1,8 @@
 import _ from 'lodash';
 
 export const WIDGET_TYPES = {
-  LINEAR: 'WEB_GRAPH',
-  BAR: 'WEB_BAR',
-};
-
-export const WIDGETS_CONFIGS = {
-  [WIDGET_TYPES.LINEAR]: {
-    minW: 3,
-    minH: 2
-  }
-};
-
-export const WIDGETS_CHART_TYPES = {
-  'LINE': 'LINE',
-  'DOTS': 'DOTS',
-};
-
-export const WIDGETS_CHART_TYPES_LIST = [
-  {
-    key: WIDGETS_CHART_TYPES.LINE,
-    value: 'Line'
-  },
-  {
-    key: WIDGETS_CHART_TYPES.DOTS,
-    value: 'Dots'
-  }
-];
-
-export const WIDGETS_SOURCE_TYPES = {
-  'RAW_DATA': 'RAW_DATA',
-  'SUM': 'SUM',
-  'AVG': 'AVG',
-  'MED': 'MED',
-  'MIN': 'MIN',
-  'MAX': 'MAX',
-  'COUNT': 'COUNT',
-  'CUMULATIVE_COUNT': 'CUMULATIVE_COUNT',
-};
-
-export const WIDGETS_SOURCE_TYPES_LIST = [
-  {
-    key: WIDGETS_SOURCE_TYPES.RAW_DATA,
-    value: 'Raw Data'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.SUM,
-    value: 'SUM of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.AVG,
-    value: 'AVG of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.MED,
-    value: 'MED of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.MIN,
-    value: 'MIN of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.MAX,
-    value: 'MAX of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.COUNT,
-    value: 'COUNT of'
-  },
-  {
-    key: WIDGETS_SOURCE_TYPES.CUMULATIVE_COUNT,
-    value: 'Cumulative Count of'
-  },
-
-
-];
-
-export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
-  label: 'Source Label',
-  sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
-  color: '007dc4',
-  graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
-  connectMissingPointsEnabled: false,
-  dataStream: {}
+  LINEAR: 'WEB_LINE_GRAPH',
+  BAR: 'WEB_BAR_GRAPH',
 };
 
 export const BAR_CHART_PARAMS = {
@@ -120,24 +40,28 @@ export const BAR_CHART_PARAMS = {
         value: 'Raw Data',
       },
       {
-        key: 'SUM_OF',
+        key: 'SUM',
         value: 'SUM of',
       },
       {
-        key: 'AVG_OF',
+        key: 'AVG',
         value: 'AVG of',
       },
       {
-        key: 'MED_OF',
+        key: 'MED',
         value: 'MED of',
       },
       {
-        key: 'MIN_OF',
+        key: 'MIN',
         value: 'MIN of',
       },
       {
-        key: 'MAX_OF',
+        key: 'MAX',
         value: 'MAX of',
+      },
+      {
+        key: 'COUNT',
+        value: 'COUNT of',
       },
     ],
     defaultKey: 'RAW_DATA'
@@ -286,6 +210,113 @@ export const BAR_CHART_PARAMS = {
 
 };
 
+export const WIDGETS_CONFIGS = {
+  [WIDGET_TYPES.LINEAR]: {
+    minW: 3,
+    minH: 2
+  },
+  [WIDGET_TYPES.BAR]: {
+    'sourceType' : BAR_CHART_PARAMS.DATA_TYPE.defaultKey,
+    'dataStream' : {},
+    'selectedColumns' : [
+      // {
+      //   'name': 'load_weight',
+      //   'label': 'Load Weight',
+      //   'type': 'COLUMN'
+      // }
+    ],
+    'groupByFields' : [
+      // {
+      //   'name': 'Shift 1',
+      //   'type': 'METADATA'
+      // }
+    ],
+    'sortByFields' : [
+      //   {
+      //   'name' : 'load_weight',
+      //   'label' : 'Load Weight',
+      //   'type' : 'COLUMN'
+      // }
+    ],
+    'sortOrder' : BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey,
+    'limit' : 10,
+    'color': BAR_CHART_PARAMS.COLOR.defaultKey,
+  },
+};
+
+export const WIDGETS_CHART_TYPES = {
+  'LINE': 'LINE',
+  'DOTS': 'DOTS',
+};
+
+export const WIDGETS_CHART_TYPES_LIST = [
+  {
+    key: WIDGETS_CHART_TYPES.LINE,
+    value: 'Line'
+  },
+  {
+    key: WIDGETS_CHART_TYPES.DOTS,
+    value: 'Dots'
+  }
+];
+
+export const WIDGETS_SOURCE_TYPES = {
+  'RAW_DATA': 'RAW_DATA',
+  'SUM': 'SUM',
+  'AVG': 'AVG',
+  'MED': 'MED',
+  'MIN': 'MIN',
+  'MAX': 'MAX',
+  'COUNT': 'COUNT',
+  'CUMULATIVE_COUNT': 'CUMULATIVE_COUNT',
+};
+
+export const WIDGETS_SOURCE_TYPES_LIST = [
+  {
+    key: WIDGETS_SOURCE_TYPES.RAW_DATA,
+    value: 'Raw Data'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.SUM,
+    value: 'SUM of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.AVG,
+    value: 'AVG of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.MED,
+    value: 'MED of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.MIN,
+    value: 'MIN of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.MAX,
+    value: 'MAX of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.COUNT,
+    value: 'COUNT of'
+  },
+  {
+    key: WIDGETS_SOURCE_TYPES.CUMULATIVE_COUNT,
+    value: 'Cumulative Count of'
+  },
+
+
+];
+
+export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
+  label: 'Source Label',
+  sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+  color: '007dc4',
+  graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+  connectMissingPointsEnabled: false,
+  dataStream: {}
+};
+
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     id: 1,
@@ -306,19 +337,18 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     ...WIDGETS_CONFIGS[WIDGET_TYPES.LINEAR],
   },
   [WIDGET_TYPES.BAR]: {
-    type: "WEB_BAR",
+    type: WIDGET_TYPES.BAR,
     id: 0,
     x: 0,
     y: 0,
-    color: BAR_CHART_PARAMS.COLOR.defaultKey,
+    sources: [
+      {
+        id: 1,
+        ...WIDGETS_CONFIGS[WIDGET_TYPES.BAR]
+      }
+    ],
     w: 3,
     h: 2,
-    maxRows: BAR_CHART_PARAMS.MAX_ROWS.defaultKey,
-    dataType: BAR_CHART_PARAMS.DATA_TYPE.defaultKey,  // raw data etc.
-    dataSource: '', // dropdown
-    groupDataBy: '', // dropdown
-    sortBy: '', // dropdown
-    sortType: BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey, // ASC or DESC
     label: "Bar Chart",
   }
 };
@@ -327,6 +357,8 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
 export const prepareWidgetForProductEdit = (widget) => {
 
   const getConfigByWidgetType = (type) => {
+    if(type === WIDGET_TYPES.BAR) return {};
+
     return WIDGETS_CONFIGS[type] || {};
   };
 

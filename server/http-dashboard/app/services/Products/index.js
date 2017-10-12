@@ -509,9 +509,16 @@ export const prepareProductForSave = (data) => {
 
   if (Array.isArray(data.dataStreams.fields)) {
     data.dataStreams.fields.forEach((value) => {
+
+      const values = {
+        ...value.values,
+      };
+
+      delete values.tableDescriptor;
+
       product.dataStreams.push({
         id: value.id,
-        ...value.values
+        ...values
       });
     });
   }
