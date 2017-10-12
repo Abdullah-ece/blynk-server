@@ -25,6 +25,7 @@ import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.http.web.dto.DataDTO;
 import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -38,9 +39,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
@@ -139,17 +140,15 @@ public class DataAPITest extends APIBaseTest {
             //{"V1":{"data":[{"1504015510046":124.0},{"1504015510045":123.0}]}}
 
             String responseString = consumeText(response);
-            Map map = JsonParser.MAPPER.readValue(responseString, Map.class);
-            assertNotNull(map);
-            assertEquals(1, map.size());
-            LinkedHashMap dataField = (LinkedHashMap) map.get("V1");
+            DataDTO<ArrayList<LinkedHashMap>>[] obj = JsonParser.MAPPER.readValue(responseString, DataDTO[].class);
+            assertNotNull(obj);
+            assertEquals(1, obj.length);
+            List dataField = obj[0].data;
             assertNotNull(dataField);
-            assertEquals(1, dataField.size());
+            assertEquals(2, dataField.size());
 
-            List data = (List) dataField.get("data");
-            assertEquals(2, data.size());
-            LinkedHashMap point0 = (LinkedHashMap) data.get(0);
-            LinkedHashMap point1 = (LinkedHashMap) data.get(1);
+            LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
+            LinkedHashMap point1 = (LinkedHashMap) dataField.get(1);
             assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
             assertEquals(124, (Double) point1.get(String.valueOf(now + 1)), 0.0001);
 
@@ -221,31 +220,31 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             //expected string is
-            //{
-            // "V1":{"data":[{"1504102495921":123.0}]},
-            // "V2":{"data":[{"1504102495921":124.0}]}
-            // }
+            //[
+            //   {
+            //      "data":[{"1507809234902":123.0}]
+            //   },
+            //   {
+            //      "data":[{"1507809234902":124.0}]
+            //   }
+            //]
             System.out.println(responseString);
 
-            Map map = JsonParser.MAPPER.readValue(responseString, Map.class);
-            assertNotNull(map);
-            assertEquals(2, map.size());
-            LinkedHashMap dataField = (LinkedHashMap) map.get("V1");
+            DataDTO<ArrayList<LinkedHashMap>>[] obj = JsonParser.MAPPER.readValue(responseString, DataDTO[].class);
+            assertNotNull(obj);
+            assertEquals(2, obj.length);
+            List dataField = obj[0].data;
             assertNotNull(dataField);
             assertEquals(1, dataField.size());
 
-            List data = (List) dataField.get("data");
-            assertEquals(1, data.size());
-            LinkedHashMap point0 = (LinkedHashMap) data.get(0);
+            LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
             assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
 
-            dataField = (LinkedHashMap) map.get("V2");
+            dataField = obj[1].data;
             assertNotNull(dataField);
             assertEquals(1, dataField.size());
 
-            data = (List) dataField.get("data");
-            assertEquals(1, data.size());
-            point0 = (LinkedHashMap) data.get(0);
+            point0 = (LinkedHashMap) dataField.get(0);
             assertEquals(124, (Double) point0.get(String.valueOf(now)), 0.0001);
         }
     }
@@ -281,19 +280,21 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
 
             //expected string is
-            //[{"V1":{"data":[{"1504015510046":123.0}]}}]
+            //[
+            //   {
+            //      "data":[{"1507809234902":123.0}]
+            //   }
+            //]
 
             String responseString = consumeText(response);
-            Map map = JsonParser.MAPPER.readValue(responseString, Map.class);
-            assertNotNull(map);
-            assertEquals(1, map.size());
-            LinkedHashMap dataField = (LinkedHashMap) map.get("V1");
+            DataDTO<ArrayList<LinkedHashMap>>[] obj = JsonParser.MAPPER.readValue(responseString, DataDTO[].class);
+            assertNotNull(obj);
+            assertEquals(1, obj.length);
+            List dataField = obj[0].data;
             assertNotNull(dataField);
             assertEquals(1, dataField.size());
 
-            List data = (List) dataField.get("data");
-            assertEquals(1, data.size());
-            LinkedHashMap point0 = (LinkedHashMap) data.get(0);
+            LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
             assertEquals(123, (Double) point0.values().iterator().next(), 0.0001);
 
             System.out.println(responseString);

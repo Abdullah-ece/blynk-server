@@ -89,7 +89,4 @@ public class DataQueryRequestDTO {
         return pinType == null || pin == -1;
     }
 
-    public String name() {
-        return "" + Character.toUpperCase(pinType.pintTypeChar) + pin;
-    }
 }

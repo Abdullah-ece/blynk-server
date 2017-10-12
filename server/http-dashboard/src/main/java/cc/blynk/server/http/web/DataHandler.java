@@ -21,12 +21,10 @@ import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
+import cc.blynk.server.http.web.dto.DataResponseDTO;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -100,12 +98,12 @@ public class DataHandler extends BaseHttpHandler {
 
         blockingIOProcessor.executeDB(() -> {
             try {
-                Map<String, Data> finalModel = new HashMap<>();
+                DataResponseDTO response = new DataResponseDTO(dataQueryRequestGroup.dataQueryRequests.length);
                 for (DataQueryRequestDTO dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
                     Object data = dbManager.getRawData(dataQueryRequest);
-                    finalModel.put(dataQueryRequest.name(), new Data(data));
+                    response.add(data);
                 }
-                ctx.writeAndFlush(ok(finalModel), ctx.voidPromise());
+                ctx.writeAndFlush(ok(response.data()), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error fetching history data.", e);
                 ctx.writeAndFlush(serverError("Error fetching history data."), ctx.voidPromise());
@@ -113,15 +111,6 @@ public class DataHandler extends BaseHttpHandler {
         });
 
         return null;
-    }
-
-    private class Data {
-
-        private final Object data;
-
-        Data(Object data) {
-            this.data = data;
-        }
     }
 
 }
