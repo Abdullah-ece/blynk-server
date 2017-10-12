@@ -757,13 +757,13 @@ HOST: https://knight-qa.blynk.cc/
         {
           "dataQueryRequests" : [
               {
-                "sourceType" : "RAW_DATA",
+                "sourceType" : "RAW_DATA", //RAW_DATA, SUM, AVG, MED, MIN, MAX, COUNT, CUMULATIVE_COUNT
                 "pinType" : "VIRTUAL",
                 "pin" : 1,
                 "selectedColumns" : [
                     {
                       "name" : "Shift 1",
-                      "type" : "METADATA"
+                      "type" : "METADATA" // or COLUMN
                     }
                 ],
                 "groupByFields" : [
