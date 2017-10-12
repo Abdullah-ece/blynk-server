@@ -10,6 +10,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
+import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -41,6 +42,7 @@ import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
+import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
@@ -104,6 +106,28 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
             batchBindStep.execute();
             connection.commit();
         }
+    }
+
+
+    @Test
+    public void printRequest() throws Exception {
+        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
+                new DataQueryRequestDTO(
+                        RAW_DATA,
+                        PinType.VIRTUAL,
+                        (byte) 1,
+                        null,
+                        new SelectedColumn[] {
+                                metaDataFrom("Shift 1"),
+                                metaDataFrom("Shift 2"),
+                                metaDataFrom("Shift 3")
+                        },
+                        null,
+                        null,
+                        0, 1000,
+                        0, System.currentTimeMillis())
+        });
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
     }
 
     @Before
