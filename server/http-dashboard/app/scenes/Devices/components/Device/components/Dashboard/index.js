@@ -4,11 +4,10 @@ import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
 import {Icon} from 'antd';
-import {VIRTUAL_PIN_PREFIX} from 'services/Widgets';
 import {TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {WidgetHistoryByPinFetch} from 'data/Widgets/api';
+import {WidgetHistoryByPinFetch, WidgetsHistory} from 'data/Widgets/api';
 import {TimeFiltering} from './scenes';
 import {getFormValues, initialize} from 'redux-form';
 
@@ -19,7 +18,8 @@ const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filteri
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
-  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch)
+  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch),
+  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch)
 }))
 class Dashboard extends React.Component {
 
@@ -29,6 +29,7 @@ class Dashboard extends React.Component {
     params: PropTypes.object,
     timeFilteringValues: PropTypes.object,
     fetchWidgetHistoryByPin: PropTypes.func,
+    fetchWidgetHistory: PropTypes.func,
     initializeForm: PropTypes.func,
   };
 
@@ -55,7 +56,7 @@ class Dashboard extends React.Component {
 
   fetchWidgetsData(params = {}) {
 
-    const pins = [];
+    const dataQueryRequests = [];
 
     const dashboard = this.props.dashboard;
 
@@ -64,30 +65,48 @@ class Dashboard extends React.Component {
       dashboard.get('widgets').forEach((widget) => {
         if (widget.has('sources') && widget.get('sources').size) {
 
-          widget.get('sources').forEach((source) => {
+          widget.get('sources').forEach((source, sourceIndex) => {
             if (!source || !source.get('dataStream'))
               return null;
 
-            let pin = `${VIRTUAL_PIN_PREFIX}${source.getIn(['dataStream', 'pin'])}`;
+            let pin = source.getIn(['dataStream', 'pin']);
 
-            if (pins.indexOf(pin) === -1)
-              pins.push(pin);
+            let timeFilter = {};
+
+            if(params.from === undefined) {
+              timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
+            }
+
+            const additionalParams = {};
+
+            if(source.has('groupByFields') && source.get('groupByFields').size) {
+              additionalParams.groupByFields = source.get('groupByFields').toJS();
+            }
+
+            if(source.has('sortByFields') && source.get('sortByFields').size) {
+              additionalParams.sortByFields = source.get('sortByFields').toJS();
+            }
+
+            dataQueryRequests.push({
+              "widgetId": widget.get('id'),
+              "sourceIndex": sourceIndex,
+              "pinType" : "VIRTUAL",
+              "pin" : pin,
+              "sourceType" : source.get('sourceType'),
+              "offset" : 0,
+              "limit" : 1000,
+              ...timeFilter,
+              ...additionalParams,
+            });
+
           });
         }
       });
 
-    if (params.from === undefined) {
-      params = {
-        ...params,
-        ...this.getTimeOffsetForData({time: 'HOUR'})
-      };
-    }
-
-    if (pins.length)
-      this.props.fetchWidgetHistoryByPin({
+    if (dataQueryRequests.length)
+      this.props.fetchWidgetHistory({
         deviceId: this.props.params.id,
-        pins: pins,
-        ...params,
+        dataQueryRequests: dataQueryRequests,
       });
 
   }
@@ -146,6 +165,7 @@ class Dashboard extends React.Component {
       params.to = values.customTime[1];
     } else {
       params.from = new Date().getTime() - TIMELINE_TIME_FILTERS[values.time].time;
+      params.to = new Date().getTime();
     }
 
     return params;
@@ -186,41 +206,41 @@ class Dashboard extends React.Component {
       };
     }
 
-    widgets.lg.push({
-      typeOfData: 1,
-      label: 'Devices By Organization',
-      type: 'BAR',
-      i: '999',
-      id: 999,
-      w: 4,
-      h: 3,
-      x: 0,
-      y: 8,
-    });
-
-    widgets.lg.push({
-      typeOfData: 2,
-      label: 'Devices By Product',
-      type: 'BAR',
-      i: '9992',
-      id: 9992,
-      w: 4,
-      h: 3,
-      x: 4,
-      y: 8,
-    });
-
-    widgets.lg.push({
-      typeOfData: 3,
-      label: 'Products By Organization',
-      type: 'BAR',
-      i: '9993',
-      id: 9993,
-      w: 8,
-      h: 4,
-      x: 0,
-      y: 12,
-    });
+    // widgets.lg.push({
+    //   typeOfData: 1,
+    //   label: 'Devices By Organization',
+    //   type: 'BAR',
+    //   i: '999',
+    //   id: 999,
+    //   w: 4,
+    //   h: 3,
+    //   x: 0,
+    //   y: 8,
+    // });
+    //
+    // widgets.lg.push({
+    //   typeOfData: 2,
+    //   label: 'Devices By Product',
+    //   type: 'BAR',
+    //   i: '9992',
+    //   id: 9992,
+    //   w: 4,
+    //   h: 3,
+    //   x: 4,
+    //   y: 8,
+    // });
+    //
+    // widgets.lg.push({
+    //   typeOfData: 3,
+    //   label: 'Products By Organization',
+    //   type: 'BAR',
+    //   i: '9993',
+    //   id: 9993,
+    //   w: 8,
+    //   h: 4,
+    //   x: 0,
+    //   y: 12,
+    // });
 
     let isLoading = false;
     if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
@@ -228,12 +248,12 @@ class Dashboard extends React.Component {
 
     // uncomment when start to use real data
 
-    // if (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size)
-    //   return (
-    //     <div className="devices--device-dashboard">
-    //       <div className="product-no-fields" style={{padding: 0}}>No Dashboard widgets</div>
-    //     </div>
-    //   );
+    if (!isLoading && (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size))
+      return (
+         <div className="devices--device-dashboard">
+           <div className="product-no-fields" style={{padding: 0}}>No Dashboard widgets</div>
+         </div>
+       );
 
 
     return (

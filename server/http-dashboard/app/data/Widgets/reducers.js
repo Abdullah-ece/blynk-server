@@ -1,9 +1,8 @@
 import {fromJS} from 'immutable';
 
-const parseWidgetData = (data) => {
-  if (!data) return [];
+const parseLineWidgetData = (response) => {
 
-  return data.map((item) => {
+  return response.data.map((item) => {
     const key = Object.keys(item)[0];
     const value = item[key];
 
@@ -14,13 +13,42 @@ const parseWidgetData = (data) => {
   });
 };
 
+const parseBarWidgetData = (response) => {
+
+  return Object.keys(response.data).map((key) => {
+    const value = response.data[key];
+
+    return {
+      name: String(key),
+      value: Number(value)
+    };
+  });
+};
+
+const parseHistoryData = (response) => {
+
+  if (!response.data) return [];
+
+  if (Array.isArray(response.data)) {
+    // parse line chart data
+    return parseLineWidgetData(response);
+  } else {
+    // parse bar chart data
+    return parseBarWidgetData(response);
+  }
+
+};
+
 const initialState = fromJS({
   widgetsData: {
     /*
+    ===NEW===
     deviceId: {
       loading: bool,
-      pin: {
-        data: Array
+      widgetId: {
+        sourceIndex: {
+          data: Array
+        }
       }
     }
     */
@@ -30,25 +58,27 @@ const initialState = fromJS({
 export default function Product(state = initialState, action) {
   switch (action.type) {
 
-    case "API_WIDGETS_HISTORY_BY_PIN":
+    case "API_WIDGETS_HISTORY":
+      // return state;
+      return action.value.dataQueryRequests.reduce((state, request) => {
+        return state.setIn(['widgetsData', String(action.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS({
+          data: []
+        }));
+      }, state.setIn(['widgetsData', String(action.value.deviceId), 'loading'], true));
 
-      return action.value.pins.reduce((state, pin) => {
-        return state.setIn(['widgetsData', action.value.deviceId, pin], fromJS(
+    case "API_WIDGETS_HISTORY_SUCCESS":
+
+      return action.meta.previousAction.value.dataQueryRequests.reduce((state, request, key) => {
+        return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS(
           {
-            data: []
-          }
-        ));
-      }, state.setIn(['widgetsData', action.value.deviceId, 'loading'], true));
-
-    case "API_WIDGETS_HISTORY_BY_PIN_SUCCESS":
-
-      return action.meta.previousAction.value.pins.reduce((state, pin) => {
-        return state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, pin], fromJS(
-          {
-            data: parseWidgetData(action.payload.data[pin].data)
+            data: parseHistoryData(action.payload.data[key])
           }
         ));
       }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
+
+    case "API_WIDGETS_HISTORY_BY_PIN_SUCCESS":
+
+      return state;
 
     case "API_WIDGETS_HISTORY_BY_PIN_FAIL":
       return action.meta.previousAction.value.pins.reduce((state, pin) => {
@@ -58,18 +88,6 @@ export default function Product(state = initialState, action) {
           }
         ));
       }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
-
-    case "API_WIDGETS_PRODUCTS_FETCH_SUCCESS":
-      // hardcoded id for bar chart
-      return state.setIn(['widgetsData', '9992'], fromJS({
-        data: action.payload.data || []
-      }));
-
-    case "API_WIDGETS_ORGANIZATION_FETCH_SUCCESS":
-      return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), 'organization'], fromJS(action.payload.data || []));
-
-    case "API_WIDGETS_ORGANIZATIONS_FETCH_SUCCESS":
-      return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), 'organizations'], fromJS(action.payload.data || []));
 
     default:
       return state;

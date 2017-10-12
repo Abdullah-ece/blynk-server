@@ -24,6 +24,27 @@ export function WidgetHistoryByPinFetch(data) {
   };
 }
 
+export function WidgetsHistory(data) {
+  if (!data.deviceId)
+    throw new Error('Missing device id parameter for widget history fetch');
+
+  if (!data.dataQueryRequests)
+    throw new Error('Missing dataQueryRequests parameter for widget history fetch');
+
+  return {
+    type: 'API_WIDGETS_HISTORY',
+    value: data,
+    payload: {
+      request: {
+        method: 'post',
+        url: API_URL.widgets().history(data),
+        data: data,
+      }
+    }
+  };
+
+}
+
 export function WidgetProductsFetch(data) {
 
   return {
