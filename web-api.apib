@@ -755,17 +755,36 @@ HOST: https://knight-qa.blynk.cc/
 + Request (application/json)
 
         {
-          "dataQueryRequests" : [ {
-            "pinType" : "VIRTUAL",
-            "pin" : 1,
-            "columnLabel" : "Load Weight",
-            "from" : 0,
-            "to" : 1507589071996,
-            "sourceType" : "RAW_DATA",
-            "groupByFields" : [ "Shift 1", "Shift 2", "Shift 3" ],
-            "offset" : 0,
-            "limit" : 1000
-          } ]
+          "dataQueryRequests" : [
+              {
+                "sourceType" : "RAW_DATA",
+                "pinType" : "VIRTUAL",
+                "pin" : 1,
+                "selectedColumns" : [
+                    {
+                      "name" : "Shift 1",
+                      "type" : "METADATA"
+                    }
+                ],
+                "groupByFields" : [
+                    {
+                      "name" : "Shift 1",
+                      "type" : "METADATA"
+                    }
+                ],
+                "sortByFields" : [
+                    {
+                      "name" : "Shift 1",
+                      "type" : "METADATA"
+                    }
+                ],
+                "offset" : 0,
+                "limit" : 1000,
+                "from" : 0,
+                "to" : 1507792950421,
+                "deviceId" : 0
+              }
+           ]
         }
 
 + Response 200 (application/json)
