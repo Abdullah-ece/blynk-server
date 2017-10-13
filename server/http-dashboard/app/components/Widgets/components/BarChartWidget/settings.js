@@ -696,9 +696,9 @@ class BarChartSettings extends React.Component {
                 </Col>
                 <Col span={12}>
 
-                  <Item label="Color">
-                    <Field component={this.colorPickerComponent} name="sources.0.color"/>
-                  </Item>
+                  {/*<Item label="Color">*/}
+                    {/*<Field component={this.colorPickerComponent} name="sources.0.color"/>*/}
+                  {/*</Item>*/}
 
                 </Col>
               </Row>
