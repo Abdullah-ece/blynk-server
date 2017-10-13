@@ -243,7 +243,7 @@ class Dashboard extends React.Component {
     // });
 
     let isLoading = false;
-    if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
+    if (this.props.widgets.hasIn([this.props.params.id, 'loading']) && this.props.widgets.getIn([this.props.params.id, 'loading']))
       isLoading = true;
 
     // uncomment when start to use real data
