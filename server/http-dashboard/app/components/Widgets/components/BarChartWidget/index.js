@@ -125,6 +125,7 @@ class BarChartWidget extends React.Component {
       l: 65,
     },
     yaxis: {
+      type: 'category',
       fixedrange: true,
       showline: false,
       linecolor: 'rgb(204,204,204)',
@@ -237,7 +238,9 @@ class BarChartWidget extends React.Component {
 
       const AVG_SYMBOL_LENGTH = 6;
 
-      layout.margin.l = Math.round(maxYLabelWidth * AVG_SYMBOL_LENGTH);
+      const ADDITIONAL_OFFSET = 12;
+
+      layout.margin.l = Math.round(maxYLabelWidth * AVG_SYMBOL_LENGTH) + ADDITIONAL_OFFSET;
     }
 
     return (

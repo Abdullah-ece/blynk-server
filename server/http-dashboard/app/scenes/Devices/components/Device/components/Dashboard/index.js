@@ -102,7 +102,7 @@ class Dashboard extends React.Component {
               "pin" : pin,
               "sourceType" : source.get('sourceType'),
               "offset" : 0,
-              "limit" : 10, //hardcoded value. Update after backend fix
+              "limit" : !additionalParams.selectedColumns ? 1 : 10, //hardcoded value. Update after backend fix
               ...timeFilter,
               ...additionalParams,
             });
