@@ -7,7 +7,7 @@ import {Icon} from 'antd';
 import {TIMELINE_TIME_FILTERS} from 'services/Devices';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {WidgetHistoryByPinFetch, WidgetsHistory} from 'data/Widgets/api';
+import {WidgetsHistory} from 'data/Widgets/api';
 import {TimeFiltering} from './scenes';
 import {getFormValues, initialize} from 'redux-form';
 
@@ -18,7 +18,6 @@ const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filteri
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
-  fetchWidgetHistoryByPin: bindActionCreators(WidgetHistoryByPinFetch, dispatch),
   fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch)
 }))
 class Dashboard extends React.Component {
@@ -28,7 +27,6 @@ class Dashboard extends React.Component {
     widgets: PropTypes.instanceOf(Map),
     params: PropTypes.object,
     timeFilteringValues: PropTypes.object,
-    fetchWidgetHistoryByPin: PropTypes.func,
     fetchWidgetHistory: PropTypes.func,
     initializeForm: PropTypes.func,
   };
