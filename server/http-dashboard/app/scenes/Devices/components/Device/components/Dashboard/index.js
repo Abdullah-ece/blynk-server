@@ -73,6 +73,11 @@ class Dashboard extends React.Component {
 
             if(params.from === undefined) {
               timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
+            } else {
+              timeFilter = {
+                from: params.from,
+                to: params.to,
+              };
             }
 
             const additionalParams = {};
