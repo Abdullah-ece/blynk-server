@@ -131,6 +131,10 @@ class BarChartSettings extends React.Component {
     const nextDataStream = nextProps.formValues.sources && nextProps.formValues.sources[0].dataStream || {};
     const dataStream = this.props.formValues.sources && this.props.formValues.sources[0].dataStream || {};
 
+    if(nextDataStream && nextDataStream.tableDescriptor) {
+      this.props.changeForm(nextProps.form, 'sources.0.dataStream', fromJS(nextDataStream).set('tableDescriptor', null).toJS());
+    }
+
     if (nextProps.formValues.sources[0] && nextDataStream.pin === undefined || nextDataStream.pin !== dataStream.pin) {
 
       let groupByFields = nextProps.formValues.sources[0].groupByFields;

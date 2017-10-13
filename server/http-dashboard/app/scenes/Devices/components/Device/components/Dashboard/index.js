@@ -100,6 +100,7 @@ class Dashboard extends React.Component {
               "sourceIndex": sourceIndex,
               "pinType" : "VIRTUAL",
               "pin" : pin,
+              "sortOrder": source.get('sortOrder'),
               "sourceType" : source.get('sourceType'),
               "offset" : 0,
               "limit" : !additionalParams.selectedColumns ? 1 : 10, //hardcoded value. Update after backend fix
