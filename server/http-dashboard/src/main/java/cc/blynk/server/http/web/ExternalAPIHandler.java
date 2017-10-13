@@ -490,7 +490,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                 try {
                     TableDataMapper tableDataMapper = new TableDataMapper(
                             KNIGHT_INSTANCE,
-                            deviceId, pin, pinType, pinValues);
+                            deviceId, pin, pinType, System.currentTimeMillis(),
+                            pinValues);
                     dbManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
@@ -562,6 +563,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         int deviceId = tokenValue.device.id;
+        long now = System.currentTimeMillis();
 
         //todo separate thread
         if (pin == 100 && pinType == PinType.VIRTUAL) {
@@ -571,7 +573,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                     int i = 0;
                     for (String[] pinValue : pinValues) {
                         tableDataMappers[i++] = new TableDataMapper(KNIGHT_INSTANCE,
-                                deviceId, pin, pinType,
+                                deviceId, pin, pinType, now,
                                 pinValue);
                     }
 

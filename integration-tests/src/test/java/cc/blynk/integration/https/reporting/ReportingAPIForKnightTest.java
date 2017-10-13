@@ -36,11 +36,12 @@ import java.util.Map;
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
-import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
+import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 import static org.junit.Assert.assertEquals;
@@ -76,11 +77,13 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                             KNIGHT_INSTANCE.fields()
                      ).values(KNIGHT_INSTANCE.values()));
 
+            long now = System.currentTimeMillis();
             for (String line : lines) {
                 KnightData[] newKnightData = makeNewDataFromOldData(line.split(","));
+                now++;
                 for (KnightData knightData : newKnightData) {
                     TableDataMapper point = new TableDataMapper(KNIGHT_INSTANCE,
-                            0, (byte) 100, PinType.VIRTUAL,
+                            0, (byte) 100, PinType.VIRTUAL, now,
                             knightData.toSplit());
                     batchBindStep.bind(point.data);
                 }
@@ -107,7 +110,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
-    public void testCreateShiftQuery() throws Exception {
+    public void testCreateShiftQueryWithSubQuery() throws Exception {
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
@@ -129,6 +132,34 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
+    public void testCreateShiftQueryWithStartTimeGrouping() throws Exception {
+        try (Connection connection = dbManager.getConnection()) {
+            DSLContext create = DSL.using(connection, POSTGRES_9_4);
+
+            Field<Integer> groupByField = extractEpochFrom(field("start_time")).as("shift");
+
+            Map<Integer, Integer> result = create.select(
+                    groupByField, countDistinct(field("created"))
+            )
+                    .from(KNIGHT_INSTANCE.tableName)
+                    .groupBy(groupByField)
+                    .fetchMap(groupByField, count());
+
+            assertEquals(3, result.size());
+
+            assertEquals(Integer.valueOf(588), result.get(2));
+            assertEquals(Integer.valueOf(507), result.get(3));
+            assertEquals(Integer.valueOf(195), result.get(1));
+
+            connection.commit();
+        }
+    }
+
+    public static Field<Integer> extractEpochFrom(Field<?> field) {
+        return field("ceil(EXTRACT(EPOCH FROM {0}) / 28800)", Integer.class, field);
+    }
+
+    @Test
     //Number of Loads by Shift
     //https://github.com/blynkkk/knight/issues/778
     public void numberOfLoadsByShift() throws Exception {
@@ -138,25 +169,17 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 PinType.VIRTUAL, (byte) 100,
                 null,
                 new SelectedColumn[] {
-                        metaDataFrom("Shift 1"),
-                        metaDataFrom("Shift 2"),
-                        metaDataFrom("Shift 3"),
-                        columnFrom("Pump Id")
+                        metaDataFrom("Shifts")
                 },
                 null,
                 null,
-                0, 1,
+                0, 10,
                 0, Long.MAX_VALUE);
 
         /*
-        select
-                count(*) filter (where start_time between time '07:59:59' and time '16:00:00') as "Shift 1",
-                count(*) filter (where start_time between time '15:59:59' and time '23:59:59') as "Shift 2",
-                count(*) filter (where start_time between time '00:00:00' and time '08:00:00') as "Shift 3"
-        from knight_laundry
-        where (device_id = 0 and pin = 100 and pin_type = 1)
-        group by pump_id
-        limit 1
+            select ceil(EXTRACT(EPOCH FROM start_time) / 28800), count(distinct created)
+            from knight_laundry
+            group by ceil(EXTRACT(EPOCH FROM start_time) / 28800)
          */
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
@@ -164,13 +187,13 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);
 
-        Map map = (Map) resultObj;
+        Map result = (Map) resultObj;
 
-        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(result));
 
-        assertEquals(588, map.get("Shift 1"));
-        assertEquals(507, map.get("Shift 2"));
-        assertEquals(195, map.get("Shift 3"));
+        assertEquals(Integer.valueOf(588), result.get(2));
+        assertEquals(Integer.valueOf(507), result.get(3));
+        assertEquals(Integer.valueOf(195), result.get(1));
     }
 
     @Test
@@ -191,6 +214,13 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 null,
                 0, 10,
                 0, Long.MAX_VALUE);
+
+        /**
+         select pump_id, sum(volume)
+         from knight_laundry
+         group by pump_id
+         */
+
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 

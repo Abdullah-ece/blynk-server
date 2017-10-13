@@ -2,7 +2,8 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
-import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.Shift;
+import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
@@ -12,6 +13,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,27 +39,32 @@ public class TableDescriptor {
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
     private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
 
-    public static final MetaField[] metafields = new MetaField[] {
-            new RangeTimeMetaField(1, "Shift 1", Role.ADMIN, false, "07:59:59", "16:00:00"),
-            new RangeTimeMetaField(2, "Shift 2", Role.ADMIN, false, "15:59:59", "23:59:59"),
-            new RangeTimeMetaField(3, "Shift 3", Role.ADMIN, false, "00:00:00", "08:00:00")
+    public static final String SPECIAL_NAME = "Shifts";
+    public static final MetaField[] shifts = new MetaField[] {
+            new ShiftMetaField(1, SPECIAL_NAME, Role.ADMIN, false, new Shift[] {
+                    new Shift("Shift 1", "08:00:00", "16:00:00", 2),
+                    new Shift("Shift 2", "16:00:00", "00:00:00", 1),
+                    new Shift("Shift 3", "00:00:00", "08:00:00", 3),
+            })
     };
 
     public static final Field<Integer> DEVICE_ID = field("device_id", Integer.class);
     public static final Field<Integer> PIN = field("pin", Integer.class);
     public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
+    public static final Field<Timestamp> CREATED = field("created", Timestamp.class);
 
     public static final TableDescriptor KNIGHT_INSTANCE = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
             //default blynk columns
             new Column("Device Id", INTEGER),
             new Column("Pin", SMALLINT),
             new Column("Pin Type", SMALLINT),
+            new Column("Created", TIMESTAMP),
 
             //knight specific columns
             new Column("Type Of Record", INTEGER),
             new Column("Washer Id", INTEGER),
             new Column("Start Date", DATE, ofPattern("MM/dd/yy")),
-            new Column("Start Time", TIME, ofPattern("HH:mm:ss"), metafields),
+            new Column("Start Time", TIME, ofPattern("HH:mm:ss"), shifts),
             new Column("Finish Time", TIME, ofPattern("HH:mm:ss")),
             new Column("Cycle Time", TIME, ofPattern("HH:mm:ss")),
             new Column("Formula Number", INTEGER),
@@ -112,8 +119,9 @@ public class TableDescriptor {
             for (Column column : columns) {
                 for (MetaField metaField : column.metaFields) {
                     if (metaField.name.equals(selectedGroupByColumn.name)) {
-                        Field<?> groupField = metaField.attachQuery(step, column.columnName);
-                        step.select(groupField);
+                        Field field = field(column.columnName);
+                        field = metaField.prepareField(step, field);
+                        step.select(field).groupBy(field);
                         break;
                     }
                 }

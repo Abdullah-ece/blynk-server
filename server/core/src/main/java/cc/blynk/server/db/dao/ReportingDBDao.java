@@ -2,7 +2,9 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
+import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -42,6 +44,8 @@ import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.table;
 
 /**
@@ -461,6 +465,15 @@ public class ReportingDBDao {
                         for (SelectedColumn selectedColumn : dataQueryRequest.selectedColumns) {
                             step.select(dataQueryRequest.sourceType.apply(selectedColumn));
                         }
+                    } else {
+                        if (dataQueryRequest.sourceType == SourceType.COUNT) {
+                            //special case
+                            if (isSpecialShiftsCase(dataQueryRequest.groupByFields)) {
+                                step.select(countDistinct(TableDescriptor.CREATED));
+                            } else {
+                                step.select(count());
+                            }
+                        }
                     }
 
                     step
@@ -471,19 +484,14 @@ public class ReportingDBDao {
                             .offset(dataQueryRequest.offset)
                             .limit(dataQueryRequest.limit);
 
-                    if (dataQueryRequest.limit == 1) {
-                        map = step.fetchOne().intoMap();
-                    } else {
-                        HashMap tempMap = new HashMap<Integer, BigDecimal>();
-                        map = step.fetch().into(new RecordHandler<>() {
-                            Map<String, Integer> res = new HashMap<>();
-                            @Override
-                            public void next(Record record) {
-                                tempMap.put(record.get(0), record.get(1));
-                            }
-                        });
-                        map = tempMap;
-                    }
+                    HashMap tempMap = new HashMap<Integer, BigDecimal>();
+                    map = step.fetch().into(new RecordHandler<>() {
+                        @Override
+                        public void next(Record record) {
+                            tempMap.put(record.get(0), record.get(1));
+                        }
+                    });
+                    map = tempMap;
 
                     connection.commit();
                 } catch (Exception e) {
@@ -494,6 +502,16 @@ public class ReportingDBDao {
                 throw new RuntimeException("Other types of aggregation is not supported yet.");
 
         }
+    }
+
+    private static boolean isSpecialShiftsCase(SelectedColumn[] selectedColumns) {
+        for (SelectedColumn selectedColumn : selectedColumns) {
+            if (selectedColumn.type == FieldType.METADATA
+                    && TableDescriptor.SPECIAL_NAME.equals(selectedColumn.name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

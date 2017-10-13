@@ -13,12 +13,19 @@ public enum SourceType {
     RAW_DATA, SUM, AVG, MED, MIN, MAX, COUNT, CUMULATIVE_COUNT;
 
     public Field<?> apply(SelectedColumn selectedColumn) {
-        Field<Object> field = DSL.field(selectedColumn.name);
-        return applyAggregation(field).as(selectedColumn.label);
+        Field<?> field = DSL.field(selectedColumn.name);
+        field = applyAggregation(field);
+        if (selectedColumn.type == FieldType.COLUMN) {
+            return field.as(selectedColumn.label);
+        } else {
+            return field;
+        }
     }
 
-    private Field<?> applyAggregation(Field<Object> field) {
+    private Field<?> applyAggregation(Field<?> field) {
         switch (this) {
+            case COUNT:
+                return field.count();
             case SUM :
                 return field.sum();
             case AVG :

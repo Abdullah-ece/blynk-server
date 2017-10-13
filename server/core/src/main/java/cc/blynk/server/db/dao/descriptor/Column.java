@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.Record;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,7 @@ import static java.sql.Types.FLOAT;
 import static java.sql.Types.INTEGER;
 import static java.sql.Types.SMALLINT;
 import static java.sql.Types.TIME;
+import static java.sql.Types.TIMESTAMP;
 import static java.sql.Types.TINYINT;
 
 /**
@@ -148,6 +150,8 @@ public class Column {
                 return Double.class;
             case CHAR :
                 return Character.class;
+            case TIMESTAMP :
+                return Timestamp.class;
             default:
                 throw new RuntimeException("Datatype " + type + " is not supported yet.");
         }

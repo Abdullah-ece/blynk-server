@@ -226,6 +226,7 @@ CREATE TABLE knight_laundry (
    device_id int4,
    pin int2,
    pin_type int2,
+   created timestamp,
    type_of_record int4,
    washer_id int4,
    start_date date,
@@ -240,7 +241,7 @@ CREATE TABLE knight_laundry (
    pulse_count int4
 );
 
-create index on knight_laundry (device_id, pin, pin_type);
+create index on knight_laundry (device_id, pin, pin_type, created);
 
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;

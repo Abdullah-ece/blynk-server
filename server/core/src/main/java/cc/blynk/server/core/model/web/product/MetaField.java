@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
@@ -33,6 +34,7 @@ import org.jooq.SelectSelectStep;
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
         @JsonSubTypes.Type(value = RangeTimeMetaField.class, name = "Range"),
+        @JsonSubTypes.Type(value = ShiftMetaField.class, name = "Shift"),
         @JsonSubTypes.Type(value = SwitchMetaField.class, name = "Switch"),
         @JsonSubTypes.Type(value = CostMetaField.class, name = "Cost"),
         @JsonSubTypes.Type(value = ContactMetaField.class, name = "Contact"),
@@ -74,7 +76,7 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return false;
     }
 
-    public Field<?> attachQuery(SelectSelectStep<Record> query, String columnName) {
+    public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
         throw new RuntimeException("Not supported.");
     }
 

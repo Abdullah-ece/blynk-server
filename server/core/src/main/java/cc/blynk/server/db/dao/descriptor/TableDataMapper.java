@@ -16,15 +16,17 @@ public class TableDataMapper {
     public final TableDescriptor tableDescriptor;
     public final Object[] data;
 
-    private static final int BLYNK_PARAMS_COUNT = 3;
+    private static final int BLYNK_PARAMS_COUNT = 4;
 
-    public TableDataMapper(TableDescriptor tableDescriptor, int deviceId, byte pin, PinType pinType, String[] values) {
+    public TableDataMapper(TableDescriptor tableDescriptor,
+                           int deviceId, byte pin, PinType pinType, long ts, String[] values) {
         this.tableDescriptor = tableDescriptor;
         data = new Object[BLYNK_PARAMS_COUNT + values.length];
 
         data[0] = deviceId;
         data[1] = pin;
         data[2] = pinType.ordinal();
+        data[3] = ts;
 
         init(values, BLYNK_PARAMS_COUNT);
     }
