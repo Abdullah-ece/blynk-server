@@ -128,6 +128,22 @@ class BarChartSettings extends React.Component {
       this.props.initializeForm(nextProps.form, nextProps.initialValues);
     }
 
+    const nextDataStream = nextProps.formValues.sources && nextProps.formValues.sources[0].dataStream || {};
+    const dataStream = this.props.formValues.sources && this.props.formValues.sources[0].dataStream || {};
+
+    if (nextProps.formValues.sources[0] && nextDataStream.pin === undefined || nextDataStream.pin !== dataStream.pin) {
+
+      let groupByFields = nextProps.formValues.sources[0].groupByFields;
+      let sortByFields = nextProps.formValues.sources[0].sortByFields;
+
+      if(groupByFields && groupByFields.length)
+        this.props.changeForm(nextProps.form, 'sources.0.groupByFields', []);
+
+      if(sortByFields && sortByFields.length)
+        this.props.changeForm(nextProps.form, 'sources.0.sortByFields', []);
+
+    }
+
   }
 
   labelNameComponent({input}) {
@@ -205,6 +221,9 @@ class BarChartSettings extends React.Component {
 
     this.props.dataStreams.forEach((stream) => {
 
+      if(parseInt(stream.values.pin) !== 100)
+        return null;
+
       dataStreamsOptions.push({
         key: `${stream.values.pin}`,
         value: stream.values.label,
@@ -214,7 +233,8 @@ class BarChartSettings extends React.Component {
         stream.values.tableDescriptor.columns.forEach((column) => {
           dataStreamsOptions.push({
             key: `${stream.values.pin}|${column.label}`,
-            value: `-- ${column.label}`
+            value: `-- ${column.label}`,
+            disabled: true,
           });
         });
       }
@@ -258,7 +278,7 @@ class BarChartSettings extends React.Component {
 
     const getOption = (item) => {
       return (
-        <AntdSelect.Option value={item.key} key={item.key}>
+        <AntdSelect.Option value={item.key} key={item.key} disabled={item.disabled || false}>
           {item.value}
         </AntdSelect.Option>
       );
