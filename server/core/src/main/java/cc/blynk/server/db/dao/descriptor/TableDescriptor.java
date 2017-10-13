@@ -3,19 +3,29 @@ package cc.blynk.server.db.dao.descriptor;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
+import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectSelectStep;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import static java.sql.Types.CHAR;
 import static java.sql.Types.DATE;
 import static java.sql.Types.DOUBLE;
 import static java.sql.Types.INTEGER;
+import static java.sql.Types.SMALLINT;
 import static java.sql.Types.TIME;
 import static java.sql.Types.TIMESTAMP;
 import static java.sql.Types.VARCHAR;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.jooq.impl.DSL.field;
 
 /**
  * The Blynk Project.
@@ -33,24 +43,29 @@ public class TableDescriptor {
             new RangeTimeMetaField(3, "Shift 3", Role.ADMIN, false, "00:00:00", "08:00:00")
     };
 
+    public static final Field<Integer> DEVICE_ID = field("device_id", Integer.class);
+    public static final Field<Integer> PIN = field("pin", Integer.class);
+    public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
+
     public static final TableDescriptor KNIGHT_INSTANCE = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
+            //default blynk columns
+            new Column("Device Id", INTEGER),
+            new Column("Pin", SMALLINT),
+            new Column("Pin Type", SMALLINT),
+
+            //knight specific columns
+            new Column("Type Of Record", INTEGER),
+            new Column("Washer Id", INTEGER),
             new Column("Start Date", DATE, ofPattern("MM/dd/yy")),
             new Column("Start Time", TIME, ofPattern("HH:mm:ss"), metafields),
-            new Column("End Date", DATE, ofPattern("MM/dd/yy")),
-            new Column("End Time", TIME, ofPattern("HH:mm:ss")),
-            new Column("System Id", INTEGER),
-            new Column("Washer Id", INTEGER),
-            new Column("Formula", INTEGER),
+            new Column("Finish Time", TIME, ofPattern("HH:mm:ss")),
             new Column("Cycle Time", TIME, ofPattern("HH:mm:ss")),
+            new Column("Formula Number", INTEGER),
             new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
-            new Column("Saphire", INTEGER),
-            new Column("Boost", INTEGER),
-            new Column("Emulsifier", INTEGER),
-            new Column("Destain", INTEGER),
-            new Column("Bleach", INTEGER),
-            new Column("Sour", INTEGER),
-            new Column("Supreme", INTEGER),
-            new Column("Jasmine", INTEGER)
+            new Column("Pump Id", INTEGER),
+            new Column("Volume", INTEGER),
+            new Column("Run Time", INTEGER),
+            new Column("Pulse Count", INTEGER)
     });
 
     public static final TableDescriptor BLYNK_DEFAULT_INSTANCE = new TableDescriptor(BLYNK_DEFAULT_NAME, new Column[] {
@@ -72,17 +87,55 @@ public class TableDescriptor {
                            @JsonProperty("columns") Column[] columns) {
         this.tableName = tableName;
         this.columns = columns;
+        checkFieldNameAreUnique();
     }
 
-    public Column getColumnWithGroupBy(SelectedColumn[] groupByFields) {
+    private void checkFieldNameAreUnique() {
+        HashSet<String> names = new HashSet<>();
         for (Column column : columns) {
-            for (MetaField metaField : column.metaFields) {
-                if (metaField.isSameName(groupByFields)) {
-                    return column;
+            if (!names.add(column.columnName)) {
+                throw new RuntimeException(column.columnName + " is not unique. Please check table descriptor.");
+            }
+        }
+    }
+
+    public void findMatchingColumn(SelectSelectStep<Record> step, SelectedColumn selectedGroupByColumn) {
+        if (selectedGroupByColumn.type == FieldType.COLUMN) {
+            for (Column column : columns) {
+                if (column.columnName.equals(selectedGroupByColumn.name)) {
+                    Field field = field(column.columnName);
+                    step.select(field).groupBy(field);
+                    break;
+                }
+            }
+        } else {
+            for (Column column : columns) {
+                for (MetaField metaField : column.metaFields) {
+                    if (metaField.name.equals(selectedGroupByColumn.name)) {
+                        Field<?> groupField = metaField.attachQuery(step, column.columnName);
+                        step.select(groupField);
+                        break;
+                    }
                 }
             }
         }
-        return null;
+    }
+
+    public Field[] fields() {
+        Field[] fields = new Field[columns.length];
+        int i = 0;
+        for (Column column : columns) {
+            fields[i++] = field(column.columnName, column.getType());
+        }
+        return fields;
+    }
+
+    public List<String> values() {
+        List<String> list = new ArrayList<>(columns.length);
+        for (Column column : columns) {
+            list.add("?");
+        }
+        return list;
     }
 
 }

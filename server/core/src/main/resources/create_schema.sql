@@ -223,24 +223,24 @@ CREATE TABLE reporting_events_last_seen (
 );
 
 CREATE TABLE knight_laundry (
+   device_id int4,
+   pin int2,
+   pin_type int2,
+   type_of_record int4,
+   washer_id int4,
    start_date date,
    start_time time,
-   end_date date,
-   end_time time,
-   system_id int4,
-   washer_id int4,
-   formula int4,
+   finish_time time,
    cycle_time time,
+   formula_number int4,
    load_weight int4,
-   saphire int4,
-   boost int4,
-   emulsifier int4,
-   destain int4,
-   bleach int4,
-   sour int4,
-   supreme int4,
-   jasmine int4
+   pump_id int4,
+   volume int4,
+   run_time int4,
+   pulse_count int4
 );
+
+create index on knight_laundry (device_id, pin, pin_type);
 
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;

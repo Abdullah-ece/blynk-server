@@ -9,18 +9,21 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.server.db.dao.descriptor.Column;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.RecordHandler;
 import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -380,6 +384,28 @@ public class ReportingDBDao {
         }
     }
 
+    public void insertDataPoint(TableDataMapper[] tableDataMappers)  {
+        try (Connection connection = ds.getConnection()) {
+            DSLContext create = DSL.using(connection, POSTGRES_9_4);
+
+            BatchBindStep batchBindStep = create.batch(
+                    create.insertInto(
+                            table(tableDataMappers[0].tableDescriptor.tableName),
+                            tableDataMappers[0].tableDescriptor.fields()
+                    ).values(tableDataMappers[0].tableDescriptor.values()));
+
+            for (TableDataMapper tableDataMapper : tableDataMappers) {
+                batchBindStep.bind(tableDataMapper.data);
+            }
+
+            batchBindStep.execute();
+
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting knight data.", e);
+        }
+    }
+
     public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
         switch (dataQueryRequest.sourceType) {
             //todo leaving it as it is for now. move to jooq
@@ -419,17 +445,15 @@ public class ReportingDBDao {
                 return result;
             case SUM:
             case COUNT:
-                Map<String, Object> map = Collections.emptyMap();
+                Object map = Collections.emptyMap();
                 try (Connection connection = ds.getConnection()) {
                     DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
                     SelectSelectStep<Record> step = create.select();
 
                     if (dataQueryRequest.groupByFields != null) {
-                        Column column = dataQueryRequest.tableDescriptor
-                                .getColumnWithGroupBy(dataQueryRequest.groupByFields);
-                        if (column != null) {
-                            column.attachQuery(step, dataQueryRequest.groupByFields);
+                        for (SelectedColumn selectedGroupByColumn : dataQueryRequest.groupByFields) {
+                            dataQueryRequest.tableDescriptor.findMatchingColumn(step, selectedGroupByColumn);
                         }
                     }
 
@@ -439,9 +463,27 @@ public class ReportingDBDao {
                         }
                     }
 
-                    map = step
+                    step
                             .from(dataQueryRequest.tableDescriptor.tableName)
-                            .fetchOne().intoMap();
+                            .where(TableDescriptor.DEVICE_ID.eq(dataQueryRequest.deviceId)
+                                    .and(TableDescriptor.PIN.eq((int) dataQueryRequest.pin))
+                                    .and(TableDescriptor.PIN_TYPE.eq(dataQueryRequest.pinType.ordinal())))
+                            .offset(dataQueryRequest.offset)
+                            .limit(dataQueryRequest.limit);
+
+                    if (dataQueryRequest.limit == 1) {
+                        map = step.fetchOne().intoMap();
+                    } else {
+                        HashMap tempMap = new HashMap<Integer, BigDecimal>();
+                        map = step.fetch().into(new RecordHandler<>() {
+                            Map<String, Integer> res = new HashMap<>();
+                            @Override
+                            public void next(Record record) {
+                                tempMap.put(record.get(0), record.get(1));
+                            }
+                        });
+                        map = tempMap;
+                    }
 
                     connection.commit();
                 } catch (Exception e) {

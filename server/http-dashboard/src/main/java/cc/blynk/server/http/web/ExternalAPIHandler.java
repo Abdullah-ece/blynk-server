@@ -42,7 +42,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
@@ -70,6 +69,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -447,7 +447,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         return updateWidgetPinData(ctx, token, pinString, pinValues);
     }
 
-    //todo remove later?
     @PUT
     @Path("/{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
@@ -486,11 +485,12 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        //todo separate thread
         if (pin == 100 && pinType == PinType.VIRTUAL) {
             blockingIOProcessor.executeDB(() -> {
                 try {
-                    TableDataMapper tableDataMapper = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, pinValues);
+                    TableDataMapper tableDataMapper = new TableDataMapper(
+                            KNIGHT_INSTANCE,
+                            deviceId, pin, pinType, pinValues);
                     dbManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
@@ -526,6 +526,65 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         return ok();
+    }
+
+    //todo remove later?
+    @PUT
+    @Path("/{token}/updateBatch/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
+    public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
+                                        @PathParam("token") String token,
+                                        @PathParam("pin") String pinString,
+                                        String[][] pinValues) {
+
+        if (pinValues.length == 0) {
+            log.debug("No pin for update provided.");
+            return Response.badRequest("No pin for update provided.");
+        }
+
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        PinType pinType;
+        byte pin;
+
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = Byte.parseByte(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.debug("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        int deviceId = tokenValue.device.id;
+
+        //todo separate thread
+        if (pin == 100 && pinType == PinType.VIRTUAL) {
+            blockingIOProcessor.executeDB(() -> {
+                try {
+                    TableDataMapper[] tableDataMappers = new TableDataMapper[pinValues.length];
+                    int i = 0;
+                    for (String[] pinValue : pinValues) {
+                        tableDataMappers[i++] = new TableDataMapper(KNIGHT_INSTANCE,
+                                deviceId, pin, pinType,
+                                pinValue);
+                    }
+
+                    dbManager.reportingDBDao.insertDataPoint(tableDataMappers);
+                    ctx.writeAndFlush(ok());
+                } catch (Exception e) {
+                    log.error("Error insert knight record.", e);
+                    ctx.writeAndFlush(serverError("Error insert knight record."));
+                }
+            });
+        }
+
+        return null;
     }
 
     @PUT

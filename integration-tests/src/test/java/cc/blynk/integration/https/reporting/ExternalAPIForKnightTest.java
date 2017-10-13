@@ -1,6 +1,7 @@
 package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.db.DBManager;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -24,6 +25,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.junit.Assert.assertEquals;
@@ -61,16 +63,13 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         Path resPath = Paths.get(url.toURI());
         List<String> lines = Files.readAllLines(resPath);
 
-        String[] split = lines.get(0).split(",");
+        KnightData[] newKnightData = makeNewDataFromOldData(lines.get(0).split(","));
 
         StringJoiner sj = new StringJoiner(",", "[", "]");
-        for (String splitPart : split) {
-            sj.add("\"" + splitPart + "\"");
-        }
-
+        sj.add(newKnightData[0].toString());
         String fixedLine = sj.toString();
 
-        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v100");
+        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/updateBatch/v100");
         put.setEntity(new StringEntity(fixedLine, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
@@ -83,23 +82,23 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
             Result<Record> result = create.select().from(KNIGHT_INSTANCE.tableName).fetch();
 
             for (Record rs : result) {
-                assertEquals("2016-10-31", KNIGHT_INSTANCE.columns[0].get(rs).toString());
-                assertEquals("23:47:46", KNIGHT_INSTANCE.columns[1].get(rs).toString());
-                assertEquals("2016-11-01", KNIGHT_INSTANCE.columns[2].get(rs).toString());
-                assertEquals("00:16:40", KNIGHT_INSTANCE.columns[3].get(rs).toString());
-                assertEquals(2, KNIGHT_INSTANCE.columns[4].get(rs));
-                assertEquals(3, KNIGHT_INSTANCE.columns[5].get(rs));
-                assertEquals(27, KNIGHT_INSTANCE.columns[6].get(rs));
-                assertEquals("00:28:54", KNIGHT_INSTANCE.columns[7].get(rs).toString());
-                assertEquals(55, KNIGHT_INSTANCE.columns[8].get(rs));
-                assertEquals(220, KNIGHT_INSTANCE.columns[9].get(rs));
-                assertEquals(330, KNIGHT_INSTANCE.columns[10].get(rs));
-                assertEquals(250, KNIGHT_INSTANCE.columns[11].get(rs));
-                assertEquals(350, KNIGHT_INSTANCE.columns[12].get(rs));
+                assertEquals(0, KNIGHT_INSTANCE.columns[0].get(rs));
+                assertEquals((short) 100, KNIGHT_INSTANCE.columns[1].get(rs));
+                assertEquals((short) PinType.VIRTUAL.ordinal(), KNIGHT_INSTANCE.columns[2].get(rs));
+
+                assertEquals(2, KNIGHT_INSTANCE.columns[3].get(rs));
+                assertEquals(3, KNIGHT_INSTANCE.columns[4].get(rs));
+                assertEquals("2016-10-31", KNIGHT_INSTANCE.columns[5].get(rs).toString());
+                assertEquals("23:47:46", KNIGHT_INSTANCE.columns[6].get(rs).toString());
+                assertEquals("00:16:40", KNIGHT_INSTANCE.columns[7].get(rs).toString());
+                assertEquals("00:28:54", KNIGHT_INSTANCE.columns[8].get(rs).toString());
+
+                assertEquals(27, KNIGHT_INSTANCE.columns[9].get(rs));
+                assertEquals(55, KNIGHT_INSTANCE.columns[10].get(rs));
+                assertEquals(1, KNIGHT_INSTANCE.columns[11].get(rs));
+                assertEquals(220, KNIGHT_INSTANCE.columns[12].get(rs));
                 assertEquals(0, KNIGHT_INSTANCE.columns[13].get(rs));
-                assertEquals(100, KNIGHT_INSTANCE.columns[14].get(rs));
-                assertEquals(0, KNIGHT_INSTANCE.columns[15].get(rs));
-                assertEquals(0, KNIGHT_INSTANCE.columns[16].get(rs));
+                assertEquals(0, KNIGHT_INSTANCE.columns[14].get(rs));
             }
             connection.commit();
         }
@@ -112,16 +111,15 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         List<String> lines = Files.readAllLines(resPath);
 
         for (String line : lines) {
-            String[] split = line.split(",");
+            KnightData[] newKnightData = makeNewDataFromOldData(line.split(","));
 
             StringJoiner sj = new StringJoiner(",", "[", "]");
-            for (String splitPart : split) {
-                sj.add("\"" + splitPart + "\"");
+            for (KnightData knightData : newKnightData) {
+                sj.add(knightData.toString());
             }
-
             String fixedLine = sj.toString();
 
-            HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v100");
+            HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/updateBatch/v100");
             put.setEntity(new StringEntity(fixedLine, ContentType.APPLICATION_JSON));
 
             try (CloseableHttpResponse response = httpclient.execute(put)) {
@@ -132,7 +130,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
             int result = create.selectCount().from(KNIGHT_INSTANCE.tableName).fetchOne(0, int.class);
-            assertEquals(1290, result);
+            assertEquals(1290 * 8, result);
             connection.commit();
         }
     }

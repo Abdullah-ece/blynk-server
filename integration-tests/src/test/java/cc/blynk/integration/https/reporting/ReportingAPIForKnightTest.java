@@ -9,8 +9,6 @@ import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.db.dao.descriptor.TableDescriptor;
-import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -32,17 +30,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
-import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
@@ -78,29 +73,17 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
             BatchBindStep batchBindStep = create.batch(
                     create.insertInto(
                             table(KNIGHT_INSTANCE.tableName),
-                            field("start_date", LocalDate.class),
-                            field("start_time", LocalTime.class),
-                            field("end_date", LocalDate.class),
-                            field("end_time", LocalTime.class),
-                            field("system_id", Integer.class),
-                            field("washer_id", Integer.class),
-                            field("formula", Integer.class),
-                            field("cycle_time", LocalTime.class),
-                            field("load_weight", Integer.class),
-                            field("saphire", Integer.class),
-                            field("boost", Integer.class),
-                            field("emulsifier", Integer.class),
-                            field("destain", Integer.class),
-                            field("bleach", Integer.class),
-                            field("sour", Integer.class),
-                            field("supreme", Integer.class),
-                            field("jasmine", Integer.class)
-                     ).values(Arrays.asList("?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?")));
+                            KNIGHT_INSTANCE.fields()
+                     ).values(KNIGHT_INSTANCE.values()));
 
             for (String line : lines) {
-                String[] split = line.split(",");
-                TableDataMapper point = new TableDataMapper(TableDescriptor.KNIGHT_INSTANCE, split);
-                batchBindStep.bind(point.data.toArray());
+                KnightData[] newKnightData = makeNewDataFromOldData(line.split(","));
+                for (KnightData knightData : newKnightData) {
+                    TableDataMapper point = new TableDataMapper(KNIGHT_INSTANCE,
+                            0, (byte) 100, PinType.VIRTUAL,
+                            knightData.toSplit());
+                    batchBindStep.bind(point.data);
+                }
             }
 
             batchBindStep.execute();
@@ -108,26 +91,8 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         }
     }
 
-
     @Test
-    public void printRequest() throws Exception {
-        DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
-                new DataQueryRequestDTO(
-                        RAW_DATA,
-                        PinType.VIRTUAL,
-                        (byte) 1,
-                        null,
-                        new SelectedColumn[] {
-                                metaDataFrom("Shift 1"),
-                                metaDataFrom("Shift 2"),
-                                metaDataFrom("Shift 3")
-                        },
-                        null,
-                        null,
-                        0, 1000,
-                        0, System.currentTimeMillis())
-        });
-        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequestGroup));
+    public void batchWorkTest() {
     }
 
     @Before
@@ -152,7 +117,8 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                     subQuery("start_time", "Shift 3", "00:00:00", "08:00:00")
             )
             .from(KNIGHT_INSTANCE.tableName)
-            .fetchOne().intoMap();
+            .groupBy(field("pump_id"))
+            .limit(1).fetchAnyMap();
 
             assertEquals(588, result.get("Shift 1"));
             assertEquals(507, result.get("Shift 2"));
@@ -168,18 +134,31 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     public void numberOfLoadsByShift() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
                 COUNT,
-                2,
+                0,
                 PinType.VIRTUAL, (byte) 100,
                 null,
                 new SelectedColumn[] {
                         metaDataFrom("Shift 1"),
                         metaDataFrom("Shift 2"),
-                        metaDataFrom("Shift 3")
+                        metaDataFrom("Shift 3"),
+                        columnFrom("Pump Id")
                 },
                 null,
                 null,
-                0, 10,
+                0, 1,
                 0, Long.MAX_VALUE);
+
+        /*
+        select
+                count(*) filter (where start_time between time '07:59:59' and time '16:00:00') as "Shift 1",
+                count(*) filter (where start_time between time '15:59:59' and time '23:59:59') as "Shift 2",
+                count(*) filter (where start_time between time '00:00:00' and time '08:00:00') as "Shift 3"
+        from knight_laundry
+        where (device_id = 0 and pin = 100 and pin_type = 1)
+        group by pump_id
+        limit 1
+         */
+
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
         Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
@@ -200,19 +179,14 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     public void totalCostPerProduct() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
                 SourceType.SUM,
-                2,
+                0,
                 PinType.VIRTUAL, (byte) 100,
                 new SelectedColumn[] {
-                        columnFrom("Saphire"),
-                        columnFrom("Boost"),
-                        columnFrom("Emulsifier"),
-                        columnFrom("Destain"),
-                        columnFrom("Bleach"),
-                        columnFrom("Sour"),
-                        columnFrom("Supreme"),
-                        columnFrom("Jasmine")
+                        columnFrom("Volume"),
                 },
-                null,
+                new SelectedColumn[] {
+                        columnFrom("Pump Id"),
+                },
                 null,
                 null,
                 0, 10,
@@ -228,14 +202,14 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
 
         assertEquals(8, map.size());
-        assertEquals(new BigDecimal(191120), map.get("Saphire"));
-        assertEquals(new BigDecimal(152155), map.get("Boost"));
-        assertEquals(new BigDecimal(178775), map.get("Emulsifier"));
-        assertEquals(new BigDecimal(153420), map.get("Destain"));
-        assertEquals(new BigDecimal(29914), map.get("Bleach"));
-        assertEquals(new BigDecimal(66127), map.get("Sour"));
-        assertEquals(new BigDecimal(62960), map.get("Supreme"));
-        assertEquals(new BigDecimal(3040), map.get("Jasmine"));
+        assertEquals(new BigDecimal(191120), map.get(1));
+        assertEquals(new BigDecimal(152155), map.get(2));
+        assertEquals(new BigDecimal(178775), map.get(3));
+        assertEquals(new BigDecimal(153420), map.get(4));
+        assertEquals(new BigDecimal(29914), map.get(5));
+        assertEquals(new BigDecimal(66127), map.get(6));
+        assertEquals(new BigDecimal(62960), map.get(7));
+        assertEquals(new BigDecimal(3040), map.get(8));
     }
 
     private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {
