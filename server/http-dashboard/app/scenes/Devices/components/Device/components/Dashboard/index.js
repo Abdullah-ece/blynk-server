@@ -82,6 +82,10 @@ class Dashboard extends React.Component {
 
             const additionalParams = {};
 
+            if(source.has('selectedColumns') && source.get('selectedColumns').size) {
+              additionalParams.selectedColumns = source.get('selectedColumns').toJS();
+            }
+
             if(source.has('groupByFields') && source.get('groupByFields').size) {
               additionalParams.groupByFields = source.get('groupByFields').toJS();
             }
@@ -91,13 +95,14 @@ class Dashboard extends React.Component {
             }
 
             dataQueryRequests.push({
+              "deviceId": this.props.params.id,
               "widgetId": widget.get('id'),
               "sourceIndex": sourceIndex,
               "pinType" : "VIRTUAL",
               "pin" : pin,
               "sourceType" : source.get('sourceType'),
               "offset" : 0,
-              "limit" : 1000,
+              "limit" : 10, //hardcoded value. Update after backend fix
               ...timeFilter,
               ...additionalParams,
             });

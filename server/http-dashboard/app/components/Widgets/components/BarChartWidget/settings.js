@@ -202,14 +202,28 @@ class BarChartSettings extends React.Component {
   }
 
   getOptionsForGroupBy() {
-    let options = [];
+    const Metadata = 'Metadata';
+    const Columns = 'Columns';
+
+    let options = {
+      [Metadata]: [],
+      [Columns]: []
+    };
+
     let columns = this.getSelectedStreamColumns();
 
     if(Array.isArray(columns)) {
-      this.getColumnsMetadata(columns).forEach((metadata) => options.push({
+      this.getColumnsMetadata(columns).forEach((metadata) => options[Metadata].push({
         key: String(metadata.id),
         value: metadata.name,
       }));
+
+      columns.forEach((column) => {
+        options[Columns].push({
+          key: String(column.columnName),
+          value: String(column.label),
+        });
+      });
     }
 
     return options;
@@ -234,7 +248,6 @@ class BarChartSettings extends React.Component {
           dataStreamsOptions.push({
             key: `${stream.values.pin}|${column.label}`,
             value: `-- ${column.label}`,
-            disabled: true,
           });
         });
       }
@@ -247,13 +260,24 @@ class BarChartSettings extends React.Component {
   }
 
   getOptionsForSortBy() {
-    let options = [];
+    const Metadata = 'Metadata';
+    const Columns = 'Columns';
+
+    let options = {
+      [Metadata]: [],
+      [Columns]: []
+    };
 
     if(this.props.formValues.sources && Array.isArray(this.props.formValues.sources[0].groupByFields) && this.props.formValues.sources[0].groupByFields.length) {
       // get values from groupBy
-      options = this.getOptionsForGroupBy().filter((option) => {
-        return this.props.formValues.sources[0].groupByFields.some((groupByOption) => ( String(groupByOption.name) === String(option.value) ));
+      options[Metadata] = this.getOptionsForGroupBy()[Metadata].filter((option) => {
+        return this.props.formValues.sources[0].groupByFields.some((groupByOption) => ( String(groupByOption.name) === String(option.value) && groupByOption.type === 'METADATA' ));
       });
+
+      options[Columns] = this.getOptionsForGroupBy()[Columns].filter((option) => {
+        return this.props.formValues.sources[0].groupByFields.some((groupByOption) => ( String(groupByOption.label) === String(option.value) && groupByOption.type === 'COLUMN' ));
+      });
+
     } else {
       // get all available values like for groupBy
       options = this.getOptionsForGroupBy();
@@ -417,17 +441,43 @@ class BarChartSettings extends React.Component {
 
     const onChange = (value) => {
 
-      let groupByColumns = value.map((id) => {
-        let item = _.find(this.getOptionsForGroupBy(), (option) => parseInt(option.key) === parseInt(id));
+      let groupByColumns = () => {
+        return value.map((id) => {
+          let item = {};
 
-        return {
-          name: item.value,
-          type: 'METADATA',
-        };
+          _.forEach(this.getOptionsForGroupBy(), (list, key) => {
+            _.forEach(list, (option) => {
 
-      });
+              if(String(option.key) === String(id)) {
 
-      props.input.onChange(groupByColumns);
+                if (key === 'Columns') {
+                  item = {
+                    label: option.value,
+                    name: option.key,
+                    type: 'COLUMN'
+                  };
+                } else {
+                  item = {
+                    name: option.value,
+                    type: 'METADATA'
+                  };
+                }
+              }
+
+            });
+          });
+
+          return {
+            label: item.label || null,
+            name: item.name,
+            type: item.type,
+          };
+
+        });
+      };
+
+
+      props.input.onChange(groupByColumns());
 
     };
 
@@ -438,9 +488,11 @@ class BarChartSettings extends React.Component {
       let values = [];
 
       props.input.value.forEach((field) => {
-        this.getOptionsForGroupBy().forEach((item) => {
-          if (item.value === field.name)
-            values.push(item.key);
+        _.forEach(this.getOptionsForGroupBy(), (list) => {
+          _.forEach(list, (item) => {
+            if (item.value === field.name || (field.label && item.value === field.label))
+              values.push(item.key);
+          });
         });
       });
 
@@ -464,17 +516,43 @@ class BarChartSettings extends React.Component {
 
     const onChange = (value) => {
 
-      let groupByColumns = value.map((id) => {
-        let item = _.find(this.getOptionsForSortBy(), (option) => parseInt(option.key) === parseInt(id));
+      let groupByColumns = () => {
+        return value.map((id) => {
+          let item = {};
 
-        return {
-          name: item.value,
-          type: 'METADATA',
-        };
+          _.forEach(this.getOptionsForGroupBy(), (list, key) => {
+            _.forEach(list, (option) => {
 
-      });
+              if(String(option.key) === String(id)) {
 
-      props.input.onChange(groupByColumns);
+                if (key === 'Columns') {
+                  item = {
+                    label: option.value,
+                    name: option.key,
+                    type: 'COLUMN'
+                  };
+                } else {
+                  item = {
+                    name: option.value,
+                    type: 'METADATA'
+                  };
+                }
+              }
+
+            });
+          });
+
+          return {
+            label: item.label || null,
+            name: item.name,
+            type: item.type,
+          };
+
+        });
+      };
+
+
+      props.input.onChange(groupByColumns());
 
     };
 
@@ -485,9 +563,11 @@ class BarChartSettings extends React.Component {
       let values = [];
 
       props.input.value.forEach((field) => {
-        this.getOptionsForSortBy().forEach((item) => {
-          if (item.value === field.name)
-            values.push(item.key);
+        _.forEach(this.getOptionsForGroupBy(), (list) => {
+          _.forEach(list, (item) => {
+            if (item.value === field.name || (field.label && item.value === field.label))
+              values.push(item.key);
+          });
         });
       });
 
