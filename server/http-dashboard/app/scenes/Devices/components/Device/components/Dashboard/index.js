@@ -103,7 +103,7 @@ class Dashboard extends React.Component {
               "sortOrder": source.get('sortOrder'),
               "sourceType" : source.get('sourceType'),
               "offset" : 0,
-              "limit" : !additionalParams.selectedColumns ? 1 : 10, //hardcoded value. Update after backend fix
+              "limit" : source.get('limit') || 10000,
               ...timeFilter,
               ...additionalParams,
             });
