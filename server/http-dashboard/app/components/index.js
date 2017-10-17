@@ -13,3 +13,4 @@ export MainLayout       from './MainLayout';
 export Plotly           from './Plotly';
 export TimeFiltering    from './TimeFiltering';
 export SimpleContentEditable from './SimpleContentEditable';
+export UI from './UI';
