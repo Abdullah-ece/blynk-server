@@ -282,7 +282,7 @@ class BarChartWidget extends React.Component {
         String(this.props.data.id),
         String(sourceIndex),
         'data',
-      ]);
+      ]) || [];
 
       storage.forEach((item) => {
         legendData.x.push(item.get('value'));

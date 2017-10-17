@@ -264,6 +264,9 @@ class Dashboard extends React.Component {
          </div>
        );
 
+    const params = {
+      id: Number(this.props.params.id)
+    };
 
     return (
       <div className="devices--device-dashboard">
@@ -276,7 +279,7 @@ class Dashboard extends React.Component {
         { isLoading && (
             <Icon type="loading" className="devices--device-dashboard-loading"/>
         ) || (
-          <Widgets params={this.props.params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
+          <Widgets params={params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
         )}
 
       </div>
