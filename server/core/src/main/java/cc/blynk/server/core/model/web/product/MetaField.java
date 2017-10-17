@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
-import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -67,16 +66,11 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.isDefault = metaField.isDefault;
     }
 
-    public boolean isSameName(SelectedColumn[] groupBy) {
-        for (SelectedColumn groupFieldName : groupBy) {
-            if (groupFieldName.name.equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+    public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
+        throw new RuntimeException("Not supported.");
     }
 
-    public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
+    public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
         throw new RuntimeException("Not supported.");
     }
 

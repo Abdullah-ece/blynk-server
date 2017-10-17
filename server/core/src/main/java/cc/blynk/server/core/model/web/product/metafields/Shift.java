@@ -30,18 +30,13 @@ public class Shift implements CopyObject<Shift> {
     @JsonDeserialize(using = IntToLocalTimeSerializer.class)
     public final LocalTime to;
 
-    //todo auto calculate this field?
-    public final int timeId;
-
     @JsonCreator
     public Shift(@JsonProperty("name") String name,
                  @JsonProperty("from") LocalTime from,
-                 @JsonProperty("to") LocalTime to,
-                 @JsonProperty("timeId") int timeId) {
+                 @JsonProperty("to") LocalTime to) {
         this.name = name;
         this.from = from;
         this.to = to;
-        this.timeId = timeId;
     }
 
     public static LocalTime parse(String time) {
@@ -50,13 +45,12 @@ public class Shift implements CopyObject<Shift> {
 
     public Shift(String name,
                  String from,
-                 String to,
-                 int timeId) {
-        this(name, parse(from), parse(to), timeId);
+                 String to) {
+        this(name, parse(from), parse(to));
     }
 
     @Override
     public Shift copy() {
-        return new Shift(name, from, to, timeId);
+        return new Shift(name, from, to);
     }
 }

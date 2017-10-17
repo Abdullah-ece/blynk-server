@@ -44,6 +44,7 @@ import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
+import static org.jooq.impl.DSL.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -136,27 +137,29 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
-            Field<Integer> groupByField = extractEpochFrom(field("start_time")).as("shift");
+            Field<Integer> groupByField = extractEpochFrom(field("start_time"));
 
-            Map<Integer, Integer> result = create.select(
-                    groupByField, countDistinct(field("created"))
+            Map result = create.select(
+                    when(groupByField.eq(0), "Shift 3")
+                            .when(groupByField.eq(1), "Shift 1")
+                            .when(groupByField.eq(2), "Shift 2").as("shifts"), countDistinct(field("created"))
             )
                     .from(KNIGHT_INSTANCE.tableName)
-                    .groupBy(groupByField)
-                    .fetchMap(groupByField, count());
+                    .groupBy(groupByField.as("shifts"))
+                    .fetchMap(groupByField.as("shifts"), count());
 
             assertEquals(3, result.size());
 
-            assertEquals(Integer.valueOf(588), result.get(2));
-            assertEquals(Integer.valueOf(507), result.get(3));
-            assertEquals(Integer.valueOf(195), result.get(1));
+            assertEquals(588, result.get("Shift 1"));
+            assertEquals(507, result.get("Shift 2"));
+            assertEquals(195, result.get("Shift 3"));
 
             connection.commit();
         }
     }
 
     public static Field<Integer> extractEpochFrom(Field<?> field) {
-        return field("ceil(EXTRACT(EPOCH FROM {0}) / 28800)", Integer.class, field);
+        return field("floor(EXTRACT(EPOCH FROM {0}) / 28800)", Integer.class, field);
     }
 
     @Test
@@ -177,7 +180,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 0, Long.MAX_VALUE);
 
         /*
-            select ceil(EXTRACT(EPOCH FROM start_time) / 28800), count(distinct created)
+            select floor(EXTRACT(EPOCH FROM start_time) / 28800), count(distinct created)
             from knight_laundry
             group by ceil(EXTRACT(EPOCH FROM start_time) / 28800)
          */
@@ -191,9 +194,9 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(result));
 
-        assertEquals(Integer.valueOf(588), result.get(2));
-        assertEquals(Integer.valueOf(507), result.get(3));
-        assertEquals(Integer.valueOf(195), result.get(1));
+        assertEquals(588, result.get("Shift 1"));
+        assertEquals(507, result.get("Shift 2"));
+        assertEquals(195, result.get("Shift 3"));
     }
 
     @Test

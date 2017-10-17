@@ -42,9 +42,10 @@ public class TableDescriptor {
     public static final String SPECIAL_NAME = "Shifts";
     public static final MetaField[] shifts = new MetaField[] {
             new ShiftMetaField(1, SPECIAL_NAME, Role.ADMIN, false, new Shift[] {
-                    new Shift("Shift 1", "08:00:00", "16:00:00", 2),
-                    new Shift("Shift 2", "16:00:00", "00:00:00", 1),
-                    new Shift("Shift 3", "00:00:00", "08:00:00", 3),
+                    //order is important. it defines related ids.
+                    new Shift("Shift 3", "00:00:00", "08:00:00"),
+                    new Shift("Shift 1", "08:00:00", "16:00:00"),
+                    new Shift("Shift 2", "16:00:00", "00:00:00")
             })
     };
 
@@ -121,7 +122,7 @@ public class TableDescriptor {
                     if (metaField.name.equals(selectedGroupByColumn.name)) {
                         Field field = field(column.columnName);
                         field = metaField.prepareField(step, field);
-                        step.select(field).groupBy(field);
+                        step.select(metaField.applyMapping(step, field)).groupBy(field);
                         break;
                     }
                 }
