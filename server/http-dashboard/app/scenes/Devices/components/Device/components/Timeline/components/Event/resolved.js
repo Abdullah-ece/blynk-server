@@ -49,7 +49,11 @@ class Resolved extends React.Component {
             </div>
           </div>
           <div className="devices--device-timeline--event-resolved-description">
-            {this.props.event.get('resolvedComment') || 'No comments provided'}
+            {this.props.event.has('resolvedComment') && (
+              this.props.event.get('resolvedComment').split('\n').map((item, key) => {
+                return (<span key={key}>{item}<br/></span>);
+              })
+            ) || 'No comments provided'}
           </div>
         </div>
       </Timeline.Item>

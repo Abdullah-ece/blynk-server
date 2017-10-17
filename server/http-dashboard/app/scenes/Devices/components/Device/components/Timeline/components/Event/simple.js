@@ -47,7 +47,9 @@ class Simple extends React.Component {
         </div>
         { this.props.event.has('description') && (
           <div className="devices--device-timeline--event-content">
-            { this.props.event.get('description') }
+            { this.props.event.get('description').split('\n').map((item, key) => {
+              return (<span key={key}>{item}<br/></span>);
+            })}
           </div>
         )}
 
