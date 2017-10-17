@@ -121,6 +121,7 @@ class BarChartSettings extends React.Component {
   constructor(props) {
     super(props);
 
+    this.simpleMatch = this.simpleMatch.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.sortByFieldsSelectComponent = this.sortByFieldsSelectComponent.bind(this);
@@ -354,6 +355,7 @@ class BarChartSettings extends React.Component {
                   value={props.input.value || []}
                   placeholder={props.placeholder || ''}
                   validate={props.validate || []}
+                  filterOption={props.filterOption || undefined}
                   style={{width: '100%'}}
                   allowClear={true}>
         {optionsList || null}
@@ -445,6 +447,10 @@ class BarChartSettings extends React.Component {
         onBlur: () => {},
       }
     });
+  }
+
+  simpleMatch(a, b) {
+    return String(b.props.children).toLowerCase().indexOf(String(a).toLowerCase()) >= 0;
   }
 
   groupByFieldsSelectComponent(props) {
@@ -631,6 +637,7 @@ class BarChartSettings extends React.Component {
                           name="sources.0.sourceType"
                           values={BAR_CHART_PARAMS.DATA_TYPE.list}
                           placeholder="Choose type"
+                          filterOption={this.simpleMatch}
                           validate={[Validation.Rules.required]}
                           style={{width: '100px'}}/>
                 </Item>
@@ -646,6 +653,7 @@ class BarChartSettings extends React.Component {
                          formValues={this.props.formValues}
                          changeForm={this.props.changeForm}
                          form={this.props.form}
+                         filterOption={this.simpleMatch}
                   />
 
                 </Item>
@@ -659,6 +667,7 @@ class BarChartSettings extends React.Component {
                        formValues={this.props.formValues}
                        changeForm={this.props.changeForm}
                        form={this.props.form}
+                       filterOption={this.simpleMatch}
                        values={groupByOptions}/>
               </Item>
               <ItemsGroup>
@@ -672,6 +681,7 @@ class BarChartSettings extends React.Component {
                          dataStreams={this.props.dataStreams}
                          formValues={this.props.formValues}
                          changeForm={this.props.changeForm}
+                         filterOption={this.simpleMatch}
                          form={this.props.form}
                          values={sortByOptions}
                   />

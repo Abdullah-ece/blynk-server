@@ -10,6 +10,10 @@ class Dashboard extends React.Component {
 
   render() {
 
+    const params = {
+      id: 0,
+    };
+
     if (!this.props.widgets)
       return null;
 
@@ -29,7 +33,7 @@ class Dashboard extends React.Component {
     };
 
     return (
-      <Widgets editable={false} data={widgets}/>
+      <Widgets editable={false} data={widgets} params={params}/>
     );
   }
 
