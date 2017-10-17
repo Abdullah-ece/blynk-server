@@ -15,6 +15,10 @@ class Dashboard extends React.Component {
     onWidgetAdd: PropTypes.func,
     onWidgetsChange: PropTypes.func,
 
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
+
     widgets: PropTypes.instanceOf(List)
   };
 
@@ -44,6 +48,7 @@ class Dashboard extends React.Component {
         />
 
         <Grid widgets={widgets}
+              params={this.props.params}
               onChange={this.handleWidgetsChange}
         />
 

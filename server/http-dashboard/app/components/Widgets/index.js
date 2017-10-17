@@ -5,6 +5,7 @@ import {
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import './styles.less';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -19,14 +20,17 @@ class Widgets extends React.Component {
   };
 
   static propTypes = {
-    fetchRealData: React.PropTypes.bool,
-    editable: React.PropTypes.bool,
+    fetchRealData: PropTypes.bool,
+    editable: PropTypes.bool,
 
-    data: React.PropTypes.object,
-    breakpoints: React.PropTypes.object,
-    params: React.PropTypes.object,
+    data: PropTypes.object,
+    breakpoints: PropTypes.object,
 
-    onChange: React.PropTypes.func,
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
+
+    onChange: PropTypes.func,
   };
 
   constructor(props) {

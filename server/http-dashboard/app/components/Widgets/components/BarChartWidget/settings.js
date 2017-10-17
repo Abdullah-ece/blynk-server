@@ -7,6 +7,8 @@ import {fromJS} from 'immutable';
 import Validation from 'services/Validation';
 import ColorPicker from 'components/ColorPicker';
 
+import Preview from './preview';
+
 import _ from 'lodash';
 
 import {
@@ -73,6 +75,10 @@ class BarChartSettings extends React.Component {
     initializeForm: PropTypes.func,
 
     initialValues: PropTypes.object,
+
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
 
     formValues: PropTypes.shape({
       dataSource: PropTypes.array, // type|pin|columnType, e.g. dataStream|100|Start Time
@@ -707,7 +713,7 @@ class BarChartSettings extends React.Component {
         )}
 
         preview={(
-          <div>Preview</div>
+          <Preview params={this.props.params}/>
         )}
       />
     );

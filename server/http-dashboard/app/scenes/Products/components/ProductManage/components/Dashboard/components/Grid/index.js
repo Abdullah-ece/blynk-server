@@ -13,6 +13,10 @@ class Grid extends React.Component {
   static propTypes = {
     widgets: PropTypes.instanceOf(List),
 
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
+
     onChange: PropTypes.func
   };
 
@@ -39,7 +43,7 @@ class Grid extends React.Component {
 
     return (
       <div className="product-manage-dashboard-grid">
-        <Widgets editable={true} data={widgets} onChange={this.handleChange}/>
+        <Widgets editable={true} data={widgets} onChange={this.handleChange} params={this.props.params}/>
       </div>
     );
   }

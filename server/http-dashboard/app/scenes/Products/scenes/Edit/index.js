@@ -465,6 +465,11 @@ class Edit extends React.Component {
     if (!this.props.product.info.values.id)
       return null;
 
+    const params = {
+      id: Number(this.props.params.id),
+      tab: String(this.props.params.tab)
+    };
+
     return (
       <MainLayout>
         <ProductEdit product={this.props.product}
@@ -484,7 +489,7 @@ class Edit extends React.Component {
                      handleSubmit={this.handleSubmit.bind(this)}
                      handleCancel={this.handleCancel.bind(this)}
                      onTabChange={this.onTabChange.bind(this)}
-                     params={this.props.params}/>
+                     params={params}/>
         <ProductDevicesForceUpdate
           isModalVisible={this.state.isDevicesForceUpdateVisible}
           loading={this.state.deviceForceUpdateLoading}

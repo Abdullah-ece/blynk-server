@@ -19,7 +19,8 @@ import {
   FORMS,
   prepareProductForSave,
   exampleMetadataField,
-  getHardcodedRequiredMetadataFields
+  getHardcodedRequiredMetadataFields,
+  TABS
 } from 'services/Products';
 import {OrganizationFetch} from 'data/Organization/actions';
 import * as API from 'data/Product/api';
@@ -348,6 +349,11 @@ class Create extends React.Component {
 
   render() {
 
+    const params = {
+      id: Number(this.props.params.id) || 0,
+      tab: String(this.props.params.tab || TABS.INFO),
+    };
+
     if (!this.props.product.info.values.boardType)
       return null;
 
@@ -367,7 +373,7 @@ class Create extends React.Component {
                      onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
                      handleSubmit={this.handleSubmit.bind(this)}
                      handleCancel={this.handleCancel.bind(this)}
-                     params={this.props.params}/>
+                     params={params}/>
     );
   }
 

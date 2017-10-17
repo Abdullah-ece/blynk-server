@@ -26,6 +26,10 @@ class DashboardScene extends React.Component {
   static propTypes = {
     dashboard: PropTypes.instanceOf(Map),
 
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
+
     changeFormValue: PropTypes.func,
   };
 
@@ -65,6 +69,7 @@ class DashboardScene extends React.Component {
 
     return (
       <Dashboard widgets={widgets}
+                 params={this.props.params}
                  onWidgetAdd={this.handleWidgetAdd}
                  onWidgetsChange={this.handleWidgetsChange}
       />

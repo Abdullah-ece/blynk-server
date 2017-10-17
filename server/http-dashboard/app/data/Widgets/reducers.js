@@ -52,6 +52,13 @@ const initialState = fromJS({
       }
     }
     */
+  },
+
+  settingsModal: {
+    previewAvailableDevices: {
+      loading: false,
+      list: null,
+    }
   }
 });
 
@@ -88,6 +95,16 @@ export default function Product(state = initialState, action) {
           }
         ));
       }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
+
+
+    case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH":
+      return state.setIn(['settingsModal', 'previewAvailableDevices', 'loading'], true);
+
+    case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH_SUCCESS":
+      return state.updateIn(['settingsModal', 'previewAvailableDevices'], (data) => ( data.set('loading', false).set('list', fromJS(action.payload.data))));
+
+    case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH_FAIL":
+      return state.setIn(['settingsModal', 'previewAvailableDevices', 'loading'], false);
 
     default:
       return state;

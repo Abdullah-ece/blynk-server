@@ -1,4 +1,5 @@
 import {API_URL} from 'services/API';
+import {DevicesGet} from 'services/Actions/Devices';
 
 export function WidgetHistoryByPinFetch(data) {
 
@@ -86,5 +87,12 @@ export function WidgetOrganizationFetch(data) {
         })
       }
     }
+  };
+}
+
+export function WidgetDevicesPreviewListFetch(data = { productId: null }) {
+  return {
+    type: 'API_WIDGET_DEVICES_PREVIEW_LIST_FETCH',
+    payload: DevicesGet(data)
   };
 }

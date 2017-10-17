@@ -22,7 +22,6 @@ class Widget extends React.Component {
       PropTypes.array,
     ]),
     style: PropTypes.object,
-    params: PropTypes.object,
     data: PropTypes.object,
     className: PropTypes.string,
 
@@ -38,6 +37,10 @@ class Widget extends React.Component {
     onTouchEnd: PropTypes.func,
     onMouseDown: PropTypes.func,
     onWidgetDelete: PropTypes.func,
+
+    params: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    }).isRequired,
   };
 
   constructor(props) {
@@ -102,6 +105,7 @@ class Widget extends React.Component {
       return (
         <BarChartWidget.Settings visible={this.state.isConfigVisible}
                                  initialValues={widget}
+                                 params={this.props.params}
                                  form={`widget-settings-${widget.id}`}
                                  onClose={this.toggleSettingsVisibility}
                                  onSubmit={this.handleSaveChanges}/>

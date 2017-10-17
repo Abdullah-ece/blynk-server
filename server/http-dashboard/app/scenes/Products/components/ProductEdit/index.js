@@ -187,7 +187,7 @@ class ProductEdit extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>Dashboard</span>} key={TABS.DASHBOARD}>
-              <DashboardTab/>
+              <DashboardTab params={this.props.params}/>
             </Tabs.TabPane>
 
           </Tabs>
