@@ -96,21 +96,21 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       id: 1,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
-      role: Roles.USER,
+      role: Roles.USER.value,
       hardcoded: true
     },
     {
       id: 2,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-      role: Roles.USER,
+      role: Roles.USER.value,
       hardcoded: true
     },
     {
       id: 3,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.LocationName,
-      role: Roles.STAFF,
+      role: Roles.STAFF.value,
       hardcoded: true
     },
     {
@@ -118,14 +118,14 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
-      role: Roles.USER,
+      role: Roles.USER.value,
       hardcoded: true
     },
     {
       id: 5,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.ModelName,
-      role: Roles.STAFF,
+      role: Roles.STAFF.value,
       hardcoded: true
     },
     {
@@ -133,7 +133,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
-      role: Roles.USER,
+      role: Roles.USER.value,
       hardcoded: true
     }
   ];
