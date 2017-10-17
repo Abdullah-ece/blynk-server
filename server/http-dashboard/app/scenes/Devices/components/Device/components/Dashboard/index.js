@@ -265,7 +265,7 @@ class Dashboard extends React.Component {
        );
 
     const params = {
-      id: Number(this.props.params.id)
+      id: Number(this.props.params.id) || 0
     };
 
     return (

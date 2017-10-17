@@ -33,6 +33,11 @@ class BarChartWidget extends React.Component {
       sources: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       }))
+    }),
+
+    fakeData: PropTypes.shape({
+      x: PropTypes.arrayOf(PropTypes.number),
+      y: PropTypes.arrayOf(PropTypes.string)
     })
   };
 
@@ -260,9 +265,33 @@ class BarChartWidget extends React.Component {
   }
 
   renderFakeData() {
-    return (
-      <div>The chart is fake</div>
-    );
+
+    return null;
+
+    // if(!this.props.fakeData)
+    //   return (
+    //     <div>The chart is fake</div>
+    //   );
+    //
+    // const data = [];
+    //
+    // let legendData = {
+    //   x: this.props.fakeData.x,
+    //   y: this.props.fakeData.y,
+    //   ...this.legendConfig
+    // };
+    //
+    // data.push(legendData);
+    //
+    // const config = {
+    //   ...this.config,
+    // };
+    //
+    // const layout = {
+    //   ...this.layout,
+    // };
+    //
+    // return this.renderChartByParams(data, config, layout);
   }
 
   renderRealData() {

@@ -10,7 +10,10 @@ import {bindActionCreators} from 'redux';
 import {WidgetDevicesPreviewListFetch} from 'data/Widgets/api';
 import PropTypes from 'prop-types';
 import {List} from 'immutable';
+import BarChartWidget from './index';
 import {reduxForm} from 'redux-form';
+import Dotdotdot from 'react-dotdotdot';
+import './styles.less';
 
 @connect((state) => ({
   devicesList: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'list']),
@@ -82,6 +85,18 @@ class Preview extends React.Component {
       });
     });
 
+    let data = {
+      id: 1,
+      w: 3,
+      h: 2,
+      title: 'Bar Chart'
+    };
+
+    let fakeData = {
+      y: ['Shift 1', 'Shift 2', 'Shift 3'],
+      x: [1, 2, 3]
+    };
+
     return (
       <div>
         <span>Preview of widget {this.props.devicesList.size} </span>
@@ -90,6 +105,16 @@ class Preview extends React.Component {
           <Select name="deviceId"
                   values={devicesOptions}
                   placeholder="Please select device" />
+        </div>
+
+        <div className="widgets--widget bar-widget-preview">
+          <div className="widgets--widget-label">
+            <Dotdotdot clamp={1}>{data.title}</Dotdotdot>
+          </div>
+          <BarChartWidget fetchRealData={false}
+                          params={this.props.params}
+                          data={data}
+                          fakeData={fakeData}/>
         </div>
 
         <div>
