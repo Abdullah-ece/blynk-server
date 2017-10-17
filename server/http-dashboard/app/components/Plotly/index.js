@@ -65,7 +65,7 @@ class Plotly extends React.Component {
 
   render() {
     return (
-      <div id="div" ref={(node) => this.container = node}/>
+      <div id="div" ref={(node) => this.container = node} style={{position: 'absolute'}}/>
     );
   }
 
