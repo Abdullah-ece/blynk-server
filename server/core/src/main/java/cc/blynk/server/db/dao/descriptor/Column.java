@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 
 import static java.sql.Types.CHAR;
@@ -33,7 +32,7 @@ public class Column {
     public final String label;
     public final String columnName;
     public final int type;
-    public final DateTimeFormatter formatter;
+    public final DateFormatters formatterTemplate;
     public final Function<String, String> filterFunction;
     public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
 
@@ -41,13 +40,13 @@ public class Column {
     public Column(@JsonProperty("label") String label,
                   @JsonProperty("columnName") String columnName,
                   @JsonProperty("type") int type,
-                  @JsonProperty("formatter") DateTimeFormatter formatter,
+                  @JsonProperty("formatterTemplate") DateFormatters formatterTemplate,
                   @JsonProperty("filterFunction") Function<String, String> filterFunction,
                   @JsonProperty("metaFields") MetaField[] metaFields) {
         this.label = label;
         this.columnName = columnName;
         this.type = type;
-        this.formatter = formatter;
+        this.formatterTemplate = formatterTemplate;
         this.filterFunction = filterFunction;
         this.metaFields = metaFields;
     }
@@ -56,7 +55,7 @@ public class Column {
         this.label = label;
         this.columnName = labelTrim(label);
         this.type = type;
-        this.formatter = null;
+        this.formatterTemplate = null;
         this.filterFunction = null;
     }
 
@@ -64,23 +63,23 @@ public class Column {
         this.label = label;
         this.columnName = columnName;
         this.type = type;
-        this.formatter = null;
+        this.formatterTemplate = null;
         this.filterFunction = null;
     }
 
-    public Column(String label, int type, DateTimeFormatter formatter) {
+    public Column(String label, int type, DateFormatters formatter) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
-        this.formatter = formatter;
+        this.formatterTemplate = formatter;
         this.filterFunction = null;
     }
 
-    public Column(String label, int type, DateTimeFormatter formatter, MetaField[] metaFields) {
+    public Column(String label, int type, DateFormatters formatter, MetaField[] metaFields) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
-        this.formatter = formatter;
+        this.formatterTemplate = formatter;
         this.filterFunction = null;
         this.metaFields = metaFields;
     }
@@ -89,7 +88,7 @@ public class Column {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
-        this.formatter = null;
+        this.formatterTemplate = null;
         this.filterFunction = filterFunction;
     }
 
@@ -102,10 +101,10 @@ public class Column {
         switch (type) {
             case DATE :
                 checkFormatter();
-                return LocalDate.parse(val, formatter);
+                return LocalDate.parse(val, formatterTemplate.formatter);
             case TIME :
                 checkFormatter();
-                return LocalTime.parse(val, formatter);
+                return LocalTime.parse(val, formatterTemplate.formatter);
             case INTEGER :
                 filter = val;
                 if (filterFunction != null) {
@@ -162,8 +161,8 @@ public class Column {
     }
 
     private void checkFormatter() {
-        if (formatter == null) {
-            throw new RuntimeException("No formatter for column " + columnName);
+        if (formatterTemplate == null) {
+            throw new RuntimeException("No formatterTemplate for column " + columnName);
         }
     }
 }

@@ -26,7 +26,6 @@ import static java.sql.Types.SMALLINT;
 import static java.sql.Types.TIME;
 import static java.sql.Types.TIMESTAMP;
 import static java.sql.Types.VARCHAR;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.jooq.impl.DSL.field;
 
 /**
@@ -65,10 +64,10 @@ public class TableDescriptor {
             //knight specific columns
             new Column("Type Of Record", INTEGER),
             new Column("Washer Id", INTEGER),
-            new Column("Start Date", DATE, ofPattern("MM/dd/yy")),
-            new Column("Start Time", TIME, ofPattern("HH:mm:ss"), shifts),
-            new Column("Finish Time", TIME, ofPattern("HH:mm:ss")),
-            new Column("Cycle Time", TIME, ofPattern("HH:mm:ss")),
+            new Column("Start Date", DATE, DateFormatters.MM_DD_YY),
+            new Column("Start Time", TIME, DateFormatters.HH_MM_SS, shifts),
+            new Column("Finish Time", TIME, DateFormatters.HH_MM_SS),
+            new Column("Cycle Time", TIME, DateFormatters.HH_MM_SS),
             new Column("Formula Number", INTEGER),
             new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
             new Column("Pump Id", INTEGER),
