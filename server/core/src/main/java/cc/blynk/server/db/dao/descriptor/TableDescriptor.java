@@ -49,6 +49,7 @@ public class TableDescriptor {
             })
     };
 
+    //todo move somewhere?
     public static final Field<Integer> DEVICE_ID = field("device_id", Integer.class);
     public static final Field<Integer> PIN = field("pin", Integer.class);
     public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
