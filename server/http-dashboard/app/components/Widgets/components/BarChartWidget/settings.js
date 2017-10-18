@@ -7,7 +7,7 @@ import {fromJS} from 'immutable';
 import Validation from 'services/Validation';
 import ColorPicker from 'components/ColorPicker';
 
-import Preview from './preview';
+import {Preview} from './scenes';
 
 import _ from 'lodash';
 

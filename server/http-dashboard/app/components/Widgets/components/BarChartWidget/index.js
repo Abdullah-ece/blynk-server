@@ -266,32 +266,32 @@ class BarChartWidget extends React.Component {
 
   renderFakeData() {
 
-    return null;
+    if(!this.props.fakeData || !this.props.fakeData.x || !this.props.fakeData.y
+      || ( Array.isArray(this.props.fakeData.x) && !this.props.fakeData.x.length )
+      || ( Array.isArray(this.props.fakeData.y) && !this.props.fakeData.y.length ))
+      return (
+        <div className="bar-chart-widget-no-data">No Data</div>
+      );
 
-    // if(!this.props.fakeData)
-    //   return (
-    //     <div>The chart is fake</div>
-    //   );
-    //
-    // const data = [];
-    //
-    // let legendData = {
-    //   x: this.props.fakeData.x,
-    //   y: this.props.fakeData.y,
-    //   ...this.legendConfig
-    // };
-    //
-    // data.push(legendData);
-    //
-    // const config = {
-    //   ...this.config,
-    // };
-    //
-    // const layout = {
-    //   ...this.layout,
-    // };
-    //
-    // return this.renderChartByParams(data, config, layout);
+    const data = [];
+
+    let legendData = {
+      x: this.props.fakeData.x,
+      y: this.props.fakeData.y,
+      ...this.legendConfig
+    };
+
+    data.push(legendData);
+
+    const config = {
+      ...this.config,
+    };
+
+    const layout = {
+      ...this.layout,
+    };
+
+    return this.renderChartByParams(data, config, layout);
   }
 
   renderRealData() {

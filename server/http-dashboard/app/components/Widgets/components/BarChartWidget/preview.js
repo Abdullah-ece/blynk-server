@@ -13,7 +13,7 @@ import {List} from 'immutable';
 import BarChartWidget from './index';
 import {reduxForm} from 'redux-form';
 import Dotdotdot from 'react-dotdotdot';
-import './styles.less';
+import './components/Preview/styles.less';
 
 @connect((state) => ({
   devicesList: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'list']),
@@ -93,8 +93,8 @@ class Preview extends React.Component {
     };
 
     let fakeData = {
-      y: ['Shift 1', 'Shift 2', 'Shift 3'],
-      x: [1, 2, 3]
+      // y: ['Shift 1', 'Shift 2', 'Shift 3'],
+      // x: [1, 2, 3]
     };
 
     return (
