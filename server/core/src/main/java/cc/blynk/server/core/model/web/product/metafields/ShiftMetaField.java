@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.db.dao.descriptor.MetaDataFormatters;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.CaseConditionStep;
@@ -13,7 +14,6 @@ import org.jooq.impl.DSL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.jooq.impl.DSL.field;
 
 /**
@@ -23,7 +23,7 @@ import static org.jooq.impl.DSL.field;
  */
 public class ShiftMetaField extends MetaField {
 
-    public static final DateTimeFormatter timeFormatter = ofPattern("HH:mm:ss");
+    public static final DateTimeFormatter timeFormatter = MetaDataFormatters.HH_MM_SS.formatter;
     private static final Shift[] EMPTY = {};
 
     private final Shift[] shifts;

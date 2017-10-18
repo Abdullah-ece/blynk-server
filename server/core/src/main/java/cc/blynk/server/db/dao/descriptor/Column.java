@@ -32,7 +32,7 @@ public class Column {
     public final String label;
     public final String columnName;
     public final int type;
-    public final DateFormatters formatterTemplate;
+    public final MetaDataFormatters formatterTemplate;
     public final Function<String, String> filterFunction;
     public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
 
@@ -40,7 +40,7 @@ public class Column {
     public Column(@JsonProperty("label") String label,
                   @JsonProperty("columnName") String columnName,
                   @JsonProperty("type") int type,
-                  @JsonProperty("formatterTemplate") DateFormatters formatterTemplate,
+                  @JsonProperty("formatterTemplate") MetaDataFormatters formatterTemplate,
                   @JsonProperty("filterFunction") Function<String, String> filterFunction,
                   @JsonProperty("metaFields") MetaField[] metaFields) {
         this.label = label;
@@ -67,7 +67,7 @@ public class Column {
         this.filterFunction = null;
     }
 
-    public Column(String label, int type, DateFormatters formatter) {
+    public Column(String label, int type, MetaDataFormatters formatter) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;
@@ -75,7 +75,7 @@ public class Column {
         this.filterFunction = null;
     }
 
-    public Column(String label, int type, DateFormatters formatter, MetaField[] metaFields) {
+    public Column(String label, int type, MetaDataFormatters formatter, MetaField[] metaFields) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;

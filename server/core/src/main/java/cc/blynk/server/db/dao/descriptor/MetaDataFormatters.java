@@ -9,13 +9,13 @@ import static java.time.format.DateTimeFormatter.ofPattern;
  * Created by Dmitriy Dumanskiy.
  * Created on 18.10.17.
  */
-public enum DateFormatters {
+public enum MetaDataFormatters {
 
-    MM_DD_YY(ofPattern("MM/dd/yy")),
-    HH_MM_SS(ofPattern("HH:mm:ss"));
+    MM_DD_YY("MM/dd/yy"),
+    HH_MM_SS("HH:mm:ss");
 
-    DateFormatters(DateTimeFormatter formatter) {
-        this.formatter = formatter;
+    MetaDataFormatters(String formatString) {
+        this.formatter = ofPattern(formatString);
     }
 
     public final DateTimeFormatter formatter;
