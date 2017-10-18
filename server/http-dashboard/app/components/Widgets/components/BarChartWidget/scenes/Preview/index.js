@@ -82,7 +82,7 @@ export default class PreviewScene extends React.Component {
           pin: this.props.source.getIn(['dataStream', 'pin']),
           offset: 0,
           from: 0,
-          limit: this.props.source.get('limit') || 1000,
+          limit: parseInt(this.props.source.get('limit')) || 1000,
           to: new Date().getTime(),
           deviceId: values.deviceId,
           ...additionalFields,

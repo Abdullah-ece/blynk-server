@@ -239,7 +239,7 @@ export const WIDGETS_CONFIGS = {
       // }
     ],
     'sortOrder' : BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey,
-    'limit' : 10,
+    'limit' : BAR_CHART_PARAMS.MAX_ROWS.defaultKey,
     'color': BAR_CHART_PARAMS.COLOR.defaultKey,
   },
 };
