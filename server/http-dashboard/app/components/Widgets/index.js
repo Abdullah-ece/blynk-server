@@ -22,6 +22,7 @@ class Widgets extends React.Component {
   static propTypes = {
     fetchRealData: PropTypes.bool,
     editable: PropTypes.bool,
+    isPreviewOnly: PropTypes.bool,
 
     data: PropTypes.object,
     breakpoints: PropTypes.object,
@@ -108,6 +109,7 @@ class Widgets extends React.Component {
                 onWidgetChange={this.handleWidgetChange}
                 onWidgetDelete={this.handleWidgetDelete}
                 onWidgetClone={this.handleWidgetClone}
+                isPreviewOnly={this.props.isPreviewOnly}
         />
       );
     });

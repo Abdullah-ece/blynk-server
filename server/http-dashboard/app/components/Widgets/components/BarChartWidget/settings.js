@@ -27,6 +27,10 @@ import {
 } from "components/UI";
 
 import {
+  WidgetDevicesPreviewHistoryClear
+} from 'data/Widgets/actions';
+
+import {
   MetadataSelect as Select
 } from 'components/Form';
 
@@ -57,6 +61,7 @@ import {
   initializeForm: bindActionCreators(initialize, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
   changeForm: bindActionCreators(change, dispatch),
+  clearWidgetDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryClear, dispatch),
 }))
 @reduxForm()
 class BarChartSettings extends React.Component {
@@ -73,6 +78,7 @@ class BarChartSettings extends React.Component {
     changeForm: PropTypes.func,
     handleSubmit: PropTypes.func,
     initializeForm: PropTypes.func,
+    clearWidgetDevicePreviewHistory: PropTypes.func,
 
     initialValues: PropTypes.object,
 
@@ -81,6 +87,7 @@ class BarChartSettings extends React.Component {
     }).isRequired,
 
     formValues: PropTypes.shape({
+      id: PropTypes.any,
       dataSource: PropTypes.array, // type|pin|columnType, e.g. dataStream|100|Start Time
       sources: PropTypes.arrayOf(PropTypes.shape({
         sourceType: PropTypes.oneOf(['RAW_DATA', 'SUM', 'AVG', 'MED', 'MIN', 'MAX', 'COUNT']),
@@ -130,6 +137,10 @@ class BarChartSettings extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
+
+    if(!nextProps.visible && this.props.visible !== nextProps.visible) {
+      this.props.clearWidgetDevicePreviewHistory();
+    }
 
     if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
       this.props.initializeForm(nextProps.form, nextProps.initialValues);
@@ -723,7 +734,7 @@ class BarChartSettings extends React.Component {
         )}
 
         preview={(
-          <Preview params={this.props.params}/>
+          <Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} params={this.props.params} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
         )}
       />
     );

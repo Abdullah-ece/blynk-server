@@ -33,7 +33,7 @@ class Dashboard extends React.Component {
     };
 
     return (
-      <Widgets editable={false} data={widgets} params={params}/>
+      <Widgets editable={false} data={widgets} params={params} isPreviewOnly={true}/>
     );
   }
 

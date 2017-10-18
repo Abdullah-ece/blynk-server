@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {List} from 'immutable';
+import Validation from 'services/Validation';
 import {
   Button,
   Icon,
@@ -35,6 +36,10 @@ class Preview extends React.Component {
     }).isRequired,
 
     devicesLoading: PropTypes.bool,
+
+    submitting: PropTypes.bool,
+
+    handleSubmit: PropTypes.func
   };
 
   renderLoading() {
@@ -60,7 +65,8 @@ class Preview extends React.Component {
         <div>
           <Select name="deviceId"
                   values={devicesOptions}
-                  placeholder="Please select device"/>
+                  placeholder="Please select device"
+          validate={[Validation.Rules.required]}/>
         </div>
 
         <div className="widgets--widget bar-widget-preview">
@@ -71,7 +77,7 @@ class Preview extends React.Component {
         </div>
 
         <div>
-          <Button onClick={this.updateChart}>
+          <Button type="submit" onClick={this.props.handleSubmit} loading={this.props.submitting}>
             Update Chart
           </Button>
         </div>

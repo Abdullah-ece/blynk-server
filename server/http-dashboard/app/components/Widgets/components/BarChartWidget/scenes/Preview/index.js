@@ -2,18 +2,25 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
-import {List} from 'immutable';
-import {Preview} from '../../components';
-import {WidgetDevicesPreviewListFetch} from 'data/Widgets/api';
 import {
-  message
-} from 'antd';
+  List,
+  Map,
+  fromJS,
+} from 'immutable';
+import {Preview} from '../../components';
+import {
+  WidgetDevicesPreviewListFetch,
+  WidgetDevicesPreviewHistoryFetch
+} from 'data/Widgets/api';
 
-@connect((state) => ({
+@connect((state, ownProps) => ({
   devicesList: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'list']),
   devicesLoading: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'loading']),
+  devicePreviewData: state.Widgets.getIn(['settingsModal', 'previewData', ownProps.widgetId, 'data']) || fromJS([]),
+  source: fromJS(ownProps.source || {}),
 }), (dispatch) => ({
-  fetchDevicesList: bindActionCreators(WidgetDevicesPreviewListFetch, dispatch)
+  fetchDevicesList: bindActionCreators(WidgetDevicesPreviewListFetch, dispatch),
+  fetchDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryFetch, dispatch),
 }))
 export default class PreviewScene extends React.Component {
 
@@ -24,10 +31,16 @@ export default class PreviewScene extends React.Component {
     }).isRequired,
 
     devicesList: PropTypes.instanceOf(List),
+    devicePreviewData: PropTypes.instanceOf(List),
+
+    widgetId: PropTypes.number,
 
     devicesLoading: PropTypes.bool,
 
-    fetchDevicesList: PropTypes.func
+    fetchDevicesList: PropTypes.func,
+    fetchDevicePreviewHistory: PropTypes.func,
+
+    source: PropTypes.instanceOf(Map),
   };
 
   constructor(props) {
@@ -46,13 +59,36 @@ export default class PreviewScene extends React.Component {
     if (this.props.devicesList === null && this.props.devicesLoading === false)
       this.props.fetchDevicesList({
         productId: this.props.params.id
-      }).catch(() => {
-        message.error('Unable to fetch devices list for Preview');
       });
   }
 
-  handleSubmit(/*values*/) {
-    // console.log('submitted', values);
+  handleSubmit(values) {
+
+    const additionalFields = {};
+
+    ['selectedColumns', 'groupByFields', 'sortByFields'].forEach((item) => {
+      if(this.props.source.get(item) && this.props.source.get(item).size)
+        additionalFields[item] = this.props.source.get(item).toJS();
+    });
+
+    return this.props.fetchDevicePreviewHistory({
+      widgetId: parseInt(this.props.widgetId),
+      deviceId: parseInt(values.deviceId),
+    },{
+      dataQueryRequests: [
+        {
+          sourceType: this.props.source.get('sourceType') || null,
+          pinType: this.props.source.getIn(['dataStream','pinType']) || null,
+          pin: this.props.source.getIn(['dataStream', 'pin']),
+          offset: 0,
+          from: 0,
+          limit: this.props.source.get('limit') || 1000,
+          to: new Date().getTime(),
+          deviceId: values.deviceId,
+          ...additionalFields,
+        }
+      ]
+    });
   }
 
   render() {
@@ -67,6 +103,12 @@ export default class PreviewScene extends React.Component {
       x: [],
       y: [],
     };
+
+    if(this.props.devicePreviewData)
+      this.props.devicePreviewData.forEach((item) => {
+        chartData.x.push(item.get('value'));
+        chartData.y.push(item.get('name'));
+      });
 
     return (
       <Preview onSubmit={this.handleSubmit}

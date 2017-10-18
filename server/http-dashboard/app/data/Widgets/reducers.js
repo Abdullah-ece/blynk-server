@@ -58,6 +58,12 @@ const initialState = fromJS({
     previewAvailableDevices: {
       loading: false,
       list: null,
+    },
+    previewData: {
+     // widgetId: {
+     //   loading: bool,
+     //   data: Array
+     // }
     }
   }
 });
@@ -105,6 +111,18 @@ export default function Product(state = initialState, action) {
 
     case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH_FAIL":
       return state.setIn(['settingsModal', 'previewAvailableDevices', 'loading'], false);
+
+    case "API_WIDGET_DEVICES_PREVIEW_HISTORY_FETCH":
+      return state.setIn(['settingsModal', 'previewData', action.value.widgetId], fromJS({ loading: true, data: [] }));
+
+    case "API_WIDGET_DEVICES_PREVIEW_HISTORY_FETCH_SUCCESS":
+      return state.updateIn(['settingsModal', 'previewData', action.meta.previousAction.value.widgetId], (previewData) => previewData.set('loading', false).set('data', fromJS(parseHistoryData(action.payload.data[0]))));
+
+    case "API_WIDGET_DEVICES_PREVIEW_HISTORY_FETCH_FAIL":
+      return state.setIn(['settingsModal', 'previewData', action.meta.previousAction.value.widgetId, 'loading'], false);
+
+    case "WIDGET_DEVICES_PREVIEW_HISTORY_CLEAR":
+      return state.setIn(['settingsModal', 'previewData'], fromJS({}));
 
     default:
       return state;
