@@ -49,6 +49,7 @@ public class ShiftMetaField extends MetaField {
         return field("floor(EXTRACT(EPOCH FROM {0}) / " + divider + ")", Integer.class, field);
     }
 
+    @Override
     public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
         CaseConditionStep<String> caseConditionStep = null;
         for (int i = 0; i < shifts.length; i++) {

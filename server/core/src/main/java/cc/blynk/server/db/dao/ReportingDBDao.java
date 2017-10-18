@@ -507,7 +507,7 @@ public class ReportingDBDao {
     private static boolean isSpecialShiftsCase(SelectedColumn[] selectedColumns) {
         for (SelectedColumn selectedColumn : selectedColumns) {
             if (selectedColumn.type == FieldType.METADATA
-                    && TableDescriptor.SPECIAL_NAME.equals(selectedColumn.name)) {
+                    && TableDescriptor.SHIFTS_METAINFO_NAME.equals(selectedColumn.name)) {
                 return true;
             }
         }

@@ -84,6 +84,15 @@ public class Column {
         this.metaFields = metaFields;
     }
 
+    public Column(String label, int type, MetaField[] metaFields) {
+        this.label = label;
+        this.columnName = label.toLowerCase().replace(" ", "_");
+        this.type = type;
+        this.formatterTemplate = null;
+        this.filterFunction = null;
+        this.metaFields = metaFields;
+    }
+
     public Column(String label, int type, Function<String, String> filterFunction) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");

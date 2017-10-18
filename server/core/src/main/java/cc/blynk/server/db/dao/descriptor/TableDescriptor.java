@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.Shift;
 import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.widgets.web.FieldType;
@@ -38,13 +39,28 @@ public class TableDescriptor {
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
     private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
 
-    public static final String SPECIAL_NAME = "Shifts";
+    public static final String SHIFTS_METAINFO_NAME = "Shifts";
+    public static final String PUMP_METAINFO_NAME = "Pump Names";
+
     public static final MetaField[] shifts = new MetaField[] {
-            new ShiftMetaField(1, SPECIAL_NAME, Role.ADMIN, false, new Shift[] {
+            new ShiftMetaField(1, SHIFTS_METAINFO_NAME, Role.ADMIN, false, new Shift[] {
                     //order is important. it defines related ids.
                     new Shift("Shift 3", "00:00:00", "08:00:00"),
                     new Shift("Shift 1", "08:00:00", "16:00:00"),
                     new Shift("Shift 2", "16:00:00", "00:00:00")
+            })
+    };
+    public static final MetaField[] pumpNames = new MetaField[] {
+            new MultiTextMetaField(2, PUMP_METAINFO_NAME, Role.ADMIN, false, new String[]{
+                    "",
+                    "Saphire",
+                    "Boost",
+                    "Emulsifier",
+                    "Destain",
+                    "Bleach",
+                    "Sour",
+                    "Supreme",
+                    "Jasmine"
             })
     };
 
@@ -70,7 +86,7 @@ public class TableDescriptor {
             new Column("Cycle Time", TIME, DateFormatters.HH_MM_SS),
             new Column("Formula Number", INTEGER),
             new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
-            new Column("Pump Id", INTEGER),
+            new Column("Pump Id", INTEGER, pumpNames),
             new Column("Volume", INTEGER),
             new Column("Run Time", INTEGER),
             new Column("Pulse Count", INTEGER)

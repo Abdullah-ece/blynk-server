@@ -39,6 +39,8 @@ import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFr
 import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.PUMP_METAINFO_NAME;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.SHIFTS_METAINFO_NAME;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
@@ -172,7 +174,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                 PinType.VIRTUAL, (byte) 100,
                 null,
                 new SelectedColumn[] {
-                        metaDataFrom("Shifts")
+                        metaDataFrom(SHIFTS_METAINFO_NAME)
                 },
                 null,
                 null,
@@ -211,7 +213,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                         columnFrom("Volume"),
                 },
                 new SelectedColumn[] {
-                        columnFrom("Pump Id"),
+                        metaDataFrom(PUMP_METAINFO_NAME),
                 },
                 null,
                 null,
@@ -235,14 +237,14 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
 
         assertEquals(8, map.size());
-        assertEquals(new BigDecimal(191120), map.get(1));
-        assertEquals(new BigDecimal(152155), map.get(2));
-        assertEquals(new BigDecimal(178775), map.get(3));
-        assertEquals(new BigDecimal(153420), map.get(4));
-        assertEquals(new BigDecimal(29914), map.get(5));
-        assertEquals(new BigDecimal(66127), map.get(6));
-        assertEquals(new BigDecimal(62960), map.get(7));
-        assertEquals(new BigDecimal(3040), map.get(8));
+        assertEquals(new BigDecimal(191120), map.get("Saphire"));
+        assertEquals(new BigDecimal(152155), map.get("Boost"));
+        assertEquals(new BigDecimal(178775), map.get("Emulsifier"));
+        assertEquals(new BigDecimal(153420), map.get("Destain"));
+        assertEquals(new BigDecimal(29914), map.get("Bleach"));
+        assertEquals(new BigDecimal(66127), map.get("Sour"));
+        assertEquals(new BigDecimal(62960), map.get("Supreme"));
+        assertEquals(new BigDecimal(3040), map.get("Jasmine"));
     }
 
     private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {

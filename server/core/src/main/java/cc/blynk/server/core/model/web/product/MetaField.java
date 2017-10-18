@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
@@ -30,6 +31,7 @@ import org.jooq.SelectSelectStep;
         property = "type")
 @JsonSubTypes({
 
+        @JsonSubTypes.Type(value = MultiTextMetaField.class, name = "MultiText"),
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
         @JsonSubTypes.Type(value = RangeTimeMetaField.class, name = "Range"),
@@ -67,11 +69,11 @@ public abstract class MetaField implements CopyObject<MetaField> {
     }
 
     public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
-        throw new RuntimeException("Not supported.");
+        return field;
     }
 
     public Field<?> applyMapping(SelectSelectStep<Record> query, Field<Object> field) {
-        throw new RuntimeException("Not supported.");
+        return field;
     }
 
     @Override
