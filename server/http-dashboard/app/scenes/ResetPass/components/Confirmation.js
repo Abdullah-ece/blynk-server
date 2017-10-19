@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router';
 
 export default class Confirmation extends React.Component {
 
@@ -6,17 +7,13 @@ export default class Confirmation extends React.Component {
     router: React.PropTypes.object
   };
 
-  loginClickHandler() {
-    this.props.router.push('/login');
-  }
-
   render() {
     return (<div className="confirm-container">
       <div className="form-header">Password change</div>
       <div className="confirm-message">
         <div>Password was changed successfully.</div>
 
-        <a className="back-to-login" onClick={this.loginClickHandler.bind(this)}>Back to login</a>
+        <Link className="back-to-login" to="/login">Continue</Link>
       </div>
     </div>);
   }
