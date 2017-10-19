@@ -89,7 +89,7 @@ public class User {
 
     //used when user is fully read from DB
     public User(String email, String pass, String appName, String region, String ip,
-                boolean isFacebookUser, boolean isSuperAdmin, String name,
+                boolean isFacebookUser,  Role role, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
                 Profile profile, int energy) {
         this.email = email;
@@ -99,7 +99,7 @@ public class User {
         this.region = region;
         this.ip = ip;
         this.isFacebookUser = isFacebookUser;
-        this.isSuperAdmin = isSuperAdmin;
+        this.role = role;
         this.name = name;
         this.lastModifiedTs = lastModifiedTs;
         this.lastLoggedAt = lastLoggedAt;

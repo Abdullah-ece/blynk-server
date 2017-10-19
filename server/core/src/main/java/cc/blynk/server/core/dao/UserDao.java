@@ -332,7 +332,7 @@ public class UserDao {
             return null;
         }
 
-        User newUser = new User(invite.email, null, appName, region, false, invite.role);
+        User newUser = new User(invite.email, null, appName, region, host, false, invite.role);
         newUser.name = invite.name;
         newUser.orgId = orgId;
         newUser.status = UserStatus.Pending;

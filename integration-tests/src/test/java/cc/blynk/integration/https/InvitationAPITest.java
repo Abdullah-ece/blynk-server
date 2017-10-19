@@ -78,7 +78,7 @@ public class InvitationAPITest extends APIBaseTest {
     public void userCantSendInvitation() throws Exception {
         String name = "user2@blynk.cc";
         String pass = "user2";
-        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.USER);
+        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.USER);
         holder.userDao.add(simpleUser);
 
         login(simpleUser.email, simpleUser.pass);

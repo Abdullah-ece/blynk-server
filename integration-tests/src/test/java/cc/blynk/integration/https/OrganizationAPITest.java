@@ -289,7 +289,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.parentId);
         }
 
-        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), BLYNK, "local", false, Role.ADMIN);
+        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -408,7 +408,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
@@ -452,7 +452,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()

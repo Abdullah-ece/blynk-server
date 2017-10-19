@@ -15,6 +15,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -97,8 +98,10 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         appClient1.reset();
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
-        ProfileSaverWorker profileSaverWorker2 = new ProfileSaverWorker(holder2.userDao, holder2.fileManager, holder2.dbManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(
+                holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
+        ProfileSaverWorker profileSaverWorker2 = new ProfileSaverWorker(
+                holder2.userDao, holder2.fileManager, holder2.dbManager, holder2.organizationDao);
 
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
@@ -148,7 +151,8 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         appClient1.reset();
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(
+                holder.userDao, holder.fileManager, holder.dbManager, holder.organizationDao);
 
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
