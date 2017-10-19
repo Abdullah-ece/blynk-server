@@ -45,6 +45,10 @@ import './styles.less';
 })
 class DeviceCreateModal extends React.Component {
 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+
   static propTypes = {
     deviceCreate: React.PropTypes.instanceOf(Map),
     visible: React.PropTypes.bool,
@@ -62,6 +66,7 @@ class DeviceCreateModal extends React.Component {
     change: React.PropTypes.func,
     DeviceCreateUpdate: React.PropTypes.func,
     DeviceAvailableOrganizationsFetch: React.PropTypes.func,
+    router: React.PropTypes.object,
   };
 
   state = {
@@ -114,6 +119,12 @@ class DeviceCreateModal extends React.Component {
 
   SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
 
+  redirectToNewDevice(id) {
+    this.props.resetForm('DeviceCreate');
+    this.props.onClose();
+    this.context.router.push(`/devices/${id}`);
+  }
+
   handleCancelClick() {
     this.props.resetForm('DeviceCreate');
     this.props.onClose();
@@ -128,14 +139,18 @@ class DeviceCreateModal extends React.Component {
         ...this.props.formValues,
         productId: productId || this.props.formValues.productId,
         status: STATUS.OFFLINE
-      }).then(() => {
+      }).then((response) => {
         this.props.fetchDevices({
           orgId: this.props.account.orgId
         }).then(() => {
           this.setState({
             loading: false
           });
-          this.handleCancelClick();
+          if(response.payload.data && response.payload.data.id) {
+            this.redirectToNewDevice(response.payload.data.id);
+          } else {
+            this.handleCancelClick();
+          }
         });
       });
     };
