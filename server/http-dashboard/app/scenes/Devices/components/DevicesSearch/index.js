@@ -33,6 +33,7 @@ class DevicesSearch extends React.Component {
             <Input style={{width: '100%'}} name="name"
                    placeholder="Search by device name"
                    mode="multiple"
+                   autoComplete="off"
                    notFoundContent="Search is on development"/>
           </Item>
           <Item style={{width: '100px'}}>

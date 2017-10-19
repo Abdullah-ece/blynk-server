@@ -11,6 +11,7 @@ export default class Input extends React.Component {
     disabled: React.PropTypes.any,
     isChecked: React.PropTypes.any,
     placeholder: React.PropTypes.any,
+    autoComplete: React.PropTypes.any,
   };
 
   prefix(icon) {
@@ -18,11 +19,12 @@ export default class Input extends React.Component {
   }
 
   render() {
-    const {placeholder, disabled, rows, input, type, icon} = this.props;
+    const {placeholder, disabled, rows, input, type, icon, autoComplete} = this.props;
     return (
       <BaseInput {...input}
                  disabled={disabled}
                  rows={rows}
+                 autoComplete={autoComplete}
                  type={type}
                  placeholder={placeholder}
                  prefix={this.prefix(icon)}
