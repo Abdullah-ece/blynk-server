@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -54,6 +55,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpsServerCodec", new HttpServerCodec())
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                 .addLast("HttpsObjectAggregator", new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
+                .addLast(new ChunkedWriteHandler())
                 .addLast(letsEncryptHandler)
                 .addLast(favIconUrlRewriter)
                 .addLast(staticFileHandler)
