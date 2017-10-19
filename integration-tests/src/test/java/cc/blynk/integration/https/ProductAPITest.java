@@ -31,6 +31,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -99,6 +100,7 @@ public class ProductAPITest extends APIBaseTest {
     }
 
     @Test
+    @Ignore("outdated")
     public void createProductFromString() throws Exception {
         login(admin.email, admin.pass);
 
@@ -1132,7 +1134,7 @@ public class ProductAPITest extends APIBaseTest {
 
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(s.toString(), ContentType.APPLICATION_JSON));
+        req.setEntity(new StringEntity(s, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
