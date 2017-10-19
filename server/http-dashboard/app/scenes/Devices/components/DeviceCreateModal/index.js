@@ -108,7 +108,7 @@ class DeviceCreateModal extends React.Component {
       }
     }
 
-    if (this.props.formValues && this.props.formValues.orgId && this.props.formValues.orgId !== nextProps.formValues.orgId) {
+    if (this.props.formValues && this.props.formValues.orgId && Number(this.props.formValues.orgId) !== Number(nextProps.formValues.orgId)) {
       this.props.change('productId', '');
     }
 
