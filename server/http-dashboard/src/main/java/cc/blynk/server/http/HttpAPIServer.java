@@ -24,8 +24,6 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  */
 public class HttpAPIServer extends BaseServer {
 
-    static final int HTTP_REQUEST_SIZE_MAX = 10 * 1024 * 1024;
-
     public static final String WEBSOCKET_PATH = "/websocket";
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
@@ -50,7 +48,7 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline()
                 .addLast("HttpServerCodec", new HttpServerCodec())
                 .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpObjectAggregator", new HttpObjectAggregator(HTTP_REQUEST_SIZE_MAX, true))
+                .addLast("HttpObjectAggregator", new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
                 .addLast(letsEncryptHandler)
                 .addLast(new ChunkedWriteHandler())
                 .addLast(favIconUrlRewriter)

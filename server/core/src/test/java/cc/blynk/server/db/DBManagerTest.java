@@ -232,8 +232,8 @@ public class DBManagerTest {
     @Test
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, Role.STAFF));
-        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false, Role.STAFF));
+        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", "127.0.0.1", false, Role.STAFF));
+        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", "127.0.0.1", false, Role.STAFF));
         dbManager.userDBDao.save(users);
         ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertEquals(2, dbUsers.size());
@@ -243,7 +243,7 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppNameUtil.BLYNK, "local", false, Role.STAFF));
+            users.add(new User("test" + i + "@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
@@ -255,19 +255,19 @@ public class DBManagerTest {
     @Test
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
         user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         user.name = "123";
         users.add(user);
-        user = new User("test2@gmail.com", "pass", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        user = new User("test2@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -301,7 +301,7 @@ public class DBManagerTest {
     @Test
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", false, Role.STAFF);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -310,7 +310,7 @@ public class DBManagerTest {
         dbManager.userDBDao.save(users);
 
         users = new ArrayList<>();
-        user = new User("test@gmail.com", "pass2", AppNameUtil.BLYNK, "local2", true, Role.SUPER_ADMIN);
+        user = new User("test@gmail.com", "pass2", AppNameUtil.BLYNK, "local2", "127.0.0.1", true, Role.SUPER_ADMIN);
         user.name = "1234";
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
@@ -351,7 +351,7 @@ public class DBManagerTest {
     @Test
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", true, Role.SUPER_ADMIN);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, Role.SUPER_ADMIN);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -388,7 +388,7 @@ public class DBManagerTest {
     @Test
     public void testInsertGetDeleteUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", true, Role.SUPER_ADMIN);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, Role.SUPER_ADMIN);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -504,4 +504,24 @@ public class DBManagerTest {
         dbManager.reportingDBDao.cleanOldReportingRecords(Instant.now());
     }
 
+    @Test
+    public void getUserIpNotExists() throws Exception {
+        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com", AppNameUtil.BLYNK);
+        assertNull(userIp);
+    }
+
+    @Test
+    public void getUserIp() throws Exception {
+        ArrayList<User> users = new ArrayList<>();
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
+
+        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com", AppNameUtil.BLYNK);
+        assertEquals("127.0.0.1", userIp);
+    }
 }

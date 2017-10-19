@@ -32,12 +32,14 @@ public class UserDao {
 
     public final ConcurrentMap<UserKey, User> users;
     private final String region;
+    private final String host;
 
-    public UserDao(ConcurrentMap<UserKey, User> users, String region) {
+    public UserDao(ConcurrentMap<UserKey, User> users, String region, String host) {
         //reading DB to RAM.
         this.users = users;
         this.region = region;
-        log.info("Region : {}", region);
+        this.host = host;
+        log.info("Region : {}. Host : {}.", region, host);
     }
 
     public boolean isUserExists(String name, String appName) {
@@ -300,7 +302,7 @@ public class UserDao {
 
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
-        User newUser = new User(email, null, appName, region, true, Role.STAFF);
+        User newUser = new User(email, null, appName, region, host, true, Role.STAFF);
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
@@ -308,7 +310,7 @@ public class UserDao {
 
     public User add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, Role.STAFF);
+        User newUser = new User(email, pass, appName, region, host, false, Role.STAFF);
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
@@ -316,7 +318,7 @@ public class UserDao {
 
     public void add(String email, String pass, String appName, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, role);
+        User newUser = new User(email, pass, appName, region, host, false, role);
         newUser.status = UserStatus.Active;
         add(newUser);
     }

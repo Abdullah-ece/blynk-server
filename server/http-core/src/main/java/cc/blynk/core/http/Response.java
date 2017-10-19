@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.ListUtils.subList;
+import static cc.blynk.utils.http.MediaType.APPLICATION_JSON;
+import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
@@ -41,7 +43,8 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public final class Response extends DefaultFullHttpResponse {
 
-    private static final String JSON = "application/json;charset=utf-8";
+    private static final String JSON = APPLICATION_JSON + ";charset=utf-8";
+    private static final String PLAIN_TEXT = TEXT_PLAIN + ";charset=utf-8";
 
     private Response(HttpVersion version, HttpResponseStatus status, ErrorMessage content, String contentType) {
         super(version, status, Unpooled.copiedBuffer(content.toString(), StandardCharsets.UTF_8));

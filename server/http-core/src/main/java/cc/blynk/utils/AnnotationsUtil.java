@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
@@ -17,6 +16,7 @@ import cc.blynk.core.http.rest.params.PathParam;
 import cc.blynk.core.http.rest.params.QueryParam;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.lang.annotation.Annotation;

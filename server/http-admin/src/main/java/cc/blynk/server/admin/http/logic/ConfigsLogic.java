@@ -1,7 +1,6 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.core.http.BaseHttpHandler;
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.GET;
@@ -13,6 +12,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 

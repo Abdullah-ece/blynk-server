@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -21,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonView;
  */
 public class User {
 
-    private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
+    private static final int INITIAL_ENERGY_AMOUNT = Integer.parseInt(System.getProperty("initial.energy", "2000"));
 
     @JsonView(Views.WebUser.class)
     public volatile String name;
@@ -39,6 +38,7 @@ public class User {
     public String appName;
 
     public String region;
+    public String ip;
 
     @JsonView(Views.WebUser.class)
     public int orgId;
@@ -64,6 +64,7 @@ public class User {
 
     public volatile boolean isLoggedOut;
 
+    //used just for tests and serialization
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
@@ -73,7 +74,7 @@ public class User {
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
-    public User(String email, String pass, String appName, String region,
+    public User(String email, String pass, String appName, String region, String ip,
                 boolean isFacebookUser, Role role) {
         this();
         this.email = email;
@@ -81,8 +82,30 @@ public class User {
         this.pass = pass;
         this.appName = appName;
         this.region = region;
+        this.ip = ip;
         this.isFacebookUser = isFacebookUser;
         this.role = role;
+    }
+
+    //used when user is fully read from DB
+    public User(String email, String pass, String appName, String region, String ip,
+                boolean isFacebookUser, boolean isSuperAdmin, String name,
+                long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
+                Profile profile, int energy) {
+        this.email = email;
+        this.name = email;
+        this.pass = pass;
+        this.appName = appName;
+        this.region = region;
+        this.ip = ip;
+        this.isFacebookUser = isFacebookUser;
+        this.isSuperAdmin = isSuperAdmin;
+        this.name = name;
+        this.lastModifiedTs = lastModifiedTs;
+        this.lastLoggedAt = lastLoggedAt;
+        this.lastLoggedIP = lastLoggedIP;
+        this.profile = profile;
+        this.energy = energy;
     }
 
     @JsonProperty("id")
