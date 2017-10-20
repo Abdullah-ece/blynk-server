@@ -53,7 +53,10 @@ class LinearWidget extends React.Component {
   componentDidMount() {
     const body = document.querySelector('body');
 
-    body.parentNode.appendChild(this.hoverElement);
+    if(this.hoverElement && !this.isHoverPlaceChanged) {
+      body.parentNode.appendChild(this.hoverElement);
+      this.isHoverPlaceChanged = true;
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -70,6 +73,8 @@ class LinearWidget extends React.Component {
     if(this.hoverElement)
       this.hoverElement.parentNode.removeChild(this.hoverElement);
   }
+
+  isHoverPlaceChanged = false;
 
   generateFakeData() {
     const data = [];
@@ -204,8 +209,14 @@ class LinearWidget extends React.Component {
 
     const data = [];
 
-    if (!this.props.widgets.hasIn([this.props.params.id, 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
+    if (!this.props.widgets.hasIn([String(this.props.params.id), 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
       return null;
+
+    if(this.hoverElement && !this.isHoverPlaceChanged) {
+      const body = document.querySelector('body');
+      body.parentNode.appendChild(this.hoverElement);
+      this.isHoverPlaceChanged = true;
+    }
 
     let minX = false;
     let maxX = false;
@@ -380,6 +391,7 @@ class LinearWidget extends React.Component {
 
     this.hoverElement.style.top = `${chartBoundingClient.top - hoverBoundingClient.height}px`;
     this.hoverElement.style.left = `${x - (hoverBoundingClient.width / 2)}px`;
+    this.hoverLine.style.top = `0px`;
     this.hoverLine.style.left = `${x - chartBoundingClient.left + 15}px`;
   }
 
