@@ -448,6 +448,10 @@ public class ReportingDBDao {
                 Collections.reverse(result);
                 return result;
             case SUM:
+            case AVG:
+            case MAX:
+            case MIN:
+            case MED:
             case COUNT:
                 Object map = Collections.emptyMap();
                 try (Connection connection = ds.getConnection()) {
