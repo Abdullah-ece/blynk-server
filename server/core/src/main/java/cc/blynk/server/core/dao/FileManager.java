@@ -157,7 +157,7 @@ public class FileManager {
                         } catch (IOException ioe) {
                             log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
                         }
-                        return Stream.empty();
+                        throw new RuntimeException("Error reading organization.");
                     })
                     .collect(Collectors.toConcurrentMap(org -> org.id, identity()));
 
