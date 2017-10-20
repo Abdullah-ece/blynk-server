@@ -42,6 +42,14 @@ class Dashboard extends React.Component {
     this.handleTimeFilterChange = this.handleTimeFilterChange.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+
+    if(prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id)) {
+      this.fetchWidgetsData();
+    }
+
+  }
+
   componentWillMount() {
 
     this.props.initializeForm(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME, {
