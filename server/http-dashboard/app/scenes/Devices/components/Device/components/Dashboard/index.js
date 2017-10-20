@@ -287,7 +287,7 @@ class Dashboard extends React.Component {
         { isLoading && (
             <Icon type="loading" className="devices--device-dashboard-loading"/>
         ) || (
-          <Widgets params={params} editable={this.state.editable} data={widgets} fetchRealData={true}/>
+          <Widgets params={params} editable={this.state.editable} data={widgets} fetchRealData={true} isPreviewOnly={true}/>
         )}
 
       </div>
