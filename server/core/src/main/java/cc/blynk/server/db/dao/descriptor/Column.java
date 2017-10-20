@@ -1,6 +1,7 @@
 package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.db.dao.descriptor.fucntions.ColumnFunction;
 import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +11,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.function.Function;
 
 import static java.sql.Types.CHAR;
 import static java.sql.Types.DATE;
@@ -33,7 +33,7 @@ public class Column {
     public final String columnName;
     public final int type;
     public final MetaDataFormatters formatterTemplate;
-    public final Function<String, String> filterFunction;
+    public final ColumnFunction<String, String> filterFunction;
     public MetaField[] metaFields = EmptyArraysUtil.EMPTY_META_FIELDS;
 
     @JsonCreator
@@ -41,7 +41,7 @@ public class Column {
                   @JsonProperty("columnName") String columnName,
                   @JsonProperty("type") int type,
                   @JsonProperty("formatterTemplate") MetaDataFormatters formatterTemplate,
-                  @JsonProperty("filterFunction") Function<String, String> filterFunction,
+                  @JsonProperty("filterFunction") ColumnFunction<String, String> filterFunction,
                   @JsonProperty("metaFields") MetaField[] metaFields) {
         this.label = label;
         this.columnName = columnName;
@@ -93,7 +93,7 @@ public class Column {
         this.metaFields = metaFields;
     }
 
-    public Column(String label, int type, Function<String, String> filterFunction) {
+    public Column(String label, int type, ColumnFunction<String, String> filterFunction) {
         this.label = label;
         this.columnName = label.toLowerCase().replace(" ", "_");
         this.type = type;

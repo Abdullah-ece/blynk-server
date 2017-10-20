@@ -2,6 +2,7 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
@@ -110,6 +111,16 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     @After
     public void shutdown() {
         super.shutdown();
+    }
+
+    @Test
+    public void tableDescriptorSerializationTest() throws Exception {
+        DataStream dataStream = new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
+        String s = JsonParser.toJson(dataStream);
+        assertNotNull(s);
+        dataStream = JsonParser.readAny(s, DataStream.class);
+        assertNotNull(dataStream);
+        assertNotNull(dataStream.tableDescriptor);
     }
 
     @Test
