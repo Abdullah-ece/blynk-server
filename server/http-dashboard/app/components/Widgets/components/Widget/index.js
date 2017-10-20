@@ -140,7 +140,7 @@ class Widget extends React.Component {
            style={this.props.style}
       >
         <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{this.props.data.label}</Dotdotdot>
+          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.editable && (
             <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
                  onMouseUp={this.preventDragNDrop}>

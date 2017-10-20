@@ -109,7 +109,7 @@ class Preview extends React.Component {
 
         <div className="widgets--widget bar-widget-preview">
           <div className="widgets--widget-label">
-            <Dotdotdot clamp={1}>{data.title}</Dotdotdot>
+            <Dotdotdot clamp={1}>{data.title || 'No Bar Title'}</Dotdotdot>
           </div>
           <BarChartWidget fetchRealData={false}
                           params={this.props.params}
