@@ -12,7 +12,8 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 public enum MetaDataFormatters {
 
     MM_DD_YY("MM/dd/yy"),
-    HH_MM_SS("HH:mm:ss");
+    HH_MM_SS("HH:mm:ss"),
+    M_DD_YYYY_HH_MM_SS("M/dd/yyyy HH:mm:ss");
 
     MetaDataFormatters(String formatString) {
         this.formatter = ofPattern(formatString);

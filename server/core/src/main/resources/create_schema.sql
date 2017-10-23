@@ -241,8 +241,25 @@ CREATE TABLE knight_laundry (
    run_time int4,
    pulse_count int4
 );
-
 create index on knight_laundry (device_id, pin, pin_type, created);
+
+CREATE TABLE knight_scopetech (
+   device_id int4,
+   pin int2,
+   pin_type int2,
+   created timestamp,
+   time timestamp,
+   scope_user text,
+   serial int4,
+   dose_volume int4,
+   flush_volume int4,
+   rinse_volume int4,
+   leak_test int4,
+   pressure int4,
+   temperature int4,
+   error int4
+);
+create index on knight_scopetech (device_id, pin, pin_type, created);
 
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;

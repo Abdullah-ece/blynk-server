@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jooq.Record;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static java.sql.Types.CHAR;
@@ -21,6 +21,7 @@ import static java.sql.Types.SMALLINT;
 import static java.sql.Types.TIME;
 import static java.sql.Types.TIMESTAMP;
 import static java.sql.Types.TINYINT;
+import static java.sql.Types.VARCHAR;
 
 /**
  * The Blynk Project.
@@ -114,6 +115,9 @@ public class Column {
             case TIME :
                 checkFormatter();
                 return LocalTime.parse(val, formatterTemplate.formatter);
+            case TIMESTAMP :
+                checkFormatter();
+                return LocalDateTime.parse(val, formatterTemplate.formatter);
             case INTEGER :
                 filter = val;
                 if (filterFunction != null) {
@@ -137,6 +141,9 @@ public class Column {
             case CHAR :
                 filter = val;
                 return filter.charAt(0);
+            case VARCHAR :
+                filter = val;
+                return filter;
             default:
                 throw new RuntimeException("Datatype is not supported yet.");
         }
@@ -148,6 +155,8 @@ public class Column {
                 return LocalDate.class;
             case TIME :
                 return LocalTime.class;
+            case TIMESTAMP :
+                return LocalDateTime.class;
             case INTEGER :
                 return Integer.class;
             case TINYINT :
@@ -158,8 +167,6 @@ public class Column {
                 return Double.class;
             case CHAR :
                 return Character.class;
-            case TIMESTAMP :
-                return Timestamp.class;
             default:
                 throw new RuntimeException("Datatype " + type + " is not supported yet.");
         }

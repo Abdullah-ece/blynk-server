@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.junit.Assert.assertEquals;
 
@@ -49,7 +49,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         httpsServerUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM " + KNIGHT_INSTANCE.tableName);
+        holder.dbManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
         this.dbManager = holder.dbManager;
     }
 
@@ -80,28 +80,32 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
-            Result<Record> result = create.select().from(KNIGHT_INSTANCE.tableName).fetch();
+            Result<Record> result = create.select().from(KNIGHT_LAUNDRY.tableName).fetch();
 
             for (Record rs : result) {
-                assertEquals(0, KNIGHT_INSTANCE.columns[0].get(rs));
-                assertEquals((short) 100, KNIGHT_INSTANCE.columns[1].get(rs));
-                assertEquals((short) PinType.VIRTUAL.ordinal(), KNIGHT_INSTANCE.columns[2].get(rs));
+                assertEquals(0, KNIGHT_LAUNDRY.columns[0].get(rs));
+                assertEquals((short) 100, KNIGHT_LAUNDRY.columns[1].get(rs));
+                assertEquals((short) PinType.VIRTUAL.ordinal(), KNIGHT_LAUNDRY.columns[2].get(rs));
+
+                System.out.println(System.currentTimeMillis());
+                System.out.println(KNIGHT_LAUNDRY.columns[3].get(rs));
+
                 assertEquals(System.currentTimeMillis(),
-                        ((Timestamp) KNIGHT_INSTANCE.columns[3].get(rs)).getTime(), 10000);
+                        ((Timestamp) KNIGHT_LAUNDRY.columns[3].get(rs)).getTime(), 10000);
 
-                assertEquals(2, KNIGHT_INSTANCE.columns[4].get(rs));
-                assertEquals(3, KNIGHT_INSTANCE.columns[5].get(rs));
-                assertEquals("2016-10-31", KNIGHT_INSTANCE.columns[6].get(rs).toString());
-                assertEquals("23:47:46", KNIGHT_INSTANCE.columns[7].get(rs).toString());
-                assertEquals("00:16:40", KNIGHT_INSTANCE.columns[8].get(rs).toString());
-                assertEquals("00:28:54", KNIGHT_INSTANCE.columns[9].get(rs).toString());
+                assertEquals(2, KNIGHT_LAUNDRY.columns[4].get(rs));
+                assertEquals(3, KNIGHT_LAUNDRY.columns[5].get(rs));
+                assertEquals("2016-10-31", KNIGHT_LAUNDRY.columns[6].get(rs).toString());
+                assertEquals("23:47:46", KNIGHT_LAUNDRY.columns[7].get(rs).toString());
+                assertEquals("00:16:40", KNIGHT_LAUNDRY.columns[8].get(rs).toString());
+                assertEquals("00:28:54", KNIGHT_LAUNDRY.columns[9].get(rs).toString());
 
-                assertEquals(27, KNIGHT_INSTANCE.columns[10].get(rs));
-                assertEquals(55, KNIGHT_INSTANCE.columns[11].get(rs));
-                assertEquals(1, KNIGHT_INSTANCE.columns[12].get(rs));
-                assertEquals(220, KNIGHT_INSTANCE.columns[13].get(rs));
-                assertEquals(0, KNIGHT_INSTANCE.columns[14].get(rs));
-                assertEquals(0, KNIGHT_INSTANCE.columns[15].get(rs));
+                assertEquals(27, KNIGHT_LAUNDRY.columns[10].get(rs));
+                assertEquals(55, KNIGHT_LAUNDRY.columns[11].get(rs));
+                assertEquals(1, KNIGHT_LAUNDRY.columns[12].get(rs));
+                assertEquals(220, KNIGHT_LAUNDRY.columns[13].get(rs));
+                assertEquals(0, KNIGHT_LAUNDRY.columns[14].get(rs));
+                assertEquals(0, KNIGHT_LAUNDRY.columns[15].get(rs));
             }
             connection.commit();
         }
@@ -132,7 +136,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
 
         try (Connection connection = dbManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
-            int result = create.selectCount().from(KNIGHT_INSTANCE.tableName).fetchOne(0, int.class);
+            int result = create.selectCount().from(KNIGHT_LAUNDRY.tableName).fetchOne(0, int.class);
             assertEquals(1290 * 8, result);
             connection.commit();
         }

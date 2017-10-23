@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.PUMP_METAINFO_NAME;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.SHIFTS_METAINFO_NAME;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
@@ -66,7 +67,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     public static void prepareData() throws Exception {
         staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class),
                 mock(GCMWrapper.class), mock(SMSWrapper.class), "db-test.properties");
-        staticHolder.dbManager.executeSQL("DELETE FROM " + KNIGHT_INSTANCE.tableName);
+        staticHolder.dbManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
 
         URL url = ExternalAPIForKnightTest.class.getResource("/2017_ISSA_Sample_IOT_Data.csv");
         Path resPath = Paths.get(url.toURI());
@@ -77,17 +78,17 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
             BatchBindStep batchBindStep = create.batch(
                     create.insertInto(
-                            table(KNIGHT_INSTANCE.tableName),
-                            KNIGHT_INSTANCE.fields()
-                     ).values(KNIGHT_INSTANCE.values()));
+                            table(KNIGHT_LAUNDRY.tableName),
+                            KNIGHT_LAUNDRY.fields()
+                     ).values(KNIGHT_LAUNDRY.values()));
 
             long now = System.currentTimeMillis();
             for (String line : lines) {
                 KnightData[] newKnightData = makeNewDataFromOldData(line.split(","));
                 now++;
                 for (KnightData knightData : newKnightData) {
-                    TableDataMapper point = new TableDataMapper(KNIGHT_INSTANCE,
-                            0, (byte) 100, PinType.VIRTUAL, now,
+                    TableDataMapper point = new TableDataMapper(KNIGHT_LAUNDRY,
+                            0, (byte) 100, PinType.VIRTUAL, LocalDateTime.now(),
                             knightData.toSplit());
                     batchBindStep.bind(point.data);
                 }
@@ -133,7 +134,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                     subQuery("start_time", "Shift 2", "15:59:59", "23:59:59"),
                     subQuery("start_time", "Shift 3", "00:00:00", "08:00:00")
             )
-            .from(KNIGHT_INSTANCE.tableName)
+            .from(KNIGHT_LAUNDRY.tableName)
             .groupBy(field("pump_id"))
             .limit(1).fetchAnyMap();
 
@@ -157,7 +158,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                             .when(groupByField.eq(1), "Shift 1")
                             .when(groupByField.eq(2), "Shift 2").as("shifts"), countDistinct(field("created"))
             )
-                    .from(KNIGHT_INSTANCE.tableName)
+                    .from(KNIGHT_LAUNDRY.tableName)
                     .groupBy(groupByField.as("shifts"))
                     .fetchMap(groupByField.as("shifts"), count());
 

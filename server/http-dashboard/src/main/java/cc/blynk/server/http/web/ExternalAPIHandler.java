@@ -41,6 +41,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
@@ -52,6 +53,7 @@ import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 import static cc.blynk.core.http.Response.badRequest;
@@ -69,7 +71,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_INSTANCE;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -485,12 +487,13 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        if (pin == 100 && pinType == PinType.VIRTUAL) {
+        TableDescriptor tableDescriptor = TableDescriptor.getTableByPin(pin, pinType);
+        if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
             blockingIOProcessor.executeDB(() -> {
                 try {
                     TableDataMapper tableDataMapper = new TableDataMapper(
-                            KNIGHT_INSTANCE,
-                            deviceId, pin, pinType, System.currentTimeMillis(),
+                            tableDescriptor,
+                            deviceId, pin, pinType, LocalDateTime.now(),
                             pinValues);
                     dbManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
@@ -563,17 +566,17 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         int deviceId = tokenValue.device.id;
-        long now = System.currentTimeMillis();
 
         //todo separate thread
-        if (pin == 100 && pinType == PinType.VIRTUAL) {
+        TableDescriptor tableDescriptor = TableDescriptor.getTableByPin(pin, pinType);
+        if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
             blockingIOProcessor.executeDB(() -> {
                 try {
                     TableDataMapper[] tableDataMappers = new TableDataMapper[pinValues.length];
                     int i = 0;
                     for (String[] pinValue : pinValues) {
-                        tableDataMappers[i++] = new TableDataMapper(KNIGHT_INSTANCE,
-                                deviceId, pin, pinType, now,
+                        tableDataMappers[i++] = new TableDataMapper(KNIGHT_LAUNDRY,
+                                deviceId, pin, pinType, LocalDateTime.now(),
                                 pinValue);
                     }
 

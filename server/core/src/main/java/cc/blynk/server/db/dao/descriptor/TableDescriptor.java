@@ -1,5 +1,6 @@
 package cc.blynk.server.db.dao.descriptor;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
@@ -36,6 +37,7 @@ import static org.jooq.impl.DSL.field;
  */
 public class TableDescriptor {
 
+    private static final String KNIGHT_SCOPETECH_TABLE_NAME = "knight_scopetech";
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
     private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
 
@@ -70,7 +72,7 @@ public class TableDescriptor {
     public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
     public static final Field<Timestamp> CREATED = field("created", Timestamp.class);
 
-    public static final TableDescriptor KNIGHT_INSTANCE = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
+    public static final TableDescriptor KNIGHT_LAUNDRY = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
             //default blynk columns
             new Column("Device Id", INTEGER),
             new Column("Pin", SMALLINT),
@@ -90,6 +92,27 @@ public class TableDescriptor {
             new Column("Volume", INTEGER),
             new Column("Run Time", INTEGER),
             new Column("Pulse Count", INTEGER)
+    });
+
+    public static final TableDescriptor KNIGHT_SCOPETECH = new TableDescriptor(KNIGHT_SCOPETECH_TABLE_NAME,
+            new Column[] {
+            //default blynk columns
+            new Column("Device Id", INTEGER),
+            new Column("Pin", SMALLINT),
+            new Column("Pin Type", SMALLINT),
+            new Column("Created", TIMESTAMP),
+
+            //knight specific columns
+            new Column("Time", TIMESTAMP, MetaDataFormatters.M_DD_YYYY_HH_MM_SS),
+            new Column("Scope User", VARCHAR),
+            new Column("Serial", INTEGER),
+            new Column("Dose Volume", INTEGER),
+            new Column("Flush Volume", INTEGER),
+            new Column("Rinse Volume", INTEGER),
+            new Column("Leak Test", INTEGER),
+            new Column("Pressure", INTEGER),
+            new Column("Temperature", INTEGER),
+            new Column("Error", INTEGER)
     });
 
     public static final TableDescriptor BLYNK_DEFAULT_INSTANCE = new TableDescriptor(BLYNK_DEFAULT_NAME, new Column[] {
@@ -161,6 +184,16 @@ public class TableDescriptor {
             list.add("?");
         }
         return list;
+    }
+
+    public static TableDescriptor getTableByPin(byte pin, PinType pinType) {
+        if (pin == 100 && pinType == PinType.VIRTUAL) {
+            return TableDescriptor.KNIGHT_LAUNDRY;
+        } else if (pin == 101 && pinType == PinType.VIRTUAL) {
+            return TableDescriptor.KNIGHT_SCOPETECH;
+        }
+
+        return TableDescriptor.BLYNK_DEFAULT_INSTANCE;
     }
 
 }

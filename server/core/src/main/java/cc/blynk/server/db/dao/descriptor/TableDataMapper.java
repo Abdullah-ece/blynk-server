@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.enums.PinType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -19,7 +21,7 @@ public class TableDataMapper {
     private static final int BLYNK_PARAMS_COUNT = 4;
 
     public TableDataMapper(TableDescriptor tableDescriptor,
-                           int deviceId, byte pin, PinType pinType, long ts, String[] values) {
+                           int deviceId, byte pin, PinType pinType, LocalDateTime ts, String[] values) {
         this.tableDescriptor = tableDescriptor;
         data = new Object[BLYNK_PARAMS_COUNT + values.length];
 
