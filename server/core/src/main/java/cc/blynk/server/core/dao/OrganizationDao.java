@@ -152,8 +152,10 @@ public class OrganizationDao {
     private List<Organization> getOrgsByParentId(int parentId) {
         List<Organization> orgs = new ArrayList<>();
         Organization org = organizations.get(parentId);
-        orgs.add(org);
-        getOrgsByParentId(orgs, parentId, 1);
+        if (org != null) {
+            orgs.add(org);
+            getOrgsByParentId(orgs, parentId, 1);
+        }
         return orgs;
     }
 
