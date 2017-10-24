@@ -60,15 +60,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
 
     @Test
     public void testInsertSingleKnightRow() throws Exception {
-        URL url = getClass().getResource("/2017_ISSA_Sample_IOT_Data.csv");
-        Path resPath = Paths.get(url.toURI());
-        List<String> lines = Files.readAllLines(resPath);
-
-        KnightData[] newKnightData = makeNewDataFromOldData(lines.get(0).split(","));
-
-        StringJoiner sj = new StringJoiner(",", "[", "]");
-        sj.add(newKnightData[0].toString());
-        String fixedLine = sj.toString();
+        String fixedLine = "[[2,3,\"10/31/16\",\"23:47:46\",\"00:16:40\",\"00:28:54\",27,\"55 KG\",1,220,0,0]]";
 
         HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/updateBatch/v100");
         put.setEntity(new StringEntity(fixedLine, ContentType.APPLICATION_JSON));

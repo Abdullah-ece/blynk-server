@@ -21,7 +21,7 @@ public class TableDataMapper {
     private static final int BLYNK_PARAMS_COUNT = 4;
 
     public TableDataMapper(TableDescriptor tableDescriptor,
-                           int deviceId, byte pin, PinType pinType, LocalDateTime ts, String[] values) {
+                           int deviceId, byte pin, PinType pinType, LocalDateTime ts, Object[] values) {
         this.tableDescriptor = tableDescriptor;
         data = new Object[BLYNK_PARAMS_COUNT + values.length];
 
@@ -33,7 +33,7 @@ public class TableDataMapper {
         init(values, BLYNK_PARAMS_COUNT);
     }
 
-    private void init(String[] values, int skipColumnIndex) {
+    private void init(Object[] values, int skipColumnIndex) {
         for (int i = 0; i < values.length; i++) {
             Column column = tableDescriptor.columns[i + skipColumnIndex];
             Object value = column.parse(values[i]);

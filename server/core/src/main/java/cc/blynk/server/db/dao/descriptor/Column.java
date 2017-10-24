@@ -106,43 +106,43 @@ public class Column {
         return columnLabel.toLowerCase().replace(" ", "_");
     }
 
-    public Object parse(String val) {
+    public Object parse(Object val) {
         String filter;
         switch (type) {
             case DATE :
                 checkFormatter();
-                return LocalDate.parse(val, formatterTemplate.formatter);
+                return LocalDate.parse((String) val, formatterTemplate.formatter);
             case TIME :
                 checkFormatter();
-                return LocalTime.parse(val, formatterTemplate.formatter);
+                return LocalTime.parse((String) val, formatterTemplate.formatter);
             case TIMESTAMP :
                 checkFormatter();
-                return LocalDateTime.parse(val, formatterTemplate.formatter);
+                return LocalDateTime.parse((String) val, formatterTemplate.formatter);
             case INTEGER :
-                filter = val;
                 if (filterFunction != null) {
-                    filter = filterFunction.apply(filter);
+                    filter = filterFunction.apply((String) val);
+                    return Integer.valueOf(filter);
                 }
-                return Integer.valueOf(filter);
+                return val;
             case SMALLINT :
             case TINYINT :
-                filter = val;
                 if (filterFunction != null) {
-                    filter = filterFunction.apply(filter);
+                    filter = filterFunction.apply((String) val);
+                    return Short.valueOf(filter);
                 }
-                return Short.valueOf(filter);
+                return val;
             case DOUBLE :
             case FLOAT :
-                filter = val;
                 if (filterFunction != null) {
-                    filter = filterFunction.apply(filter);
+                    filter = filterFunction.apply((String) val);
+                    return Double.valueOf(filter);
                 }
-                return Double.valueOf(filter);
+                return val;
             case CHAR :
-                filter = val;
+                filter = (String) val;
                 return filter.charAt(0);
             case VARCHAR :
-                filter = val;
+                filter = (String) val;
                 return filter;
             default:
                 throw new RuntimeException("Datatype is not supported yet.");

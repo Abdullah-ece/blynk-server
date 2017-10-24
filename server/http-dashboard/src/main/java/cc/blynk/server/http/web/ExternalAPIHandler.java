@@ -54,6 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Base64;
 
 import static cc.blynk.core.http.Response.badRequest;
@@ -445,7 +446,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response updateWidgetPinDataNew(@Context ChannelHandlerContext ctx,
                                            @PathParam("token") String token,
                                            @PathParam("pin") String pinString,
-                                           String[] pinValues) {
+                                           Object[] pinValues) {
         return updateWidgetPinData(ctx, token, pinString, pinValues);
     }
 
@@ -456,7 +457,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
                                         @PathParam("token") String token,
                                         @PathParam("pin") String pinString,
-                                        String[] pinValues) {
+                                        Object[] pinValues) {
 
         if (pinValues.length == 0) {
             log.debug("No pin for update provided.");
@@ -507,7 +508,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         final long now = System.currentTimeMillis();
 
-        String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
+        String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING,
+                Arrays.copyOf(pinValues, pinValues.length, String[].class));
 
         reportingDao.process(user, dashId, deviceId, pin, pinType, pinValue, now);
 

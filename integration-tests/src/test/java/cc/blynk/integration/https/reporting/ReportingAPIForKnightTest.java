@@ -40,6 +40,7 @@ import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
 import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
+import static cc.blynk.server.db.dao.descriptor.TableDescriptor.FORMULA_METAINFO_NAME;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.PUMP_METAINFO_NAME;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.SHIFTS_METAINFO_NAME;
@@ -82,13 +83,13 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
                             KNIGHT_LAUNDRY.fields()
                      ).values(KNIGHT_LAUNDRY.values()));
 
-            long now = System.currentTimeMillis();
+            LocalDateTime now = LocalDateTime.now();
             for (String line : lines) {
                 KnightData[] newKnightData = makeNewDataFromOldData(line.split(","));
-                now++;
+                now = now.plusSeconds(1);
                 for (KnightData knightData : newKnightData) {
                     TableDataMapper point = new TableDataMapper(KNIGHT_LAUNDRY,
-                            0, (byte) 100, PinType.VIRTUAL, LocalDateTime.now(),
+                            0, (byte) 100, PinType.VIRTUAL, now,
                             knightData.toSplit());
                     batchBindStep.bind(point.data);
                 }
@@ -257,6 +258,43 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         assertEquals(new BigDecimal(66127), map.get("Sour"));
         assertEquals(new BigDecimal(62960), map.get("Supreme"));
         assertEquals(new BigDecimal(3040), map.get("Jasmine"));
+    }
+
+    @Test
+    public void selectFormulaNames() throws Exception {
+        DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
+                SourceType.SUM,
+                0,
+                PinType.VIRTUAL, (byte) 100,
+                new SelectedColumn[] {
+                        metaDataFrom("Volume"),
+                },
+                new SelectedColumn[] {
+                        metaDataFrom(FORMULA_METAINFO_NAME),
+                },
+                null,
+                null,
+                0, 100,
+                0, Long.MAX_VALUE);
+
+        /**
+         select pump_id, sum(volume)
+         from knight_laundry
+         group by pump_id
+         */
+
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
+
+        Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        assertNotNull(resultObj);
+
+        Map map = (Map) resultObj;
+
+        System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(map));
+
+        assertEquals(18, map.size());
+        assertEquals(new BigDecimal(6608), map.get("Towel White"));
     }
 
     private static Field<Integer> subQuery(String fieldName, String alias, String timeFrom, String timeTo) {

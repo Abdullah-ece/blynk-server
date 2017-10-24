@@ -43,6 +43,7 @@ public class TableDescriptor {
 
     public static final String SHIFTS_METAINFO_NAME = "Shifts";
     public static final String PUMP_METAINFO_NAME = "Pump Names";
+    public static final String FORMULA_METAINFO_NAME = "Formula Names";
 
     public static final MetaField[] shifts = new MetaField[] {
             new ShiftMetaField(1, SHIFTS_METAINFO_NAME, Role.ADMIN, false, new Shift[] {
@@ -52,6 +53,7 @@ public class TableDescriptor {
                     new Shift("Shift 2", "16:00:00", "00:00:00")
             })
     };
+
     public static final MetaField[] pumpNames = new MetaField[] {
             new MultiTextMetaField(2, PUMP_METAINFO_NAME, Role.ADMIN, false, new String[]{
                     "",
@@ -65,6 +67,48 @@ public class TableDescriptor {
                     "Jasmine"
             })
     };
+
+    public static final MetaField[] formulaNames = new MetaField[] {
+            new MultiTextMetaField(3, FORMULA_METAINFO_NAME, Role.ADMIN, false, new String[]{
+                    "",
+                    "Towel White",
+                    "Bed sheet White",
+                    "Pillow Case",
+                    "Pool Towel",
+                    "Dark",
+                    "",
+                    "F&B Light",
+                    "F&B Dark",
+                    "",
+                    "Light Guest/Uniform",
+                    "Dark Guest/Uniform",
+                    "Nil1",
+                    "Nil2",
+                    "F&B White",
+                    "White Guest/Uniform",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "Towel White 2",
+                    "Bedsheet White 2",
+                    "Pillow Case 2",
+                    "Pool Towel 2",
+                    "Dark2",
+                    "",
+                    "F&B Light 2",
+                    "F&B Dark 2",
+                    "",
+                    "Light Guest/Uniform",
+                    "Dark Guest/Uniform",
+                    "Nil 2",
+                    "Nil2 2",
+                    "F&B White",
+                    "White Guest/Uniform"
+            })
+    };
+
 
     //todo move somewhere?
     public static final Field<Integer> DEVICE_ID = field("device_id", Integer.class);
@@ -86,7 +130,7 @@ public class TableDescriptor {
             new Column("Start Time", TIME, MetaDataFormatters.HH_MM_SS, shifts),
             new Column("Finish Time", TIME, MetaDataFormatters.HH_MM_SS),
             new Column("Cycle Time", TIME, MetaDataFormatters.HH_MM_SS),
-            new Column("Formula Number", INTEGER),
+            new Column("Formula Number", INTEGER, formulaNames),
             new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
             new Column("Pump Id", INTEGER, pumpNames),
             new Column("Volume", INTEGER),
