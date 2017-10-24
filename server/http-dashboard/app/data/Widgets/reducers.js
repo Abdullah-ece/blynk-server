@@ -39,6 +39,17 @@ const parseHistoryData = (response) => {
 
 };
 
+const filterDevicesByProductId = (list, productId) => {
+
+  if(!productId)
+    throw new Error('productId parameter is missed');
+
+  return list.filter((item) => {
+    return parseInt(item.get('productId')) === parseInt(productId);
+  });
+
+};
+
 const initialState = fromJS({
   widgetsData: {
     /*
@@ -107,7 +118,7 @@ export default function Product(state = initialState, action) {
       return state.setIn(['settingsModal', 'previewAvailableDevices', 'loading'], true);
 
     case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH_SUCCESS":
-      return state.updateIn(['settingsModal', 'previewAvailableDevices'], (data) => ( data.set('loading', false).set('list', fromJS(action.payload.data))));
+      return state.updateIn(['settingsModal', 'previewAvailableDevices'], (data) => ( data.set('loading', false).set('list', filterDevicesByProductId(fromJS(action.payload.data), action.meta.previousAction.value.productId))));
 
     case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH_FAIL":
       return state.setIn(['settingsModal', 'previewAvailableDevices', 'loading'], false);

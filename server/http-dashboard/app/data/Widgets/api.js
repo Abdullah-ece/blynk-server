@@ -98,6 +98,7 @@ export function WidgetOrganizationFetch(data) {
 export function WidgetDevicesPreviewListFetch(data = { productId: null }) {
   return {
     type: 'API_WIDGET_DEVICES_PREVIEW_LIST_FETCH',
+    value: data,
     payload: DevicesGet(data)
   };
 }

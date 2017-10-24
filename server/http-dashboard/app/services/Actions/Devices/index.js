@@ -1,16 +1,16 @@
 import {API_URL} from 'services/API';
 
-export function DevicesGet({productId = null}) {
+export function DevicesGet({orgId = null}) {
 
-  if(!productId) {
-    throw new Error('productId parameter is missed');
+  if(!orgId) {
+    throw new Error('orgId parameter is missed');
   }
 
   return {
     request: {
       method: 'get',
       url: API_URL.device().get({
-        productId: productId
+        orgId: orgId
       })
     }
   };

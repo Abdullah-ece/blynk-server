@@ -14,6 +14,7 @@ import {
 } from 'data/Widgets/api';
 
 @connect((state, ownProps) => ({
+  orgId: parseInt(state.Account.orgId || 0),
   devicesList: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'list']),
   devicesLoading: state.Widgets.getIn(['settingsModal', 'previewAvailableDevices', 'loading']),
   devicePreviewData: state.Widgets.getIn(['settingsModal', 'previewData', ownProps.widgetId, 'data']) || fromJS([]),
@@ -33,6 +34,7 @@ export default class PreviewScene extends React.Component {
     devicesList: PropTypes.instanceOf(List),
     devicePreviewData: PropTypes.instanceOf(List),
 
+    orgId: PropTypes.number,
     widgetId: PropTypes.number,
 
     devicesLoading: PropTypes.bool,
@@ -56,10 +58,10 @@ export default class PreviewScene extends React.Component {
     if (this.props.params.id === 0)
       return null;
 
-    if (this.props.devicesList === null && this.props.devicesLoading === false)
-      this.props.fetchDevicesList({
-        productId: this.props.params.id
-      });
+    this.props.fetchDevicesList({
+      productId: this.props.params.id,
+      orgId: this.props.orgId
+    });
   }
 
   handleSubmit(values) {
