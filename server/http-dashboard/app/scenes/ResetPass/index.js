@@ -38,7 +38,7 @@ export default class ResetPass extends React.Component {
 
   componentWillMount() {
     if (!this.props.location.query || !this.props.location.query.token || !this.props.location.query.email) {
-      this.context.router.push('/products');
+      this.context.router.push('/devices');
     }
   }
 

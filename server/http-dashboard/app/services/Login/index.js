@@ -19,7 +19,7 @@ export const RouteAuthorizedOnly = () => {
 export const RouteGuestOnly = () => {
   return (nextState, replaceWith, callback) => {
     isLoggedIn().then(() => {
-      replaceWith('/products');
+      replaceWith('/devices');
       callback();
     }).catch(() => {
       callback();

@@ -60,7 +60,7 @@ export default class Login extends React.Component {
     }).then(() => {
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
-        this.context.router.push('/products');
+        this.context.router.push('/devices');
       });
     });
   }

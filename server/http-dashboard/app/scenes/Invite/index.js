@@ -33,7 +33,7 @@ class Invite extends React.Component {
       password: password
     }).then(() => {
       this.props.AccountFetch().then(() => {
-        this.context.router.push('/products');
+        this.context.router.push('/devices');
       });
     }).catch((err) => {
       throw new SubmissionError({
