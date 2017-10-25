@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  message
+  message,
+  Icon
 } from 'antd';
 import {
   Device
@@ -116,6 +117,9 @@ class DeviceDetailsScene extends React.Component {
   render() {
     if (!this.props.deviceDetails.getIn(['info', 'data']))
       return null;
+
+    if (this.props.deviceDetails.getIn(['info', 'loading']))
+      return <Icon type="loading" style={{ margin: '30px' }}/>;
 
     return (
       <Device onDeviceChange={this.onDeviceChange}
