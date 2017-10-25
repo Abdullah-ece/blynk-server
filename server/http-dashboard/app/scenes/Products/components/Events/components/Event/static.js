@@ -59,7 +59,7 @@ class Event extends React.Component {
           </ItemsGroup>
           <Item label="Description" offset="normal">
             <FieldStub multipleLines={true} noValueMessage="Empty">
-              { this.props.fields.description.split('\n').map((item, key) => {
+              { this.props.fields.description && this.props.fields.description.split('\n').map((item, key) => {
                 return (<span key={key}>{item}<br/></span>);
               })}
             </FieldStub>
