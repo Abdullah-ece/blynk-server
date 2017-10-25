@@ -500,7 +500,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
                     log.error("Error insert knight record.", e);
-                    ctx.writeAndFlush(serverError("Error insert knight record."));
+                    ctx.writeAndFlush(serverError("Error insert knight record. " + e.getMessage()));
                 }
             });
             return null;
@@ -586,7 +586,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
                     log.error("Error insert knight record.", e);
-                    ctx.writeAndFlush(serverError("Error insert knight record."));
+                    ctx.writeAndFlush(serverError("Error insert knight record. " + e.getMessage()));
                 }
             });
         }

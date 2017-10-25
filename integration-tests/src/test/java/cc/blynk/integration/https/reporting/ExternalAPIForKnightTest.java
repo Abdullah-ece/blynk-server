@@ -59,6 +59,22 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
+    public void testCorrectErrorMessage() throws Exception {
+        String fixedLine = "[[2,3,\"31/10/16\",\"23:47:46\",\"00:16:40\",\"00:28:54\",27,\"55 KG\",1,220,0,0]]";
+
+        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/updateBatch/v100");
+        put.setEntity(new StringEntity(fixedLine, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(put)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":"
+                    + "\"Error insert knight record. Text '31/10/16' could not be parsed: "
+                    + "Invalid value for MonthOfYear (valid values 1 - 12): 31\"}}",
+                    consumeText(response));
+        }
+    }
+
+    @Test
     public void testInsertSingleKnightRow() throws Exception {
         String fixedLine = "[[2,3,\"10/31/16\",\"23:47:46\",\"00:16:40\",\"00:28:54\",27,\"55 KG\",1,220,0,0]]";
 
