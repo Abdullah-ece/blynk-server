@@ -69,9 +69,9 @@ class Device extends React.Component {
           <TabPane tab="Device Info" key="3">
             <DeviceInfo onMetadataChange={this.onMetadataChange} device={this.props.device}/>
           </TabPane>
-          <TabPane tab="Labels" key="4">
+          {/*<TabPane tab="Labels" key="4">
             <div style={{padding: '12px 32px'}}>Labels</div>
-          </TabPane>
+          </TabPane>*/}
         </Tabs>
       </div>
     );
