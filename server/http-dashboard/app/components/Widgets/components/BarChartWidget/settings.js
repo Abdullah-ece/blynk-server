@@ -257,7 +257,7 @@ class BarChartSettings extends React.Component {
 
     this.props.dataStreams.forEach((stream) => {
 
-      if(parseInt(stream.values.pin) !== 100)
+      if(parseInt(stream.values.pin) < 100)
         return null;
 
       dataStreamsOptions.push({
