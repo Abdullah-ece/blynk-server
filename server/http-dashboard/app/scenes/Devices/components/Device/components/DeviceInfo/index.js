@@ -105,7 +105,8 @@ class DeviceInfo extends React.Component {
         </Row>
         <Row>
           <Col span={24}>
-            {this.props.device.has('metaFields') && (<Section title="Metadata">
+            {this.props.device.has('metaFields') && this.props.device.get('metaFields').size !== 0 &&
+            (<Section title="Metadata">
               <div className="device--device-info-metadata-list">
                 {this.props.device.get('metaFields').map((field, key) => {
 
@@ -123,7 +124,7 @@ class DeviceInfo extends React.Component {
                     onChange: this.onChange.bind(this)
                   };
 
-
+                  
                   if (field.get('type') === Metadata.Fields.TEXT)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>

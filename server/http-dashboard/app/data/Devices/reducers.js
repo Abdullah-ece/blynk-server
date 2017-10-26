@@ -3,6 +3,20 @@ import {
   DEVICES_SORT
 } from 'services/Devices';
 
+const cutDeviceNameMetaFieldFromMetaFields = (device) => {
+  if (!device.has('metaFields')) {
+    return device;
+  }
+
+  device = device.update('metaFields',(metaFields)=>{
+    return metaFields.filter(metaField=>{
+      return metaField.get('name') !== 'Device Name';
+    });
+  });
+
+  return device;
+};
+
 const initialState = fromJS({
   devices: [],
   timeline: {},
@@ -51,7 +65,7 @@ export default function Devices(state = initialState, action) {
       return state.setIn(['sorting', 'value'], action.value);
 
     case "API_DEVICE_DETAILS_FETCH_SUCCESS":
-      return state.setIn(['deviceDetails', 'info', 'data'], fromJS(action.payload.data)).update('devices', (devices) => {
+      return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
         return devices.map((device) => {
 
           if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
