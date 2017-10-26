@@ -69,7 +69,7 @@ public class Product {
         this.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
         this.dataStreams = ArrayUtil.copy(product.dataStreams, DataStream.class);
         this.events = ArrayUtil.copy(product.events, Event.class);
-        this.webDashboard = webDashboard.copy();
+        this.webDashboard = product.webDashboard.copy();
     }
 
     public void update(Product updatedProduct) {

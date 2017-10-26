@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInvite;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
@@ -24,6 +25,8 @@ import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebBarGraph;
 import cc.blynk.server.http.web.dto.EmailDTO;
 import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import cc.blynk.utils.SHA256Util;
@@ -552,8 +555,12 @@ public class OrganizationAPITest extends APIBaseTest {
         };
 
         product.dataStreams = new DataStream[] {
-                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+                new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
+
+        product.webDashboard = new WebDashboard(new Widget[]{
+                new WebBarGraph()
+        });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
         req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
@@ -571,8 +578,11 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(0, fromApi.version);
             assertNotEquals(0, fromApi.lastModifiedTs);
             assertNotNull(fromApi.dataStreams);
+            assertEquals(1, fromApi.dataStreams.length);
+            assertEquals(100, fromApi.dataStreams[0].pin);
             assertNotNull(fromApi.metaFields);
             assertEquals(10, fromApi.metaFields.length);
+            assertNotNull(fromApi.webDashboard);
         }
 
         Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
@@ -602,8 +612,15 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(0, productFromApi.version);
             assertNotEquals(0, productFromApi.lastModifiedTs);
             assertNotNull(productFromApi.dataStreams);
+            assertArrayEquals(product.dataStreams, productFromApi.dataStreams);
+            assertEquals(1, productFromApi.dataStreams.length);
+            assertEquals(100, productFromApi.dataStreams[0].pin);
             assertNotNull(productFromApi.metaFields);
             assertEquals(10, productFromApi.metaFields.length);
+            assertNotNull(productFromApi.webDashboard);
+            assertNotNull(productFromApi.webDashboard.widgets);
+            assertEquals(1, productFromApi.webDashboard.widgets.length);
+            assertArrayEquals(product.webDashboard.widgets, productFromApi.webDashboard.widgets);
         }
 
         Organization organization2 = new Organization("My Org2", "Some TimeZone", "/static/logo.png", false);
