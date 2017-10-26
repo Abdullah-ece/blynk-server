@@ -33,8 +33,9 @@ public class OrganizationDao {
     private final AtomicInteger productSequence;
     private final FileManager fileManager;
     private final DeviceDao deviceDao;
+    private final UserDao userDao;
 
-    public OrganizationDao(FileManager fileManager, DeviceDao deviceDao) {
+    public OrganizationDao(FileManager fileManager, DeviceDao deviceDao, UserDao userDao) {
         this.fileManager = fileManager;
         this.organizations = fileManager.deserializeOrganizations();
 
@@ -49,6 +50,7 @@ public class OrganizationDao {
         this.orgSequence = new AtomicInteger(largestOrgSequenceNumber);
         this.productSequence = new AtomicInteger(largestProductSequenceNumber);
         this.deviceDao = deviceDao;
+        this.userDao = userDao;
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
@@ -237,6 +239,12 @@ public class OrganizationDao {
     public boolean delete(int id) {
         Organization org = organizations.remove(id);
         if (org != null) {
+            List<User> users = userDao.getAllUsersByOrgId(id);
+            for (User user : users) {
+                UserKey userKey = new UserKey(user.email, user.appName);
+                userDao.delete(userKey);
+                fileManager.delete(userKey);
+            }
             fileManager.deleteOrg(id);
             return true;
         }

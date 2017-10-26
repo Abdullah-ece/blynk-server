@@ -118,7 +118,7 @@ public class Holder implements Closeable {
         }
 
         this.deviceDao = new DeviceDao(userDao.users);
-        this.organizationDao = new OrganizationDao(fileManager, deviceDao);
+        this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, deviceDao, dbManager, host);
         this.stats = new GlobalStats();
@@ -177,7 +177,7 @@ public class Holder implements Closeable {
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
 
         this.deviceDao = new DeviceDao(userDao.users);
-        this.organizationDao = new OrganizationDao(fileManager, deviceDao);
+        this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
         this.tokenManager = new TokenManager(userDao.users, blockingIOProcessor, deviceDao, dbManager, host);
         this.stats = new GlobalStats();

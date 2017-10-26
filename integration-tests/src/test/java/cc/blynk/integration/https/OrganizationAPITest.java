@@ -66,6 +66,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -273,6 +274,117 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(orgs);
             assertEquals(0, orgs.length);
         }
+    }
+
+    @Test
+    public void createOrgInviteUserAndRemoveOrg() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, -1);
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+        }
+
+        String email = "dmitriy@blynk.cc";
+        String name = "Dmitriy";
+        Role role = Role.ADMIN;
+
+        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
+        String data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, name, role));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard" + "/invite?token="));
+        reset(mailWrapper);
+
+        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
+
+        //we don't need cookie from initial login here
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
+        CloseableHttpClient newHttpClient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/invite");
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("token", token));
+        nvps.add(new BasicNameValuePair("password", "123"));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = newHttpClient.execute(loginRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            assertTrue(cookieHeader.getValue().startsWith("session="));
+            User user = JsonParser.parseUserFromString(consumeText(response));
+            assertNotNull(user);
+            assertEquals(email, user.email);
+            assertEquals(name, user.name);
+            assertEquals(role, user.role);
+            assertEquals(2, user.orgId);
+        }
+
+        HttpDelete deleteOrg = new HttpDelete(httpsAdminServerUrl + "/organization/2");
+
+        try (CloseableHttpResponse response = httpclient.execute(deleteOrg)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+
+
+        Organization organization3 = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, -1);
+
+        req = new HttpPut(httpsAdminServerUrl + "/organization");
+        req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(3, fromApi.id);
+            assertEquals(1, fromApi.parentId);
+        }
+
+        inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/3/invite");
+        data = JsonParser.MAPPER.writeValueAsString(new UserInvite(email, name, role));
+        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
+        body = bodyArgumentCapture.getValue();
+
+        token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard" + "/invite?token="));
+
     }
 
     @Test
