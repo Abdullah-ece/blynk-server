@@ -241,7 +241,7 @@ class DeviceCreateModal extends React.Component {
           </Row>
           <Row>
             <Col span={24}>
-              <Item label="Organization owner of this device"
+              <Item label="Assign to Organization"
                     offset={this.props.formValues && this.props.formValues.orgId ? 'large' : 'none'}>
                 <MetadataSelect displayError={false} name="orgId" values={organizations}
                                 placeholder="Choose organization"
