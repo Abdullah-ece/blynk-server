@@ -122,7 +122,7 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
     }
 
     @Test
@@ -151,13 +151,13 @@ public class InvitationAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk dashboard."), contains("/dashboard/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
 

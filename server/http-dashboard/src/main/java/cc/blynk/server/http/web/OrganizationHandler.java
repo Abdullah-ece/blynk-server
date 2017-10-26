@@ -400,7 +400,7 @@ public class OrganizationHandler extends BaseHttpHandler {
                         .replace("{host}", this.host)
                         .replace("{link}", inviteURL + token + "&email="
                                 + URLEncoder.encode(userInvite.email, "UTF-8"));
-                mailWrapper.sendHtml(userInvite.email, "Invitation to Blynk dashboard.", message);
+                mailWrapper.sendHtml(userInvite.email, "Invitation to " + org.name + " dashboard.", message);
                 log.info("Invitation sent to {}. From {}", userInvite.email, httpSession.user.email);
                 response = ok();
             } catch (Exception e) {
