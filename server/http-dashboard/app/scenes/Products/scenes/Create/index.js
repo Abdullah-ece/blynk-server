@@ -234,7 +234,7 @@ class Create extends React.Component {
     const regexp = /products\/edit\/[0-9]\/(info|metadata|datastreams|events|dashboard)/g;
 
     if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
-      return 'Are you sure you want to leave this page without saving?';
+      return 'Leave this page without saving your changes?';
   }
 
   isMetadataFormInvalid() {
