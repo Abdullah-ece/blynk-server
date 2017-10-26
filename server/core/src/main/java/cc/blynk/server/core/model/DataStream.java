@@ -113,7 +113,7 @@ public class DataStream implements CopyObject<DataStream> {
 
     @Override
     public DataStream copy() {
-        return null;
+        return new DataStream(this);
     }
 
     //HAVE IN MIND : value is not compared as it is updated in realtime.
