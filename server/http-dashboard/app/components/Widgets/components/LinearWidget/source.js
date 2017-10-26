@@ -2,11 +2,10 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import ColorPicker from 'components/ColorPicker';
 import {Item, ItemsGroup} from "components/UI";
-import {Button, Radio, Icon, Row, Col} from 'antd';
+import {Button, Radio, Icon} from 'antd';
 import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
 import {Map, List} from 'immutable';
@@ -126,14 +125,16 @@ class Source extends React.Component {
       return 'Add Data Stream before setup chart';
     };
 
-    const getLabelForChartTypeItem = () => {
+    // #849
 
-      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
-
-      if (!name) return `Please, select chart type`;
-
-      return `Chart Type: ${name.value}`;
-    };
+    // const getLabelForChartTypeItem = () => {
+    //
+    //   const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
+    //
+    //   if (!name) return `Please, select chart type`;
+    //
+    //   return `Chart Type: ${name.value}`;
+    // };
 
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
@@ -166,25 +167,28 @@ class Source extends React.Component {
             </Item>
           </ItemsGroup>
         </div>
-        <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
-          <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
-            <Row>
-              <Col span={6}>
-                <Item label={getLabelForChartTypeItem()} offset="medium">
-                  <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}
-                         getIconForChartByType={this.getIconForChartByType}/>
-                </Item>
-              </Col>
-              <Col span={12}>
-                <Item label="Color" offset="medium">
-                  <Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}
-                         getIconForChartByType={this.getIconForChartByType}/>
-                </Item>
 
-              </Col>
-            </Row>
-          </div>
-        </div>
+        {/*#849 Temporary hide this element*/}
+
+        {/*<div className="modal-window-widget-settings-config-column-sources-source-chart-type">*/}
+          {/*<div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">*/}
+            {/*<Row>*/}
+              {/*<Col span={6}>*/}
+                {/*<Item label={getLabelForChartTypeItem()} offset="medium">*/}
+                  {/*<Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}*/}
+                         {/*getIconForChartByType={this.getIconForChartByType}/>*/}
+                {/*</Item>*/}
+              {/*</Col>*/}
+              {/*<Col span={12}>*/}
+                {/*<Item label="Color" offset="medium">*/}
+                  {/*<Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}*/}
+                         {/*getIconForChartByType={this.getIconForChartByType}/>*/}
+                {/*</Item>*/}
+
+              {/*</Col>*/}
+            {/*</Row>*/}
+          {/*</div>*/}
+        {/*</div>*/}
 
       </div>
     );
