@@ -42,12 +42,15 @@ class DeviceAuthToken extends React.Component {
   }
 
   handleCopyClick() {
-    const messages = document.getElementsByClassName('ant-message-notice');
-    if (messages.length === 0) {
-      message.success('Auth token copied to clipboard');
-      if (typeof this.props.onCopy === 'function') {
-        this.props.onCopy();
-      }
+    if (this.hideMessageSuccess) return null;
+    this.hideMessageSuccess = message.success('Auth token copied to clipboard', 0);
+
+    setTimeout(() => {
+      this.hideMessageSuccess = this.hideMessageSuccess();
+    }, 2500);
+
+    if (typeof this.props.onCopy === 'function') {
+      this.props.onCopy();
     }
   }
 
