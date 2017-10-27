@@ -236,7 +236,7 @@ class BarWidget extends React.Component {
     data.map((legend) => {
       // calculate max Y label width
       if (legend && Array.isArray(legend.y) && legend.y.length) {
-        legend.y.forEach((label) => {
+        legend.y.forEach((label = '') => {
           if (String(label).length)
             maxYLabelWidth = label.length > maxYLabelWidth ? label.length : maxYLabelWidth;
         });

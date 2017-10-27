@@ -1,5 +1,6 @@
 import React from 'react';
 import {Widgets} from 'components';
+import _ from 'lodash';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
@@ -54,7 +55,7 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if(prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id)) {
+    if((prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id)) || !_.isEqual(prevProps.dashboard, this.props.dashboard)) {
       this.fetchWidgetsData();
     }
 
