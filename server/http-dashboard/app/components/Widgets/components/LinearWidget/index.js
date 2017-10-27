@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
 import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import {Map, fromJS, List} from 'immutable';
 import _ from 'lodash';
 
 @connect((state) => ({
@@ -75,6 +75,84 @@ class LinearWidget extends React.Component {
   }
 
   isHoverPlaceChanged = false;
+
+  getTimeFormatForRange(dateFrom = 0, dateTo = 0) {
+
+    dateFrom = moment(parseInt(dateFrom));
+    dateTo = moment(parseInt(dateTo));
+
+    if (dateTo.diff(dateFrom, 'hours') === 0) {
+      return {
+        tickFormat: '%I:%M %p',
+        hoverFormat: '%a, %d %b, %I:%M:%S %p'
+      };
+    } else if (dateTo.diff(dateFrom, 'days') === 0) {
+      return {
+        tickFormat: '%I:%M %p',
+        hoverFormat: '%a, %d %b, %I:%M %p'
+      };
+    } else if (dateTo.diff(dateFrom, 'days') >= 1 && dateTo.diff(dateFrom, 'days') <= 6) {
+      return {
+        tickFormat: '%a, %I:%M %p',
+        hoverFormat: '%a, %d %b, %I:%M %p'
+      };
+    } else if (dateTo.diff(dateFrom, 'days') >= 7 && dateTo.diff(dateFrom, 'month') === 0) {
+      return {
+        tickFormat: '%d %b, %I:%M %p',
+        hoverFormat: '%a, %d %b, %I:%M %p'
+      };
+    } else if (dateTo.diff(dateFrom, 'month') >= 1) {
+      return {
+        tickFormat: '%d %b, %I:%M %p',
+        hoverFormat: '%a, %d %b, %I:%M %p, %Y'
+      };
+    }
+
+  }
+
+  getMinXFromLegendsList(data) {
+    let min = new Date().getTime();
+
+    if(data && data instanceof List && data.size) {
+      data.forEach(item => {
+        if(item.has('x') && item.get('x').size) {
+          min = item.get('x').reduce((min, value) => {
+
+            let valueTimestamp = min;
+
+            if(value)
+              valueTimestamp = moment(value).format('x');
+
+            return valueTimestamp <= min ? valueTimestamp : min;
+          }, min);
+        }
+      });
+    }
+
+    return min;
+  }
+
+  getMaxXFromLegendsList(data) {
+    let max = 0;
+
+    if(data && data instanceof List && data.size) {
+      data.forEach(item => {
+        if(item.has('x') && item.get('x').size) {
+          max = item.get('x').reduce((max, value) => {
+
+            let valueTimestamp = 0;
+
+            if(value)
+              valueTimestamp = moment(value).format('x');
+
+            return valueTimestamp >= max ? valueTimestamp : max;
+          }, max);
+        }
+      });
+    }
+
+    return max;
+  }
 
   generateFakeData() {
     const data = [];
@@ -279,12 +357,18 @@ class LinearWidget extends React.Component {
 
     });
 
+    let formats = this.getTimeFormatForRange(
+      this.getMinXFromLegendsList(fromJS(data)),
+      this.getMaxXFromLegendsList(fromJS(data)),
+    );
+
     const layout = {
       ...this.layout,
       xaxis: {
         ...this.layout.xaxis,
         nticks: this.getNTicks(this.props.data.width),
-        tickformat: (data[0] && data[0].x.length ? this.layout.xaxis.tickformat : null),
+        tickformat: (data[0] && data[0].x.length ? formats.tickFormat : null),
+        hoverformat: (data[0] && data[0].x.length ? formats.hoverFormat : null),
         rangeslider: {
           ...this.layout.rangeslider,
           range: minX === false || maxX === false ? [] : [minX, maxX]
