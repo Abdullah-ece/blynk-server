@@ -102,7 +102,7 @@ public class DevicesHandler extends BaseHttpHandler {
             throw new ProductNotFoundException("Product with passed id " + newDevice.productId + " not found.");
         }
 
-        newDevice.metaFields = product.copyNonDefaultMetaFields();
+        newDevice.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);

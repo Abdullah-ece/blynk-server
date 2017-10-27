@@ -8,9 +8,7 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.utils.ArrayUtil;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DATA_STREAMS;
@@ -122,20 +120,6 @@ public class Product {
             }
         }
         return 0;
-    }
-
-    public MetaField[] copyNonDefaultMetaFields() {
-        if (metaFields == null || metaFields.length == 0) {
-            return EMPTY_META_FIELDS;
-        }
-
-        List<MetaField> result = new ArrayList<>(metaFields.length);
-        for (MetaField metaField : metaFields) {
-            if (!metaField.isDefault) {
-                result.add(metaField.copy());
-            }
-        }
-        return result.toArray(new MetaField[result.size()]);
     }
 
     public boolean notValid() {

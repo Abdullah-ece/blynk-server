@@ -226,13 +226,13 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard" + "/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
 
@@ -306,13 +306,13 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard" + "/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
         reset(mailWrapper);
 
         HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
@@ -377,13 +377,13 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         body = bodyArgumentCapture.getValue();
 
         token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard" + "/invite?token="));
+        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
 
     }
 

@@ -95,7 +95,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
-            assertEquals(1, device.metaFields.length);
+            assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
@@ -131,7 +131,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
-            assertEquals(1, device.metaFields.length);
+            assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
@@ -195,7 +195,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
-            assertEquals(1, device.metaFields.length);
+            assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
@@ -273,7 +273,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
-            assertEquals(1, device.metaFields.length);
+            assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
             assertEquals(Role.STAFF, numberMetaField.role);
