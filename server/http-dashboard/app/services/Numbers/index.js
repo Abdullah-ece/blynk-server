@@ -1,17 +1,10 @@
-export const addThousandsSeparatorForNumber = (number) => {
-  if (number === undefined) {
-    return undefined;
+export const addThousandsSeparatorForNumber = (number = 0) => {
+  const splitedNumber = number.toString().split('.');
+
+  if(splitedNumber[0].length > 3) {
+    splitedNumber[0] = Number(splitedNumber[0]) / 1000;
+    splitedNumber[0] = splitedNumber[0].toString().split('.').join(',');
   }
 
-  number = number / 1000;
-
-  // If input number is like 123.123 the result of dividing will be 0.123123, to avoid
-  // such output we are checking the number of digits after decimal point and round it if need.
-  return countDigitsAfterDecimalPoint(number) > 4 ? number.toFixed(4) : number;
-};
-
-const countDigitsAfterDecimalPoint = (number) => {
-  if (Math.floor(number) === number) return 0;
-
-  return number.toString().split(".")[1].length || 0;
+  return splitedNumber.join('.');
 };
