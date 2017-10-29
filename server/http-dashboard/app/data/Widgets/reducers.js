@@ -135,6 +135,12 @@ export default function Product(state = initialState, action) {
     case "WIDGET_DEVICES_PREVIEW_HISTORY_CLEAR":
       return state.setIn(['settingsModal', 'previewData'], fromJS({}));
 
+    case "WIDGET_DEVICES_PREVIEW_LIST_CLEAR":
+      return state.setIn(['settingsModal', 'previewAvailableDevices'], fromJS({
+        loading: false,
+        list: null,
+      }));
+
     default:
       return state;
   }

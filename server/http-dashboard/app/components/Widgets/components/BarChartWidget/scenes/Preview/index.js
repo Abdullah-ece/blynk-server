@@ -12,6 +12,9 @@ import {
   WidgetDevicesPreviewListFetch,
   WidgetDevicesPreviewHistoryFetch
 } from 'data/Widgets/api';
+import {
+  WidgetDevicesPreviewListClear
+} from 'data/Widgets/actions';
 
 @connect((state, ownProps) => ({
   orgId: parseInt(state.Account.orgId || 0),
@@ -22,6 +25,7 @@ import {
 }), (dispatch) => ({
   fetchDevicesList: bindActionCreators(WidgetDevicesPreviewListFetch, dispatch),
   fetchDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryFetch, dispatch),
+  clearWidgetDevicesPreviewList: bindActionCreators(WidgetDevicesPreviewListClear, dispatch),
 }))
 export default class PreviewScene extends React.Component {
 
@@ -41,6 +45,7 @@ export default class PreviewScene extends React.Component {
 
     fetchDevicesList: PropTypes.func,
     fetchDevicePreviewHistory: PropTypes.func,
+    clearWidgetDevicesPreviewList: PropTypes.func,
 
     source: PropTypes.instanceOf(Map),
   };
@@ -62,6 +67,10 @@ export default class PreviewScene extends React.Component {
       productId: this.props.params.id,
       orgId: this.props.orgId
     });
+  }
+
+  componentWillUnmount() {
+    this.props.clearWidgetDevicesPreviewList();
   }
 
   handleSubmit(values) {

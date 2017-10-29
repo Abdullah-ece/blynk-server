@@ -140,6 +140,7 @@ class BarChartSettings extends React.Component {
 
     if(!nextProps.visible && this.props.visible !== nextProps.visible) {
       this.props.clearWidgetDevicePreviewHistory();
+      this.props.resetForm('bar-chart-widget-preview');
     }
 
     if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
