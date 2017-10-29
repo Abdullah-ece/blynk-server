@@ -2,7 +2,7 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import ColorPicker from 'components/ColorPicker';
 import {Item, ItemsGroup} from "components/UI";
-import {Button, Radio, Icon} from 'antd';
+import {Button, Radio, Icon, Row, Col} from 'antd';
 import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -168,27 +168,27 @@ class Source extends React.Component {
           </ItemsGroup>
         </div>
 
-        {/*#849 Temporary hide this element*/}
+        <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
+          <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
+            <Row>
+              {/*#849 Temporary hide this element*/}
 
-        {/*<div className="modal-window-widget-settings-config-column-sources-source-chart-type">*/}
-          {/*<div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">*/}
-            {/*<Row>*/}
               {/*<Col span={6}>*/}
                 {/*<Item label={getLabelForChartTypeItem()} offset="medium">*/}
                   {/*<Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}*/}
                          {/*getIconForChartByType={this.getIconForChartByType}/>*/}
                 {/*</Item>*/}
               {/*</Col>*/}
-              {/*<Col span={12}>*/}
-                {/*<Item label="Color" offset="medium">*/}
-                  {/*<Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}*/}
-                         {/*getIconForChartByType={this.getIconForChartByType}/>*/}
-                {/*</Item>*/}
+              <Col span={12}>
+                <Item label="Color" offset="medium">
+                  <Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}
+                         getIconForChartByType={this.getIconForChartByType}/>
+                </Item>
 
-              {/*</Col>*/}
-            {/*</Row>*/}
-          {/*</div>*/}
-        {/*</div>*/}
+              </Col>
+            </Row>
+          </div>
+        </div>
 
       </div>
     );
