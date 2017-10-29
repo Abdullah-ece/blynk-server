@@ -39,7 +39,10 @@ class Preview extends React.Component {
 
     submitting: PropTypes.bool,
 
-    handleSubmit: PropTypes.func
+    handleSubmit: PropTypes.func,
+
+    invalid: PropTypes.bool,
+    pristine: PropTypes.bool
   };
 
   renderLoading() {
@@ -65,8 +68,9 @@ class Preview extends React.Component {
         <div>
           <Select name="deviceId"
                   values={devicesOptions}
-                  placeholder="Please select device"
-          validate={[Validation.Rules.required]}/>
+                  placeholder="Choose device for data preview"
+                  notFoundContent={devicesOptions.length > 0 ? "Not found" : "Create at least one device to preview data"}
+          validate={devicesOptions.length > 0 ? [Validation.Rules.required] : []}/>
         </div>
 
         <div className="widgets--widget bar-widget-preview">
@@ -77,7 +81,11 @@ class Preview extends React.Component {
         </div>
 
         <div>
-          <Button type="submit" onClick={this.props.handleSubmit} loading={this.props.submitting}>
+          <Button type="submit"
+                  onClick={this.props.handleSubmit}
+                  loading={this.props.submitting}
+                  disabled={ this.props.invalid || this.props.pristine || devicesOptions.length === 0 }>
+
             Update Chart
           </Button>
         </div>
