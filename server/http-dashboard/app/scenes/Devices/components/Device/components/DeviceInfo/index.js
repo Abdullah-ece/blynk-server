@@ -108,12 +108,12 @@ class DeviceInfo extends React.Component {
             {this.props.device.has('metaFields') && this.props.device.get('metaFields').size !== 0 &&
             (<Section title="Metadata">
               <div className="device--device-info-metadata-list">
-                {this.props.device.get('metaFields').map((field, key) => {
+                {this.props.device.get('metaFields').map((field) => {
 
-                  const form = `devicemetadataedit${field.get('name')}`;
+                  const form = `device${this.props.device.get('id')}metadataedit${field.get('name')}`;
 
                   const fieldProps = {
-                    key: key,
+                    key: form,
                     form: form,
                     initialValues: field.toJS()
                   };
@@ -124,7 +124,7 @@ class DeviceInfo extends React.Component {
                     onChange: this.onChange.bind(this)
                   };
 
-                  
+
                   if (field.get('type') === Metadata.Fields.TEXT)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
