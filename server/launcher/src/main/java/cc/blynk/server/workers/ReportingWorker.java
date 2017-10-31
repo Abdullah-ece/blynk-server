@@ -55,7 +55,7 @@ public class ReportingWorker implements Runnable {
             dbManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
             dbManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
 
-            dbManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
+            dbManager.insertBatchDataPoints(reportingDao.rawDataProcessor.rawStorage);
 
             dbManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {

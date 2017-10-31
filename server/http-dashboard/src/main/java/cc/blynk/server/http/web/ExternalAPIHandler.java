@@ -568,8 +568,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         int deviceId = tokenValue.device.id;
+        LocalDateTime now = LocalDateTime.now();
 
-        //todo separate thread
         TableDescriptor tableDescriptor = TableDescriptor.getTableByPin(pin, pinType);
         if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
             blockingIOProcessor.executeDB(() -> {
@@ -578,7 +578,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                     int i = 0;
                     for (String[] pinValue : pinValues) {
                         tableDataMappers[i++] = new TableDataMapper(KNIGHT_LAUNDRY,
-                                deviceId, pin, pinType, LocalDateTime.now(),
+                                deviceId, pin, pinType, now,
                                 pinValue);
                     }
 

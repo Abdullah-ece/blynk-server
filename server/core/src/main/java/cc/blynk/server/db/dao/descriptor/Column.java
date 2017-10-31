@@ -123,21 +123,30 @@ public class Column {
                     filter = filterFunction.apply((String) val);
                     return Integer.valueOf(filter);
                 }
-                return val;
+                if (val instanceof Integer) {
+                    return val;
+                }
+                return Integer.parseInt((String) val);
             case SMALLINT :
             case TINYINT :
                 if (filterFunction != null) {
                     filter = filterFunction.apply((String) val);
                     return Short.valueOf(filter);
                 }
-                return val;
+                if (val instanceof Short) {
+                    return val;
+                }
+                return Short.parseShort((String) val);
             case DOUBLE :
             case FLOAT :
                 if (filterFunction != null) {
                     filter = filterFunction.apply((String) val);
                     return Double.valueOf(filter);
                 }
-                return val;
+                if (val instanceof Double) {
+                    return val;
+                }
+                return Double.parseDouble((String) val);
             case CHAR :
                 filter = (String) val;
                 return filter.charAt(0);

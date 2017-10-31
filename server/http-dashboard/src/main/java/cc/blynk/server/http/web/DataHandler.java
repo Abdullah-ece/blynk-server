@@ -16,15 +16,17 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
 import cc.blynk.server.http.web.dto.DataResponseDTO;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.time.LocalDateTime;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -58,7 +60,7 @@ public class DataHandler extends BaseHttpHandler {
                                       @ContextUser User user,
                                       @PathParam("deviceId") int deviceId,
                                       @QueryParam("dataStream") String dataStream,
-                                      @QueryParam("value") Double value,
+                                      @QueryParam("value") String value,
                                       @QueryParam("ts") Long inTs) {
 
         Device device = deviceDao.getById(deviceId);
@@ -69,11 +71,11 @@ public class DataHandler extends BaseHttpHandler {
 
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
 
-        AggregationKey key = new AggregationKey(new BaseReportingKey(user.email,
-                user.appName, 0, deviceId, pinType, pin), ts);
+        TableDescriptor descriptor = TableDescriptor.getTableByPin(pin, pinType);
 
         blockingIOProcessor.executeDB(() -> {
-            dbManager.insertSingleEntryRaw(key, value);
+            dbManager.reportingDBDao.insertDataPoint(new TableDataMapper(
+                    descriptor, deviceId, pin, pinType, LocalDateTime.now(), value));
             ctx.writeAndFlush(ok(), ctx.voidPromise());
         });
 

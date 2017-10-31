@@ -17,6 +17,7 @@ import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.db.model.Purchase;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * The Blynk Project.
@@ -167,15 +169,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public void insertSingleEntryRaw(AggregationKey key, Double val) {
-        if (isDBEnabled()) {
-            reportingDBDao.insertSingleEntryRaw(key, val);
-        }
-    }
-
-    public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
-        if (isDBEnabled() && rawData.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
+    public void insertBatchDataPoints(Queue<TableDataMapper> rawDataBatch) {
+        if (isDBEnabled() && rawDataBatch.size() > 0) {
+            blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
         }
     }
 

@@ -20,9 +20,9 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebSource;
-import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.dto.DataDTO;
 import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
@@ -46,6 +46,7 @@ import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -67,7 +68,7 @@ public class DataAPITest extends APIBaseTest {
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM reporting_raw_data");
+        holder.dbManager.executeSQL("DELETE FROM " + TableDescriptor.BLYNK_DEFAULT_INSTANCE.tableName);
     }
 
     @After
@@ -121,14 +122,13 @@ public class DataAPITest extends APIBaseTest {
         }
 
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        long now = System.currentTimeMillis();
-        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 1), now, 123);
-        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 1), now + 1, 124);
+        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "123");
+        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "124");
 
         //invoking directly dao to avoid separate thread execution
-        holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
+        holder.dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
-        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, now+1);
+        DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
@@ -147,8 +147,9 @@ public class DataAPITest extends APIBaseTest {
 
             LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
             LinkedHashMap point1 = (LinkedHashMap) dataField.get(1);
-            assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
-            assertEquals(124, (Double) point1.get(String.valueOf(now + 1)), 0.0001);
+
+            assertTrue(point0.containsValue(123D));
+            assertTrue(point1.containsValue(124D));
 
             System.out.println(responseString);
         }
@@ -176,18 +177,17 @@ public class DataAPITest extends APIBaseTest {
         }
 
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        long now = System.currentTimeMillis();
-        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 1), now, 123);
-        rawDataProcessor.collect(new BaseReportingKey("any@gmail.com", "Knight", 1, 1, PinType.VIRTUAL, (byte) 2), now, 124);
+        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "123");
+        rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 2, "124");
 
         //invoking directly dao to avoid separate thread execution
-        holder.dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
+        holder.dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
         DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
                 new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 1,
-                        null, null, null, null, 0, 1000, 0, now),
+                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis()),
                 new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 2,
-                        null, null, null, null, 0, 1000, 0, now)
+                        null, null, null, null, 0, 1000, 0, System.currentTimeMillis())
         });
 
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
@@ -215,14 +215,14 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(1, dataField.size());
 
             LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
-            assertEquals(123, (Double) point0.get(String.valueOf(now)), 0.0001);
+            assertTrue(point0.containsValue(123.0D));
 
             dataField = obj[1].data;
             assertNotNull(dataField);
             assertEquals(1, dataField.size());
 
             point0 = (LinkedHashMap) dataField.get(0);
-            assertEquals(124, (Double) point0.get(String.valueOf(now)), 0.0001);
+            assertTrue(point0.containsValue(124.0D));
         }
     }
 
@@ -272,7 +272,7 @@ public class DataAPITest extends APIBaseTest {
             assertEquals(1, dataField.size());
 
             LinkedHashMap point0 = (LinkedHashMap) dataField.get(0);
-            assertEquals(123, (Double) point0.values().iterator().next(), 0.0001);
+            assertTrue(point0.containsValue(123.0D));
 
             System.out.println(responseString);
         }

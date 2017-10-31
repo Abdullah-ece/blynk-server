@@ -20,26 +20,42 @@ public class TableDataMapper {
 
     private static final int BLYNK_PARAMS_COUNT = 4;
 
-    public TableDataMapper(TableDescriptor tableDescriptor,
-                           int deviceId, byte pin, PinType pinType, LocalDateTime ts, Object[] values) {
+    private TableDataMapper(TableDescriptor tableDescriptor,
+                            int deviceId, byte pin, PinType pinType,
+                            LocalDateTime now,
+                            int size) {
         this.tableDescriptor = tableDescriptor;
-        data = new Object[BLYNK_PARAMS_COUNT + values.length];
+        this.data = new Object[size];
 
-        data[0] = deviceId;
-        data[1] = pin;
-        data[2] = pinType.ordinal();
-        data[3] = ts;
-
-        init(values, BLYNK_PARAMS_COUNT);
+        this.data[0] = deviceId;
+        this.data[1] = pin;
+        this.data[2] = pinType.ordinal();
+        this.data[3] = now;
     }
 
-    private void init(Object[] values, int skipColumnIndex) {
+    public TableDataMapper(TableDescriptor tableDescriptor,
+                           int deviceId, byte pin, PinType pinType, LocalDateTime now, Object value) {
+        this(tableDescriptor, deviceId, pin, pinType, now, BLYNK_PARAMS_COUNT + 1);
+        init(value, 0);
+    }
+
+    public TableDataMapper(TableDescriptor tableDescriptor,
+                           int deviceId, byte pin, PinType pinType, LocalDateTime now, Object[] values) {
+        this(tableDescriptor, deviceId, pin, pinType, now, BLYNK_PARAMS_COUNT + values.length);
+        init(values);
+    }
+
+    private void init(Object[] values) {
         for (int i = 0; i < values.length; i++) {
-            Column column = tableDescriptor.columns[i + skipColumnIndex];
-            Object value = column.parse(values[i]);
-            log.trace("In {}, out {}. Type {}", values[i], value, value.getClass().getSimpleName());
-            data[i + skipColumnIndex] = value;
+            init(values[i], i);
         }
+    }
+
+    private void init(Object value, int i) {
+        Column column = tableDescriptor.columns[i + BLYNK_PARAMS_COUNT];
+        Object castedValue = column.parse(value);
+        log.trace("In {}, out {}. Type {}", value, castedValue, castedValue.getClass().getSimpleName());
+        data[i + BLYNK_PARAMS_COUNT] = castedValue;
     }
 
 }

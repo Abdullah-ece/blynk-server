@@ -28,21 +28,18 @@ import org.jooq.impl.DSL;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
-import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
@@ -64,14 +61,6 @@ public class ReportingDBDao {
     private static final String insertDaily =
             "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-    private static final String insertRawData =
-            "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, "
-                    + "stringValue, doubleValue) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String selectDoubleRawData =
-            "SELECT ts, doubleValue from reporting_raw_data WHERE device_id = ? and pin = ? and "
-                    + "pinType = ? and ts BETWEEN ? and ? ORDER BY ts DESC offset ? limit ?";
 
     public static final String selectMinute =
             "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -157,71 +146,6 @@ public class ReportingDBDao {
             default :
                 return insertDaily;
         }
-    }
-
-    public void insertSingleEntryRaw(AggregationKey key, Double value) {
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
-
-            ps.setString(1, key.getEmail());
-            ps.setInt(2, key.getDashId());
-            ps.setInt(3, key.getDeviceId());
-            ps.setByte(4, key.getPin());
-            ps.setString(5, PinType.getPinTypeString(key.getPinType()));
-            ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
-            ps.setNull(7, Types.VARCHAR);
-            ps.setDouble(8, value);
-
-            ps.executeUpdate();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting raw reporting data in DB.", e);
-        }
-    }
-
-    public void insertRawData(Map<AggregationKey, Object> rawData) {
-        long start = System.currentTimeMillis();
-
-        log.info("Storing raw reporting...");
-        int counter = 0;
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
-
-            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry<AggregationKey, Object> entry = iter.next();
-
-                AggregationKey key = entry.getKey();
-                Object value = entry.getValue();
-
-                ps.setString(1, key.getEmail());
-                ps.setInt(2, key.getDashId());
-                ps.setInt(3, key.getDeviceId());
-                ps.setByte(4, key.getPin());
-                ps.setString(5, PinType.getPinTypeString(key.getPinType()));
-                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
-
-                if (value instanceof String) {
-                    ps.setString(7, (String) value);
-                    ps.setNull(8, Types.DOUBLE);
-                } else {
-                    ps.setNull(7, Types.VARCHAR);
-                    ps.setDouble(8, (Double) value);
-                }
-
-                ps.addBatch();
-                counter++;
-                iter.remove();
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting raw reporting data in DB.", e);
-        }
-
-        log.info("Storing raw reporting finished. Time {}. Records saved {}",
-                System.currentTimeMillis() - start, counter);
     }
 
     public void insertStat(String region, Stat stat) {
@@ -392,11 +316,11 @@ public class ReportingDBDao {
         try (Connection connection = ds.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
+            TableDescriptor descriptor = tableDataMappers[0].tableDescriptor;
+
             BatchBindStep batchBindStep = create.batch(
-                    create.insertInto(
-                            table(tableDataMappers[0].tableDescriptor.tableName),
-                            tableDataMappers[0].tableDescriptor.fields()
-                    ).values(tableDataMappers[0].tableDescriptor.values()));
+                    create.insertInto(table(descriptor.tableName), descriptor.fields())
+                            .values(descriptor.values()));
 
             for (TableDataMapper tableDataMapper : tableDataMappers) {
                 batchBindStep.bind(tableDataMapper.data);
@@ -410,37 +334,52 @@ public class ReportingDBDao {
         }
     }
 
+    public void insertDataPoint(Queue<TableDataMapper> tableDataMappers)  {
+        try (Connection connection = ds.getConnection()) {
+            DSLContext create = DSL.using(connection, POSTGRES_9_4);
+
+            TableDescriptor descriptor = tableDataMappers.peek().tableDescriptor;
+
+            BatchBindStep batchBindStep = create.batch(
+                    create.insertInto(table(descriptor.tableName), descriptor.fields())
+                            .values(descriptor.values()));
+
+            Iterator<TableDataMapper> iterator = tableDataMappers.iterator();
+            while (iterator.hasNext()) {
+                TableDataMapper dataMapper = iterator.next();
+                batchBindStep.bind(dataMapper.data);
+                iterator.remove();
+            }
+            batchBindStep.execute();
+
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting knight data.", e);
+        }
+    }
+
     public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
         switch (dataQueryRequest.sourceType) {
             //todo leaving it as it is for now. move to jooq
             case RAW_DATA:
-                List<AbstractMap.SimpleEntry<Long, Double>> result = new ArrayList<>();
-                try (Connection connection = ds.getConnection();
-                     PreparedStatement statement = connection.prepareStatement(selectDoubleRawData)) {
+                List<RawEntry> result = new ArrayList<>();
+                try (Connection connection = ds.getConnection()) {
+                    DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
-                    statement.setInt(1, dataQueryRequest.deviceId);
-                    statement.setByte(2, dataQueryRequest.pin);
-                    statement.setString(3, dataQueryRequest.pinType.pinTypeString);
-                    statement.setTimestamp(4, new Timestamp(dataQueryRequest.from), UTC_CALENDAR);
-                    statement.setTimestamp(5, new Timestamp(dataQueryRequest.to), UTC_CALENDAR);
-                    statement.setInt(6, dataQueryRequest.offset);
-                    statement.setInt(7, dataQueryRequest.limit);
+                    result = create.select(TableDescriptor.CREATED, TableDescriptor.VALUE)
+                          .from(dataQueryRequest.tableDescriptor.tableName)
+                          .where(TableDescriptor.DEVICE_ID.eq(dataQueryRequest.deviceId)
+                                  .and(TableDescriptor.PIN.eq((int) dataQueryRequest.pin))
+                                  .and(TableDescriptor.PIN_TYPE.eq(dataQueryRequest.pinType.ordinal()))
+                                  .and(TableDescriptor.CREATED
+                                          .between(new Timestamp(dataQueryRequest.from))
+                                          .and(new Timestamp(dataQueryRequest.to))))
+                          .orderBy(TableDescriptor.CREATED.desc())
+                          .offset(dataQueryRequest.offset)
+                          .limit(dataQueryRequest.limit)
+                          .fetchInto(RawEntry.class);
 
-                    log.debug(statement);
-
-                    try (ResultSet rs = statement.executeQuery()) {
-
-                        while (rs.next()) {
-                            result.add(
-                                    new AbstractMap.SimpleEntry<>(
-                                            rs.getTimestamp("ts", UTC_CALENDAR).getTime(),
-                                            rs.getDouble("doubleValue")
-                                    )
-                            );
-                        }
-
-                        connection.commit();
-                    }
+                    connection.commit();
                 } catch (Exception e) {
                     log.error("Error getting raw data from DB.", e);
                 }

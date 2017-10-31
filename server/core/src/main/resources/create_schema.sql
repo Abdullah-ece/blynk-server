@@ -56,19 +56,6 @@ CREATE TABLE purchase (
   PRIMARY KEY (email, transactionId)
 );
 
-CREATE TABLE reporting_raw_data (
-  email text,
-  project_id int4,
-  device_id int4,
-  pin int2,
-  pinType char,
-  ts timestamp,
-  stringValue text,
-  doubleValue float8,
-
-  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
-);
-
 CREATE TABLE reporting_average_minute (
   email text,
   project_id int4,
@@ -260,6 +247,15 @@ CREATE TABLE knight_scopetech (
    error int4
 );
 create index on knight_scopetech (device_id, pin, pin_type, created);
+
+CREATE TABLE blynk_default (
+   device_id int4,
+   pin int2,
+   pin_type int2,
+   created timestamp,
+   value float8
+);
+create index on blynk_default (device_id, pin, pin_type, created);
 
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;

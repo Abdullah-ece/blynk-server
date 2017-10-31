@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static java.sql.Types.CHAR;
 import static java.sql.Types.DATE;
 import static java.sql.Types.DOUBLE;
 import static java.sql.Types.INTEGER;
@@ -39,7 +38,7 @@ public class TableDescriptor {
 
     private static final String KNIGHT_SCOPETECH_TABLE_NAME = "knight_scopetech";
     private static final String KNIGHT_TABLE_NAME = "knight_laundry";
-    private static final String BLYNK_DEFAULT_NAME = "reporting_raw_data";
+    private static final String BLYNK_DEFAULT_NAME = "blynk_default";
 
     public static final String SHIFTS_METAINFO_NAME = "Shifts";
     public static final String PUMP_METAINFO_NAME = "Pump Names";
@@ -115,6 +114,7 @@ public class TableDescriptor {
     public static final Field<Integer> PIN = field("pin", Integer.class);
     public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
     public static final Field<Timestamp> CREATED = field("created", Timestamp.class);
+    public static final Field<Double> VALUE = field("value", Double.class);
 
     public static final TableDescriptor KNIGHT_LAUNDRY = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
             //default blynk columns
@@ -160,14 +160,13 @@ public class TableDescriptor {
     });
 
     public static final TableDescriptor BLYNK_DEFAULT_INSTANCE = new TableDescriptor(BLYNK_DEFAULT_NAME, new Column[] {
-            new Column("Email", VARCHAR),
-            new Column("Project Id", INTEGER),
+            //default blynk columns
             new Column("Device Id", INTEGER),
-            new Column("Pin", INTEGER),
-            new Column("Pin Type", "pinType", CHAR),
-            new Column("Timestamp", "ts", TIMESTAMP),
-            new Column("String value", "stringValue", VARCHAR),
-            new Column("Double value", "doubleValue", DOUBLE)
+            new Column("Pin", SMALLINT),
+            new Column("Pin Type", SMALLINT),
+            new Column("Created", TIMESTAMP),
+
+            new Column("Value", DOUBLE)
     });
 
     public final String tableName;

@@ -1,12 +1,13 @@
 package cc.blynk.server.core.reporting.raw;
 
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.utils.NumberUtil;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.StringUtils;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Simply stores every record in memory that should be stored in reporting DB lately.
@@ -19,34 +20,25 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RawDataProcessor {
 
-    public final Map<AggregationKey, Object> rawStorage;
+    public final Queue<TableDataMapper> rawStorage;
 
     public RawDataProcessor(boolean enable) {
-        if (enable) {
-            rawStorage = new ConcurrentHashMap<>();
-        } else {
-            rawStorage = Collections.emptyMap();
+        rawStorage = new ConcurrentLinkedQueue<>();
+    }
+
+    public void collect(int deviceId, PinType pinType, byte pin, String stringValue) {
+        if (stringValue.contains(StringUtils.BODY_SEPARATOR_STRING)) {
+            //storing for now just first part for multi value
+            stringValue = stringValue.split(StringUtils.BODY_SEPARATOR_STRING)[0];
         }
-    }
 
-    //todo 2 millis is minimum allowed interval for data pushing.
-    public void collect(BaseReportingKey key, long ts, String stringValue, double doubleValue) {
-        final AggregationKey aggregationKey = new AggregationKey(key, ts);
-        if (doubleValue == NumberUtil.NO_RESULT) {
-            //storing for now just first part
-            String part1 = stringValue.split(StringUtils.BODY_SEPARATOR_STRING)[0];
-            rawStorage.put(aggregationKey, part1);
-        } else {
-            rawStorage.put(aggregationKey, doubleValue);
-        }
-    }
-
-    public void collect(BaseReportingKey key, long ts, String stringValue) {
-        rawStorage.put(new AggregationKey(key, ts), stringValue);
-    }
-
-    public void collect(BaseReportingKey key, long ts, double doubleValue) {
-        rawStorage.put(new AggregationKey(key, ts), doubleValue);
+        rawStorage.add(
+                new TableDataMapper(
+                    TableDescriptor.BLYNK_DEFAULT_INSTANCE,
+                    deviceId, pin, pinType, LocalDateTime.now(),
+                    stringValue
+                )
+        );
     }
 
 }
