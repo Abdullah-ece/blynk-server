@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {SketchPicker} from 'react-color';
+import {TwitterPicker} from 'react-color';
 
 import './styles.less';
 
@@ -49,7 +49,7 @@ class BrandingColorPicker extends React.Component {
         <div className="color-picker">
           <div className="branding-color-picker-color-preview">
             { this.state.displayColorPicker &&
-            <SketchPicker color={this.state.color} onChange={this.handleColorChange.bind(this)}/>}
+            <TwitterPicker triangle="hide" color={this.state.color} onChange={this.handleColorChange.bind(this)}/>}
             { !this.state.color &&
             <div className="branding-color-picker-color-preview-choose" onClick={this.displayColorPicker.bind(this)}/>
             }

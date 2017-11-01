@@ -70,10 +70,35 @@
   z-index: 1;
 }
 
-.sketch-picker {
+.twitter-picker {
   position: absolute;
   z-index: 3;
-  top: -320px;
+  left: 50px;
+  top: -65px;
+}
+
+.twitter-picker:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgba(0, 0, 0, 0.1);
+  position: absolute;
+  left: -10px;
+  top: 69px;
+}
+
+.twitter-picker:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #ffffff;
+  position: absolute;
+  left: -9px;
+  top: 69px;
 }
 
 .color-picker {
