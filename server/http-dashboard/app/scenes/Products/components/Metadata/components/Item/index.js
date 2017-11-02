@@ -145,13 +145,21 @@ class MetadataItem extends React.PureComponent {
                 { this.props.children }
               </Col>
               <Col span={3}>
-                <FormItem offset={false}>
-                  <FormItem.Title>Who can edit</FormItem.Title>
-                  <FormItem.Content>
-                    <MetadataSelect disabled={isRoleSelectDisabled} onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
-                                    name="role" style={{width: '100%'}} values={MetadataRoles}/>
-                  </FormItem.Content>
-                </FormItem>
+                {isRoleSelectDisabled ? '' :
+                  <FormItem offset={false}>
+
+                    <FormItem.Title>Who can edit</FormItem.Title>
+                    <FormItem.Content>
+                        <MetadataSelect disabled={isRoleSelectDisabled}
+                                        onFocus={this.markAsActive.bind(this)}
+                                        onBlur={this.handleCancelDelete.bind(this)}
+                                        name="role"
+                                        style={{width: '100%'}}
+                                        values={MetadataRoles}
+                        />
+                    </FormItem.Content>
+                  </FormItem>
+                }
               </Col>
               <Col span={8}>
                 { this.preview() }
