@@ -666,6 +666,8 @@ class BarChartSettings extends React.Component {
                          changeForm={this.props.changeForm}
                          form={this.props.form}
                          filterOption={this.simpleMatch}
+                         notFoundContent={sourcesOptions["Data Streams"].length > 0 ?
+                                             "No DataStreams or Fields match search":"Create at least one DataStream with PIN >= 100"}
                   />
 
                 </Item>
