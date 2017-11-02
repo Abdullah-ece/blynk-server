@@ -109,7 +109,7 @@ class DeviceDetailsScene extends React.Component {
         }).catch((err) => reject(err));
       }).catch((err) => reject(err));
     }).catch(() => {
-      message.error('Error happened during metadata updating');
+      message.error('Can\'t update Metadata due to an error');
     });
   }
 
