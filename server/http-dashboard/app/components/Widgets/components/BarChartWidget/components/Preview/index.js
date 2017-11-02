@@ -69,7 +69,7 @@ class Preview extends React.Component {
           <Select name="deviceId"
                   values={devicesOptions}
                   placeholder="Choose device for data preview"
-                  notFoundContent={devicesOptions.length > 0 ? "Not found" : "Create at least one device to preview data"}
+                  notFoundContent={devicesOptions.length > 0 ? "No Devices match search" : "Create at least one device to preview data"}
           validate={devicesOptions.length > 0 ? [Validation.Rules.required] : []}/>
         </div>
 
