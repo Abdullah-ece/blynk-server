@@ -53,7 +53,7 @@ class Device extends React.Component {
 
     const TabPane = Tabs.TabPane;
     return (
-      <div className="devices--device">
+      <div className="devices--device" key={`devices--device${this.props.device.get('id')}`}>
         <div className="devices--device-name">
           <ContentEditable value={this.props.device.get('name')} onChange={this.handleDeviceNameChange.bind(this)}/>
         </div>

@@ -84,7 +84,7 @@ class Preview extends React.Component {
           <Button type="submit"
                   onClick={this.props.handleSubmit}
                   loading={this.props.submitting}
-                  disabled={ this.props.invalid || this.props.pristine || devicesOptions.length === 0 }>
+                  disabled={this.props.invalid || this.props.pristine || devicesOptions.length === 0}>
 
             Update Chart
           </Button>
