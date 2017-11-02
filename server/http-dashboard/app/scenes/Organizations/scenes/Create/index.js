@@ -28,6 +28,7 @@ import {
   OrganizationSendInvite
 }                             from 'data/Organization/actions';
 
+import {message} from 'antd';
 
 import {
   Create as OrganizationCreate
@@ -148,6 +149,7 @@ class Create extends React.Component {
           Promise.all(promises).then(() => {
             resolve();
           }).catch((response) => {
+            message.error((<span>An Error occurred while sending the invites for admins. <br/>You can resend invites on Organization Users page</span>), 5);
             reject({invites: response});
           });
         }).catch((response) => {
