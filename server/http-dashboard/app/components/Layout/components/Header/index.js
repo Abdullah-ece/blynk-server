@@ -125,7 +125,9 @@ class Header extends React.Component {
                 selectedKeys={this.currentActivePage(this.state.current)}>
             {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
             <Menu.Item key="/devices">Devices</Menu.Item>
-            <Menu.Item key="/products">Products</Menu.Item>
+            { this.props.Organization && this.props.Organization.canCreateOrgs && (
+              <Menu.Item key="/products">Products</Menu.Item>
+            ) || (null)}
             { this.props.Organization && this.props.Organization.canCreateOrgs && (
               <Menu.Item key="/organizations">Organizations</Menu.Item>
             ) || (null)}

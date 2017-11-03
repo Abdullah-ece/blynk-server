@@ -9,7 +9,8 @@ import ProductsList from './scenes/List';
 import NoProducts from './scenes/NoProducts';
 
 @connect((state) => ({
-  Product: state.Product
+  Product: state.Product,
+  Organization: state.Organization
 }), (dispatch) => {
   return {
     ProductsFetch: bindActionCreators(ProductsAPI.ProductsFetch, dispatch),
@@ -24,7 +25,8 @@ class ProductsIndex extends React.Component {
   static propTypes = {
     location: React.PropTypes.object,
     ProductsFetch: React.PropTypes.func,
-    Product: React.PropTypes.object
+    Product: React.PropTypes.object,
+    Organization: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -55,7 +57,7 @@ class ProductsIndex extends React.Component {
       );
 
     return (
-      <NoProducts/>
+      <NoProducts organization={this.props.Organization}/>
     );
   }
 }

@@ -6,7 +6,22 @@ import {
 import './styles.less';
 
 export default class NoProducts extends React.Component {
-  render() {
+  static propTypes = {
+    organization: React.PropTypes.object
+  };
+
+  renderForSubOrgs() {
+    return (
+      <MainLayout.Content className="products-empty">
+        <MainList>
+          <MainList.Empty title="There are no products assigned to you organization."
+                          description="Contact parent organization for details"/>
+        </MainList>
+      </MainLayout.Content>
+    );
+  }
+
+  renderForSuperOrg() {
     return (
       <MainLayout.Content className="products-empty">
         <MainList>
@@ -17,5 +32,13 @@ export default class NoProducts extends React.Component {
         </MainList>
       </MainLayout.Content>
     );
+  }
+
+  render() {
+    if(this.props.organization.parentId) {
+      return this.renderForSubOrgs();
+    } else {
+      return this.renderForSuperOrg();
+    }
   }
 }

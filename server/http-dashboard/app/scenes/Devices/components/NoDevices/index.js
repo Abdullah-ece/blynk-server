@@ -13,6 +13,7 @@ class NoDevices extends React.Component {
   static propTypes = {
     location: React.PropTypes.object,
     isAnyProductExist: React.PropTypes.bool,
+    organization: React.PropTypes.object,
   };
 
   state = {
@@ -43,6 +44,41 @@ class NoDevices extends React.Component {
     }
   }
 
+  renderNoDevice(){
+    if(this.props.organization.parentId){
+      return (
+        <div>
+          <div className="devices-no-items-description">
+            Here you will find a list of all of your activated devices and their data visualized.
+            You will be able to edit their data and track important events.
+            <br/>
+            <br/>
+            You need to have at least one Product set up before adding new devices. <br/><br/>
+            Please contact parent organization for details
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <div className="devices-no-items-description">
+            Here you will find a list of all of your activated devices and their data visualized.
+            You will be able to edit their data and track important events.
+            <br/>
+            <br/>
+            You need to have at least one Product set up before adding new devices.
+          </div>
+          <div className="devices-no-items-action">
+            <Link to="/products/create">
+              <Button icon="plus" type="primary">Create New Product</Button>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+  }
+
   render() {
 
     return (
@@ -51,22 +87,7 @@ class NoDevices extends React.Component {
           <div className="devices-no-items-title">
             This is the place to manage all your devices
           </div>
-          { !this.props.isAnyProductExist && (
-            <div>
-              <div className="devices-no-items-description">
-                Here you will find a list of all of your activated devices and their data visualized.
-                You will be able to edit their data and track important events.
-                <br/>
-                <br/>
-                You need to have at least one Product set up before adding new devices.
-              </div>
-              <div className="devices-no-items-action">
-                <Link to="/products/create">
-                  <Button icon="plus" type="primary">Create New Product</Button>
-                </Link>
-              </div>
-            </div>
-          ) || (
+          { !this.props.isAnyProductExist && this.renderNoDevice() || (
             <div>
               <div className="devices-no-items-description">
                 Here you will find a list of all of your activated devices and their data visualized.

@@ -28,6 +28,7 @@ import {List, fromJS, Map} from "immutable";
   devicesSortValue: state.Devices.getIn(['sorting', 'value']),
   devicesSearchFormValues: fromJS(getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {}),
   devicesFilterFormValues: fromJS(getFormValues(DEVICES_FILTER_FORM_NAME)(state) || {filter: DEVICES_FILTERS.DEFAULT}),
+  organization: state.Organization,
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   devicesSortChange: bindActionCreators(DevicesSortChange, dispatch)
@@ -49,6 +50,8 @@ class Devices extends React.Component {
     devicesSortValue: React.PropTypes.string,
     changeForm: React.PropTypes.func,
     devicesSortChange: React.PropTypes.func,
+
+    organization: React.PropTypes.object,
   };
 
   static getLocationName(device) {
@@ -226,7 +229,8 @@ class Devices extends React.Component {
       return (
         <NoDevices isAnyProductExist={!!this.props.products.length}
                    location={this.props.location}
-                   params={this.props.params}/>);
+                   params={this.props.params}
+                   organization={this.props.organization}/>);
     } else {
 
       const devicesFilterValue = this.props.devicesFilterFormValues.get('filter');
