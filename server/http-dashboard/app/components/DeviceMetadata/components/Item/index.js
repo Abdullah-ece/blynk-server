@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  hardcodedRequiredMetadataFieldsNames
-} from 'services/Products';
+  isUserAbleToEdit
+} from "services/Roles";
 import {Row, Col, Button, Icon} from 'antd';
 import './styles.less';
 
@@ -10,9 +10,15 @@ class Item extends React.Component {
   static propTypes = {
     children: React.PropTypes.any,
     fieldName: React.PropTypes.string,
-    onEditClick: React.PropTypes.func
+    onEditClick: React.PropTypes.func,
+    fieldRole: React.PropTypes.string,
+    userRole: React.PropTypes.string,
   };
 
+  constructor(props){
+    super(props);
+    this.onEditClick = this.onEditClick.bind(this);
+  }
   onEditClick() {
     if (typeof this.props.onEditClick === 'function')
       this.props.onEditClick();
@@ -26,8 +32,8 @@ class Item extends React.Component {
             {this.props.children}
           </Col>
           <Col span={10} className="device-metadata--item-edit">
-            {this.props.fieldName !== hardcodedRequiredMetadataFieldsNames.Manufacturer && (
-              <Button type="primary" onClick={this.onEditClick.bind(this)}>
+            {isUserAbleToEdit(this.props.userRole, this.props.fieldRole) && (
+              <Button type="primary" onClick={this.onEditClick}>
                 <Icon type="edit"/>Edit
               </Button>
             ) || (
