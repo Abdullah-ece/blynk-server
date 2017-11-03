@@ -10,7 +10,8 @@ class DeviceInfo extends React.Component {
 
   static propTypes = {
     device: React.PropTypes.object,
-    onMetadataChange: React.PropTypes.func
+    onMetadataChange: React.PropTypes.func,
+    account: React.PropTypes.object,
   };
 
   shouldComponentUpdate(nextProps) {
@@ -115,13 +116,14 @@ class DeviceInfo extends React.Component {
                   const fieldProps = {
                     key: form,
                     form: form,
-                    initialValues: field.toJS()
+                    initialValues: field.toJS(),
                   };
 
                   const props = {
                     form: form,
                     data: field,
-                    onChange: this.onChange.bind(this)
+                    onChange: this.onChange.bind(this),
+                    account: this.props.account,
                   };
 
 
