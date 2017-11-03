@@ -68,3 +68,13 @@ export {
   InviteAvailableRoles,
   UsersAvailableRoles
 };
+
+export const isUserAbleToEdit = (userRole, fieldRole) => {
+  const permissions = {
+    SUPER_ADMIN: ['USER','STAFF','ADMIN','SUPER_ADMIN'],
+    ADMIN: ['USER','STAFF','ADMIN'],
+    STAFF:['USER','STAFF'],
+    USER:['USER']
+  };
+  return permissions[userRole].indexOf(fieldRole) !== -1;
+};
