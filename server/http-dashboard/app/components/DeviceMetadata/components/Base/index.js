@@ -15,8 +15,16 @@ class Base extends React.Component {
     initialize: React.PropTypes.func,
     resetForm: React.PropTypes.func,
     values: React.PropTypes.object,
-    errors: React.PropTypes.object
+    errors: React.PropTypes.object,
+    account: React.PropTypes.object,
   };
+
+  constructor(props) {
+    super(props);
+    this.handleCancelClick = this.handleCancelClick.bind(this);
+    this.handleEdit        = this.handleEdit.bind(this);
+    this.handleOkClick     = this.handleOkClick.bind(this);
+  }
 
   state = {
     editVisible: false
@@ -80,18 +88,18 @@ class Base extends React.Component {
     const field = this.props.data;
 
     return (
-      <Item onEditClick={this.handleEdit.bind(this)} fieldName={field.get('name')}>
+      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.get('role')} fieldName={field.get('name')}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName="device-metadata-modal"
                closable={false}
                title={field.get('name')}
-               onCancel={this.handleCancelClick.bind(this)}
+               onCancel={this.handleCancelClick}
                footer={[
                  <Button key="cancel" type="primary" size="default"
-                         onClick={this.handleCancelClick.bind(this)}>Cancel</Button>,
+                         onClick={this.handleCancelClick}>Cancel</Button>,
                  <Button key="save" size="default" disabled={!!this.props.errors} loading={this.state.loading}
-                         onClick={this.handleOkClick.bind(this)}>
+                         onClick={this.handleOkClick}>
                    Save
                  </Button>,
                ]}
