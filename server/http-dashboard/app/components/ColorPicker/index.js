@@ -16,9 +16,11 @@ class BrandingColorPicker extends React.Component {
     super(props);
 
     this.state = {
-      color: props.color || '',
       displayColorPicker: false
     };
+    this.displayColorPicker = this.displayColorPicker.bind(this);
+    this.hideColorPicker    = this.hideColorPicker.bind(this);
+    this.handleColorChange = this.handleColorChange.bind(this);
   }
 
   displayColorPicker() {
@@ -31,31 +33,27 @@ class BrandingColorPicker extends React.Component {
     this.setState({
       displayColorPicker: false
     });
-    if (this.props.onChange) this.props.onChange(this.state.color);
   }
 
   handleColorChange(color) {
-    this.setState({
-      color: color.hex.replace('#', '')
-    });
+    if (this.props.onChange) this.props.onChange(color.hex.replace('#', ''));
   }
 
   render() {
-
     return (
       <div className="branding-color-picker">
         { this.state.displayColorPicker &&
-        <div className="branding-color-picker-color-preview-overlay" onClick={this.hideColorPicker.bind(this)}/> }
+        <div className="branding-color-picker-color-preview-overlay" onClick={this.hideColorPicker}/> }
         <div className="color-picker">
           <div className="branding-color-picker-color-preview">
             { this.state.displayColorPicker &&
-            <TwitterPicker triangle="hide" color={this.state.color} onChange={this.handleColorChange.bind(this)}/>}
-            { !this.state.color &&
-            <div className="branding-color-picker-color-preview-choose" onClick={this.displayColorPicker.bind(this)}/>
+            <TwitterPicker triangle="hide" color={this.props.color} onChange={this.handleColorChange}/>}
+            { !this.props.color &&
+            <div className="branding-color-picker-color-preview-choose" onClick={this.displayColorPicker}/>
             }
-            { this.state.color &&
-            <div className="branding-color-picker-color-preview-specific" onClick={this.displayColorPicker.bind(this)}
-                 style={{background: '#' + this.state.color}}/> }
+            { this.props.color &&
+            <div className="branding-color-picker-color-preview-specific" onClick={this.displayColorPicker}
+                 style={{background: '#' + this.props.color}}/> }
           </div>
         </div>
       </div>
