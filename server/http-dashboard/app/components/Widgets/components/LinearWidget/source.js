@@ -2,7 +2,7 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import ColorPicker from 'components/ColorPicker';
 import {Item, ItemsGroup} from "components/UI";
-import {Button, Radio, Icon, Row, Col} from 'antd';
+import {Button, Radio, Icon, Row, Col, Select as AntdSelect} from 'antd';
 import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -42,27 +42,7 @@ class Source extends React.Component {
     this.handleCopy = this.handleCopy.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.labelComponent = this.labelComponent.bind(this);
-  }
-
-  componentWillUpdate(nextProps) {
-    if (Number(nextProps.source.get('dataStreamPin')) && Number(nextProps.source.get('dataStreamPin')) !== Number(this.props.source.get('dataStreamPin')) && nextProps.dataStreams.size) {
-      const stream = this.props.dataStreams.find(
-        stream => parseInt(stream.get('key')) === parseInt(nextProps.source.get('dataStreamPin'))
-      );
-
-      if (stream) {
-        this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, stream.get('values'));
-      }
-    }
-
-    const dataStreamNotFound = !nextProps.dataStreams.size || !nextProps.dataStreams.find(stream => {
-      return Number(stream.get('key')) === Number(nextProps.source.get('dataStreamPin'));
-    });
-
-    if (dataStreamNotFound) {
-      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStream`, {});
-      this.props.changeForm(this.props.form, `sources.${this.props.index}.dataStreamPin`, null);
-    }
+    this.dataStreamSelectComponent = this.dataStreamSelectComponent.bind(this);
   }
 
   getIconForChartByType(type) {
@@ -116,6 +96,95 @@ class Source extends React.Component {
       this.props.onCopy(this.props.source.get('id'));
   }
 
+  dataStreamSelectComponent(props) {
+
+    const onChange = (value) => {
+
+      const stream = this.props.dataStreams.find(
+        stream => parseInt(stream.get('key')) === parseInt(value)
+      );
+
+      if (stream) {
+        props.input.onChange(stream.get('values').toJS());
+      } else {
+        props.input.onChange({});
+      }
+
+    };
+
+    const getValue = () => {
+      if (props.input.value && !isNaN(Number(props.input.value.pin)) && props.input.value.pinType === 'VIRTUAL')
+        return String(props.input.value.pin);
+
+      return '';
+    };
+
+    return this.multipleTagsSelect({
+      ...props,
+      input: {
+        ...props.input,
+        value: getValue(),
+        onChange: onChange,
+        onBlur: () => {},
+      }
+    });
+
+  }
+
+  multipleTagsSelect(props) {
+
+    const getOption = (item) => {
+      return (
+        <AntdSelect.Option value={item.key} key={item.key} disabled={item.disabled || false}>
+          {item.value}
+        </AntdSelect.Option>
+      );
+    };
+
+    const getOptions = (list) => {
+      return list.map((item) => getOption(item));
+    };
+
+    const getGroup = (name, list) => {
+      return (
+        <AntdSelect.OptGroup key={name}>
+          {getOptions(list)}
+        </AntdSelect.OptGroup>
+      );
+    };
+
+    const getGroups = (list) => {
+      return Object.keys(list).map((key) => getGroup(key, list[key]));
+    };
+
+    const values = props.values || [];
+
+    let optionsList = null;
+
+    if (Array.isArray(values)) {
+      optionsList = getOptions(values);
+    } else {
+      optionsList = getGroups(values);
+    }
+
+    return (
+      <AntdSelect onFocus={props.input.onFocus}
+                  onBlur={props.input.onBlur}
+                  onChange={props.input.onChange}
+                  notFoundContent={props.notFoundContent || ''}
+                  dropdownMatchSelectWidth={props.dropdownMatchSelectWidth || false}
+                  value={props.input.value || []}
+                  placeholder={props.placeholder || ''}
+                  validate={props.validate || []}
+                  filterOption={props.filterOption || undefined}
+                  style={{width: '100%'}}
+                  allowClear={true}>
+        {optionsList || null}
+      </AntdSelect>
+    );
+
+  }
+
   render() {
 
     const getNotFoundDataStreamContent = () => {
@@ -157,13 +226,19 @@ class Source extends React.Component {
                       validate={[Validation.Rules.required]}
                       style={{width: '100px'}}/>
             </Item>
-            <Item label=" " offset="medium">
-              <Select notFoundContent={getNotFoundDataStreamContent()}
-                      dropdownMatchSelectWidth={false}
-                      name={`sources.${this.props.index}.dataStreamPin`} values={{ 'Data Streams': this.props.dataStreams.toJS()}}
-                      placeholder="Choose Source"
-                      validate={[Validation.Rules.required]}
-                      style={{width: '100%'}}/>
+            <Item label=" " offset="medium" style={{width: '100%'}}>
+
+              <Field name={`sources.${this.props.index}.dataStream`}
+                     notFoundContent={getNotFoundDataStreamContent()}
+                     dropdownMatchSelectWidth={false}
+                     values={{ 'Data Streams': this.props.dataStreams.toJS()}}
+                     placeholder="Choose Source"
+                     validate={[Validation.Rules.required]}
+                     style={{width: '100%'}}
+
+                     component={this.dataStreamSelectComponent}
+              />
+
             </Item>
           </ItemsGroup>
         </div>
