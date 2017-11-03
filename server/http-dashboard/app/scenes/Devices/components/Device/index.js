@@ -67,7 +67,7 @@ class Device extends React.Component {
             <Timeline params={this.props.params} location={this.props.location}/>
           </TabPane>
           <TabPane tab="Device Info" key="3">
-            <DeviceInfo onMetadataChange={this.onMetadataChange} device={this.props.device}/>
+            <DeviceInfo account={this.props.account} onMetadataChange={this.onMetadataChange} device={this.props.device}/>
           </TabPane>
           {/*<TabPane tab="Labels" key="4">
             <div style={{padding: '12px 32px'}}>Labels</div>
