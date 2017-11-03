@@ -118,7 +118,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
-      role: Roles.USER.value,
+      role: Roles.SUPER_ADMIN.value,
       hardcoded: true
     },
     {
