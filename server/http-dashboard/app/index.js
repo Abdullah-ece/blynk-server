@@ -5,7 +5,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 
 /* components */
-import Layout, {UserLayout, UserProfileLayout} from './components/Layout';
+import Layout, {UserLayout} from './components/Layout';
 import LoginLayout from './components/LoginLayout';
 
 /* scenes */
@@ -18,8 +18,8 @@ import Logout from './scenes/Logout';
 import StyleGuide from './scenes/StyleGuide';
 import * as Organizations from './scenes/Organizations';
 import Invite from './scenes/Invite';
-import {MyAccount, OrganizationSettings} from './scenes/UserProfile';
 import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
+import UserProfile from './scenes/UserProfileNew';
 
 /* store */
 import {Provider} from 'react-redux';
@@ -29,7 +29,6 @@ import Store from './store';
 import {RouteGuestOnly, RouteAuthorizedOnly} from './services/Login';
 import {
   Products as ProductsPreloader,
-  Account as AccountPreloader,
   Organization as OrganizationPreloader,
   Devices as DevicesPreloader
 } from './services/Preloaders';
@@ -73,12 +72,8 @@ Store().then((store) => {
           </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
-              <Route component={UserProfileLayout}>
-                <Route path="/account" component={MyAccount}
-                       onEnter={AccountPreloader(store)}/>
-                <Route path="/organization-settings" component={OrganizationSettings}
-                       onEnter={OrganizationPreloader(store)}/>
-              </Route>
+              <Route path="/UserProfile" component={UserProfile} />
+              <Route path="/UserProfile/:tab" component={UserProfile} />
               <Route onEnter={DevicesPreloader(store)}>
                 <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
                 <Route path="/devices/create" components={Devices}/>
