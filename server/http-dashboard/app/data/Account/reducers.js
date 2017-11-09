@@ -2,7 +2,8 @@ const initialState = {
   name: '',
   email: '',
   role: '',
-  orgId: null
+  orgId: null,
+  resetPasswordProcessing: false
 };
 
 export default function Account(state = initialState, action) {
@@ -32,6 +33,24 @@ export default function Account(state = initialState, action) {
       return {
         ...state,
         name: action.name
+      };
+
+    case "API_ACCOUNT_SEND_RESET_PASS":
+      return {
+        ...state,
+        resetPasswordProcessing: true
+      };
+
+    case "API_ACCOUNT_SEND_RESET_PASS_SUCCESS":
+      return {
+        ...state,
+        resetPasswordProcessing: false
+      };
+
+    case "API_ACCOUNT_SEND_RESET_PASS_FAILURE":
+      return {
+        ...state,
+        resetPasswordProcessing: false
       };
 
     default:
