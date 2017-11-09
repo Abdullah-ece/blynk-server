@@ -16,12 +16,18 @@ class UserProfile extends Component {
 
   static propTypes = {
     params: React.PropTypes.object,
+    Account: React.PropTypes.object,
     onTabChange: React.PropTypes.func,
+    onAccountNameUpdate: React.PropTypes.func,
+    onAccountSave: React.PropTypes.func,
+    onAccountResetPassword: React.PropTypes.func,
   };
+
   handleTabChange(tab){
     this.props.onTabChange(tab);
     browserHistory.push('/UserProfile/'+tab);
   }
+
   render() {
     const title = getTabValueByKey(this.props.params.activeTab);
 
@@ -31,10 +37,13 @@ class UserProfile extends Component {
         <MainLayout.Content className="product-create-content">
           <Tabs defaultActiveKey={TABS.ACCOUNT_SETTINGS.key}
                 activeKey = {this.props.params.activeTab}
-                onChange={(tab)=>{this.handleTabChange(tab)} }>
+                onChange={(tab)=>{this.handleTabChange(tab);}}>
 
             <Tabs.TabPane tab={<span>{TABS.ACCOUNT_SETTINGS.value}</span>} key={TABS.ACCOUNT_SETTINGS.key}>
-              <MyAccount/>
+              <MyAccount onAccountNameUpdate={this.props.onAccountNameUpdate}
+                         onAccountSave={this.props.onAccountSave}
+                         onAccountResetPassword={this.props.onAccountResetPassword}
+                         Account={this.props.Account}/>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{TABS.ORGANIZATION_SETTINGS.value}</span>} key={TABS.ORGANIZATION_SETTINGS.key}>
