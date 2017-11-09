@@ -1,67 +1,40 @@
 import React from 'react';
-
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {Section, Item} from '../../../Section';
 import {Button, Modal, message} from 'antd';
-import {
-  Account as AccountFetch,
-  AccountSave,
-  updateName as AccountUpdateName,
-  AccountResetPassword
-} from 'data/Account/actions';
 import Field from '../../../Field';
 
 import './styles.less';
 
-@connect((state) => ({
-  Account: state.Account
-}), (dispatch) => ({
-  AccountFetch: bindActionCreators(AccountFetch, dispatch),
-  AccountSave: bindActionCreators(AccountSave, dispatch),
-  AccountUpdateName: bindActionCreators(AccountUpdateName, dispatch),
-  AccountResetPassword: bindActionCreators(AccountResetPassword, dispatch)
-}))
 class MyAccount extends React.Component {
 
   static propTypes = {
     Account: React.PropTypes.object,
     AccountFetch: React.PropTypes.func,
-    AccountSave: React.PropTypes.func,
-    AccountUpdateName: React.PropTypes.func,
-    AccountResetPassword: React.PropTypes.func
+    onAccountNameUpdate: React.PropTypes.func,
+    onAccountSave : React.PropTypes.func,
+    onAccountResetPassword: React.PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      resetPasswordProcessing: false
-    };
+    this.handleNameSave = this.handleNameSave.bind(this);
+    this.resetPassword  = this.resetPassword.bind(this);
   }
 
   handleNameSave(name) {
     const hideUpdatingMessage = message.loading('Updating account name..', 0);
-    this.props.AccountUpdateName(name);
+    this.props.onAccountNameUpdate(name);
     /** @todo track error */
-    this.props.AccountSave(Object.assign({}, this.props.Account, {name: name})).then(() => {
+    this.props.onAccountSave(Object.assign({}, this.props.Account, {name: name})).then(() => {
       hideUpdatingMessage();
     });
   }
 
   resetPassword() {
-    this.setState({
-      resetPasswordProcessing: true
-    });
-    this.props.AccountResetPassword(Object.assign({}, {email: this.props.Account.email})).then(() => {
-      this.setState({
-        resetPasswordProcessing: false
-      });
+    this.props.onAccountResetPassword(Object.assign({}, {email: this.props.Account.email})).then(() => {
       this.showResetPasswordSuccessMessage();
     }).catch((err) => {
-      this.setState({
-        resetPasswordProcessing: false
-      });
       this.showResetPasswordErrorMessage(err && err.error && err.message);
     });
   }
@@ -83,12 +56,11 @@ class MyAccount extends React.Component {
   }
 
   render() {
-    console.log();
     return (
       <div className="user-profile">
 
         <Item title="Name">
-          <Field value={this.props.Account.name} onChange={this.handleNameSave.bind(this)}/>
+          <Field value={this.props.Account.name} onChange={this.handleNameSave}/>
         </Item>
         <Item title="Email Address">
           {this.props.Account.email}
@@ -97,8 +69,8 @@ class MyAccount extends React.Component {
         <Section title="Change Password">
           <Item>
             <Button type="primary"
-                    onClick={this.resetPassword.bind(this)}
-                    loading={this.state.resetPasswordProcessing}>
+                    onClick={this.resetPassword}
+                    loading={this.props.Account.resetPasswordProcessing}>
               Send password reset email
             </Button>
           </Item>
