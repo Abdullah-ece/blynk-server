@@ -5,7 +5,6 @@ import {
   TABS,
   getTabValueByKey
 } from 'services/UserProfile';
-import { browserHistory } from 'react-router';
 
 import MyAccount from './components/AccountSettings';
 import OrganizationSettings from './components/OrganizationSettings';
@@ -17,20 +16,29 @@ class UserProfile extends Component {
   static propTypes = {
     params: React.PropTypes.object,
     Account: React.PropTypes.object,
+    Organization: React.PropTypes.object,
     onTabChange: React.PropTypes.func,
     onAccountNameUpdate: React.PropTypes.func,
     onAccountSave: React.PropTypes.func,
     onAccountResetPassword: React.PropTypes.func,
+
+    onOrganizationSave:React.PropTypes.func,
+    onOrganizationLogoUpdate: React.PropTypes.func,
+    onOrganizationUpdateName: React.PropTypes.func,
+    onOrganizationBrandingUpdate: React.PropTypes.func,
+    onOrganizationUpdateTimezone: React.PropTypes.func,
+    onOrganizationUsersFetch: React.PropTypes.func,
+    onOrganizationSendInvite: React.PropTypes.func,
+
+    onResetForm: React.PropTypes.func,
   };
 
   handleTabChange(tab){
     this.props.onTabChange(tab);
-    browserHistory.push('/UserProfile/'+tab);
   }
 
   render() {
     const title = getTabValueByKey(this.props.params.activeTab);
-
     return(
       <MainLayout>
         <MainLayout.Header title={title}/>
@@ -47,15 +55,25 @@ class UserProfile extends Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{TABS.ORGANIZATION_SETTINGS.value}</span>} key={TABS.ORGANIZATION_SETTINGS.key}>
-              <OrganizationSettings/>
+              <OrganizationSettings Account={this.props.Account}
+                                    Organization={this.props.Organization}
+                                    onOrganizationUpdateName={this.props.onOrganizationUpdateName}
+                                    onOrganizationSave={this.props.onOrganizationSave}
+                                    onOrganizationUpdateTimezone={this.props.onOrganizationUpdateTimezone}/>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{TABS.USERS.value}</span>} key={TABS.USERS.key}>
-              <Users/>
+              <Users Account={this.props.Account}
+                     onOrganizationUsersFetch = {this.props.onOrganizationUsersFetch}
+                     onOrganizationSendInvite = {this.props.onOrganizationSendInvite}
+                     onResetForm = {this.props.onResetForm}/>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{TABS.BRANDING.value}</span>} key={TABS.BRANDING.key}>
-              <Branding/>
+              <Branding Organization={this.props.Organization}
+                        onOrganizationSave={this.props.onOrganizationSave}
+                        onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}
+                        onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>
             </Tabs.TabPane>
           </Tabs>
 
