@@ -5,15 +5,22 @@ const initialState = {
   secondaryColor: '979282',
   logoUrl: '',
   users: [],
-  parentId: null
+  parentId: null,
+  isLoading: false
 };
 
 export default function Account(state = initialState, action) {
   switch (action.type) {
 
+    case "API_ORGANIZATION":
+      return {
+        ...state,
+        isLoading: true
+      };
     case "API_ORGANIZATION_SUCCESS":
       return {
         ...state,
+        isLoading: false,
         ...action.payload.data
       };
     case "API_ORGANIZATION_USERS_SUCCESS":

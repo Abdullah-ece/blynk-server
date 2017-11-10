@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs} from 'antd';
+import {Tabs, Icon} from 'antd';
 import {MainLayout} from 'components';
 import {
   TABS,
@@ -41,43 +41,46 @@ class UserProfile extends Component {
     const title = getTabValueByKey(this.props.params.activeTab);
     return(
       <MainLayout>
-        <MainLayout.Header title={title}/>
-        <MainLayout.Content className="product-create-content">
-          <Tabs defaultActiveKey={TABS.ACCOUNT_SETTINGS.key}
-                activeKey = {this.props.params.activeTab}
-                onChange={(tab)=>{this.handleTabChange(tab);}}>
+        {!this.props.Organization.isLoading &&
+        (<div>
+          <MainLayout.Header title={title}/>
+          <MainLayout.Content className="product-create-content">
 
-            <Tabs.TabPane tab={<span>{TABS.ACCOUNT_SETTINGS.value}</span>} key={TABS.ACCOUNT_SETTINGS.key}>
-              <MyAccount onAccountNameUpdate={this.props.onAccountNameUpdate}
-                         onAccountSave={this.props.onAccountSave}
-                         onAccountResetPassword={this.props.onAccountResetPassword}
-                         Account={this.props.Account}/>
-            </Tabs.TabPane>
+            <Tabs defaultActiveKey={TABS.ACCOUNT_SETTINGS.key}
+                  activeKey = {this.props.params.activeTab}
+                  onChange={(tab)=>{this.handleTabChange(tab);}}>
 
-            <Tabs.TabPane tab={<span>{TABS.ORGANIZATION_SETTINGS.value}</span>} key={TABS.ORGANIZATION_SETTINGS.key}>
-              <OrganizationSettings Account={this.props.Account}
-                                    Organization={this.props.Organization}
-                                    onOrganizationUpdateName={this.props.onOrganizationUpdateName}
-                                    onOrganizationSave={this.props.onOrganizationSave}
-                                    onOrganizationUpdateTimezone={this.props.onOrganizationUpdateTimezone}/>
-            </Tabs.TabPane>
+              <Tabs.TabPane tab={<span>{TABS.ACCOUNT_SETTINGS.value}</span>} key={TABS.ACCOUNT_SETTINGS.key}>
+                <MyAccount onAccountNameUpdate={this.props.onAccountNameUpdate}
+                           onAccountSave={this.props.onAccountSave}
+                           onAccountResetPassword={this.props.onAccountResetPassword}
+                           Account={this.props.Account}/>
+              </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{TABS.USERS.value}</span>} key={TABS.USERS.key}>
-              <Users Account={this.props.Account}
-                     onOrganizationUsersFetch = {this.props.onOrganizationUsersFetch}
-                     onOrganizationSendInvite = {this.props.onOrganizationSendInvite}
-                     onResetForm = {this.props.onResetForm}/>
-            </Tabs.TabPane>
+              <Tabs.TabPane tab={<span>{TABS.ORGANIZATION_SETTINGS.value}</span>} key={TABS.ORGANIZATION_SETTINGS.key}>
+                <OrganizationSettings Account={this.props.Account}
+                                      Organization={this.props.Organization}
+                                      onOrganizationUpdateName={this.props.onOrganizationUpdateName}
+                                      onOrganizationSave={this.props.onOrganizationSave}
+                                      onOrganizationUpdateTimezone={this.props.onOrganizationUpdateTimezone}/>
+              </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{TABS.BRANDING.value}</span>} key={TABS.BRANDING.key}>
-              <Branding Organization={this.props.Organization}
-                        onOrganizationSave={this.props.onOrganizationSave}
-                        onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}
-                        onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>
-            </Tabs.TabPane>
-          </Tabs>
+              <Tabs.TabPane tab={<span>{TABS.USERS.value}</span>} key={TABS.USERS.key}>
+                <Users Account={this.props.Account}
+                       onOrganizationUsersFetch = {this.props.onOrganizationUsersFetch}
+                       onOrganizationSendInvite = {this.props.onOrganizationSendInvite}
+                       onResetForm = {this.props.onResetForm}/>
+              </Tabs.TabPane>
 
-        </MainLayout.Content>
+              <Tabs.TabPane tab={<span>{TABS.BRANDING.value}</span>} key={TABS.BRANDING.key}>
+                <Branding Organization={this.props.Organization}
+                          onOrganizationSave={this.props.onOrganizationSave}
+                          onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}
+                          onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>
+              </Tabs.TabPane>
+            </Tabs>
+          </MainLayout.Content>
+        </div> )|| (<Icon type="loading" style={{fontSize: 72}}/>)}
       </MainLayout>
     );
   }
