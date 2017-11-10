@@ -72,8 +72,8 @@ Store().then((store) => {
           </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
-              <Route path="/UserProfile" component={UserProfile} />
-              <Route path="/UserProfile/:tab" component={UserProfile} />
+              <Route path="/UserProfile" component={UserProfile} onEnter={OrganizationPreloader(store)}/>
+              <Route path="/UserProfile/:tab" component={UserProfile} onEnter={OrganizationPreloader(store)}/>
               <Route onEnter={DevicesPreloader(store)}>
                 <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
                 <Route path="/devices/create" components={Devices}/>
