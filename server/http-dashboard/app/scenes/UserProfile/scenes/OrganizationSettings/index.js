@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Title, Section, Item} from '../../index';
-import {Select, Modal, message} from 'antd';
+import {Select, message} from 'antd';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Timezones from 'services/timeszones';
@@ -71,16 +71,6 @@ class OrganizationSettings extends React.Component {
     });
   }
 
-  showInviteError(message) {
-    Modal.error({
-      title: 'Ooops!',
-      content: String(message)
-    });
-  }
-
-  showInviteSuccess() {
-    message.success('Invite has been sent to email!');
-  }
 
   handleTimezoneChange(timezone) {
     const hideUpdatingMessage = message.loading('Updating organization timezone...', 0);
