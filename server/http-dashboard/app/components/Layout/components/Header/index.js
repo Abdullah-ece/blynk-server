@@ -59,16 +59,16 @@ class Header extends React.Component {
     return (
       <Menu onClick={this.handleClick.bind(this)}
             defaultSelectedKeys={menuItemActive}>
-        <Menu.Item key="/UserProfile/accountSettings">
+        <Menu.Item key="/user-profile/account-settings">
           My Account
         </Menu.Item>
-        <Menu.Item key="/UserProfile/organizationSettings">
+        <Menu.Item key="/user-profile/organization-settings">
           Organization Settings
         </Menu.Item>
-        <Menu.Item key="/UserProfile/users">
+        <Menu.Item key="/user-profile/users">
           Organization Users
         </Menu.Item>
-        <Menu.Item key="/UserProfile/branding">
+        <Menu.Item key="/user-profile/branding">
           Organization Branding
         </Menu.Item>
 

@@ -102,7 +102,7 @@ class UserProfile extends Component {
   }
   handleTabChange(tab) {
     this.props.onTabChange(tab);
-    this.context.router.push(`/UserProfile/${tab}`);
+    this.context.router.push(`/user-profile/${tab}`);
   }
 
   handleAccountUpdateName(name) {
