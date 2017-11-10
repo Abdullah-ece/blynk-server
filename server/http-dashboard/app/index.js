@@ -19,7 +19,7 @@ import StyleGuide from './scenes/StyleGuide';
 import * as Organizations from './scenes/Organizations';
 import Invite from './scenes/Invite';
 import {ProductsIndex, ProductCreate, ProductDetails, ProductEdit, ProductClone} from './scenes/Products';
-import UserProfile from './scenes/UserProfileNew';
+import UserProfile from './scenes/UserProfile';
 
 /* store */
 import {Provider} from 'react-redux';
