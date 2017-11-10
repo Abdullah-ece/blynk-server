@@ -3,6 +3,7 @@ import React from 'react';
 import './styles.less';
 import LogoUploader from "components/LogoUploader/index";
 import BrandingColorPicker from "components/BrandingColorPicker/index";
+import {Item} from '../../../Section';
 
 export default class OrganizationBranding extends React.Component {
   static propTypes = {
@@ -50,18 +51,20 @@ export default class OrganizationBranding extends React.Component {
   render() {
     return (
       <div className="user-profile--organization-settings--organization-branding">
-        <LogoUploader onChange={this.handleLogoChange}
-                      logo={this.props.Organization.logoUrl}
-                      defaultImage={this.DEFAULT_LOGO}/>
-        <div className="user-profile--organization-settings--organization-branding-colors">
-          <BrandingColorPicker title="primary color"
-                               color={this.props.Organization.primaryColor}
-                               onChange={this.handlePrimaryColorChange}/>
+        <Item>
+          <LogoUploader onChange={this.handleLogoChange}
+                        logo={this.props.Organization.logoUrl}
+                        defaultImage={this.DEFAULT_LOGO}/>
+          <div className="user-profile--organization-settings--organization-branding-colors">
+            <BrandingColorPicker title="primary color"
+                                 color={this.props.Organization.primaryColor}
+                                 onChange={this.handlePrimaryColorChange}/>
 
-          <BrandingColorPicker title="secondary color"
-                               color={this.props.Organization.secondaryColor}
-                               onChange={this.handleSecondaryColorChange}/>
-        </div>
+            <BrandingColorPicker title="secondary color"
+                                 color={this.props.Organization.secondaryColor}
+                                 onChange={this.handleSecondaryColorChange}/>
+          </div>
+        </Item>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Section, Item} from '../../../Section';
+import {Item} from '../../../Section';
 import {Select, Modal, message} from 'antd';
 import Timezones from 'services/timeszones';
 import Field from '../../../Field';
@@ -73,20 +73,20 @@ class OrganizationSettings extends React.Component {
 
     return (
       <div className="user-profile">
-        <Section title="Global Settings">
-          <Item title="Name">
-            <Field value={this.props.Organization.name} onChange={this.handleNameSave}/>
-          </Item>
-          <Item title="Timezone">
-            <Select showSearch
-                    filterOption={this.timezoneSearch}
-                    value={this.props.Organization.tzName}
-                    className="user-profile--organization-settings-timezones-select"
-                    onChange={this.handleTimezoneChange}>
-              {timezonesOptions}
-            </Select>
-          </Item>
-        </Section>
+
+        <Item title="Name">
+          <Field value={this.props.Organization.name} onChange={this.handleNameSave}/>
+        </Item>
+        <Item title="Timezone">
+          <Select showSearch
+                  filterOption={this.timezoneSearch}
+                  value={this.props.Organization.tzName}
+                  className="user-profile--organization-settings-timezones-select"
+                  onChange={this.handleTimezoneChange}>
+            {timezonesOptions}
+          </Select>
+        </Item>
+
 
       </div>
     );

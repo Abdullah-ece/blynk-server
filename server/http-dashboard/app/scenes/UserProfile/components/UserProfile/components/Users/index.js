@@ -53,11 +53,9 @@ class Users extends Component {
   render() {
     return(
       <div>
-        <Section title="Invite Users">
-          <Item>
-            <InviteUsersForm onSubmit={this.handleInviteSubmit}/>
-          </Item>
-        </Section>
+        <Item>
+          <InviteUsersForm onSubmit={this.handleInviteSubmit}/>
+        </Item>
         <Section title="Users">
           <Item>
             <OrganizationUsers/>

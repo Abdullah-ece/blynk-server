@@ -66,10 +66,10 @@ class Header extends React.Component {
           Organization Settings
         </Menu.Item>
         <Menu.Item key="/UserProfile/users">
-          Users
+          Organization Users
         </Menu.Item>
         <Menu.Item key="/UserProfile/branding">
-          Branding
+          Organization Branding
         </Menu.Item>
 
         {/*<Menu.Item key="/billing">*/}
