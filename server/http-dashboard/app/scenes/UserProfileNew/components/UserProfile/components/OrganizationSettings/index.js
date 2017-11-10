@@ -2,51 +2,27 @@ import React from 'react';
 
 import {Section, Item} from '../../../Section';
 import {Select, Modal, message} from 'antd';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
 import Timezones from 'services/timeszones';
 import Field from '../../../Field';
 
-import {reset} from 'redux-form';
-import {
-  OrganizationFetch,
-  OrganizationUpdateName,
-  OrganizationSave,
-  OrganizationUpdateTimezone,
-  OrganizationUsersFetch,
-  OrganizationSendInvite
-} from 'data/Organization/actions';
-
 import './styles.less';
 
-@connect((state) => ({
-  Organization: state.Organization,
-  Account: state.Account
-}), (dispatch) => ({
-  OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
-  OrganizationUsersFetch: bindActionCreators(OrganizationUsersFetch, dispatch),
-  OrganizationUpdateName: bindActionCreators(OrganizationUpdateName, dispatch),
-  OrganizationSave: bindActionCreators(OrganizationSave, dispatch),
-  OrganizationUpdateTimezone: bindActionCreators(OrganizationUpdateTimezone, dispatch),
-  OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
-  ResetForm: bindActionCreators(reset, dispatch)
-}))
 class OrganizationSettings extends React.Component {
 
   static propTypes = {
     Organization: React.PropTypes.object,
-    OrganizationFetch: React.PropTypes.func,
-    OrganizationUsersFetch: React.PropTypes.func,
-    OrganizationUpdateName: React.PropTypes.func,
-    OrganizationSave: React.PropTypes.func,
-    OrganizationUpdateTimezone: React.PropTypes.func,
-    OrganizationSendInvite: React.PropTypes.func,
-    ResetForm: React.PropTypes.func,
+    onOrganizationUpdateName: React.PropTypes.func,
+    onOrganizationSave: React.PropTypes.func,
+    onOrganizationUpdateTimezone: React.PropTypes.func,
     Account: React.PropTypes.object
   };
 
   constructor(props) {
     super(props);
+
+    this.handleNameSave = this.handleNameSave.bind(this);
+    this.timezoneSearch = this.timezoneSearch.bind(this);
+    this.handleTimezoneChange = this.handleTimezoneChange.bind(this);
   }
 
   showInviteError(message) {
@@ -62,19 +38,16 @@ class OrganizationSettings extends React.Component {
 
   handleTimezoneChange(timezone) {
     const hideUpdatingMessage = message.loading('Updating organization timezone...', 0);
-    this.props.OrganizationSave(Object.assign({}, this.props.Organization, {tzName: timezone})).then(() => {
-      this.props.OrganizationUpdateTimezone(timezone);
+    this.props.onOrganizationSave(Object.assign({}, this.props.Organization, {tzName: timezone})).then(() => {
+      this.props.onOrganizationUpdateTimezone(timezone);
       hideUpdatingMessage();
-    }).catch((err) => {
-      hideUpdatingMessage();
-      message.error(err && err.error && err.error.response.message);
     });
   }
 
   handleNameSave(name) {
     const hideUpdatingMessage = message.loading('Updating organization name..', 0);
-    this.props.OrganizationSave(Object.assign({}, this.props.Organization, {name: name})).then(() => {
-      this.props.OrganizationUpdateName(name);
+    this.props.onOrganizationSave(Object.assign({}, this.props.Organization, {name: name})).then(() => {
+      this.props.onOrganizationUpdateName(name);
       hideUpdatingMessage();
     }).catch((err) => {
       hideUpdatingMessage();
@@ -102,14 +75,14 @@ class OrganizationSettings extends React.Component {
       <div className="user-profile">
         <Section title="Global Settings">
           <Item title="Name">
-            <Field value={this.props.Organization.name} onChange={this.handleNameSave.bind(this)}/>
+            <Field value={this.props.Organization.name} onChange={this.handleNameSave}/>
           </Item>
           <Item title="Timezone">
             <Select showSearch
-                    filterOption={this.timezoneSearch.bind(this)}
+                    filterOption={this.timezoneSearch}
                     value={this.props.Organization.tzName}
                     className="user-profile--organization-settings-timezones-select"
-                    onChange={this.handleTimezoneChange.bind(this)}>
+                    onChange={this.handleTimezoneChange}>
               {timezonesOptions}
             </Select>
           </Item>
