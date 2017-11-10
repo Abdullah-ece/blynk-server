@@ -3,54 +3,46 @@ import React from 'react';
 import './styles.less';
 import LogoUploader from "components/LogoUploader/index";
 import BrandingColorPicker from "components/BrandingColorPicker/index";
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {OrganizationBrandingUpdate, OrganizationSave, OrganizationLogoUpdate} from 'data/Organization/actions';
 
-@connect((state) => ({
-  primaryColor: state.Organization.primaryColor,
-  secondaryColor: state.Organization.secondaryColor,
-  logo: state.Organization.logoUrl,
-  Organization: state.Organization,
-}), (dispatch) => ({
-  OrganizationBrandingUpdate: bindActionCreators(OrganizationBrandingUpdate, dispatch),
-  OrganizationLogoUpdate: bindActionCreators(OrganizationLogoUpdate, dispatch),
-  OrganizationSave: bindActionCreators(OrganizationSave, dispatch)
-}))
 export default class OrganizationBranding extends React.Component {
   static propTypes = {
     Organization: React.PropTypes.object,
-    primaryColor: React.PropTypes.any,
-    secondaryColor: React.PropTypes.any,
-    OrganizationBrandingUpdate: React.PropTypes.func,
-    OrganizationSave: React.PropTypes.func,
-    OrganizationLogoUpdate: React.PropTypes.func,
-    logo: React.PropTypes.string
+    onOrganizationSave:React.PropTypes.func,
+    onOrganizationLogoUpdate: React.PropTypes.func,
+    onOrganizationBrandingUpdate:React.PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.handleLogoChange = this.handleLogoChange.bind(this);
+    this.handlePrimaryColorChange = this.handlePrimaryColorChange.bind(this);
+    this.handleSecondaryColorChange = this.handleSecondaryColorChange.bind(this);
+  }
 
   DEFAULT_LOGO = '/static/logo.png';
 
   handlePrimaryColorChange(primaryColor) {
     const data = {
       primaryColor: primaryColor,
-      secondaryColor: this.props.secondaryColor
+      secondaryColor: this.props.Organization.secondaryColor
     };
-    this.props.OrganizationBrandingUpdate(data);
-    this.props.OrganizationSave(Object.assign({}, this.props.Organization, data));
+    this.props.onOrganizationBrandingUpdate(data);
+    this.props.onOrganizationSave(Object.assign({}, this.props.Organization, data));
   }
 
   handleSecondaryColorChange(secondaryColor) {
     const data = {
-      primaryColor: this.props.primaryColor,
+      primaryColor: this.props.Organization.primaryColor,
       secondaryColor: secondaryColor
     };
-    this.props.OrganizationBrandingUpdate(data);
-    this.props.OrganizationSave(Object.assign({}, this.props.Organization, data));
+    this.props.onOrganizationBrandingUpdate(data);
+    this.props.onOrganizationSave(Object.assign({}, this.props.Organization, data));
   }
 
   handleLogoChange(logoUrl) {
-    this.props.OrganizationLogoUpdate(logoUrl || this.DEFAULT_LOGO);
-    this.props.OrganizationSave(Object.assign({}, this.props.Organization, {
+    this.props.onOrganizationLogoUpdate(logoUrl || this.DEFAULT_LOGO);
+    this.props.onOrganizationSave(Object.assign({}, this.props.Organization, {
       logoUrl: logoUrl || this.DEFAULT_LOGO
     }));
   }
@@ -58,13 +50,17 @@ export default class OrganizationBranding extends React.Component {
   render() {
     return (
       <div className="user-profile--organization-settings--organization-branding">
-        <LogoUploader onChange={this.handleLogoChange.bind(this)} logo={this.props.logo}
+        <LogoUploader onChange={this.handleLogoChange}
+                      logo={this.props.Organization.logoUrl}
                       defaultImage={this.DEFAULT_LOGO}/>
         <div className="user-profile--organization-settings--organization-branding-colors">
-          <BrandingColorPicker title="primary color" color={this.props.primaryColor}
-                               onChange={this.handlePrimaryColorChange.bind(this)}/>
-          <BrandingColorPicker title="secondary color" color={this.props.secondaryColor}
-                               onChange={this.handleSecondaryColorChange.bind(this)}/>
+          <BrandingColorPicker title="primary color"
+                               color={this.props.Organization.primaryColor}
+                               onChange={this.handlePrimaryColorChange}/>
+
+          <BrandingColorPicker title="secondary color"
+                               color={this.props.Organization.secondaryColor}
+                               onChange={this.handleSecondaryColorChange}/>
         </div>
       </div>
     );
