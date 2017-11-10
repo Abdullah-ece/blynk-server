@@ -148,9 +148,8 @@ class UserProfile extends Component {
 
   render() {
     const params = {
-      activeTab: this.props.activeTab || TABS.ACCOUNT_SETTINGS.key
+      activeTab: this.props.params.tab || TABS.ACCOUNT_SETTINGS.key
     };
-
     return(
       <UserProfileComponent params={params}
                             onTabChange={this.handleTabChange}
