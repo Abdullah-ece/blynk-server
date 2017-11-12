@@ -3,8 +3,8 @@ import {fromJS} from 'immutable';
 const parseLineWidgetData = (response) => {
 
   return response.data.map((item) => {
-    const key = Object.keys(item)[0];
-    const value = item[key];
+    const key = item.key;
+    const value = item.value;
 
     return {
       x: Number(key),

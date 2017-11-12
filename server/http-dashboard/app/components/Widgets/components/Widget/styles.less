@@ -42,6 +42,16 @@
   }
 }
 
+.widgets--widget-container {
+  flex-basis: 100%;
+  position: relative;
+  > * {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+}
+
 .widgets--widget-tools {
   transition: .3s ease;
   opacity: 0;

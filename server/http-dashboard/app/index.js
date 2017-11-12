@@ -4,6 +4,8 @@ import {Router, Route, Redirect, useRouterHistory} from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 
+import './canvasjs';
+
 /* components */
 import Layout, {UserLayout} from './components/Layout';
 import LoginLayout from './components/LoginLayout';
@@ -69,6 +71,7 @@ Store().then((store) => {
             <Route path="/book/modal" component={Book.Modal}/>
             <Route path="/book/back-top" component={Book.BackTop}/>
             <Route path="/book/chart" component={Book.Chart}/>
+            <Route path="/book/canvasjs" component={Book.Canvasjs}/>
           </Route>
           <Route component={Layout}>
             <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>

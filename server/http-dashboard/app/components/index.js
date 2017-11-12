@@ -10,6 +10,7 @@ export Modal            from './Modal';
 export BackTop          from './BackTop';
 export MainList         from './MainList';
 export MainLayout       from './MainLayout';
+export Chart            from './Chart';
 export Plotly           from './Plotly';
 export TimeFiltering    from './TimeFiltering';
 export SimpleContentEditable from './SimpleContentEditable';

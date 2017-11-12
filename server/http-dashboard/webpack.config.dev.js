@@ -26,7 +26,8 @@ export default {
     filename: 'bundle.js'
   },
   externals: {
-    'plotly': 'Plotly'
+    'plotly': 'Plotly',
+    'canvasjs': 'CanvasJS',
   },
   plugins: [
     new webpack.DefinePlugin({

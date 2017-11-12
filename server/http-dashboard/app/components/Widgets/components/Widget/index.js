@@ -40,7 +40,7 @@ class Widget extends React.Component {
     onWidgetDelete: PropTypes.func,
 
     params: PropTypes.shape({
-      id: PropTypes.number.isRequired
+      // id: PropTypes.number.isRequired
     }).isRequired,
   };
 
