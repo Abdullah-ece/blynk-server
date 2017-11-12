@@ -1,5 +1,5 @@
 import React from 'react';
-import Canvasjs from 'app/canvasjs';
+import Canvasjs from 'canvasjs';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import './styles.less';
