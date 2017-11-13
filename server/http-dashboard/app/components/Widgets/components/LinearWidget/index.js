@@ -175,25 +175,13 @@ class LinearWidget extends React.Component {
     if(!pin)
       return null;
 
-    // const dataPoints = pin.get('data').map((item) => {
-    //
-    //   return fromJS({
-    //     x: moment(Number(item.get('x'))).toDate(),
-    //     y: item.get('y')
-    //   });
-    // });
+    const dataPoints = pin.get('data').map((item) => {
 
-    let dataPoints = fromJS([]);
-
-    for(let i = 32; i >= 0; i--) {
-
-      let time = moment().subtract(i, 'days');
-
-      dataPoints = dataPoints.push(fromJS({
-        x: moment(Number(time)).toDate(),
-        y: _.random(0, 100)
-      }));
-    }
+      return fromJS({
+        x: moment(Number(item.get('x'))).toDate(),
+        y: item.get('y')
+      });
+    });
 
     let dataSource = fromJS({
       ...this.dataDefaultOptions,
