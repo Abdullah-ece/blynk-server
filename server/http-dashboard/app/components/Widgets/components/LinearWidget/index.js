@@ -122,6 +122,7 @@ class LinearWidget extends React.Component {
   generateFakeData(source) {
     let dataSource = fromJS({
       ...this.dataDefaultOptions,
+      color: `#${source.get('color')}` || null,
       name: source.get('label') || null,
       dataPoints: [],
       xValueFormatString: 'DD-MMMs',
@@ -185,6 +186,7 @@ class LinearWidget extends React.Component {
 
     let dataSource = fromJS({
       ...this.dataDefaultOptions,
+      color: `#${source.get('color')}` || null,
       name: source.get('label') || null,
       dataPoints: dataPoints || [],
     });
