@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-  Plotly
-} from 'components';
+import {Chart} from 'components';
 
 import {Map} from 'immutable';
 
@@ -49,6 +47,8 @@ class BarChartWidget extends React.Component {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleChartMouseEnter = this.handleChartMouseEnter.bind(this);
     this.handleChartMouseLeave = this.handleChartMouseLeave.bind(this);
+    this.handleDataPointBlur = this.handleDataPointBlur.bind(this);
+    this.handleDataPointHover = this.handleDataPointHover.bind(this);
   }
 
   handleChartMouseEnter() {
@@ -185,6 +185,25 @@ class BarChartWidget extends React.Component {
     displayModeBar: false
   };
 
+  hoverColor = '#B5F3E0';
+  defaultColor = '#29DEAF';
+
+  handleDataPointHover(e){
+    const length = e.dataSeries.dataPoints.length;
+    for(let i = 0; i < length; i++){
+      e.dataSeries.dataPoints[i].color = this.hoverColor;
+    }
+    e.dataPoint.color = this.defaultColor;
+    return e.dataSeries.dataPoints;
+  }
+  handleDataPointBlur(e) {
+    const length = e.dataSeries.dataPoints.length;
+    for(let i = 0; i < length; i++){
+      e.dataSeries.dataPoints[i].color = this.defaultColor;
+    }
+    return e.dataSeries.dataPoints;
+  }
+
   renderChartByParams(data = [], config = {}, layout = {}) {
     let maxYLabelWidth = 0;
 
@@ -247,19 +266,71 @@ class BarChartWidget extends React.Component {
 
       layout.margin.l = Math.round(maxYLabelWidth * AVG_SYMBOL_LENGTH) + ADDITIONAL_OFFSET;
     }
+    config = {
+      toolTip:{
+        content: "${y}",
+        cornerRadius: 6,
+        borderThickness: 0,
+        borderColor:"white",
+        backgroundColor:" white"
+      },
+      colorSet: "default",
+      title: {
+        fontWeight: "bold",
+        fontFamily: "Arial",
+        fontColor: "#17161A",
+        horizontalAlign: "left",
+        text: "Total Cost Per Product, $"
+      },
 
+      axisY2:{
+        gridColor: "#F5F5F5",
+        gridThickness: 1,
+        lineColor: "white",
+        tickColor: "white",
+        labelFontColor: "#646368"
+      },
+      axisX: {
+        labelFontSize: "12px",
+        labelFontColor: "#3A3A3F",
+        labelFontFamily: "Arial",
+        lineColor: "#F5F5F5",
+        tickColor: "white"
+      },
+      data: [
+        {
+          highlightEnabled: false,
+          axisYType: "secondary",
+          type: "bar",
+        }
+      ]
+    };
+    const colorSets = [
+      {
+        name:'default',
+        colors: ['#29DEAF']
+      },
+      {
+        name: 'hover',
+        colors: ['#B5F3E0']
+      }
+    ];
+    const length = data[0].x.length;
+    let dataSource = [];
+    for(let i = 0; i < length; i++) {
+      dataSource.push({
+        label: data[0].y[i],
+            y: data[0].x[i]
+      });
+    }
+    config.data[0].dataPoints = dataSource;
     return (
-      <div onMouseEnter={this.handleChartMouseEnter}
-           onMouseLeave={this.handleChartMouseLeave}
-           className="grid-linear-widget"
-           ref={(element) => this.chartElement = element}
-           onMouseMove={this.handleMouseMove}>
-        <Plotly data={data} config={config} layout={layout} handleHover={this.handleHover}
-                handleUnHover={this.handleUnhover}/>
-
-        <div className="grid-bar-widget-chart-hover-container"
-             ref={(element) => (this.hoverElement = element)}/>
-
+      <div className="widgets--widget-container">
+        <Chart config={config}
+               colorSets={colorSets}
+               onDataPointHover={this.handleDataPointHover}
+               onDataPointBlur={this.handleDataPointBlur}
+        />
       </div>
     );
   }
