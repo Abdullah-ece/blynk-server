@@ -12,16 +12,31 @@ class Chart extends React.Component {
       axisY: PropTypes.object,
       axisX: PropTypes.object,
       legend: PropTypes.object,
-    })
+    }),
+    colorSets: PropTypes.array,
+    onDataPointHover: PropTypes.func,
+    onDataPointBlur: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
+
+    this.handleDataPointHover = this.handleDataPointHover.bind(this);
+    this.handleDataPointBlur = this.handleDataPointBlur.bind(this);
   }
 
   componentDidMount() {
 
     const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
+    if(typeof this.props.onDataPointHover === 'function') {
+      chartConfig.data[0].mouseover = this.handleDataPointHover;
+    }
+    if(typeof this.props.onDataPointBlur === 'function') {
+      chartConfig.data[0].mouseout = this.handleDataPointBlur;
+    }
+    this.props.colorSets.map((colorSet) => {
+      Canvasjs.addColorSet(colorSet.name, colorSet.colors);
+    });
 
     this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
 
@@ -36,6 +51,20 @@ class Chart extends React.Component {
     this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
 
     this.chart.render();
+  }
+
+  handleDataPointHover(e) {
+    if(typeof this.props.onDataPointHover === 'function') {
+      this.chart.data[0].dataPoints = this.props.onDataPointHover(e);
+      this.chart.render();
+    }
+  }
+
+  handleDataPointBlur(e) {
+    if(typeof this.props.onDataPointBlur === 'function') {
+      this.chart.data[0].dataPoints = this.props.onDataPointBlur(e);
+      this.chart.render();
+    }
   }
 
   legendDefaultOptions = {
@@ -171,6 +200,7 @@ class Chart extends React.Component {
   };
 
   render() {
+
     return (
       <div>
         <div className="canvasjs-widget-container" ref={(ref) => this.chartRef = ref}/>
