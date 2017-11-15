@@ -46,28 +46,8 @@ class BarChartWidget extends React.Component {
     this.handleDataPointHover = this.handleDataPointHover.bind(this);
   }
 
-  hoverColor = '#B5F3E0';
-  defaultColor = '#29DEAF';
-
-  handleDataPointHover(e){
-    const length = e.dataSeries.dataPoints.length;
-    for(let i = 0; i < length; i++){
-      e.dataSeries.dataPoints[i].color = this.hoverColor;
-    }
-    e.dataPoint.color = this.defaultColor;
-    return e.dataSeries.dataPoints;
-  }
-  handleDataPointBlur(e) {
-    const length = e.dataSeries.dataPoints.length;
-    for(let i = 0; i < length; i++){
-      e.dataSeries.dataPoints[i].color = this.defaultColor;
-    }
-    return e.dataSeries.dataPoints;
-  }
-
-  renderChartByParams(data = []) {
-
-    let config = {
+  defaultParams = {
+    chartConfigs: {
       toolTip:{
         content: "${y}",
         cornerRadius: 6,
@@ -85,6 +65,7 @@ class BarChartWidget extends React.Component {
       },
 
       axisY2:{
+        labelAngle: 0,
         gridColor: "#F5F5F5",
         gridThickness: 1,
         lineColor: "white",
@@ -92,6 +73,7 @@ class BarChartWidget extends React.Component {
         labelFontColor: "#646368"
       },
       axisX: {
+        labelAngle: 0,
         labelFontSize: "12px",
         labelFontColor: "#3A3A3F",
         labelFontFamily: "Arial",
@@ -105,32 +87,48 @@ class BarChartWidget extends React.Component {
           type: "bar",
         }
       ]
-    };
-    const colorSets = [
-      {
-        name:'default',
-        colors: ['#29DEAF']
-      },
-      {
-        name: 'hover',
-        colors: ['#B5F3E0']
-      }
-    ];
-    const length = data[0].x.length;
-    let dataSource = [];
-    for(let i = 0; i < length; i++) {
-      dataSource.push({
-        label: data[0].y[i],
-            y: data[0].x[i]
-      });
+    },
+    colors: {
+      hoverColor: '#B5F3E0',
+      unhoveredColor: '#29DEAF',
+    },
+    colorSets: [
+        {
+          name:'default',
+          colors: ['#29DEAF']
+        },
+        {
+          name: 'hover',
+          colors: ['#B5F3E0']
+        }
+    ],
+  };
+
+
+  handleDataPointHover(e){
+    const length = e.dataSeries.dataPoints.length;
+    for(let i = 0; i < length; i++){
+      e.dataSeries.dataPoints[i].color = this.defaultParams.colors.hoverColor;
     }
-    config.data[0].dataPoints = dataSource;
+    e.dataPoint.color = this.defaultParams.colors.unhoveredColor;
+    return e.dataSeries.dataPoints;
+  }
+  handleDataPointBlur(e) {
+    const length = e.dataSeries.dataPoints.length;
+    for(let i = 0; i < length; i++){
+      e.dataSeries.dataPoints[i].color = this.defaultParams.colors.unhoveredColor;
+    }
+    return e.dataSeries.dataPoints;
+  }
+
+  renderChartByParams(config = {}) {
     return (
       <div className="widgets--widget-container">
         <Chart config={config}
-               colorSets={colorSets}
+               colorSets={this.defaultParams.colorSets}
                onDataPointHover={this.handleDataPointHover}
                onDataPointBlur={this.handleDataPointBlur}
+               className = 'bar-chart'
         />
       </div>
     );
@@ -145,31 +143,33 @@ class BarChartWidget extends React.Component {
         <div className="bar-chart-widget-no-data">No Data</div>
       );
 
-    const data = [];
 
-    let legendData = {
-      x: this.props.fakeData.x,
-      y: this.props.fakeData.y,
-      ...this.legendConfig
+    let config = {
+      ...this.defaultParams.chartConfigs
     };
 
-    data.push(legendData);
+    const length = this.props.fakeData.x.length;
+    let dataSource = [];
+    for(let i = 0; i < length; i++) {
+      dataSource.push({
+        label:this.props.fakeData.y[i],
+        y: this.props.fakeData.x[i],
+      });
+    }
+    config.data[0].dataPoints = dataSource;
 
-    return this.renderChartByParams(data);
+    return this.renderChartByParams(config);
   }
 
   renderRealData() {
 
-    const data = [];
+    let config = {
+      ...this.defaultParams.chartConfigs
+    };
+
+    let dataSource = [];
 
     this.props.data.sources.forEach((source, sourceIndex) => {
-
-      let legendData = {
-        x: [],
-        y: [],
-        ...this.legendConfig
-      };
-
       const storage = this.props.widgets.getIn([
         String(this.props.params.id),
         String(this.props.data.id),
@@ -178,15 +178,16 @@ class BarChartWidget extends React.Component {
       ]) || [];
 
       storage.forEach((item) => {
-        legendData.x.push(item.get('value'));
-        legendData.y.push(item.get('name'));
+        dataSource.push({
+          label: item.get('name'),
+          y: item.get('value')
+        });
       });
-
-      data.push(legendData);
-
     });
 
-    return this.renderChartByParams(data);
+    config.data[0].dataPoints = dataSource;
+
+    return this.renderChartByParams(config);
   }
 
   render() {
@@ -195,7 +196,6 @@ class BarChartWidget extends React.Component {
       return this.renderFakeData();
 
     return this.renderRealData();
-
   }
 
 }
