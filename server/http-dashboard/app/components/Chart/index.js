@@ -16,6 +16,7 @@ class Chart extends React.Component {
     colorSets: PropTypes.array,
     onDataPointHover: PropTypes.func,
     onDataPointBlur: PropTypes.func,
+    className: PropTypes.string,
   };
 
   constructor(props) {
@@ -202,7 +203,7 @@ class Chart extends React.Component {
   render() {
 
     return (
-      <div>
+      <div className={this.props.className}>
         <div className="canvasjs-widget-container" ref={(ref) => this.chartRef = ref}/>
       </div>
     );
