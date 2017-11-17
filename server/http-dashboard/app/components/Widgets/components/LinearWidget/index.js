@@ -130,28 +130,38 @@ class LinearWidget extends React.Component {
     });
 
     for(let i = 0; i < 7; i++) {
-      dataSource = dataSource.update('dataPoints', (dataPoints) => dataPoints.push(
+      dataSource = dataSource.update('dataPoints', (dataPoints) => dataPoints.push(fromJS(
         { x: moment().subtract(i, 'days').toDate(), y: _.random(0,500)}
-      ));
+      )));
     }
 
-    return dataSource.toJS();
+    return dataSource;
   }
 
   renderFakeDataChart() {
+
+    const MAX_LABEL_LENGTH = 60;
+    const DEFAULT_TICK_FORMAT = 'DDD, hh:mm TT';
+    const DEFAULT_HOVER_FORMAT = 'DDD, DD MMM, hh:mm TT';
 
     const data = fromJS(this.props.data);
 
     if(!data.has('sources') || !data.get('sources').size)
       return null;
 
-    const dataSources = data.get('sources').map(this.generateFakeData).toJS();
+    const dataSources = data.get('sources')
+      .map(this.generateFakeData)
+      .map(dataSource =>
+        dataSource.set('xValueFormatString', DEFAULT_HOVER_FORMAT).set('yValueFormatString', '###,###,###,###')
+      );
 
     const config = {
       axisX: {
-        valueFormatString: "DD-MMM"
+        labelMaxWidth: MAX_LABEL_LENGTH,
+        labelAngle: 0,
+        valueFormatString: DEFAULT_TICK_FORMAT,
       },
-      data: dataSources
+      data: dataSources.toJS()
     };
 
     return this.renderChartByParams(config);
