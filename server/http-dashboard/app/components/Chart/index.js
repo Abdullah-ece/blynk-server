@@ -21,10 +21,10 @@ class Chart extends React.Component {
 
     const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
 
-    if(this.props.colorSets && typeof this.props.colorSets === 'object' && this.props.colorSets.length !== 'undefined')
-    this.props.colorSets.map((colorSet) => {
-      Canvasjs.addColorSet(colorSet.name, colorSet.colors);
-    });
+    if(Array.isArray(this.props.colorSets))
+      this.props.colorSets.map((colorSet) => {
+        Canvasjs.addColorSet(colorSet.name, colorSet.colors);
+      });
 
     this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
 
