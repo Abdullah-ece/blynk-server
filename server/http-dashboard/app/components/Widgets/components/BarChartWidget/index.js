@@ -42,6 +42,10 @@ class BarChartWidget extends React.Component {
   defaultParams = {
     chartConfigs: {
       toolTip:{
+        fontColor: "#0f0f13",
+        fontSize: 12,
+        fontFamily: 'PF DinDisplay Pro',
+        fontWeight: 300,
         content: "{label}: {y}",
         cornerRadius: 6,
         borderThickness: 0,
