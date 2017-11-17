@@ -10,6 +10,8 @@ import {connect} from 'react-redux';
 
 import BarChartSettings from './settings';
 
+import _ from 'lodash';
+
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
 }))
@@ -36,7 +38,8 @@ class BarChartWidget extends React.Component {
     fakeData: PropTypes.shape({
       x: PropTypes.arrayOf(PropTypes.number),
       y: PropTypes.arrayOf(PropTypes.string)
-    })
+    }),
+    isChartPreview: PropTypes.bool,
   };
 
   defaultParams = {
@@ -107,26 +110,45 @@ class BarChartWidget extends React.Component {
     );
   }
 
+  generateFakeData() {
+    let labels = ['Saphire','Boost','Emulsiphier','Destain','Bleach'];
+    const length = _.random(2,5);
+    let dataSource = [];
+    for(let i = 0; i < length; i++) {
+      dataSource.push({
+        label: labels.splice(_.random(labels.length-1), 1).toString(),
+        y: _.random(1000),
+      });
+    }
+    return dataSource;
+  }
   renderFakeData() {
-
-    if(!this.props.fakeData || !this.props.fakeData.x || !this.props.fakeData.y
-      || ( Array.isArray(this.props.fakeData.x) && !this.props.fakeData.x.length )
-      || ( Array.isArray(this.props.fakeData.y) && !this.props.fakeData.y.length ))
-      return (
-        <div className="bar-chart-widget-no-data">No Data</div>
-      );
-
-
     let config = {
       ...this.defaultParams.chartConfigs
     };
 
-    const length = this.props.fakeData.x.length;
+    let data = this.props.fakeData;
+    if(!data || !data.x || !data.y
+      || ( Array.isArray(data.x) && !data.x.length )
+      || ( Array.isArray(data.y) && !data.y.length )){
+
+
+      if(this.props.isChartPreview){
+        return (
+          <div className="bar-chart-widget-no-data">No Data</div>
+        );
+      }else {
+        config.data[0].dataPoints = this.generateFakeData();
+        return this.renderChartByParams(config);
+      }
+    }
+
+    const length = data.x.length;
     let dataSource = [];
     for(let i = 0; i < length; i++) {
       dataSource.push({
-        label:this.props.fakeData.y[i],
-        y: this.props.fakeData.x[i],
+        label:data.y[i],
+        y: data.x[i],
       });
     }
     config.data[0].dataPoints = dataSource;
@@ -157,6 +179,9 @@ class BarChartWidget extends React.Component {
         });
       });
     });
+
+    if (!dataSource.length)
+      return (<div className="bar-chart-widget-no-data">No data</div>);
 
     config.data[0].dataPoints = dataSource;
 

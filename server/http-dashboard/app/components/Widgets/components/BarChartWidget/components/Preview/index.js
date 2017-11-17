@@ -77,7 +77,8 @@ class Preview extends React.Component {
           <BarChartWidget fetchRealData={false}
                           params={this.props.params}
                           data={this.props.widgetData}
-                          fakeData={this.props.chartData}/>
+                          fakeData={this.props.chartData}
+                          isChartPreview={true}/>
         </div>
 
         <div>
