@@ -57,6 +57,7 @@ class BarChartWidget extends React.Component {
       },
       colorSet: "default",
       axisY2:{
+        labelFontSize: "12",
         labelAngle: 0,
         gridColor: "rgba(33, 34, 39, 0.05)",
         gridThickness: 1,
