@@ -110,13 +110,13 @@ class BarChartWidget extends React.Component {
     );
   }
 
-  generateFakeData() {
-    let labels = ['Saphire','Boost','Emulsiphier','Destain','Bleach'];
+  generateFakeData(){
+    let labels = ['Column 1','Column 2','Column 3','Column 4','Column 5'];
     const length = _.random(2,5);
     let dataSource = [];
     for(let i = 0; i < length; i++) {
       dataSource.push({
-        label: labels.splice(_.random(labels.length-1), 1).toString(),
+        label: labels.splice(0, 1).toString(),
         y: _.random(1000),
       });
     }
