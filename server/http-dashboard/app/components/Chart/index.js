@@ -21,7 +21,7 @@ class Chart extends React.Component {
 
     const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
 
-    if(Array.isArray(this.props.colorSets))
+    if(this.props.colorSets.constructor === Array)
       this.props.colorSets.map((colorSet) => {
         Canvasjs.addColorSet(colorSet.name, colorSet.colors);
       });
@@ -92,84 +92,6 @@ class Chart extends React.Component {
     data: [],
     legend: {
       ...this.legendDefaultOptions,
-    },
-    toolTip: {
-      shared: true,
-      contentFormatter: (data) => {
-
-        const getTooltipTemplate = ( legendsTemplateFn, titleTemplateFn, data) => {
-          return `
-            <div class="chart-tooltip">
-              ${titleTemplateFn(data)}
-              <div class="chart-tooltip-legends">
-                ${legendsTemplateFn(data)}
-              </div>
-            </div>
-            `;
-        };
-
-        const getLegendsTemplate = (data) => {
-
-          const getLegendTemplate = (name, value, color) => {
-            return (
-              `<div class="chart-tooltip-legends-legend">
-                <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
-                <div class="chart-tooltip-legends-legend-name">${name}:</div>
-                <div class="chart-tooltip-legends-legend-value">${value}</div>
-              </div>`
-            );
-          };
-
-          const legends = [];
-
-          data.forEach((item) => {
-            legends.push(getLegendTemplate(
-              item.name,
-              item.y,
-              item.color
-            ));
-          });
-
-          return legends.join('');
-
-        };
-
-        const getTitleTemplate = (data) => {
-          return `<div class="chart-tooltip-title">${data[0].x}</div>`;
-        };
-
-        // highlight point
-        const series = data.entries[0].dataSeries;
-        series.markerType = 'circle';
-
-        const tooltipData = [];
-
-        data.entries.forEach((entry) => {
-
-          const getFormattedValue = (format, value) => {
-
-            if(format) {
-              if(value instanceof Date)
-                return Canvasjs.formatDate(value, format);
-
-              if(!isNaN(Number(value)))
-                return Canvasjs.formatNumber(value, format);
-            }
-
-            return value;
-          };
-
-          tooltipData.push({
-            x: getFormattedValue(entry.dataSeries.xValueFormatString, entry.dataPoint.x),
-            y: getFormattedValue(entry.dataSeries.yValueFormatString, entry.dataPoint.y),
-            name: entry.dataSeries.name,
-            color: entry.dataSeries.lineColor,
-          });
-        });
-
-        return getTooltipTemplate(getLegendsTemplate, getTitleTemplate, tooltipData);
-
-      }
     }
   };
 

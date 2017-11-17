@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {Map, fromJS, List} from 'immutable';
 import moment from 'moment';
 import _ from 'lodash';
+import Canvasjs from 'canvasjs';
 
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
@@ -41,6 +42,86 @@ class LinearWidget extends React.Component {
     type: 'line',
     markerType: 'none',
     lineThickness: 1,
+  };
+
+  defaultToolTip = {
+
+    shared: true,
+    contentFormatter: (data) => {
+
+      const getTooltipTemplate = ( legendsTemplateFn, titleTemplateFn, data) => {
+        return `
+            <div class="chart-tooltip">
+              ${titleTemplateFn(data)}
+              <div class="chart-tooltip-legends">
+                ${legendsTemplateFn(data)}
+              </div>
+            </div>
+            `;
+      };
+
+      const getLegendsTemplate = (data) => {
+
+        const getLegendTemplate = (name, value, color) => {
+          return (
+            `<div class="chart-tooltip-legends-legend">
+                <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
+                <div class="chart-tooltip-legends-legend-name">${name}:</div>
+                <div class="chart-tooltip-legends-legend-value">${value}</div>
+              </div>`
+          );
+        };
+
+        const legends = [];
+
+        data.forEach((item) => {
+          legends.push(getLegendTemplate(
+            item.name,
+            item.y,
+            item.color
+          ));
+        });
+
+        return legends.join('');
+
+      };
+
+      const getTitleTemplate = (data) => {
+        return `<div class="chart-tooltip-title">${data[0].x}</div>`;
+      };
+
+      // highlight point
+      const series = data.entries[0].dataSeries;
+      series.markerType = 'circle';
+
+      const tooltipData = [];
+
+      data.entries.forEach((entry) => {
+
+        const getFormattedValue = (format, value) => {
+
+          if(format) {
+            if(value instanceof Date)
+              return Canvasjs.formatDate(value, format);
+
+            if(!isNaN(Number(value)))
+              return Canvasjs.formatNumber(value, format);
+          }
+
+          return value;
+        };
+
+        tooltipData.push({
+          x: getFormattedValue(entry.dataSeries.xValueFormatString, entry.dataPoint.x),
+          y: getFormattedValue(entry.dataSeries.yValueFormatString, entry.dataPoint.y),
+          name: entry.dataSeries.name,
+          color: entry.dataSeries.lineColor,
+        });
+      });
+
+      return getTooltipTemplate(getLegendsTemplate, getTitleTemplate, tooltipData);
+
+    }
   };
 
   getMinMaxXFromLegendsList(data) {
@@ -161,6 +242,7 @@ class LinearWidget extends React.Component {
         labelAngle: 0,
         valueFormatString: DEFAULT_TICK_FORMAT,
       },
+      toolTip: this.defaultToolTip,
       data: dataSources.toJS()
     };
 
@@ -226,6 +308,7 @@ class LinearWidget extends React.Component {
         labelAngle: 0,
         valueFormatString: formats.tickFormat,
       },
+      toolTip: this.defaultToolTip,
       data: dataSources.toJS()
     };
 
