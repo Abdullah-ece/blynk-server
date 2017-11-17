@@ -75,7 +75,6 @@ class BarChartWidget extends React.Component {
       },
       data: [
         {
-          highlightEnabled: false,
           axisYType: "secondary",
           type: "bar",
         }
