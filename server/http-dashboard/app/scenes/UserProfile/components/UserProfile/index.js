@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import {Tabs, Icon} from 'antd';
 import {MainLayout} from 'components';
 import {
-  TABS,
-  getTabValueByKey
+  TABS
 } from 'services/UserProfile';
 
 import MyAccount from './components/AccountSettings';
@@ -38,12 +37,12 @@ class UserProfile extends Component {
   }
 
   render() {
-    const title = getTabValueByKey(this.props.params.activeTab);
+
     return(
       <MainLayout>
         {!this.props.Organization.isLoading &&
         (<div>
-          <MainLayout.Header title={title}/>
+          <MainLayout.Header title="Account Settings"/>
           <MainLayout.Content className="product-create-content">
 
             <Tabs defaultActiveKey={TABS.ACCOUNT_SETTINGS.key}

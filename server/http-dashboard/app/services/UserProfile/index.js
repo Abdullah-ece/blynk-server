@@ -3,7 +3,7 @@ import _ from 'lodash';
 export const TABS = {
   ACCOUNT_SETTINGS: {
     key:'account-settings',
-    value:'Account Settings',
+    value:'My Profile',
   },
   ORGANIZATION_SETTINGS: {
     key:'organization-settings',
@@ -11,11 +11,11 @@ export const TABS = {
   },
   USERS:{
     key:'users',
-    value:'Organization Users',
+    value:'Users',
   },
   BRANDING:{
     key:'branding',
-    value:'Organization Branding',
+    value:'Branding',
   },
 };
 
