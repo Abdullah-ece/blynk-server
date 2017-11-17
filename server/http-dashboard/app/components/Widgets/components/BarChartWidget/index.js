@@ -98,7 +98,7 @@ class BarChartWidget extends React.Component {
       <div className="widgets--widget-container">
         <Chart config={config}
                colorSets={this.defaultParams.colorSets}
-               className = 'bar-chart'
+               className = "bar-chart"
         />
       </div>
     );

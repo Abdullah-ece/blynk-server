@@ -154,12 +154,7 @@ class LinearWidget extends React.Component {
       data: dataSources
     };
 
-    return (
-      <div className="widgets--widget-container">
-        <Chart config={config}/>
-      </div>
-    );
-
+    return this.renderChartByParams(config);
   }
 
   generateData(source, sourceIndex) {
@@ -224,11 +219,29 @@ class LinearWidget extends React.Component {
       data: dataSources.toJS()
     };
 
-    return (
-      <div className="widgets--widget-container">
-        <Chart config={config}/>
-      </div>
-    );
+    return this.renderChartByParams(config);
+  }
+
+  renderChartByParams(config) {
+
+    const hasData = !!(config.data.reduce((acc, item) => {
+      if(Array.isArray(item.dataPoints) && acc < item.dataPoints.length)
+        return item.dataPoints.length;
+      return acc;
+    }, 0));
+
+
+    if (hasData) {
+      return (
+        <div className="widgets--widget-container">
+          <Chart config={config}/>
+        </div>
+      );
+    } else {
+      return (
+        <div className="bar-chart-widget-no-data">No Data</div>
+      );
+    }
   }
 
   render() {
