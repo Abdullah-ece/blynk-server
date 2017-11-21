@@ -171,7 +171,7 @@ class OrganizationUsers extends React.Component {
     return (
       <div className="users-profile--organization-settings--organization-users">
         <div className="users-profile--organization-settings--organization-users-delete-button">
-          <Popconfirm title="Are you sure you want to delete selected users?？"
+          <Popconfirm title="Are you sure you want to delete selected users?"
                       okText="Yes"
                       cancelText="No"
                       onConfirm={this.handleDeleteUsers.bind(this)}

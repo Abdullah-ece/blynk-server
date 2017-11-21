@@ -120,7 +120,7 @@ class AdminTableList extends React.Component {
     return (
       <div className="admins-table-list">
         <div className="admins-table-list-delete-button">
-          <Popconfirm title="Are you sure you want to delete selected users?？"
+          <Popconfirm title="Are you sure you want to delete selected users?"
                       okText="Yes"
                       cancelText="No"
                       onConfirm={this.handleDeleteUser}

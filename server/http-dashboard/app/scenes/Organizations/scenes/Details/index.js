@@ -192,7 +192,7 @@ class Details extends React.Component {
         <MainLayout.Header title={organization.get('name')}
                            options={(
                              <div>
-                               <Popconfirm title="Are you sure？" okText="Yes" cancelText="No"
+                               <Popconfirm title="Are you sure?" okText="Yes" cancelText="No"
                                            onConfirm={this.handleOrganizationDelete}>
                                  <Button type="danger">Delete</Button>
                                </Popconfirm>
