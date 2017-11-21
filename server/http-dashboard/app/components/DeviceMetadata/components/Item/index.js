@@ -36,8 +36,6 @@ class Item extends React.Component {
               <Button type="primary" onClick={this.onEditClick}>
                 <Icon type="edit"/>Edit
               </Button>
-            ) || (
-              <div className="device-metadata--item-edit-no-permission">No permissions to edit</div>
             )}
           </Col>
         </Row>
