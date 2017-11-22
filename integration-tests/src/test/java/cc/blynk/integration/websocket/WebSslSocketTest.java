@@ -25,10 +25,8 @@ import static org.mockito.Mockito.verify;
  * Created on 13.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class WebSslSocketTest extends BaseTest {
 
-    public static int sslWebSocketPort = httpsPort;
     private static BaseServer webSocketServer;
 
     @AfterClass
@@ -50,7 +48,7 @@ public class WebSslSocketTest extends BaseTest {
 
     @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", sslWebSocketPort, HttpAPIServer.WEBSOCKET_PATH, true);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", httpsPort, HttpAPIServer.WEBSOCKET_PATH, true);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

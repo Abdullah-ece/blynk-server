@@ -9,6 +9,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.verify;
 public class AppWebSocketTest extends IntegrationBase {
 
     //web socket ports
-    public static int tcpWebSocketPort;
     private static BaseServer webSocketServer;
     private static BaseServer hardwareServer;
     private static BaseServer appServer;
@@ -60,16 +60,15 @@ public class AppWebSocketTest extends IntegrationBase {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(localHolder).start();
         appServer = new AppServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();
+        webSocketServer = new HttpsAPIServer(localHolder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 
     @Test
     public void testAppWebSocketlogin() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, "/websockets", false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", httpsPort, "/websocket", true);
         webSocketClient.start();
         webSocketClient.send("login " + DEFAULT_TEST_USER + " 1");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
