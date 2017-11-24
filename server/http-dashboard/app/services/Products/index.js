@@ -216,6 +216,11 @@ export const Unit = {
     key: 'Ton',
     value: 'Ton'
   },
+  Tonne: {
+    abbreviation: 't',
+    key: 'Tonne',
+    value: 'Tonne'
+  },
   Milligram: {
     abbreviation: 'mg',
     key: 'Milligram',
@@ -242,7 +247,7 @@ export const Unit = {
     value: 'Gallon'
   },
   Liter: {
-    abbreviation: 'lt',
+    abbreviation: 'l',
     key: 'Liter',
     value: 'Liter'
   },
@@ -257,7 +262,7 @@ export const Unit = {
     value: 'Fahrenheit'
   },
   Kelvin: {
-    abbreviation: '°K',
+    abbreviation: 'K',
     key: 'Kelvin',
     value: 'Kelvin'
   },

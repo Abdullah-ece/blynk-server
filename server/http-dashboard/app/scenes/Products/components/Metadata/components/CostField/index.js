@@ -57,7 +57,8 @@ class CostField extends BaseField {
         Unit.Stone,
         Unit.Quarter,
         Unit.Hundredweight,
-        Unit.Ton
+        Unit.Ton,
+        Unit.Tonne,
       ],
       'Metric': [
         Unit.Milligram,
