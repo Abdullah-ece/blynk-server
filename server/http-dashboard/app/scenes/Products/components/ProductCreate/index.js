@@ -133,7 +133,7 @@ class ProductCreate extends React.Component {
   render() {
     return (
       <MainLayout>
-        <MainLayout.Header title="New Product"
+        <MainLayout.Header title={this.props.params.title}
                        options={(
                          <div>
                            <Button type="default"

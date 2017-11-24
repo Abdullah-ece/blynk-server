@@ -101,6 +101,7 @@ import ProductCreate from 'scenes/Products/components/ProductCreate';
   })();
 
   return {
+    values: getFormValues('product-edit-info')(state),
     organization: fromJS(state.Organization),
     orgId: state.Account.orgId,
     product: state.Product.edit,
@@ -140,6 +141,7 @@ class Create extends React.Component {
     isMetadataFirstTime: React.PropTypes.bool,
     isProductInfoInvalid: React.PropTypes.bool,
 
+    values: React.PropTypes.object,
     Fetch: React.PropTypes.func,
     Create: React.PropTypes.func,
     destroyForm: React.PropTypes.func,
@@ -356,6 +358,12 @@ class Create extends React.Component {
 
     if (!this.props.product.info.values.boardType)
       return null;
+
+    if(this.props.values){
+      params.title = this.props.values.name && this.props.values.name !== "" ? this.props.values.name : "New Product";
+    } else {
+      params.title = "New Product";
+    }
 
     return (
       <ProductCreate product={this.props.product}
