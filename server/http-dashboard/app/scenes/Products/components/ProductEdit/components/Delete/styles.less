@@ -1,0 +1,60 @@
+@import 'components/Layout/style-guide';
+
+.product-delete-confirmation-modal.delete-confirmation-modal {
+  .delete-confirmation-modal-title {
+    .font-h2;
+    text-align: center;
+    font-weight: 400;
+    i {
+      margin-right: 10px;
+      font-size: @style-font-size-5;
+      color: @color-critical;
+    }
+    line-height: 24px;
+    vertical-align: middle;
+  }
+  .delete-confirmation-modal-content {
+    .delete-confirmation-modal-content-notice {
+      margin: 20px 0;
+      font-weight: 500;
+      font-size: 12px;
+      text-align: center;
+      span {
+        color: @color-critical;
+      }
+    }
+    .delete-confirmation-modal-content-sub-notice {
+      margin: 20px 0;
+      font-size: 12px;
+      text-align: center;
+    }
+    .delete-confirmation-modal-buttons {
+      text-align: center;
+      button {
+        margin: 0 4px;
+        &:first-child {
+          margin-left: 0
+        }
+        &:last-child {
+          margin-right: 0
+        }
+      }
+    }
+    .delete-confirmation-modal-input {
+      text-align: center;
+      input {
+        text-align: center;
+        width: 220px;
+      }
+    }
+    .delete-confirmation-modal-buttons-cancel {
+      width: 96px;
+    }
+    .delete-confirmation-modal-buttons-confirm {
+      width: 212px;
+    }
+  }
+  .delete-confirmation-modal-wrapper {
+    padding: 16px;
+  }
+}
