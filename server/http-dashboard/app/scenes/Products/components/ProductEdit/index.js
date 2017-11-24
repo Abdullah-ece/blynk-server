@@ -14,8 +14,10 @@ import {
   DataStreams as DataStreamsTab,
 }                                           from '../ProductManage';
 
+import _                        from 'lodash';
 import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
 import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
+import DeleteModal              from './components/Delete';
 
 class ProductEdit extends React.Component {
 
@@ -34,6 +36,7 @@ class ProductEdit extends React.Component {
     onDataStreamsFieldChange: React.PropTypes.func,
     onDataStreamsFieldsChange: React.PropTypes.func,
     updateMetadataFirstTimeFlag: React.PropTypes.func,
+    onDelete: React.PropTypes.func,
 
     isFormDirty: React.PropTypes.bool,
     isMetadataInfoRead: React.PropTypes.bool,
@@ -50,12 +53,17 @@ class ProductEdit extends React.Component {
 
   constructor(props) {
     super(props);
+    const currentProduct = _.find(this.props.product, {
+      id: Number(this.props.params.id)
+    });
 
     this.state = {
       originalName: null,
       submited: false,
       activeTab: props && props.params.tab || TABS.INFO,
-      metadataIntroVisible: false
+      metadataIntroVisible: false,
+      showDeleteModal: false,
+      currentProduct: currentProduct,
     };
   }
 
@@ -129,6 +137,18 @@ class ProductEdit extends React.Component {
     this.props.handleSubmit();
   }
 
+  toggleDelete() {
+    this.setState({
+      showDeleteModal: !this.state.showDeleteModal
+    });
+  }
+
+  handleDeleteSubmit() {
+    return this.props.onDelete(this.props.params.id).then(() => {
+      this.toggleDelete();
+    });
+  }
+
   render() {
 
     return (
@@ -136,6 +156,7 @@ class ProductEdit extends React.Component {
         <MainLayout.Header title={this.state.originalName}
                            options={(
                              <div>
+                               <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
                                <Button type="default"
                                        onClick={this.props.handleCancel.bind(this)}>
                                  Cancel
@@ -191,7 +212,9 @@ class ProductEdit extends React.Component {
             </Tabs.TabPane>
 
           </Tabs>
-
+          <DeleteModal deviceCount={this.state.currentProduct.deviceCount} onCancel={this.toggleDelete.bind(this)}
+                       visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
+                       productName={this.state.currentProduct.name}/>
         </MainLayout.Content>
       </div>
     );

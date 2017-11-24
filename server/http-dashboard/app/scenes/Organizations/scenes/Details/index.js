@@ -5,8 +5,6 @@ import {ProductsFetch}      from 'data/Product/api';
 import {
   Button,
   Tabs,
-  message,
-  Popconfirm
 }                           from 'antd';
 import PropTypes            from 'prop-types';
 import {
@@ -81,7 +79,6 @@ class Details extends React.Component {
 
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleOrganizationEdit = this.handleOrganizationEdit.bind(this);
-    this.handleOrganizationDelete = this.handleOrganizationDelete.bind(this);
   }
 
   componentWillMount() {
@@ -139,35 +136,6 @@ class Details extends React.Component {
     ADMINS: 'admins'
   };
 
-  toggleOrganizationDeleteLoading(state) {
-    this.props.OrganizationsDetailsUpdate(
-      this.props.details.set('organizationDeleteLoading', state)
-    );
-  }
-
-  handleOrganizationDelete() {
-    this.toggleOrganizationDeleteLoading(true);
-
-    this.props.OrganizationsDelete({
-      id: this.props.params.id
-    }).then(() => {
-
-      this.props.OrganizationsFetch().then(() => {
-
-        this.context.router.push('/organizations');
-
-        this.toggleOrganizationDeleteLoading(false);
-      });
-
-    }).catch((response) => {
-      this.toggleOrganizationDeleteLoading(false);
-
-      const data = response.error.response.data;
-
-      message.error(data.error && data.error.message || 'Cannot delete organization');
-    });
-  }
-
   handleTabChange(tab) {
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', tab)
@@ -192,10 +160,6 @@ class Details extends React.Component {
         <MainLayout.Header title={organization.get('name')}
                            options={(
                              <div>
-                               <Popconfirm title="Are you sure?" okText="Yes" cancelText="No"
-                                           onConfirm={this.handleOrganizationDelete}>
-                                 <Button type="danger">Delete</Button>
-                               </Popconfirm>
                                <Button type="primary" loading={this.props.details.get('loading')}
                                        onClick={this.handleOrganizationEdit}>Edit</Button>
                              </div>

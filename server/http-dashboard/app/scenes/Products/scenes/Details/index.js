@@ -11,7 +11,6 @@ import * as API                 from 'data/Product/api';
 import {connect}                from 'react-redux';
 import {bindActionCreators}     from 'redux';
 import _                        from 'lodash';
-import DeleteModal              from './components/Delete';
 import {TABS}                   from 'services/Products';
 import './styles.less';
 
@@ -22,13 +21,11 @@ import {MainLayout} from 'components';
   canEditProduct: state.Organization && state.Organization.parentId && state.Organization.parentId === -1,
 }), (dispatch) => ({
   Fetch: bindActionCreators(API.ProductFetch, dispatch),
-  Delete: bindActionCreators(API.ProductDelete, dispatch)
 }))
 class ProductDetails extends React.Component {
 
   static propTypes = {
     Fetch: React.PropTypes.func,
-    Delete: React.PropTypes.func,
 
     params: React.PropTypes.object,
     location: React.PropTypes.object,
@@ -48,7 +45,6 @@ class ProductDetails extends React.Component {
     this.state = {
       product: null,
       activeTab: props && props.params.tab || TABS.INFO,
-      showDeleteModal: false
     };
   }
 
@@ -90,21 +86,6 @@ class ProductDetails extends React.Component {
     this.context.router.push(`/product/${this.props.params.id}/${key}`);
   }
 
-  handleDeleteSubmit() {
-    return this.props.Delete(this.props.params.id).then(() => {
-      this.toggleDelete();
-      this.context.router.push('/products?deleted=true');
-    }).catch((err) => {
-      message.error(err.message || 'Cannot delete product');
-    });
-  }
-
-  toggleDelete() {
-    this.setState({
-      showDeleteModal: !this.state.showDeleteModal
-    });
-  }
-
   handleEdit() {
     if (this.state.activeTab) {
       this.context.router.push(`/products/edit/${this.props.params.id}/${this.state.activeTab}`);
@@ -128,7 +109,6 @@ class ProductDetails extends React.Component {
         <MainLayout.Header title={this.state.product.name}
                            options={this.props.canEditProduct && (
                              <div>
-                               <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
                                <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
                                <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
                              </div>
@@ -154,9 +134,6 @@ class ProductDetails extends React.Component {
               <Dashboard widgets={(this.state.product.webDashboard && this.state.product.webDashboard.widgets) || []}/>
             </Tabs.TabPane>
           </Tabs>
-          <DeleteModal deviceCount={this.state.product.deviceCount} onCancel={this.toggleDelete.bind(this)}
-                       visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
-                       productName={this.state.product.name}/>
         </MainLayout.Content>
       </MainLayout>
     );

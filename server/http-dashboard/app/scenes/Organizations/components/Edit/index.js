@@ -1,7 +1,7 @@
 import React                from 'react';
 import {MainLayout}         from 'components';
 import Manage               from './../Manage';
-import {Button}             from 'antd';
+import {Button, Popconfirm} from 'antd';
 import PropTypes            from 'prop-types';
 import {List, Map}          from 'immutable';
 import {reduxForm}          from 'redux-form';
@@ -15,6 +15,7 @@ class Edit extends React.Component {
     products: PropTypes.instanceOf(List),
 
     onCancel: PropTypes.func,
+    onDelete: PropTypes.func,
     onTabChange: PropTypes.func,
     handleCancel: PropTypes.func,
     handleSubmit: PropTypes.func,
@@ -37,6 +38,10 @@ class Edit extends React.Component {
         <MainLayout.Header title={this.props.formValues.get('name')}
                            options={(
                              <div>
+                               <Popconfirm title="Are you sure?" okText="Yes" cancelText="No"
+                                           onConfirm={this.props.onDelete}>
+                                 <Button type="danger">Delete</Button>
+                               </Popconfirm>
                                <Button type="default"
                                        onClick={this.props.onCancel}>
                                  Cancel

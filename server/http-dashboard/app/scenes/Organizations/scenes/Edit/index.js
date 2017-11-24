@@ -2,6 +2,9 @@ import React                  from 'react';
 import {connect}              from 'react-redux';
 import {bindActionCreators}   from 'redux';
 import {
+  message
+}                           from 'antd';
+import {
   initialize,
   destroy,
   getFormSyncErrors,
@@ -23,14 +26,15 @@ import {
   OrganizationsManageUpdate,
   OrganizationsCreate,
   OrganizationsFetch,
+  OrganizationsDelete,
   OrganizationsUpdate,
   OrganizationsUsersFetch,
-  OrganizationsDetailsUpdate
+  OrganizationsDetailsUpdate,
 }                             from 'data/Organizations/actions';
 
 import {
   OrganizationSendInvite,
-  OrganizationUsersDelete
+  OrganizationUsersDelete,
 }                             from 'data/Organization/actions';
 
 
@@ -64,6 +68,7 @@ import AdminsEditScene from "../AdminsEdit/index";
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   OrganizationsFetch: bindActionCreators(OrganizationsFetch, dispatch),
+  OrganizationsDelete: bindActionCreators(OrganizationsDelete, dispatch),
   OrganizationsUpdate: bindActionCreators(OrganizationsUpdate, dispatch),
   OrganizationsCreate: bindActionCreators(OrganizationsCreate, dispatch),
   OrganizationSendInvite: bindActionCreators(OrganizationSendInvite, dispatch),
@@ -88,6 +93,7 @@ class Edit extends React.Component {
     fetchProducts: PropTypes.func,
     OrganizationSave: PropTypes.func,
     OrganizationsFetch: PropTypes.func,
+    OrganizationsDelete: PropTypes.func,
     OrganizationsCreate: PropTypes.func,
     OrganizationsUpdate: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
@@ -119,6 +125,7 @@ class Edit extends React.Component {
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleSubmitFail = this.handleSubmitFail.bind(this);
     this.handleSubmitSuccess = this.handleSubmitSuccess.bind(this);
+    this.handleOrganizationDelete = this.handleOrganizationDelete.bind(this);
   }
 
   componentWillMount() {
@@ -248,6 +255,35 @@ class Edit extends React.Component {
     });
   }
 
+  toggleOrganizationDeleteLoading(state) {
+    this.props.OrganizationsDetailsUpdate(
+      this.props.details.set('organizationDeleteLoading', state)
+    );
+  }
+
+  handleOrganizationDelete() {
+    this.toggleOrganizationDeleteLoading(true);
+
+    this.props.OrganizationsDelete({
+      id: this.props.params.id
+    }).then(() => {
+
+      this.props.OrganizationsFetch().then(() => {
+
+        this.context.router.push('/organizations');
+
+        this.toggleOrganizationDeleteLoading(false);
+      });
+
+    }).catch((response) => {
+      this.toggleOrganizationDeleteLoading(false);
+
+      const data = response.error.response.data;
+
+      message.error(data.error && data.error.message || 'Cannot delete organization');
+    });
+  }
+
   render() {
 
     if (this.props.manage.get('loading') || !this.props.admins.get('users'))
@@ -264,6 +300,7 @@ class Edit extends React.Component {
         onSubmitSuccess={this.handleSubmitSuccess}
         onSubmitFail={this.handleSubmitFail}
         onCancel={this.handleCancel}
+        onDelete={this.handleOrganizationDelete}
         products={this.props.products}
         onTabChange={this.handleTabChange}
         adminsComponent={<AdminsEditScene params={this.props.params}/>}

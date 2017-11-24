@@ -110,6 +110,7 @@ import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevices
   submitFormById: bindActionCreators(submit, dispatch),
   Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
+  Delete: bindActionCreators(API.ProductDelete, dispatch),
   destroyForm: bindActionCreators(destroy, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
@@ -141,6 +142,7 @@ class Edit extends React.Component {
     dashboard: React.PropTypes.any,
     Fetch: React.PropTypes.func,
     Update: React.PropTypes.func,
+    Delete: React.PropTypes.func,
     Create: React.PropTypes.func,
     destroyForm: React.PropTypes.func,
     initializeForm: React.PropTypes.func,
@@ -461,6 +463,14 @@ class Edit extends React.Component {
     });
   }
 
+  handleDeleteSubmit() {
+    return this.props.Delete(this.props.params.id).then(() => {
+      this.context.router.push('/products?deleted=true');
+    }).catch((err) => {
+      message.error(err.message || 'Cannot delete product');
+    });
+  }
+
   render() {
     if (!this.props.product.info.values.id)
       return null;
@@ -489,7 +499,8 @@ class Edit extends React.Component {
                      handleSubmit={this.handleSubmit.bind(this)}
                      handleCancel={this.handleCancel.bind(this)}
                      onTabChange={this.onTabChange.bind(this)}
-                     params={params}/>
+                     params={params}
+                     onDelete = {this.handleDeleteSubmit.bind(this)}/>
         <ProductDevicesForceUpdate
           isModalVisible={this.state.isDevicesForceUpdateVisible}
           loading={this.state.deviceForceUpdateLoading}
