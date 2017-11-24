@@ -69,6 +69,9 @@ class ProductDeviceForceUpdate extends React.Component {
 
   render() {
 
+    if(!this.props.product)
+      return null;
+
     const DevicesText = getOptionByAmount(this.props.product.deviceCount, ['Device', 'Devices']);
 
     return (
