@@ -406,6 +406,10 @@ export const STATUS = {
 };
 
 export const TIMELINE_TIME_FILTERS = {
+  'LIVE': {
+    'key': 'LIVE',
+    'value': 'Live'
+  },
   'HOUR': {
     'key': 'HOUR',
     'value': '1 hour',

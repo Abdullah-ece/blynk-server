@@ -3,10 +3,11 @@ import {Radio} from 'antd';
 import {TIMELINE_TIME_FILTERS} from 'services/Devices';
 
 const labels = {
-  'HOUR': 'Last hour',
-  'DAY': 'Last day',
-  'WEEK': 'Last Week',
-  'MONTH': 'Last Month',
+  'LIVE' : 'Live',
+  'HOUR': 'Hour',
+  'DAY': 'Day',
+  'WEEK': 'Week',
+  'MONTH': 'Month',
   'CUSTOM': 'Custom Range'
 };
 
@@ -24,6 +25,9 @@ class TimeSelect extends React.Component {
     return (
       <div className="devices--device-dashboard-time-filtering-time-select">
         <Radio.Group {...this.props.input}>
+          <Radio.Button value={TIMELINE_TIME_FILTERS.LIVE.key}>
+            {labels[TIMELINE_TIME_FILTERS.LIVE.key]}
+          </Radio.Button>
           <Radio.Button value={TIMELINE_TIME_FILTERS.HOUR.key}>
             {labels[TIMELINE_TIME_FILTERS.HOUR.key]}
           </Radio.Button>
