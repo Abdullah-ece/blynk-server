@@ -120,7 +120,7 @@ class Header extends React.Component {
           </div>
           <div className="user-layout--header-user">
             <div className="dark user-layout--header-user-link">
-              { this.props.Account.email }
+              { this.props.Account.name }
               <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
                 <Button type="primary" icon="user" className="user-layout--header-user-button dark"/>
               </Dropdown>
