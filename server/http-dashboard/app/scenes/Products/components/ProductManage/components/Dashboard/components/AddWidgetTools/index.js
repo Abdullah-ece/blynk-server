@@ -36,7 +36,6 @@ class AddWidgetTools extends React.Component {
   render() {
     return (
       <div className="product-manage-dashboard--add-widget-tools">
-        <div className="product-manage-dashboard--add-widget-tools-title">+ Add New Widget:</div>
         <div className="product-manage-dashboard--add-widget-tools-buttons">
           <Button.Group>
             <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
