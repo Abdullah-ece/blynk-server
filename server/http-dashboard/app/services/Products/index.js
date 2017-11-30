@@ -75,7 +75,7 @@ export const hardcodedRequiredMetadataFieldsNames = {
   LocationName: 'Location Name',
   Manufacturer: 'Manufacturer',
   ModelName: 'Model Name',
-  TimezoneOfTheDevice: 'Timezone of the device'
+  TimezoneOfTheDevice: 'Device Timezone'
 };
 
 export const filterMetadataFields = (fields, filterHardcoded = true) => {

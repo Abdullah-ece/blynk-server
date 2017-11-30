@@ -47,7 +47,7 @@ class TimezoneOfDeviceField extends BaseField {
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>Timezone of the device</FormItem.Title>
+          <FormItem.Title style={{width: '50%'}}>Device Timezone</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
           <MetadataSelect displayError={false} name="value" values={timezones}
