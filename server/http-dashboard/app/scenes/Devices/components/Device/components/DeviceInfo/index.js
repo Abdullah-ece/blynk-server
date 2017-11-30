@@ -44,7 +44,7 @@ class DeviceInfo extends React.Component {
       sameDay: '[Today], hh:mm A',
       lastDay: '[Yesterday], hh:mm A',
       lastWeek: 'dddd, hh:mm A',
-      sameElse: 'hh:mm A, YYYY.MM.DD'
+      sameElse: 'hh:mm A, MM.DD.YYYY'
     };
 
     let lastReported = Number(time) ? moment(Number(time)).calendar(null, timeConfig) : 'Not reported yet';
@@ -71,7 +71,7 @@ class DeviceInfo extends React.Component {
             )}
             <Fieldset>
               <Fieldset.Legend>Device Activated</Fieldset.Legend>
-              {deviceActivatedTime} by {this.props.device.get('activatedBy')}
+              {deviceActivatedTime} <br/> by {this.props.device.get('activatedBy')}
             </Fieldset>
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
@@ -86,7 +86,7 @@ class DeviceInfo extends React.Component {
             {this.props.device.has('metadataUpdatedAt') && metadataUpdatedAt > 0 && (
               <Fieldset>
                 <Fieldset.Legend>Latest Metadata update</Fieldset.Legend>
-                {metadataUpdatedTime} by {this.props.device.get('metadataUpdatedBy')}
+                {metadataUpdatedTime} <br/> by {this.props.device.get('metadataUpdatedBy')}
               </Fieldset>
             )}
             {this.props.device.has('orgName') && (
