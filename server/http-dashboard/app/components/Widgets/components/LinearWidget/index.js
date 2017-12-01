@@ -195,7 +195,7 @@ class LinearWidget extends React.Component {
 
     return {
       tickFormat: null,
-      hoverFormat: null
+      hoverFormat: 'DDD, DD MMM, hh:mm:ss TT'
     };
 
   }
