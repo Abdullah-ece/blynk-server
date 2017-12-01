@@ -199,7 +199,7 @@ class DataStreams extends React.Component {
         values: {
           ...params.values,
           pin: this.generatePin(),
-          units: Unit.Inch.key,
+          units: Unit.None.key,
           isRecentlyCreated: true,
           pinType: 'VIRTUAL',
         }

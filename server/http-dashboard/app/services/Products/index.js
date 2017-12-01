@@ -146,6 +146,11 @@ export const exampleMetadataField = {
 };
 
 export const Unit = {
+  None: {
+    abbreviation: '',
+    key: 'None',
+    value: 'None'
+  },
   Inch: {
     abbreviation: 'in',
     key: 'Inch',

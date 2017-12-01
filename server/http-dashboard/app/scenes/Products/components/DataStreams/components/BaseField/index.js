@@ -64,6 +64,9 @@ class BaseField extends React.Component {
   }
 
   Unit = {
+    'Default' : [
+      Unit.None
+    ],
     'Length, Distance': {
       'Imperial': [
         Unit.Inch,
