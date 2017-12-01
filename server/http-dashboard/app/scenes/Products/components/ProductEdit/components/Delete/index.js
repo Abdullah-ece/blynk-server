@@ -19,7 +19,7 @@ class Delete extends React.Component {
   render() {
     return (
       <Modal width={380} onCancel={this.props.onCancel} visible={this.props.visible} footer={null} closable={false}
-             wrapClassName="product-delete-confirmation-modal delete-confirmation-modal">
+             wrapClassName="product-delete-confirmation-modal delete-confirmation-modal vertical-center-modal">
         <div className="delete-confirmation-modal-wrapper">
           <div className="delete-confirmation-modal-title">
             <Icon type="exclamation-circle"/> Are you sure?

@@ -11,7 +11,7 @@ class Modal extends React.Component {
   render() {
 
     return (
-      <AntModal {...this.props} wrapClassName={`modal-window ${this.props.wrapClassName || ''}`}/>
+      <AntModal {...this.props} wrapClassName={`modal-window ${this.props.wrapClassName || ''} vertical-center-modal`}/>
     );
   }
 
