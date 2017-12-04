@@ -24,6 +24,8 @@ class LinearWidget extends React.Component {
 
     editable: PropTypes.bool,
 
+    previewMode: PropTypes.bool,
+
     fetchRealData: PropTypes.bool,
 
     onWidgetDelete: PropTypes.func,
@@ -45,7 +47,7 @@ class LinearWidget extends React.Component {
   };
 
   defaultToolTip = {
-
+    enabled:  !(this.props.editable && !this.props.previewMode),
     shared: true,
     contentFormatter: (data) => {
 
@@ -338,7 +340,7 @@ class LinearWidget extends React.Component {
   }
 
   render() {
-
+    console.log("hide tooltip ? ",this.props.editable && !this.props.previewMode);
     if (!this.props.fetchRealData)
       return this.renderFakeDataChart();
 

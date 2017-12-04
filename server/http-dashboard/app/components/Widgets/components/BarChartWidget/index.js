@@ -26,6 +26,9 @@ class BarChartWidget extends React.Component {
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
 
+    editable: PropTypes.bool,
+    previewMode: PropTypes.bool,
+
     data: PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       w: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -45,6 +48,7 @@ class BarChartWidget extends React.Component {
   defaultParams = {
     chartConfigs: {
       toolTip:{
+        enabled: !(this.props.editable && !this.props.previewMode),
         fontColor: "#0f0f13",
         fontSize: 12,
         fontFamily: 'PF DinDisplay Pro',

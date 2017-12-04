@@ -65,6 +65,7 @@ class Widget extends React.Component {
                       params={this.props.params}
                       data={widget}
                       editable={this.props.editable}
+                      previewMode={this.state.isConfigVisible}
                       onWidgetDelete={this.handleWidgetDelete}/>
       );
 
@@ -75,6 +76,7 @@ class Widget extends React.Component {
                    params={this.props.params}
                    data={widget}
                    editable={this.props.editable}
+                   previewMode={this.state.isConfigVisible}
                    onWidgetDelete={this.handleWidgetDelete}/>
       );
 
