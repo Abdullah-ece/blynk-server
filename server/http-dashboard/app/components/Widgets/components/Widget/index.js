@@ -58,28 +58,27 @@ class Widget extends React.Component {
   }
 
   getWidgetByType(type, widget) {
+
+    const attributes = {
+      key            :widget.id,
+      fetchRealData  :this.props.fetchRealData,
+      params         :this.props.params,
+      data           :widget,
+      name           :widget.type + widget.id,
+      editable       :this.props.editable,
+      previewMode    :this.state.isConfigVisible,
+      onWidgetDelete :this.handleWidgetDelete
+    };
+
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget key={widget.id}
-                      fetchRealData={this.props.fetchRealData}
-                      params={this.props.params}
-                      data={widget}
-                      editable={this.props.editable}
-                      previewMode={this.state.isConfigVisible}
-                      onWidgetDelete={this.handleWidgetDelete}/>
+        <LinearWidget {...attributes}/>
       );
 
     if (type === WIDGET_TYPES.BAR)
       return (
-        <BarChartWidget key={widget.id}
-                   fetchRealData={this.props.fetchRealData}
-                   params={this.props.params}
-                   data={widget}
-                   editable={this.props.editable}
-                   previewMode={this.state.isConfigVisible}
-                   onWidgetDelete={this.handleWidgetDelete}/>
+        <BarChartWidget {...attributes}/>
       );
-
   }
 
   handleSaveChanges(values) {

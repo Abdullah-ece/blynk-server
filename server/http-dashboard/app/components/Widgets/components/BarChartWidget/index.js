@@ -28,6 +28,7 @@ class BarChartWidget extends React.Component {
 
     editable: PropTypes.bool,
     previewMode: PropTypes.bool,
+    name: PropTypes.string,
 
     data: PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -111,6 +112,7 @@ class BarChartWidget extends React.Component {
         <Chart config={config}
                colorSets={this.defaultParams.colorSets}
                className = "bar-chart"
+               name={this.props.name}
         />
       </div>
     );

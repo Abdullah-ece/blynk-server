@@ -15,6 +15,7 @@ class Chart extends React.Component {
     }),
     colorSets: PropTypes.array,
     className: PropTypes.string,
+    name:PropTypes.string,
   };
 
   componentDidMount() {
@@ -96,9 +97,8 @@ class Chart extends React.Component {
   };
 
   render() {
-
     return (
-      <div className={this.props.className}>
+      <div className={this.props.className}  id={this.props.name}>
         <div className="canvasjs-widget-container" ref={(ref) => this.chartRef = ref}/>
       </div>
     );

@@ -46,6 +46,11 @@ class DashboardScene extends React.Component {
       return Number(item.get('id')) > acc ? Number(item.get('id')) : acc;
     }, 0) + 1;
 
+    widget.y = this.props.dashboard.get('widgets').reduce((acc, item) => {
+      return Number(item.get('y')) > acc ? Number(item.get('y')) : acc;
+    }, 0) + 1;
+
+    widget.name = widget.type + widget.id;
     this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', this.props.dashboard.get('widgets').unshift(fromJS(widget) ));
   }
 

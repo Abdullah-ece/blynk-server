@@ -6,6 +6,7 @@ import {Responsive, WidthProvider} from 'react-grid-layout';
 import './styles.less';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import Scroll from 'react-scroll';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -42,10 +43,23 @@ class Widgets extends React.Component {
     };
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.handleWidgetClone = this.handleWidgetClone.bind(this);
+    this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.handleWidgetChange = this.handleWidgetChange.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    const difference = _.differenceBy(this.props.data[this.state.currentBreakpoint],
+                                      prevProps.data[this.state.currentBreakpoint],
+                                      "name");
+    if(difference.length !== 0){
+      const newWidget = difference[0];
+      Scroll.scroller.scrollTo( newWidget.name,  {
+        smooth: "easeInOutQuint",
+        offset: -110,
+      });
+    }
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};

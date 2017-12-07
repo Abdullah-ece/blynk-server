@@ -21,6 +21,7 @@ class LinearWidget extends React.Component {
   static propTypes = {
     data: PropTypes.object,
     params: PropTypes.object,
+    name: PropTypes.string,
 
     editable: PropTypes.bool,
 
@@ -329,7 +330,7 @@ class LinearWidget extends React.Component {
     if (hasData) {
       return (
         <div className="widgets--widget-container">
-          <Chart config={config}/>
+          <Chart name={this.props.name} config={config}/>
         </div>
       );
     } else {
@@ -340,7 +341,6 @@ class LinearWidget extends React.Component {
   }
 
   render() {
-    console.log("hide tooltip ? ",this.props.editable && !this.props.previewMode);
     if (!this.props.fetchRealData)
       return this.renderFakeDataChart();
 
