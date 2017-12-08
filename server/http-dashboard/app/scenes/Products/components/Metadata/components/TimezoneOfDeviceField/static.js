@@ -24,7 +24,7 @@ class TimezoneOfDeviceField extends BaseField.Static {
 
     return (
       <FormItem offset={false}>
-        <FormItem.Title>Timezone of the device</FormItem.Title>
+        <FormItem.Title>Device Timezone</FormItem.Title>
         <FormItem.Content input>
           <FieldStub>
             {this.props.value}
