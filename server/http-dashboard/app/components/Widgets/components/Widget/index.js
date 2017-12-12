@@ -11,10 +11,10 @@ import {
 } from 'services/Widgets';
 import {
   LinearWidget,
-  BarChartWidget
+  BarChartWidget,
+  LabelWidget
 } from 'components/Widgets/components';
 import './styles.less';
-
 class Widget extends React.Component {
 
   static propTypes = {
@@ -79,6 +79,12 @@ class Widget extends React.Component {
       return (
         <BarChartWidget {...attributes}/>
       );
+
+    if (type === WIDGET_TYPES.LABEL)
+      return (
+        <LabelWidget {...attributes}/>
+      );
+
   }
 
   handleSaveChanges(values) {
@@ -106,6 +112,16 @@ class Widget extends React.Component {
     if (type === WIDGET_TYPES.BAR)
       return (
         <BarChartWidget.Settings visible={this.state.isConfigVisible}
+                                 initialValues={widget}
+                                 params={this.props.params}
+                                 form={`widget-settings-${widget.id}`}
+                                 onClose={this.toggleSettingsVisibility}
+                                 onSubmit={this.handleSaveChanges}/>
+      );
+
+    if (type === WIDGET_TYPES.LABEL)
+      return (
+        <LabelWidget.Settings    visible={this.state.isConfigVisible}
                                  initialValues={widget}
                                  params={this.props.params}
                                  form={`widget-settings-${widget.id}`}
