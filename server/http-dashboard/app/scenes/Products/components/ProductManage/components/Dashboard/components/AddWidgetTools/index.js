@@ -21,8 +21,9 @@ class AddWidgetTools extends React.Component {
 
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
 
-    this.handleLinearWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LINEAR);
     this.handleBarWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.BAR);
+    this.handleLabelWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LABEL);
+    this.handleLinearWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LINEAR);
   }
 
   handleWidgetAdd(type) {
@@ -38,9 +39,9 @@ class AddWidgetTools extends React.Component {
       <div className="product-manage-dashboard--add-widget-tools">
         <div className="product-manage-dashboard--add-widget-tools-buttons">
           <Button.Group>
+            <Button onClick={this.handleLabelWidgetAdd}><Icon type="laptop"/></Button>
             <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
             <Button onClick={this.handleBarWidgetAdd}><Icon type="bar-chart"/></Button>
-            <Button disabled={true}><Icon type="dot-chart"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>

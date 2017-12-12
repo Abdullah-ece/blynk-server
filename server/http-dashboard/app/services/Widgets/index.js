@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 export const WIDGET_TYPES = {
+  LABEL: 'WEB_LABEL',
   LINEAR: 'WEB_LINE_GRAPH',
   BAR: 'WEB_BAR_GRAPH',
 };
@@ -211,6 +212,9 @@ export const BAR_CHART_PARAMS = {
 };
 
 export const WIDGETS_CONFIGS = {
+  [WIDGET_TYPES.LABEL]: {
+
+  },
   [WIDGET_TYPES.LINEAR]: {
     minW: 3,
     minH: 2
@@ -350,6 +354,15 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     w: 3,
     h: 2,
     label: "Bar Chart",
+  },
+  [WIDGET_TYPES.LABEL]: {
+    type: WIDGET_TYPES.LABEL,
+    id: 0,
+    x: 0,
+    y: 0,
+    w: 3,
+    h: 2,
+    label: "Label",
   }
 };
 
