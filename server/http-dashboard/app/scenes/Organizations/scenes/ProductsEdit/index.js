@@ -84,23 +84,34 @@ class ProductsEdit extends React.Component {
     // this code get products list and remove original products if we have already attached clone of this product
 
     // replace clone id to parent id to save product with original products ids
-    const clonedProducts = this.props.formValues.get('products').map((product) =>
-      product
-        .set('isClone', true)
-        .set('cloneId', product.get('id'))
-        .set('id', product.get('parentId'))
-    );
 
-    const notClonedOriginalProducts = fromJS(this.props.products).filter(((originalProduct) =>
-        clonedProducts.every((clonedProduct) => originalProduct.get('id') !== clonedProduct.get('parentId'))
-    ));
 
-    const products = clonedProducts.concat(notClonedOriginalProducts);
+    let products = fromJS([]);
+    let name = "";
+    let selectedProducts = [];
+
+    if (this.props.formValues) {
+      name = this.props.formValues.get('name');
+      selectedProducts = this.props.formValues.get('selectedProducts').toJS();
+      const clonedProducts = this.props.formValues.get('products').map((product) =>
+        product
+          .set('isClone', true)
+          .set('cloneId', product.get('id'))
+          .set('id', product.get('parentId'))
+      );
+
+      const notClonedOriginalProducts = fromJS(this.props.products).filter(((originalProduct) =>
+          clonedProducts.every((clonedProduct) => originalProduct.get('id') !== clonedProduct.get('parentId'))
+      ));
+
+      products = clonedProducts.concat(notClonedOriginalProducts);
+
+    }
 
     return (
-      <Products orgName={this.props.formValues.get('name')}
+      <Products orgName={name}
                 onSelect={this.handleSelect}
-                value={this.props.formValues.get('selectedProducts').toJS()}
+                value={selectedProducts}
                 products={products}/>
     );
   }

@@ -194,6 +194,9 @@ class Edit extends React.Component {
         users: fromJS(users)
       });
     });
+     const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+                                                              this.props.params.tab : this.TABS.INFO;
+    this.props.setTab(activeTab);
   }
 
   componentWillUnmount() {
@@ -208,21 +211,22 @@ class Edit extends React.Component {
   }
 
   TABS = {
-    INFO: 'Info',
-    PRODUCTS: 'Products',
-    ADMINS: 'Admins'
+    INFO: 'info',
+    PRODUCTS: 'products',
+    ADMINS: 'admins'
   };
 
-  handleCancel() {
-    this.context.router.push(`/organizations/${this.props.params.id}`);
+  handleCancel(tab) {
+    this.context.router.push(`/organizations/${this.props.params.id}/${tab}`);
   }
 
   handleTabChange(tab) {
     this.props.setTab(tab);
+    this.context.router.push(`/organizations/edit/${this.props.params.id}/${tab}`);
   }
 
   handleSubmitSuccess() {
-    this.context.router.push(`/organizations/${this.props.params.id}`);
+     this.context.router.push(`/organizations/${this.props.params.id}/${this.props.params.tab}`);
   }
 
   handleSubmitFail() {

@@ -32,6 +32,21 @@ class Edit extends React.Component {
     formValues: PropTypes.instanceOf(Map)
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleCancel() {
+    this.props.onCancel(this.props.activeTab);
+  }
+
+  handleSubmit() {
+    this.props.handleSubmit();
+  }
+
   render() {
     return (
       <MainLayout>
@@ -43,13 +58,13 @@ class Edit extends React.Component {
                                  <Button type="danger">Delete</Button>
                                </Popconfirm>
                                <Button type="default"
-                                       onClick={this.props.onCancel}>
+                                       onClick={this.handleCancel}>
                                  Cancel
                                </Button>
                                <Button type="primary"
                                        loading={this.props.submitting}
                                        disabled={this.props.formSubmitErrors.size && this.props.formAsyncErrors.size && this.props.formErrors.size && this.props.submitFailed}
-                                       onClick={this.props.handleSubmit}>
+                                       onClick={this.handleSubmit}>
                                  Save
                                </Button>
                              </div>

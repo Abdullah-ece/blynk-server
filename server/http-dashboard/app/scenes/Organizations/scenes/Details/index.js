@@ -103,12 +103,20 @@ class Details extends React.Component {
     if (this.props.list)
       redirectIfNotExist(this.props.list);
 
+    const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+                                                              this.props.params.tab : this.TABS.INFO;
+    this.props.OrganizationsDetailsUpdate(
+      this.props.details.set('activeTab', activeTab )
+    );
+
+
+
+
   }
 
   componentWillUnmount() {
     this.props.OrganizationsDetailsUpdate(
       this.props.details
-        .set('activeTab', this.TABS.INFO)
         .set('users', null)
     );
   }
@@ -124,7 +132,7 @@ class Details extends React.Component {
     ]).then(() => {
       setTimeout(() => {
         this.props.OrganizationsDetailsUpdate(this.props.details.set('loading', false));
-        this.context.router.push(`/organizations/edit/${this.props.params.id}`);
+        this.context.router.push(`/organizations/edit/${this.props.params.id}/${this.props.params.tab}`);
       }, 500);
     });
   }
@@ -140,6 +148,7 @@ class Details extends React.Component {
     this.props.OrganizationsDetailsUpdate(
       this.props.details.set('activeTab', tab)
     );
+    this.context.router.push(`/organizations/${this.props.params.id}/${tab}`);
   }
 
   render() {
@@ -154,7 +163,8 @@ class Details extends React.Component {
 
     if (!organization)
       return null;
-
+    const activeTab =  Object.values(this.TABS).indexOf(this.props.params.tab) > -1 ?
+                                                              this.props.params.tab : this.TABS.INFO;
     return (
       <MainLayout>
         <MainLayout.Header title={organization.get('name')}
@@ -166,7 +176,7 @@ class Details extends React.Component {
                            )}/>
         <MainLayout.Content className="product-details-content">
           <Tabs onChange={this.handleTabChange}
-                activeKey={this.props.details.get('activeTab')}>
+                activeKey={activeTab}>
             <TabPane tab="Info"
                      key={this.TABS.INFO}>
               <div className="organizations-manage-tab-wrapper">
