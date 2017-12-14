@@ -7,13 +7,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS} from 'immutable';
 import _ from 'lodash';
-import {WIDGETS_SOURCE_TYPES_LIST} from 'services/Widgets';
+import {
+  WIDGETS_SOURCE_TYPES_LIST,
+  WIDGETS_LABEL_DATA_FORMATS,
+} from 'services/Widgets';
 import Validation from 'services/Validation';
 import {
   MetadataSelect as Select
 } from 'components/Form';
 import {
-  Select as AntdSelect
+  Select as AntdSelect,
+  Radio,
 } from 'antd';
 import {
   SimpleContentEditable
@@ -216,6 +220,15 @@ class LabelWidgetSettings extends React.Component {
 
   }
 
+  incomingDataComponent(props) {
+    return (
+      <Radio.Group onChange={props.input.onChange} value={props.input.value}>
+        <Radio value={WIDGETS_LABEL_DATA_FORMATS.NUMBER}>Number</Radio>
+        <Radio value={WIDGETS_LABEL_DATA_FORMATS.STRING}>String</Radio>
+      </Radio.Group>
+    );
+  }
+
   labelNameComponent({input}) {
     return (
       <SimpleContentEditable maxLength={35}
@@ -291,7 +304,7 @@ class LabelWidgetSettings extends React.Component {
 
               <div className="modal-window-widget-settings-config-column-bar-configuration">
                 <ItemsGroup>
-                  <Item label="X: Data" offset="large">
+                  <Item label="X: Data" offset="medium">
                     <Select displayError={false}
                             dropdownMatchSelectWidth={false}
                             name="sources.0.sourceType"
@@ -301,7 +314,7 @@ class LabelWidgetSettings extends React.Component {
                             validate={[Validation.Rules.required]}
                             style={{width: '100px'}}/>
                   </Item>
-                  <Item label=" " offset="large" style={{width: '100%'}}>
+                  <Item label=" " offset="medium" style={{width: '100%'}}>
 
                     <Field name="sources.0.dataStream"
                            style={{width: '100%'}}
@@ -320,7 +333,11 @@ class LabelWidgetSettings extends React.Component {
 
                   </Item>
                 </ItemsGroup>
-
+                <Item label="Incoming Data Format" offset="large">
+                  <Field name={'sources.0.dataFormat'}
+                         component={this.incomingDataComponent}
+                  />
+                </Item>
               </div>
             </div>
           </div>

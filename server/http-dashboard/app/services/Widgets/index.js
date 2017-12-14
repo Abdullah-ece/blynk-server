@@ -372,6 +372,11 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
   }
 };
 
+export const WIDGETS_LABEL_DATA_FORMATS = {
+  NUMBER: 'NUMBER',
+  STRING: 'STRING',
+};
+
 
 export const prepareWidgetForProductEdit = (widget) => {
 
