@@ -41,7 +41,8 @@ class ProductCreate extends React.Component {
     isDataStreamsFormInvalid: React.PropTypes.bool,
 
     params: React.PropTypes.object,
-    product: React.PropTypes.object
+    product: React.PropTypes.object,
+    loading: React.PropTypes.bool,
   };
 
   constructor(props) {
@@ -142,6 +143,7 @@ class ProductCreate extends React.Component {
                            </Button>
                            <Button type="primary"
                                    onClick={this.handleSubmit.bind(this)}
+                                   loading={this.props.loading}
                                    disabled={this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
                              Create
                            </Button>

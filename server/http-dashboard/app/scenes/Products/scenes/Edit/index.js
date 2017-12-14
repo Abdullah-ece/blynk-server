@@ -499,6 +499,7 @@ class Edit extends React.Component {
                      handleCancel={this.handleCancel.bind(this)}
                      onTabChange={this.onTabChange.bind(this)}
                      params={params}
+                     loading={this.state.deviceForceUpdateLoading}
                      onDelete = {this.handleDeleteSubmit.bind(this)}/>
         <ProductDevicesForceUpdate
           isModalVisible={this.state.isDevicesForceUpdateVisible}

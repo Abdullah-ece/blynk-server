@@ -272,8 +272,10 @@ class Create extends React.Component {
     this.context.router.push(`/products`);
   }
 
-  handleSubmit() {
+  loading = false;
 
+  handleSubmit() {
+    this.loading = true;
     if (Array.isArray(this.props.product.metadata.fields)) {
       this.props.product.metadata.fields.forEach((field) => {
         this.props.submitFormById(`metadatafield${field.id}`);
@@ -316,6 +318,7 @@ class Create extends React.Component {
         orgId: this.props.orgId
       }).then(() => {
         this.isProductCreated = true;
+        this.loading = false;
         this.context.router.push(`/products/?success=true`);
       }).catch((response) => {
         message.error(response && response.error && response.error.response.message || 'Cannot create product');
@@ -381,7 +384,8 @@ class Create extends React.Component {
                      onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
                      handleSubmit={this.handleSubmit.bind(this)}
                      handleCancel={this.handleCancel.bind(this)}
-                     params={params}/>
+                     params={params}
+                     loading = {this.loading}/>
     );
   }
 

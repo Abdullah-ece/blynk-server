@@ -66,9 +66,14 @@ class ProductDetails extends React.Component {
 
       this.setState({
         product: product,
-        showDeleteModal: false
+        showDeleteModal: false,
+        enteringEditMode: false,
       });
     });
+  }
+
+  componentWillUnmount() {
+    this.setState({"enteringEditMode" :false});
   }
 
   TABS = {
@@ -86,7 +91,11 @@ class ProductDetails extends React.Component {
     this.context.router.push(`/product/${this.props.params.id}/${key}`);
   }
 
+  enteringEditMode = false;
+
   handleEdit() {
+    this.setState({"enteringEditMode": true});
+
     if (this.state.activeTab) {
       this.context.router.push(`/products/edit/${this.props.params.id}/${this.state.activeTab}`);
     } else {
@@ -109,8 +118,15 @@ class ProductDetails extends React.Component {
         <MainLayout.Header title={this.state.product.name}
                            options={this.props.canEditProduct && (
                              <div>
-                               <Button type="default" onClick={this.handleClone.bind(this)}>Clone</Button>
-                               <Button type="primary" onClick={this.handleEdit.bind(this)}>Edit</Button>
+                               <Button type="default"
+                                       onClick={this.handleClone.bind(this)}>
+                                 Clone
+                               </Button>
+                               <Button type="primary"
+                                       loading = {this.state.enteringEditMode}
+                                       onClick={this.handleEdit.bind(this)}>
+                                 Edit
+                               </Button>
                              </div>
                            ) || (null)}/>
         <MainLayout.Content className="product-details-content">

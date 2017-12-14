@@ -48,6 +48,7 @@ class ProductEdit extends React.Component {
     params: React.PropTypes.object,
     product: React.PropTypes.object,
 
+    loading: React.PropTypes.bool,
     successButtonLabel: React.PropTypes.string
   };
 
@@ -163,6 +164,7 @@ class ProductEdit extends React.Component {
                                </Button>
                                <Button type="primary"
                                        onClick={this.handleSubmit.bind(this)}
+                                       loading={this.props.loading}
                                        disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
                                  { this.props.successButtonLabel || 'Save' }
                                </Button>
