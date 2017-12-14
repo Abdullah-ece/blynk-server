@@ -13,11 +13,14 @@ import {
 } from 'services/Widgets';
 import Validation from 'services/Validation';
 import {
+  Field as FormField,
   MetadataSelect as Select
 } from 'components/Form';
 import {
   Select as AntdSelect,
   Radio,
+  Row,
+  Col,
 } from 'antd';
 import {
   SimpleContentEditable
@@ -59,7 +62,8 @@ class LabelWidgetSettings extends React.Component {
           pin: PropTypes.number,
           name: PropTypes.string
         }),
-        selectedColumns: PropTypes.array
+        selectedColumns: PropTypes.array,
+        dataFormat: PropTypes.oneOf([WIDGETS_LABEL_DATA_FORMATS.NUMBER, WIDGETS_LABEL_DATA_FORMATS.STRING])
       })),
     }),
 
@@ -333,11 +337,29 @@ class LabelWidgetSettings extends React.Component {
 
                   </Item>
                 </ItemsGroup>
-                <Item label="Incoming Data Format" offset="large">
+                <Item label="Incoming Data Format" offset="normal">
                   <Field name={'sources.0.dataFormat'}
                          component={this.incomingDataComponent}
                   />
                 </Item>
+
+                { this.props.formValues.sources[0].dataFormat === WIDGETS_LABEL_DATA_FORMATS.NUMBER && (
+
+                  <Row>
+                    <Col span={6}>
+                      <Item label="Decimals" offset="medium">
+                        <FormField name={'decimalFormat'} placeholder={'Example: #.#'}/>
+                      </Item>
+                    </Col>
+                    <Col span={6} offset={1}>
+                      <Item label="Suffix" offset="medium">
+                        <FormField name={'valueSuffix'} placeholder={'Example: %'}/>
+                      </Item>
+                    </Col>
+                  </Row>
+
+                )}
+
               </div>
             </div>
           </div>
