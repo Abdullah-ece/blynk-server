@@ -5,6 +5,8 @@ import {Field as FormField} from 'redux-form';
 import moment from 'moment';
 import {TimeRange, Time} from 'services/Metadata';
 
+import './styles.less';
+
 export default class Field extends React.Component {
   renderField({timestampPicker = false, displayError = true, timeFormat, defaultValue, style, placeholder, input, meta: {touched, error, warning}}) {
 
@@ -24,7 +26,7 @@ export default class Field extends React.Component {
       <Form.Item validateStatus={validateStatus}
                  help={help}
                  style={style}>
-
+        <div className="custom"></div>
         { timestampPicker ? (
           <TimePicker
             format={timeFormat}
