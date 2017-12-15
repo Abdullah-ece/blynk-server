@@ -24,14 +24,13 @@ import {
   Col,
 } from 'antd';
 import {
-  SimpleContentEditable
+  SimpleContentEditable,
+  FontAwesome
 } from 'components';
 import {
   Item,
   ItemsGroup
 } from "components/UI";
-
-import {FontAwesome} from 'components';
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
