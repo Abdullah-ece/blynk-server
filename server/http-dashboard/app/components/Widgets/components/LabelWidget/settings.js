@@ -25,8 +25,10 @@ import {
   Switch
 } from 'antd';
 import {
+  ColorPicker,
+  TextColorPicker,
   SimpleContentEditable,
-  FontAwesome
+  FontAwesome,
 } from 'components';
 import {
   Item,
@@ -66,7 +68,10 @@ class LabelWidgetSettings extends React.Component {
           name: PropTypes.string
         }),
         selectedColumns: PropTypes.array,
-        dataFormat: PropTypes.oneOf([WIDGETS_LABEL_DATA_FORMATS.NUMBER, WIDGETS_LABEL_DATA_FORMATS.STRING])
+        dataFormat: PropTypes.oneOf([WIDGETS_LABEL_DATA_FORMATS.NUMBER, WIDGETS_LABEL_DATA_FORMATS.STRING]),
+        isColorSetEnabled: PropTypes.bool,
+        backgroundColor: PropTypes.any,
+        textColor: PropTypes.any,
       })),
     }),
 
@@ -85,6 +90,20 @@ class LabelWidgetSettings extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
+  }
+
+  colorPickerComponent({input}) {
+    return (
+      <ColorPicker title="primary color" color={input.value}
+                   onChange={input.onChange}/>
+    );
+  }
+
+  textColorPickerComponent({input, backgroundColor}) {
+    return (
+      <TextColorPicker title="primary color" backgroundColor={backgroundColor} color={input.value}
+                   onChange={input.onChange}/>
+    );
   }
 
   sourceMultipleSelectComponent(props) {
@@ -381,12 +400,12 @@ class LabelWidgetSettings extends React.Component {
                   <Row>
                     <Col span={6}>
                       <Item label="Decimals" offset="medium">
-                        <FormField name={'decimalFormat'} placeholder={'Example: #.#'}/>
+                        <FormField name={'sources.0.decimalFormat'} placeholder={'Example: #.#'}/>
                       </Item>
                     </Col>
                     <Col span={6} offset={1}>
                       <Item label="Suffix" offset="medium">
-                        <FormField name={'valueSuffix'} placeholder={'Example: %'}/>
+                        <FormField name={'sources.0.valueSuffix'} placeholder={'Example: %'}/>
                       </Item>
                     </Col>
                   </Row>
@@ -394,14 +413,33 @@ class LabelWidgetSettings extends React.Component {
                 )}
 
                 <Item label={'Text Alignment'} offset={'medium'}>
-                  <Field name={'textAlignment'} component={this.textAlignmentComponent} />
+                  <Field name={'sources.0.textAlignment'} component={this.textAlignmentComponent} />
                 </Item>
 
                 <div className="widgets--label-widget--settings-group-name">
                   Background
                 </div>
 
-                <Field name={'isColorSetEnabled'} component={this.colorSetSwitchComponent} />
+                <Item offset={'normal'}>
+                  <Field name={'sources.0.isColorSetEnabled'} component={this.colorSetSwitchComponent} />
+                </Item>
+
+                { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === false && (
+
+                  <Row>
+                    <Col span={6}>
+                      <Item label="Background" offset="medium" className="widgets--label-widget--settings-background-color-picker">
+                        <Field name="sources.0.backgroundColor" component={this.colorPickerComponent} />
+                      </Item>
+                    </Col>
+                    <Col span={6} offset={1}>
+                      <Item label="Text" offset="medium" className="widgets--label-widget--settings-background-color-picker">
+                        <Field name="sources.0.textColor" component={this.textColorPickerComponent} backgroundColor={this.props.formValues.sources && this.props.formValues.sources[0].backgroundColor} />
+                      </Item>
+                    </Col>
+                  </Row>
+
+                )}
 
               </div>
             </div>

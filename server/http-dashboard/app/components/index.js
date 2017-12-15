@@ -9,6 +9,8 @@ export ContentEditable  from './ContentEditable';
 export Modal            from './Modal';
 export BackTop          from './BackTop';
 export MainList         from './MainList';
+export ColorPicker      from './ColorPicker';
+export TextColorPicker  from './TextColorPicker';
 export MainLayout       from './MainLayout';
 export Chart            from './Chart';
 export Plotly           from './Plotly';

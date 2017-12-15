@@ -366,7 +366,10 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [
       {
         id: 1,
-        ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL]
+        ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL],
+        isColorSetEnabled: false,
+        backgroundColor: '#fff',
+        textColor: '000'
       }
     ]
   }

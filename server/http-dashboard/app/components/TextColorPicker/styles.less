@@ -1,0 +1,120 @@
+@import 'components/Layout/style-guide';
+
+.branding-text-color-picker {
+  display: inline-block;
+  margin-right: 8px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.branding-text-color-picker-name {
+  color: @color-dark-grey-50;
+  font-size: 12px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.branding-text-color-picker-box {
+  margin-top: 4px;
+  position: relative;
+  width: 96px;
+  height: 32px;
+  border: 1px solid @color-dark-grey-25;
+  border-radius: 4px;
+}
+
+.branding-text-color-picker-box-color-code {
+  font-size: 16px;
+  color: @color-dark-grey;
+  padding: 8px 0 8px 8px;
+  line-height: 14px;
+  &.placeholder {
+    color: @color-dark-grey-50;
+  }
+}
+
+.branding-text-color-picker-color-preview {
+  cursor: pointer;
+}
+
+.branding-text-color-picker-color-preview-choose {
+  cursor: pointer;
+  background-image: url('assets/colorpalette.png');
+  background-size: 100%;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -10px;
+}
+
+.branding-text-color-picker-color-preview-specific {
+  width: 32px;
+  height: 32px;
+  background: @color-white;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  border-radius: 0 4px 4px 0;
+}
+
+.branding-text-color-picker-color-preview-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  z-index: 1;
+}
+
+.twitter-picker {
+  position: absolute;
+  z-index: 3;
+  left: 50px;
+  top: -65px;
+}
+
+.twitter-picker:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgba(0, 0, 0, 0.1);
+  position: absolute;
+  left: -10px;
+  top: 69px;
+}
+
+.twitter-picker:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #ffffff;
+  position: absolute;
+  left: -9px;
+  top: 69px;
+}
+
+.color-picker {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  margin-top: 2px;
+  .branding-text-color-picker-color-preview-specific {
+    border-radius: 5px;
+  }
+}
+
+.branding-text-color-picker-color-preview-specific-label {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  font-weight: 500;
+  top: 0;
+}
