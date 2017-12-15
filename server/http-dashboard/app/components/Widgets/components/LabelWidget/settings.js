@@ -453,7 +453,7 @@ class LabelWidgetSettings extends React.Component {
 
                 )}
 
-                <div className="widgets--label-widget--settings-group-name">
+                <div className="widgets--label-widget--settings-group-name widgets--label-widget--settings-group-name--level">
                   Level
                 </div>
 
@@ -482,7 +482,7 @@ class LabelWidgetSettings extends React.Component {
                       <Field name="sources.0.level.position" component={this.levelPositionComponent} />
                     </Item>
 
-                    <Item label="Color" offset={'normal'}>
+                    <Item label="Color" offset={'normal'} className="widgets--label-widget--settings-background-color-picker">
                       <Field name="sources.0.level.color" component={this.colorPickerComponent} />
                     </Item>
 
