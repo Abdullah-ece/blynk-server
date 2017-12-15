@@ -75,6 +75,7 @@ class LabelWidgetSettings extends React.Component {
         textColor: PropTypes.any,
         isShowLevelEnabled: PropTypes.any,
         level: PropTypes.any,
+        colorsSet: PropTypes.array,
       })),
     }),
 
@@ -435,6 +436,38 @@ class LabelWidgetSettings extends React.Component {
                 <Item offset={'normal'}>
                   <Field name={'sources.0.isColorSetEnabled'} component={this.switchComponent} label={'Change color based on value'}/>
                 </Item>
+
+                { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === true && (
+
+                  this.props.formValues.sources[0].colorsSet.map((item, key) => ((
+                    <Row key={key} className="widgets--label-widget-background-colors-set">
+                      <Col span={12}>
+                        <ItemsGroup>
+                          <Item label=" ">
+                            <Field name={`sources.0.colorsSet.${key}.backgroundColor`} component={this.colorPickerComponent}/>
+                          </Item>
+                          <Item label="min">
+                            <FormField name={`sources.0.colorsSet.${key}.min`} style={{width: '100px'}}/>
+                          </Item>
+                          <Item label="max">
+                            <FormField name={`sources.0.colorsSet.${key}.max`} style={{width: '100px'}}/>
+                          </Item>
+                        </ItemsGroup>
+                      </Col>
+                      <Col span={11} offset={1}>
+                        <ItemsGroup>
+                          <Item label=" ">
+                            <Field name={`sources.0.colorsSet.${key}.textColor`} component={this.textColorPickerComponent} backgroundColor={item.backgroundColor}/>
+                          </Item>
+                          <Item label="custom text (optional)">
+                            <FormField name={`sources.0.colorsSet.${key}.customText`}/>
+                          </Item>
+                        </ItemsGroup>
+                      </Col>
+                    </Row>
+                  )))
+
+                )}
 
                 { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === false && (
 

@@ -387,6 +387,29 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
         backgroundColor: '#fff',
         textColor: '#000',
         dataFormat: WIDGETS_LABEL_DATA_FORMATS.NUMBER,
+        colorsSet: [
+          {
+            min: 0,
+            max: 30,
+            backgroundColor: '24c48e',
+            textColor: 'fff',
+            customText: '',
+          },
+          {
+            min: 31,
+            max: 60,
+            backgroundColor: 'fcb900',
+            textColor: '000',
+            customText: '',
+          },
+          {
+            min: 61,
+            max: 100,
+            backgroundColor: 'eb144c',
+            textColor: 'fff',
+            customText: '',
+          },
+        ],
         textAlignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT,
         level: {
           position: WIDGETS_LABEL_LEVEL_POSITION.VERTICAL,
