@@ -352,7 +352,7 @@ class LabelWidgetSettings extends React.Component {
                            form={this.props.form}
                            filterOption={this.simpleMatch}
                            notFoundContent={sourcesOptions["Data Streams"].length > 0 ?
-                             "No DataStreams or Fields match search" : "Create at least one DataStream with PIN >= 100"}
+                             "No DataStreams to match search" : "Create at least one DataStream"}
                     />
 
                   </Item>
@@ -363,7 +363,7 @@ class LabelWidgetSettings extends React.Component {
                   />
                 </Item>
 
-                { this.props.formValues.sources[0].dataFormat === WIDGETS_LABEL_DATA_FORMATS.NUMBER && (
+                { this.props.formValues.sources && this.props.formValues.sources[0].dataFormat === WIDGETS_LABEL_DATA_FORMATS.NUMBER && (
 
                   <Row>
                     <Col span={6}>
