@@ -10,6 +10,7 @@ import _ from 'lodash';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
   WIDGETS_LABEL_DATA_FORMATS,
+  WIDGETS_LABEL_TEXT_ALIGNMENT,
 } from 'services/Widgets';
 import Validation from 'services/Validation';
 import {
@@ -29,6 +30,8 @@ import {
   Item,
   ItemsGroup
 } from "components/UI";
+
+import {FontAwesome} from 'components';
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
@@ -233,6 +236,24 @@ class LabelWidgetSettings extends React.Component {
     );
   }
 
+  textAlignmentComponent(props) {
+    return (
+      <Radio.Group onChange={props.input.onChange} value={props.input.value}>
+        <Radio.Button value={WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT}>
+          <FontAwesome name={'align-left'}/>
+        </Radio.Button>
+        <Radio.Button value={WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER}>
+          <FontAwesome name={'align-center'}/>
+          {/*{ FormatAlignCenter }*/}
+        </Radio.Button>
+        <Radio.Button value={WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT}>
+          <FontAwesome name={'align-right'}/>
+          {/*{ FormatAlignRight }*/}
+        </Radio.Button>
+      </Radio.Group>
+    );
+  }
+
   labelNameComponent({input}) {
     return (
       <SimpleContentEditable maxLength={35}
@@ -359,6 +380,10 @@ class LabelWidgetSettings extends React.Component {
                   </Row>
 
                 )}
+
+                <Item label={'Text Alignment'} offset={'medium'}>
+                  <Field name={'textAlignment'} component={this.textAlignmentComponent} />
+                </Item>
 
               </div>
             </div>

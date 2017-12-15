@@ -14,4 +14,5 @@ export Chart            from './Chart';
 export Plotly           from './Plotly';
 export TimeFiltering    from './TimeFiltering';
 export SimpleContentEditable from './SimpleContentEditable';
+export FontAwesome      from './FontAwesome';
 export UI from './UI';

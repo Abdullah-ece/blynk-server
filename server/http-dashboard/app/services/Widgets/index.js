@@ -377,6 +377,11 @@ export const WIDGETS_LABEL_DATA_FORMATS = {
   STRING: 'STRING',
 };
 
+export const WIDGETS_LABEL_TEXT_ALIGNMENT = {
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT',
+  CENTER: 'CENTER',
+};
 
 export const prepareWidgetForProductEdit = (widget) => {
 
