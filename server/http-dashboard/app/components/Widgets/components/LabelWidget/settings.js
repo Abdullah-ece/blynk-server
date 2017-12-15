@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './styles.less';
 import WidgetSettings from '../WidgetSettings';
 import PropTypes from 'prop-types';
 import {reduxForm, getFormValues, reset, initialize, destroy, change, Field} from 'redux-form';
@@ -22,6 +22,7 @@ import {
   Radio,
   Row,
   Col,
+  Switch
 } from 'antd';
 import {
   SimpleContentEditable,
@@ -253,6 +254,18 @@ class LabelWidgetSettings extends React.Component {
     );
   }
 
+  colorSetSwitchComponent(props) {
+    return (
+      <div>
+      <Switch size="small" onChange={props.input.onChange} checked={props.input.value}/>
+        <span className="switch-label font-size-medium">
+          Change color based on value
+        </span>
+      </div>
+
+    );
+  }
+
   labelNameComponent({input}) {
     return (
       <SimpleContentEditable maxLength={35}
@@ -383,6 +396,12 @@ class LabelWidgetSettings extends React.Component {
                 <Item label={'Text Alignment'} offset={'medium'}>
                   <Field name={'textAlignment'} component={this.textAlignmentComponent} />
                 </Item>
+
+                <div className="widgets--label-widget--settings-group-name">
+                  Background
+                </div>
+
+                <Field name={'isColorSetEnabled'} component={this.colorSetSwitchComponent} />
 
               </div>
             </div>
