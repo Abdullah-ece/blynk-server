@@ -257,7 +257,7 @@ class LabelWidgetSettings extends React.Component {
   colorSetSwitchComponent(props) {
     return (
       <div>
-      <Switch size="small" onChange={props.input.onChange} checked={props.input.value}/>
+      <Switch size="small" onChange={props.input.onChange} checked={Boolean(props.input.value)}/>
         <span className="switch-label font-size-medium">
           Change color based on value
         </span>
@@ -270,7 +270,7 @@ class LabelWidgetSettings extends React.Component {
     return (
       <SimpleContentEditable maxLength={35}
                              className="modal-window-widget-settings-config-widget-name"
-                             value={input.value} o
+                             value={input.value}
                              onChange={input.onChange}/>
     );
   }
