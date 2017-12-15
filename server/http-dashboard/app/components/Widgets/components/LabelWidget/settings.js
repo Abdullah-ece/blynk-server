@@ -11,6 +11,7 @@ import {
   WIDGETS_SOURCE_TYPES_LIST,
   WIDGETS_LABEL_DATA_FORMATS,
   WIDGETS_LABEL_TEXT_ALIGNMENT,
+  WIDGETS_LABEL_LEVEL_POSITION,
 } from 'services/Widgets';
 import Validation from 'services/Validation';
 import {
@@ -72,6 +73,8 @@ class LabelWidgetSettings extends React.Component {
         isColorSetEnabled: PropTypes.bool,
         backgroundColor: PropTypes.any,
         textColor: PropTypes.any,
+        isShowLevelEnabled: PropTypes.any,
+        level: PropTypes.any,
       })),
     }),
 
@@ -255,6 +258,15 @@ class LabelWidgetSettings extends React.Component {
     );
   }
 
+  levelPositionComponent(props) {
+    return (
+      <Radio.Group onChange={props.input.onChange} value={props.input.value}>
+        <Radio value={WIDGETS_LABEL_LEVEL_POSITION.VERTICAL}>Vertical</Radio>
+        <Radio value={WIDGETS_LABEL_LEVEL_POSITION.HORIZONTAL}>Horizontal</Radio>
+      </Radio.Group>
+    );
+  }
+
   textAlignmentComponent(props) {
     return (
       <Radio.Group onChange={props.input.onChange} value={props.input.value}>
@@ -273,12 +285,12 @@ class LabelWidgetSettings extends React.Component {
     );
   }
 
-  colorSetSwitchComponent(props) {
+  switchComponent(props) {
     return (
       <div>
       <Switch size="small" onChange={props.input.onChange} checked={Boolean(props.input.value)}/>
         <span className="switch-label font-size-medium">
-          Change color based on value
+          { props.label }
         </span>
       </div>
 
@@ -421,7 +433,7 @@ class LabelWidgetSettings extends React.Component {
                 </div>
 
                 <Item offset={'normal'}>
-                  <Field name={'sources.0.isColorSetEnabled'} component={this.colorSetSwitchComponent} />
+                  <Field name={'sources.0.isColorSetEnabled'} component={this.switchComponent} label={'Change color based on value'}/>
                 </Item>
 
                 { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === false && (
@@ -438,6 +450,44 @@ class LabelWidgetSettings extends React.Component {
                       </Item>
                     </Col>
                   </Row>
+
+                )}
+
+                <div className="widgets--label-widget--settings-group-name">
+                  Level
+                </div>
+
+                <Item offset={'normal'}>
+                  <Field name={'sources.0.isShowLevelEnabled'} component={this.switchComponent} label={'Show level'}/>
+                </Item>
+
+                { this.props.formValues.sources && this.props.formValues.sources[0].isShowLevelEnabled === true && (
+
+                  <div>
+
+                    <Row>
+                      <Col span={6}>
+                        <Item label="min value" offset="medium">
+                          <FormField name={'sources.0.level.min'}/>
+                        </Item>
+                      </Col>
+                      <Col span={6} offset={1}>
+                        <Item label="max value" offset="medium">
+                          <FormField name={'sources.0.level.max'}/>
+                        </Item>
+                      </Col>
+                    </Row>
+
+                    <Item label="Position" offset={'normal'}>
+                      <Field name="sources.0.level.position" component={this.levelPositionComponent} />
+                    </Item>
+
+                    <Item label="Color" offset={'normal'}>
+                      <Field name="sources.0.level.color" component={this.colorPickerComponent} />
+                    </Item>
+
+                  </div>
+
 
                 )}
 

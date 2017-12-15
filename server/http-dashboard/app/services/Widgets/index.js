@@ -386,6 +386,11 @@ export const WIDGETS_LABEL_TEXT_ALIGNMENT = {
   CENTER: 'CENTER',
 };
 
+export const WIDGETS_LABEL_LEVEL_POSITION = {
+  VERTICAL: 'VERTICAL',
+  HORIZONTAL: 'HORIZONTAL',
+};
+
 export const prepareWidgetForProductEdit = (widget) => {
 
   const getConfigByWidgetType = (type) => {
