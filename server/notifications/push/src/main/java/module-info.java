@@ -8,8 +8,8 @@ module cc.blynk.server.notifications.push {
     requires jackson.annotations;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
-    requires io.netty.codec.http;
     requires async.http.client;
+    requires io.netty.codec.http;
 
     exports cc.blynk.server.notifications.push;
     exports cc.blynk.server.notifications.push.android;

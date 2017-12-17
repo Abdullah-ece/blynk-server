@@ -6,7 +6,6 @@ import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
@@ -52,11 +51,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final GlobalStats stats;
     private final WebSocketsGenericLoginHandler genericLoginHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, String rootPath) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.noMatchHandler = new NoMatchHandler();
 
         this.stats = holder.stats;
-        this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder);
+        this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
 
         this.webLoginHandler = new WebLoginHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);

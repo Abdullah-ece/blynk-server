@@ -61,7 +61,6 @@ import cc.blynk.server.core.model.widgets.web.WebLabel;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.CopyObject;
-import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

@@ -222,9 +222,7 @@ public class ReportingDao implements Closeable {
     private void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType,
                          String value, long ts, double doubleVal) {
         if (enableRawDbDataStore) {
-            rawDataProcessor.collect(
-                    new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin),
-                    ts, value, doubleVal);
+            rawDataProcessor.collect(deviceId, pinType, pin, value);
         }
 
         //not a number, nothing to aggregate

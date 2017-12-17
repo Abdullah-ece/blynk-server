@@ -1,6 +1,5 @@
 package cc.blynk.integration.tools;
 
-import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;

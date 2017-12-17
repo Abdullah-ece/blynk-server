@@ -26,10 +26,6 @@ public abstract class WebWidget extends Widget {
     }
 
     @Override
-    public void updateIfSame(Widget widget) {
-    }
-
-    @Override
     public String getJsonValue() {
         return null;
     }

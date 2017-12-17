@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.widgets.web;
 
+import cc.blynk.server.core.model.enums.PinMode;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -9,8 +11,8 @@ package cc.blynk.server.core.model.widgets.web;
 public class WebLabel extends WebWidget {
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

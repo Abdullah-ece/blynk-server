@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.widgets.web;
 
+import cc.blynk.server.core.model.enums.PinMode;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -13,8 +15,8 @@ public class WebBarGraph extends WebWidget {
     public boolean isShowLegendEnabled;
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

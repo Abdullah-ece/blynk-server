@@ -34,7 +34,7 @@ public class HttpsAPIServer extends BaseServer {
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
         HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, "/api");
+                new HttpAndWebSocketUnificatorHandler(holder, port, "/api");
 
         ExternalAPIHandler externalAPILogic = new ExternalAPIHandler(holder, "/external/api");
 

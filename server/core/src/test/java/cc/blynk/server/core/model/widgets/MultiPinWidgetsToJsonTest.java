@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
@@ -20,8 +21,8 @@ public class MultiPinWidgetsToJsonTest {
     public void testJoystick() {
         TwoAxisJoystick joystick = new TwoAxisJoystick();
         joystick.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream(1, (byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label", MeasurementUnit.Celsius),
+                new DataStream(2, (byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label", MeasurementUnit.Celsius)
         };
         assertEquals("[\"value\"]", joystick.getJsonValue());
 
@@ -33,8 +34,8 @@ public class MultiPinWidgetsToJsonTest {
     public void testRGB() {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream(1, (byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label", MeasurementUnit.Celsius),
+                new DataStream(2, (byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label", MeasurementUnit.Celsius)
         };
         assertEquals("[\"value\"]", rgb.getJsonValue());
 
@@ -47,8 +48,8 @@ public class MultiPinWidgetsToJsonTest {
         LCD lcd = new LCD();
         lcd.advancedMode = true;
         lcd.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream(1, (byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label", MeasurementUnit.Celsius),
+                new DataStream(2, (byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label", MeasurementUnit.Celsius)
         };
         assertEquals("[\"value\"]", lcd.getJsonValue());
 
@@ -60,7 +61,7 @@ public class MultiPinWidgetsToJsonTest {
     public void testJoystickMultiValue() {
         TwoAxisJoystick joystick = new TwoAxisJoystick();
         joystick.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value\0value2", 0, 250, "label")
+                new DataStream(1, (byte) 1, false, false, PinType.VIRTUAL, "value\0value2", 0, 250, "label", MeasurementUnit.Celsius)
         };
         assertEquals("[\"value\",\"value2\"]", joystick.getJsonValue());
     }
