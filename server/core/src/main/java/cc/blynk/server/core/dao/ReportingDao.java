@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.dao.functions.Function;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
@@ -8,9 +9,12 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.core.reporting.raw.GraphValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -205,15 +209,34 @@ public class ReportingDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
-    public void process(User user, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
+    public void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType, String value, long ts) {
+        try {
+            double doubleVal = NumberUtil.parseDouble(value);
+            process(user, dash, deviceId, pin, pinType, value, ts, doubleVal);
+        } catch (Exception e) {
+            //just in case
+            log.trace("Error collecting reporting entry.");
+        }
+    }
+
+    private void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType,
+                         String value, long ts, double doubleVal) {
         if (enableRawDbDataStore) {
-            rawDataProcessor.collect(deviceId, pinType, pin, value);
+            rawDataProcessor.collect(
+                    new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin),
+                    ts, value, doubleVal);
         }
 
-        //todo change this for knight?
-        //BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin);
-        //averageAggregator.collect(key, ts, doubleVal);
-        //rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+        //not a number, nothing to aggregate
+        if (doubleVal == NumberUtil.NO_RESULT) {
+            return;
+        }
+
+        BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
+        averageAggregator.collect(key, ts, doubleVal);
+        if (dash.needRawDataForGraph(deviceId, pin, pinType)) {
+            rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+        }
     }
 
     public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {

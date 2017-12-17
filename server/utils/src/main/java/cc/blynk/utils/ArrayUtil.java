@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * The Blynk Project.
@@ -37,6 +38,12 @@ public final class ArrayUtil {
         }
 
         return result;
+    }
+
+    public static <T> T[] copyAndReplace(T[] array, T element, int index) {
+        T[] newArray = Arrays.copyOf(array, array.length);
+        newArray[index] = element;
+        return newArray;
     }
 
     public static boolean contains(final int[] ar, final int val) {

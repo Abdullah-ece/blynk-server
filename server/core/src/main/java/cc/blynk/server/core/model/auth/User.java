@@ -62,8 +62,6 @@ public class User {
     public transient int emailMessages;
     private transient long emailSentTs;
 
-    public volatile boolean isLoggedOut;
-
     //used just for tests and serialization
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();

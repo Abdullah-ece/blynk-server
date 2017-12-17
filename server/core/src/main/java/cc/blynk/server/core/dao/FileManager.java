@@ -249,7 +249,7 @@ public class FileManager {
             }
 
             for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget);
+                dashBoard.cleanPinStorage(widget, false);
             }
         }
     }

@@ -96,7 +96,7 @@ public class DataStream implements CopyObject<DataStream> {
     }
 
     public boolean isSame(byte pin, PinType type) {
-        return this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
+        return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
     }
 
     public String makeHardwareBody() {

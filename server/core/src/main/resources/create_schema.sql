@@ -178,6 +178,16 @@ CREATE TABLE reporting_http_command_stat_minute (
   PRIMARY KEY (region, ts)
 );
 
+CREATE TABLE forwarding_tokens (
+  token character(32),
+  host text,
+  email text,
+  project_id int4,
+  device_id int4,
+  ts timestamp DEFAULT NOW(),
+  PRIMARY KEY(token, host)
+);
+
 CREATE TABLE invitation_tokens (
   token character(32),
   email text,

@@ -33,4 +33,9 @@ public final class HardwareStateHolder extends StateHolderBase {
                 + ", token=" + device.token
                 + '}';
     }
+
+    @Override
+    public boolean isSameDash(int inDashId) {
+        return dash.id == inDashId;
+    }
 }

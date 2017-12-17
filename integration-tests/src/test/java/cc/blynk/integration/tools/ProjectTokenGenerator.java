@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectTokenGenerator {
 
     public static void main(String[] args) throws Exception {
-        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, new DeviceDao(new ConcurrentHashMap<>()), null, "");
+        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, "");
         String email = "dmitriy@blynk.cc";
         String pass = "b";
         String appName = AppNameUtil.BLYNK;

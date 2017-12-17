@@ -18,6 +18,8 @@ class SharedTokenManager {
     private static final Logger log = LogManager.getLogger(SharedTokenManager.class);
     private final ConcurrentMap<String, SharedTokenValue> cache;
 
+    protected final ConcurrentMap<String, SharedTokenValue> cache;
+
     SharedTokenManager(Iterable<User> users) {
         this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {
             {
