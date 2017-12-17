@@ -23,7 +23,8 @@ import {
   Radio,
   Row,
   Col,
-  Switch
+  Switch,
+  Button,
 } from 'antd';
 import {
   ColorPicker,
@@ -93,6 +94,8 @@ class LabelWidgetSettings extends React.Component {
 
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleAddColorSet = this.handleAddColorSet.bind(this);
+    this.handleRemoveColorSet = this.handleRemoveColorSet.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
   }
 
@@ -108,6 +111,34 @@ class LabelWidgetSettings extends React.Component {
       <TextColorPicker title="primary color" backgroundColor={backgroundColor} color={input.value}
                    onChange={input.onChange}/>
     );
+  }
+
+  handleRemoveColorSet(key) {
+    return () => {
+
+      const clone = _.concat(this.props.formValues.sources[0].colorsSet, []);
+
+      _.remove(clone, (i, k) => {
+        return Number(key) === Number(k);
+      });
+
+      this.props.changeForm(this.props.form, 'sources.0.colorsSet', clone);
+    };
+  }
+
+  handleAddColorSet() {
+
+    const lastValue = _.last(this.props.formValues.sources[0].colorsSet);
+
+    const colorsSet = _.concat(this.props.formValues.sources[0].colorsSet, [{
+      min: null,
+      max: null,
+      backgroundColor: lastValue.backgroundColor,
+      textColor: lastValue.textColor,
+      customText: '',
+    }]);
+
+    this.props.changeForm(this.props.form, 'sources.0.colorsSet', colorsSet);
   }
 
   sourceMultipleSelectComponent(props) {
@@ -439,33 +470,50 @@ class LabelWidgetSettings extends React.Component {
 
                 { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === true && (
 
-                  this.props.formValues.sources[0].colorsSet.map((item, key) => ((
-                    <Row key={key} className="widgets--label-widget-background-colors-set">
-                      <Col span={12}>
-                        <ItemsGroup>
-                          <Item label=" ">
-                            <Field name={`sources.0.colorsSet.${key}.backgroundColor`} component={this.colorPickerComponent}/>
-                          </Item>
-                          <Item label="min">
-                            <FormField name={`sources.0.colorsSet.${key}.min`} style={{width: '100px'}}/>
-                          </Item>
-                          <Item label="max">
-                            <FormField name={`sources.0.colorsSet.${key}.max`} style={{width: '100px'}}/>
-                          </Item>
-                        </ItemsGroup>
-                      </Col>
-                      <Col span={11} offset={1}>
-                        <ItemsGroup>
-                          <Item label=" ">
-                            <Field name={`sources.0.colorsSet.${key}.textColor`} component={this.textColorPickerComponent} backgroundColor={item.backgroundColor}/>
-                          </Item>
-                          <Item label="custom text (optional)">
-                            <FormField name={`sources.0.colorsSet.${key}.customText`}/>
-                          </Item>
-                        </ItemsGroup>
-                      </Col>
-                    </Row>
-                  )))
+                  <div>
+
+                    {this.props.formValues.sources[0].colorsSet.map((item, key) => ((
+                      <Row key={key} className="widgets--label-widget-background-colors-set">
+                        <Col span={12}>
+                          <ItemsGroup>
+                            <Item label=" ">
+                              <Field name={`sources.0.colorsSet.${key}.backgroundColor`}
+                                     component={this.colorPickerComponent}/>
+                            </Item>
+                            <Item label="min">
+                              <FormField name={`sources.0.colorsSet.${key}.min`} style={{width: '100px'}}/>
+                            </Item>
+                            <Item label="max">
+                              <FormField name={`sources.0.colorsSet.${key}.max`} style={{width: '100px'}}/>
+                            </Item>
+                          </ItemsGroup>
+                        </Col>
+                        <Col span={10} offset={1}>
+                          <ItemsGroup>
+                            <Item label=" ">
+                              <Field name={`sources.0.colorsSet.${key}.textColor`}
+                                     component={this.textColorPickerComponent} backgroundColor={item.backgroundColor}/>
+                            </Item>
+                            <Item label="custom text (optional)">
+                              <FormField name={`sources.0.colorsSet.${key}.customText`}/>
+                            </Item>
+                          </ItemsGroup>
+                        </Col>
+                        <Col span={1}>
+                          { this.props.formValues.sources[0].colorsSet.length >= 2 && (
+                            <Button type="danger" className="widgets--label-widget-background-colors-set--remove-button" onClick={this.handleRemoveColorSet(key)}>
+                              <FontAwesome name={'trash'}/>
+                            </Button>
+                          )}
+                        </Col>
+                      </Row>
+                    )))}
+
+                    <Button type="dashed" className="danger widgets--label-widget-background-colors-set--add-button" onClick={this.handleAddColorSet}>
+                      +
+                    </Button>
+
+                  </div>
 
                 )}
 
