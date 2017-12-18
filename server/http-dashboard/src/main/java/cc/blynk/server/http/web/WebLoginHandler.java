@@ -201,12 +201,13 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         if (user == null) {
             log.info("User with passed email {} not found.", email);
-            return badRequest("User email field is wrong.");
+            return ok("Email was sent.");
         }
+
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
         if (organization == null) {
             log.info("Organization with orgId {} not found.", user.orgId);
-            return badRequest("Organization doesn't exist");
+            return badRequest("Organization for that user is no longer exist.");
         }
 
         tokensPool.addToken(token, user);

@@ -55,6 +55,18 @@ public class ResetPassAPITest extends APIBaseTest {
     }
 
     @Test
+    public void resetPassForNonExistingUserShouldReturnOk() throws Exception {
+        HttpPost resetReq = new HttpPost(httpsAdminServerUrl + "/sendResetPass");
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", "xxx@gmail.com"));
+        resetReq.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(resetReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void resetFullFlowForNotLoggedUser() throws Exception {
         HttpPost resetReq = new HttpPost(httpsAdminServerUrl + "/sendResetPass");
         List <NameValuePair> nvps = new ArrayList<>();
