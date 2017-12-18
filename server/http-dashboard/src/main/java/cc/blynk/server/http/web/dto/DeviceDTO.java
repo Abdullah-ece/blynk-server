@@ -3,11 +3,14 @@ package cc.blynk.server.http.web.dto;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.db.model.LogEventCountKey;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
@@ -20,39 +23,39 @@ import java.util.Map;
  */
 public class DeviceDTO {
 
-    public int id;
+    public final int id;
 
-    public int productId;
+    public final int productId;
 
-    public String name;
+    public final String name;
 
-    public String boardType;
+    public final String boardType;
 
-    public String token;
+    public final String token;
 
-    public ConnectionType connectionType;
+    public final ConnectionType connectionType;
 
-    public Status status;
+    public final Status status;
 
-    public long createdAt;
+    public final long createdAt;
 
-    public long activatedAt;
+    public final long activatedAt;
 
-    public String activatedBy;
+    public final String activatedBy;
 
-    public long disconnectTime;
+    public final long disconnectTime;
 
-    public String lastLoggedIP;
+    public final String lastLoggedIP;
 
-    public long dataReceivedAt;
+    public final long dataReceivedAt;
 
-    public long metadataUpdatedAt;
+    public final long metadataUpdatedAt;
 
-    public String metadataUpdatedBy;
+    public final String metadataUpdatedBy;
 
-    public MetaField[] metaFields;
+    public final MetaField[] metaFields;
 
-    public WebDashboard webDashboard;
+    public final WebDashboard webDashboard;
 
     public String productName;
 
@@ -64,7 +67,51 @@ public class DeviceDTO {
 
     public Integer warningSinceLastView;
 
-    public DeviceDTO() {
+    @JsonCreator
+    public DeviceDTO(@JsonProperty("id") int id,
+                     @JsonProperty("productId") int productId,
+                     @JsonProperty("name") String name,
+                     @JsonProperty("boardType") String boardType,
+                     @JsonProperty("token") String token,
+                     @JsonProperty("connectionType") ConnectionType connectionType,
+                     @JsonProperty("status") Status status,
+                     @JsonProperty("createdAt") long createdAt,
+                     @JsonProperty("activatedAt") long activatedAt,
+                     @JsonProperty("activatedBy") String activatedBy,
+                     @JsonProperty("disconnectTime") long disconnectTime,
+                     @JsonProperty("lastLoggedIP") String lastLoggedIP,
+                     @JsonProperty("dataReceivedAt") long dataReceivedAt,
+                     @JsonProperty("metadataUpdatedAt") long metadataUpdatedAt,
+                     @JsonProperty("metadataUpdatedBy") String metadataUpdatedBy,
+                     @JsonProperty("metaFields") MetaField[] metaFields,
+                     @JsonProperty("webDashboard") WebDashboard webDashboard,
+                     @JsonProperty("productName") String productName,
+                     @JsonProperty("productLogoUrl") String productLogoUrl,
+                     @JsonProperty("orgName") String orgName,
+                     @JsonProperty("criticalSinceLastView") Integer criticalSinceLastView,
+                     @JsonProperty("warningSinceLastView") Integer warningSinceLastView) {
+        this.id = id;
+        this.productId = productId;
+        this.name = name;
+        this.boardType = boardType;
+        this.token = token;
+        this.connectionType = connectionType;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.activatedAt = activatedAt;
+        this.activatedBy = activatedBy;
+        this.disconnectTime = disconnectTime;
+        this.lastLoggedIP = lastLoggedIP;
+        this.dataReceivedAt = dataReceivedAt;
+        this.metadataUpdatedAt = metadataUpdatedAt;
+        this.metadataUpdatedBy = metadataUpdatedBy;
+        this.metaFields = metaFields;
+        this.webDashboard = webDashboard;
+        this.productName = productName;
+        this.productLogoUrl = productLogoUrl;
+        this.orgName = orgName;
+        this.criticalSinceLastView = criticalSinceLastView;
+        this.warningSinceLastView = warningSinceLastView;
     }
 
     private DeviceDTO(Device device, Product product) {
@@ -104,4 +151,8 @@ public class DeviceDTO {
         this.orgName = orgName;
     }
 
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
+    }
 }

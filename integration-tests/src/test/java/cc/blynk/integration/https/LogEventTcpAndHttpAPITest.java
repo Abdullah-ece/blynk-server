@@ -718,7 +718,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
+            DeviceDTO[] devices = readDevices(responseString);
             assertNotNull(devices);
             assertEquals(2, devices.length);
             DeviceDTO device = devices[1];
@@ -751,7 +751,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
+            DeviceDTO[] devices = readDevices(responseString);
             assertNotNull(devices);
             assertEquals(2, devices.length);
             DeviceDTO device = devices[1];
@@ -779,7 +779,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
+            DeviceDTO[] devices = readDevices(responseString);
             assertNotNull(devices);
             assertEquals(2, devices.length);
             DeviceDTO device = devices[1];
@@ -812,7 +812,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
+            DeviceDTO[] devices = readDevices(responseString);
             assertNotNull(devices);
             assertEquals(2, devices.length);
             DeviceDTO device = devices[1];
@@ -829,7 +829,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = newHttpClient.execute(getDevices)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            DeviceDTO[] devices = JsonParser.readAny(responseString, DeviceDTO[].class);
+            DeviceDTO[] devices = readDevices(responseString);
             assertNotNull(devices);
             assertEquals(2, devices.length);
             DeviceDTO device = devices[1];
@@ -851,5 +851,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         Integer criticalSinceLastView;
         Integer warningSinceLastView;
     }
+    
+    public static DeviceDTO readDevice(String responseString) {
+        return JsonParser.readAny(responseString, DeviceDTO.class);
+    }
+    
+    public static DeviceDTO[] readDevices(String responseString) {
+        return JsonParser.readAny(responseString, DeviceDTO[].class);
 
+    }
 }
