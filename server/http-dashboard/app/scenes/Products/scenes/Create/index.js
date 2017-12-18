@@ -233,7 +233,7 @@ class Create extends React.Component {
   }
 
   routerWillLeave(route) {
-    const regexp = /products\/edit\/[0-9]\/(info|metadata|datastreams|events|dashboard)/g;
+    const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
 
     if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
       return 'Leave this page without saving your changes?';
