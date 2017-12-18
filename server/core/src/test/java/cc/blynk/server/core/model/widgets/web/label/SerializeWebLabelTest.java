@@ -32,7 +32,7 @@ public class SerializeWebLabelTest {
         webLabel.valueSuffix = "Loads";
         webLabel.alignment = TextAlignment.MIDDLE;
         webLabel.colorsSet = new ColorSet[] {
-                new ColorSet(0, 10, "#000", "#fff")
+                new ColorSet(0, 10, "#000", "#fff", "#333")
         };
         webLabel.backgroundColor = "#000";
         webLabel.textColor = "#fff";

@@ -18,14 +18,18 @@ public class ColorSet {
 
     public final String textColor;
 
+    public final String customText;
+
     @JsonCreator
     public ColorSet(@JsonProperty("min") int min,
                     @JsonProperty("max") int max,
                     @JsonProperty("backgroundColor") String backgroundColor,
-                    @JsonProperty("textColor") String textColor) {
+                    @JsonProperty("textColor") String textColor,
+                    @JsonProperty("customText") String customText) {
         this.min = min;
         this.max = max;
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
+        this.customText = customText;
     }
 }
