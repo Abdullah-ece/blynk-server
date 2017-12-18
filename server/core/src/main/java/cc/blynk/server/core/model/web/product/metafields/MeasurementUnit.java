@@ -7,6 +7,8 @@ package cc.blynk.server.core.model.web.product.metafields;
  */
 public enum MeasurementUnit {
 
+    None, //no unit
+
     Millimeter,
     Centimeter,
     Meter,
