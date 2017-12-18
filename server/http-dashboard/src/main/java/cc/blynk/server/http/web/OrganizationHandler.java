@@ -33,6 +33,7 @@ import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.http.web.dto.EmailDTO;
+import cc.blynk.server.http.web.dto.OrganizationDTO;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -95,7 +96,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{orgId}")
     public Response get(@ContextUser User user,
                         @PathParam("orgId") int orgId) {
-        Organization organization = organizationDao.getOrgById(orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
 
         if (!user.isSuperAdmin()) {
             if (orgId != user.orgId) {
@@ -104,7 +105,15 @@ public class OrganizationHandler extends BaseHttpHandler {
             }
         }
 
-        return ok(organization);
+        String parentOrgName = null;
+        if (organization.hasParentOrg()) {
+            Organization parentOrg = organizationDao.getOrgById(organization.parentId);
+            if (parentOrg != null && parentOrg.name != null) {
+                parentOrgName = parentOrg.name;
+            }
+        }
+
+        return ok(new OrganizationDTO(organization, parentOrgName));
     }
 
     @GET
@@ -141,7 +150,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         List<String> existingLocations = new ArrayList<>();
-        Organization org = organizationDao.getOrgById(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         for (Product product : org.products) {
             for (MetaField metaField : product.metaFields) {
                 if (metaField.isDefault && "Location Name".equalsIgnoreCase(metaField.name)) {
@@ -250,7 +259,7 @@ public class OrganizationHandler extends BaseHttpHandler {
 
         newOrganization.parentId = user.orgId;
 
-        Organization parentOrg = organizationDao.getOrgById(user.orgId);
+        Organization parentOrg = organizationDao.getOrgByIdOrThrow(user.orgId);
         if (!parentOrg.canCreateOrgs) {
             log.error("This organization cannot have sub organizations.");
             return forbidden("This organization cannot have sub organizations.");
@@ -277,7 +286,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     }
 
     private void deleteRemovedProducts(int orgId, String orgName, int[] deletedProducts) {
-        Organization org = organizationDao.getOrgById(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         for (int parentProductId : deletedProducts) {
             log.debug("Deleting product for org {} and parentProductId {}.", orgName, parentProductId);
             for (Product product : org.products) {
@@ -304,7 +313,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
+        Organization existingOrganization = organizationDao.getOrgByIdOrThrow(newOrganization.id);
 
         if (!organizationDao.hasAccess(user, newOrganization.id)) {
             log.error("User {} tries to update organization he has no access.", user.email);
@@ -337,7 +346,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return forbidden();
         }
 
-        Organization existingOrganization = organizationDao.getOrgById(orgId);
+        Organization existingOrganization = organizationDao.getOrgByIdOrThrow(orgId);
 
         if (!organizationDao.delete(orgId)) {
             log.error("Wasn't able to remove organization with orgId {}.", orgId);
@@ -358,7 +367,7 @@ public class OrganizationHandler extends BaseHttpHandler {
             return badRequest("Invalid invitation.");
         }
 
-        Organization org = organizationDao.getOrgById(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
 
         userInvite.email = userInvite.email.toLowerCase();
 

@@ -95,7 +95,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Organization org = organizationDao.getOrgById(orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         Product product = org.getProduct(newDevice.productId);
         if (product == null) {
             log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);

@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebBarGraph;
 import cc.blynk.server.http.web.dto.EmailDTO;
+import cc.blynk.server.http.web.dto.OrganizationDTO;
 import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -211,7 +212,6 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
         }
-
 
         String email = "dmitriy@blynk.cc";
         String name = "Dmitriy";
@@ -1452,6 +1452,43 @@ public class OrganizationAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
         }
+    }
+
+    @Test
+    public void createSubOrgAndCheckItHasParentOrgName() throws Exception {
+        login(admin.email, admin.pass);
+
+        Organization organization = new Organization("My Sub Org", "Europe/Kiev", "/static/logo.png", false, 1);
+
+        HttpPut putOrg = new HttpPut(httpsAdminServerUrl + "/organization");
+        putOrg.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(putOrg)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            OrganizationDTO fromApi = readOrgDTO(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals("My Sub Org", fromApi.name);
+            assertEquals("Europe/Kiev", fromApi.tzName);
+            //we do not have it at that state, only via GET
+            //assertEquals("Blynk Inc.", fromApi.parentOrgName);
+        }
+
+        HttpGet getOrg = new HttpGet(httpsAdminServerUrl + "/organization/2");
+
+        try (CloseableHttpResponse response = httpclient.execute(getOrg)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            OrganizationDTO fromApi = readOrgDTO(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(2, fromApi.id);
+            assertEquals("My Sub Org", fromApi.name);
+            assertEquals("Europe/Kiev", fromApi.tzName);
+            assertEquals("Blynk Inc.", fromApi.parentOrgName);
+        }
+    }
+
+    private static OrganizationDTO readOrgDTO(String responseString) {
+        return JsonParser.readAny(responseString, OrganizationDTO.class);
     }
 
 }

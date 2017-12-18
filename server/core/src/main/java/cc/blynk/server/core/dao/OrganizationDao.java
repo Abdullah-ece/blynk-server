@@ -70,7 +70,7 @@ public class OrganizationDao {
     }
 
     public Product getProduct(int orgId, int productId) {
-        Organization org = getOrgById(orgId);
+        Organization org = getOrgByIdOrThrow(orgId);
         for (Product product : org.products) {
             if (product.id == productId) {
                 return product;
@@ -205,7 +205,11 @@ public class OrganizationDao {
     }
 
     public Organization getOrgById(int id) {
-        Organization org = organizations.get(id);
+        return organizations.get(id);
+    }
+
+    public Organization getOrgByIdOrThrow(int id) {
+        Organization org = getOrgById(id);
         if (org == null) {
             log.error("Cannot find org with id {}.", id);
             throw new OrgNotFoundException("Cannot find organization with passed id.");
@@ -252,7 +256,7 @@ public class OrganizationDao {
     }
 
     public Product createProduct(int orgId, Product product) {
-        Organization organization = getOrgById(orgId);
+        Organization organization = getOrgByIdOrThrow(orgId);
         product.id = productSequence.incrementAndGet();
         organization.addProduct(product);
         return product;

@@ -53,7 +53,7 @@ public class ProductHandler extends BaseHttpHandler {
     @GET
     @Path("")
     public Response getAll(@ContextUser User user) {
-        Organization organization = organizationDao.getOrgById(user.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
@@ -68,7 +68,7 @@ public class ProductHandler extends BaseHttpHandler {
     @GET
     @Path("/{id}")
     public Response getProductById(@ContextUser User user, @PathParam("id") int productId) {
-        Organization organization = organizationDao.getOrgById(user.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
@@ -102,7 +102,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest("Product is empty or has not name.");
         }
 
-        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
         if (organization.isSubOrg()) {
             log.error("You can't create products for sub organizations.");
@@ -137,7 +137,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
         if (!organization.isValidProductName(updatedProduct)) {
             log.error("Organization {} already has product with name {}.", organization.name, updatedProduct.name);

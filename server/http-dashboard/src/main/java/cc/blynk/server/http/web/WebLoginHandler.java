@@ -130,7 +130,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         user.pass = password;
         user.status = UserStatus.Active;
-        Organization org = organizationDao.getOrgById(user.orgId);
+        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
         org.isActive = true;
 
         Response response = ok(user);
@@ -203,7 +203,7 @@ public class WebLoginHandler extends BaseHttpHandler {
             log.info("User with passed email {} not found.", email);
             return badRequest("User email field is wrong.");
         }
-        Organization organization = organizationDao.getOrgById(user.orgId);
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
         if (organization == null) {
             log.info("Organization with orgId {} not found.", user.orgId);
             return badRequest("Organization doesn't exist");

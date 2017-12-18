@@ -125,6 +125,10 @@ public class Organization {
         return false;
     }
 
+    public boolean hasParentOrg() {
+        return parentId != SUPER_ORG_PARENT_ID;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);
