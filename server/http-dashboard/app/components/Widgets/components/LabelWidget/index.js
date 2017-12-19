@@ -6,7 +6,7 @@ class LabelWidget extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="widgets--widget-web-label">
         Label widget is comming there
       </div>
     );
