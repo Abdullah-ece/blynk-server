@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Map, fromJS} from 'immutable';
 import {Icon} from 'antd';
+import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
 import './styles.less';
 
@@ -43,13 +44,53 @@ class LabelWidget extends React.Component {
       return 'widgets--widget-web-label--alignment-right';
   }
 
+  getValueClassName(isStringValue) {
+    if (isStringValue)
+      return 'widgets--widget-web-label--string-value';
+
+    return 'widgets--widget-web-label--number-value';
+  }
+
+  getValueSizeClassName(cellSize) {
+    if(Number(cellSize) === 1)
+      return 'widgets--widget-web-label--value-size-1';
+
+    if(Number(cellSize) === 2)
+      return 'widgets--widget-web-label--value-size-2';
+
+    if(Number(cellSize) >= 3)
+      return 'widgets--widget-web-label--value-size-3';
+  }
+
   renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null}) {
 
     const alignmentClassName = this.getTextAlignmentClassNameByAlignment(params.alignment);
 
+    const isNoData = params.value === null || params.value === undefined;
+
+    const isStringValue = isNaN(Number(params.value));
+
+    const valueClassName = this.getValueClassName(isStringValue);
+
+    const valueSizeClassName = this.getValueSizeClassName(this.props.data.height);
+
     return (
       <div className={`widgets--widget-web-label ${alignmentClassName}`}>
-        {params.value}{params.suffix}
+        { !isNoData && (
+          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
+            <Dotdotdot clamp={1}>
+              <span
+                className={`${valueClassName}`}>{isStringValue ? params.value : params.value.toLocaleString()}</span>
+              {params.suffix && (
+                <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
+              )}
+            </Dotdotdot>
+          </div>
+        ) || (
+          <div className={valueSizeClassName}>
+            <span className={`${valueClassName}`}>--</span>
+          </div>
+        )}
       </div>
     );
   }
@@ -75,7 +116,9 @@ class LabelWidget extends React.Component {
     if (!pin)
       return null;
 
-    return pin.get('data').last().get('y');
+    const lastPoint = pin.get('data').last();
+
+    return lastPoint && lastPoint.get('y') || null;
   }
 
   renderRealDataLabel() {
@@ -91,7 +134,7 @@ class LabelWidget extends React.Component {
     const dataSources = sources.map(this.generateData).filter((source) => source !== null);
 
     return this.renderLabelByParams({
-      value: dataSources.get(0),
+      value: dataSources.get(0) || null,
       suffix: this.props.data.valueSuffix,
       alignment: this.props.data.alignment
     });
