@@ -150,12 +150,18 @@ class Widget extends React.Component {
       [this.props.className]: true
     });
 
+    let styles = {
+      ...(this.props.style || {}),
+      'backgroundColor': '#'+this.props.data.backgroundColor,
+      'color': '#'+this.props.data.textColor
+    };
+
     return (
       <div className={className}
            onMouseDown={this.props.onMouseDown}
            onMouseUp={this.props.onMouseUp}
            onTouchEnd={this.props.onTouchEnd}
-           style={this.props.style}
+           style={styles}
       >
         <div className="widgets--widget-label">
           <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
