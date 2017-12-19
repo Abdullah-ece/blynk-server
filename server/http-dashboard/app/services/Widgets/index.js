@@ -321,15 +321,15 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
   dataStream: {}
 };
 
-export const WIDGETS_LABEL_DATA_FORMATS = {
-  NUMBER: 'NUMBER',
-  STRING: 'STRING',
+export const WIDGETS_LABEL_DATA_TYPES = {
+  NUMBER: 'Number',
+  STRING: 'String',
 };
 
 export const WIDGETS_LABEL_TEXT_ALIGNMENT = {
   LEFT: 'LEFT',
   RIGHT: 'RIGHT',
-  CENTER: 'CENTER',
+  CENTER: 'MIDDLE',
 };
 
 export const WIDGETS_LABEL_LEVEL_POSITION = {
@@ -383,40 +383,40 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
       {
         id: 1,
         ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL],
-        isColorSetEnabled: false,
-        backgroundColor: '#fff',
-        textColor: '#000',
-        dataFormat: WIDGETS_LABEL_DATA_FORMATS.NUMBER,
-        colorsSet: [
-          {
-            min: 0,
-            max: 30,
-            backgroundColor: '24c48e',
-            textColor: 'fff',
-            customText: '',
-          },
-          {
-            min: 31,
-            max: 60,
-            backgroundColor: 'fcb900',
-            textColor: '000',
-            customText: '',
-          },
-          {
-            min: 61,
-            max: 100,
-            backgroundColor: 'eb144c',
-            textColor: 'fff',
-            customText: '',
-          },
-        ],
-        textAlignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT,
-        level: {
-          position: WIDGETS_LABEL_LEVEL_POSITION.VERTICAL,
-          color: '007dc4'
-        }
       }
-    ]
+    ],
+    isColorSetEnabled: false,
+    backgroundColor: '#fff',
+    textColor: '#000',
+    dataType: WIDGETS_LABEL_DATA_TYPES.NUMBER,
+    colorsSet: [
+      {
+        min: 0,
+        max: 30,
+        backgroundColor: '24c48e',
+        textColor: 'fff',
+        customText: '',
+      },
+      {
+        min: 31,
+        max: 60,
+        backgroundColor: 'fcb900',
+        textColor: '000',
+        customText: '',
+      },
+      {
+        min: 61,
+        max: 100,
+        backgroundColor: 'eb144c',
+        textColor: 'fff',
+        customText: '',
+      },
+    ],
+    alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT,
+    level: {
+      position: WIDGETS_LABEL_LEVEL_POSITION.VERTICAL,
+      color: '007dc4'
+    }
   }
 };
 

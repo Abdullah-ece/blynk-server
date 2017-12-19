@@ -9,7 +9,7 @@ import {fromJS} from 'immutable';
 import _ from 'lodash';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
-  WIDGETS_LABEL_DATA_FORMATS,
+  WIDGETS_LABEL_DATA_TYPES,
   WIDGETS_LABEL_TEXT_ALIGNMENT,
   WIDGETS_LABEL_LEVEL_POSITION,
 } from 'services/Widgets';
@@ -70,14 +70,14 @@ class LabelWidgetSettings extends React.Component {
           name: PropTypes.string
         }),
         selectedColumns: PropTypes.array,
-        dataFormat: PropTypes.oneOf([WIDGETS_LABEL_DATA_FORMATS.NUMBER, WIDGETS_LABEL_DATA_FORMATS.STRING]),
-        isColorSetEnabled: PropTypes.bool,
-        backgroundColor: PropTypes.any,
-        textColor: PropTypes.any,
-        isShowLevelEnabled: PropTypes.any,
-        level: PropTypes.any,
-        colorsSet: PropTypes.array,
       })),
+      dataType: PropTypes.oneOf([WIDGETS_LABEL_DATA_TYPES.NUMBER, WIDGETS_LABEL_DATA_TYPES.STRING]),
+      isColorSetEnabled: PropTypes.bool,
+      backgroundColor: PropTypes.any,
+      textColor: PropTypes.any,
+      isShowLevelEnabled: PropTypes.any,
+      level: PropTypes.any,
+      colorsSet: PropTypes.array,
     }),
 
     dataStreams: PropTypes.arrayOf(PropTypes.shape({
@@ -116,21 +116,21 @@ class LabelWidgetSettings extends React.Component {
   handleRemoveColorSet(key) {
     return () => {
 
-      const clone = _.concat(this.props.formValues.sources[0].colorsSet, []);
+      const clone = _.concat(this.props.formValues.colorsSet, []);
 
       _.remove(clone, (i, k) => {
         return Number(key) === Number(k);
       });
 
-      this.props.changeForm(this.props.form, 'sources.0.colorsSet', clone);
+      this.props.changeForm(this.props.form, 'colorsSet', clone);
     };
   }
 
   handleAddColorSet() {
 
-    const lastValue = _.last(this.props.formValues.sources[0].colorsSet);
+    const lastValue = _.last(this.props.formValues.colorsSet);
 
-    const colorsSet = _.concat(this.props.formValues.sources[0].colorsSet, [{
+    const colorsSet = _.concat(this.props.formValues.colorsSet, [{
       min: null,
       max: null,
       backgroundColor: lastValue.backgroundColor,
@@ -138,7 +138,7 @@ class LabelWidgetSettings extends React.Component {
       customText: '',
     }]);
 
-    this.props.changeForm(this.props.form, 'sources.0.colorsSet', colorsSet);
+    this.props.changeForm(this.props.form, 'colorsSet', colorsSet);
   }
 
   sourceMultipleSelectComponent(props) {
@@ -284,8 +284,8 @@ class LabelWidgetSettings extends React.Component {
   incomingDataComponent(props) {
     return (
       <Radio.Group onChange={props.input.onChange} value={props.input.value}>
-        <Radio value={WIDGETS_LABEL_DATA_FORMATS.NUMBER}>Number</Radio>
-        <Radio value={WIDGETS_LABEL_DATA_FORMATS.STRING}>String</Radio>
+        <Radio value={WIDGETS_LABEL_DATA_TYPES.NUMBER}>Number</Radio>
+        <Radio value={WIDGETS_LABEL_DATA_TYPES.STRING}>String</Radio>
       </Radio.Group>
     );
   }
@@ -434,22 +434,22 @@ class LabelWidgetSettings extends React.Component {
                   </Item>
                 </ItemsGroup>
                 <Item label="Incoming Data Format" offset="normal">
-                  <Field name={'sources.0.dataFormat'}
+                  <Field name={'dataType'}
                          component={this.incomingDataComponent}
                   />
                 </Item>
 
-                { this.props.formValues.sources && this.props.formValues.sources[0].dataFormat === WIDGETS_LABEL_DATA_FORMATS.NUMBER && (
+                { this.props.formValues.dataType === WIDGETS_LABEL_DATA_TYPES.NUMBER && (
 
                   <Row>
                     <Col span={6}>
                       <Item label="Decimals" offset="medium">
-                        <FormField name={'sources.0.decimalFormat'} placeholder={'Example: #.#'}/>
+                        <FormField name={'decimalFormat'} placeholder={'Example: #.#'}/>
                       </Item>
                     </Col>
                     <Col span={6} offset={1}>
                       <Item label="Suffix" offset="medium">
-                        <FormField name={'sources.0.valueSuffix'} placeholder={'Example: %'}/>
+                        <FormField name={'valueSuffix'} placeholder={'Example: %'}/>
                       </Item>
                     </Col>
                   </Row>
@@ -457,7 +457,7 @@ class LabelWidgetSettings extends React.Component {
                 )}
 
                 <Item label={'Text Alignment'} offset={'medium'}>
-                  <Field name={'sources.0.textAlignment'} component={this.textAlignmentComponent} />
+                  <Field name={'alignment'} component={this.textAlignmentComponent} />
                 </Item>
 
                 <div className="widgets--label-widget--settings-group-name">
@@ -465,42 +465,42 @@ class LabelWidgetSettings extends React.Component {
                 </div>
 
                 <Item offset={'normal'}>
-                  <Field name={'sources.0.isColorSetEnabled'} component={this.switchComponent} label={'Change color based on value'}/>
+                  <Field name={'isColorSetEnabled'} component={this.switchComponent} label={'Change color based on value'}/>
                 </Item>
 
-                { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === true && (
+                { this.props.formValues.isColorSetEnabled === true && (
 
                   <div>
 
-                    {this.props.formValues.sources[0].colorsSet.map((item, key) => ((
+                    {this.props.formValues.colorsSet.map((item, key) => ((
                       <Row key={key} className="widgets--label-widget-background-colors-set">
                         <Col span={12}>
                           <ItemsGroup>
                             <Item label=" ">
-                              <Field name={`sources.0.colorsSet.${key}.backgroundColor`}
+                              <Field name={`colorsSet.${key}.backgroundColor`}
                                      component={this.colorPickerComponent}/>
                             </Item>
                             <Item label="min">
-                              <FormField name={`sources.0.colorsSet.${key}.min`} style={{width: '100px'}}/>
+                              <FormField name={`colorsSet.${key}.min`} style={{width: '100px'}}/>
                             </Item>
                             <Item label="max">
-                              <FormField name={`sources.0.colorsSet.${key}.max`} style={{width: '100px'}}/>
+                              <FormField name={`colorsSet.${key}.max`} style={{width: '100px'}}/>
                             </Item>
                           </ItemsGroup>
                         </Col>
                         <Col span={10} offset={1}>
                           <ItemsGroup>
                             <Item label=" ">
-                              <Field name={`sources.0.colorsSet.${key}.textColor`}
+                              <Field name={`colorsSet.${key}.textColor`}
                                      component={this.textColorPickerComponent} backgroundColor={item.backgroundColor}/>
                             </Item>
                             <Item label="custom text (optional)">
-                              <FormField name={`sources.0.colorsSet.${key}.customText`}/>
+                              <FormField name={`colorsSet.${key}.customText`}/>
                             </Item>
                           </ItemsGroup>
                         </Col>
                         <Col span={1}>
-                          { this.props.formValues.sources[0].colorsSet.length >= 2 && (
+                          { this.props.formValues.colorsSet.length >= 2 && (
                             <Button type="danger" className="widgets--label-widget-background-colors-set--remove-button" onClick={this.handleRemoveColorSet(key)}>
                               <FontAwesome name={'trash'}/>
                             </Button>
@@ -517,17 +517,17 @@ class LabelWidgetSettings extends React.Component {
 
                 )}
 
-                { this.props.formValues.sources && this.props.formValues.sources[0].isColorSetEnabled === false && (
+                { this.props.formValues.isColorSetEnabled === false && (
 
                   <Row>
                     <Col span={6}>
                       <Item label="Background" offset="medium" className="widgets--label-widget--settings-background-color-picker">
-                        <Field name="sources.0.backgroundColor" component={this.colorPickerComponent} />
+                        <Field name="backgroundColor" component={this.colorPickerComponent} />
                       </Item>
                     </Col>
                     <Col span={6} offset={1}>
                       <Item label="Text" offset="medium" className="widgets--label-widget--settings-background-color-picker">
-                        <Field name="sources.0.textColor" component={this.textColorPickerComponent} backgroundColor={this.props.formValues.sources && this.props.formValues.sources[0].backgroundColor} />
+                        <Field name="textColor" component={this.textColorPickerComponent} backgroundColor={this.props.formValues.backgroundColor} />
                       </Item>
                     </Col>
                   </Row>
@@ -539,32 +539,32 @@ class LabelWidgetSettings extends React.Component {
                 </div>
 
                 <Item offset={'normal'}>
-                  <Field name={'sources.0.isShowLevelEnabled'} component={this.switchComponent} label={'Show level'}/>
+                  <Field name={'isShowLevelEnabled'} component={this.switchComponent} label={'Show level'}/>
                 </Item>
 
-                { this.props.formValues.sources && this.props.formValues.sources[0].isShowLevelEnabled === true && (
+                { this.props.formValues.isShowLevelEnabled === true && (
 
                   <div>
 
                     <Row>
                       <Col span={6}>
                         <Item label="min value" offset="medium">
-                          <FormField name={'sources.0.level.min'}/>
+                          <FormField name={'level.min'}/>
                         </Item>
                       </Col>
                       <Col span={6} offset={1}>
                         <Item label="max value" offset="medium">
-                          <FormField name={'sources.0.level.max'}/>
+                          <FormField name={'level.max'}/>
                         </Item>
                       </Col>
                     </Row>
 
                     <Item label="Position" offset={'normal'}>
-                      <Field name="sources.0.level.position" component={this.levelPositionComponent} />
+                      <Field name="level.position" component={this.levelPositionComponent} />
                     </Item>
 
                     <Item label="Color" offset={'normal'} className="widgets--label-widget--settings-background-color-picker">
-                      <Field name="sources.0.level.color" component={this.colorPickerComponent} />
+                      <Field name="level.color" component={this.colorPickerComponent} />
                     </Item>
 
                   </div>
