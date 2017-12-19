@@ -23,4 +23,24 @@ public class WebLineGraph extends WebWidget {
     public int getPrice() {
         return 0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WebLineGraph)) return false;
+        if (!super.equals(o)) return false;
+
+        WebLineGraph that = (WebLineGraph) o;
+
+        if (isShowTitleEnabled != that.isShowTitleEnabled) return false;
+        return isShowLegendEnabled == that.isShowLegendEnabled;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (isShowTitleEnabled ? 1 : 0);
+        result = 31 * result + (isShowLegendEnabled ? 1 : 0);
+        return result;
+    }
 }

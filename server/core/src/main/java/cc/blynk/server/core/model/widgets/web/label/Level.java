@@ -28,4 +28,26 @@ public class Level {
         this.position = position;
         this.color = color;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Level)) return false;
+
+        Level level = (Level) o;
+
+        if (min != level.min) return false;
+        if (max != level.max) return false;
+        if (position != level.position) return false;
+        return color != null ? color.equals(level.color) : level.color == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min;
+        result = 31 * result + max;
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        return result;
+    }
 }

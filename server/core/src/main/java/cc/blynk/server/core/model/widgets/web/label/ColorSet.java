@@ -32,4 +32,29 @@ public class ColorSet {
         this.textColor = textColor;
         this.customText = customText;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ColorSet)) return false;
+
+        ColorSet colorSet = (ColorSet) o;
+
+        if (min != colorSet.min) return false;
+        if (max != colorSet.max) return false;
+        if (backgroundColor != null ? !backgroundColor.equals(colorSet.backgroundColor) : colorSet.backgroundColor != null)
+            return false;
+        if (textColor != null ? !textColor.equals(colorSet.textColor) : colorSet.textColor != null) return false;
+        return customText != null ? customText.equals(colorSet.customText) : colorSet.customText == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min;
+        result = 31 * result + max;
+        result = 31 * result + (backgroundColor != null ? backgroundColor.hashCode() : 0);
+        result = 31 * result + (textColor != null ? textColor.hashCode() : 0);
+        result = 31 * result + (customText != null ? customText.hashCode() : 0);
+        return result;
+    }
 }
