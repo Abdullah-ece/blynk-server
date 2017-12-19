@@ -87,7 +87,7 @@ class LabelWidget extends React.Component {
             </Dotdotdot>
           </div>
         ) || (
-          <div className={valueSizeClassName}>
+          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
             <span className={`${valueClassName}`}>--</span>
           </div>
         )}
@@ -96,11 +96,12 @@ class LabelWidget extends React.Component {
   }
 
   renderFakeDataLabel() {
-    return (
-      <div className="widgets--widget-web-label">
-        Label
-      </div>
-    );
+
+    return this.renderLabelByParams({
+      value: undefined,
+      suffix: this.props.data.valueSuffix,
+      alignment: this.props.data.alignment
+    });
   }
 
   generateData(source, sourceIndex) {
