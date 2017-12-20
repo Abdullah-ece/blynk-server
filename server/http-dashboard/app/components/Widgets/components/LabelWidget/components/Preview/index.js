@@ -84,7 +84,7 @@ class Preview extends React.Component {
         </div>
 
         <div className="widgets--widget label-widget-preview" style={labelStyles}>
-          <div className="widgets--widget-label">
+          <div className="widgets--widget-label" style={{padding: 0}}>
             <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           </div>
           <LabelWidget fetchRealData={false}

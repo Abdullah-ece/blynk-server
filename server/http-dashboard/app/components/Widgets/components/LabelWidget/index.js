@@ -5,6 +5,7 @@ import {Map, fromJS} from 'immutable';
 import {Icon} from 'antd';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
+import Canvasjs from 'canvasjs';
 import './styles.less';
 
 import LabelWidgetSettings from './settings';
@@ -69,6 +70,13 @@ class LabelWidget extends React.Component {
       return 'widgets--widget-web-label--value-size-3';
   }
 
+  formatLabelValue(value) {
+    if (!this.props.data.decimalFormat)
+      return value;
+
+    return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
+  }
+
   renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null}) {
 
     const alignmentClassName = this.getTextAlignmentClassNameByAlignment(params.alignment);
@@ -87,7 +95,7 @@ class LabelWidget extends React.Component {
           <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
             <Dotdotdot clamp={1}>
               <span
-                className={`${valueClassName}`}>{isStringValue ? params.value : params.value.toLocaleString()}</span>
+                className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
               {params.suffix && (
                 <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
               )}
