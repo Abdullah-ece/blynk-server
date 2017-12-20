@@ -22,6 +22,13 @@ class LabelWidget extends React.Component {
 
     fetchRealData: PropTypes.bool,
 
+    isChartPreview: PropTypes.bool,
+
+    fakeData: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+
     onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
@@ -141,9 +148,20 @@ class LabelWidget extends React.Component {
     });
   }
 
+  renderLabelByData() {
+    return this.renderLabelByParams({
+      value: this.props.fakeData,
+      suffix: this.props.data.valueSuffix,
+      alignment: this.props.data.alignment,
+    });
+  }
+
   render() {
     if (this.props.fetchRealData)
       return this.renderRealDataLabel();
+
+    if(this.props.isChartPreview)
+      return this.renderLabelByData();
 
     return this.renderFakeDataLabel();
   }

@@ -4,6 +4,7 @@ import WidgetSettings from '../WidgetSettings';
 import PropTypes from 'prop-types';
 import {reduxForm, getFormValues, reset, initialize, destroy, change, Field} from 'redux-form';
 import {connect} from 'react-redux';
+import {Preview} from './scenes';
 import {bindActionCreators} from 'redux';
 import {fromJS} from 'immutable';
 import _ from 'lodash';
@@ -86,7 +87,9 @@ class LabelWidgetSettings extends React.Component {
         pin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         label: PropTypes.string,
       })
-    }))
+    })),
+
+    params: PropTypes.any,
   };
 
   constructor(props) {
@@ -391,7 +394,11 @@ class LabelWidgetSettings extends React.Component {
         onCancel={this.handleCancel}
         visible={this.props.visible}
         preview={(
-          <div>Label Widget Preview</div>
+          <Preview
+            widgetId={this.props.formValues && Number(this.props.formValues.id || 0)}
+            params={this.props.params}
+            source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}
+            data={this.props.formValues}/>
         )}
         config={(
           <div>
