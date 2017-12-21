@@ -36,6 +36,12 @@
   height: 32px;
   margin-left: 8px;
   opacity: 0;
+  &:active, &:focus, &:hover {
+    background: #fff;
+    span {
+      color: @color-critical;
+    }
+  }
 }
 
 .widgets--label-widget-background-colors-set:hover {
