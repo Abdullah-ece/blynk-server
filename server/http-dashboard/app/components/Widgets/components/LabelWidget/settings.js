@@ -37,6 +37,11 @@ import {
   ItemsGroup
 } from "components/UI";
 
+import {
+  WidgetDevicesPreviewHistoryClear
+} from 'data/Widgets/actions';
+
+
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
   dataStreams: (state.Product.edit.dataStreams && state.Product.edit.dataStreams.fields || []),
@@ -45,6 +50,7 @@ import {
   resetForm: bindActionCreators(reset, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   destroyForm: bindActionCreators(destroy, dispatch),
+  clearWidgetDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryClear, dispatch),
 }))
 @reduxForm()
 class LabelWidgetSettings extends React.Component {
@@ -88,6 +94,12 @@ class LabelWidgetSettings extends React.Component {
       })
     })),
 
+    clearWidgetDevicePreviewHistory: PropTypes.func,
+
+    initializeForm: PropTypes.func,
+
+    initialValues: PropTypes.object,
+
     params: PropTypes.any,
   };
 
@@ -99,6 +111,17 @@ class LabelWidgetSettings extends React.Component {
     this.handleAddColorSet = this.handleAddColorSet.bind(this);
     this.handleRemoveColorSet = this.handleRemoveColorSet.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
+  }
+
+  componentWillUpdate(nextProps) {
+    if(!nextProps.visible && this.props.visible !== nextProps.visible) {
+      this.props.clearWidgetDevicePreviewHistory();
+      this.props.resetForm('bar-chart-widget-preview');
+    }
+
+    if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
+      this.props.initializeForm(nextProps.form, nextProps.initialValues);
+    }
   }
 
   colorPickerComponent({input}) {
