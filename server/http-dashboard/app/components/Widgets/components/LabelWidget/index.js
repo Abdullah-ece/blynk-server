@@ -72,7 +72,7 @@ class LabelWidget extends React.Component {
 
   formatLabelValue(value) {
     if (!this.props.data.decimalFormat)
-      return value;
+      return (value).toLocaleString();
 
     return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
   }
