@@ -240,38 +240,46 @@ export const WIDGETS_SOURCE_TYPES = {
 
 export const WIDGETS_CONFIGS = {
   [WIDGET_TYPES.LABEL]: {
-    'sourceType': WIDGETS_SOURCE_TYPES.RAW_DATA
+    minW: 2,
+    minH: 1,
+    source: {
+      'sourceType': WIDGETS_SOURCE_TYPES.RAW_DATA
+    }
   },
   [WIDGET_TYPES.LINEAR]: {
     minW: 3,
     minH: 2
   },
   [WIDGET_TYPES.BAR]: {
-    'sourceType' : BAR_CHART_PARAMS.DATA_TYPE.defaultKey,
-    'dataStream' : {},
-    'selectedColumns' : [
-      // {
-      //   'name': 'load_weight',
-      //   'label': 'Load Weight',
-      //   'type': 'COLUMN'
-      // }
-    ],
-    'groupByFields' : [
-      // {
-      //   'name': 'Shift 1',
-      //   'type': 'METADATA'
-      // }
-    ],
-    'sortByFields' : [
-      //   {
-      //   'name' : 'load_weight',
-      //   'label' : 'Load Weight',
-      //   'type' : 'COLUMN'
-      // }
-    ],
-    'sortOrder' : BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey,
-    'limit' : BAR_CHART_PARAMS.MAX_ROWS.defaultKey,
-    'color': BAR_CHART_PARAMS.COLOR.defaultKey,
+    minW: 3,
+    minH: 2,
+    source: {
+      'sourceType' : BAR_CHART_PARAMS.DATA_TYPE.defaultKey,
+      'dataStream' : {},
+      'selectedColumns' : [
+        // {
+        //   'name': 'load_weight',
+        //   'label': 'Load Weight',
+        //   'type': 'COLUMN'
+        // }
+      ],
+      'groupByFields' : [
+        // {
+        //   'name': 'Shift 1',
+        //   'type': 'METADATA'
+        // }
+      ],
+      'sortByFields' : [
+        //   {
+        //   'name' : 'load_weight',
+        //   'label' : 'Load Weight',
+        //   'type' : 'COLUMN'
+        // }
+      ],
+      'sortOrder' : BAR_CHART_PARAMS.SORT_BY_ORDER.defaultKey,
+      'limit' : BAR_CHART_PARAMS.MAX_ROWS.defaultKey,
+      'color': BAR_CHART_PARAMS.COLOR.defaultKey,
+    }
   },
 };
 
@@ -357,6 +365,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     ...WIDGETS_CONFIGS[WIDGET_TYPES.LINEAR],
   },
   [WIDGET_TYPES.BAR]: {
+    ...WIDGETS_CONFIGS[WIDGET_TYPES.BAR],
     type: WIDGET_TYPES.BAR,
     id: 0,
     x: 0,
@@ -364,7 +373,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [
       {
         id: 1,
-        ...WIDGETS_CONFIGS[WIDGET_TYPES.BAR]
+        ...WIDGETS_CONFIGS[WIDGET_TYPES.BAR].source
       }
     ],
     w: 3,
@@ -372,6 +381,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     label: "Bar Chart",
   },
   [WIDGET_TYPES.LABEL]: {
+    ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL],
     type: WIDGET_TYPES.LABEL,
     id: 0,
     x: 0,
@@ -382,7 +392,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [
       {
         id: 1,
-        ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL],
+        ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL].source,
       }
     ],
     isColorSetEnabled: false,
