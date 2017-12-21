@@ -6,7 +6,6 @@ import {reduxForm, getFormValues, reset, initialize, destroy, change, Field} fro
 import {connect} from 'react-redux';
 import {Preview} from './scenes';
 import {bindActionCreators} from 'redux';
-import {fromJS} from 'immutable';
 import _ from 'lodash';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
@@ -154,46 +153,12 @@ class LabelWidgetSettings extends React.Component {
         });
       };
 
-      const getColumnByLabel = (label = null, columns = []) => {
-        return _.find(columns, (column) => String(column.label) === String(label));
-      };
+      let dataStream = getStreamByPin(value);
 
-      let dataStream = null;
-      let selectedColumns = [];
+      if(!dataStream)
+        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
 
-      value.forEach((source) => {
-
-        let [pin, columnLabel] = source.split('|');
-
-        if(!dataStream) {
-          dataStream = getStreamByPin(pin);
-        }
-
-        if(columnLabel) {
-
-          let column = getColumnByLabel(columnLabel, dataStream.values.tableDescriptor.columns);
-
-          selectedColumns.push({
-            name: column.columnName,
-            label: column.label,
-            type: 'COLUMN',
-          });
-
-        }
-
-      });
-
-      if(!dataStream || !dataStream.values) {
-        props.input.onChange({});
-        props.changeForm(this.props.form, 'sources.0.selectedColumns', []);
-        return null;
-      }
-
-      props.input.onChange(
-        fromJS(dataStream.values).set('tableDescriptor', null).toJS()
-      );
-
-      props.changeForm(this.props.form, 'sources.0.selectedColumns', selectedColumns);
+      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
 
     };
 
@@ -201,21 +166,11 @@ class LabelWidgetSettings extends React.Component {
 
       if(!props.input.value) return [];
 
-      let values = [];
-
       let pin = this.props.formValues.sources[0].dataStream.pin;
 
-      if(isNaN(Number(pin)))
-        return [];
+      let value = String(pin);
 
-      (this.props.formValues.sources[0].selectedColumns || []).forEach((column) => {
-        values.push(`${pin}|${column.label}`);
-      });
-
-      if(!values.length) // display stream as selected only if no columns selected
-        values.push(String(pin));
-
-      return values;
+      return value;
     };
 
     return this.multipleTagsSelect({
@@ -266,8 +221,7 @@ class LabelWidgetSettings extends React.Component {
     }
 
     return (
-      <AntdSelect mode="multiple"
-                  onFocus={props.input.onFocus}
+      <AntdSelect onFocus={props.input.onFocus}
                   onBlur={props.input.onBlur}
                   onChange={props.input.onChange}
                   notFoundContent={props.notFoundContent || ''}

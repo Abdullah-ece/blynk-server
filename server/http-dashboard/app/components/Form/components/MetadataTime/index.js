@@ -26,7 +26,7 @@ export default class Field extends React.Component {
       <Form.Item validateStatus={validateStatus}
                  help={help}
                  style={style}>
-        <div className="custom"></div>
+        <div className="custom"/>
         { timestampPicker ? (
           <TimePicker
             format={timeFormat}
