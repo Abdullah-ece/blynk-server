@@ -172,7 +172,7 @@ class Widget extends React.Component {
         ...styles,
         'backgroundColor': '#' + this.props.data.backgroundColor,
         'color': '#' + this.props.data.textColor,
-        'text-align': getTextAlignStyle(this.props.data.alignment),
+        'textAlign': getTextAlignStyle(this.props.data.alignment),
       };
     }
 
