@@ -15,6 +15,8 @@ import {MetadataSelect as Select} from 'components/Form';
 
 import {reduxForm} from 'redux-form';
 
+import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
+
 import './styles.less';
 
 @reduxForm()
@@ -72,6 +74,19 @@ class Preview extends React.Component {
 
     if(this.props.data.textColor)
       labelStyles.color = '#'+this.props.data.textColor;
+
+    const getTextAlignStyle = (alignment) => {
+      if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
+        return 'left';
+
+      if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER)
+        return 'center';
+
+      if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT)
+        return 'right';
+    };
+
+    labelStyles.textAlign = getTextAlignStyle(this.props.data.alignment);
 
     return (
       <div>

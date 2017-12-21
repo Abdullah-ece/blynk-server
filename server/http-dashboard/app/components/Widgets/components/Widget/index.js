@@ -7,7 +7,8 @@ import Dotdotdot from 'react-dotdotdot';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {
-  WIDGET_TYPES
+  WIDGET_TYPES,
+  WIDGETS_LABEL_TEXT_ALIGNMENT
 } from 'services/Widgets';
 import {
   LinearWidget,
@@ -152,9 +153,29 @@ class Widget extends React.Component {
 
     let styles = {
       ...(this.props.style || {}),
-      'backgroundColor': '#'+this.props.data.backgroundColor,
-      'color': '#'+this.props.data.textColor
     };
+
+    if (this.props.data.type === WIDGET_TYPES.LABEL) {
+
+      const getTextAlignStyle = (alignment) => {
+        if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
+          return 'left';
+
+        if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER)
+          return 'center';
+
+        if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT)
+          return 'right';
+      };
+
+      styles = {
+        ...styles,
+        'backgroundColor': '#' + this.props.data.backgroundColor,
+        'color': '#' + this.props.data.textColor,
+        'text-align': getTextAlignStyle(this.props.data.alignment),
+      };
+    }
+
 
     return (
       <div className={className}
