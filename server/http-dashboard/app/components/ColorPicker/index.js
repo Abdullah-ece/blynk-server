@@ -9,7 +9,8 @@ class BrandingColorPicker extends React.Component {
   static propTypes = {
     title: React.PropTypes.string,
     color: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    colors: React.PropTypes.array,
   };
 
   constructor(props) {
@@ -47,7 +48,7 @@ class BrandingColorPicker extends React.Component {
         <div className="color-picker">
           <div className="branding-color-picker-color-preview">
             { this.state.displayColorPicker &&
-            <TwitterPicker triangle="hide" color={this.props.color} onChange={this.handleColorChange}/>}
+            <TwitterPicker triangle="hide" color={this.props.color} onChange={this.handleColorChange} colors={this.props.colors || []}/>}
             { !this.props.color &&
             <div className="branding-color-picker-color-preview-choose" onClick={this.displayColorPicker}/>
             }

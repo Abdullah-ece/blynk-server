@@ -109,7 +109,9 @@ class LabelWidgetSettings extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddColorSet = this.handleAddColorSet.bind(this);
+    this.colorPickerComponent = this.colorPickerComponent.bind(this);
     this.handleRemoveColorSet = this.handleRemoveColorSet.bind(this);
+    this.textColorPickerComponent = this.textColorPickerComponent.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
   }
 
@@ -124,16 +126,28 @@ class LabelWidgetSettings extends React.Component {
     }
   }
 
+  colorPalette = [
+    '#000',
+    '#fff',
+    '#24c48e',
+    '#04c0f8',
+    '#d3435c',
+    '#ea7d26',
+    '#ea7d26',
+  ];
+
   colorPickerComponent({input}) {
     return (
-      <ColorPicker title="primary color" color={input.value}
+      <ColorPicker colors={this.colorPalette}
+                   title="primary color" color={input.value}
                    onChange={input.onChange}/>
     );
   }
 
   textColorPickerComponent({input, backgroundColor}) {
     return (
-      <TextColorPicker title="primary color" backgroundColor={backgroundColor} color={input.value}
+      <TextColorPicker colors={this.colorPalette}
+                       title="primary color" backgroundColor={backgroundColor} color={input.value}
                    onChange={input.onChange}/>
     );
   }
