@@ -103,7 +103,7 @@ class LabelWidget extends React.Component {
           </div>
         ) || (
           <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
-            <span className={`${valueClassName}`}>--</span>
+            <span className={`widgets--widget-web-label--number-value`}>--</span>
           </div>
         )}
       </div>
