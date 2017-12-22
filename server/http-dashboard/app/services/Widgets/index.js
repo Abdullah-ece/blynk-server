@@ -242,6 +242,7 @@ export const WIDGETS_CONFIGS = {
   [WIDGET_TYPES.LABEL]: {
     minW: 2,
     minH: 1,
+    maxH: 3,
     source: {
       'sourceType': WIDGETS_SOURCE_TYPES.RAW_DATA
     }
