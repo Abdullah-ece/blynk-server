@@ -373,6 +373,7 @@ class Create extends React.Component {
 
     return (
       <ProductCreate
+        initialValues={PRODUCT_CREATE_INITIAL_VALUES}
         formValues={this.props.formValues}
         invalid={this.props.invalid}
         loading={this.props.loading}
