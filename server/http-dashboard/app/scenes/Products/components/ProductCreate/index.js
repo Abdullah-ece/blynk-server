@@ -2,7 +2,7 @@ import React                                from 'react';
 import {
   Button,
   Tabs,
-  // Icon,
+  Icon,
   // Popover
 }                                           from 'antd';
 import {MainLayout}                         from 'components';
@@ -54,9 +54,12 @@ class ProductCreate extends React.Component {
       logoUrl: PropTypes.string,
     }),
 
+    formSyncErrors: PropTypes.object,
+
     loading: PropTypes.bool,
     invalid: PropTypes.bool,
     submitting: PropTypes.bool,
+    submitFailed: PropTypes.bool,
 
     onCancel: PropTypes.func,
     onSubmit: PropTypes.func,
@@ -147,10 +150,17 @@ class ProductCreate extends React.Component {
   //   return this.props.isInfoFormInvalid;
   // }
   //
-  // productInfoInvalidIcon() {
-  //   return this.state.submited && this.isInfoFormInvalid() &&
-  //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
-  // }
+  productInfoInvalidIcon() {
+
+    return this.props.submitFailed && (
+      this.props.formSyncErrors.has('name') ||
+      this.props.formSyncErrors.has('boardType') ||
+      this.props.formSyncErrors.has('connectionType') ||
+      this.props.formSyncErrors.has('description') ||
+      this.props.formSyncErrors.has('logoUrl')
+    ) && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+  }
+
   //
   // productDataStreamsInvalidIcon() {
   //   return this.state.submited && this.props.isDataStreamsFormInvalid &&
@@ -188,7 +198,7 @@ class ProductCreate extends React.Component {
                                <Button type="primary"
                                        onClick={this.props.handleSubmit}
                                        loading={this.props.loading}
-                                       disabled={this.props.invalid || this.props.submitting}>
+                                       disabled={(this.props.submitFailed && this.props.invalid) || this.props.submitting}>
                                  Create
                                </Button>
                              </div>
@@ -198,7 +208,7 @@ class ProductCreate extends React.Component {
 
           <Tabs defaultActiveKey={TABS.INFO} activeKey={TABS.INFO} className="products-tabs">
 
-            <Tabs.TabPane tab={<span>Info</span>} key={TABS.INFO}>
+            <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
               <InfoTab />
             </Tabs.TabPane>
 

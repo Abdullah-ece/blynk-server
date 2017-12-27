@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
 // import _ from 'lodash';
 import {
   // submit,
-  // getFormSyncErrors,
+  getFormSyncErrors,
   initialize,
   // destroy,
   getFormValues,
@@ -55,6 +55,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 @connect((state) => {
   return {
     formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
+    formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
     // organization: fromJS(state.Organization),
     orgId: state.Account.orgId,
     // product: state.Product.edit,
@@ -96,6 +97,8 @@ class Create extends React.Component {
       description: PropTypes.string,
       logoUrl: PropTypes.string,
     }),
+
+    formSyncErrors: PropTypes.object,
 
     loading: PropTypes.bool,
     invalid: PropTypes.bool,
@@ -377,6 +380,7 @@ class Create extends React.Component {
         onSubmit={this.handleSubmit}
         onCancel={this.handleCancel}
         form={FORMS.PRODUCTS_PRODUCT_CREATE}
+        formSyncErrors={this.props.formSyncErrors}
         // product={this.props.product}
         // isInfoFormInvalid={this.props.isProductInfoInvalid}
         // isEventsFormInvalid={this.isEventsFormInvalid()}
