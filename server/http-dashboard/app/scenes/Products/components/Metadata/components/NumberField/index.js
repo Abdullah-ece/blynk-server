@@ -19,6 +19,14 @@ import Static from './static';
 })
 class NumberField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
@@ -40,11 +48,11 @@ class NumberField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} validateOnBlur={true}
+                               onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
                                name="name" type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} name="value"
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur} name="value"
                                type="text" placeholder="Default value(optional)" validate={[
               Validation.Rules.number
             ]}/>

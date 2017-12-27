@@ -21,6 +21,14 @@ import Static from './static';
 })
 class UnitField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+  }
+
   Unit = {
     'Length, Distance': {
       'Imperial': [
@@ -94,15 +102,15 @@ class UnitField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               onFocus={this.onFocus} onBlur={this.onBlur}
                                validateOnBlur={true} name="name" type="text" placeholder="Field Name"
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="value" type="text" placeholder="Default val..." validate={[
               Validation.Rules.number
             ]}/>

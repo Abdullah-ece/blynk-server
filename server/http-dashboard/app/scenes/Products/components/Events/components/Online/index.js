@@ -14,6 +14,13 @@ class Online extends React.Component {
     validate: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+  }
+
   state = {
     isFocused: false
   };
@@ -39,7 +46,7 @@ class Online extends React.Component {
             isActive={this.state.isFocused}>
         <Base.Content>
           <Item label="Online Event" offset="small">
-            <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <Input onFocus={this.onFocus} onBlur={this.onBlur}
                    validateOnBlur={true} name="name" placeholder="Event Name"/>
           </Item>
         </Base.Content>

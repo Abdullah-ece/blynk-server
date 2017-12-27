@@ -181,6 +181,20 @@ class Edit extends React.Component {
     };
 
     this.routerWillLeave = this.routerWillLeave.bind(this);
+
+    this.handleProductDeviceForceUpdateCancel = this.handleProductDeviceForceUpdateCancel.bind(this);
+    this.handleProductDeviceForceUpdateSubmit = this.handleProductDeviceForceUpdateSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
+    this.onTabChange = this.onTabChange.bind(this);
+    this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
+    this.onMetadataFieldChange = this.onMetadataFieldChange.bind(this);
+    this.onMetadataFieldsChange = this.onMetadataFieldsChange.bind(this);
+    this.onEventsFieldsChange = this.onEventsFieldsChange.bind(this);
+    this.onDataStreamsFieldChange = this.onDataStreamsFieldChange.bind(this);
+    this.onDataStreamsFieldsChange = this.onDataStreamsFieldsChange.bind(this);
+    this.handleProductSaveSuccess = this.handleProductSaveSuccess.bind(this);
   }
 
   componentWillMount() {
@@ -407,7 +421,7 @@ class Edit extends React.Component {
         product: product,
         orgId: this.props.orgId
       })
-        .then(this.handleProductSaveSuccess.bind(this))
+        .then(this.handleProductSaveSuccess)
         .catch((response) => {
           this.setState({
             deviceForceUpdateLoading: false
@@ -429,7 +443,7 @@ class Edit extends React.Component {
       product: product,
       orgId: this.props.orgId
     })
-      .then(this.handleProductSaveSuccess.bind(this))
+      .then(this.handleProductSaveSuccess)
       .catch((response) => {
         this.setState({
           deviceForceUpdateLoading: false
@@ -446,7 +460,7 @@ class Edit extends React.Component {
     this.props.Create({
       product: product,
       orgId: this.props.orgId
-    }).then(this.handleProductSaveSuccess.bind(this))
+    }).then(this.handleProductSaveSuccess)
       .catch((response) => {
         this.setState({
           deviceForceUpdateLoading: false
@@ -489,24 +503,24 @@ class Edit extends React.Component {
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
                      isFormDirty={this.props.isFormDirty}
-                     onInfoValuesChange={this.onInfoValuesChange.bind(this)}
-                     onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
-                     onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
-                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
-                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
-                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
-                     handleSubmit={this.handleSubmit.bind(this)}
-                     handleCancel={this.handleCancel.bind(this)}
-                     onTabChange={this.onTabChange.bind(this)}
+                     onInfoValuesChange={this.onInfoValuesChange}
+                     onMetadataFieldChange={this.onMetadataFieldChange}
+                     onMetadataFieldsChange={this.onMetadataFieldsChange}
+                     onEventsFieldsChange={this.onEventsFieldsChange}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange}
+                     handleSubmit={this.handleSubmit}
+                     handleCancel={this.handleCancel}
+                     onTabChange={this.onTabChange}
                      params={params}
                      loading={this.state.deviceForceUpdateLoading}
-                     onDelete = {this.handleDeleteSubmit.bind(this)}/>
+                     onDelete = {this.handleDeleteSubmit}/>
         <ProductDevicesForceUpdate
           isModalVisible={this.state.isDevicesForceUpdateVisible}
           loading={this.state.deviceForceUpdateLoading}
           product={_.find(this.props.products, product => Number(product.id) === Number(this.props.params.id))}
-          onSave={this.handleProductDeviceForceUpdateSubmit.bind(this)}
-          onCancel={this.handleProductDeviceForceUpdateCancel.bind(this)}/>
+          onSave={this.handleProductDeviceForceUpdateSubmit}
+          onCancel={this.handleProductDeviceForceUpdateCancel}/>
       </MainLayout>
     );
   }

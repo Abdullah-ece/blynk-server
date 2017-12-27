@@ -44,6 +44,11 @@ class DataStreamItem extends React.Component {
 
     this.invalid = false;
 
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.markAsActive = this.markAsActive.bind(this);
+    this.handleCancelDelete = this.handleCancelDelete.bind(this);
+    this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
+
     this.state = {
       isActive: false
     };
@@ -112,15 +117,15 @@ class DataStreamItem extends React.Component {
     if (this.props.anyTouched) {
       deleteButton = (
         <Popconfirm title="Are you sure?" overlayClassName="danger"
-                    onConfirm={this.handleConfirmDelete.bind(this)}
-                    onCancel={this.handleCancelDelete.bind(this)} okText="Yes, Delete"
+                    onConfirm={this.handleConfirmDelete}
+                    onCancel={this.handleCancelDelete} okText="Yes, Delete"
                     cancelText="Cancel">
-          <Button icon="delete" size="small" onClick={this.markAsActive.bind(this)}/>
+          <Button icon="delete" size="small" onClick={this.markAsActive}/>
         </Popconfirm>
       );
     } else {
       deleteButton = (
-        <Button size="small" icon="delete" onClick={this.handleConfirmDelete.bind(this)}/>
+        <Button size="small" icon="delete" onClick={this.handleConfirmDelete}/>
       );
     }
 
@@ -132,7 +137,7 @@ class DataStreamItem extends React.Component {
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form onSubmit={this.handleSubmit}>
             <Row gutter={8}>
               <Col span={13}>
                 {this.props.children}
@@ -144,8 +149,8 @@ class DataStreamItem extends React.Component {
                 </FormItem.TitleGroup>
                 <FormItem.Content>
                   <MetadataFormSelect name="pin"
-                                      onFocus={this.markAsActive.bind(this)}
-                                      onBlur={this.handleCancelDelete.bind(this)}
+                                      onFocus={this.markAsActive}
+                                      onBlur={this.handleCancelDelete}
                                       type="text"
                                       placeholder="Pin"
                                       dropdownClassName="product-metadata-item-unit-dropdown"
@@ -162,7 +167,7 @@ class DataStreamItem extends React.Component {
             <div className="product-metadata-item-tools">
               <DragHandler/>
               {deleteButton}
-              <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+              <Button icon="copy" size="small" onClick={this.props.onClone}/>
             </div>
           </Form>
         </div>

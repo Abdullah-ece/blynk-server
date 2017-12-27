@@ -32,7 +32,7 @@ class Delete extends React.Component {
             <div className="delete-confirmation-modal-content-sub-notice">
               Sensor data and devices logs will not be deleted
             </div>
-            <DeleteForm onCancel={this.props.onCancel} onSubmit={this.props.handleSubmit.bind(this)}
+            <DeleteForm onCancel={this.props.onCancel} onSubmit={this.props.handleSubmit}
                         productName={this.props.productName}/>
           </div>
         </div>

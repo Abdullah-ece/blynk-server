@@ -20,6 +20,14 @@ import Static from './static';
 })
 class SwitchField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const from = this.props.fields.from;
@@ -42,18 +50,18 @@ class SwitchField extends BaseField {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               onFocus={this.onFocus} onBlur={this.onBlur}
                                validateOnBlur={true} name="name" type="text" placeholder="Field Name"
                                validate={[
                                  Validation.Rules.required, Validation.Rules.metafieldName,
                                ]}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="from" type="text" placeholder="Option A"
                                validate={[
                                  Validation.Rules.required
                                ]}/>
 
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="to" type="text" placeholder="Option B"
                                validate={[
                                  Validation.Rules.required

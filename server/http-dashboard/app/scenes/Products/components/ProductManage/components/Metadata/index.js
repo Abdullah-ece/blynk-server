@@ -26,6 +26,15 @@ class ProductMetadata extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.onSortStart = this.onSortStart.bind(this);
+    this.handleCloneField = this.handleCloneField.bind(this);
+    this.addMetadataField = this.addMetadataField.bind(this);
+    this.handleChangeField = this.handleChangeField.bind(this);
+    this.handleDeleteField = this.handleDeleteField.bind(this);
+    this.metadataFieldValidation = this.metadataFieldValidation.bind(this);
+
   }
 
   state = {
@@ -79,10 +88,10 @@ class ProductMetadata extends React.Component {
       id: field.id,
       key: field.id,
       form: `metadatafield${field.id}`,
-      onChange: this.handleChangeField.bind(this),
-      validate: this.metadataFieldValidation.bind(this),
-      onDelete: this.handleDeleteField.bind(this),
-      onClone: this.handleCloneField.bind(this),
+      onChange: this.handleChangeField,
+      validate: this.metadataFieldValidation,
+      onDelete: this.handleDeleteField,
+      onClone: this.handleCloneField,
       field: field
     };
 
@@ -385,10 +394,10 @@ class ProductMetadata extends React.Component {
         id: field.id,
         key: field.id,
         form: `metadatafield${field.id}`,
-        onChange: this.handleChangeField.bind(this),
-        validate: this.metadataFieldValidation.bind(this),
-        onDelete: this.handleDeleteField.bind(this),
-        onClone: this.handleCloneField.bind(this),
+        onChange: this.handleChangeField,
+        validate: this.metadataFieldValidation,
+        onDelete: this.handleDeleteField,
+        onClone: this.handleCloneField,
         field: field,
         tools: false,
         initialValues: {
@@ -457,15 +466,15 @@ class ProductMetadata extends React.Component {
           { this.props.fields && this.props.fields.length && (
             <this.SortableList items={filterDynamicMetadataFields(this.props.fields)}
                                useWindowAsScrollContainer={true}
-                               onSortEnd={this.onSortEnd.bind(this)}
-                               onSortStart={this.onSortStart.bind(this)}
+                               onSortEnd={this.onSortEnd}
+                               onSortStart={this.onSortStart}
                                useDragHandle={true}
                                lockAxis="y"
                                helperClass="product-metadata-item-drag-active"/>) || null
           }
 
         </Metadata.ItemsList>
-        <AddMetadataFields onFieldAdd={this.addMetadataField.bind(this)}/>
+        <AddMetadataFields onFieldAdd={this.addMetadataField}/>
         <BackTop/>
       </div>
     );

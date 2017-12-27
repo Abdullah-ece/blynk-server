@@ -99,6 +99,17 @@ class Clone extends React.Component {
     this.state = {
       activeTab: props && props.params.tab || this.TABS.INFO,
     };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.onTabChange = this.onTabChange.bind(this);
+    this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
+    this.onMetadataFieldChange = this.onMetadataFieldChange.bind(this);
+    this.onMetadataFieldsChange = this.onMetadataFieldsChange.bind(this);
+    this.onEventsFieldsChange = this.onEventsFieldsChange.bind(this);
+    this.onDataStreamsFieldChange = this.onDataStreamsFieldChange.bind(this);
+    this.onDataStreamsFieldsChange = this.onDataStreamsFieldsChange.bind(this);
+
   }
 
   componentWillMount() {
@@ -254,15 +265,15 @@ class Clone extends React.Component {
                      isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
-                     onInfoValuesChange={this.onInfoValuesChange.bind(this)}
-                     onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
-                     onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
-                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
-                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
-                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
-                     handleSubmit={this.handleSubmit.bind(this)}
-                     handleCancel={this.handleCancel.bind(this)}
-                     onTabChange={this.onTabChange.bind(this)}
+                     onInfoValuesChange={this.onInfoValuesChange}
+                     onMetadataFieldChange={this.onMetadataFieldChange}
+                     onMetadataFieldsChange={this.onMetadataFieldsChange}
+                     onEventsFieldsChange={this.onEventsFieldsChange}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange}
+                     handleSubmit={this.handleSubmit}
+                     handleCancel={this.handleCancel}
+                     onTabChange={this.onTabChange}
                      params={this.props.params}/>
       </MainLayout>
     );

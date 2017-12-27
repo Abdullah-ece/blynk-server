@@ -54,6 +54,11 @@ class ProductCreate extends React.Component {
       activeTab: props.params.tab || TABS.INFO,
       metadataIntroVisible: false
     };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
+    this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
+
   }
 
   componentWillMount() {
@@ -138,11 +143,11 @@ class ProductCreate extends React.Component {
                        options={(
                          <div>
                            <Button type="default"
-                                   onClick={this.props.handleCancel.bind(this)}>
+                                   onClick={this.props.handleCancel}>
                              Cancel
                            </Button>
                            <Button type="primary"
-                                   onClick={this.handleSubmit.bind(this)}
+                                   onClick={this.handleSubmit}
                                    loading={this.props.loading}
                                    disabled={this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid)}>
                              Create
@@ -152,18 +157,18 @@ class ProductCreate extends React.Component {
         <MainLayout.Content className="product-create-content">
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
-            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
+            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage}/>}
             visible={this.isMetadataIntroductionMessageVisible()}
             overlayClassName="products-metadata-introduction-message-popover"
             trigger="click">
 
             <Icon type="info-circle" className="products-metadata-info"
-                  onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
+                  onClick={this.toggleMetadataIntroductionMessage}/>
           </Popover>}
 
           <Tabs defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
-                onChange={this.handleTabChange.bind(this)} className="products-tabs">
+                onChange={this.handleTabChange} className="products-tabs">
 
             <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
               <InfoTab values={this.props.product.info.values}

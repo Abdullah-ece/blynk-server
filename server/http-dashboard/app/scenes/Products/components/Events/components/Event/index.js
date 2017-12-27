@@ -44,6 +44,10 @@ class Event extends React.Component {
   constructor(props) {
     super(props);
 
+    this.onBlur = this.onBlur.bind(this);
+    this.onFocus = this.onFocus.bind(this);
+    this.onNameChange = this.onNameChange.bind(this);
+
     if (_.values(EVENT_TYPES).indexOf(props.type) === -1) {
       throw Error('Wrong props.type for Event');
     }
@@ -112,20 +116,20 @@ class Event extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
-              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
-                     validateOnBlur={true} onChange={this.onNameChange.bind(this)} name="name" placeholder="Event Name"
+              <Input onFocus={this.onFocus} onBlur={this.onBlur}
+                     validateOnBlur={true} onChange={this.onNameChange} name="name" placeholder="Event Name"
                      style={{width: '55%'}}
                      validate={[Validation.Rules.required]}
                      className={`event-name-field-${this.props.initialValues.id}`}/>
             </Item>
             <Item label="Event Code" offset="normal">
-              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+              <Input onFocus={this.onFocus} onBlur={this.onBlur}
                      validateOnBlur={true} name="eventCode" placeholder="Event code" style={{width: '45%'}}
                      validate={[Validation.Rules.required, Validation.Rules.eventsEventCode]}/>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
-            <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <Input onFocus={this.onFocus} onBlur={this.onBlur}
                    name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>

@@ -28,6 +28,10 @@ class BaseField extends React.PureComponent {
     if (typeof this.component !== 'function') {
       throw new Error('Object nested from BaseField should have component method');
     }
+
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleClone = this.handleClone.bind(this);
+
   }
 
   state = {
@@ -64,10 +68,10 @@ class BaseField extends React.PureComponent {
 
     return (
       <Metadata.Item preview={this.getPreviewValues()}
-                     onChange={this.props.onChange.bind(this)}
-                     onDelete={this.handleDelete.bind(this)}
-                     onClone={this.handleClone.bind(this)}
-                     validate={this.props.validate.bind(this)}
+                     onChange={this.props.onChange}
+                     onDelete={this.handleDelete}
+                     onClone={this.handleClone}
+                     validate={this.props.validate}
                      initialValues={this.props.initialValues}
                      tools={this.props.tools !== false}
                      fields={this.props.fields}

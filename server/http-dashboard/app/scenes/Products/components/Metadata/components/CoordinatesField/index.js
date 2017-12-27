@@ -20,6 +20,14 @@ import Static from './static';
 })
 class CoordinatesField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+  }
+
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const lat = this.props.fields.lat;
@@ -44,15 +52,15 @@ class CoordinatesField extends BaseField {
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
                                validateOnBlur={true} name="name" type="text" placeholder="Field Name"
-                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               onFocus={this.onFocus} onBlur={this.onBlur}
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="lat" type="text" placeholder="Latitude" validate={[
               Validation.Rules.latitude
             ]}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="lon" type="text" placeholder="Longitude" validate={[
               Validation.Rules.longitude
             ]}/>

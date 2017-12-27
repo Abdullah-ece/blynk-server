@@ -18,6 +18,14 @@ import Static from './static';
 })
 class DeviceOwnerField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onFocus.bind(this);
+
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
@@ -35,7 +43,7 @@ class DeviceOwnerField extends BaseField {
           <FormItem.Title style={{width: '50%'}}>Device Owner</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+          <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                              name="value" type="text" placeholder="device-owner@example.com (optional)"
                              validate={[Validation.Rules.email]}
                              validateOnBlur={true}

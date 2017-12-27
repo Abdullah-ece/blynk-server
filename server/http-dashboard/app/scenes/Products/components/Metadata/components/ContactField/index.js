@@ -64,6 +64,14 @@ import _ from 'lodash';
 }))
 class ContactField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onUncheckEmail = this.onUncheckEmail.bind(this);
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+  }
+
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(this.props, nextProps);
   }
@@ -175,7 +183,7 @@ class ContactField extends BaseField {
       popconfirmOptions = {
         onUncheck: true,
         message: <div>This contact is used on some<br/> Events Notifications.<br/> Are you sure?</div>,
-        onConfirm: this.onUncheckEmail.bind(this)
+        onConfirm: this.onUncheckEmail
       };
     }
 
@@ -185,7 +193,7 @@ class ContactField extends BaseField {
           <Form.Input validateOnBlur={true}
                       className={`metadata-name-field-${this.props.field.id} metadata-contact-field`}
                       name="name" type="text"
-                      onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                      onFocus={this.onFocus} onBlur={this.onBlur}
                       placeholder="Field Name"
                       validate={[
                         Validation.Rules.required, Validation.Rules.metafieldName,
@@ -205,39 +213,39 @@ class ContactField extends BaseField {
               <Form.Items offset="small">
                 <DefinedInput placeholder="First name" prefix="firstName"
                               isChecked={this.props.fields.values.firstName.checked}
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               value={this.props.fields.values.firstName.value}/>
                 <DefinedInput placeholder="Last name" prefix="lastName"
                               isChecked={this.props.fields.values.lastName.checked}
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               value={this.props.fields.values.lastName.value}/>
               </Form.Items>
             </Col>
             <Col span={12}>
               <Form.Items offset="small">
                 <DefinedInput placeholder="E-mail address" prefix="email"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.email.checked}
                               value={this.props.fields.values.email.value}
                               popconfirm={popconfirmOptions}/>
                 <DefinedInput placeholder="Phone number" prefix="phone"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.phone.checked}
                               value={this.props.fields.values.phone.value}/>
                 <DefinedInput placeholder="Street address" prefix="streetAddress"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.streetAddress.checked}
                               value={this.props.fields.values.streetAddress.value}/>
                 <DefinedInput placeholder="City" prefix="city"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.city.checked}
                               value={this.props.fields.values.city.value}/>
                 <DefinedInput placeholder="State" prefix="state"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.state.checked}
                               value={this.props.fields.values.state.value}/>
                 <DefinedInput placeholder="ZIP Code" prefix="zip"
-                              onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                              onFocus={this.onFocus} onBlur={this.onBlur}
                               isChecked={this.props.fields.values.zip.checked}
                               value={this.props.fields.values.zip.value}/>
               </Form.Items>

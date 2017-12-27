@@ -46,6 +46,11 @@ class ProductDetails extends React.Component {
       product: null,
       activeTab: props && props.params.tab || TABS.INFO,
     };
+
+    this.handleClone = this.handleClone.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
+
   }
 
   componentDidMount() {
@@ -119,12 +124,12 @@ class ProductDetails extends React.Component {
                            options={this.props.canEditProduct && (
                              <div>
                                <Button type="default"
-                                       onClick={this.handleClone.bind(this)}>
+                                       onClick={this.handleClone}>
                                  Clone
                                </Button>
                                <Button type="primary"
                                        loading = {this.state.enteringEditMode}
-                                       onClick={this.handleEdit.bind(this)}>
+                                       onClick={this.handleEdit}>
                                  Edit
                                </Button>
                              </div>
@@ -133,7 +138,7 @@ class ProductDetails extends React.Component {
           <Tabs className="products-tabs"
                 defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
-                onChange={this.handleTabChange.bind(this)}>
+                onChange={this.handleTabChange}>
             <Tabs.TabPane tab="Info" key={TABS.INFO}>
               <Info product={this.state.product}/>
             </Tabs.TabPane>

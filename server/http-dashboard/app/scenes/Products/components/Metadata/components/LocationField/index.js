@@ -17,6 +17,14 @@ import Static from './static';
 })
 class LocationField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
@@ -34,7 +42,7 @@ class LocationField extends BaseField {
           <FormItem.Title style={{width: '50%'}}>Location Name</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+          <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                              name="value" type="text" placeholder="Default value(optional)"/>
         </FormItem.Content>
       </FormItem>

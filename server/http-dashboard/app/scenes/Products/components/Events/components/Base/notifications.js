@@ -20,6 +20,12 @@ class Notifications extends React.Component {
     onBlur: React.PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+
+
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
@@ -81,13 +87,13 @@ class Notifications extends React.Component {
           <Item label="E-mail to" offset="normal">
             <Field name="emailNotifications"
                    component={this.notificationSelect}
-                   onFocus={this.props.onFocus.bind(this)} onBlur={this.props.onBlur.bind(this)}
+                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}
                    options={notificationAvailableMetadataContactFields}/>
           </Item>
           <Item label="PUSH Notifications to">
             <Field name="pushNotifications"
                    component={this.notificationSelect}
-                   onFocus={this.props.onFocus.bind(this)} onBlur={this.props.onBlur.bind(this)}
+                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}
                    options={notificationAvailableMetadataContactFields}/>
           </Item>
         </FormItem>

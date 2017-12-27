@@ -66,6 +66,13 @@ class ProductEdit extends React.Component {
       showDeleteModal: false,
       currentProduct: currentProduct,
     };
+
+    this.toggleDelete = this.toggleDelete.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
+    this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
+
   }
 
   componentWillMount() {
@@ -157,13 +164,13 @@ class ProductEdit extends React.Component {
         <MainLayout.Header title={this.state.originalName}
                            options={(
                              <div>
-                               <Button type="danger" onClick={this.toggleDelete.bind(this)}>Delete</Button>
+                               <Button type="danger" onClick={this.toggleDelete}>Delete</Button>
                                <Button type="default"
-                                       onClick={this.props.handleCancel.bind(this)}>
+                                       onClick={this.props.handleCancel}>
                                  Cancel
                                </Button>
                                <Button type="primary"
-                                       onClick={this.handleSubmit.bind(this)}
+                                       onClick={this.handleSubmit}
                                        loading={this.props.loading}
                                        disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
                                  { this.props.successButtonLabel || 'Save' }
@@ -173,18 +180,18 @@ class ProductEdit extends React.Component {
         <MainLayout.Content className="product-edit-content">
           { this.state.activeTab === TABS.METADATA && <Popover
             placement="bottomRight"
-            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage.bind(this)}/>}
+            content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage}/>}
             visible={this.isMetadataIntroductionMessageVisible()}
             overlayClassName="products-metadata-introduction-message-popover"
             trigger="click">
 
             <Icon type="info-circle" className="products-metadata-info"
-                  onClick={this.toggleMetadataIntroductionMessage.bind(this)}/>
+                  onClick={this.toggleMetadataIntroductionMessage}/>
           </Popover>}
 
           <Tabs defaultActiveKey={TABS.INFO}
                 activeKey={this.state.activeTab}
-                onChange={this.handleTabChange.bind(this)} className="products-tabs">
+                onChange={this.handleTabChange} className="products-tabs">
 
             <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
               <InfoTab values={this.props.product.info.values}
@@ -214,8 +221,8 @@ class ProductEdit extends React.Component {
             </Tabs.TabPane>
 
           </Tabs>
-          <DeleteModal deviceCount={this.state.currentProduct.deviceCount} onCancel={this.toggleDelete.bind(this)}
-                       visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit.bind(this)}
+          <DeleteModal deviceCount={this.state.currentProduct.deviceCount} onCancel={this.toggleDelete}
+                       visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit}
                        productName={this.state.currentProduct.name}/>
         </MainLayout.Content>
       </div>

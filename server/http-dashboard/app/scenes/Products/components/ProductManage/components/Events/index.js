@@ -16,6 +16,20 @@ class Events extends React.Component {
     onFieldsChange: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.onSortStart = this.onSortStart.bind(this);
+    this.handleAddField = this.handleAddField.bind(this);
+    this.handleFieldClone = this.handleFieldClone.bind(this);
+    this.handleFieldChange = this.handleFieldChange.bind(this);
+    this.handleFieldDelete = this.handleFieldDelete.bind(this);
+    this.handleFieldValidation = this.handleFieldValidation.bind(this);
+
+  }
+
+
   state = {
     isSortEnabled: false
   };
@@ -161,10 +175,10 @@ class Events extends React.Component {
             emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
             pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
           },
-          onChange: this.handleFieldChange.bind(this),
-          onDelete: this.handleFieldDelete.bind(this),
-          onClone: this.handleFieldClone.bind(this),
-          validate: this.handleFieldValidation.bind(this),
+          onChange: this.handleFieldChange,
+          onDelete: this.handleFieldDelete,
+          onClone: this.handleFieldClone,
+          validate: this.handleFieldValidation,
         };
 
         if (field.type === EVENT_TYPES.ONLINE) {
@@ -239,10 +253,10 @@ class Events extends React.Component {
         emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
         pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
       },
-      onChange: this.handleFieldChange.bind(this),
-      onDelete: this.handleFieldDelete.bind(this),
-      onClone: this.handleFieldClone.bind(this),
-      validate: this.handleFieldValidation.bind(this),
+      onChange: this.handleFieldChange,
+      onDelete: this.handleFieldDelete,
+      onClone: this.handleFieldClone,
+      validate: this.handleFieldValidation,
     };
 
     if (field.type === EVENT_TYPES.INFO) {
@@ -339,15 +353,15 @@ class Events extends React.Component {
       <div className={className}>
         { staticFields }
 
-        <this.SortableList items={this.getDynamicFields(this.props.fields)} /*onSortEnd={this.onSortEnd.bind(this)}*/
+        <this.SortableList items={this.getDynamicFields(this.props.fields)} /*onSortEnd={this.onSortEnd}*/
                            useDragHandle={true}
                            useWindowAsScrollContainer={true}
-                           onSortStart={this.onSortStart.bind(this)}
-                           onSortEnd={this.onSortEnd.bind(this)}
+                           onSortStart={this.onSortStart}
+                           onSortEnd={this.onSortEnd}
                            lockAxis="y"
                            helperClass="product-events-item-drag-active"/>
 
-        <Add handleSubmit={this.handleAddField.bind(this)}/>
+        <Add handleSubmit={this.handleAddField}/>
         <BackTop/>
       </div>
     );

@@ -48,6 +48,12 @@ class Base extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleClone = this.handleClone.bind(this);
+    this.markAsActive = this.markAsActive.bind(this);
+    this.handleCancelDelete = this.handleCancelDelete.bind(this);
+    this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
+
+
     this.state = {
       isActive: false
     };
@@ -125,12 +131,12 @@ class Base extends React.Component {
   toolsPopconfirmDeleteButton() {
     return (
       <Popconfirm title="Are you sure?" overlayClassName="danger"
-                  onConfirm={this.handleConfirmDelete.bind(this)}
-                  onCancel={this.handleCancelDelete.bind(this)}
+                  onConfirm={this.handleConfirmDelete}
+                  onCancel={this.handleCancelDelete}
                   okText="Yes, Delete"
                   cancelText="Cancel">
         <Button icon="delete" size="small"
-                onClick={this.markAsActive.bind(this)}
+                onClick={this.markAsActive}
         />
       </Popconfirm>
     );
@@ -139,7 +145,7 @@ class Base extends React.Component {
   toolsDeleteButton() {
     return (
       <Button size="small" icon="delete"
-              onClick={this.handleConfirmDelete.bind(this)}
+              onClick={this.handleConfirmDelete}
       />
     );
   }
@@ -147,7 +153,7 @@ class Base extends React.Component {
   toolsCloneButton() {
     return (
       <Button icon="copy" size="small"
-              onClick={this.handleClone.bind(this)}/>
+              onClick={this.handleClone}/>
     );
   }
 
@@ -167,7 +173,7 @@ class Base extends React.Component {
               <Row gutter={8}>
                 <Col span={13}>
                   { this.getChildrenByType(Content.displayName) }
-                  <Notifications onFocus={this.markAsActive.bind(this)} onBlur={this.handleCancelDelete.bind(this)}
+                  <Notifications onFocus={this.markAsActive} onBlur={this.handleCancelDelete}
                                  metadata={this.props.metadata} fields={this.props.fields}/>
                 </Col>
                 <Col span={9} offset={1}>

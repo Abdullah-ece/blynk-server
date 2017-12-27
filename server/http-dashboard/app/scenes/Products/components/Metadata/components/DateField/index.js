@@ -32,6 +32,14 @@ export default class DateField extends React.Component {
     isUnique: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleClone = this.handleClone.bind(this);
+
+  }
+
   getPreviewValues() {
     const name = this.props.fields.name;
     const value = this.props.fields.value;
@@ -60,8 +68,8 @@ export default class DateField extends React.Component {
 
     return (
       <Metadata.Item touched={this.props.anyTouched} preview={this.getPreviewValues()}
-                     onDelete={this.handleDelete.bind(this)}
-                     onClone={this.handleClone.bind(this)}>
+                     onDelete={this.handleDelete}
+                     onClone={this.handleClone}>
         <FormItem offset={false}>
           <FormItem.TitleGroup>
             <FormItem.Title style={{width: '50%'}}>Date</FormItem.Title>

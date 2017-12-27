@@ -12,6 +12,9 @@ class Info extends React.Component {
     super(props);
 
     this.invalid = false;
+
+    this.onChange = this.onChange.bind(this);
+
   }
 
   onChange(values) {
@@ -32,7 +35,7 @@ class Info extends React.Component {
   render() {
 
     return (
-      <InfoForm onChange={this.onChange.bind(this)} initialValues={this.getInitialValues()}/>
+      <InfoForm onChange={this.onChange} initialValues={this.getInitialValues()}/>
     );
   }
 }

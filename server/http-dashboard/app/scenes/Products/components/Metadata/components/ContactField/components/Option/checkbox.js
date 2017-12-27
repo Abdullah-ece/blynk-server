@@ -17,6 +17,10 @@ class Checkbox extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.toggle = this.toggle.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleConfirm = this.handleConfirm.bind(this);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -55,10 +59,10 @@ class Checkbox extends React.Component {
         <Popconfirm title={this.props.popconfirm.message}
                     okText="Yes"
                     cancelText="No"
-                    onConfirm={this.handleConfirm.bind(this)}
-                    onCancel={this.handleCancel.bind(this)}
+                    onConfirm={this.handleConfirm}
+                    onCancel={this.handleCancel}
                     overlayClassName="danger">
-          <NativeCheckbox onChange={this.toggle.bind(this)}
+          <NativeCheckbox onChange={this.toggle}
                           checked={!!this.props.input.value}>{this.props.placeholder}</NativeCheckbox>
         </Popconfirm>
       );

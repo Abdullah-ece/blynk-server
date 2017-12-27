@@ -175,6 +175,15 @@ class Create extends React.Component {
     super(props);
 
     this.routerWillLeave = this.routerWillLeave.bind(this);
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
+    this.onMetadataFieldChange = this.onMetadataFieldChange.bind(this);
+    this.onMetadataFieldsChange = this.onMetadataFieldsChange.bind(this);
+    this.onEventsFieldsChange = this.onEventsFieldsChange.bind(this);
+    this.onDataStreamsFieldChange = this.onDataStreamsFieldChange.bind(this);
+    this.onDataStreamsFieldsChange = this.onDataStreamsFieldsChange.bind(this);
   }
 
   componentWillMount() {
@@ -376,14 +385,14 @@ class Create extends React.Component {
                      isDataStreamsFormInvalid={this.isDataStreamsFormInvalid()}
                      isMetadataInfoRead={!this.props.isMetadataFirstTime}
                      updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
-                     onInfoValuesChange={this.onInfoValuesChange.bind(this)}
-                     onEventsFieldsChange={this.onEventsFieldsChange.bind(this)}
-                     onMetadataFieldChange={this.onMetadataFieldChange.bind(this)}
-                     onMetadataFieldsChange={this.onMetadataFieldsChange.bind(this)}
-                     onDataStreamsFieldChange={this.onDataStreamsFieldChange.bind(this)}
-                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange.bind(this)}
-                     handleSubmit={this.handleSubmit.bind(this)}
-                     handleCancel={this.handleCancel.bind(this)}
+                     onInfoValuesChange={this.onInfoValuesChange}
+                     onEventsFieldsChange={this.onEventsFieldsChange}
+                     onMetadataFieldChange={this.onMetadataFieldChange}
+                     onMetadataFieldsChange={this.onMetadataFieldsChange}
+                     onDataStreamsFieldChange={this.onDataStreamsFieldChange}
+                     onDataStreamsFieldsChange={this.onDataStreamsFieldsChange}
+                     handleSubmit={this.handleSubmit}
+                     handleCancel={this.handleCancel}
                      params={params}
                      loading = {this.loading}/>
     );

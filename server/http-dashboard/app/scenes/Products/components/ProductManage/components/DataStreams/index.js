@@ -16,6 +16,20 @@ class DataStreams extends React.Component {
     onFieldsChange: React.PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.onSortStart = this.onSortStart.bind(this);
+    this.fieldsValidation = this.fieldsValidation.bind(this);
+    this.handleCloneField = this.handleCloneField.bind(this);
+    this.handleChangeField = this.handleChangeField.bind(this);
+    this.handleDeleteField = this.handleDeleteField.bind(this);
+    this.addDataStreamsField = this.addDataStreamsField.bind(this);
+
+  }
+
+
   state = {
     isSortEnabled: false
   };
@@ -49,10 +63,10 @@ class DataStreams extends React.Component {
       id: field.id,
       key: field.id,
       form: `datastreamfield${field.id}`,
-      onChange: this.handleChangeField.bind(this),
-      validate: this.fieldsValidation.bind(this),
-      onDelete: this.handleDeleteField.bind(this),
-      onClone: this.handleCloneField.bind(this),
+      onChange: this.handleChangeField,
+      validate: this.fieldsValidation,
+      onDelete: this.handleDeleteField,
+      onClone: this.handleCloneField,
       field: field,
       initialValues: {
         label: field.values.label,
@@ -234,14 +248,14 @@ class DataStreams extends React.Component {
       <div className={className}>
         { this.props.fields && this.props.fields.length && (
           <this.SortableList items={this.props.fields}
-                             onSortStart={this.onSortStart.bind(this)}
-                             onSortEnd={this.onSortEnd.bind(this)}
+                             onSortStart={this.onSortStart}
+                             onSortEnd={this.onSortEnd}
                              useDragHandle={true}
                              lockAxis="y"
                              useWindowAsScrollContainer={true}
                              helperClass="product-metadata-item-drag-active"/>) || null
         }
-        <AddDataStreamsFields onFieldAdd={this.addDataStreamsField.bind(this)}/>
+        <AddDataStreamsFields onFieldAdd={this.addDataStreamsField}/>
         <BackTop/>
       </div>
     );

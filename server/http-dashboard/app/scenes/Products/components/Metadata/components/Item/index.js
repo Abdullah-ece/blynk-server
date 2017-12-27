@@ -55,6 +55,12 @@ class MetadataItem extends React.PureComponent {
     this.state = {
       isActive: false
     };
+
+    this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
+    this.handleCancelDelete = this.handleCancelDelete.bind(this);
+    this.markAsActive = this.markAsActive.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
   }
 
   componentWillMount() {
@@ -120,13 +126,13 @@ class MetadataItem extends React.PureComponent {
     let deleteButton;
     if (this.props.anyTouched) {
       deleteButton = (<Popconfirm title="Are you sure?" overlayClassName="danger"
-                                  onConfirm={this.handleConfirmDelete.bind(this)}
-                                  onCancel={this.handleCancelDelete.bind(this)} okText="Yes, Delete"
+                                  onConfirm={this.handleConfirmDelete}
+                                  onCancel={this.handleCancelDelete} okText="Yes, Delete"
                                   cancelText="Cancel">
-        <Button icon="delete" size="small" onClick={this.markAsActive.bind(this)}/>
+        <Button icon="delete" size="small" onClick={this.markAsActive}/>
       </Popconfirm>);
     } else {
-      deleteButton = (<Button size="small" icon="delete" onClick={this.handleConfirmDelete.bind(this)}/>);
+      deleteButton = (<Button size="small" icon="delete" onClick={this.handleConfirmDelete}/>);
     }
 
     const itemClasses = classnames({
@@ -139,7 +145,7 @@ class MetadataItem extends React.PureComponent {
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form onSubmit={this.handleSubmit}>
             <Row gutter={8}>
               <Col span={12}>
                 { this.props.children }
@@ -151,8 +157,8 @@ class MetadataItem extends React.PureComponent {
                     <FormItem.Title>Who can edit</FormItem.Title>
                     <FormItem.Content>
                         <MetadataSelect disabled={isRoleSelectDisabled}
-                                        onFocus={this.markAsActive.bind(this)}
-                                        onBlur={this.handleCancelDelete.bind(this)}
+                                        onFocus={this.markAsActive}
+                                        onBlur={this.handleCancelDelete}
                                         name="role"
                                         style={{width: '100%'}}
                                         values={MetadataRoles}
@@ -169,7 +175,7 @@ class MetadataItem extends React.PureComponent {
               <div className="product-metadata-item-tools">
                 <DragHandler/>
                 {deleteButton}
-                <Button icon="copy" size="small" onClick={this.props.onClone.bind(this)}/>
+                <Button icon="copy" size="small" onClick={this.props.onClone}/>
               </div>
             )}
           </Form>

@@ -43,6 +43,15 @@ class BaseField extends React.Component {
     field: React.PropTypes.object,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleClone = this.handleClone.bind(this);
+  }
+
   state = {
     isFocused: false
   };
@@ -160,24 +169,24 @@ class BaseField extends React.Component {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} validateOnBlur={true}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
                                name="label" type="text" placeholder="Field Name"
                                style={{width: '200%'}} className={`datastream-name-field-${this.props.field.id}`}
                                validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="units" type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}
                                 validate={[Validation.Rules.required]}/>
 
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="min" type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormField onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
                                name="max" type="text" placeholder="Max" validate={[
               Validation.Rules.number
             ]}/>
@@ -191,10 +200,10 @@ class BaseField extends React.Component {
     return (
       <DataStreamsItem
         preview={this.getPreviewValues()}
-        onChange={this.props.onChange.bind(this)}
-        onDelete={this.handleDelete.bind(this)}
-        onClone={this.handleClone.bind(this)}
-        validate={this.props.validate.bind(this)}
+        onChange={this.props.onChange}
+        onDelete={this.handleDelete}
+        onClone={this.handleClone}
+        validate={this.props.validate}
         initialValues={this.props.initialValues}
         fields={this.props.fields}
         field={this.props.field}

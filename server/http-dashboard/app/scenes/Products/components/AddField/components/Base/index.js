@@ -7,8 +7,14 @@ class AddField extends React.Component {
     onFieldAdd: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleMenuClick = this.handleMenuClick.bind(this);
+  }
+
   menu = () => (
-    <Menu selectable={false} onClick={this.handleMenuClick.bind(this)}>
+    <Menu selectable={false} onClick={this.handleMenuClick}>
       {
         this.fields.filter((item, key) => key >= 5).map((field) => (
           <Menu.Item key={field.type}>

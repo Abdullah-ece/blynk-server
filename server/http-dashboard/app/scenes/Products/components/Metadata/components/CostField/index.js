@@ -27,6 +27,14 @@ import Static from './static';
 })
 class CostField extends BaseField {
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+  }
+
   Currency = [
     Currency.USD,
     Currency.EUR,
@@ -131,22 +139,22 @@ class CostField extends BaseField {
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
                                validateOnBlur={true} name="name" type="text" placeholder="Field Name"
-                               onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+                               onFocus={this.onFocus} onBlur={this.onBlur}
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="currency" type="text" placeholder="Choose" values={this.Currency}/>
 
-            <MetadataFormNumber onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="price" type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormNumber onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="perValue" type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
                                 name="units" type="text" placeholder="--"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}/>

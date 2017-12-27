@@ -17,6 +17,13 @@ class Offline extends React.Component {
     validate: React.PropTypes.func
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+  }
+
   state = {
     isFocused: false
   };
@@ -62,7 +69,7 @@ class Offline extends React.Component {
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
-              <Input onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)}
+              <Input onFocus={this.onFocus} onBlur={this.onBlur}
                      validateOnBlur={true} name="name" placeholder="Event Name"
                      style={{width: '55%'}}/>
             </Item>
