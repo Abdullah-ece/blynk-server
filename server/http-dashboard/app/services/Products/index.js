@@ -2,6 +2,18 @@ import _ from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
 import {Roles} from '../Roles';
+import {
+  DEFAULT_HARDWARE_TYPE,
+  DEFAULT_CONNECTION_TYPE,
+} from 'services/Devices';
+
+export const PRODUCT_CREATE_INITIAL_VALUES = {
+  name: '',
+  boardType: DEFAULT_HARDWARE_TYPE,
+  connectionType: DEFAULT_CONNECTION_TYPE,
+  description: '',
+  logoUrl: '',
+};
 
 export const TABS = {
   INFO: 'info',
@@ -12,6 +24,7 @@ export const TABS = {
 };
 
 export const FORMS = {
+  PRODUCTS_PRODUCT_CREATE: 'products-product-create-form',
   DASHBOARD: 'products-manage-dashboard-form'
 };
 

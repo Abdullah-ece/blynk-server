@@ -3,23 +3,18 @@ import FormItem from 'components/FormItem';
 import {Input, Col, Row, message} from 'antd';
 import {Field, Select} from 'components/Form';
 import ImageUploader from 'components/ImageUploader';
-import {reduxForm, Field as FormField} from 'redux-form';
+import {Field as FormField} from 'redux-form';
 import Validation from 'services/Validation';
 import {connect} from 'react-redux';
-import {FILE_UPLOAD_URL} from 'services/API';
 import {bindActionCreators} from 'redux';
 import {ProductInfoUpdateInvalidFlag} from 'data/Product/actions';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
 
-@connect(() => ({}), (dispatch) => ({
+@connect(() => ({
+
+}), (dispatch) => ({
   updateInfoInvalidFlag: bindActionCreators(ProductInfoUpdateInvalidFlag, dispatch)
 }))
-@reduxForm({
-  touchOnChange: true,
-  form: 'product-edit-info',
-  onSubmit: () => {
-  }
-})
 class Info extends React.Component {
 
   static propTypes = {
@@ -52,13 +47,6 @@ class Info extends React.Component {
       message.error(`${info.file.name} file upload failed.`);
     }
   }
-
-  InfoFileProps = {
-    name: 'file',
-    action: FILE_UPLOAD_URL,
-    showUploadList: false,
-    accept: 'image/*'
-  };
 
   render() {
 

@@ -380,6 +380,12 @@ export const AVAILABLE_CONNECTION_TYPES = [
   CONNECTIONS_TYPES.GSM,
 ];
 
+export const AVAILABLE_HARDWARE_TYPES_LIST = AVAILABLE_HARDWARE_TYPES.map((item) => item.key);
+
+export const AVAILABLE_CONNECTION_TYPES_LIST = AVAILABLE_CONNECTION_TYPES.map((item) => item.key);
+
+export const DEFAULT_HARDWARE_TYPE = HARDWARES["Particle Electron"].key;
+export const DEFAULT_CONNECTION_TYPE = CONNECTIONS_TYPES["GSM"].key;
 
 export const TIMELINE_TYPE_FILTERS = {
   'ALL': {
