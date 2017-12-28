@@ -6,11 +6,11 @@ import Validation from 'services/Validation';
 
 @reduxForm({
   form: 'product-delete-confirmation',
-  validate: function (values, props) {
+  validate: function (values) {
     const errors = {};
 
-    if (values.productName !== props.productName) {
-      errors.productName = 'Product name does not match';
+    if (values.productName !== "DELETE") {
+      errors.productName = 'Please type DELETE into the field to confirm action';
     }
 
     return errors;
@@ -33,7 +33,7 @@ class DeleteForm extends React.Component {
     return (
       <Form onSubmit={this.props.handleSubmit}>
         <div className="delete-confirmation-modal-input">
-          <Field name="productName" displayError={false} placeholder={`Type in ${this.props.productName}`} validate={[
+          <Field name="productName" displayError={false} placeholder={`Type in DELETE`} validate={[
             Validation.Rules.required
           ]}/>
         </div>
@@ -44,7 +44,7 @@ class DeleteForm extends React.Component {
                   htmlType="submit"
                   loading={this.props.submitting}
                   disabled={this.props.invalid || this.props.submitting}>
-            Yes, Delete Product
+            Delete
           </Button>
         </div>
       </Form>
