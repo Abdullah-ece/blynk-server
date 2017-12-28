@@ -31,7 +31,7 @@ import {
   // prepareProductForSave,
   // exampleMetadataField,
   // getHardcodedRequiredMetadataFields,
-  // TABS,
+  TABS,
   PRODUCT_CREATE_INITIAL_VALUES,
 } from 'services/Products';
 // import {OrganizationFetch} from 'data/Organization/actions';
@@ -56,6 +56,9 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
   return {
     formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
     formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
+
+    organization: fromJS(state.Organization),
+
     // organization: fromJS(state.Organization),
     orgId: state.Account.orgId,
     // product: state.Product.edit,
@@ -96,6 +99,12 @@ class Create extends React.Component {
       connectionType: PropTypes.oneOf(AVAILABLE_CONNECTION_TYPES_LIST),
       description: PropTypes.string,
       logoUrl: PropTypes.string,
+      metaFields: ImmutablePropTypes.list
+    }),
+
+    organization: ImmutablePropTypes.contains({
+      name: PropTypes.string,
+      tzName: PropTypes.string,
     }),
 
     formSyncErrors: PropTypes.object,
@@ -110,7 +119,15 @@ class Create extends React.Component {
     orgId: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
-    ])
+    ]),
+
+    params: PropTypes.shape({
+      id: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]),
+      tab: PropTypes.string,
+    }),
 
     // isFormDirty: React.PropTypes.bool,
     // isMetadataFirstTime: React.PropTypes.bool,
@@ -133,7 +150,6 @@ class Create extends React.Component {
     //
     // dashboard: React.PropTypes.instanceOf(Map),
     // organization: React.PropTypes.instanceOf(Map),
-    // params: React.PropTypes.object,
     // products: React.PropTypes.array,
     // eventsForms: React.PropTypes.array,
     // product: React.PropTypes.object,
@@ -162,7 +178,10 @@ class Create extends React.Component {
   componentWillMount() {
 
     this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_CREATE, {
-      ...PRODUCT_CREATE_INITIAL_VALUES,
+      ...PRODUCT_CREATE_INITIAL_VALUES({
+        timezoneDefaultValue: this.props.organization.get('tzName'),
+        manufacturerDefaultValue: this.props.organization.get('name')
+      }),
     });
 
     //
@@ -356,11 +375,11 @@ class Create extends React.Component {
   }
 
   render() {
-    //
-    // const params = {
-    //   id: Number(this.props.params.id) || 0,
-    //   tab: String(this.props.params.tab || TABS.INFO),
-    // };
+
+    const params = {
+      id: Number(this.props.params.id) || 0,
+      tab: String(this.props.params.tab || TABS.INFO),
+    };
     //
     // if (!this.props.product.info.values.boardType)
     //   return null;
@@ -373,7 +392,6 @@ class Create extends React.Component {
 
     return (
       <ProductCreate
-        initialValues={PRODUCT_CREATE_INITIAL_VALUES}
         formValues={this.props.formValues}
         invalid={this.props.invalid}
         loading={this.props.loading}
@@ -382,6 +400,7 @@ class Create extends React.Component {
         onCancel={this.handleCancel}
         form={FORMS.PRODUCTS_PRODUCT_CREATE}
         formSyncErrors={this.props.formSyncErrors}
+        params={params}
         // product={this.props.product}
         // isInfoFormInvalid={this.props.isProductInfoInvalid}
         // isEventsFormInvalid={this.isEventsFormInvalid()}
@@ -397,7 +416,6 @@ class Create extends React.Component {
         // onDataStreamsFieldsChange={this.onDataStreamsFieldsChange}
         // handleSubmit={this.handleSubmit}
         // handleCancel={this.handleCancel}
-        // params={params}
         // loading={this.loading}
       />
     );

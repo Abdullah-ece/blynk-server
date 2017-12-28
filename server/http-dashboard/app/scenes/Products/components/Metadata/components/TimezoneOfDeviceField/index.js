@@ -4,30 +4,15 @@ import FormItem   from 'components/FormItem';
 import {
   MetadataSelect
 }                 from 'components/Form';
-import {
-  formValueSelector
-}                 from 'redux-form';
-import {
-  connect
-}                 from 'react-redux';
 import Timezones  from 'services/timeszones';
 import BaseField  from '../BaseField/index';
 import Static     from './static';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      value: selector(state, 'value')
-    }
-  };
-})
 class TimezoneOfDeviceField extends BaseField {
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const value = this.props.fields.value;
+    const name = this.props.field.get('name');
+    const value = this.props.field.get('value');
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
@@ -50,7 +35,7 @@ class TimezoneOfDeviceField extends BaseField {
           <FormItem.Title style={{width: '50%'}}>Device Timezone</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
-          <MetadataSelect displayError={false} name="value" values={timezones}
+          <MetadataSelect displayError={false} name={`metaFields.${this.props.metaFieldKey}.value`} values={timezones}
                           placeholder="Choose timezone"
           />
         </FormItem.Content>

@@ -9,11 +9,16 @@ import {MetadataRoles} from 'services/Roles';
 import classnames from 'classnames';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {reduxForm, touch, Form, getFormSyncErrors} from 'redux-form';
+import {
+  // reduxForm,
+  touch,
+  // Form,
+  getFormSyncErrors} from 'redux-form';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
-import _ from 'lodash';
+// import _ from 'lodash';
 import {hardcodedRequiredMetadataFieldsNames} from 'services/Products';
+import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => ({
   events: state.Product.edit.events.fields,
@@ -21,30 +26,31 @@ import {hardcodedRequiredMetadataFieldsNames} from 'services/Products';
 }), (dispatch) => ({
   touchFormById: bindActionCreators(touch, dispatch)
 }))
-@reduxForm({
-  touchOnChange: true
-})
 class MetadataItem extends React.PureComponent {
 
   static propTypes = {
-    events: React.PropTypes.any,
-    anyTouched: React.PropTypes.bool,
-    invalid: React.PropTypes.bool,
-    preview: React.PropTypes.object,
-    fieldsErrors: React.PropTypes.any,
-    form: React.PropTypes.string,
-    fields: React.PropTypes.object,
-    children: React.PropTypes.any,
-    onDelete: React.PropTypes.func,
-    touchFormById: React.PropTypes.func,
-    onClone: React.PropTypes.func,
-    id: React.PropTypes.number,
-    onChange: React.PropTypes.func,
-    field: React.PropTypes.object,
-    touched: React.PropTypes.bool,
-    isActive: React.PropTypes.bool,
-    tools: React.PropTypes.bool,
-    updateMetadataFieldInvalidFlag: React.PropTypes.func,
+    events: PropTypes.any,
+    anyTouched: PropTypes.bool,
+    invalid: PropTypes.bool,
+    preview: PropTypes.object,
+    fieldsErrors: PropTypes.any,
+    form: PropTypes.string,
+    fields: PropTypes.object,
+    children: PropTypes.any,
+    onDelete: PropTypes.func,
+    touchFormById: PropTypes.func,
+    onClone: PropTypes.func,
+    id: PropTypes.number,
+    onChange: PropTypes.func,
+    field: PropTypes.object,
+    touched: PropTypes.bool,
+    isActive: PropTypes.bool,
+    tools: PropTypes.bool,
+    updateMetadataFieldInvalidFlag: PropTypes.func,
+    metaFieldKey: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ])
   };
 
   constructor(props) {
@@ -71,16 +77,12 @@ class MetadataItem extends React.PureComponent {
 
   componentWillReceiveProps(props) {
     if (this.invalid !== props.invalid) {
-      this.props.onChange({
-        ...props.field,
-        invalid: props.invalid
-      });
+      // this.props.onChange({
+      //   ...props.field,
+      //   invalid: props.invalid
+      // });
       this.invalid = props.invalid;
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.isActive !== nextProps.isActive || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.events, nextProps.events));
   }
 
   handleConfirmDelete() {
@@ -145,40 +147,38 @@ class MetadataItem extends React.PureComponent {
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
-          <Form onSubmit={this.handleSubmit}>
-            <Row gutter={8}>
-              <Col span={12}>
-                { this.props.children }
-              </Col>
-              <Col span={3}>
-                {isRoleSelectDisabled ? '' :
-                  <FormItem offset={false}>
+          <Row gutter={8}>
+            <Col span={12}>
+              {this.props.children}
+            </Col>
+            <Col span={3}>
+              {isRoleSelectDisabled ? '' :
+                <FormItem offset={false}>
 
-                    <FormItem.Title>Who can edit</FormItem.Title>
-                    <FormItem.Content>
-                        <MetadataSelect disabled={isRoleSelectDisabled}
-                                        onFocus={this.markAsActive}
-                                        onBlur={this.handleCancelDelete}
-                                        name="role"
-                                        style={{width: '100%'}}
-                                        values={MetadataRoles}
-                        />
-                    </FormItem.Content>
-                  </FormItem>
-                }
-              </Col>
-              <Col span={8}>
-                { this.preview() }
-              </Col>
-            </Row>
-            { this.props.tools && (
-              <div className="product-metadata-item-tools">
-                <DragHandler/>
-                {deleteButton}
-                <Button icon="copy" size="small" onClick={this.props.onClone}/>
-              </div>
-            )}
-          </Form>
+                  <FormItem.Title>Who can edit</FormItem.Title>
+                  <FormItem.Content>
+                    <MetadataSelect disabled={isRoleSelectDisabled}
+                                    onFocus={this.markAsActive}
+                                    onBlur={this.handleCancelDelete}
+                                    name={`metaFields.${this.props.metaFieldKey}.role`}
+                                    style={{width: '100%'}}
+                                    values={MetadataRoles}
+                    />
+                  </FormItem.Content>
+                </FormItem>
+              }
+            </Col>
+            <Col span={8}>
+              {this.preview()}
+            </Col>
+          </Row>
+          {this.props.tools && (
+            <div className="product-metadata-item-tools">
+              <DragHandler/>
+              {deleteButton}
+              <Button icon="copy" size="small" onClick={this.props.onClone}/>
+            </div>
+          )}
         </div>
       </Scroll.Element>
     );

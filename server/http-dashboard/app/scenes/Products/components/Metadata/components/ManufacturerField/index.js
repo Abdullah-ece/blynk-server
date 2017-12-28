@@ -3,24 +3,9 @@ import FormItem   from 'components/FormItem';
 import {
   MetadataField as MetadataFormField
 }                 from 'components/Form';
-import {
-  formValueSelector
-}                 from 'redux-form';
-import {
-  connect
-}                 from 'react-redux';
 import BaseField  from '../BaseField/index';
 import Static     from './static';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      value: selector(state, 'value')
-    }
-  };
-})
 class ManufacturerField extends BaseField {
 
   constructor(props) {
@@ -32,8 +17,8 @@ class ManufacturerField extends BaseField {
   }
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const value = this.props.fields.value;
+    const name = this.props.field.get('name');
+    const value = this.props.field.get('value');
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
@@ -49,7 +34,7 @@ class ManufacturerField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
-                             name="value" type="text" placeholder="Default value (optional)"
+                             name={`metaFields.${this.props.metaFieldKey}.value`} type="text" placeholder="Default value (optional)"
                              validateOnBlur={true}
           />
         </FormItem.Content>

@@ -1,22 +1,22 @@
-import React                                from 'react';
+import React from 'react';
 import {
   Button,
   Tabs,
   Icon,
   // Popover
-}                                           from 'antd';
-import {MainLayout}                         from 'components';
+} from 'antd';
+import {MainLayout} from 'components';
 import {
   TABS,
   // FORMS,
   // PRODUCT_CREATE_INITIAL_VALUES,
-}                                           from 'services/Products';
+} from 'services/Products';
 import {
   Info        as InfoTab,
   // Events      as EventsTab,
-  // Metadata    as MetadataTab,
+  Metadata    as MetadataTab,
   // DataStreams as DataStreamsTab,
-}                                           from '../ProductManage';
+} from '../ProductManage';
 
 // import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
 // import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
@@ -52,6 +52,7 @@ class ProductCreate extends React.Component {
       connectionType: PropTypes.oneOf(AVAILABLE_CONNECTION_TYPES_LIST),
       description: PropTypes.string,
       logoUrl: PropTypes.string,
+      metaFields: ImmutablePropTypes.list,
     }),
 
     formSyncErrors: PropTypes.object,
@@ -64,6 +65,10 @@ class ProductCreate extends React.Component {
     onCancel: PropTypes.func,
     onSubmit: PropTypes.func,
     handleSubmit: PropTypes.func,
+
+    params: PropTypes.shape({
+      tab: PropTypes.string
+    }),
 
     // handleCancel: React.PropTypes.func,
     // handleSubmit: React.PropTypes.func,
@@ -81,7 +86,6 @@ class ProductCreate extends React.Component {
     // isMetadataFormInvalid: React.PropTypes.bool,
     // isDataStreamsFormInvalid: React.PropTypes.bool,
     //
-    // params: React.PropTypes.object,
     // product: React.PropTypes.object,
     // loading: React.PropTypes.bool,
   };
@@ -89,17 +93,17 @@ class ProductCreate extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.state = {
-    //   originalName: null,
-    //   submited: false,
-    //   activeTab: props.params.tab || TABS.INFO,
-    //   metadataIntroVisible: false
-    // };
+    this.state = {
+      //   originalName: null,
+      //   submited: false,
+      activeTab: props.params.tab || TABS.INFO,
+      //   metadataIntroVisible: false
+    };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
 
-    // this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
     // this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
 
   }
@@ -140,11 +144,11 @@ class ProductCreate extends React.Component {
   //   }
   // }
 
-  // handleTabChange(key) {
-  //   this.setState({
-  //     activeTab: key
-  //   });
-  // }
+  handleTabChange(key) {
+    this.setState({
+      activeTab: key
+    });
+  }
 
   // isInfoFormInvalid() {
   //   return this.props.isInfoFormInvalid;
@@ -167,11 +171,20 @@ class ProductCreate extends React.Component {
   //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
   // }
   //
-  // productMetadataInvalidIcon() {
-  //   return this.state.submited && this.props.isMetadataFormInvalid &&
-  //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
-  // }
-  //
+  productMetadataInvalidIcon() {
+
+    const isAnyMetaFieldHasError = () => {
+      if(!this.props.formSyncErrors.has('metaFields'))
+        return false;
+
+      return this.props.formSyncErrors.get('metaFields').reduce((acc, item) => {
+        return (!acc && item && item.count && item.count() >= 0) || acc;
+      }, false);
+    };
+
+    return this.props.submitFailed && isAnyMetaFieldHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+  }
+
   // productEventsInvalidIcon() {
   //   return this.state.submited && this.props.isEventsFormInvalid &&
   //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
@@ -186,6 +199,7 @@ class ProductCreate extends React.Component {
   }
 
   render() {
+
     return (
       <MainLayout>
         <MainLayout.Header title={this.props.formValues.get('name') || 'New Product'}
@@ -206,10 +220,17 @@ class ProductCreate extends React.Component {
         />
         <MainLayout.Content className="product-create-content">
 
-          <Tabs defaultActiveKey={TABS.INFO} activeKey={TABS.INFO} className="products-tabs">
+          <Tabs className="products-tabs"
+                defaultActiveKey={TABS.INFO}
+                onChange={this.handleTabChange}
+                activeKey={this.state.activeTab}>
 
             <Tabs.TabPane tab={<span>{this.productInfoInvalidIcon()}Info</span>} key={TABS.INFO}>
-              <InfoTab />
+              <InfoTab/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA}>
+              <MetadataTab formValues={this.props.formValues}/>
             </Tabs.TabPane>
 
           </Tabs>

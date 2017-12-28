@@ -3,15 +3,23 @@ import {AddMetadataFields} from 'scenes/Products/components/AddField';
 import {BackTop} from 'components';
 import {
   Metadata as MetadataService,
-  filterDynamicMetadataFields,
-  filterHardcodedMetadataFields,
+  // filterDynamicMetadataFields,
+  filterHardcodedMetadataFields as getHardcodedMetadataFields,
   hardcodedRequiredMetadataFieldsNames
 } from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
-import {MetadataRolesDefault} from 'services/Roles';
+// import {MetadataRolesDefault} from 'services/Roles';
 import _ from 'lodash';
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
-import Scroll from 'react-scroll';
+import {
+  SortableContainer,
+  SortableElement,
+  // arrayMove
+} from 'react-sortable-hoc';
+// import Scroll from 'react-scroll';
+
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import PropTypes from 'prop-types';
+
 const MetadataFields = Metadata.Fields;
 class ProductMetadata extends React.Component {
 
@@ -19,9 +27,22 @@ class ProductMetadata extends React.Component {
 
     fields: React.PropTypes.array,
 
-    onEventsChange: React.PropTypes.func,
-    onFieldChange: React.PropTypes.func,
-    onFieldsChange: React.PropTypes.func
+    formValues: ImmutablePropTypes.contains({
+      metaFields: ImmutablePropTypes.contains({
+        id: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number
+        ]),
+        type: PropTypes.string,
+        name: PropTypes.string,
+        role: PropTypes.string,
+        isDefault: PropTypes.bool,
+        value: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number
+        ])
+      })
+    }),
   };
 
   constructor(props) {
@@ -42,40 +63,41 @@ class ProductMetadata extends React.Component {
   };
 
   componentDidUpdate() {
-    this.props.fields.forEach((field) => {
-      if (field && field.values && field.values.isRecentlyCreated) {
-
-        Scroll.scroller.scrollTo(`${field.name}`, {
-          duration: 1000,
-          offset: -64,
-          smooth: "easeInOutQuint",
-        });
-
-        this.handleChangeField({
-          ...field,
-          values: {
-            ...field.values,
-            isRecentlyCreated: false
-          }
-        });
-      }
-    });
+    // this.props.fields.forEach((field) => {
+    //   if (field && field.values && field.values.isRecentlyCreated) {
+    //
+    //     Scroll.scroller.scrollTo(`${field.name}`, {
+    //       duration: 1000,
+    //       offset: -64,
+    //       smooth: "easeInOutQuint",
+    //     });
+    //
+    //     this.handleChangeField({
+    //       ...field,
+    //       values: {
+    //         ...field.values,
+    //         isRecentlyCreated: false
+    //       }
+    //     });
+    //   }
+    // });
   }
 
-  handleChangeField(values, dispatch, props) {
+  handleChangeField(/*values, dispatch*/) {
 
-    if (values.id) {
-      // updates full entity
-      this.props.onFieldChange(values);
-    } else {
-      // updates only values of entity
-      const field = _.find(this.props.fields, {id: props.id});
+    // if (values.id) {
+    //   // updates full entity
+    //   this.props.onFieldChange(values);
+    // } else {
+    //   // updates only values of entity
+    //   const field = _.find(this.props.fields, {id: props.id});
+    //
+    //   this.props.onFieldChange({
+    //     ...field,
+    //     values
+    //   });
+    // }
 
-      this.props.onFieldChange({
-        ...field,
-        values
-      });
-    }
   }
 
   SortableItem = SortableElement(({value}) => {
@@ -223,7 +245,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.ContactField
           {...props}
-          onEventsChange={this.props.onEventsChange}
           initialValues={{
             name: field.values.name,
             role: field.values.role,
@@ -304,7 +325,7 @@ class ProductMetadata extends React.Component {
 
     const cloned = _.find(this.props.fields, {id: id});
 
-    const nextId = _.random(4, 2000000000);
+    // const nextId = _.random(4, 2000000000);
 
     let name = '';
     let nameUnique = false;
@@ -318,61 +339,61 @@ class ProductMetadata extends React.Component {
       i++;
     }
 
-    const fields = [
-      ...this.props.fields,
-      {
-        ...cloned,
-        id: nextId,
-        values: {
-          ...cloned.values,
-          name: `${name}`,
-          isSavedBefore: false,
-          isRecentlyCreated: true
-        }
-      }
-    ];
+    // const fields = [
+    //   ...this.props.fields,
+    //   {
+    //     ...cloned,
+    //     id: nextId,
+    //     values: {
+    //       ...cloned.values,
+    //       name: `${name}`,
+    //       isSavedBefore: false,
+    //       isRecentlyCreated: true
+    //     }
+    //   }
+    // ];
 
-    const originalIndex = _.findIndex(fields, {id: id});
+    // const originalIndex = _.findIndex(fields, {id: id});
 
-    this.props.onFieldsChange(
-      arrayMove(fields, fields.length - 1, originalIndex + 1)
-    );
+    // this.props.onFieldsChange(
+    //   arrayMove(fields, fields.length - 1, originalIndex + 1)
+    // );
   }
 
-  addMetadataField(params) {
+  addMetadataField(/*params*/) {
 
     const nextId = _.random(4, 2000000000);
 
-    this.props.onFieldsChange([
-      ...this.props.fields,
-      {
-        id: nextId,
-        type: params.type,
-        values: {
-          role: MetadataRolesDefault,
-          name: '',
-          value: '',
-          ...params.values,
-          isRecentlyCreated: true
-        }
-      }
-    ]);
+    // this.props.onFieldsChange([
+    //   ...this.props.fields,
+    //   {
+    //     id: nextId,
+    //     type: params.type,
+    //     values: {
+    //       role: MetadataRolesDefault,
+    //       name: '',
+    //       value: '',
+    //       ...params.values,
+    //       isRecentlyCreated: true
+    //     }
+    //   }
+    // ]);
 
     /** @todo dirty hack, remove it after refactoring */
     setTimeout(() => document.querySelector(`.metadata-name-field-${nextId}  input`).focus(), 100);
   }
 
-  handleDeleteField(key) {
-    this.props.onFieldsChange(this.props.fields.filter((field) => field.id !== key));
+  handleDeleteField(/*key*/) {
+    // this.props.onFieldsChange(this.props.fields.filter((field) => field.id !== key));
   }
 
-  onSortEnd({oldIndex, newIndex}) {
+  onSortEnd(/*{oldIndex, newIndex}*/) {
 
-    const staticMetadataFieldsCount = filterHardcodedMetadataFields(this.props.fields).length;
+    // const staticMetadataFieldsCount = getHardcodedMetadataFields(this.props.fields).length;
 
-    this.props.onFieldsChange(
-      arrayMove(this.props.fields, oldIndex + staticMetadataFieldsCount, newIndex + staticMetadataFieldsCount)
-    );
+    // this.props.onFieldsChange(
+    //   arrayMove(this.props.fields, oldIndex + staticMetadataFieldsCount, newIndex + staticMetadataFieldsCount)
+    // );
 
     this.setState({
       isSortEnabled: false
@@ -382,63 +403,53 @@ class ProductMetadata extends React.Component {
 
   getStaticFields() {
 
-    const fields = filterHardcodedMetadataFields(this.props.fields);
+    const fields = getHardcodedMetadataFields(this.props.formValues.get('metaFields'));
 
     const elements = [];
 
-    fields.forEach((field) => {
+    fields.forEach((field, key) => {
 
-      if (!field.values.name) return false;
+      if (!field.has('name')) return false;
 
       const props = {
-        id: field.id,
-        key: field.id,
-        form: `metadatafield${field.id}`,
-        onChange: this.handleChangeField,
-        validate: this.metadataFieldValidation,
-        onDelete: this.handleDeleteField,
-        onClone: this.handleCloneField,
+        id: field.get('id'),
+        key: key,
+        metaFieldKey: key,
         field: field,
         tools: false,
-        initialValues: {
-          name: field.values.name,
-          value: field.values.value,
-          role: field.values.role,
-          hardcoded: field.values.hardcoded
-        }
       };
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.LocationName) {
         elements.push(
           <MetadataFields.LocationField {...props}/>
         );
       }
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
         elements.push(
           <MetadataFields.DeviceOwnerField {...props}/>
         );
       }
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceName) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceName) {
         elements.push(
           <MetadataFields.DeviceNameField {...props}/>
         );
       }
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.Manufacturer) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.Manufacturer) {
         elements.push(
           <MetadataFields.ManufacturerField {...props}/>
         );
       }
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.ModelName) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.ModelName) {
         elements.push(
           <MetadataFields.ModelNameField {...props}/>
         );
       }
 
-      if (field.values.name && field.values.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
         elements.push(
           <MetadataFields.TimezoneOfDeviceField {...props}/>
         );
@@ -463,15 +474,15 @@ class ProductMetadata extends React.Component {
         <Metadata.ItemsList>
           { this.getStaticFields()}
 
-          { this.props.fields && this.props.fields.length && (
-            <this.SortableList items={filterDynamicMetadataFields(this.props.fields)}
-                               useWindowAsScrollContainer={true}
-                               onSortEnd={this.onSortEnd}
-                               onSortStart={this.onSortStart}
-                               useDragHandle={true}
-                               lockAxis="y"
-                               helperClass="product-metadata-item-drag-active"/>) || null
-          }
+          {/*{ this.props.fields && this.props.fields.length && (*/}
+            {/*<this.SortableList items={filterDynamicMetadataFields(this.props.fields)}*/}
+                               {/*useWindowAsScrollContainer={true}*/}
+                               {/*onSortEnd={this.onSortEnd}*/}
+                               {/*onSortStart={this.onSortStart}*/}
+                               {/*useDragHandle={true}*/}
+                               {/*lockAxis="y"*/}
+                               {/*helperClass="product-metadata-item-drag-active"/>) || null*/}
+          {/*}*/}
 
         </Metadata.ItemsList>
         <AddMetadataFields onFieldAdd={this.addMetadataField}/>

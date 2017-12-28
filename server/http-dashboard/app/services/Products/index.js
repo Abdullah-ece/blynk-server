@@ -7,14 +7,6 @@ import {
   DEFAULT_CONNECTION_TYPE,
 } from 'services/Devices';
 
-export const PRODUCT_CREATE_INITIAL_VALUES = {
-  name: '',
-  boardType: DEFAULT_HARDWARE_TYPE,
-  connectionType: DEFAULT_CONNECTION_TYPE,
-  description: '',
-  logoUrl: '',
-};
-
 export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',
@@ -91,8 +83,23 @@ export const hardcodedRequiredMetadataFieldsNames = {
   TimezoneOfTheDevice: 'Device Timezone'
 };
 
+export const hardcodedRequiredMetadataFieldsNamesList = [
+  hardcodedRequiredMetadataFieldsNames.DeviceName,
+  hardcodedRequiredMetadataFieldsNames.DeviceOwner,
+  hardcodedRequiredMetadataFieldsNames.LocationName,
+  hardcodedRequiredMetadataFieldsNames.Manufacturer,
+  hardcodedRequiredMetadataFieldsNames.ModelName,
+  hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice
+];
+
 export const filterMetadataFields = (fields, filterHardcoded = true) => {
-  return fields.filter((field) => filterHardcoded ? field.values.hardcoded : !field.values.hardcoded);
+
+  return fields.filter((field) => {
+    if(filterHardcoded)
+      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0;
+
+    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1;
+  });
 };
 
 export const filterHardcodedMetadataFields = (fields) => {
@@ -110,21 +117,18 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
       role: Roles.USER.value,
-      hardcoded: true
     },
     {
       id: 2,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
-      hardcoded: true
     },
     {
       id: 3,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.LocationName,
       role: Roles.STAFF.value,
-      hardcoded: true
     },
     {
       id: 4,
@@ -132,14 +136,12 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
       role: Roles.SUPER_ADMIN.value,
-      hardcoded: true
     },
     {
       id: 5,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.ModelName,
       role: Roles.STAFF.value,
-      hardcoded: true
     },
     {
       id: 6,
@@ -147,10 +149,20 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
-      hardcoded: true
     }
   ];
 };
+
+export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacturerDefaultValue}) => ({
+  name: '',
+  boardType: DEFAULT_HARDWARE_TYPE,
+  connectionType: DEFAULT_CONNECTION_TYPE,
+  description: '',
+  logoUrl: '',
+  metaFields: [
+    ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue})
+  ],
+});
 
 export const exampleMetadataField = {
   type: Metadata.Fields.TEXT,
