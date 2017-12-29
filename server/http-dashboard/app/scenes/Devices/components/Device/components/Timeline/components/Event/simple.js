@@ -1,8 +1,8 @@
 import React                              from 'react';
 import classnames                         from 'classnames';
-import moment                             from 'moment';
 import {Timeline, Button}                 from 'antd';
 import {EVENT_TYPES, getEventDefaultName} from 'services/Products';
+import {getCalendarFormatDate} from 'services/Date';
 
 class Simple extends React.Component {
 
@@ -16,13 +16,7 @@ class Simple extends React.Component {
   }
 
   render() {
-
-    const time = moment(this.props.event.get('ts')).calendar(null, {
-      sameDay: '[Today], hh:mm A',
-      lastDay: '[Yesterday], hh:mm A',
-      lastWeek: 'dddd, hh:mm A',
-      sameElse: 'MMM D, YYYY hh:mm A'
-    });
+    const time = getCalendarFormatDate(this.props.event.get('ts'));
 
     const className = classnames({
       "devices--device-timeline--event": true,

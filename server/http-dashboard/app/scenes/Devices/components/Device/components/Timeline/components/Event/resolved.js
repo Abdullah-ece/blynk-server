@@ -1,8 +1,8 @@
 import React                              from 'react';
 import classnames                         from 'classnames';
-import moment                             from 'moment';
 import {Timeline}                         from 'antd';
 import {EVENT_TYPES, getEventDefaultName} from 'services/Products';
+import {getCalendarFormatDate} from 'services/Date';
 
 class Resolved extends React.Component {
 
@@ -12,19 +12,9 @@ class Resolved extends React.Component {
 
   render() {
 
-    const resolvedTime = moment(this.props.event.get('resolvedAt') || 0).calendar(null, {
-      sameDay: '[today], hh:mm A',
-      lastDay: '[yesterday], hh:mm A',
-      lastWeek: 'dddd, hh:mm A',
-      sameElse: 'MMM D, YYYY hh:mm A'
-    });
+    const resolvedTime = getCalendarFormatDate(this.props.event.get('resolvedAt'));
 
-    const time = moment(this.props.event.get('ts')).calendar(null, {
-      sameDay: '[Today], hh:mm A',
-      lastDay: '[Yesterday], hh:mm A',
-      lastWeek: 'dddd, hh:mm A',
-      sameElse: 'MMM D, YYYY hh:mm A'
-    });
+    const time = getCalendarFormatDate(this.props.event.get('ts'));
 
     const className = classnames({
       "devices--device-timeline--event-resolved-content-name": true,

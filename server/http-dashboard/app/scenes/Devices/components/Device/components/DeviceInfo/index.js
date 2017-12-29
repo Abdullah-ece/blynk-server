@@ -1,9 +1,9 @@
 import React from 'react';
-import moment from 'moment';
 import {Row, Col} from 'antd';
 import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, BackTop} from 'components';
 import {Metadata} from 'services/Products';
 import _ from 'lodash';
+import {getCalendarFormatDate} from 'services/Date';
 import './styles.less';
 
 class DeviceInfo extends React.Component {
@@ -37,23 +37,15 @@ class DeviceInfo extends React.Component {
 
     let time = this.props.device.get('dataReceivedAt');
     let disconnectTime = this.props.device.get('disconnectTime');
-    let activatedAt = this.props.device.get('activatedAt');
     let metadataUpdatedAt = this.props.device.get('metadataUpdatedAt');
 
-    const timeConfig = {
-      sameDay: '[Today], hh:mm A',
-      lastDay: '[Yesterday], hh:mm A',
-      lastWeek: 'dddd, hh:mm A',
-      sameElse: 'hh:mm A, MM.DD.YYYY'
-    };
+    let lastReported = Number(time) ? getCalendarFormatDate(time) : 'Not reported yet';
 
-    let lastReported = Number(time) ? moment(Number(time)).calendar(null, timeConfig) : 'Not reported yet';
+    let lastOnlineTime = getCalendarFormatDate(disconnectTime);
 
-    let lastOnlineTime = moment(Number(disconnectTime || 0)).calendar(null, timeConfig);
+    let deviceActivatedTime = getCalendarFormatDate(this.props.device.get('activatedAt'));
 
-    let deviceActivatedTime = moment(Number(activatedAt || 0)).calendar(null, timeConfig);
-
-    let metadataUpdatedTime = moment(Number(metadataUpdatedAt || 0)).calendar(null, timeConfig);
+    let metadataUpdatedTime = getCalendarFormatDate(metadataUpdatedAt);
 
     return (
       <div className="device--device-info">
