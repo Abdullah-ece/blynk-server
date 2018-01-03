@@ -98,14 +98,18 @@ class Header extends React.Component {
   }
 
   currentActivePage(state) {
-    if (state.indexOf('product') >= 0) {
-      return ['/products'];
-    }
-    if (state.indexOf('devices') >= 0) {
-      return ['/devices'];
-    }
-    if (state.indexOf('organizations') >= 0) {
-      return ['/organizations'];
+    const splitedPath = state.split('/');
+    const length = splitedPath.length;
+    for(let i = 0; i < length; i++) {
+      if ('products' === splitedPath[i]) {
+        return ['/products'];
+      }
+      if ('devices' === splitedPath[i]) {
+        return ['/devices'];
+      }
+      if ('organizations' === splitedPath[i]) {
+        return ['/organizations'];
+      }
     }
   }
 
