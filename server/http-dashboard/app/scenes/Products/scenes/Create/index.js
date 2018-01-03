@@ -333,6 +333,8 @@ class Create extends React.Component {
         message.error(response && response.error && response.error.response.message || 'Cannot create product');
       });
 
+    } else {
+      this.loading = false;
     }
 
   }
