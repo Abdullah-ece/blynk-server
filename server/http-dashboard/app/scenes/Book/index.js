@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu} from 'antd';
-import {Index, Fieldset, DeviceStatus, DeviceAuthToken, Section, Modal, ContentEditable, BackTop, Chart, Canvasjs} from './scenes/index';
+import {Index, Fieldset, DeviceStatus, DeviceAuthToken, Section, Modal, ContentEditable, BackTop, Canvasjs} from './scenes/index';
 import _ from 'lodash';
 import './styles.less';
 import 'highlightjs/styles/atom-one-light.css';
@@ -49,9 +49,6 @@ class Book extends React.Component {
       },
       'BackTop': {
         path: '/book/back-top'
-      },
-      'Chart': {
-        path: '/book/chart'
       },
       'Canvasjs': {
         path: '/book/canvasjs'
@@ -104,7 +101,6 @@ Book.Fieldset = Fieldset;
 Book.Modal = Modal;
 Book.BackTop = BackTop;
 Book.Index = Index;
-Book.Chart = Chart;
 Book.Canvasjs = Canvasjs;
 
 export default Book;

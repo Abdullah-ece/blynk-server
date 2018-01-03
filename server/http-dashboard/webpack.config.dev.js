@@ -26,7 +26,6 @@ export default {
     filename: 'bundle.js'
   },
   externals: {
-    'plotly': 'Plotly',
     'canvasjs': 'CanvasJS',
   },
   plugins: [

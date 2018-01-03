@@ -29,7 +29,6 @@ export default {
     filename: '[name].[chunkhash].js'
   },
   externals: {
-    'plotly': 'Plotly',
     'canvasjs': 'CanvasJS',
   },
   plugins: [
