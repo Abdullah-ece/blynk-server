@@ -13,7 +13,7 @@ class Products extends React.Component {
 
   render() {
     return (
-      <MainList className="organizations-create-products-list">
+      <MainList className="organizations-create-products-list non-clickable">
         { this.props.products && this.props.products.map((product) => (
           <MainList.Item key={product.get('id')}
                          id={product.get('id')}
