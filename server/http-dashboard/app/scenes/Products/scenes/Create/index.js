@@ -174,6 +174,10 @@ class Create extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      loading: false
+    };
+
     this.routerWillLeave = this.routerWillLeave.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -284,7 +288,11 @@ class Create extends React.Component {
   loading = false;
 
   handleSubmit() {
-    this.loading = true;
+
+    this.setState({
+      loading: true
+    });
+
     if (Array.isArray(this.props.product.metadata.fields)) {
       this.props.product.metadata.fields.forEach((field) => {
         this.props.submitFormById(`metadatafield${field.id}`);
@@ -327,14 +335,21 @@ class Create extends React.Component {
         orgId: this.props.orgId
       }).then(() => {
         this.isProductCreated = true;
-        this.loading = false;
+        this.setState({
+          loading: false
+        });
         this.context.router.push(`/products/?success=true`);
       }).catch((response) => {
+        this.setState({
+          loading: false
+        });
         message.error(response && response.error && response.error.response.message || 'Cannot create product');
       });
 
     } else {
-      this.loading = false;
+      this.setState({
+        loading: false
+      });
     }
 
   }
@@ -396,7 +411,7 @@ class Create extends React.Component {
                      handleSubmit={this.handleSubmit}
                      handleCancel={this.handleCancel}
                      params={params}
-                     loading = {this.loading}/>
+                     loading = {!!this.state.loading}/>
     );
   }
 
