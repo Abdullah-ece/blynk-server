@@ -39,7 +39,7 @@ class AddWidgetTools extends React.Component {
       <div className="product-manage-dashboard--add-widget-tools">
         <div className="product-manage-dashboard--add-widget-tools-buttons">
           <Button.Group>
-            <Button onClick={this.handleLabelWidgetAdd}><Icon type="laptop"/></Button>
+            <Button onClick={this.handleLabelWidgetAdd}><Icon type="laptop" style={{verticalAlign: 'middle'}}/></Button>
             <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
             <Button onClick={this.handleBarWidgetAdd}><Icon type="bar-chart"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>
