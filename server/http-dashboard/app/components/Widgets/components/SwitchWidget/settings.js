@@ -3,6 +3,7 @@ import React from 'react';
 import {
   SimpleContentEditable,
   FontAwesome,
+  ColorPicker,
 } from 'components';
 
 import {
@@ -14,6 +15,8 @@ import _ from 'lodash';
 import {
   Field as FormField,
 } from 'components/Form';
+
+
 
 import Validation from 'services/Validation';
 
@@ -77,9 +80,28 @@ class SwitchSettings extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.multipleTagsSelect = this.multipleTagsSelect.bind(this);
+    this.colorPickerComponent = this.colorPickerComponent.bind(this);
     this.labelNameComponent = this.labelNameComponent.bind(this);
     this.textAlignmentComponent = this.textAlignmentComponent.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
+  }
+
+  colorPalette = [
+    '#000',
+    '#fff',
+    '#24c48e',
+    '#04c0f8',
+    '#d3435c',
+    '#ea7d26',
+    '#ea7d26',
+  ];
+
+  colorPickerComponent({input}) {
+    return (
+      <ColorPicker colors={this.colorPalette}
+                   title="primary color" color={input.value}
+                   onChange={input.onChange}/>
+    );
   }
 
   handleCancel() {
@@ -311,10 +333,18 @@ class SwitchSettings extends React.Component {
                 </Col>
               </Row>
 
-              <Item label={'Alignment'} offset={'medium'}>
-                <Field name={'alignment'} component={this.textAlignmentComponent} />
-              </Item>
-
+              <Row>
+                <Col span={8}>
+                  <Item label={'Alignment'} offset={'medium'}>
+                    <Field name={'alignment'} component={this.textAlignmentComponent} />
+                  </Item>
+                </Col>
+                <Col span={8} offset={1}>
+                  <Item label={'Color'} offset={'medium'} className={`widgets--label-widget--settings-background-color-picker`}>
+                    <Field name={'color'} component={this.colorPickerComponent} />
+                  </Item>
+                </Col>
+              </Row>
             </div>
 
           </div>
