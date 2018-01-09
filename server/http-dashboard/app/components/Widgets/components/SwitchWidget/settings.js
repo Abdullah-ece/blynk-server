@@ -10,9 +10,13 @@ import {
 
 import _ from 'lodash';
 
+import {
+  Field as FormField,
+} from 'components/Form';
+
 import Validation from 'services/Validation';
 
-import {Select as AntdSelect} from 'antd';
+import {Select as AntdSelect, Row, Col} from 'antd';
 
 import {
   reduxForm,
@@ -266,6 +270,19 @@ class SwitchSettings extends React.Component {
                          "No DataStreams or PINs match search":"Create at least one DataStream"}
                 />
               </Item>
+
+              <Row>
+                <Col span={8}>
+                  <Item label="on value" offset="medium">
+                    <FormField name={'onValue'} placeholder={`For example: 1`}/>
+                  </Item>
+                </Col>
+                <Col span={8} offset={1}>
+                  <Item label="off value" offset="medium">
+                    <FormField name={'offValue'} placeholder={`For example: 0`}/>
+                  </Item>
+                </Col>
+              </Row>
 
             </div>
 
