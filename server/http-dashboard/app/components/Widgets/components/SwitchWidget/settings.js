@@ -395,8 +395,12 @@ class SwitchSettings extends React.Component {
                     </Col>
                   </Row>
 
-                  <Item label="on label" offset="medium">
+                  <Item label="on label" offset="normal">
                     <Field name={'labelPosition'} component={this.labelPositionComponent}/>
+                  </Item>
+
+                  <Item offset={'normal'}>
+                    <Field name={'isHideWidgetNameEnabled'} component={this.switchComponent} label={'Hide widget name'}/>
                   </Item>
 
                 </div>
