@@ -1,8 +1,28 @@
 import React from 'react';
 
+import {fromJS} from 'immutable';
+
+import {
+  SimpleContentEditable
+} from 'components';
+
+import {reduxForm, getFormValues, Field} from 'redux-form';
+
 import WidgetSettings from '../WidgetSettings';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+// import {bindActionCreators} from 'redux';
 
+@connect((state, ownProps) => ({
+  formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
+  dataStreams: fromJS(state.Product.edit.dataStreams.fields || []),
+}), (/*dispatch*/) => ({
+  // changeForm: bindActionCreators(change, dispatch),
+  // resetForm: bindActionCreators(reset, dispatch),
+  // initializeForm: bindActionCreators(initialize, dispatch),
+  // destroyForm: bindActionCreators(destroy, dispatch),
+}))
+@reduxForm()
 class SwitchSettings extends React.Component {
 
   static propTypes = {
@@ -35,6 +55,15 @@ class SwitchSettings extends React.Component {
       this.props.handleSubmit();
   }
 
+  labelNameComponent({input}) {
+    return (
+      <SimpleContentEditable maxLength={35}
+                             className="modal-window-widget-settings-config-widget-name"
+                             value={input.value}
+                             onChange={input.onChange}/>
+    );
+  }
+
   render() {
 
     return (
@@ -43,7 +72,13 @@ class SwitchSettings extends React.Component {
         onSave={this.handleSave}
         onCancel={this.handleCancel}
         config={(
-          <div>Switch Settings</div>
+          <div className="modal-window-widget-settings-config-column-header">
+            <Field name="label" component={this.labelNameComponent}/>
+
+            <div className="modal-window-widget-settings-config-add-source">
+              {/*<Button type="dashed" onClick={this.handleAddSource}>Add source</Button>*/}
+            </div>
+          </div>
         )}
       />
     );
