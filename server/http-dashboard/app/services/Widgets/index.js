@@ -353,6 +353,11 @@ export const WIDGETS_LABEL_LEVEL_POSITION = {
   HORIZONTAL: 'HORIZONTAL',
 };
 
+export const WIDGETS_SWITCH_ALIGNMENT = {
+  LEFT: 'LEFT',
+  CENTER: 'MIDDLE',
+};
+
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     id: 1,
@@ -446,6 +451,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     h: 1,
     label: "Switch",
     sources: [],
+    alignment: WIDGETS_SWITCH_ALIGNMENT.LEFT,
   }
 };
 

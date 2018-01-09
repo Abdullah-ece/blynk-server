@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {
-  SimpleContentEditable
+  SimpleContentEditable,
+  FontAwesome,
 } from 'components';
 
 import {
@@ -16,7 +17,16 @@ import {
 
 import Validation from 'services/Validation';
 
-import {Select as AntdSelect, Row, Col} from 'antd';
+import {
+  WIDGETS_SWITCH_ALIGNMENT
+} from 'services/Widgets';
+
+import {
+  Select as AntdSelect,
+  Row,
+  Col,
+  Radio,
+} from 'antd';
 
 import {
   reduxForm,
@@ -29,6 +39,8 @@ import WidgetSettings from '../WidgetSettings';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+
+import './styles.less';
 
 @connect((state, ownProps) => ({
   formValues: getFormValues(ownProps.form)(state) || {},
@@ -66,6 +78,7 @@ class SwitchSettings extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.multipleTagsSelect = this.multipleTagsSelect.bind(this);
     this.labelNameComponent = this.labelNameComponent.bind(this);
+    this.textAlignmentComponent = this.textAlignmentComponent.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
   }
 
@@ -186,6 +199,20 @@ class SwitchSettings extends React.Component {
     });
   }
 
+  textAlignmentComponent(props) {
+    return (
+      <Radio.Group onChange={props.input.onChange} value={props.input.value} className={`modal-window-widget-settings-config--switch-text-alignment`}>
+        <Radio.Button value={WIDGETS_SWITCH_ALIGNMENT.LEFT}>
+          <FontAwesome name={'align-left'}/>
+        </Radio.Button>
+        <Radio.Button value={WIDGETS_SWITCH_ALIGNMENT.CENTER}>
+          <FontAwesome name={'align-center'}/>
+          {/*{ FormatAlignCenter }*/}
+        </Radio.Button>
+      </Radio.Group>
+    );
+  }
+
   getSourceOptions() {
     const dataStreamsOptions = [];
 
@@ -283,6 +310,10 @@ class SwitchSettings extends React.Component {
                   </Item>
                 </Col>
               </Row>
+
+              <Item label={'Alignment'} offset={'medium'}>
+                <Field name={'alignment'} component={this.textAlignmentComponent} />
+              </Item>
 
             </div>
 
