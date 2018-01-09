@@ -26,6 +26,7 @@ import {
 
 import {
   Select as AntdSelect,
+  Switch,
   Row,
   Col,
   Radio,
@@ -282,6 +283,18 @@ class SwitchSettings extends React.Component {
     return dataStreamsOptions;
   }
 
+  switchComponent(props) {
+    return (
+      <div>
+        <Switch size="small" onChange={props.input.onChange} checked={Boolean(props.input.value)}/>
+        <span className="switch-label font-size-medium">
+          { props.label }
+        </span>
+      </div>
+
+    );
+  }
+
   render() {
 
     const sourcesOptions = this.getSourceOptions();
@@ -340,11 +353,16 @@ class SwitchSettings extends React.Component {
                   </Item>
                 </Col>
                 <Col span={8} offset={1}>
-                  <Item label={'Color'} offset={'medium'} className={`widgets--label-widget--settings-background-color-picker`}>
+                  <Item label={'Color'} offset={'medium'} className={`widgets--label-widget--switch-settings-background-color-picker`}>
                     <Field name={'color'} component={this.colorPickerComponent} />
                   </Item>
                 </Col>
               </Row>
+
+              <Item offset={'normal'}>
+                <Field name={'isShowOnOffLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
+              </Item>
+
             </div>
 
           </div>
