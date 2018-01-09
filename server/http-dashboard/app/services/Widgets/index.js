@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export const WIDGET_TYPES = {
   LABEL: 'WEB_LABEL',
+  SWITCH: 'WEB_SWITCH',
   LINEAR: 'WEB_LINE_GRAPH',
   BAR: 'WEB_BAR_GRAPH',
 };
@@ -239,6 +240,12 @@ export const WIDGETS_SOURCE_TYPES = {
 };
 
 export const WIDGETS_CONFIGS = {
+  [WIDGET_TYPES.SWITCH]: {
+    minW: 2,
+    maxW: 2,
+    minH: 1,
+    maxH: 1,
+  },
   [WIDGET_TYPES.LABEL]: {
     minW: 2,
     minH: 1,
@@ -428,6 +435,17 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
       position: WIDGETS_LABEL_LEVEL_POSITION.VERTICAL,
       color: '007dc4'
     }
+  },
+  [WIDGET_TYPES.SWITCH]: {
+    ...WIDGETS_CONFIGS[WIDGET_TYPES.SWITCH],
+    type: WIDGET_TYPES.SWITCH,
+    id: 0,
+    x: 0,
+    y: 0,
+    w: 2,
+    h: 1,
+    label: "Switch",
+    sources: [],
   }
 };
 
