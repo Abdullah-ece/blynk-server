@@ -13,7 +13,8 @@ import {
 import {
   LinearWidget,
   BarChartWidget,
-  LabelWidget
+  LabelWidget,
+  SwitchWidget
 } from 'components/Widgets/components';
 import './styles.less';
 class Widget extends React.Component {
@@ -86,6 +87,10 @@ class Widget extends React.Component {
         <LabelWidget {...attributes}/>
       );
 
+    if (type === WIDGET_TYPES.SWITCH)
+      return (
+        <SwitchWidget {...attributes}/>
+      );
   }
 
   handleSaveChanges(values) {
@@ -101,33 +106,33 @@ class Widget extends React.Component {
   }
 
   getWidgetSettingsByType(type, widget) {
+
+    const attributes = {
+      visible: this.state.isConfigVisible,
+      initialValues: widget,
+      form: `widget-settings-${widget.id}`,
+      onClose: this.toggleSettingsVisibility,
+      onSubmit: this.handleSaveChanges,
+    };
+
     if (type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget.Settings visible={this.state.isConfigVisible}
-                               initialValues={widget}
-                               form={`widget-settings-${widget.id}`}
-                               onClose={this.toggleSettingsVisibility}
-                               onSubmit={this.handleSaveChanges}/>
+        <LinearWidget.Settings {...attributes}/>
       );
 
     if (type === WIDGET_TYPES.BAR)
       return (
-        <BarChartWidget.Settings visible={this.state.isConfigVisible}
-                                 initialValues={widget}
-                                 params={this.props.params}
-                                 form={`widget-settings-${widget.id}`}
-                                 onClose={this.toggleSettingsVisibility}
-                                 onSubmit={this.handleSaveChanges}/>
+        <BarChartWidget.Settings {...attributes}/>
       );
 
     if (type === WIDGET_TYPES.LABEL)
       return (
-        <LabelWidget.Settings    visible={this.state.isConfigVisible}
-                                 initialValues={widget}
-                                 params={this.props.params}
-                                 form={`widget-settings-${widget.id}`}
-                                 onClose={this.toggleSettingsVisibility}
-                                 onSubmit={this.handleSaveChanges}/>
+        <LabelWidget.Settings {...attributes}/>
+      );
+
+    if (type === WIDGET_TYPES.SWITCH)
+      return (
+        <SwitchWidget.Settings {...attributes}/>
       );
   }
 
