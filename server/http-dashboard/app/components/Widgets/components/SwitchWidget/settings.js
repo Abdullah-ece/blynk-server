@@ -363,6 +363,27 @@ class SwitchSettings extends React.Component {
                 <Field name={'isShowOnOffLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
               </Item>
 
+              {this.props.formValues.isShowOnOffLabelsEnabled && (
+
+                <div>
+
+                  <Row>
+                    <Col span={8}>
+                      <Item label="on label" offset="medium">
+                        <FormField name={'onLabel'} placeholder={`For e.g. System On`}/>
+                      </Item>
+                    </Col>
+                    <Col span={8} offset={1}>
+                      <Item label="off label" offset="medium">
+                        <FormField name={'offLabel'} placeholder={`For e.g. System Off`}/>
+                      </Item>
+                    </Col>
+                  </Row>
+
+                </div>
+
+              )}
+
             </div>
 
           </div>
