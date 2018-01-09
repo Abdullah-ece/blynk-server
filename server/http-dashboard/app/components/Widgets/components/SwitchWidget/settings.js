@@ -45,6 +45,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import './styles.less';
+import {WIDGETS_SWITCH_LABEL_ALIGNMENT} from "services/Widgets/index";
 
 @connect((state, ownProps) => ({
   formValues: getFormValues(ownProps.form)(state) || {},
@@ -84,6 +85,7 @@ class SwitchSettings extends React.Component {
     this.colorPickerComponent = this.colorPickerComponent.bind(this);
     this.labelNameComponent = this.labelNameComponent.bind(this);
     this.textAlignmentComponent = this.textAlignmentComponent.bind(this);
+    this.labelPositionComponent = this.labelPositionComponent.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
   }
 
@@ -236,6 +238,19 @@ class SwitchSettings extends React.Component {
     );
   }
 
+  labelPositionComponent(props) {
+    return (
+      <Radio.Group onChange={props.input.onChange} value={props.input.value} className={`modal-window-widget-settings-config--switch-text-alignment`}>
+        <Radio value={WIDGETS_SWITCH_LABEL_ALIGNMENT.LEFT}>
+          Left
+        </Radio>
+        <Radio value={WIDGETS_SWITCH_LABEL_ALIGNMENT.RIGHT}>
+          Right
+        </Radio>
+      </Radio.Group>
+    );
+  }
+
   getSourceOptions() {
     const dataStreamsOptions = [];
 
@@ -379,6 +394,10 @@ class SwitchSettings extends React.Component {
                       </Item>
                     </Col>
                   </Row>
+
+                  <Item label="on label" offset="medium">
+                    <Field name={'labelPosition'} component={this.labelPositionComponent}/>
+                  </Item>
 
                 </div>
 
