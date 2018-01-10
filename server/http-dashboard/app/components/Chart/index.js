@@ -98,7 +98,7 @@ class Chart extends React.Component {
 
   render() {
     return (
-      <div className={this.props.className}  id={this.props.name}>
+      <div className={this.props.className}>
         <div className="canvasjs-widget-container" ref={(ref) => this.chartRef = ref}/>
       </div>
     );

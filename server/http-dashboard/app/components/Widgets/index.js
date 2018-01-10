@@ -55,11 +55,33 @@ class Widgets extends React.Component {
                                       "name");
     if(difference.length !== 0){
       const newWidget = difference[0];
-      Scroll.scroller.scrollTo( newWidget.name,  {
-        smooth: "easeInOutQuint",
-        offset: -110,
-      });
+
+      //Getting all necessary widget position information
+      const chartDefaultPadding = 15;
+
+      const docScrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+      const docViewBottom = window.innerHeight + docScrollTop;
+
+      const chartHeight = document.getElementById(newWidget.name).clientHeight;
+
+      const rect = document.getElementById(newWidget.name).getBoundingClientRect(), bodyElt = document.body;
+
+      const chartOffset = {
+        top: rect.top + bodyElt .scrollTop,
+        left: rect.left + bodyElt .scrollLeft
+      };
+
+      const chartBottom = chartOffset.top + chartHeight + chartDefaultPadding;
+      // ----
+
+      const visible = (chartBottom <= docViewBottom) && (chartOffset.top >= docScrollTop);
+
+      if (!visible) {
+        const scroll = Scroll.animateScroll;
+        scroll.scrollTo( chartOffset.top+chartHeight - window.innerHeight + chartDefaultPadding + docScrollTop);
+      }
     }
+
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
@@ -135,7 +157,7 @@ class Widgets extends React.Component {
         breakpoints={this.props.breakpoints || Widgets.breakpoints}
         margin={[8, 8]}
         rowHeight={96}
-
+        // ref={element => this.myElement = element}
         cols={this.cols}
 
         className={`widgets ${this.props.editable ? 'widgets-editable' : null}`}

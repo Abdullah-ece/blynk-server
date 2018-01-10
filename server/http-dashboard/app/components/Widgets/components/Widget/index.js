@@ -183,6 +183,7 @@ class Widget extends React.Component {
            onMouseUp={this.props.onMouseUp}
            onTouchEnd={this.props.onTouchEnd}
            style={styles}
+           id = {this.props.data.type + this.props.data.id}
       >
         <div className="widgets--widget-label">
           <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
