@@ -56,32 +56,35 @@ class Widgets extends React.Component {
     if(difference.length !== 0){
       const newWidget = difference[0];
 
-      //Getting all necessary widget position information
-      const chartDefaultPadding = 15;
-
-      const docScrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-      const docViewBottom = window.innerHeight + docScrollTop;
-
-      const chartHeight = document.getElementById(newWidget.name).clientHeight;
-
-      const rect = document.getElementById(newWidget.name).getBoundingClientRect(), bodyElt = document.body;
-
-      const chartOffset = {
-        top: rect.top + bodyElt .scrollTop,
-        left: rect.left + bodyElt .scrollLeft
-      };
-
-      const chartBottom = chartOffset.top + chartHeight + chartDefaultPadding;
-      // ----
-
-      const visible = (chartBottom <= docViewBottom) && (chartOffset.top >= docScrollTop);
-
-      if (!visible) {
-        const scroll = Scroll.animateScroll;
-        scroll.scrollTo( chartOffset.top+chartHeight - window.innerHeight + chartDefaultPadding + docScrollTop);
-      }
+      this.scrollToWidget(newWidget);
     }
+  }
 
+  scrollToWidget(newWidget) {
+    //Getting all necessary widget position information
+    const chartDefaultPadding = 15;
+
+    const docScrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    const docViewBottom = window.innerHeight + docScrollTop;
+
+    const chartHeight = document.getElementById(newWidget.name).clientHeight;
+
+    const rect = document.getElementById(newWidget.name).getBoundingClientRect(), bodyElt = document.body;
+
+    const chartOffset = {
+      top: rect.top + bodyElt .scrollTop,
+      left: rect.left + bodyElt .scrollLeft
+    };
+
+    const chartBottom = chartOffset.top + chartHeight + chartDefaultPadding;
+    // ----
+
+    const visible = (chartBottom <= docViewBottom) && (chartOffset.top >= docScrollTop);
+
+    if (!visible) {
+      const scroll = Scroll.animateScroll;
+      scroll.scrollTo( chartOffset.top+chartHeight - window.innerHeight + chartDefaultPadding + docScrollTop);
+    }
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
@@ -111,12 +114,18 @@ class Widgets extends React.Component {
 
     const widgets = [...this.props.data.lg];
 
+    const clonedWidgetId = _.random(1, 999999999);
+
+    widget.y = widgets.reduce((acc, item) => {
+      return Number(item.y) > acc ? Number(item.y) : acc;
+    }, 0) + 1;
+
     widgets.push({
       ...widget,
-      id: _.random(1, 999999999),
+      id: clonedWidgetId,
       label: `${widget.label} Copy`,
-      x: 0,
-      y: 0
+      name: widget.type + clonedWidgetId,
+      x: 0
     });
 
     this.props.onChange(
