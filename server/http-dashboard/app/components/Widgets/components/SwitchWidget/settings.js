@@ -188,6 +188,9 @@ class SwitchSettings extends React.Component {
 
     const onChange = (value) => {
 
+      if(!value)
+        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
+
       const getStreamByPin = (pin) => {
         return _.find(props.dataStreams, (stream) => {
           return parseInt(stream.values.pin) === parseInt(pin);
@@ -197,7 +200,9 @@ class SwitchSettings extends React.Component {
       let dataStream = getStreamByPin(value);
 
       if(!dataStream)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
+        return props.changeForm(this.props.form, 'sources.0.dataStream', {
+          pin: value
+        });
 
       props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
 
