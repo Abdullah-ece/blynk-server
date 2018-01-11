@@ -354,7 +354,7 @@ class SwitchSettings extends React.Component {
                 />
               </Item>
 
-              { this.props.formValues.sources.length && this.props.formValues.sources[0].dataStream && (
+              { this.props.formValues.sources && this.props.formValues.sources.length && this.props.formValues.sources[0].dataStream && (
 
                 <div>
 

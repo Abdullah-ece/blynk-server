@@ -245,6 +245,7 @@ export const WIDGETS_CONFIGS = {
     maxW: 2,
     minH: 1,
     maxH: 1,
+    color: `#fff`
   },
   [WIDGET_TYPES.LABEL]: {
     minW: 2,
