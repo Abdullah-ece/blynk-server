@@ -16,3 +16,35 @@
     height: 32px;
   }
 }
+
+.widgets--widget-switch {
+  .ant-switch {
+    width: 56px;
+    height: 28px;
+    &:after {
+      width: 24px;
+      height: 24px;
+    }
+    &.ant-switch-checked {
+      &:after {
+        margin-left: -25px;
+      }
+    }
+  }
+
+  &.widgets--widget-switch--alignment-left .widgets--widget-switch-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-content: flex-start;
+  }
+
+  &.widgets--widget-switch--alignment-center .widgets--widget-switch-wrapper {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+}
+
+.widgets--widget-switch--label {
+
+}
