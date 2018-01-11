@@ -349,64 +349,71 @@ class SwitchSettings extends React.Component {
                 />
               </Item>
 
-              <Row>
-                <Col span={8}>
-                  <Item label="on value" offset="medium">
-                    <FormField name={'onValue'} placeholder={`For example: 1`}/>
-                  </Item>
-                </Col>
-                <Col span={8} offset={1}>
-                  <Item label="off value" offset="medium">
-                    <FormField name={'offValue'} placeholder={`For example: 0`}/>
-                  </Item>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col span={8}>
-                  <Item label={'Alignment'} offset={'medium'}>
-                    <Field name={'alignment'} component={this.textAlignmentComponent} />
-                  </Item>
-                </Col>
-                <Col span={8} offset={1}>
-                  <Item label={'Color'} offset={'medium'} className={`widgets--label-widget--switch-settings-background-color-picker`}>
-                    <Field name={'color'} component={this.colorPickerComponent} />
-                  </Item>
-                </Col>
-              </Row>
-
-              <Item offset={'normal'}>
-                <Field name={'isShowOnOffLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
-              </Item>
-
-              {this.props.formValues.isShowOnOffLabelsEnabled && (
+              { this.props.formValues.sources.length && this.props.formValues.sources[0].dataStream && (
 
                 <div>
 
                   <Row>
                     <Col span={8}>
-                      <Item label="on label" offset="medium">
-                        <FormField name={'onLabel'} placeholder={`For e.g. System On`}/>
+                      <Item label="on value" offset="medium">
+                        <FormField name={'onValue'} placeholder={`For example: 1`}/>
                       </Item>
                     </Col>
                     <Col span={8} offset={1}>
-                      <Item label="off label" offset="medium">
-                        <FormField name={'offLabel'} placeholder={`For e.g. System Off`}/>
+                      <Item label="off value" offset="medium">
+                        <FormField name={'offValue'} placeholder={`For example: 0`}/>
                       </Item>
                     </Col>
                   </Row>
 
-                  <Item label="on label" offset="normal">
-                    <Field name={'labelPosition'} component={this.labelPositionComponent}/>
-                  </Item>
+                  <Row>
+                    <Col span={8}>
+                      <Item label={'Alignment'} offset={'medium'}>
+                        <Field name={'alignment'} component={this.textAlignmentComponent} />
+                      </Item>
+                    </Col>
+                    <Col span={8} offset={1}>
+                      <Item label={'Color'} offset={'medium'} className={`widgets--label-widget--switch-settings-background-color-picker`}>
+                        <Field name={'color'} component={this.colorPickerComponent} />
+                      </Item>
+                    </Col>
+                  </Row>
 
                   <Item offset={'normal'}>
-                    <Field name={'isHideWidgetNameEnabled'} component={this.switchComponent} label={'Hide widget name'}/>
+                    <Field name={'isShowOnOffLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
                   </Item>
 
-                </div>
+                  {this.props.formValues.isShowOnOffLabelsEnabled && (
 
-              )}
+                    <div>
+
+                      <Row>
+                        <Col span={8}>
+                          <Item label="on label" offset="medium">
+                            <FormField name={'onLabel'} placeholder={`For e.g. System On`}/>
+                          </Item>
+                        </Col>
+                        <Col span={8} offset={1}>
+                          <Item label="off label" offset="medium">
+                            <FormField name={'offLabel'} placeholder={`For e.g. System Off`}/>
+                          </Item>
+                        </Col>
+                      </Row>
+
+                      <Item label="on label" offset="normal">
+                        <Field name={'labelPosition'} component={this.labelPositionComponent}/>
+                      </Item>
+
+                      <Item offset={'normal'}>
+                        <Field name={'isHideWidgetNameEnabled'} component={this.switchComponent} label={'Hide widget name'}/>
+                      </Item>
+
+                    </div>
+
+                  )}
+
+                </div>
+              ) || null}
 
             </div>
 
