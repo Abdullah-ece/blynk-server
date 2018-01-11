@@ -91,8 +91,8 @@ class SwitchSettings extends React.Component {
 
   colorPalette = [
     '#000',
-    '#fff',
     '#24c48e',
+    '#007dc4',
     '#04c0f8',
     '#d3435c',
     '#ea7d26',

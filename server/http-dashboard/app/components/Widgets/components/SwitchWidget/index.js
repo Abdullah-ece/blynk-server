@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {Switch as AntdSwitch} from 'antd';
 import {WIDGETS_SWITCH_ALIGNMENT} from "services/Widgets";
 import './styles.less';
+import {WIDGETS_SWITCH_LABEL_ALIGNMENT} from "services/Widgets/index";
 
 class Switch extends React.Component {
 
@@ -29,6 +30,10 @@ class Switch extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
   }
 
+  state = {
+    checked: false
+  };
+
   handleCancel() {
     if (typeof this.props.onClose === 'function')
       this.props.onClose();
@@ -50,15 +55,57 @@ class Switch extends React.Component {
 
   }
 
+  getLabelAlignmentClassName(alignment) {
+    if(alignment === WIDGETS_SWITCH_LABEL_ALIGNMENT.LEFT)
+      return `widgets--widget-switch--label-alignment-left`;
+
+    if(alignment === WIDGETS_SWITCH_LABEL_ALIGNMENT.RIGHT)
+      return `widgets--widget-switch--label-alignment-right`;
+
+  }
+
+  getSwitchColorByStatus(status, color) {
+    if(status)
+      return `#${color}`;
+
+    if(!status)
+      return `#BFBFBF`;
+  }
+
+  getLabelByStatus(status, data) {
+    if(status)
+      return data.onLabel;
+
+    if(!status)
+      return data.offLabel;
+  }
+
   render() {
+
+    const onChange = (value) => {
+      this.setState({
+        checked: value
+      });
+    };
 
     const alignmentClassName = this.getAlignmentClassName(this.props.data.alignment);
 
+    const labelAlignmentClassName = this.getLabelAlignmentClassName(this.props.data.labelPosition);
+
+    const label = this.getLabelByStatus(this.state.checked, this.props.data);
+
+    const color = this.getSwitchColorByStatus(this.state.checked, this.props.data.color);
+
+    const {offLabel, onLabel} = this.props.data;
+
     return (
-      <div className={`widgets--widget-switch ${alignmentClassName}`}>
+      <div className={`widgets--widget-switch ${alignmentClassName} ${labelAlignmentClassName}`}>
         <div className={`widgets--widget-switch-wrapper`}>
-          <AntdSwitch />
-          {/* <span className={`widgets--widget-switch--label`}></span> */}
+          <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={this.state.checked} onChange={onChange}/>
+
+          { (offLabel || onLabel) && (
+            <span className={`widgets--widget-switch--label`}>{ label }</span>
+          )}
         </div>
       </div>
     );

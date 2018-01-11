@@ -242,10 +242,9 @@ export const WIDGETS_SOURCE_TYPES = {
 export const WIDGETS_CONFIGS = {
   [WIDGET_TYPES.SWITCH]: {
     minW: 2,
-    maxW: 2,
     minH: 1,
     maxH: 1,
-    color: `#fff`
+    color: `007dc4`
   },
   [WIDGET_TYPES.LABEL]: {
     minW: 2,
