@@ -405,7 +405,7 @@ class SwitchSettings extends React.Component {
                         </Col>
                       </Row>
 
-                      <Item label="on label" offset="normal">
+                      <Item label="label position" offset="normal">
                         <Field name={'labelPosition'} component={this.labelPositionComponent}/>
                       </Item>
 

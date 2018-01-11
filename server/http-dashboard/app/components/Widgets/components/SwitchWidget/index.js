@@ -96,14 +96,14 @@ class Switch extends React.Component {
 
     const color = this.getSwitchColorByStatus(this.state.checked, this.props.data.color);
 
-    const {offLabel, onLabel} = this.props.data;
+    const {isShowOnOffLabelsEnabled} = this.props.data;
 
     return (
-      <div className={`widgets--widget-switch ${alignmentClassName} ${labelAlignmentClassName}`}>
+      <div className={`widgets--widget-switch ${alignmentClassName} ${isShowOnOffLabelsEnabled && labelAlignmentClassName || ''}`}>
         <div className={`widgets--widget-switch-wrapper`}>
           <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={this.state.checked} onChange={onChange}/>
 
-          { (offLabel || onLabel) && (
+          { isShowOnOffLabelsEnabled && (
             <span className={`widgets--widget-switch--label`}>{ label }</span>
           )}
         </div>
