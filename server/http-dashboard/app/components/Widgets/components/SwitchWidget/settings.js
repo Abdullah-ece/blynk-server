@@ -36,7 +36,9 @@ import {
   reduxForm,
   getFormValues,
   Field,
-  change
+  change,
+  reset,
+  initialize,
 } from 'redux-form';
 
 import WidgetSettings from '../WidgetSettings';
@@ -52,8 +54,8 @@ import {WIDGETS_SWITCH_LABEL_ALIGNMENT} from "services/Widgets/index";
   dataStreams: state.Product.edit.dataStreams.fields || [],
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
-  // resetForm: bindActionCreators(reset, dispatch),
-  // initializeForm: bindActionCreators(initialize, dispatch),
+  resetForm: bindActionCreators(reset, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   // destroyForm: bindActionCreators(destroy, dispatch),
 }))
 @reduxForm()
@@ -65,6 +67,7 @@ class SwitchSettings extends React.Component {
 
     form: PropTypes.string,
     formValues: PropTypes.object,
+    initialValues: PropTypes.object,
 
     visible: PropTypes.bool,
 
@@ -87,6 +90,17 @@ class SwitchSettings extends React.Component {
     this.textAlignmentComponent = this.textAlignmentComponent.bind(this);
     this.labelPositionComponent = this.labelPositionComponent.bind(this);
     this.sourceMultipleSelectComponent = this.sourceMultipleSelectComponent.bind(this);
+  }
+
+  componentWillUpdate(nextProps) {
+    if(!nextProps.visible && this.props.visible !== nextProps.visible) {
+      // this.props.clearWidgetDevicePreviewHistory();
+      // this.props.resetForm('bar-chart-widget-preview');
+    }
+
+    if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
+      this.props.initializeForm(nextProps.form, nextProps.initialValues);
+    }
   }
 
   colorPalette = [

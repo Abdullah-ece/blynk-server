@@ -181,6 +181,13 @@ class Widget extends React.Component {
       };
     }
 
+    let labelStyles = {};
+
+    if(this.props.data.isHideWidgetNameEnabled) {
+      labelStyles = {
+        'marginTop': `-14px`
+      };
+    }
 
     return (
       <div className={className}
@@ -190,8 +197,10 @@ class Widget extends React.Component {
            style={styles}
            id = {this.props.data.type + this.props.data.id}
       >
-        <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+        <div className="widgets--widget-label" style={labelStyles}>
+          { !this.props.data.isHideWidgetNameEnabled && (
+            <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          ) }
           {this.props.editable && (
             <div className="widgets--widget-tools" onMouseDown={this.preventDragNDrop}
                  onMouseUp={this.preventDragNDrop}>

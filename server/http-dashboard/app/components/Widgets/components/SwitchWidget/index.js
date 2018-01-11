@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {Switch as AntdSwitch} from 'antd';
 import {WIDGETS_SWITCH_ALIGNMENT} from "services/Widgets";
 import './styles.less';
+import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_SWITCH_LABEL_ALIGNMENT} from "services/Widgets/index";
 
 class Switch extends React.Component {
@@ -104,7 +105,9 @@ class Switch extends React.Component {
           <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={this.state.checked} onChange={onChange}/>
 
           { isShowOnOffLabelsEnabled && (
-            <span className={`widgets--widget-switch--label`}>{ label }</span>
+            <span className={`widgets--widget-switch--label`}>
+              <Dotdotdot clamp={1}>{ label }</Dotdotdot>
+            </span>
           )}
         </div>
       </div>
