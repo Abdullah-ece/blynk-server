@@ -101,7 +101,8 @@ class SwitchSettings extends React.Component {
 
   colorPickerComponent({input}) {
     return (
-      <ColorPicker colors={this.colorPalette}
+      <ColorPicker width={`240px`}
+                   colors={this.colorPalette}
                    title="primary color" color={input.value}
                    onChange={input.onChange}/>
     );
