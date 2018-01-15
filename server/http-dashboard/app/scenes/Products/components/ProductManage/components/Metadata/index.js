@@ -55,7 +55,6 @@ class ProductMetadata extends React.Component {
     this.onSortStart = this.onSortStart.bind(this);
     this.renderMetaFields = this.renderMetaFields.bind(this);
     this.handleCloneField = this.handleCloneField.bind(this);
-    this.addMetadataField = this.addMetadataField.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleDeleteField = this.handleDeleteField.bind(this);
     this.metadataFieldValidation = this.metadataFieldValidation.bind(this);
