@@ -37,7 +37,31 @@ import {
   reduxForm
 } from 'redux-form';
 
-@reduxForm()
+@reduxForm({
+  shouldValidate: () => true,
+  validate: (fields) => {
+
+    let validationErrors = {
+      metaFields: {}
+    };
+
+    const UNIQUE_NAME_ERROR = 'Name should be unique';
+
+    if(fields && fields.metaFields && fields.metaFields.length)
+      fields.metaFields.forEach((field1, index1) => {
+
+        fields.metaFields.forEach((field2, index2) => {
+          if(index1 !== index2 && field1.name && field2.name && field1.name.trim() === field2.name.trim()) {
+            validationErrors.metaFields[index1] = { name: UNIQUE_NAME_ERROR };
+            validationErrors.metaFields[index2] = { name: UNIQUE_NAME_ERROR };
+          }
+        });
+
+      });
+
+    return validationErrors;
+  },
+})
 class ProductCreate extends React.Component {
 
   static contextTypes = {
