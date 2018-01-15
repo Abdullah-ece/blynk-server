@@ -96,10 +96,8 @@ class ProductMetadata extends React.Component {
       key: field.get('id'),
       metaFieldKey: metaFieldKey,
       index: metaFieldIndex,
-      // onChange: this.handleChangeField,
-      // validate: this.metadataFieldValidation,
       onDelete: this.handleDeleteField,
-      // onClone: this.handleCloneField,
+      onClone: this.handleCloneField,
       field: field
     };
 
@@ -299,46 +297,39 @@ class ProductMetadata extends React.Component {
   handleCloneField(id) {
 
     const isNameAlreadyExists = (name) => {
-      return this.props.fields.some((field) => {
-        return field.values.name.trim() === name.trim();
+      return this.props.fields.getAll().some((field) => {
+        return field.name.trim() === name.trim();
       });
     };
 
-    const cloned = _.find(this.props.fields, {id: id});
-
-    // const nextId = _.random(4, 2000000000);
+    const cloned = _.find(this.props.fields.getAll(), {id: id});
 
     let name = '';
     let nameUnique = false;
     let i = 0;
 
     while (!nameUnique) {
-      name = `${cloned.values.name} Copy ${!i ? '' : i}`;
+      name = `${cloned.name} Copy ${!i ? '' : i}`.trim();
       if (!isNameAlreadyExists(name)) {
         nameUnique = true;
       }
       i++;
     }
 
-    // const fields = [
-    //   ...this.props.fields,
-    //   {
-    //     ...cloned,
-    //     id: nextId,
-    //     values: {
-    //       ...cloned.values,
-    //       name: `${name}`,
-    //       isSavedBefore: false,
-    //       isRecentlyCreated: true
-    //     }
-    //   }
-    // ];
+    const originalIndex = _.findIndex(this.props.fields.getAll(), {id: id});
 
-    // const originalIndex = _.findIndex(fields, {id: id});
+    this.props.fields.push({
+      ...cloned,
+      name: name,
+      id: new Date().getTime()
+    });
 
-    // this.props.onFieldsChange(
-    //   arrayMove(fields, fields.length - 1, originalIndex + 1)
-    // );
+    const newIndex = this.props.fields.getAll().length;
+    const oldIndex = originalIndex + 1;
+
+    if(newIndex !== oldIndex)
+      this.props.fields.swap(newIndex, oldIndex);
+
   }
 
   // addMetadataField(params) {
