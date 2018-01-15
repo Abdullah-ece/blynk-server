@@ -132,6 +132,8 @@ public class WebLoginHandler extends BaseHttpHandler {
         Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
         org.isActive = true;
 
+        tokensPool.removeToken(token);
+
         Response response = ok(user);
 
         Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
@@ -160,6 +162,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         user.pass = password;
         user.status = UserStatus.Active;
+        tokensPool.removeToken(token);
 
         Response response = ok(user);
 

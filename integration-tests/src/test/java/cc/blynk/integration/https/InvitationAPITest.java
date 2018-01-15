@@ -190,6 +190,17 @@ public class InvitationAPITest extends APIBaseTest {
             assertEquals(role, user.role);
             assertEquals(1, user.orgId);
         }
+
+        loginRequest = new HttpPost(httpsAdminServerUrl + "/invite");
+        nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("token", token));
+        nvps.add(new BasicNameValuePair("password", "123"));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = newHttpClient.execute(loginRequest)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Your invitation expired or was used already. Please request new one.\"}}", consumeText(response));
+        }
     }
 
 
