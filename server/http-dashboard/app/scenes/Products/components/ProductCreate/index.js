@@ -230,7 +230,7 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA} forceRender={true}>
-              <MetadataTab formValues={this.props.formValues}/>
+              <MetadataTab/>
             </Tabs.TabPane>
 
           </Tabs>
