@@ -3,18 +3,19 @@ import {AddMetadataFields} from 'scenes/Products/components/AddField';
 import {BackTop} from 'components';
 import {
   Metadata as MetadataService,
-  // filterDynamicMetadataFields,
-  filterHardcodedMetadataFields as getHardcodedMetadataFields,
+  filterDynamicMetadataFields,
   hardcodedRequiredMetadataFieldsNames
 } from 'services/Products';
+import {FieldArray} from 'redux-form';
 import Metadata from "scenes/Products/components/Metadata";
-// import {MetadataRolesDefault} from 'services/Roles';
+import {MetadataRolesDefault} from 'services/Roles';
 import _ from 'lodash';
 import {
   SortableContainer,
   SortableElement,
   // arrayMove
 } from 'react-sortable-hoc';
+import {fromJS} from 'immutable';
 // import Scroll from 'react-scroll';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -25,7 +26,7 @@ class ProductMetadata extends React.Component {
 
   static propTypes = {
 
-    fields: React.PropTypes.array,
+    fields: PropTypes.array,
 
     formValues: ImmutablePropTypes.contains({
       metaFields: ImmutablePropTypes.contains({
@@ -43,6 +44,8 @@ class ProductMetadata extends React.Component {
         ])
       })
     }),
+
+    onFieldsChange: PropTypes.func
   };
 
   constructor(props) {
@@ -50,6 +53,7 @@ class ProductMetadata extends React.Component {
 
     this.onSortEnd = this.onSortEnd.bind(this);
     this.onSortStart = this.onSortStart.bind(this);
+    this.renderMetaFields = this.renderMetaFields.bind(this);
     this.handleCloneField = this.handleCloneField.bind(this);
     this.addMetadataField = this.addMetadataField.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
@@ -100,32 +104,28 @@ class ProductMetadata extends React.Component {
 
   }
 
-  SortableItem = SortableElement(({value}) => {
+  SortableItem = SortableElement(({value, metaFieldKey, metaFieldIndex}) => {
 
     const field = value;
 
     let element;
 
     const props = {
-      id: field.id,
-      key: field.id,
-      form: `metadatafield${field.id}`,
-      onChange: this.handleChangeField,
-      validate: this.metadataFieldValidation,
-      onDelete: this.handleDeleteField,
-      onClone: this.handleCloneField,
+      id: field.get('id'),
+      key: field.get('id'),
+      metaFieldKey: metaFieldKey,
+      index: metaFieldIndex,
+      // onChange: this.handleChangeField,
+      // validate: this.metadataFieldValidation,
+      // onDelete: this.handleDeleteField,
+      // onClone: this.handleCloneField,
       field: field
     };
 
-    if (field.type === MetadataService.Fields.TEXT) {
+    if (field.get('type') === MetadataService.Fields.TEXT) {
       element = (
         <MetadataFields.TextField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            value: field.values.value,
-            role: field.values.role
-          }}
         />
       );
     }
@@ -287,16 +287,16 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    return element;
+    return element || null;
 
   });
 
   SortableList = SortableContainer(({items}) => {
     return (
       <div>
-        {items.map((value, index) => {
+        {items.map((item, index) => {
           return (
-            <this.SortableItem key={`item-${value.id}`} index={index} value={value}/>
+            <this.SortableItem key={`item-${item.get('id')}`} metaFieldKey={item.get('metaFieldKey')} metaFieldIndex={index} index={index} value={item}/>
           );
         })}
       </div>
@@ -360,28 +360,28 @@ class ProductMetadata extends React.Component {
     // );
   }
 
-  addMetadataField(/*params*/) {
-
-    const nextId = _.random(4, 2000000000);
-
-    // this.props.onFieldsChange([
-    //   ...this.props.fields,
-    //   {
-    //     id: nextId,
-    //     type: params.type,
-    //     values: {
-    //       role: MetadataRolesDefault,
-    //       name: '',
-    //       value: '',
-    //       ...params.values,
-    //       isRecentlyCreated: true
-    //     }
-    //   }
-    // ]);
-
-    /** @todo dirty hack, remove it after refactoring */
-    setTimeout(() => document.querySelector(`.metadata-name-field-${nextId}  input`).focus(), 100);
-  }
+  // addMetadataField(params) {
+  //
+  //   const nextId = _.random(4, 2000000000);
+  //
+  //   this.props.onFieldsChange([
+  //     ...this.props.fields,
+  //     {
+  //       id: nextId,
+  //       type: params.type,
+  //       values: {
+  //         role: MetadataRolesDefault,
+  //         name: '',
+  //         value: '',
+  //         ...params.values,
+  //         isRecentlyCreated: true
+  //       }
+  //     }
+  //   ]);
+  //
+  //   /** @todo dirty hack, remove it after refactoring */
+  //   setTimeout(() => document.querySelector(`.metadata-name-field-${nextId}  input`).focus(), 100);
+  // }
 
   handleDeleteField(/*key*/) {
     // this.props.onFieldsChange(this.props.fields.filter((field) => field.id !== key));
@@ -401,13 +401,11 @@ class ProductMetadata extends React.Component {
 
   }
 
-  getStaticFields() {
-
-    const fields = getHardcodedMetadataFields(this.props.formValues.get('metaFields'));
+  getStaticFields({ metaFields }) {
 
     const elements = [];
 
-    fields.forEach((field, key) => {
+    metaFields.forEach((field, key) => {
 
       if (!field.has('name')) return false;
 
@@ -467,27 +465,69 @@ class ProductMetadata extends React.Component {
     });
   }
 
-  render() {
+  renderMetaFields({ fields, /*meta*/ }) {
+
+    /*
+    * fields - reduxForm FieldArray with additional params to operate form
+    * metaFields - simple immutable List with fields data
+    * */
+
+    /*
+      metaFieldKey is using in forms to access deep fields like: formValues.metaFields.$index$.name etc.
+      metaField is an index of metaField on reduxForm storage
+     */
+
+    const metaFields = fromJS(fields.getAll()).map((item, index) => item.set('metaFieldKey', index));
+
+    const dynamicMetaFields = filterDynamicMetadataFields(metaFields);
+
+    const addMetadataField = (params) => {
+
+      fields.push({
+        id: new Date().getTime(),
+        role: MetadataRolesDefault,
+        ...params,
+      });
+
+    };
+
+    const onSortEnd = (params) => {
+      fields.swap(dynamicMetaFields.get(params.oldIndex).get('metaFieldKey'), dynamicMetaFields.get(params.newIndex).get('metaFieldKey'));
+    };
 
     return (
       <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null}>
         <Metadata.ItemsList>
-          { this.getStaticFields()}
 
-          {/*{ this.props.fields && this.props.fields.length && (*/}
-            {/*<this.SortableList items={filterDynamicMetadataFields(this.props.fields)}*/}
-                               {/*useWindowAsScrollContainer={true}*/}
-                               {/*onSortEnd={this.onSortEnd}*/}
-                               {/*onSortStart={this.onSortStart}*/}
-                               {/*useDragHandle={true}*/}
-                               {/*lockAxis="y"*/}
-                               {/*helperClass="product-metadata-item-drag-active"/>) || null*/}
-          {/*}*/}
+          {this.getStaticFields({
+            reduxFormFields: fields,
+            metaFields: metaFields,
+          })}
+
+          { metaFields && metaFields.size && (
+            <this.SortableList items={dynamicMetaFields}
+                               useWindowAsScrollContainer={true}
+                               onSortEnd={onSortEnd}
+                               onSortStart={this.onSortStart}
+                               useDragHandle={true}
+                               lockAxis="y"
+                               helperClass="product-metadata-item-drag-active"/>) || null
+          }
 
         </Metadata.ItemsList>
-        <AddMetadataFields onFieldAdd={this.addMetadataField}/>
+
+        <AddMetadataFields onFieldAdd={addMetadataField}/>
         <BackTop/>
       </div>
+
+    );
+
+  }
+
+  render() {
+
+    return (
+      <FieldArray name={`metaFields`} component={this.renderMetaFields}/>
     );
   }
 }

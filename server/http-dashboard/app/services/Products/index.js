@@ -160,7 +160,17 @@ export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacture
   description: '',
   logoUrl: '',
   metaFields: [
-    ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue})
+    ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue}),
+    ...(new Array(1).fill({}).map((item, index) => {
+
+      return {
+        id: (new Date().getTime()) + index,
+        type: Metadata.Fields.TEXT,
+        name: '',
+        value: '',
+        role: Roles.USER.value,
+      };
+    }))
   ],
 });
 

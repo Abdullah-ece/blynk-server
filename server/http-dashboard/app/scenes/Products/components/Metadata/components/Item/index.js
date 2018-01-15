@@ -34,6 +34,7 @@ class MetadataItem extends React.PureComponent {
     invalid: PropTypes.bool,
     preview: PropTypes.object,
     fieldsErrors: PropTypes.any,
+    index: PropTypes.any,
     form: PropTypes.string,
     fields: PropTypes.object,
     children: PropTypes.any,
@@ -83,6 +84,14 @@ class MetadataItem extends React.PureComponent {
       // });
       this.invalid = props.invalid;
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      (nextProps.preview.name !== this.props.preview.name) ||
+      (nextProps.preview.value !== this.props.preview.value) ||
+      (nextProps.index !== this.props.index)
+    );
   }
 
   handleConfirmDelete() {

@@ -21,6 +21,7 @@ class BaseField extends React.PureComponent {
     onClone: PropTypes.func,
     validate: PropTypes.func,
     isUnique: PropTypes.func,
+    index: PropTypes.any,
 
     metaFieldKey: PropTypes.oneOfType([
       React.PropTypes.string,
@@ -43,6 +44,17 @@ class BaseField extends React.PureComponent {
   state = {
     isFocused: false
   };
+
+  shouldComponentUpdate(nextProps) {
+
+    const shouldRender = (
+      (this.props.field.get('name') !== nextProps.field.get('name')) ||
+      (this.props.field.get('value') !== nextProps.field.get('value')) ||
+      (this.props.index !== nextProps.index)
+    );
+
+    return shouldRender;
+  }
 
   onFocus() {
     this.setState({
@@ -78,6 +90,7 @@ class BaseField extends React.PureComponent {
                      initialValues={this.props.initialValues}
                      tools={this.props.tools !== false}
                      fields={this.props.fields}
+                     index={this.props.index}
                      field={this.props.field}
                      id={this.props.id}
                      form={this.props.form}

@@ -34,9 +34,9 @@ class ProductsIndex extends React.Component {
   }
 
   componentWillMount() {
-    if (this.props.Organization && !this.props.Organization.canCreateOrgs) {
-      this.context.router.push('/dashboard');
-    }
+    // if (this.props.Organization && !this.props.Organization.canCreateOrgs) {
+    //   this.context.router.push('/dashboard');
+    // }
     if (this.props.location.query && this.props.location.query.success) {
       message.success('Product created successfully');
       this.context.router.push('/products');
