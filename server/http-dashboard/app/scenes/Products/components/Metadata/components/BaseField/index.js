@@ -45,11 +45,12 @@ class BaseField extends React.PureComponent {
     isFocused: false
   };
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
 
     const shouldRender = (
       (this.props.field.get('name') !== nextProps.field.get('name')) ||
       (this.props.field.get('value') !== nextProps.field.get('value')) ||
+      (this.state.isFocused !== nextState.isFocused) ||
       (this.props.index !== nextProps.index)
     );
 

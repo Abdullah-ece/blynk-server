@@ -86,13 +86,13 @@ class MetadataItem extends React.PureComponent {
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    return (
-      (nextProps.preview.name !== this.props.preview.name) ||
-      (nextProps.preview.value !== this.props.preview.value) ||
-      (nextProps.index !== this.props.index)
-    );
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   return (
+  //     (nextProps.preview.name !== this.props.preview.name) ||
+  //     (nextProps.preview.value !== this.props.preview.value) ||
+  //     (nextProps.index !== this.props.index)
+  //   );
+  // }
 
   handleConfirmDelete() {
     if (this.props.onDelete)
