@@ -6,25 +6,11 @@ import {
   MetadataSelect as MetadataFormSelect,
   Number as MetadataFormNumber
 } from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import {Currency, Unit} from 'services/Products';
 import Static from './static';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      price: selector(state, 'price'),
-      currency: selector(state, 'currency'),
-      perValue: selector(state, 'perValue'),
-      units: selector(state, 'units')
-    }
-  };
-})
 class CostField extends BaseField {
 
   constructor(props) {
@@ -94,11 +80,11 @@ class CostField extends BaseField {
   };
 
   getPreviewValues() {
-    const fieldName = this.props.fields.name;
-    const perValue = this.props.fields.perValue;
-    const price = this.props.fields.price;
-    const units = this.props.fields.units;
-    const currency = this.props.fields.currency;
+    const fieldName = this.props.field.get('name');
+    const perValue = this.props.field.get('perValue');
+    const price = this.props.field.get('price');
+    const units = this.props.field.get('units');
+    const currency = this.props.field.get('currency');
 
     let name = null;
     let value = null;
@@ -137,25 +123,25 @@ class CostField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                onFocus={this.onFocus} onBlur={this.onBlur}
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
             <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
-                                name="currency" type="text" placeholder="Choose" values={this.Currency}/>
+                                name={`metaFields.${this.props.metaFieldKey}.currency`} type="text" placeholder="Choose" values={this.Currency}/>
 
             <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
-                                name="price" type="text" placeholder="--" validate={[
+                                name={`metaFields.${this.props.metaFieldKey}.price`} type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
             <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
-                                name="perValue" type="text" placeholder="--" validate={[
+                                name={`metaFields.${this.props.metaFieldKey}.perValue`} type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
             <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
-                                name="units" type="text" placeholder="--"
+                                name={`metaFields.${this.props.metaFieldKey}.units`} type="text" placeholder="--"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}/>
           </Input.Group>
