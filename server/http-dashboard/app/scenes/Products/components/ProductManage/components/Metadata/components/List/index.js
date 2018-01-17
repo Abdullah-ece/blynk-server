@@ -169,19 +169,21 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.get('type') === MetadataService.Fields.DATE) {
-      element = (
-        <MetadataFields.DateField
-          {...props}
-          initialValues={{
-            name: field.values.name,
-            value: field.values.value
-          }}
-        />
-      );
-    }
+    // not used for now
 
-    if (field.type === MetadataService.Fields.COORDINATES) {
+    // if (field.get('type') === MetadataService.Fields.DATE) {
+    //   element = (
+    //     <MetadataFields.DateField
+    //       {...props}
+    //       initialValues={{
+    //         name: field.values.name,
+    //         value: field.values.value
+    //       }}
+    //     />
+    //   );
+    // }
+
+    if (field.get('type') === MetadataService.Fields.COORDINATES) {
       element = (
         <MetadataFields.CoordinatesField
           {...props}
@@ -209,7 +211,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.CONTACT) {
+    if (field.get('type') === MetadataService.Fields.CONTACT) {
       element = (
         <MetadataFields.ContactField
           {...props}
