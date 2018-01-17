@@ -7,6 +7,7 @@ import './styles.less';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Scroll from 'react-scroll';
+import {getCoordinatesToSet} from 'services/Widgets';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -116,16 +117,15 @@ class Widgets extends React.Component {
 
     const clonedWidgetId = _.random(1, 999999999);
 
-    widget.y = widgets.reduce((acc, item) => {
-      return Number(item.y) > acc ? Number(item.y) : acc;
-    }, 0) + 1;
+    const coords = getCoordinatesToSet(widget, widgets, this.state.currentBreakpoint);
 
     widgets.push({
       ...widget,
       id: clonedWidgetId,
       label: `${widget.label} Copy`,
       name: widget.type + clonedWidgetId,
-      x: 0
+      x: coords.x,
+      y: coords.y,
     });
 
     this.props.onChange(

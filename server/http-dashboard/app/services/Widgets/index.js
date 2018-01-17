@@ -469,3 +469,134 @@ export const prepareWidgetForProductEdit = (widget) => {
 };
 
 export const VIRTUAL_PIN_PREFIX = 'V';
+
+
+
+const DASHBOARD_WIDTH = {
+  lg: 8,
+};
+
+export const getCoordinatesToSet = (newWidget, widgets, breakpoint) => {
+  if(!widgets.length){
+    return {x:0,y:0};
+  }
+  const highestWidget = widgets.reduce(function(prev, current) {
+    return (prev.y+prev.h > current.y+current.h) ? prev : current;
+  });
+  const dashboardHeight = highestWidget.y + highestWidget.h + newWidget.h + 1;
+  const dashboard = {
+    x: 0,
+    y: 0,
+    w: DASHBOARD_WIDTH[breakpoint],
+    h: dashboardHeight
+  };
+  return checkEachDashboardPoint(newWidget, widgets, dashboard);
+};
+
+const checkEachDashboardPoint = (newWidget, widgets, dashboard) => {
+  let settableCoordinates;
+
+  for (let i = 0; i < dashboard.h; i++) {
+    for (let j = 0; j < dashboard.w; j++) {
+
+      settableCoordinates = checkEachWidgetPoint(newWidget, i, j, dashboard, widgets);
+      if (settableCoordinates) {
+
+        return settableCoordinates;
+      }
+    }
+  }
+
+  return false;
+};
+
+const checkEachWidgetPoint = (newWidget, dashboardY, dashboardX, dashboard, widgets) => {
+
+  for (let i = 0; i < newWidget.h; i++) {
+    for (let j = 0; j < newWidget.w; j++) {
+
+      const point = {x: dashboardX + j + 0.5, y: dashboardY + i + 0.5};
+      if (overflowDashboard(point, dashboard)) {
+
+          return false;
+      }
+      if (isCollapseWithWidgets(point, widgets)) {
+
+        return false;
+      }
+    }
+  }
+
+  return {x: dashboardX, y: dashboardY};
+};
+
+const isCollapseWithWidgets = (point, allWidgets) => {
+  for (let i = 0; i < allWidgets.length; i++) {
+    if (isInWidget(point, allWidgets[i])) {
+
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const isInWidget = (point, widget) => {
+
+  const wCorners = getCornersOfWidget(widget);
+
+  return pointInWidgetArea(point, widget, wCorners);
+};
+
+const overflowDashboard = (point, dashboard) => {
+  const dashboardCorners = getCornersOfWidget(dashboard);
+
+  return !pointInWidgetArea(point, dashboard, dashboardCorners);
+};
+
+const getCornersOfWidget = (widget) => {
+  return {
+    A: {x: widget.x,              y: widget.y},
+    B: {x: (widget.x+widget.w), y: widget.y},
+    C: {x: (widget.x+widget.w), y: (widget.y+widget.h)},
+    D: {x: widget.x,              y: (widget.y+widget.h)}
+  };
+};
+
+const pointInWidgetArea = (point, widget, wCorners) => {
+  // Widget area
+  const wArea = getWidgetArea(widget);
+  const sumTrianglesArea = parseFloat((
+    getTriangleArea(point, wCorners.A, wCorners.B) +
+    getTriangleArea(point, wCorners.B, wCorners.C) +
+    getTriangleArea(point, wCorners.C, wCorners.D) +
+    getTriangleArea(point, wCorners.D, wCorners.A)
+  ).toFixed(6));
+
+  return wArea === sumTrianglesArea;
+};
+
+const getTriangleArea = (A, B, C) => {
+  const triangleSides = {
+    AB: getLineLengthByCoords(A, B),
+    BC: getLineLengthByCoords(B, C),
+    CA: getLineLengthByCoords(C, A)
+  };
+  // half of perimeter of triangle
+  const hp = ((triangleSides.AB + triangleSides.BC + triangleSides.CA) / 2);
+
+  return Math.sqrt(hp * (hp-triangleSides.AB) * (hp-triangleSides.BC) * (hp-triangleSides.CA));
+};
+
+const getLineLengthByCoords = (startPoint, endPoint) => {
+
+  return Math.sqrt(Math.pow((endPoint.x - startPoint.x), 2) + Math.pow((endPoint.y - startPoint.y), 2));
+};
+
+const getWidgetArea = (widget) => {
+  return (
+    getLineLengthByCoords({x: widget.x, y: widget.y}, {x: (widget.x + widget.w), y: widget.y})
+    *
+    getLineLengthByCoords({x: widget.x, y: widget.y}, {x: widget.x, y: (widget.y + widget.h)})
+  );
+};

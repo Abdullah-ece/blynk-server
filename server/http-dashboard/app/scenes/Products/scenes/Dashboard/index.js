@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {getCoordinatesToSet} from 'services/Widgets';
 
 @connect((state) => ({
   dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {})
@@ -46,9 +47,10 @@ class DashboardScene extends React.Component {
       return Number(item.get('id')) > acc ? Number(item.get('id')) : acc;
     }, 0) + 1;
 
-    widget.y = this.props.dashboard.get('widgets').reduce((acc, item) => {
-      return Number(item.get('y')) > acc ? Number(item.get('y')) : acc;
-    }, 0) + 1;
+    const coords = (getCoordinatesToSet(widget, this.props.dashboard.get('widgets').toJS(), 'lg'));
+
+    widget.x = coords.x;
+    widget.y = coords.y;
 
     widget.name = widget.type + widget.id;
     this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', this.props.dashboard.get('widgets').unshift(fromJS(widget) ));
