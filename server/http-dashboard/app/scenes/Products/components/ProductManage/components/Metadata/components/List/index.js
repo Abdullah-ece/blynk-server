@@ -4,7 +4,8 @@ import {BackTop} from 'components';
 import {
   Metadata as MetadataService,
   filterDynamicMetadataFields,
-  hardcodedRequiredMetadataFieldsNames
+  hardcodedRequiredMetadataFieldsNames,
+  FORMS,
 } from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
@@ -15,19 +16,27 @@ import {
   // arrayMove
 } from 'react-sortable-hoc';
 import {fromJS} from 'immutable';
-// import Scroll from 'react-scroll';
+import Scroll from 'react-scroll';
 
 // import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
 
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {change} from 'redux-form';
+
 const MetadataFields = Metadata.Fields;
+@connect((state) => state, (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch)
+}))
 class ProductMetadata extends React.Component {
 
   static propTypes = {
 
     fields: PropTypes.object,
 
-    onFieldsChange: PropTypes.func
+    changeForm: PropTypes.func,
+    onFieldsChange: PropTypes.func,
   };
 
   constructor(props) {
@@ -48,24 +57,35 @@ class ProductMetadata extends React.Component {
   };
 
   componentDidUpdate() {
-    // this.props.fields.forEach((field) => {
-    //   if (field && field.values && field.values.isRecentlyCreated) {
-    //
-    //     Scroll.scroller.scrollTo(`${field.name}`, {
-    //       duration: 1000,
-    //       offset: -64,
-    //       smooth: "easeInOutQuint",
-    //     });
-    //
-    //     this.handleChangeField({
-    //       ...field,
-    //       values: {
-    //         ...field.values,
-    //         isRecentlyCreated: false
-    //       }
-    //     });
-    //   }
-    // });
+
+    // all new fields marked as isRecentlyCreated to be able to scroll to new element
+    // after scrolled to element we should remove isRecentlyCreated to prevent scroll every update
+
+    let fields = [];
+    let shouldUpdateFields = false;
+
+    this.props.fields.getAll().forEach((field) => {
+
+      if (!field.isRecentlyCreated) {
+        return fields.push(field);
+      }
+
+      shouldUpdateFields = true;
+
+      Scroll.scroller.scrollTo(`${field.name}`, {
+        duration: 1000,
+        offset: -64,
+        smooth: "easeInOutQuint",
+      });
+
+      return fields.push({
+        ...field,
+        isRecentlyCreated: false,
+      });
+    });
+
+    if(shouldUpdateFields)
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, 'metaFields', fields);
   }
 
   handleChangeField(/*values, dispatch*/) {
@@ -436,6 +456,7 @@ class ProductMetadata extends React.Component {
     this.props.fields.push({
       id: nextId,
       role: MetadataRolesDefault,
+      isRecentlyCreated: true,
       ...params,
     });
 
