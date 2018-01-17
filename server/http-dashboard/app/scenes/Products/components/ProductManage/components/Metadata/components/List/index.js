@@ -161,17 +161,10 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.SWITCH) {
+    if (field.get('type') === MetadataService.Fields.SWITCH) {
       element = (
         <MetadataFields.SwitchField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            from: field.values.from,
-            value: field.values.value || 0,
-            role: field.values.role,
-            to: field.values.to
-          }}
         />
       );
     }

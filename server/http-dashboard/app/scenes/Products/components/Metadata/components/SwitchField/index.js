@@ -2,22 +2,10 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import {MetadataField as MetadataFormField} from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
 import Static from './static';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      from: selector(state, 'from'),
-      to: selector(state, 'to')
-    }
-  };
-})
 class SwitchField extends BaseField {
 
   constructor(props) {
@@ -29,9 +17,9 @@ class SwitchField extends BaseField {
   }
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const from = this.props.fields.from;
-    const to = this.props.fields.to;
+    const name = this.props.field.get('name');
+    const from = this.props.field.get('from');
+    const to = this.props.field.get('to');
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
@@ -49,20 +37,20 @@ class SwitchField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
+            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
                                onFocus={this.onFocus} onBlur={this.onBlur}
-                               validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                validate={[
                                  Validation.Rules.required, Validation.Rules.metafieldName,
                                ]}/>
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
-                               name="from" type="text" placeholder="Option A"
+                               name={`metaFields.${this.props.metaFieldKey}.from`} type="text" placeholder="Option A"
                                validate={[
                                  Validation.Rules.required
                                ]}/>
 
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
-                               name="to" type="text" placeholder="Option B"
+                               name={`metaFields.${this.props.metaFieldKey}.to`} type="text" placeholder="Option B"
                                validate={[
                                  Validation.Rules.required
                                ]}/>
