@@ -129,20 +129,15 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.NUMBER) {
+    if (field.get('type') === MetadataService.Fields.NUMBER) {
       element = (
         <MetadataFields.NumberField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            value: field.values.value,
-            role: field.values.role
-          }}
         />
       );
     }
 
-    if (field.type === MetadataService.Fields.COST) {
+    if (field.get('type') === MetadataService.Fields.COST) {
       element = (
         <MetadataFields.CostField
           {...props}
@@ -171,7 +166,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.RANGE) {
+    if (field.get('type') === MetadataService.Fields.RANGE) {
       element = (
         <MetadataFields.ShiftField
           {...props}
@@ -200,7 +195,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.DATE) {
+    if (field.get('type') === MetadataService.Fields.DATE) {
       element = (
         <MetadataFields.DateField
           {...props}
@@ -226,7 +221,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.UNIT) {
+    if (field.get('type') === MetadataService.Fields.UNIT) {
       element = (
         <MetadataFields.UnitField
           {...props}
@@ -269,7 +264,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.ADDRESS) {
+    if (field.get('type') === MetadataService.Fields.ADDRESS) {
       element = (
         <MetadataFields.AddressField
           {...props}
