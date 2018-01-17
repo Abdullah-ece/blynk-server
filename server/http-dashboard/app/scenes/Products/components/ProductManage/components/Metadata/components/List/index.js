@@ -201,12 +201,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.UnitField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            value: field.values.value,
-            role: field.values.role,
-            units: field.values.units
-          }}
         />
       );
     }
@@ -215,27 +209,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.ContactField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            role: field.values.role,
-            isDefaultsEnabled: field.values.isDefaultsEnabled,
-            firstName: field.values.firstName,
-            lastName: field.values.lastName,
-            email: field.values.email,
-            phone: field.values.phone,
-            streetAddress: field.values.streetAddress,
-            city: field.values.city,
-            state: field.values.state,
-            zip: field.values.zip,
-            isFirstNameEnabled: field.values.isFirstNameEnabled,
-            isLastNameEnabled: field.values.isLastNameEnabled,
-            isEmailEnabled: field.values.isEmailEnabled,
-            isPhoneEnabled: field.values.isPhoneEnabled,
-            isStreetAddressEnabled: field.values.isStreetAddressEnabled,
-            isCityEnabled: field.values.isCityEnabled,
-            isStateEnabled: field.values.isStateEnabled,
-            isZipEnabled: field.values.isZipEnabled
-          }}
         />
       );
     }
@@ -244,15 +217,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.AddressField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            role: field.values.role,
-            streetAddress: field.values.streetAddress,
-            city: field.values.city,
-            state: field.values.state,
-            zip: field.values.zip,
-            country: field.values.country
-          }}
         />
       );
     }
