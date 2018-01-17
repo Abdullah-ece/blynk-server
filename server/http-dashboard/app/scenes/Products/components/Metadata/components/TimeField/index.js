@@ -2,27 +2,16 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import {MetadataField as MetadataFormField, MetadataTime as MetadataFormTime} from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import Static from './static';
 import {Time} from 'services/Metadata';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      time: selector(state, 'time')
-    }
-  };
-})
 class TimeField extends BaseField {
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const time = this.props.fields.time;
+    const name = this.props.field.get('name');
+    const time = this.props.field.get('time');
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
@@ -40,11 +29,11 @@ class TimeField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               validateOnBlur={true} name="name" type="text" placeholder="Field Name" validate={[
+            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormTime name="time" type="text" timeFormat="HH:mm" placeholder="Choose Time"
+            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.time`} type="text" timeFormat="HH:mm" placeholder="Choose Time"
                               timestampPicker={true}/>
           </Input.Group>
         </FormItem.Content>

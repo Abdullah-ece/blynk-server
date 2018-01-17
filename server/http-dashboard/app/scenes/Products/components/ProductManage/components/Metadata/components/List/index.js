@@ -153,7 +153,7 @@ class ProductMetadata extends React.Component {
       );
     }
 
-    if (field.type === MetadataService.Fields.TIME) {
+    if (field.get('type') === MetadataService.Fields.TIME) {
       element = (
         <MetadataFields.TimeField
           {...props}
