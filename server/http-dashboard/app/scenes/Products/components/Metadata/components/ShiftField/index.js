@@ -2,29 +2,17 @@ import React from 'react';
 import FormItem from 'components/FormItem';
 import {Input} from 'antd';
 import {MetadataField as MetadataFormField, MetadataTime as MetadataFormTime} from 'components/Form';
-import {formValueSelector} from 'redux-form';
-import {connect} from 'react-redux';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField';
 import Static from './static';
 import {TimeRange} from 'services/Metadata';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      from: selector(state, 'from'),
-      to: selector(state, 'to'),
-    }
-  };
-})
 class ShiftField extends BaseField {
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    const from = this.props.fields.from;
-    const to = this.props.fields.to;
+    const name = this.props.field.get(`name`);
+    const from = this.props.field.get(`from`);
+    const to = this.props.field.get(`to`);
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
@@ -43,13 +31,13 @@ class ShiftField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.id}`}
-                               validateOnBlur={true} name="name" type="text" placeholder="Field Name"
+            <MetadataFormField className={`metadata-name-field-${this.props.field.get(`id`)}`}
+                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                style={{width: '200%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormTime name="from" type="text" timeFormat="HH:mm" placeholder="06:00"/>
-            <MetadataFormTime name="to" type="text" timeFormat="HH:mm" placeholder="07:00"/>
+            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.from`} type="text" timeFormat="HH:mm" placeholder="06:00"/>
+            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.to`} type="text" timeFormat="HH:mm" placeholder="07:00"/>
           </Input.Group>
         </FormItem.Content>
       </FormItem>

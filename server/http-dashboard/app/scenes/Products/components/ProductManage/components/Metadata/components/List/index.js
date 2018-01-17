@@ -141,14 +141,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.CostField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            price: field.values.price,
-            perValue: field.values.perValue,
-            units: field.values.units,
-            currency: field.values.currency,
-            role: field.values.role
-          }}
         />
       );
     }
@@ -157,11 +149,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.TimeField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            time: field.values.time,
-            role: field.values.role
-          }}
         />
       );
     }
@@ -170,12 +157,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.ShiftField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            from: field.values.from,
-            role: field.values.role,
-            to: field.values.to
-          }}
         />
       );
     }
