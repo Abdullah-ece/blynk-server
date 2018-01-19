@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   AddWidgetTools,
-  Grid
+  Grid,
+  DeviceSelect,
 } from './components';
 import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
@@ -86,7 +87,14 @@ class Dashboard extends React.Component {
     return (
       <div className="products-manage-dashboard">
 
-        <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
+        <div className={`products-manage-dashboard--tools`}>
+          <div className={`products-manage-dashboard--tools--widget-add`}>
+            <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
+          </div>
+          <div className={`products-manage-dashboard--tools--device-select`}>
+            <DeviceSelect />
+          </div>
+        </div>
 
         <Grid widgets={widgets}
               params={params}
