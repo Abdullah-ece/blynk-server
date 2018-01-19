@@ -58,6 +58,12 @@ export default function Devices(state = initialState, action) {
     case "API_DEVICES_UPDATE_SUCCESS":
       return state.set('devices', fromJS(action.payload.data));
 
+    case "API_DEVICES_DELETE_SUCCESS":
+      return state;
+
+    case "API_DEVICES_DELETE":
+      return state;
+
     case "API_TIMELINE_FETCH_SUCCESS":
       return state.set('timeline', fromJS(action.payload.data));
 

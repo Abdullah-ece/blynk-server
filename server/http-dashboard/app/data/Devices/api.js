@@ -67,6 +67,22 @@ export const DeviceCreate = (data, device) => {
   };
 };
 
+export const DeviceDelete = (deviceId, orgId) => {
+
+  if (!orgId)
+    throw new Error('orgId parameter is missed');
+
+  return {
+    type: 'API_DEVICE_DELETE',
+    payload: {
+      request: {
+        method: 'delete',
+        url: `/devices/${orgId}/${deviceId}`
+      }
+    }
+  };
+};
+
 export const TimelineFetch = (params = {}) => {
 
   if (!params.orgId)

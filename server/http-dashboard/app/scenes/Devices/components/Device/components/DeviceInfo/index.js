@@ -4,6 +4,7 @@ import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, BackTo
 import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
+import {DeviceDelete} from 'scenes/Devices/scenes';
 import './styles.less';
 
 class DeviceInfo extends React.Component {
@@ -89,6 +90,9 @@ class DeviceInfo extends React.Component {
             )}
           </Col>
           <Col span={8}>
+
+            <DeviceDelete deviceId={this.props.device.get('id')} />
+
             <div className="device--device-info-logo">
               {this.props.device.has('productLogoUrl') && (
                 <img src={this.props.device.get('productLogoUrl')}/>
