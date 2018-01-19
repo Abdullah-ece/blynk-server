@@ -1,15 +1,30 @@
 import React from 'react';
 import {Select} from 'antd';
+import PropTypes from 'prop-types';
 
 class DeviceSelect extends React.Component {
 
+  static propTypes = {
+
+    value: PropTypes.string,
+
+    devicesList: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
+      value: PropTypes.string
+    })),
+
+    onChange: PropTypes.func,
+  };
+
   render() {
+
+    const { value, devicesList, onChange} = this.props;
+
     return (
-      <Select value={`1`}>
-        <Select.Option key={`1`}>Test Device 1</Select.Option>
-        <Select.Option key={`2`}>Test Device 2</Select.Option>
-        <Select.Option key={`3`}>Test Device 3</Select.Option>
-        <Select.Option key={`4`}>Test Device 4</Select.Option>
+      <Select value={value} onChange={onChange} placeholder={`Select device for preview`}>
+        { devicesList.map((device) => (
+          <Select.Option key={device.key}>{device.value}</Select.Option>
+        ))}
       </Select>
     );
   }

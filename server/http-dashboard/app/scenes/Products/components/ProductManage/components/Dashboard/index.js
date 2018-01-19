@@ -84,6 +84,25 @@ class Dashboard extends React.Component {
 
     const deviceId = 1;
 
+    const devicesList = [
+      {
+        key: '1',
+        value: 'Test Device 1'
+      },
+      {
+        key: '2',
+        value: 'Test Device 2'
+      },
+      {
+        key: '3',
+        value: 'Test Device 3'
+      }
+    ];
+
+    const onChange = () => {
+
+    };
+
     return (
       <div className="products-manage-dashboard">
 
@@ -92,7 +111,7 @@ class Dashboard extends React.Component {
             <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
           </div>
           <div className={`products-manage-dashboard--tools--device-select`}>
-            <DeviceSelect />
+            <DeviceSelect devicesList={devicesList} onChange={onChange}/>
           </div>
         </div>
 
