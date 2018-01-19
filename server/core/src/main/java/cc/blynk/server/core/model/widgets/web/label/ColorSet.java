@@ -35,16 +35,28 @@ public class ColorSet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ColorSet)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ColorSet)) {
+            return false;
+        }
 
         ColorSet colorSet = (ColorSet) o;
 
-        if (min != colorSet.min) return false;
-        if (max != colorSet.max) return false;
-        if (backgroundColor != null ? !backgroundColor.equals(colorSet.backgroundColor) : colorSet.backgroundColor != null)
+        if (min != colorSet.min) {
             return false;
-        if (textColor != null ? !textColor.equals(colorSet.textColor) : colorSet.textColor != null) return false;
+        }
+        if (max != colorSet.max) {
+            return false;
+        }
+        if (backgroundColor != null ? !backgroundColor.equals(colorSet.backgroundColor)
+                : colorSet.backgroundColor != null) {
+            return false;
+        }
+        if (textColor != null ? !textColor.equals(colorSet.textColor) : colorSet.textColor != null) {
+            return false;
+        }
         return customText != null ? customText.equals(colorSet.customText) : colorSet.customText == null;
     }
 

@@ -26,13 +26,21 @@ public class WebLineGraph extends WebWidget {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebLineGraph)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebLineGraph)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         WebLineGraph that = (WebLineGraph) o;
 
-        if (isShowTitleEnabled != that.isShowTitleEnabled) return false;
+        if (isShowTitleEnabled != that.isShowTitleEnabled) {
+            return false;
+        }
         return isShowLegendEnabled == that.isShowLegendEnabled;
     }
 

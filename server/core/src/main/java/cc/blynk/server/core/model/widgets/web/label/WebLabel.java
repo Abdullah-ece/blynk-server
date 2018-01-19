@@ -46,25 +46,47 @@ public class WebLabel extends WebWidget {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WebLabel)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebLabel)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         WebLabel webLabel = (WebLabel) o;
 
-        if (isColorSetEnabled != webLabel.isColorSetEnabled) return false;
-        if (isShowLevelEnabled != webLabel.isShowLevelEnabled) return false;
-        if (dataType != webLabel.dataType) return false;
-        if (decimalFormat != null ? !decimalFormat.equals(webLabel.decimalFormat) : webLabel.decimalFormat != null)
+        if (isColorSetEnabled != webLabel.isColorSetEnabled) {
             return false;
-        if (valueSuffix != null ? !valueSuffix.equals(webLabel.valueSuffix) : webLabel.valueSuffix != null)
+        }
+        if (isShowLevelEnabled != webLabel.isShowLevelEnabled) {
             return false;
-        if (alignment != webLabel.alignment) return false;
+        }
+        if (dataType != webLabel.dataType) {
+            return false;
+        }
+        if (decimalFormat != null ? !decimalFormat.equals(webLabel.decimalFormat) : webLabel.decimalFormat != null) {
+            return false;
+        }
+        if (valueSuffix != null ? !valueSuffix.equals(webLabel.valueSuffix) : webLabel.valueSuffix != null) {
+            return false;
+        }
+        if (alignment != webLabel.alignment) {
+            return false;
+        }
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(colorsSet, webLabel.colorsSet)) return false;
-        if (backgroundColor != null ? !backgroundColor.equals(webLabel.backgroundColor) : webLabel.backgroundColor != null)
+        if (!Arrays.equals(colorsSet, webLabel.colorsSet)) {
             return false;
-        if (textColor != null ? !textColor.equals(webLabel.textColor) : webLabel.textColor != null) return false;
+        }
+        if (backgroundColor != null ? !backgroundColor.equals(webLabel.backgroundColor)
+                : webLabel.backgroundColor != null) {
+            return false;
+        }
+        if (textColor != null ? !textColor.equals(webLabel.textColor) : webLabel.textColor != null) {
+            return false;
+        }
         return level != null ? level.equals(webLabel.level) : webLabel.level == null;
     }
 

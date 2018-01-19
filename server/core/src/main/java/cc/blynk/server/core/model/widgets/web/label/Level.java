@@ -31,14 +31,24 @@ public class Level {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Level)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Level)) {
+            return false;
+        }
 
         Level level = (Level) o;
 
-        if (min != level.min) return false;
-        if (max != level.max) return false;
-        if (position != level.position) return false;
+        if (min != level.min) {
+            return false;
+        }
+        if (max != level.max) {
+            return false;
+        }
+        if (position != level.position) {
+            return false;
+        }
         return color != null ? color.equals(level.color) : level.color == null;
     }
 
