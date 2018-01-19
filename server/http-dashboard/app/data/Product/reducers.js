@@ -28,6 +28,11 @@ const initialState = {
     events: {
       invalid: true,
       fields: []
+    },
+    dashboard: {
+      isLoading: false,
+      devicesList: [],
+      selectedDeviceId: undefined,
     }
   },
   products: null
@@ -35,6 +40,56 @@ const initialState = {
 
 export default function Product(state = initialState, action) {
   switch (action.type) {
+
+    case "PRODUCT_DASHBOARD_DEVICE_ID_FOR_PREVIEW_CHANGE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dashboard: {
+            ...state.edit.dashboard,
+            selectedDeviceId: action.data
+          }
+        }
+      };
+
+    case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dashboard: {
+            ...state.edit.dashboard,
+            isLoading: true,
+          }
+        }
+      };
+
+    case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH_SUCCESS":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dashboard: {
+            ...state.edit.dashboard,
+            devicesList: action.payload.data,
+            isLoading: false,
+          }
+        }
+      };
+
+    case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH_FAILURE":
+      return {
+        ...state,
+        edit: {
+          ...state.edit,
+          dashboard: {
+            ...state.edit.dashboard,
+            isLoading: false,
+          }
+        }
+      };
+
 
     case "PRODUCT_EDIT_METADATA_FIELDS_UPDATE":
       return {

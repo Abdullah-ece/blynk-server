@@ -109,3 +109,10 @@ export function ProductInfoUpdateInvalidFlag(data = false) {
     data: data
   };
 }
+
+export function ProductDashboardDeviceIdForPreviewChange(data = false) {
+  return {
+    type: 'PRODUCT_DASHBOARD_DEVICE_ID_FOR_PREVIEW_CHANGE',
+    data: data
+  };
+}

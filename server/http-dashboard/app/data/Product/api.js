@@ -1,3 +1,5 @@
+import {API_URL} from "services/API";
+
 export function ProductsFetch() {
   return {
     type: 'API_PRODUCTS_FETCH',
@@ -5,6 +7,22 @@ export function ProductsFetch() {
       request: {
         method: 'get',
         url: `/product`
+      }
+    }
+  };
+}
+
+export function DevicesListForProductDashboardPreviewFetch(params = {}) {
+
+  if(!params.orgId)
+    throw new Error('Missing orgId parameter for DevicesListForProductDashboardPreviewFetch');
+
+  return {
+    type: 'API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.device().get(params)
       }
     }
   };

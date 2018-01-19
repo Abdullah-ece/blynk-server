@@ -8,22 +8,24 @@ class DeviceSelect extends React.Component {
 
     value: PropTypes.string,
 
-    devicesList: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      value: PropTypes.string
-    })),
+    devicesList: PropTypes.array,
 
     onChange: PropTypes.func,
   };
 
   render() {
 
-    const { value, devicesList, onChange} = this.props;
+    const { value, onChange} = this.props;
+
+    let devicesList = this.props.devicesList.map((device) => ({
+      key: device.id,
+      value: device.name,
+    }));
 
     return (
       <Select value={value} onChange={onChange} placeholder={`Select device for preview`}>
         { devicesList.map((device) => (
-          <Select.Option key={device.key}>{device.value}</Select.Option>
+          <Select.Option key={`${device.key}`}>{device.value}</Select.Option>
         ))}
       </Select>
     );

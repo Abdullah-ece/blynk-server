@@ -15,6 +15,16 @@ import _ from 'lodash';
 class Dashboard extends React.Component {
 
   static propTypes = {
+    onWidgetAdd: PropTypes.func,
+    onWidgetsChange: PropTypes.func,
+    onDeviceForPreviewChange: PropTypes.func,
+
+    selectedDeviceIdForPreview: PropTypes.any,
+
+    devicesListForPreview: PropTypes.array,
+
+    widgets: PropTypes.instanceOf(List),
+
     fields: PropTypes.object,
   };
 
@@ -71,6 +81,8 @@ class Dashboard extends React.Component {
 
   render() {
 
+    const {devicesListForPreview, onDeviceForPreviewChange, selectedDeviceIdForPreview} = this.props;
+
     const widgets = fromJS(this.props.fields.map((prefix, index, fields) => {
       return {
         ...fields.get(index),
@@ -111,7 +123,7 @@ class Dashboard extends React.Component {
             <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
           </div>
           <div className={`products-manage-dashboard--tools--device-select`}>
-            <DeviceSelect devicesList={devicesList} onChange={onChange}/>
+            <DeviceSelect devicesList={devicesListForPreview} value={selectedDeviceIdForPreview} onChange={onDeviceForPreviewChange}/>
           </div>
         </div>
 

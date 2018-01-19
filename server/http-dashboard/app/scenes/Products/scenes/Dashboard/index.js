@@ -7,6 +7,9 @@ import {
 
 import {FORMS} from 'services/Products';
 
+import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
+import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
+
 import {
   getFormValues,
   change,
@@ -18,9 +21,15 @@ import {bindActionCreators} from 'redux';
 import {getCoordinatesToSet} from 'services/Widgets';
 
 @connect((state) => ({
-  dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {})
+  orgId: state.Account.orgId,
+  dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
+  devicesList: state.Product.edit.dashboard.devicesList,
+  isDevicesListLoading: state.Product.edit.dashboard.devicesList,
+  selectedDeviceId: state.Product.edit.dashboard.selectedDeviceId,
 }), (dispatch) => ({
-  changeFormValue: bindActionCreators(change, dispatch)
+  changeFormValue: bindActionCreators(change, dispatch),
+  fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
+  changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
 }))
 class DashboardScene extends React.Component {
 
@@ -31,7 +40,14 @@ class DashboardScene extends React.Component {
       id: PropTypes.number.isRequired
     }).isRequired,
 
+    orgId: PropTypes.any,
+
+    devicesList: PropTypes.array,
+    selectedDeviceId: PropTypes.any,
+
     changeFormValue: PropTypes.func,
+    fetchDevicesListForPreview: PropTypes.func,
+    changeDeviceIdForPreview: PropTypes.func,
   };
 
   constructor(props) {
@@ -39,6 +55,13 @@ class DashboardScene extends React.Component {
 
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
     this.handleWidgetsChange = this.handleWidgetsChange.bind(this);
+    this.handleDeviceForPreviewChange = this.handleDeviceForPreviewChange.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.fetchDevicesListForPreview({
+      orgId: this.props.orgId,
+    });
   }
 
   handleWidgetAdd(widget) {
@@ -70,6 +93,10 @@ class DashboardScene extends React.Component {
     this.props.changeFormValue(FORMS.DASHBOARD, 'widgets', updatedWidgets);
   }
 
+  handleDeviceForPreviewChange(value) {
+    this.props.changeDeviceIdForPreview(value);
+  }
+
   render() {
 
     const widgets = this.props.dashboard.get('widgets');
@@ -79,6 +106,9 @@ class DashboardScene extends React.Component {
                  params={this.props.params}
                  onWidgetAdd={this.handleWidgetAdd}
                  onWidgetsChange={this.handleWidgetsChange}
+                 devicesListForPreview={this.props.devicesList}
+                 selectedDeviceIdForPreview={this.props.selectedDeviceId}
+                 onDeviceForPreviewChange={this.handleDeviceForPreviewChange}
       />
     );
   }
