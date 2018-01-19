@@ -254,7 +254,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
                 .set(CONTENT_LENGTH, fileLength)
                 .set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()))
                 .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        setDateAndCacheHeaders(response, file);
 
         //todo setup caching for files.
         setDateAndCacheHeaders(response, file);
