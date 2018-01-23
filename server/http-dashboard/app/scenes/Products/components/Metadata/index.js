@@ -11,7 +11,7 @@ import SwitchField from './components/SwitchField';
 import DateField from './components/DateField';
 import CoordinatesField from './components/CoordinatesField';
 import UnitField from './components/UnitField';
-import ContactField from './components/ContactField2';
+import ContactField from './components/ContactField';
 import AddressField from './components/AddressField';
 import DeviceNameField from './components/DeviceNameField';
 import LocationField from './components/LocationField';

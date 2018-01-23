@@ -1,125 +1,34 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
-import {Form} from 'components/UI';
-import {Switch, Row, Col} from 'antd';
-import {formValueSelector, Field, change} from 'redux-form';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import Validation from 'services/Validation';
-import BaseField from '../BaseField';
-import {
-  Default as OptionDefault,
-  Input as DefinedInput
-} from './components/Option';
-import './styles.less';
-import Static from './static';
+import {Col, Row, Switch, Checkbox, Input} from 'antd';
 import _ from 'lodash';
+import {MetadataField as MetadataFormField} from 'components/Form';
+import Validation from 'services/Validation';
+import BaseField from '../BaseField/index';
+import {Form} from 'components/UI';
+import Static from './static';
+import {Field, Fields} from 'redux-form';
+import './styles.less';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    events: state.Product.edit.events.fields,
-    fields: {
-      name: selector(state, 'name') || "",
-      isDefaultsEnabled: selector(state, 'isDefaultsEnabled'),
-      fieldAvailable: selector(state, 'fieldAvailable'),
-      values: {
-        firstName: {
-          checked: selector(state, 'isFirstNameEnabled'),
-          value: selector(state, 'firstName'),
-        },
-        lastName: {
-          checked: selector(state, 'isLastNameEnabled'),
-          value: selector(state, 'lastName'),
-        },
-        email: {
-          checked: selector(state, 'isEmailEnabled'),
-          value: selector(state, 'email'),
-        },
-        phone: {
-          checked: selector(state, 'isPhoneEnabled'),
-          value: selector(state, 'phone'),
-        },
-        streetAddress: {
-          checked: selector(state, 'isStreetAddressEnabled'),
-          value: selector(state, 'streetAddress'),
-        },
-        city: {
-          checked: selector(state, 'isCityEnabled'),
-          value: selector(state, 'city'),
-        },
-        state: {
-          checked: selector(state, 'isStateEnabled'),
-          value: selector(state, 'state'),
-        },
-        zip: {
-          checked: selector(state, 'isZipEnabled'),
-          value: selector(state, 'zip'),
-        }
-      }
-    }
-  };
-}, (dispatch) => ({
-  updateFormField: bindActionCreators(change, dispatch)
-}))
 class ContactField extends BaseField {
 
   constructor(props) {
     super(props);
 
-    this.onUncheckEmail = this.onUncheckEmail.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
-  }
+    this.fieldLabeledCheckbox = this.fieldLabeledCheckbox.bind(this);
 
-  shouldComponentUpdate(nextProps) {
-    return !_.isEqual(this.props, nextProps);
   }
 
   getPreviewValues() {
-    const name = this.props.fields.name;
-    let value = [];
 
-    const values = ['email', 'phone', 'streetAddress', 'city', 'state', 'zip'];
-
-    const placeholders = {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      email: 'mail@example.com',
-      phone: '+1 555 55 55',
-      streetAddress: 'Street Address',
-      city: 'City',
-      state: 'State',
-      zip: 'ZIP'
-    };
-
-    const checkIsFieldValid = (name) => {
-      return this.props.fields.values[name].checked;
-    };
-
-    if (['firstName', 'lastName'].every(checkIsFieldValid)) {
-      const firstName = this.props.fields.values.firstName.value || placeholders.firstName;
-      const lastName = this.props.fields.values.lastName.value || placeholders.lastName;
-      value.push(`${firstName}, ${lastName}`);
-    } else {
-      values.unshift('firstName', 'lastName');
-    }
-
-    values.forEach((field) => {
-      if (checkIsFieldValid(field)) {
-        if (this.props.fields.isDefaultsEnabled && this.props.fields.values[field].value) {
-          value.push(this.props.fields.values[field].value);
-        } else {
-          value.push(placeholders[field]);
-        }
-      }
-    });
-
+    const name = this.props.field.get('name');
+    const value = this.props.field.get('value');
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: value.length ? value.join('\n') : null,
-      inline: !!value.length
+      value: value && typeof value === 'string' ? value.trim() : null
     };
   }
 
@@ -132,167 +41,193 @@ class ContactField extends BaseField {
     );
   }
 
-  onUncheckEmail() {
-    this.removeContactFromEvents();
+  labeledCheckbox(props) {
+    return (
+      <div className={`contact-field-values-list-item`}>
+        <Checkbox className={`contact-field-values-list-item-checkbox`}
+                  size="small"
+                  checked={!!props.input.value}
+                  onChange={(value) => {
+                    props.input.onChange(value);
+                  }}>
+          <span>{props.label}</span>
+        </Checkbox>
+      </div>
+    );
   }
+  fieldLabeledCheckbox(props) {
 
-  removeContactFromEvents() {
-    let events = [...this.props.events];
 
-    const updated = events.map((event) => {
+    // the path to element looks like props[`metaFields`][this.props.metaFieldKey][`isFirstNameEnabled`]
+    // the name on props.names looks like `metaFields.6.isFirstNameEnabled`
+    // so to take checkbox/field value/onChange handler we should take the last string after the last dot - isFirstNameEnabled
 
-      let emailNotifications = event.values.emailNotifications &&
-        event.values.emailNotifications.filter(
-          (id) => !(Number(id) === Number(this.props.id))
-        );
+    const checkbox = _.get(props, props.names[0]);
+    const field = _.get(props, props.names[1]);
 
-      let pushNotifications = event.values.pushNotifications &&
-        event.values.pushNotifications.filter(
-          (id) => !(Number(id) === Number(this.props.id))
-        );
+    return (
+      <div className={`contact-field-values-list-item`}>
 
-      this.props.updateFormField(`event${event.id}`, `emailNotifications`, emailNotifications);
-      this.props.updateFormField(`event${event.id}`, `pushNotifications`, pushNotifications);
+        <Form.Items layout="inline">
+          <Form.Item className={`contact-field-values-list-item-checkbox`}>
+            <Checkbox size="small"
+                      checked={!!checkbox.input.value}
+                      onChange={checkbox.input.onChange}
+            />
+          </Form.Item>
+          <Form.Item className={`contact-field-values-list-item-field`}>
+            <Input onBlur={this.onBlur}
+                   onFocus={this.onFocus}
+                   value={field.input.value}
+                   onChange={field.input.onChange}
+                   placeholder={props.label}
+                   disabled={!checkbox.input.value}/>
+          </Form.Item>
+        </Form.Items>
 
-      const updated = {
-        ...event,
-        values: {
-          ...event.values,
-          emailNotifications: emailNotifications,
-          pushNotifications: pushNotifications
-        }
-      };
-      return updated;
-    });
-
-    this.props.onEventsChange(updated);
-  }
-
-  isContactUsedOnEvents() {
-    return this.props.events.some((event) => {
-      return (event.values.emailNotifications && event.values.emailNotifications.some((id) => (Number(id) === Number(this.props.id)))) || (
-          event.values.pushNotifications && event.values.pushNotifications.some((id) => (Number(id) === Number(this.props.id)))
-        );
-    });
+      </div>
+    );
   }
 
   component() {
 
-    let popconfirmOptions = {};
-    if (this.isContactUsedOnEvents()) {
-      popconfirmOptions = {
-        onUncheck: true,
-        message: <div>This contact is used on some<br/> Events Notifications.<br/> Are you sure?</div>,
-        onConfirm: this.onUncheckEmail
-      };
-    }
+    const getColumns = (renderFieldsWithInputs) => ([
+      [
+        {
+          label: `First Name`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isFirstNameEnabled`,
+            `metaFields.${this.props.metaFieldKey}.firstName`
+          ]
+        },
+        {
+          label: `Last Name`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isLastNameEnabled`,
+            `metaFields.${this.props.metaFieldKey}.lastName`
+          ]
+        }
+      ],
+      [
+        {
+          label: `E-mail Address`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isEmailEnabled`,
+            `metaFields.${this.props.metaFieldKey}.email`
+          ]
+        },
+        {
+          label: `Phone Number`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isPhoneEnabled`,
+            `metaFields.${this.props.metaFieldKey}.phone`
+          ]
+        },
+        {
+          label: `Street Address`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isStreetAddressEnabled`,
+            `metaFields.${this.props.metaFieldKey}.streetAddress`
+          ]
+        },
+        {
+          label: `City`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isCityEnabled`,
+            `metaFields.${this.props.metaFieldKey}.city`
+          ]
+        },
+        {
+          label: `State`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isStateEnabled`,
+            `metaFields.${this.props.metaFieldKey}.state`
+          ]
+        },
+        {
+          label: `ZIP Code`,
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isZipEnabled`,
+            `metaFields.${this.props.metaFieldKey}.zip`
+          ]
+        },
+      ]
+    ].map((column) => {
+
+      if (renderFieldsWithInputs) {
+
+        return column.map((item, key) => (
+          <Fields {...item} key={key}
+                  component={this.fieldLabeledCheckbox}/>
+        ));
+
+      } else {
+
+        return column.map((item, key) => (
+          <Field key={key}
+                 name={item.names[0]}
+                 label={item.label}
+                 onFocus={this.onFocus}
+                 onBlur={this.onBlur}
+                 component={this.labeledCheckbox}
+          />
+        ));
+
+      }
+
+    }));
+
+    const valuesListClassName = this.props.field.get('isDefaultsEnabled') ? 'contact-field-values-list-defaults' : 'contact-field-values-list-non-defaults';
 
     return (
       <div>
-        <Form.Item label="Contact" offset="extra-small">
-          <Form.Input validateOnBlur={true}
-                      className={`metadata-name-field-${this.props.field.id} metadata-contact-field`}
-                      name="name" type="text"
-                      onFocus={this.onFocus} onBlur={this.onBlur}
-                      placeholder="Field Name"
-                      validate={[
-                        Validation.Rules.required, Validation.Rules.metafieldName,
-                      ]}/>
-        </Form.Item>
+        <FormItem offset={false}>
+          <FormItem.Title>Contact</FormItem.Title>
+          <FormItem.Content>
+            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+                               onFocus={this.onFocus} onBlur={this.onBlur}
+                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text"
+                               placeholder="Field Name" validate={[
+              Validation.Rules.required, Validation.Rules.metafieldName,
+            ]}/>
+          </FormItem.Content>
+        </FormItem>
+
         <Form.Item offset="small" checkbox={true}>
-          <div>
-            <Field name="isDefaultsEnabled"
+          <div className={`contact-field-allow-default-values`}>
+            <Field name={`metaFields.${this.props.metaFieldKey}.isDefaultsEnabled`}
                    component={this.switch}/>
-            <span className="contact-field-allow-default-values-title">Allow default values</span>
+            <span className="contact-field-allow-default-values-title"> Allow default values</span>
           </div>
         </Form.Item>
 
-        <FormItem offset={false} visible={!!this.props.fields.isDefaultsEnabled}>
+        <FormItem offset={false}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Items offset="small">
-                <DefinedInput placeholder="First name" prefix="firstName"
-                              isChecked={this.props.fields.values.firstName.checked}
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              value={this.props.fields.values.firstName.value}/>
-                <DefinedInput placeholder="Last name" prefix="lastName"
-                              isChecked={this.props.fields.values.lastName.checked}
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              value={this.props.fields.values.lastName.value}/>
+              <Form.Items className={`contact-field-values-list ${valuesListClassName}`}>
+
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
+                  {getColumns(false)[0]}
+                </div>
+
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'block' || 'none')}}>
+                  {getColumns(true)[0]}
+                </div>
+
               </Form.Items>
             </Col>
             <Col span={12}>
-              <Form.Items offset="small">
-                <DefinedInput placeholder="E-mail address" prefix="email"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.email.checked}
-                              value={this.props.fields.values.email.value}
-                              popconfirm={popconfirmOptions}/>
-                <DefinedInput placeholder="Phone number" prefix="phone"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.phone.checked}
-                              value={this.props.fields.values.phone.value}/>
-                <DefinedInput placeholder="Street address" prefix="streetAddress"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.streetAddress.checked}
-                              value={this.props.fields.values.streetAddress.value}/>
-                <DefinedInput placeholder="City" prefix="city"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.city.checked}
-                              value={this.props.fields.values.city.value}/>
-                <DefinedInput placeholder="State" prefix="state"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.state.checked}
-                              value={this.props.fields.values.state.value}/>
-                <DefinedInput placeholder="ZIP Code" prefix="zip"
-                              onFocus={this.onFocus} onBlur={this.onBlur}
-                              isChecked={this.props.fields.values.zip.checked}
-                              value={this.props.fields.values.zip.value}/>
-              </Form.Items>
-            </Col>
-          </Row>
-        </FormItem>
 
+              <Form.Items className={`contact-field-values-list ${valuesListClassName}`}>
 
-        <FormItem offset={false} visible={!this.props.fields.isDefaultsEnabled}>
-          <Row gutter={8}>
-            <Col span={12}>
-              <Form.Items offset="small">
-                <OptionDefault placeholder="First name" prefix="firstName"
-                               isChecked={this.props.fields.values.firstName.checked}
-                               value={this.props.fields.values.firstName.value}/>
-                <OptionDefault placeholder="Last name" prefix="lastName"
-                               isChecked={this.props.fields.values.lastName.checked}
-                               value={this.props.fields.values.lastName.value}/>
-              </Form.Items>
-            </Col>
-            <Col span={12}>
-              <Form.Items offset="small">
-                <OptionDefault placeholder="E-mail address" prefix="email"
-                               isChecked={this.props.fields.values.email.checked}
-                               value={this.props.fields.values.email.value}
-                               popconfirm={popconfirmOptions}
-                />
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
+                  {getColumns(false)[1]}
+                </div>
 
-                < OptionDefault placeholder="Phone number" prefix="phone"
-                                isChecked={this.props.fields.values.phone.checked}
-                                value={this.props.fields.values.phone.value}/>
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'block' || 'none')}}>
+                  {getColumns(true)[1]}
+                </div>
 
-                <OptionDefault placeholder="Street address" prefix="streetAddress"
-                               isChecked={this.props.fields.values.streetAddress.checked}
-                               value={this.props.fields.values.streetAddress.value}/>
-
-                <OptionDefault placeholder="City" prefix="city"
-                               isChecked={this.props.fields.values.city.checked}
-                               value={this.props.fields.values.city.value}/>
-
-                <OptionDefault placeholder="State" prefix="state"
-                               isChecked={this.props.fields.values.state.checked}
-                               value={this.props.fields.values.state.value}/>
-
-                <OptionDefault placeholder="ZIP Code" prefix="zip"
-                               isChecked={this.props.fields.values.zip.checked}
-                               value={this.props.fields.values.zip.value}/>
               </Form.Items>
             </Col>
           </Row>
@@ -301,8 +236,8 @@ class ContactField extends BaseField {
       </div>
     );
   }
+
 }
 
 ContactField.Static = Static;
-
 export default ContactField;
