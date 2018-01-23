@@ -6,6 +6,7 @@ import {
   filterDynamicMetadataFields,
   hardcodedRequiredMetadataFieldsNames,
   FORMS,
+  isMetadataPristine,
 } from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
@@ -124,6 +125,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.TEXT) {
       element = (
         <MetadataFields.TextField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.TEXT](field)}
           {...props}
         />
       );
@@ -132,6 +134,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.NUMBER) {
       element = (
         <MetadataFields.NumberField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.NUMBER](field)}
           {...props}
         />
       );
@@ -140,6 +143,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.COST) {
       element = (
         <MetadataFields.CostField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.COST](field)}
           {...props}
         />
       );
@@ -148,6 +152,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.TIME) {
       element = (
         <MetadataFields.TimeField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.TIME](field)}
           {...props}
         />
       );
@@ -156,6 +161,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.RANGE) {
       element = (
         <MetadataFields.ShiftField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.RANGE](field)}
           {...props}
         />
       );
@@ -164,6 +170,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.SWITCH) {
       element = (
         <MetadataFields.SwitchField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.SWITCH](field)}
           {...props}
         />
       );
@@ -186,6 +193,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.COORDINATES) {
       element = (
         <MetadataFields.CoordinatesField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.COORDINATES](field)}
           {...props}
         />
       );
@@ -194,6 +202,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.UNIT) {
       element = (
         <MetadataFields.UnitField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.UNIT](field)}
           {...props}
         />
       );
@@ -202,6 +211,7 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.CONTACT) {
       element = (
         <MetadataFields.ContactField // @todo finish
+          isDirty={!isMetadataPristine()[MetadataService.Fields.CONTACT](field)}
           {...props}
         />
       );

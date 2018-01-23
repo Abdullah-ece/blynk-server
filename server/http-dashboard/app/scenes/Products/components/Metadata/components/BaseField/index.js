@@ -15,6 +15,7 @@ class BaseField extends React.PureComponent {
     tools: PropTypes.bool,
     pristine: PropTypes.bool,
     invalid: PropTypes.bool,
+    isDirty: PropTypes.bool,
     anyTouched: PropTypes.bool,
     onDelete: PropTypes.func,
     onChange: PropTypes.func,
@@ -91,6 +92,7 @@ class BaseField extends React.PureComponent {
                      initialValues={this.props.initialValues}
                      tools={this.props.tools !== false}
                      fields={this.props.fields}
+                     isDirty={this.props.isDirty}
                      index={this.props.index}
                      field={this.props.field}
                      id={this.props.id}

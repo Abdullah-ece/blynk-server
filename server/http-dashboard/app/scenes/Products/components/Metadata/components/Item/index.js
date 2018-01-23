@@ -31,6 +31,7 @@ class MetadataItem extends React.PureComponent {
   static propTypes = {
     events: PropTypes.any,
     anyTouched: PropTypes.bool,
+    isDirty: PropTypes.bool,
     invalid: PropTypes.bool,
     preview: PropTypes.object,
     fieldsErrors: PropTypes.any,
@@ -133,9 +134,8 @@ class MetadataItem extends React.PureComponent {
   }
 
   render() {
-
     let deleteButton;
-    if (this.props.anyTouched) {
+    if (this.props.isDirty) {
       deleteButton = (<Popconfirm title="Are you sure?" overlayClassName="danger"
                                   onConfirm={this.handleConfirmDelete}
                                   onCancel={this.handleCancelDelete} okText="Yes, Delete"

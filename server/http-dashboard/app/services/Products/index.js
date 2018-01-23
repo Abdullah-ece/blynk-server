@@ -578,3 +578,37 @@ const prepareContactValuesForEdit = (fields) => {
   return values;
 
 };
+
+export const isMetadataPristine = () => ({
+  [Metadata.Fields.TEXT]: (field) => (
+    !field.get('name') && !field.get('value')
+  ),
+  [Metadata.Fields.NUMBER]: (field) => (
+    !field.get('name') && !field.get('value')
+  ),
+  [Metadata.Fields.COST]: (field) => (
+    !field.get('name') && !field.get('perValue') && !field.get('price') && !field.get('units') && !field.get('currency')
+  ),
+  [Metadata.Fields.TIME]: (field) => (
+    !field.get('name') && !field.get('time')
+  ),
+  [Metadata.Fields.RANGE]: (field) => (
+    !field.get('name') && !field.get('from') && !field.get('to')
+  ),
+  [Metadata.Fields.SWITCH]: (field) => (
+    !field.get('name') && !field.get('from') && !field.get('to')
+  ),
+  [Metadata.Fields.COORDINATES]: (field) => (
+    !field.get('name') && !field.get('lat') && !field.get('lon')
+  ),
+  [Metadata.Fields.UNIT]: (field) => (
+    !field.get('name') && !field.get('value') && !field.get('units')
+  ),
+  [Metadata.Fields.CONTACT]: (field) => (
+    !field.get('name') && !field.get('isFirstNameEnabled') && !field.get('firstName') && !field.get('isLastNameEnabled') && !field.get('lastName') &&
+    !field.get('isEmailEnabled') && !field.get('email') && !field.get('isPhoneEnabled') && !field.get('phone') &&
+    !field.get('isStreetAddressEnabled') && !field.get('streetAddress') && !field.get('isCityEnabled') && !field.get('city') &&
+    !field.get('isStateEnabled') && !field.get('state') && !field.get('isZipEnabled') && !field.get('zip')
+  ),
+
+});
