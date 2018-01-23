@@ -1,6 +1,6 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
-import {Col, Row, Switch} from 'antd';
+import {Col, Row, Switch, Checkbox} from 'antd';
 import {MetadataField as MetadataFormField} from 'components/Form';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
@@ -39,7 +39,67 @@ class ContactField extends BaseField {
     );
   }
 
+  labeledCheckbox(props) {
+    return (
+      <div className={`contact-field-values-list-item`}>
+        <Checkbox size="small" className="contact-field-allow-default-values-switch" checked={!!props.input.value}
+                  onChange={(value) => {
+                    props.input.onChange(value);
+                  }}>
+          <span>{props.label}</span>
+        </Checkbox>
+      </div>
+    );
+  }
+
   component() {
+
+    const columns = [
+      [
+        {
+          label: `First Name`,
+          name: `metaFields.${this.props.metaFieldKey}.isFirstNameEnabled`
+        },
+        {
+          label: `Last Name`,
+          name: `metaFields.${this.props.metaFieldKey}.isLastNameEnabled`
+        }
+      ],
+      [
+        {
+          label: `E-mail Address`,
+          name: `metaFields.${this.props.metaFieldKey}.isEmailEnabled`
+        },
+        {
+          label: `Phone Number`,
+          name: `metaFields.${this.props.metaFieldKey}.isPhoneEnabled`
+        },
+        {
+          label: `Street Address`,
+          name: `metaFields.${this.props.metaFieldKey}.isStreetAddressEnabled`
+        },
+        {
+          label: `City`,
+          name: `metaFields.${this.props.metaFieldKey}.isCityEnabled`
+        },
+        {
+          label: `State`,
+          name: `metaFields.${this.props.metaFieldKey}.isStateEnabled`
+        },
+        {
+          label: `ZIP Code`,
+          name: `metaFields.${this.props.metaFieldKey}.isZipEnabled`
+        },
+      ]
+    ].map((column) => column.map((item, key) => (
+      <Field key={key}
+             {...item}
+             onFocus={this.onFocus}
+             onBlur={this.onBlur}
+             component={this.labeledCheckbox}
+      />
+    )));
+
     return (
       <div>
         <FormItem offset={false}>
@@ -65,49 +125,19 @@ class ContactField extends BaseField {
         <FormItem offset={false}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Items offset="small">
-                {/*<div>*/}
+              <Form.Items offset="small" className={`contact-field-values-list`}>
 
-                {/*</div>*/}
-                {/*<DefinedInput placeholder="First name" prefix="firstName"*/}
-                              {/*isChecked={this.props.fields.values.firstName.checked}*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*value={this.props.fields.values.firstName.value}/>*/}
-                {/*<DefinedInput placeholder="Last name" prefix="lastName"*/}
-                              {/*isChecked={this.props.fields.values.lastName.checked}*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*value={this.props.fields.values.lastName.value}/>*/}
+                { columns[0] }
+
               </Form.Items>
             </Col>
             <Col span={12}>
-              {/*<Form.Items offset="small">*/}
-                {/*<DefinedInput placeholder="E-mail address" prefix="email"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.email.checked}*/}
-                              {/*value={this.props.fields.values.email.value}*/}
-                  {/*// popconfirm={popconfirmOptions}*/}
-                {/*/>*/}
-                {/*<DefinedInput placeholder="Phone number" prefix="phone"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.phone.checked}*/}
-                              {/*value={this.props.fields.values.phone.value}/>*/}
-                {/*<DefinedInput placeholder="Street address" prefix="streetAddress"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.streetAddress.checked}*/}
-                              {/*value={this.props.fields.values.streetAddress.value}/>*/}
-                {/*<DefinedInput placeholder="City" prefix="city"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.city.checked}*/}
-                              {/*value={this.props.fields.values.city.value}/>*/}
-                {/*<DefinedInput placeholder="State" prefix="state"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.state.checked}*/}
-                              {/*value={this.props.fields.values.state.value}/>*/}
-                {/*<DefinedInput placeholder="ZIP Code" prefix="zip"*/}
-                              {/*onFocus={this.onFocus} onBlur={this.onBlur}*/}
-                              {/*isChecked={this.props.fields.values.zip.checked}*/}
-                              {/*value={this.props.fields.values.zip.value}/>*/}
-              {/*</Form.Items>*/}
+
+              <Form.Items offset="small" className={`contact-field-values-list`}>
+
+                { columns[1] }
+
+              </Form.Items>
             </Col>
           </Row>
         </FormItem>
