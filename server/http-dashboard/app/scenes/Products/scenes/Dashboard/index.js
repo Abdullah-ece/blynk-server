@@ -9,6 +9,8 @@ import {FORMS} from 'services/Products';
 
 import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
 import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
+import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+import {WidgetsHistory} from 'data/Widgets/api';
 
 import {
   getFormValues,
@@ -23,13 +25,14 @@ import {getCoordinatesToSet} from 'services/Widgets';
 @connect((state) => ({
   orgId: state.Account.orgId,
   dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
-  devicesList: state.Product.edit.dashboard.devicesList,
-  isDevicesListLoading: state.Product.edit.dashboard.devicesList,
-  selectedDeviceId: state.Product.edit.dashboard.selectedDeviceId,
+  devicesList: state.Product.dashboardPreview.devicesList,
+  selectedDeviceId: state.Product.dashboardPreview.selectedDeviceId,
+  historyLoading: state.Widgets.get('widgetsData'),
 }), (dispatch) => ({
   changeFormValue: bindActionCreators(change, dispatch),
   fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
   changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
+  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
 }))
 class DashboardScene extends React.Component {
 
@@ -41,11 +44,13 @@ class DashboardScene extends React.Component {
     }).isRequired,
 
     orgId: PropTypes.any,
+    historyLoading: PropTypes.any,
 
     devicesList: PropTypes.array,
     selectedDeviceId: PropTypes.any,
 
     changeFormValue: PropTypes.func,
+    fetchWidgetHistory: PropTypes.func,
     fetchDevicesListForPreview: PropTypes.func,
     changeDeviceIdForPreview: PropTypes.func,
   };
@@ -62,6 +67,12 @@ class DashboardScene extends React.Component {
     this.props.fetchDevicesListForPreview({
       orgId: this.props.orgId,
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.selectedDeviceId !== this.props.selectedDeviceId) {
+      this.getDataForWidgets();
+    }
   }
 
   handleWidgetAdd(widget) {
@@ -95,6 +106,29 @@ class DashboardScene extends React.Component {
 
   handleDeviceForPreviewChange(value) {
     this.props.changeDeviceIdForPreview(value);
+  }
+
+  getDataForWidgets() {
+
+    let dataQueryRequests = [];
+
+    const { dashboard } = this.props;
+
+    if (dashboard.has('widgets') && dashboard.get('widgets').size && this.props.selectedDeviceId)
+
+      dataQueryRequests = buildDataQueryRequestForWidgets({
+        widgets: dashboard.get('widgets').toJS(),
+        deviceId: this.props.selectedDeviceId,
+        timeFrom: new Date().getTime() - 1000 * 60 * 60 * 24 * 7, // 7 days ago,
+        timeTo: new Date().getTime()
+      });
+
+    if (dataQueryRequests.length)
+      this.props.fetchWidgetHistory({
+        deviceId: this.props.selectedDeviceId,
+        dataQueryRequests: dataQueryRequests,
+      });
+
   }
 
   render() {

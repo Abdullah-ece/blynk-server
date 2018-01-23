@@ -1,10 +1,69 @@
 import _ from 'lodash';
+import {fromJS} from 'immutable';
 
 export const WIDGET_TYPES = {
   LABEL: 'WEB_LABEL',
   SWITCH: 'WEB_SWITCH',
   LINEAR: 'WEB_LINE_GRAPH',
   BAR: 'WEB_BAR_GRAPH',
+};
+
+
+export const buildDataQueryRequestForWidgets = ({ widgets, timeFrom, timeTo, deviceId }) => {
+
+  if(!widgets.isList)
+    widgets = fromJS(widgets);
+
+  let dataQueryRequests = [];
+
+  widgets.forEach((widget) => {
+    if (widget.has('sources') && widget.get('sources').size) {
+
+      widget.get('sources').forEach((source, sourceIndex) => {
+        if (!source || !source.get('dataStream'))
+          return null;
+
+        let pin = source.getIn(['dataStream', 'pin']);
+
+        let timeFilter = {
+          from: timeFrom,
+          to: timeTo,
+        };
+
+        const additionalParams = {};
+
+        if (source.has('selectedColumns') && source.get('selectedColumns').size) {
+          additionalParams.selectedColumns = source.get('selectedColumns').toJS();
+        }
+
+        if (source.has('groupByFields') && source.get('groupByFields').size) {
+          additionalParams.groupByFields = source.get('groupByFields').toJS();
+        }
+
+        if (source.has('sortByFields') && source.get('sortByFields').size) {
+          additionalParams.sortByFields = source.get('sortByFields').toJS();
+        }
+
+        dataQueryRequests.push({
+          "deviceId": deviceId,
+          "widgetId": widget.get('id'),
+          "sourceIndex": sourceIndex,
+          "pinType": "VIRTUAL",
+          "pin": pin,
+          "sortOrder": source.get('sortOrder'),
+          "sourceType": source.get('sourceType'),
+          "offset": 0,
+          "limit": source.get('limit') || 10000,
+          ...timeFilter,
+          ...additionalParams,
+        });
+
+      });
+    }
+  });
+
+  return dataQueryRequests;
+
 };
 
 export const BAR_CHART_PARAMS = {

@@ -129,9 +129,10 @@ class Dashboard extends React.Component {
 
         <Grid widgets={widgets}
               params={params}
-              deviceId={Number(deviceId)}
+              deviceId={Number(selectedDeviceIdForPreview)}
               onWidgetDelete={this.handleWidgetDelete}
               onWidgetClone={this.handleWidgetClone}
+              onChange={this.handleWidgetsChange}
         />
 
       </div>

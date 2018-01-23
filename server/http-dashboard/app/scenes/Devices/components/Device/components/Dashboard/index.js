@@ -12,6 +12,8 @@ import {WidgetsHistory} from 'data/Widgets/api';
 import {TimeFiltering} from './scenes';
 import {getFormValues, initialize} from 'redux-form';
 
+import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
 @connect((state) => ({
@@ -58,62 +60,28 @@ class Dashboard extends React.Component {
 
   fetchWidgetsData(params = {}) {
 
-    const dataQueryRequests = [];
+    let dataQueryRequests = [];
 
     const dashboard = this.props.dashboard;
 
+    let timeFilter = {};
+
+    if (params.from === undefined) {
+      timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
+    } else {
+      timeFilter = {
+        from: params.from,
+        to: params.to,
+      };
+    }
+
     if (dashboard.has('widgets') && dashboard.get('widgets').size)
 
-      dashboard.get('widgets').forEach((widget) => {
-        if (widget.has('sources') && widget.get('sources').size) {
-
-          widget.get('sources').forEach((source, sourceIndex) => {
-            if (!source || !source.get('dataStream'))
-              return null;
-
-            let pin = source.getIn(['dataStream', 'pin']);
-
-            let timeFilter = {};
-
-            if(params.from === undefined) {
-              timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
-            } else {
-              timeFilter = {
-                from: params.from,
-                to: params.to,
-              };
-            }
-
-            const additionalParams = {};
-
-            if(source.has('selectedColumns') && source.get('selectedColumns').size) {
-              additionalParams.selectedColumns = source.get('selectedColumns').toJS();
-            }
-
-            if(source.has('groupByFields') && source.get('groupByFields').size) {
-              additionalParams.groupByFields = source.get('groupByFields').toJS();
-            }
-
-            if(source.has('sortByFields') && source.get('sortByFields').size) {
-              additionalParams.sortByFields = source.get('sortByFields').toJS();
-            }
-
-            dataQueryRequests.push({
-              "deviceId": this.props.params.id,
-              "widgetId": widget.get('id'),
-              "sourceIndex": sourceIndex,
-              "pinType" : "VIRTUAL",
-              "pin" : pin,
-              "sortOrder": source.get('sortOrder'),
-              "sourceType" : source.get('sourceType'),
-              "offset" : 0,
-              "limit" : source.get('limit') || 10000,
-              ...timeFilter,
-              ...additionalParams,
-            });
-
-          });
-        }
+      dataQueryRequests = buildDataQueryRequestForWidgets({
+        widgets: dashboard.get('widgets').toJS(),
+        deviceId: this.props.params.id,
+        timeFrom: timeFilter.from,
+        timeTo: timeFilter.to,
       });
 
     if (dataQueryRequests.length)

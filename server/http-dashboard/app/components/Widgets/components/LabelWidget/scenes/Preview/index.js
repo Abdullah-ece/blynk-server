@@ -31,10 +31,6 @@ export default class PreviewScene extends React.Component {
 
   static propTypes = {
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
-
     data: PropTypes.object,
 
     devicesList: PropTypes.instanceOf(List),
@@ -62,13 +58,13 @@ export default class PreviewScene extends React.Component {
 
     // if no product id provided we cannot make preview based on productId
 
-    if (this.props.params.id === 0)
-      return null;
-
-    this.props.fetchDevicesList({
-      productId: this.props.params.id,
-      orgId: this.props.orgId
-    });
+    // if (this.props.deviceId === 0)
+    //   return null;
+    //
+    // this.props.fetchDevicesList({
+    //   productId: this.props.deviceId,
+    //   orgId: this.props.orgId
+    // });
   }
 
   componentWillUnmount() {
@@ -124,7 +120,6 @@ export default class PreviewScene extends React.Component {
 
     return (
       <Preview onSubmit={this.handleSubmit}
-               params={this.props.params}
                form={'widgets-widget-label-preview'}
                labelData={labelData}
                widgetData={widgetData}

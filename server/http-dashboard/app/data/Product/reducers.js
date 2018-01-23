@@ -29,11 +29,11 @@ const initialState = {
       invalid: true,
       fields: []
     },
-    dashboard: {
-      isLoading: false,
-      devicesList: [],
-      selectedDeviceId: undefined,
-    }
+  },
+  dashboardPreview: {
+    isLoading: false,
+    devicesList: [],
+    selectedDeviceId: undefined,
   },
   products: null
 };
@@ -44,49 +44,37 @@ export default function Product(state = initialState, action) {
     case "PRODUCT_DASHBOARD_DEVICE_ID_FOR_PREVIEW_CHANGE":
       return {
         ...state,
-        edit: {
-          ...state.edit,
-          dashboard: {
-            ...state.edit.dashboard,
-            selectedDeviceId: action.data
-          }
+        dashboardPreview: {
+          ...state.dashboardPreview,
+          selectedDeviceId: action.data
         }
       };
 
     case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH":
       return {
         ...state,
-        edit: {
-          ...state.edit,
-          dashboard: {
-            ...state.edit.dashboard,
-            isLoading: true,
-          }
+        dashboardPreview: {
+          ...state.dashboardPreview,
+          isLoading: true,
         }
       };
 
     case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH_SUCCESS":
       return {
         ...state,
-        edit: {
-          ...state.edit,
-          dashboard: {
-            ...state.edit.dashboard,
-            devicesList: action.payload.data,
-            isLoading: false,
-          }
+        dashboardPreview: {
+          ...state.dashboardPreview,
+          devicesList: action.payload.data,
+          isLoading: false,
         }
       };
 
     case "API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH_FAILURE":
       return {
         ...state,
-        edit: {
-          ...state.edit,
-          dashboard: {
-            ...state.edit.dashboard,
-            isLoading: false,
-          }
+        dashboardPreview: {
+          ...state.dashboardPreview,
+          isLoading: false,
         }
       };
 

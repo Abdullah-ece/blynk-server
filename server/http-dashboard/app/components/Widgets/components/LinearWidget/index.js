@@ -23,6 +23,8 @@ class LinearWidget extends React.Component {
     params: PropTypes.object,
     name: PropTypes.string,
 
+    deviceId: PropTypes.any,
+
     editable: PropTypes.bool,
 
     previewMode: PropTypes.bool,

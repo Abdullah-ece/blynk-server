@@ -25,10 +25,6 @@ class Preview extends React.Component {
   static propTypes = {
     devicesList: PropTypes.instanceOf(List),
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
-
     widgetData: PropTypes.shape({
       id: PropTypes.number,
       w: PropTypes.number,
@@ -103,7 +99,6 @@ class Preview extends React.Component {
             <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           </div>
           <LabelWidget fetchRealData={false}
-                       params={this.props.params}
                        data={this.props.data}
                        fakeData={this.props.labelData}
                        isChartPreview={true}/>

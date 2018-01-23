@@ -22,9 +22,7 @@ class BarChartWidget extends React.Component {
 
     widgets: PropTypes.instanceOf(Map),
 
-    params: PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    }),
+    deviceId: PropTypes.any,
 
     deviceId: PropTypes.number,
 

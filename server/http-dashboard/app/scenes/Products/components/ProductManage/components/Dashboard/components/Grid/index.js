@@ -13,10 +13,6 @@ class Grid extends React.Component {
   static propTypes = {
     widgets: PropTypes.instanceOf(List),
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
-
     deviceId: PropTypes.number,
 
     onWidgetDelete: PropTypes.func,
@@ -45,6 +41,7 @@ class Grid extends React.Component {
         <Widgets
           editable={true}
           data={widgets}
+          fetchRealData={true}
           deviceId={this.props.deviceId}
           onWidgetDelete={this.props.onWidgetDelete}
           onWidgetClone={this.props.onWidgetClone}

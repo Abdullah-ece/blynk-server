@@ -17,11 +17,11 @@ class LabelWidget extends React.Component {
 
   static propTypes = {
     data: PropTypes.object,
-    params: PropTypes.object,
-
     editable: PropTypes.bool,
 
     fetchRealData: PropTypes.bool,
+
+    deviceId: PropTypes.any,
 
     isChartPreview: PropTypes.bool,
 
