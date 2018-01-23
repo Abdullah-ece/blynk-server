@@ -207,7 +207,7 @@ class ProductMetadata extends React.Component {
 
     if (field.get('type') === MetadataService.Fields.CONTACT) {
       element = (
-        <MetadataFields.ContactField
+        <MetadataFields.ContactField // @todo finish
           {...props}
         />
       );
@@ -215,7 +215,7 @@ class ProductMetadata extends React.Component {
 
     if (field.get('type') === MetadataService.Fields.ADDRESS) {
       element = (
-        <MetadataFields.AddressField
+        <MetadataFields.AddressField // @todo finish
           {...props}
         />
       );

@@ -149,6 +149,12 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
+    },
+    {
+      id: 7,
+      type: Metadata.Fields.CONTACT,
+      name: '',
+      role: Roles.ADMIN.value,
     }
   ];
 };
@@ -161,16 +167,6 @@ export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacture
   logoUrl: '',
   metaFields: [
     ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue}),
-    ...(new Array(1).fill({}).map((item, index) => {
-
-      return {
-        id: (new Date().getTime()) + index,
-        type: Metadata.Fields.TEXT,
-        name: '',
-        value: '',
-        role: Roles.USER.value,
-      };
-    }))
   ],
 });
 
