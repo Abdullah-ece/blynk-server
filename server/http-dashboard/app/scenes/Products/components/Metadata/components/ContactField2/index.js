@@ -44,7 +44,9 @@ class ContactField extends BaseField {
   labeledCheckbox(props) {
     return (
       <div className={`contact-field-values-list-item`}>
-        <Checkbox size="small" className="contact-field-allow-default-values-switch" checked={!!props.input.value}
+        <Checkbox className={`contact-field-values-list-item-checkbox`}
+                  size="small"
+                  checked={!!props.input.value}
                   onChange={(value) => {
                     props.input.onChange(value);
                   }}>
@@ -67,13 +69,13 @@ class ContactField extends BaseField {
       <div className={`contact-field-values-list-item`}>
 
         <Form.Items layout="inline">
-          <Form.Item>
-            <Checkbox size="small" className="contact-field-allow-default-values-switch"
+          <Form.Item className={`contact-field-values-list-item-checkbox`}>
+            <Checkbox size="small"
                       checked={!!checkbox.input.value}
                       onChange={checkbox.input.onChange}
             />
           </Form.Item>
-          <Form.Item>
+          <Form.Item className={`contact-field-values-list-item-field`}>
             <Input onBlur={this.onBlur}
                    onFocus={this.onFocus}
                    value={field.input.value}
@@ -175,6 +177,8 @@ class ContactField extends BaseField {
 
     }));
 
+    const valuesListClassName = this.props.field.get('isDefaultsEnabled') ? 'contact-field-values-list-defaults' : 'contact-field-values-list-non-defaults';
+
     return (
       <div>
         <FormItem offset={false}>
@@ -200,7 +204,7 @@ class ContactField extends BaseField {
         <FormItem offset={false}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Items className={`contact-field-values-list`}>
+              <Form.Items className={`contact-field-values-list ${valuesListClassName}`}>
 
                 <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
                   {getColumns(false)[0]}
@@ -214,7 +218,7 @@ class ContactField extends BaseField {
             </Col>
             <Col span={12}>
 
-              <Form.Items className={`contact-field-values-list`}>
+              <Form.Items className={`contact-field-values-list ${valuesListClassName}`}>
 
                 <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
                   {getColumns(false)[1]}
