@@ -45,11 +45,6 @@ class Dashboard extends React.Component {
 
   componentWillMount() {
 
-    this.props.initializeForm(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME, {
-      time: 'HOUR',
-      customTime: [(new Date().getTime()) - 1000*60*60*24*7, (new Date().getTime())]
-    });
-
     this.fetchWidgetsData();
   }
 
