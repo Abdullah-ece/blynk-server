@@ -294,13 +294,13 @@ class LinearWidget extends React.Component {
 
     const sources = fromJS(this.props.data.sources);
 
-    const dataSources = sources.map(this.generateData).filter((source) => source !== null);
+    let dataSources = sources.map(this.generateData).filter((source) => source !== null);
 
     let formats = this.getTimeFormatForRange(
       this.getMinMaxXFromLegendsList(dataSources)
     );
 
-    dataSources.map(dataSource =>
+    dataSources = dataSources.map(dataSource =>
       dataSource.set('xValueFormatString', formats.hoverFormat).set('yValueFormatString', '###,###,###,###')
     );
 
