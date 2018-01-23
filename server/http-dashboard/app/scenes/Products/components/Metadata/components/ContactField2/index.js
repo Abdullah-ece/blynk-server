@@ -1,12 +1,13 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
-import {Col, Row, Switch, Checkbox} from 'antd';
+import {Col, Row, Switch, Checkbox, Input} from 'antd';
+import _ from 'lodash';
 import {MetadataField as MetadataFormField} from 'components/Form';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
 import {Form} from 'components/UI';
 import Static from './static';
-import {Field} from 'redux-form';
+import {Field, Fields} from 'redux-form';
 import './styles.less';
 
 class ContactField extends BaseField {
@@ -16,6 +17,7 @@ class ContactField extends BaseField {
 
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
+    this.fieldLabeledCheckbox = this.fieldLabeledCheckbox.bind(this);
 
   }
 
@@ -51,54 +53,127 @@ class ContactField extends BaseField {
       </div>
     );
   }
+  fieldLabeledCheckbox(props) {
+
+
+    // the path to element looks like props[`metaFields`][this.props.metaFieldKey][`isFirstNameEnabled`]
+    // the name on props.names looks like `metaFields.6.isFirstNameEnabled`
+    // so to take checkbox/field value/onChange handler we should take the last string after the last dot - isFirstNameEnabled
+
+    const checkbox = _.get(props, props.names[0]);
+    const field = _.get(props, props.names[1]);
+
+    return (
+      <div className={`contact-field-values-list-item`}>
+
+        <Form.Items layout="inline">
+          <Form.Item>
+            <Checkbox size="small" className="contact-field-allow-default-values-switch"
+                      checked={!!checkbox.input.value}
+                      onChange={checkbox.input.onChange}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Input onBlur={this.onBlur}
+                   onFocus={this.onFocus}
+                   value={field.input.value}
+                   onChange={field.input.onChange}
+                   placeholder={props.label}
+                   disabled={!checkbox.input.value}/>
+          </Form.Item>
+        </Form.Items>
+
+      </div>
+    );
+  }
 
   component() {
 
-    const columns = [
+    const getColumns = (renderFieldsWithInputs) => ([
       [
         {
           label: `First Name`,
-          name: `metaFields.${this.props.metaFieldKey}.isFirstNameEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isFirstNameEnabled`,
+            `metaFields.${this.props.metaFieldKey}.firstName`
+          ]
         },
         {
           label: `Last Name`,
-          name: `metaFields.${this.props.metaFieldKey}.isLastNameEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isLastNameEnabled`,
+            `metaFields.${this.props.metaFieldKey}.lastName`
+          ]
         }
       ],
       [
         {
           label: `E-mail Address`,
-          name: `metaFields.${this.props.metaFieldKey}.isEmailEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isEmailEnabled`,
+            `metaFields.${this.props.metaFieldKey}.email`
+          ]
         },
         {
           label: `Phone Number`,
-          name: `metaFields.${this.props.metaFieldKey}.isPhoneEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isPhoneEnabled`,
+            `metaFields.${this.props.metaFieldKey}.phone`
+          ]
         },
         {
           label: `Street Address`,
-          name: `metaFields.${this.props.metaFieldKey}.isStreetAddressEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isStreetAddressEnabled`,
+            `metaFields.${this.props.metaFieldKey}.streetAddress`
+          ]
         },
         {
           label: `City`,
-          name: `metaFields.${this.props.metaFieldKey}.isCityEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isCityEnabled`,
+            `metaFields.${this.props.metaFieldKey}.city`
+          ]
         },
         {
           label: `State`,
-          name: `metaFields.${this.props.metaFieldKey}.isStateEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isStateEnabled`,
+            `metaFields.${this.props.metaFieldKey}.state`
+          ]
         },
         {
           label: `ZIP Code`,
-          name: `metaFields.${this.props.metaFieldKey}.isZipEnabled`
+          names: [
+            `metaFields.${this.props.metaFieldKey}.isZipEnabled`,
+            `metaFields.${this.props.metaFieldKey}.zip`
+          ]
         },
       ]
-    ].map((column) => column.map((item, key) => (
-      <Field key={key}
-             {...item}
-             onFocus={this.onFocus}
-             onBlur={this.onBlur}
-             component={this.labeledCheckbox}
-      />
-    )));
+    ].map((column) => {
+
+      if (renderFieldsWithInputs) {
+
+        return column.map((item, key) => (
+          <Fields {...item} key={key}
+                  component={this.fieldLabeledCheckbox}/>
+        ));
+
+      } else {
+
+        return column.map((item, key) => (
+          <Field key={key}
+                 name={item.names[0]}
+                 label={item.label}
+                 onFocus={this.onFocus}
+                 onBlur={this.onBlur}
+                 component={this.labeledCheckbox}
+          />
+        ));
+
+      }
+
+    }));
 
     return (
       <div>
@@ -125,22 +200,35 @@ class ContactField extends BaseField {
         <FormItem offset={false}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Items offset="small" className={`contact-field-values-list`}>
+              <Form.Items className={`contact-field-values-list`}>
 
-                { columns[0] }
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
+                  {getColumns(false)[0]}
+                </div>
+
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'block' || 'none')}}>
+                  {getColumns(true)[0]}
+                </div>
 
               </Form.Items>
             </Col>
             <Col span={12}>
 
-              <Form.Items offset="small" className={`contact-field-values-list`}>
+              <Form.Items className={`contact-field-values-list`}>
 
-                { columns[1] }
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'none' || 'block')}}>
+                  {getColumns(false)[1]}
+                </div>
+
+                <div style={{display: (this.props.field.get('isDefaultsEnabled') && 'block' || 'none')}}>
+                  {getColumns(true)[1]}
+                </div>
 
               </Form.Items>
             </Col>
           </Row>
         </FormItem>
+
       </div>
     );
   }

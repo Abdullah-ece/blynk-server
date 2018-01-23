@@ -187,12 +187,6 @@ class ProductMetadata extends React.Component {
       element = (
         <MetadataFields.CoordinatesField
           {...props}
-          initialValues={{
-            name: field.values.name,
-            lat: field.values.lat,
-            role: field.values.role,
-            lon: field.values.lon
-          }}
         />
       );
     }
