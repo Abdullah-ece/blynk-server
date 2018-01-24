@@ -83,7 +83,7 @@ class DataStreamItem extends React.Component {
   render() {
 
     let deleteButton;
-    // if (this.props.anyTouched) {
+    if (this.props.isDirty) {
       deleteButton = (
         <Popconfirm title="Are you sure?" overlayClassName="danger"
                     onConfirm={this.handleConfirmDelete}
@@ -92,11 +92,11 @@ class DataStreamItem extends React.Component {
           <Button icon="delete" size="small" onClick={this.markAsActive}/>
         </Popconfirm>
       );
-    // } else {
-    //   deleteButton = (
-    //     <Button size="small" icon="delete" onClick={this.handleConfirmDelete}/>
-    //   );
-    // }
+    } else {
+      deleteButton = (
+        <Button size="small" icon="delete" onClick={this.handleConfirmDelete}/>
+      );
+    }
 
     const itemClasses = classnames({
       'product-metadata-item': true,

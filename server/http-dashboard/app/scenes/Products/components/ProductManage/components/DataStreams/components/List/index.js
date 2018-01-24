@@ -36,7 +36,7 @@ class List extends React.Component {
     // this.fieldsValidation = this.fieldsValidation.bind(this);
     // this.handleCloneField = this.handleCloneField.bind(this);
     // this.handleChangeField = this.handleChangeField.bind(this);
-    // this.handleDeleteField = this.handleDeleteField.bind(this);
+    this.handleDeleteField = this.handleDeleteField.bind(this);
     this.addDataStreamsField = this.addDataStreamsField.bind(this);
 
   }
@@ -111,7 +111,7 @@ class List extends React.Component {
       key: field.get('id'),
       // onChange: this.handleChangeField,
       // validate: this.fieldsValidation,
-      // onDelete: this.handleDeleteField,
+      onDelete: this.handleDeleteField,
       // onClone: this.handleCloneField,
       field: field,
       fieldSyncErrors: fieldSyncErrors,
@@ -171,9 +171,18 @@ class List extends React.Component {
   //   return errors;
   // }
 
-  // handleDeleteField(key) {
-  //   this.props.onFieldsChange(this.props.fields.filter((field) => field.id !== key));
-  // }
+  handleDeleteField(id) {
+
+    let fieldIndex = null;
+
+    this.props.fields.getAll().forEach((field, index) => {
+      if(Number(field.id) === Number(id))
+        fieldIndex = index;
+    });
+
+    if(fieldIndex !== null)
+      this.props.fields.remove(fieldIndex);
+  }
 
   generatePin() {
     let pin = 0;

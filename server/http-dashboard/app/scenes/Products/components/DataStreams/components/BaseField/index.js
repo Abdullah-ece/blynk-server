@@ -108,7 +108,7 @@ class BaseField extends React.Component {
   };
 
   handleDelete() {
-    // this.props.onDelete(this.props.id);
+    this.props.onDelete(this.props.field.get('id'));
   }
 
   handleClone() {
