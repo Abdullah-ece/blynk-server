@@ -4,22 +4,26 @@ import {BackTop} from 'components';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
 import {fromJS} from 'immutable';
-import {Unit, FORMS} from "services/Products";
+import {Unit, FORMS, isDataStreamPristine} from "services/Products";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 // import _ from 'lodash';
-import {change} from 'redux-form';
+import {change, getFormSyncErrors} from 'redux-form';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-@connect((state) => state, (dispatch) => ({
+@connect((state) => ({
+  formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_CREATE)(state))
+}), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
 class List extends React.Component {
 
   static propTypes = {
     fields: PropTypes.object,
+
+    formSyncErrors: PropTypes.object,
 
     changeForm: PropTypes.func
   };
@@ -99,6 +103,10 @@ class List extends React.Component {
 
     const field = fromJS(value);
 
+    const fieldIndex = name.match(/dataStreams\[([0-9]+)\]/)[1]; // dataStreams[0]
+
+    const fieldSyncErrors = this.props.formSyncErrors.getIn(['dataStreams', fieldIndex]) || fromJS({});
+
     const props = {
       key: field.get('id'),
       // onChange: this.handleChangeField,
@@ -106,6 +114,8 @@ class List extends React.Component {
       // onDelete: this.handleDeleteField,
       // onClone: this.handleCloneField,
       field: field,
+      fieldSyncErrors: fieldSyncErrors,
+      isDirty: !isDataStreamPristine(field),
       name: name,
     };
 
@@ -271,7 +281,6 @@ class List extends React.Component {
     const className = classnames({
       'no-mouse-selection': this.state.isSortEnabled
     });
-
 
     return (
       <div className={className}>

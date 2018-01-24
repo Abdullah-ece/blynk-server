@@ -21,7 +21,9 @@ class BaseField extends React.Component {
     onChange: PropTypes.func,
 
     field: PropTypes.instanceOf(Map),
+    fieldSyncErrors: PropTypes.oneOfType([PropTypes.instanceOf(Map), PropTypes.object]),
     name: PropTypes.string,
+    isDirty: PropTypes.bool,
   };
 
   constructor(props) {
@@ -185,6 +187,8 @@ class BaseField extends React.Component {
         onDelete={this.handleDelete}
         onClone={this.handleClone}
         field={this.props.field}
+        isDirty={this.props.isDirty}
+        fieldSyncErrors={this.props.fieldSyncErrors}
         name={this.props.name}
         isActive={this.state.isFocused}
       >

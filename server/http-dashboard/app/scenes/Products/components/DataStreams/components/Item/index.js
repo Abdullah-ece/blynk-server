@@ -15,8 +15,10 @@ class DataStreamItem extends React.Component {
   static propTypes = {
     preview: PropTypes.object,
     field: PropTypes.object,
+    fieldSyncErrors: PropTypes.object,
 
     name: PropTypes.string,
+    isDirty: PropTypes.bool,
 
     children: PropTypes.any,
     onDelete: PropTypes.func,
@@ -26,8 +28,6 @@ class DataStreamItem extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.invalid = false;
 
     this.markAsActive = this.markAsActive.bind(this);
     this.handleCancelDelete = this.handleCancelDelete.bind(this);
@@ -53,9 +53,12 @@ class DataStreamItem extends React.Component {
 
   preview() {
 
-    // if (this.props.invalid) {
-    //   return (<Preview> <Preview.Unavailable /> </Preview>);
-    // }
+    if (this.props.fieldSyncErrors && this.props.fieldSyncErrors.size && this.props.isDirty) {
+      return (<Preview> <Preview.Unavailable /> </Preview>);
+    }
+
+    if(!this.props.preview.name)
+      return null;
 
     return (
       <Preview>

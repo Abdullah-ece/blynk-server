@@ -595,6 +595,10 @@ const prepareContactValuesForEdit = (fields) => {
 
 };
 
+export const isDataStreamPristine = (field) => (
+  !field.get('label') && !field.get('min') && !field.get('max') && field.get('units') === Unit.None.key
+);
+
 export const isMetadataPristine = () => ({
   [Metadata.Fields.TEXT]: (field) => (
     !field.get('name') && !field.get('value')
