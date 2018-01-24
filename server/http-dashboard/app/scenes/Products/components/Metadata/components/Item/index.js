@@ -148,7 +148,7 @@ class MetadataItem extends React.PureComponent {
 
     const itemClasses = classnames({
       'product-metadata-item': true,
-      'product-metadata-item-active': this.props.isActive || this.state.isActive,
+      'product-metadata-item-active': this.state.isActive,
     });
 
     const isRoleSelectDisabled = String(this.props.preview.name) === hardcodedRequiredMetadataFieldsNames.Manufacturer;

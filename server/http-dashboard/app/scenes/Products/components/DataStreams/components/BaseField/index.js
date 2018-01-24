@@ -8,39 +8,20 @@ import {
 } from 'components/Form';
 import Validation from 'services/Validation';
 import {Unit} from 'services/Products';
-import {connect} from 'react-redux';
-import {formValueSelector} from 'redux-form';
 import Static from './static';
-import _ from 'lodash';
+// import _ from 'lodash';
+import {Map} from 'immutable';
+import PropTypes from 'prop-types';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      label: selector(state, 'label'),
-      units: selector(state, 'units'),
-      min: selector(state, 'min'),
-      max: selector(state, 'max'),
-      pin: selector(state, 'pin')
-    }
-  };
-})
 class BaseField extends React.Component {
 
   static propTypes = {
-    onClone: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    validate: React.PropTypes.func,
+    onClone: PropTypes.func,
+    onDelete: PropTypes.func,
+    onChange: PropTypes.func,
 
-    initialValues: React.PropTypes.object,
-
-    id: React.PropTypes.number,
-
-    form: React.PropTypes.string,
-
-    fields: React.PropTypes.object,
-    field: React.PropTypes.object,
+    field: PropTypes.instanceOf(Map),
+    name: PropTypes.string,
   };
 
   constructor(props) {
@@ -56,9 +37,9 @@ class BaseField extends React.Component {
     isFocused: false
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.field, nextProps.field)) || !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState));
+  // }
 
   onFocus() {
     this.setState({
@@ -125,18 +106,18 @@ class BaseField extends React.Component {
   };
 
   handleDelete() {
-    this.props.onDelete(this.props.id);
+    // this.props.onDelete(this.props.id);
   }
 
   handleClone() {
-    this.props.onClone(this.props.id);
+    // this.props.onClone(this.props.id);
   }
 
   getPreviewValues() {
-    const name = this.props.fields.label;
-    const min = this.props.fields.min;
-    const max = this.props.fields.max;
-    const units = this.props.fields.units;
+    const name = this.props.field.get('label');
+    const min = this.props.field.get('min');
+    const max = this.props.field.get('max');
+    const units = this.props.field.get('units');
 
     let value = null;
 
@@ -170,24 +151,24 @@ class BaseField extends React.Component {
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
-                               name="label" type="text" placeholder="Field Name"
+                               name={`${this.props.name}.label`} type="text" placeholder="Field Name"
                                style={{width: '200%'}} className={`datastream-name-field-${this.props.field.id}`}
                                validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
             <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
-                                name="units" type="text" placeholder="Choose"
+                                name={`${this.props.name}.units`} type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}
                                 validate={[Validation.Rules.required]}/>
 
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
-                               name="min" type="text" placeholder="Min" validate={[
+                               name={`${this.props.name}.min`} type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
-                               name="max" type="text" placeholder="Max" validate={[
+                               name={`${this.props.name}.max`} type="text" placeholder="Max" validate={[
               Validation.Rules.number
             ]}/>
           </Input.Group>
@@ -203,12 +184,8 @@ class BaseField extends React.Component {
         onChange={this.props.onChange}
         onDelete={this.handleDelete}
         onClone={this.handleClone}
-        validate={this.props.validate}
-        initialValues={this.props.initialValues}
-        fields={this.props.fields}
         field={this.props.field}
-        id={this.props.id}
-        form={this.props.form}
+        name={this.props.name}
         isActive={this.state.isFocused}
       >
         { this.component() }

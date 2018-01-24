@@ -149,12 +149,6 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
-    },
-    {
-      id: 7,
-      type: Metadata.Fields.CONTACT,
-      name: '',
-      role: Roles.ADMIN.value,
     }
   ];
 };
@@ -168,6 +162,28 @@ export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacture
   metaFields: [
     ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue}),
   ],
+  dataStreams: [
+    {
+      id: 1,
+      type: 'DataStream',
+      pin: '0'
+    },
+    {
+      id: 2,
+      type: 'DataStream',
+      pin: '1'
+    },
+    {
+      id: 3,
+      type: 'DataStream',
+      pin: '2'
+    },
+    {
+      id: 4,
+      type: 'DataStream',
+      pin: '3'
+    },
+  ]
 });
 
 export const exampleMetadataField = {

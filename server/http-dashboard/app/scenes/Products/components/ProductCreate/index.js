@@ -15,7 +15,7 @@ import {
   Info        as InfoTab,
   // Events      as EventsTab,
   Metadata    as MetadataTab,
-  // DataStreams as DataStreamsTab,
+  DataStreams as DataStreamsTab,
 } from '../ProductManage';
 
 // import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
@@ -255,6 +255,10 @@ class ProductCreate extends React.Component {
 
             <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA} forceRender={true}>
               <MetadataTab/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
+              <DataStreamsTab/>
             </Tabs.TabPane>
 
           </Tabs>
