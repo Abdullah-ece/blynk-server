@@ -9,10 +9,18 @@
   button {
     width: @style-size-4-1;
   }
+  .ant-btn-group{
+    .ant-btn:first-child:not(:last-child){
+      padding-left: 8px;
+    }
+    .ant-btn:last-child:not(:first-child){
+      padding-right: 8px;
+    }
+  }
 }
 
 .product-manage-dashboard--add-widget-tools-buttons--switch {
   vertical-align: middle;
   font-size: 15px;
-  line-height: 10px;
+  line-height: 8px;
 }
