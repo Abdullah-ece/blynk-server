@@ -112,7 +112,7 @@ class BaseField extends React.Component {
   }
 
   handleClone() {
-    // this.props.onClone(this.props.id);
+    this.props.onClone(this.props.field.get('id'));
   }
 
   getPreviewValues() {

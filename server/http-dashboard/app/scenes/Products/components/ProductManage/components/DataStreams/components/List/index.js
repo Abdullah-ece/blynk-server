@@ -6,7 +6,7 @@ import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/compon
 import {fromJS} from 'immutable';
 import {Unit, FORMS, isDataStreamPristine} from "services/Products";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
-// import _ from 'lodash';
+import _ from 'lodash';
 import {change, getFormSyncErrors} from 'redux-form';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -34,7 +34,7 @@ class List extends React.Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.onSortStart = this.onSortStart.bind(this);
     // this.fieldsValidation = this.fieldsValidation.bind(this);
-    // this.handleCloneField = this.handleCloneField.bind(this);
+    this.handleCloneField = this.handleCloneField.bind(this);
     // this.handleChangeField = this.handleChangeField.bind(this);
     this.handleDeleteField = this.handleDeleteField.bind(this);
     this.addDataStreamsField = this.addDataStreamsField.bind(this);
@@ -109,10 +109,8 @@ class List extends React.Component {
 
     const props = {
       key: field.get('id'),
-      // onChange: this.handleChangeField,
-      // validate: this.fieldsValidation,
       onDelete: this.handleDeleteField,
-      // onClone: this.handleCloneField,
+      onClone: this.handleCloneField,
       field: field,
       fieldSyncErrors: fieldSyncErrors,
       isDirty: !isDataStreamPristine(field),
@@ -205,63 +203,55 @@ class List extends React.Component {
     return pin;
   }
 
-  // handleCloneField(id) {
-  //
-  //   const isNameAlreadyExists = (name) => {
-  //     return this.props.fields.some((field) => {
-  //       if (!field.values || !field.values.name || !name)
-  //         return false;
-  //
-  //       return field.values.name.trim() === name.trim();
-  //     });
-  //   };
-  //
-  //   const cloned = _.find(this.props.fields, {id: id});
-  //
-  //   const nextId = this.props.fields.reduce((acc, value) => (
-  //     acc < value.id ? value.id : acc
-  //   ), this.props.fields.length ? this.props.fields[0].id : 0) + 1;
-  //
-  //   let name = '';
-  //   let nameUnique = false;
-  //   let i = 0;
-  //
-  //   while (!nameUnique) {
-  //     name = `${cloned.values.name} Copy ${!i ? '' : i}`;
-  //     if (!isNameAlreadyExists(name)) {
-  //       nameUnique = true;
-  //     }
-  //     i++;
-  //   }
-  //
-  //   const fields = [
-  //     ...this.props.fields,
-  //     {
-  //       ...cloned,
-  //       id: nextId,
-  //       values: {
-  //         ...cloned.values,
-  //         name: cloned.values && cloned.values.name ? `${name}` : '',
-  //         pin: this.generatePin(),
-  //         isRecentlyCreated: true
-  //       }
-  //     }
-  //   ];
-  //
-  //   const originalIndex = _.findIndex(fields, {id: id});
-  //
-  //   this.props.onFieldsChange(
-  //     arrayMove(fields, fields.length - 1, originalIndex + 1)
-  //   );
-  // }
+  handleCloneField(id) {
 
-  addDataStreamsField(params) {
+    const isNameAlreadyExists = (label) => {
+      return this.props.fields.getAll().some((field) => {
+        return field.label && field.label.trim() === label.trim();
+      });
+    };
+
+    const cloned = _.find(this.props.fields.getAll(), {id: id});
+
+    const nextId = new Date().getTime();
+
+    let name = '';
+    let nameUnique = !cloned.label; //if cloned name is empty don't find unique name
+    let i = 0;
+
+    while (!nameUnique) {
+      name = `${cloned.label} Copy ${!i ? '' : i}`.trim();
+      if (!isNameAlreadyExists(name)) {
+        nameUnique = true;
+      }
+      i++;
+    }
+
+    const field = {
+      ...cloned,
+      id: nextId,
+      label: name,
+      pin: this.generatePin(),
+      isRecentlyCreated: true
+    };
+
+    const originalIndex = _.findIndex(this.props.fields.getAll(), {id: id});
+
+    this.props.fields.push(field);
+
+    const newIndex = this.props.fields.getAll().length;
+    const oldIndex = originalIndex + 1;
+
+    if(newIndex !== oldIndex)
+      this.props.fields.swap(newIndex, oldIndex);
+  }
+
+  addDataStreamsField() {
 
     const nextId = new Date().getTime();
 
     this.props.fields.push({
       id: nextId,
-      type: params.type,
       pin: `${this.generatePin()}`,
       units: Unit.None.key,
       isRecentlyCreated: true,
