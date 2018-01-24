@@ -27,8 +27,8 @@ class List extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.onSortEnd = this.onSortEnd.bind(this);
-    // this.onSortStart = this.onSortStart.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.onSortStart = this.onSortStart.bind(this);
     // this.fieldsValidation = this.fieldsValidation.bind(this);
     // this.handleCloneField = this.handleCloneField.bind(this);
     // this.handleChangeField = this.handleChangeField.bind(this);
@@ -250,22 +250,21 @@ class List extends React.Component {
     });
 
     // /** @todo dirty hack, remove it after refactoring */
-    // setTimeout(() => document.querySelector(`.datastream-name-field-${nextId}  input`).focus(), 100);
+    setTimeout(() => document.querySelector(`.datastream-name-field-${nextId}  input`).focus(), 100);
   }
 
-  // onSortStart() {
-  //   this.setState({
-  //     isSortEnabled: true
-  //   });
-  // }
-  //
-  // onSortEnd({oldIndex, newIndex}) {
-  //
-  //   this.props.onFieldsChange(
-  //     arrayMove(this.props.fields, oldIndex, newIndex)
-  //   );
-  //
-  // }
+  onSortStart() {
+    this.setState({
+      isSortEnabled: true
+    });
+  }
+
+  onSortEnd({oldIndex, newIndex}) {
+    if(newIndex === oldIndex)
+      return false;
+
+    this.props.fields.swap(oldIndex, newIndex);
+  }
 
   render() {
 
@@ -279,12 +278,13 @@ class List extends React.Component {
 
         {this.props.fields && this.props.fields.length && (
           <this.SortableList items={this.props.fields}
-            // onSortStart={this.onSortStart}
-            // onSortEnd={this.onSortEnd}
+                             onSortStart={this.onSortStart}
+                             onSortEnd={this.onSortEnd}
                              useDragHandle={true}
                              lockAxis="y"
                              useWindowAsScrollContainer={true}
-                             helperClass="product-metadata-item-drag-active"/>
+                             helperClass="product-metadata-item-drag-active"
+          />
         ) || null}
 
         <AddDataStreamsFields onFieldAdd={this.addDataStreamsField}/>
