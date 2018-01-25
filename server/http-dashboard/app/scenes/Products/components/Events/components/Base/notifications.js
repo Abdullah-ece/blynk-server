@@ -4,11 +4,11 @@ import {
   hardcodedRequiredMetadataFieldsNames
 } from 'services/Products';
 import {Switch, Select} from 'antd';
-import {Field} from 'redux-form';
-import FormItem from 'components/FormItem';
-import {Item} from 'components/UI';
+// import {Field} from 'redux-form';
+// import FormItem from 'components/FormItem';
+// import {Item} from 'components/UI';
 import {SimpleMatch} from 'services/Filters';
-import _ from 'lodash';
+// import _ from 'lodash';
 import Static from './notifications-static';
 
 class Notifications extends React.Component {
@@ -22,12 +22,6 @@ class Notifications extends React.Component {
 
   constructor(props) {
     super(props);
-
-
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props.fields, nextProps.fields)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
   }
 
   notificationSelect(props) {
@@ -69,37 +63,43 @@ class Notifications extends React.Component {
   }
 
   render() {
-    let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail().concat(
-      this.getDeviceOwnerField()
-    );
-
     return (
-      <FormItem>
-        <Item offset="small">
-          <Field name="isNotificationsEnabled" component={this.switcher}/>
-          { this.props.fields.isNotificationsEnabled && (
-            <span className="product-events-notifications-label">Notifications On</span>
-          ) || (
-            <span className="product-events-notifications-label">Notifications Off</span>
-          )}
-        </Item>
-        <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
-          <Item label="E-mail to" offset="normal">
-            <Field name="emailNotifications"
-                   component={this.notificationSelect}
-                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}
-                   options={notificationAvailableMetadataContactFields}/>
-          </Item>
-          <Item label="PUSH Notifications to">
-            <Field name="pushNotifications"
-                   component={this.notificationSelect}
-                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}
-                   options={notificationAvailableMetadataContactFields}/>
-          </Item>
-        </FormItem>
-      </FormItem>
+      null
     );
   }
+
+  // render() {
+  //   let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail().concat(
+  //     this.getDeviceOwnerField()
+  //   );
+  //
+  //   return (
+  //     <FormItem>
+  //       <Item offset="small">
+  //         <Field name="isNotificationsEnabled" component={this.switcher}/>
+  //         { this.props.fields.isNotificationsEnabled && (
+  //           <span className="product-events-notifications-label">Notifications On</span>
+  //         ) || (
+  //           <span className="product-events-notifications-label">Notifications Off</span>
+  //         )}
+  //       </Item>
+  //       <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
+  //         <Item label="E-mail to" offset="normal">
+  //           <Field name="emailNotifications"
+  //                  component={this.notificationSelect}
+  //                  onFocus={this.props.onFocus} onBlur={this.props.onBlur}
+  //                  options={notificationAvailableMetadataContactFields}/>
+  //         </Item>
+  //         <Item label="PUSH Notifications to">
+  //           <Field name="pushNotifications"
+  //                  component={this.notificationSelect}
+  //                  onFocus={this.props.onFocus} onBlur={this.props.onBlur}
+  //                  options={notificationAvailableMetadataContactFields}/>
+  //         </Item>
+  //       </FormItem>
+  //     </FormItem>
+  //   );
+  // }
 
 }
 

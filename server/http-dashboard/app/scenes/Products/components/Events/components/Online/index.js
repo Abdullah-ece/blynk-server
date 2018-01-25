@@ -3,15 +3,14 @@ import {Base} from '../../index';
 import {Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import Static from './static';
+import {Map} from 'immutable';
+import PropTypes from 'prop-types';
 
 class Online extends React.Component {
 
   static propTypes = {
-    form: React.PropTypes.string,
-    initialValues: React.PropTypes.object,
-    onChange: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    validate: React.PropTypes.func
+    onDelete: PropTypes.func,
+    field: PropTypes.instanceOf(Map),
   };
 
   constructor(props) {
@@ -39,15 +38,13 @@ class Online extends React.Component {
 
   render() {
     return (
-      <Base type={EVENT_TYPES.ONLINE} form={this.props.form} initialValues={this.props.initialValues}
-            onChange={this.props.onChange}
-            validate={this.props.validate}
+      <Base type={EVENT_TYPES.ONLINE}
             onDelete={this.props.onDelete}
             isActive={this.state.isFocused}>
         <Base.Content>
           <Item label="Online Event" offset="small">
             <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                   validateOnBlur={true} name="name" placeholder="Event Name"/>
+                   validateOnBlur={true} name={`${this.props.field.get('fieldPrefix')}.name`} placeholder="Event Name"/>
           </Item>
         </Base.Content>
       </Base>

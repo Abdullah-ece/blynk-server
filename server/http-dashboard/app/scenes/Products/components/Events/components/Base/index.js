@@ -7,28 +7,9 @@ import Content from './content';
 import Static from './static';
 import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
-import {reduxForm, formValueSelector, getFormValues, getFormSyncErrors} from 'redux-form';
-import {connect} from 'react-redux';
 import _ from 'lodash';
 import {SortableHandle} from 'react-sortable-hoc';
 
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    metadata: state.Product.edit.metadata.fields,
-    fields: {
-      id: selector(state, 'id'),
-      isNotificationsEnabled: selector(state, 'isNotificationsEnabled')
-    },
-    formValues: getFormValues(ownProps.form)(state),
-    fieldsErrors: getFormSyncErrors(ownProps.form)(state),
-  };
-})
-@reduxForm({
-  touchOnChange: true,
-  onSubmit: () => {
-  }
-})
 class Base extends React.Component {
 
   static propTypes = {

@@ -6,15 +6,14 @@ import {ItemsGroup, Item, Input} from 'components/UI';
 import {EVENT_TYPES} from 'services/Products';
 import {Field} from 'redux-form';
 import Static from './static';
+import PropTypes from 'prop-types';
+import {Map} from 'immutable';
 
 class Offline extends React.Component {
 
   static propTypes = {
-    form: React.PropTypes.string,
-    initialValues: React.PropTypes.object,
-    onChange: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    validate: React.PropTypes.func
+    onDelete: PropTypes.func,
+    field: PropTypes.instanceOf(Map),
   };
 
   constructor(props) {
@@ -41,10 +40,15 @@ class Offline extends React.Component {
   }
 
   ignorePeriod(props) {
+
+    const getTime = (milliseconds) => (
+      moment().set({hours: 0, minutes: 0, seconds: 0, milliseconds: milliseconds})
+    );
+
     const format = "HH [hrs] mm [min]";
 
     const onChange = (value) => {
-      props.input.onChange(value);
+      props.input.onChange(value.diff(getTime(0)));
     };
 
     return (
@@ -52,8 +56,7 @@ class Offline extends React.Component {
         format={format}
         style={{width: '100%'}}
         onChange={onChange}
-        defaultValue={moment('00:00', 'HH:mm')}
-        value={moment(props.input.value)}
+        value={getTime(props.input.value)}
       />
     );
   }
@@ -61,20 +64,18 @@ class Offline extends React.Component {
   render() {
 
     return (
-      <Base type={EVENT_TYPES.OFFLINE} form={this.props.form} initialValues={this.props.initialValues}
-            onChange={this.props.onChange}
-            validate={this.props.validate}
+      <Base type={EVENT_TYPES.OFFLINE}
             onDelete={this.props.onDelete}
             isActive={this.state.isFocused}>
         <Base.Content>
           <ItemsGroup>
             <Item label="Offline Event" offset="small">
               <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                     validateOnBlur={true} name="name" placeholder="Event Name"
+                     validateOnBlur={true} name={`${this.props.field.get('fieldPrefix')}.name`} placeholder="Event Name"
                      style={{width: '55%'}}/>
             </Item>
             <Item label="Ignore Period" offset="small" style={{width: '45%'}}>
-              <Field name="ignorePeriod" component={this.ignorePeriod}/>
+              <Field name={`${this.props.field.get('fieldPrefix')}.ignorePeriod`} component={this.ignorePeriod}/>
             </Item>
           </ItemsGroup>
         </Base.Content>

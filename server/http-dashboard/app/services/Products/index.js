@@ -162,7 +162,18 @@ export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacture
   metaFields: [
     ...getHardcodedRequiredMetadataFields({timezoneDefaultValue, manufacturerDefaultValue}),
   ],
-  dataStreams: []
+  dataStreams: [],
+  events: [
+    {
+      id: 1,
+      type: EVENT_TYPES.ONLINE
+    },
+    {
+      id: 2,
+      type: EVENT_TYPES.OFFLINE,
+      ignorePeriod: 0,
+    }
+  ]
 });
 
 export const exampleMetadataField = {

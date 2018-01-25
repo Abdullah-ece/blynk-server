@@ -13,7 +13,7 @@ import {
 } from 'services/Products';
 import {
   Info        as InfoTab,
-  // Events      as EventsTab,
+  Events      as EventsTab,
   Metadata    as MetadataTab,
   DataStreams as DataStreamsTab,
 } from '../ProductManage';
@@ -189,12 +189,20 @@ class ProductCreate extends React.Component {
     ) && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
   }
 
-  //
-  // productDataStreamsInvalidIcon() {
-  //   return this.state.submited && this.props.isDataStreamsFormInvalid &&
-  //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
-  // }
-  //
+
+  productDataStreamsInvalidIcon() {
+    const isAnyDataStreamHasError = () => {
+      if(!this.props.formSyncErrors.has('dataStreams'))
+        return false;
+
+      return this.props.formSyncErrors.get('dataStreams').reduce((acc, item) => {
+        return (!acc && item && item.count && item.count() >= 0) || acc;
+      }, false);
+    };
+
+    return this.props.submitFailed && isAnyDataStreamHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+  }
+
   productMetadataInvalidIcon() {
 
     const isAnyMetaFieldHasError = () => {
@@ -209,10 +217,18 @@ class ProductCreate extends React.Component {
     return this.props.submitFailed && isAnyMetaFieldHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
   }
 
-  // productEventsInvalidIcon() {
-  //   return this.state.submited && this.props.isEventsFormInvalid &&
-  //     <Icon type="exclamation-circle-o" className="product-tab-invalid"/> || null;
-  // }
+  productEventsInvalidIcon() {
+    const isAnyEventHasError = () => {
+      if(!this.props.formSyncErrors.has('events'))
+        return false;
+
+      return this.props.formSyncErrors.get('events').reduce((acc, item) => {
+        return (!acc && item && item.count && item.count() >= 0) || acc;
+      }, false);
+    };
+
+    return this.props.submitFailed && isAnyEventHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+  }
 
   handleCancel() {
     this.props.onCancel();
@@ -257,8 +273,12 @@ class ProductCreate extends React.Component {
               <MetadataTab/>
             </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
+            <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
               <DataStreamsTab/>
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
+              <EventsTab/>
             </Tabs.TabPane>
 
           </Tabs>
