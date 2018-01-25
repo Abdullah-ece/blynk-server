@@ -1,61 +1,83 @@
 import React from 'react';
-import {
-  Metadata,
-  hardcodedRequiredMetadataFieldsNames
-} from 'services/Products';
 import {Switch, Select} from 'antd';
-// import {Field} from 'redux-form';
-// import FormItem from 'components/FormItem';
-// import {Item} from 'components/UI';
-import {SimpleMatch} from 'services/Filters';
-// import _ from 'lodash';
+import {Field} from 'redux-form';
+import FormItem from 'components/FormItem';
+import {Item} from 'components/UI';
 import Static from './notifications-static';
+import {List} from 'immutable';
+import PropTypes from 'prop-types';
 
 class Notifications extends React.Component {
 
   static propTypes = {
-    metadata: React.PropTypes.any,
-    fields: React.PropTypes.object,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
+    contactMetaFields: PropTypes.instanceOf(List),
+    field: PropTypes.object,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
+
+    this.notificationSelect = this.notificationSelect.bind(this);
   }
 
   notificationSelect(props) {
 
+    const getValue = () => {
+
+      if(!Array.isArray(props.input.value))
+        return [];
+
+      return props.input.value.filter((id) => (
+        this.props.contactMetaFields.some((field) => Number(id) === Number(field.get('id')))
+      ));
+    };
+
+    const onChange = (value) => {
+      props.input.onChange(value);
+    };
+
+    const options = this.props.contactMetaFields.map((field) => {
+
+      return (
+        <Select.Option key={`${field.get('id')}`}
+                       value={`${field.get('id')}`}>
+          {field.get('name')}
+        </Select.Option>
+      );
+    });
+
     return (
-      <Select mode="multiple"
+
+      <Select mode="tags"
+              style={{width: '100%'}}
               onFocus={props.input.onFocus}
               onBlur={props.input.onBlur}
-              onChange={props.input.onChange}
-              value={props.input.value || []}
-              style={{width: '100%'}}
-              placeholder="Select contact"
+              value={getValue()}
+              onChange={onChange}
               allowClear={true}
-              filterOption={(value, option) => SimpleMatch(value, option.key)}
-              notFoundContent={!props.options.length ? 'Add a "Contact" type Metadata to enable notifications' : 'No field matches your request'}>
-        { props.options }
+              placeholder="Select contact"
+              notFoundContent={!options.length ? 'Add a "Contact" type Metadata to enable notifications' : 'No field matches your request'}>
+        {options.toJS()}
       </Select>
+
     );
-  }
 
-  getMetadataContactFieldsWithEmail() {
-    return this.props.metadata.filter((field) => {
-      return field.type === Metadata.Fields.CONTACT && field.values && field.values.isEmailEnabled;
-    }).map((field) => (
-      <Select.Option key={field.values.name} value={(field.id).toString()}>{field.values.name}</Select.Option>
-    ));
-  }
+    // return (
+    //   <Select mode="tags"
+    //           onFocus={props.input.onFocus}
+    //           onBlur={props.input.onBlur}
+    //           onChange={onChange}
+    //           value={[]}
+    //           style={{width: '100%'}}
+    //           placeholder="Select contact"
+    //           allowClear={true}
+    //           notFoundContent={!options.length ? 'Add a "Contact" type Metadata to enable notifications' : 'No field matches your request'}>
+    //     {options}
+    //   </Select>
+    // );
 
-  getDeviceOwnerField() {
-    return this.props.metadata.filter((field) => {
-      return field.values.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner;
-    }).map((field) => (
-      <Select.Option key={field.values.name} value={(field.id).toString()}>{field.values.name}</Select.Option>
-    ));
   }
 
   switcher(props) {
@@ -63,43 +85,32 @@ class Notifications extends React.Component {
   }
 
   render() {
+
     return (
-      null
+      <FormItem>
+        <Item offset="small">
+          <Field name={`${this.props.field.get('fieldPrefix')}.isNotificationsEnabled`} component={this.switcher}/>
+          {this.props.field.get('isNotificationsEnabled') && (
+            <span className="product-events-notifications-label">Notifications On</span>
+          ) || (
+            <span className="product-events-notifications-label">Notifications Off</span>
+          )}
+        </Item>
+        <FormItem visible={!!this.props.field && !!this.props.field.get('isNotificationsEnabled')}>
+          <Item label="E-mail to" offset="normal">
+            <Field name={`${this.props.field.get('fieldPrefix')}.emailNotifications`}
+                   component={this.notificationSelect}
+                   onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>
+          </Item>
+          {/*<Item label="PUSH Notifications to">*/}
+          {/*<Field name="pushNotifications"*/}
+          {/*component={this.notificationSelect}*/}
+          {/*onFocus={this.props.onFocus} onBlur={this.props.onBlur}/>*/}
+          {/*</Item>*/}
+        </FormItem>
+      </FormItem>
     );
   }
-
-  // render() {
-  //   let notificationAvailableMetadataContactFields = this.getMetadataContactFieldsWithEmail().concat(
-  //     this.getDeviceOwnerField()
-  //   );
-  //
-  //   return (
-  //     <FormItem>
-  //       <Item offset="small">
-  //         <Field name="isNotificationsEnabled" component={this.switcher}/>
-  //         { this.props.fields.isNotificationsEnabled && (
-  //           <span className="product-events-notifications-label">Notifications On</span>
-  //         ) || (
-  //           <span className="product-events-notifications-label">Notifications Off</span>
-  //         )}
-  //       </Item>
-  //       <FormItem visible={!!this.props.fields && !!this.props.fields.isNotificationsEnabled}>
-  //         <Item label="E-mail to" offset="normal">
-  //           <Field name="emailNotifications"
-  //                  component={this.notificationSelect}
-  //                  onFocus={this.props.onFocus} onBlur={this.props.onBlur}
-  //                  options={notificationAvailableMetadataContactFields}/>
-  //         </Item>
-  //         <Item label="PUSH Notifications to">
-  //           <Field name="pushNotifications"
-  //                  component={this.notificationSelect}
-  //                  onFocus={this.props.onFocus} onBlur={this.props.onBlur}
-  //                  options={notificationAvailableMetadataContactFields}/>
-  //         </Item>
-  //       </FormItem>
-  //     </FormItem>
-  //   );
-  // }
 
 }
 

@@ -5,15 +5,37 @@ import {Timeline, Row, Col, Button, Popconfirm, Icon} from 'antd';
 import Preview from './preview';
 import Content from './content';
 import Static from './static';
-// import Notifications from './notifications';
-import {EVENT_TYPES} from 'services/Products';
+import Notifications from './notifications';
+import {
+  EVENT_TYPES,
+  Metadata,
+  FORMS,
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
 // import _ from 'lodash';
 import {SortableHandle} from 'react-sortable-hoc';
 import PropTypes from 'prop-types';
+import {getFormValues} from 'redux-form';
+import {List, fromJS} from 'immutable';
+import {connect} from 'react-redux';
 
+@connect((state) => ({
+  contactMetaFields: (() => {
+    /* get MetaFields type Contact and Hardcoded Device Owner to display those metaFields on Notifications select */
+    const formValues = fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state));
+
+    return fromJS((formValues.get('metaFields') || []).filter(
+      (metaField) => (
+        (metaField.get('type') === Metadata.Fields.CONTACT && metaField.get('isEmailEnabled')) ||
+        (metaField.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner && !!metaField.get('value'))
+      )
+    ));
+  })()
+}))
 class Base extends React.Component {
 
   static propTypes = {
+    contactMetaFields: PropTypes.instanceOf(List),
     children: PropTypes.any,
     type: PropTypes.string,
     field: PropTypes.object,
@@ -154,20 +176,20 @@ class Base extends React.Component {
             <Timeline.Item {...this.getPropsByType(this.props.type)}>
               <Row gutter={8}>
                 <Col span={13}>
-                  { this.getChildrenByType(Content.displayName) }
-                  {/*<Notifications onFocus={this.markAsActive} onBlur={this.handleCancelDelete}
-                                 metadata={this.props.metadata} fields={this.props.fields}/>*/}
+                  {this.getChildrenByType(Content.displayName)}
+                  <Notifications onFocus={this.markAsActive} onBlur={this.handleCancelDelete}
+                                 contactMetaFields={this.props.contactMetaFields} field={this.props.field}/>
                 </Col>
                 <Col span={9} offset={1}>
-                  { this.getChildrenByType(Preview.displayName) }
+                  {this.getChildrenByType(Preview.displayName)}
                 </Col>
-                { this.props.tools && (
+                {this.props.tools && (
                   <Col span={1} className="product-events-event-tools">
-                    <this.toolsDragAndDropButton />
+                    <this.toolsDragAndDropButton/>
 
-                    { this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton() }
+                    {this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton()}
 
-                    { this.toolsCloneButton() }
+                    {this.toolsCloneButton()}
                   </Col>
                 )}
               </Row>

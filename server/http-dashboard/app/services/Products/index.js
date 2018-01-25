@@ -123,6 +123,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
+      value: 'ihor.bra@gmail.com'
     },
     {
       id: 3,
@@ -587,6 +588,13 @@ const prepareContactValuesForEdit = (fields) => {
 
 export const isDataStreamPristine = (field) => (
   !field.get('label') && !field.get('min') && !field.get('max') && field.get('units') === Unit.None.key
+);
+
+export const isEventPristine = (field) => (
+  !field.get('name') && !field.get('eventCode') &&
+  !field.get('description') && !field.get('isNotificationsEnabled') &&
+  !field.get('emailNotifications') && !field.get('pushNotifications') &&
+  !field.get('ignorePeriod')
 );
 
 export const isMetadataPristine = () => ({
