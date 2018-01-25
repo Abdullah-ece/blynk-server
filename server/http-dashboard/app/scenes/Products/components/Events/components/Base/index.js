@@ -7,23 +7,24 @@ import Content from './content';
 import Static from './static';
 import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
-import _ from 'lodash';
+// import _ from 'lodash';
 import {SortableHandle} from 'react-sortable-hoc';
+import PropTypes from 'prop-types';
 
 class Base extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.any,
-    type: React.PropTypes.string,
-    fields: React.PropTypes.object,
-    metadata: React.PropTypes.array,
-    onClone: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    tools: React.PropTypes.bool,
-    anyTouched: React.PropTypes.bool,
-    isActive: React.PropTypes.bool,
-    formValues: React.PropTypes.any,
-    fieldsErrors: React.PropTypes.any,
+    children: PropTypes.any,
+    type: PropTypes.string,
+    fields: PropTypes.object,
+    metadata: PropTypes.array,
+    onClone: PropTypes.func,
+    onDelete: PropTypes.func,
+    tools: PropTypes.bool,
+    anyTouched: PropTypes.bool,
+    isActive: PropTypes.bool,
+    formValues: PropTypes.any,
+    fieldsErrors: PropTypes.any,
   };
 
   constructor(props) {
@@ -40,9 +41,9 @@ class Base extends React.Component {
     };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.isActive !== nextProps.isActive || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.props.isActive !== nextProps.isActive || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors)) || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.state, nextState)) || !(_.isEqual(this.props.metadata, nextProps.metadata));
+  // }
 
   handleCancelDelete() {
     this.setState({isActive: false});

@@ -4,41 +4,26 @@ import {Input, Item, ItemsGroup} from "components/UI";
 import {convertUserFriendlyEventCode, EVENT_TYPES} from "services/Products";
 import _ from "lodash";
 import Validation from "services/Validation";
-import {change, formValueSelector, getFormMeta, getFormSyncErrors, getFormValues} from "redux-form";
-import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
 import Static from "./static";
-
-@connect((state, ownProps) => {
-  const selector = formValueSelector(ownProps.form);
-  return {
-    fields: {
-      name: selector(state, 'name'),
-      eventCode: selector(state, 'eventCode')
-    },
-    fieldsErrors: getFormSyncErrors(ownProps.form)(state),
-    formValues: getFormValues(ownProps.form)(state),
-    values: getFormMeta(ownProps.form)(state)
-  };
-}, (dispatch) => ({
-  changeField: bindActionCreators(change, dispatch)
-}))
+import PropTypes from 'prop-types';
+import {Map} from 'immutable';
 class Event extends React.Component {
 
   static propTypes = {
-    type: React.PropTypes.string,
-    form: React.PropTypes.string,
-    initialValues: React.PropTypes.object,
-    onChange: React.PropTypes.func,
-    onDelete: React.PropTypes.func,
-    onClone: React.PropTypes.func,
-    validate: React.PropTypes.func,
-    changeField: React.PropTypes.func,
-    anyTouched: React.PropTypes.bool,
-    formValues: React.PropTypes.any,
-    fields: React.PropTypes.any,
-    fieldsErrors: React.PropTypes.any,
-    values: React.PropTypes.any,
+    field: PropTypes.instanceOf(Map),
+    type: PropTypes.string,
+    form: PropTypes.string,
+    initialValues: PropTypes.object,
+    onChange: PropTypes.func,
+    onDelete: PropTypes.func,
+    onClone: PropTypes.func,
+    validate: PropTypes.func,
+    changeField: PropTypes.func,
+    anyTouched: PropTypes.bool,
+    formValues: PropTypes.any,
+    fields: PropTypes.any,
+    fieldsErrors: PropTypes.any,
+    values: PropTypes.any,
   };
 
   constructor(props) {
@@ -57,9 +42,9 @@ class Event extends React.Component {
     isFocused: false
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
+  // }
 
   onFocus() {
     this.setState({
@@ -106,36 +91,33 @@ class Event extends React.Component {
   render() {
 
     return (
-      <Base type={this.props.type} form={this.props.form} initialValues={this.props.initialValues}
+      <Base type={this.props.type}
             tools={true}
-            onChange={this.props.onChange}
             onClone={this.props.onClone}
-            validate={this.props.validate}
-            onDelete={this.props.onDelete}
-            isActive={this.state.isFocused}>
+            onDelete={this.props.onDelete}>
         <Base.Content>
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
               <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                     validateOnBlur={true} onChange={this.onNameChange} name="name" placeholder="Event Name"
+                     validateOnBlur={true} onChange={this.onNameChange} name={`${this.props.field.get('fieldPrefix')}.name`} placeholder="Event Name"
                      style={{width: '55%'}}
                      validate={[Validation.Rules.required]}
-                     className={`event-name-field-${this.props.initialValues.id}`}/>
+                     className={`event-name-field-${this.props.field.get('id')}`}/>
             </Item>
             <Item label="Event Code" offset="normal">
               <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                     validateOnBlur={true} name="eventCode" placeholder="Event code" style={{width: '45%'}}
+                     validateOnBlur={true} name={`${this.props.field.get('fieldPrefix')}.eventCode`} placeholder="Event code" style={{width: '45%'}}
                      validate={[Validation.Rules.required, Validation.Rules.eventsEventCode]}/>
             </Item>
           </ItemsGroup>
           <Item label="Description" offset="small">
             <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                   name="description" type="textarea" placeholder="Event Description (optional)" rows="3"/>
+                   name={`${this.props.field.get('fieldPrefix')}.description`} type="textarea" placeholder="Event Description (optional)" rows="3"/>
           </Item>
         </Base.Content>
-        <Base.Preview {...this.getPreviewProps()} valid={
+        <Base.Preview /*{...this.getPreviewProps()}*/ valid={
           <Item label="Code Preview" offset="small">
-            Blynk.logEvent("{ this.props.fields.eventCode }");
+            Blynk.logEvent("{ this.props.field.get('eventCode') }");
           </Item>
         } invalid={
           <Item label="Code Preview" offset="small">

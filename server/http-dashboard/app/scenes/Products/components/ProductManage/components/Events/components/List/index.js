@@ -1,10 +1,10 @@
 import React from 'react';
 // import Scroll from 'react-scroll';
 // import {BackTop} from 'components';
-import {Online, Offline, /*Info, Warning, Critical, Add*/} from 'scenes/Products/components/Events';
+import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 // import {getNextId} from 'services/Entity';
-// import {arrayMove, SortableContainer, SortableElement} from 'react-sortable-hoc';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 // import _ from 'lodash';
 import classnames from 'classnames';
 // import {connect} from 'react-redux';
@@ -14,10 +14,11 @@ import {fromJS} from 'immutable';
 //   fields: fromJS(ownProps.fields)
 // }))
 import PropTypes from 'prop-types';
+
 class List extends React.Component {
 
   static propTypes = {
-    fields: PropTypes.array,
+    fields: PropTypes.object,
 
     // onFieldsChange: React.PropTypes.func
   };
@@ -27,7 +28,7 @@ class List extends React.Component {
 
     // this.onSortEnd = this.onSortEnd.bind(this);
     // this.onSortStart = this.onSortStart.bind(this);
-    // this.handleAddField = this.handleAddField.bind(this);
+    this.handleAddField = this.handleAddField.bind(this);
     // this.handleFieldClone = this.handleFieldClone.bind(this);
     // this.handleFieldChange = this.handleFieldChange.bind(this);
     // this.handleFieldDelete = this.handleFieldDelete.bind(this);
@@ -224,98 +225,20 @@ class List extends React.Component {
   //   ));
   // }
   //
-  // handleAddField(type) {
+  handleAddField(type) {
+
+    const nextId = new Date().getTime();
+
+    this.props.fields.push({
+      id: nextId,
+      type: type,
+      isRecentlyCreated: true
+    });
+
+    /** @todo dirty hack, remove it after refactoring */
+    // setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
+  }
   //
-  //   const nextId = getNextId(this.props.fields);
-  //
-  //   this.props.onFieldsChange([
-  //     ...this.props.fields,
-  //     {
-  //       id: nextId,
-  //       type: type,
-  //       values: {
-  //         isRecentlyCreated: true
-  //       }
-  //     }
-  //   ]);
-  //
-  //   /** @todo dirty hack, remove it after refactoring */
-  //   setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
-  // }
-  //
-  // SortableItem = SortableElement(({value}) => {
-  //
-  //   const field = value;
-  //
-  //   let element;
-  //
-  //   let options = {
-  //     form: `event${field.id}`,
-  //     key: `event${field.id}`,
-  //     initialValues: {
-  //       id: field.id,
-  //       name: field.values.name,
-  //       isNotificationsEnabled: field.values.isNotificationsEnabled,
-  //       emailNotifications: field.values.emailNotifications && field.values.emailNotifications.map((value) => value.toString()),
-  //       pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
-  //     },
-  //     onChange: this.handleFieldChange,
-  //     onDelete: this.handleFieldDelete,
-  //     onClone: this.handleFieldClone,
-  //     validate: this.handleFieldValidation,
-  //   };
-  //
-  //   if (field.type === EVENT_TYPES.INFO) {
-  //
-  //     options = {
-  //       ...options,
-  //       initialValues: {
-  //         ...options.initialValues,
-  //         eventCode: field.values.eventCode,
-  //         description: field.values.description
-  //       }
-  //     };
-  //
-  //     element = (
-  //       <Info {...options}/>
-  //     );
-  //   }
-  //
-  //   if (field.type === EVENT_TYPES.WARNING) {
-  //
-  //     options = {
-  //       ...options,
-  //       initialValues: {
-  //         ...options.initialValues,
-  //         eventCode: field.values.eventCode,
-  //         description: field.values.description
-  //       }
-  //     };
-  //
-  //     element = (
-  //       <Warning {...options}/>
-  //     );
-  //   }
-  //
-  //   if (field.type === EVENT_TYPES.CRITICAL) {
-  //
-  //     options = {
-  //       ...options,
-  //       initialValues: {
-  //         ...options.initialValues,
-  //         eventCode: field.values.eventCode,
-  //         description: field.values.description
-  //       }
-  //     };
-  //
-  //     element = (
-  //       <Critical {...options}/>
-  //     );
-  //   }
-  //
-  //   return element;
-  //
-  // });
   //
   // SortableList = SortableContainer(({items}) => {
   //   return (
@@ -349,12 +272,10 @@ class List extends React.Component {
   getFieldsByTypes(types) {
     return this.props.fields.map((name, index, fields) => {
       const field = fromJS(fields.get(index));
+      return field.set('eventKey', index)
+        .set('fieldPrefix', name);
 
-      if (types.indexOf(field.get('type')) !== -1) {
-        return field.set('eventKey', index)
-          .set('fieldPrefix', name);
-      }
-    });
+    }).filter((field) => types.indexOf(field.get('type')) !== -1);
   }
 
   getStaticFields() {
@@ -377,20 +298,77 @@ class List extends React.Component {
         // isDirty: false
       };
 
-      if(field.get('type') === EVENT_TYPES.ONLINE)
+      if (field.get('type') === EVENT_TYPES.ONLINE)
         return (
           <Online {...props}/>
         );
 
-      if(field.get('type') === EVENT_TYPES.OFFLINE)
+      if (field.get('type') === EVENT_TYPES.OFFLINE)
         return (
           <Offline {...props}/>
         );
     });
   }
 
-  renderDynamicFields() {
+  SortableItem = SortableElement(({value}) => {
 
+    const field = value;
+
+    let options = {
+      key: `event${field.get('id')}`,
+      field: field,
+      // onDelete: this.handleFieldDelete,
+      // onClone: this.handleFieldClone,
+    };
+
+    if (field.get('type') === EVENT_TYPES.INFO)
+      return (
+        <Info {...options}/>
+      );
+
+
+    if (field.get('type') === EVENT_TYPES.WARNING)
+      return (
+        <Warning {...options}/>
+      );
+
+
+    if (field.get('type') === EVENT_TYPES.CRITICAL)
+      return (
+        <Critical {...options}/>
+      );
+
+    return null;
+
+  });
+
+  SortableList = SortableContainer(({items}) => {
+
+    return (
+      <div>
+        {items.map((item, index) => {
+          return (
+            <this.SortableItem key={`item-${item.get('id')}`} index={index} value={item}/>
+          );
+        })}
+      </div>
+    );
+  });
+
+  renderDynamicFields() {
+    const fields = this.getDynamicFields();
+
+    return (
+
+      <this.SortableList items={fields}
+                         useDragHandle={true}
+                         useWindowAsScrollContainer={true}
+        // onSortStart={this.onSortStart}
+        // onSortEnd={this.onSortEnd}
+                         lockAxis="y"
+                         helperClass="product-events-item-drag-active"/>
+
+    );
   }
 
   render() {
@@ -429,7 +407,11 @@ class List extends React.Component {
 
       <div className={className}>
 
-        { this.renderStaticFields() }
+        {this.renderStaticFields()}
+
+        {this.renderDynamicFields()}
+
+        <Add handleSubmit={this.handleAddField}/>
 
       </div>
 
