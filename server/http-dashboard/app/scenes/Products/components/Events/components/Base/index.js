@@ -5,7 +5,7 @@ import {Timeline, Row, Col, Button, Popconfirm, Icon} from 'antd';
 import Preview from './preview';
 import Content from './content';
 import Static from './static';
-import Notifications from './notifications';
+// import Notifications from './notifications';
 import {EVENT_TYPES} from 'services/Products';
 // import _ from 'lodash';
 import {SortableHandle} from 'react-sortable-hoc';
@@ -16,7 +16,7 @@ class Base extends React.Component {
   static propTypes = {
     children: PropTypes.any,
     type: PropTypes.string,
-    fields: PropTypes.object,
+    field: PropTypes.object,
     metadata: PropTypes.array,
     onClone: PropTypes.func,
     onDelete: PropTypes.func,
@@ -103,11 +103,11 @@ class Base extends React.Component {
   }
 
   handleConfirmDelete() {
-    this.props.onDelete(this.props.fields);
+    this.props.onDelete(this.props.field.get('id'));
   }
 
   handleClone() {
-    this.props.onClone(this.props.fields);
+    this.props.onClone(this.props.field.get('id'));
   }
 
   toolsPopconfirmDeleteButton() {
@@ -148,15 +148,15 @@ class Base extends React.Component {
     });
 
     return (
-      <Scroll.Element name={this.props.formValues && this.props.formValues.name}>
+      <Scroll.Element name={this.props.field.get('name')}>
         <div className={itemClasses}>
           <Timeline>
             <Timeline.Item {...this.getPropsByType(this.props.type)}>
               <Row gutter={8}>
                 <Col span={13}>
                   { this.getChildrenByType(Content.displayName) }
-                  <Notifications onFocus={this.markAsActive} onBlur={this.handleCancelDelete}
-                                 metadata={this.props.metadata} fields={this.props.fields}/>
+                  {/*<Notifications onFocus={this.markAsActive} onBlur={this.handleCancelDelete}
+                                 metadata={this.props.metadata} fields={this.props.fields}/>*/}
                 </Col>
                 <Col span={9} offset={1}>
                   { this.getChildrenByType(Preview.displayName) }

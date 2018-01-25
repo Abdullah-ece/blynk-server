@@ -65,6 +65,7 @@ class Offline extends React.Component {
 
     return (
       <Base type={EVENT_TYPES.OFFLINE}
+            field={this.props.field}
             onDelete={this.props.onDelete}
             isActive={this.state.isFocused}>
         <Base.Content>

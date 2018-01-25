@@ -104,6 +104,7 @@ class Event extends React.Component {
 
     return (
       <Base type={this.props.type}
+            field={this.props.field}
             tools={true}
             onClone={this.props.onClone}
             onDelete={this.props.onDelete}>

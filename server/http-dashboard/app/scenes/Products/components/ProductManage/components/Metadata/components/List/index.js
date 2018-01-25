@@ -257,18 +257,18 @@ class ProductMetadata extends React.Component {
 
     const isNameAlreadyExists = (name) => {
       return this.props.fields.getAll().some((field) => {
-        return field.name.trim() === name.trim();
+        return field.name && field.name.trim() === name.trim();
       });
     };
 
     const cloned = _.find(this.props.fields.getAll(), {id: id});
 
     let name = '';
-    let nameUnique = false;
+    let nameUnique = !cloned.name;
     let i = 0;
 
     while (!nameUnique) {
-      name = `${cloned.name} Copy ${!i ? '' : i}`.trim();
+      name = `${cloned.name || ''} Copy ${!i ? '' : i}`.trim();
       if (!isNameAlreadyExists(name)) {
         nameUnique = true;
       }

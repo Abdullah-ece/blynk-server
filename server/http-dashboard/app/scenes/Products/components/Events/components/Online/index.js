@@ -39,6 +39,7 @@ class Online extends React.Component {
   render() {
     return (
       <Base type={EVENT_TYPES.ONLINE}
+            field={this.props.field}
             onDelete={this.props.onDelete}
             isActive={this.state.isFocused}>
         <Base.Content>

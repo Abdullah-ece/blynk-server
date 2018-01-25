@@ -5,7 +5,7 @@ import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/com
 import {EVENT_TYPES, FORMS} from 'services/Products';
 // import {getNextId} from 'services/Entity';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
-// import _ from 'lodash';
+import _ from 'lodash';
 import classnames from 'classnames';
 import {fromJS} from 'immutable';
 
@@ -31,9 +31,8 @@ class List extends React.Component {
     // this.onSortEnd = this.onSortEnd.bind(this);
     // this.onSortStart = this.onSortStart.bind(this);
     this.handleAddField = this.handleAddField.bind(this);
-    // this.handleFieldClone = this.handleFieldClone.bind(this);
-    // this.handleFieldChange = this.handleFieldChange.bind(this);
-    // this.handleFieldDelete = this.handleFieldDelete.bind(this);
+    this.handleCloneField = this.handleCloneField.bind(this);
+    this.handleDeleteField = this.handleDeleteField.bind(this);
     // this.handleFieldValidation = this.handleFieldValidation.bind(this);
 
   }
@@ -113,70 +112,55 @@ class List extends React.Component {
   //   return errors;
   // }
   //
-  // handleFieldDelete(values) {
-  //   if (values.id) {
-  //
-  //     let fields = this.props.fields.filter(
-  //       (field) => Number(field.id) !== Number(values.id)
-  //     );
-  //
-  //     this.props.onFieldsChange(fields);
-  //
-  //   } else {
-  //     throw Error('Missing id parameter for handleFieldDelete');
-  //   }
-  // }
-  //
-  // handleFieldClone(values) {
-  //
-  //   const isNameAlreadyExists = (name) => {
-  //     return this.props.fields.some((field) => {
-  //       if (!field.values || !field.values.name || !name)
-  //         return false;
-  //
-  //       return field.values.name.trim() === name.trim();
-  //     });
-  //   };
-  //
-  //   if (values.id) {
-  //
-  //     const originalIndex = _.findIndex(this.props.fields, {id: values.id});
-  //     const original = this.props.fields[originalIndex];
-  //
-  //     let name = '';
-  //     let eventCode = '';
-  //     let nameUnique = false;
-  //     let i = 0;
-  //
-  //     while (!nameUnique) {
-  //       name = `${original.values.name} Copy ${!i ? '' : i}`;
-  //       eventCode = `${original.values.eventCode}_copy${!i ? '' : '_' + i}`;
-  //       if (!isNameAlreadyExists(name)) {
-  //         nameUnique = true;
-  //       }
-  //       i++;
-  //     }
-  //
-  //     const copy = {
-  //       ...original,
-  //       values: {
-  //         ...original.values,
-  //         name: original.values.name ? name : '',
-  //         eventCode: original.values.eventCode ? eventCode : '',
-  //         isRecentlyCreated: true
-  //       },
-  //       id: getNextId(this.props.fields)
-  //     };
-  //
-  //     this.props.onFieldsChange(arrayMove([
-  //       ...this.props.fields,
-  //       copy
-  //     ], this.props.fields.length, originalIndex + 1));
-  //
-  //   } else {
-  //     throw Error('Missing id parameter for handleFieldClone');
-  //   }
-  // }
+  handleDeleteField(id) {
+    let fieldIndex = null;
+
+    this.props.fields.getAll().forEach((field, index) => {
+      if(Number(field.id) === Number(id))
+        fieldIndex = index;
+    });
+
+    this.props.fields.remove(fieldIndex);
+  }
+
+  handleCloneField(id) {
+
+    const isNameAlreadyExists = (name) => {
+      return this.props.fields.getAll().some((field) => {
+        return field.name && field.name.trim() === name.trim();
+      });
+    };
+
+    const cloned = _.find(this.props.fields.getAll(), {id: id});
+
+    let name = '';
+    let nameUnique = !cloned.name;
+    let i = 0;
+
+    while (!nameUnique) {
+      name = `${cloned.name || ''} Copy ${!i ? '' : i}`.trim();
+      if (!isNameAlreadyExists(name)) {
+        nameUnique = true;
+      }
+      i++;
+    }
+
+    const originalIndex = _.findIndex(this.props.fields.getAll(), {id: id});
+
+    this.props.fields.push({
+      ...cloned,
+      name: name,
+      id: new Date().getTime(),
+      isRecentlyCreated: true,
+    });
+
+    const newIndex = this.props.fields.getAll().length;
+    const oldIndex = originalIndex + 1;
+
+    if(newIndex !== oldIndex)
+      this.props.fields.swap(newIndex, oldIndex);
+
+  }
   //
   // getFieldsForTypes(fields, types) {
   //   const elements = [];
@@ -198,7 +182,7 @@ class List extends React.Component {
   //           pushNotifications: field.values.pushNotifications && field.values.pushNotifications.map((value) => value.toString()),
   //         },
   //         onChange: this.handleFieldChange,
-  //         onDelete: this.handleFieldDelete,
+  //         onDelete: this.handleDeleteField,
   //         onClone: this.handleFieldClone,
   //         validate: this.handleFieldValidation,
   //       };
@@ -307,9 +291,9 @@ class List extends React.Component {
     return fields.map((field) => {
       let props = {
         field: field,
-        key: field.get('id')
-        // onClone: this.handleFieldClone,
-        // onDelete: this.handleFieldDelete,
+        key: field.get('id'),
+        onClone: this.handleCloneField,
+        onDelete: this.handleDeleteField,
         // isDirty: false
       };
 
@@ -332,8 +316,8 @@ class List extends React.Component {
     let options = {
       key: `event${field.get('id')}`,
       field: field,
-      // onDelete: this.handleFieldDelete,
-      // onClone: this.handleFieldClone,
+      onDelete: this.handleDeleteField,
+      onClone: this.handleCloneField,
     };
 
     if (field.get('type') === EVENT_TYPES.INFO)
