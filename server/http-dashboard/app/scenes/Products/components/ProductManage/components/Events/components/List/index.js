@@ -1,26 +1,28 @@
 import React from 'react';
-// import Scroll from 'react-scroll';
+import Scroll from 'react-scroll';
 // import {BackTop} from 'components';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
-import {EVENT_TYPES} from 'services/Products';
+import {EVENT_TYPES, FORMS} from 'services/Products';
 // import {getNextId} from 'services/Entity';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 // import _ from 'lodash';
 import classnames from 'classnames';
-// import {connect} from 'react-redux';
 import {fromJS} from 'immutable';
-//
-// @connect((state, ownProps) => ({
-//   fields: fromJS(ownProps.fields)
-// }))
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {change} from 'redux-form';
+
+@connect((state) => state, (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch)
+}))
 class List extends React.Component {
 
   static propTypes = {
     fields: PropTypes.object,
 
-    // onFieldsChange: React.PropTypes.func
+    changeForm: React.PropTypes.func
   };
 
   constructor(props) {
@@ -41,24 +43,37 @@ class List extends React.Component {
     isSortEnabled: false
   };
 
-  // componentDidUpdate() {
-  //   this.props.fields.forEach((field) => {
-  //     if (field && field.values && field.values.isRecentlyCreated) {
-  //
-  //       Scroll.scroller.scrollTo(`${field.name}`, {
-  //         duration: 1000,
-  //         offset: -64,
-  //         smooth: "easeInOutQuint",
-  //       });
-  //
-  //       this.handleFieldChange({
-  //         ...field.values,
-  //         id: field.id,
-  //         isRecentlyCreated: false
-  //       });
-  //     }
-  //   });
-  // }
+  componentDidUpdate() {
+
+    // all new fields marked as isRecentlyCreated to be able to scroll to new element
+    // after scrolled to element we should remove isRecentlyCreated to prevent scroll every update
+
+    let fields = [];
+    let shouldUpdateFields = false;
+
+    this.props.fields.getAll().forEach((field) => {
+
+      if (!field.isRecentlyCreated) {
+        return fields.push(field);
+      }
+
+      shouldUpdateFields = true;
+
+      Scroll.scroller.scrollTo(`${field.name}`, {
+        duration: 1000,
+        offset: -64,
+        smooth: "easeInOutQuint",
+      });
+
+      return fields.push({
+        ...field,
+        isRecentlyCreated: false,
+      });
+    });
+
+    if(shouldUpdateFields)
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, 'events', fields);
+  }
   //
   // handleFieldChange(values, /*dispatch, props*/) {
   //   if (values.id) {
@@ -236,7 +251,7 @@ class List extends React.Component {
     });
 
     /** @todo dirty hack, remove it after refactoring */
-    // setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
+    setTimeout(() => document.querySelector(`.event-name-field-${nextId}  input`).focus(), 100);
   }
   //
   //
