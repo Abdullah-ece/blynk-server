@@ -1,28 +1,34 @@
 import React from "react";
 import {Base} from "../../index";
 import {Input, Item, ItemsGroup} from "components/UI";
-import {convertUserFriendlyEventCode, EVENT_TYPES} from "services/Products";
+import {convertUserFriendlyEventCode, EVENT_TYPES, FORMS} from "services/Products";
 import _ from "lodash";
 import Validation from "services/Validation";
 import Static from "./static";
 import PropTypes from 'prop-types';
 import {Map} from 'immutable';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {change} from 'redux-form';
+
+@connect((state) => state, (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch)
+}))
 class Event extends React.Component {
 
   static propTypes = {
     field: PropTypes.instanceOf(Map),
+
     type: PropTypes.string,
-    form: PropTypes.string,
-    initialValues: PropTypes.object,
-    onChange: PropTypes.func,
+
     onDelete: PropTypes.func,
     onClone: PropTypes.func,
-    validate: PropTypes.func,
-    changeField: PropTypes.func,
-    anyTouched: PropTypes.bool,
-    formValues: PropTypes.any,
+    changeForm: PropTypes.func,
+
     fields: PropTypes.any,
     fieldsErrors: PropTypes.any,
+
     values: PropTypes.any,
   };
 
@@ -45,6 +51,12 @@ class Event extends React.Component {
   // shouldComponentUpdate(nextProps, nextState) {
   //   return this.state.isFocused !== nextState.isFocused || !(_.isEqual(this.props.formValues, nextProps.formValues)) || !(_.isEqual(this.props.fieldsErrors, nextProps.fieldsErrors));
   // }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.field.get('name') !== this.props.field.get('name')) {
+      this.onNameChange(this.props.field.get('name'), prevProps.field.get('name'));
+    }
+  }
 
   onFocus() {
     this.setState({
@@ -81,10 +93,10 @@ class Event extends React.Component {
     };
   }
 
-  onNameChange(event, newValue, oldValue) {
-    const eventCode = this.props.fields.eventCode;
+  onNameChange(newValue, oldValue) {
+    const eventCode = this.props.field.get('eventCode');
     if (!eventCode || convertUserFriendlyEventCode(oldValue) === eventCode) {
-      this.props.changeField(this.props.form, 'eventCode', convertUserFriendlyEventCode(newValue));
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, `${this.props.field.get('fieldPrefix')}.eventCode`, convertUserFriendlyEventCode(newValue));
     }
   }
 
@@ -99,7 +111,7 @@ class Event extends React.Component {
           <ItemsGroup>
             <Item label={this.getLabelForType(this.props.type)} offset="normal">
               <Input onFocus={this.onFocus} onBlur={this.onBlur}
-                     validateOnBlur={true} onChange={this.onNameChange} name={`${this.props.field.get('fieldPrefix')}.name`} placeholder="Event Name"
+                     validateOnBlur={true} name={`${this.props.field.get('fieldPrefix')}.name`} placeholder="Event Name"
                      style={{width: '55%'}}
                      validate={[Validation.Rules.required]}
                      className={`event-name-field-${this.props.field.get('id')}`}/>
