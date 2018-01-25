@@ -593,8 +593,8 @@ export const isDataStreamPristine = (field) => (
 export const isEventPristine = (field) => (
   !field.get('name') && !field.get('eventCode') &&
   !field.get('description') && !field.get('isNotificationsEnabled') &&
-  !field.get('emailNotifications') && !field.get('pushNotifications') &&
-  !field.get('ignorePeriod')
+  (!field.get('emailNotifications') || !field.get('emailNotifications').size) &&
+  (!field.get('pushNotifications') || !field.get('pushNotifications').size)
 );
 
 export const isMetadataPristine = () => ({

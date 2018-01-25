@@ -10,7 +10,8 @@ import {
   EVENT_TYPES,
   Metadata,
   FORMS,
-  hardcodedRequiredMetadataFieldsNames
+  hardcodedRequiredMetadataFieldsNames,
+  isEventPristine,
 } from 'services/Products';
 // import _ from 'lodash';
 import {SortableHandle} from 'react-sortable-hoc';
@@ -187,7 +188,7 @@ class Base extends React.Component {
                   <Col span={1} className="product-events-event-tools">
                     <this.toolsDragAndDropButton/>
 
-                    {this.props.anyTouched && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton()}
+                    {!isEventPristine(this.props.field) && this.toolsPopconfirmDeleteButton() || this.toolsDeleteButton()}
 
                     {this.toolsCloneButton()}
                   </Col>
