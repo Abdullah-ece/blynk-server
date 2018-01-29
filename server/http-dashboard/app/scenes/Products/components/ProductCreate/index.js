@@ -16,6 +16,7 @@ import {
   Events      as EventsTab,
   Metadata    as MetadataTab,
   DataStreams as DataStreamsTab,
+  // Dashboard   as DashboardTab,
 } from '../ProductManage';
 
 // import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
@@ -34,7 +35,8 @@ import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
 import {
-  reduxForm
+  reduxForm,
+  FieldArray
 } from 'redux-form';
 
 @reduxForm({
@@ -230,6 +232,19 @@ class ProductCreate extends React.Component {
     return this.props.submitFailed && isAnyEventHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
   }
 
+  productDashboardInvalidIcon() {
+    const isAnyWidgetHasError = () => {
+      if(!this.props.formSyncErrors.has('webDashboard'))
+        return false;
+
+      return this.props.formSyncErrors.get('webDashboard').reduce((acc, item) => {
+        return (!acc && item && item.count && item.count() >= 0) || acc;
+      }, false);
+    };
+
+    return this.props.submitFailed && isAnyWidgetHasError() && (<Icon type="exclamation-circle-o" className="product-tab-invalid"/>) || null;
+  }
+
   handleCancel() {
     this.props.onCancel();
   }
@@ -270,16 +285,21 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA} forceRender={true}>
-              <MetadataTab/>
+              <FieldArray name={`metaFields`} component={MetadataTab}/>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
-              <DataStreamsTab/>
+              <FieldArray name={`dataStreams`} component={DataStreamsTab}/>
+              {/*</>*/}
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
-              <EventsTab/>
+              <FieldArray component={EventsTab} name={`events`}/>
             </Tabs.TabPane>
+
+            {/*<Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>*/}
+              {/*<FieldArray component={DashboardTab} name={`webDashboard`}/>*/}
+            {/*</Tabs.TabPane>*/}
 
           </Tabs>
 
