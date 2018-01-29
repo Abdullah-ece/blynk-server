@@ -277,7 +277,7 @@ class ProductCreate extends React.Component {
               <DataStreamsTab/>
             </Tabs.TabPane>
 
-            <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
+            <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
               <EventsTab/>
             </Tabs.TabPane>
 
