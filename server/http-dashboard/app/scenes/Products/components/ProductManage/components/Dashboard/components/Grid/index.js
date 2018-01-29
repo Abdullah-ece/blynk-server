@@ -17,17 +17,11 @@ class Grid extends React.Component {
       id: PropTypes.number.isRequired
     }).isRequired,
 
-    onChange: PropTypes.func
   };
 
   constructor(props) {
     super(props);
 
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(widgets) {
-    this.props.onChange(widgets);
   }
 
   render() {
@@ -43,7 +37,7 @@ class Grid extends React.Component {
 
     return (
       <div className="product-manage-dashboard-grid">
-        <Widgets editable={true} data={widgets} onChange={this.handleChange} params={this.props.params}/>
+        <Widgets editable={true} data={widgets} params={this.props.params}/>
       </div>
     );
   }

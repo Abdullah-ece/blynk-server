@@ -41,10 +41,15 @@ import {
   WidgetDevicesPreviewHistoryClear
 } from 'data/Widgets/actions';
 
+import {FORMS} from 'services/Products';
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
-  dataStreams: (state.Product.edit.dataStreams && state.Product.edit.dataStreams.fields || []),
+  dataStreams: (() => {
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state);
+
+    return (formValues && formValues.dataStreams || []);
+  })(),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -72,7 +77,7 @@ class LabelWidgetSettings extends React.Component {
         sourceType: PropTypes.oneOf(['RAW_DATA', 'SUM', 'AVG', 'MED', 'MIN', 'MAX', 'COUNT']),
         dataStream: PropTypes.shape({
           id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-          pin: PropTypes.number,
+          pin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
           name: PropTypes.string
         }),
         selectedColumns: PropTypes.array,
@@ -186,7 +191,7 @@ class LabelWidgetSettings extends React.Component {
 
       const getStreamByPin = (pin) => {
         return _.find(props.dataStreams, (stream) => {
-          return parseInt(stream.values.pin) === parseInt(pin);
+          return parseInt(stream.pin) === parseInt(pin);
         });
       };
 
@@ -195,7 +200,7 @@ class LabelWidgetSettings extends React.Component {
       if(!dataStream)
         return props.changeForm(this.props.form, 'sources.0.dataStream', null);
 
-      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
+      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream);
 
     };
 
@@ -340,6 +345,7 @@ class LabelWidgetSettings extends React.Component {
   }
 
   handleSave() {
+
     if (typeof this.props.handleSubmit === 'function')
       this.props.handleSubmit();
   }
@@ -350,8 +356,8 @@ class LabelWidgetSettings extends React.Component {
     this.props.dataStreams.forEach((stream) => {
 
       dataStreamsOptions.push({
-        key: `${stream.values.pin}`,
-        value: stream.values.label,
+        key: `${stream.pin}`,
+        value: stream.label,
       });
 
 

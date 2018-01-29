@@ -8,6 +8,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Scroll from 'react-scroll';
 import {getCoordinatesToSet} from 'services/Widgets';
+import {Field, Fields} from 'redux-form';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -32,8 +33,6 @@ class Widgets extends React.Component {
     params: PropTypes.shape({
       id: PropTypes.number.isRequired
     }).isRequired,
-
-    onChange: PropTypes.func,
   };
 
   constructor(props) {
@@ -43,11 +42,11 @@ class Widgets extends React.Component {
       currentBreakpoint: 'lg',
     };
 
-    this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.handleWidgetClone = this.handleWidgetClone.bind(this);
+    this.widget = this.widget.bind(this);
+    // this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
-    this.handleWidgetChange = this.handleWidgetChange.bind(this);
-    this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+    // this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+    this.responsiveGridLayout = this.responsiveGridLayout.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -96,36 +95,18 @@ class Widgets extends React.Component {
     });
   }
 
-  onLayoutChange(layout) {
-    if (this.props.onChange)
-      this.props.onChange(layout);
-  }
+   handleWidgetClone(widget) {
 
-  handleWidgetChange(widget) {
-    this.props.onChange(
-      this.props.data.lg.map((w) => {
-        if (Number(w.id) === Number(widget.id))
-          return widget;
-        return w;
-      })
-    );
-  }
+     const widgets = [...this.props.data.lg];
 
-  handleWidgetClone(widget) {
+     const coords = getCoordinatesToSet(widget, widgets, this.state.currentBreakpoint);
 
-    const widgets = [...this.props.data.lg];
-
-    const clonedWidgetId = _.random(1, 999999999);
-
-    const coords = getCoordinatesToSet(widget, widgets, this.state.currentBreakpoint);
-
-    widgets.push({
-      ...widget,
-      id: clonedWidgetId,
-      label: `${widget.label} Copy`,
-      name: widget.type + clonedWidgetId,
-      x: coords.x,
-      y: coords.y,
+     widgets.push({
+       ...widget,
+       id: _.random(1, 999999999),
+       label: `${widget.label} Copy`,
+       x: coords.x,
+       y: coords.y,
     });
 
     this.props.onChange(
@@ -133,34 +114,67 @@ class Widgets extends React.Component {
     );
   }
 
-  handleWidgetDelete(id) {
+  // handleWidgetDelete(id) {
+  //
+  //   if (this.props.onChange)
+  //     this.props.onChange(
+  //       this.props.data.lg.filter((widget) => Number(widget.id) !== Number(id))
+  //     );
+  // }
 
-    if (this.props.onChange)
-      this.props.onChange(
-        this.props.data.lg.filter((widget) => Number(widget.id) !== Number(id))
-      );
+  widget(props) {
+
+    const onChange = (widget) => {
+      props.input.onChange(widget);
+    };
+
+    const widget = props.input.value;
+
+    return (
+      <Widget id={Number(widget.id)}
+              key={widget.id}
+              style={props.style}
+              onMouseDown={props.onMouseDown}
+              onMouseUp={props.onMouseUp}
+              onTouchStart={props.onTouchStart}
+              onTouchEnd={props.onTouchEnd}
+              fetchRealData={this.props.fetchRealData}
+              params={this.props.params}
+              data={widget}
+              editable={this.props.editable}
+              onWidgetChange={onChange}
+              onWidgetDelete={this.handleWidgetDelete}
+              onWidgetClone={this.handleWidgetClone}
+              isPreviewOnly={this.props.isPreviewOnly}
+      />
+    );
   }
 
   generateDOM() {
 
     return _.map(this.props.data[this.state.currentBreakpoint], (widget) => {
       return (
-        <Widget id={Number(widget.id)}
-                key={widget.id}
-                fetchRealData={this.props.fetchRealData}
-                params={this.props.params}
-                data={widget}
-                editable={this.props.editable}
-                onWidgetChange={this.handleWidgetChange}
-                onWidgetDelete={this.handleWidgetDelete}
-                onWidgetClone={this.handleWidgetClone}
-                isPreviewOnly={this.props.isPreviewOnly}
-        />
+        <Field name={`${widget.fieldName}`} key={widget.id} component={this.widget}/>
       );
     });
   }
 
-  render() {
+  responsiveGridLayout(props) {
+    const onDragStop = (layout, oldItem, newItem) => {
+
+      const item = _.find(props.webDashboard, (item) => {
+        return Number(item.input.value.id) === Number(newItem.i);
+      });
+
+      item.input.onChange({
+        ...item.input.value,
+        x: newItem.x,
+        y: newItem.y,
+        width: newItem.width,
+        height: newItem.height,
+      });
+    };
+
     return (
       <ResponsiveGridLayout
         breakpoints={this.props.breakpoints || Widgets.breakpoints}
@@ -176,7 +190,7 @@ class Widgets extends React.Component {
         isDraggable={this.props.editable}
         isResizable={this.props.editable}
 
-        onLayoutChange={this.onLayoutChange}
+        onDragStop={onDragStop}
         onBreakpointChange={this.onBreakpointChange}
 
         autoSize={true}
@@ -184,6 +198,17 @@ class Widgets extends React.Component {
       >
         {this.generateDOM()}
       </ResponsiveGridLayout>
+    );
+  }
+
+  render() {
+
+    const names = _.map(this.props.data[this.state.currentBreakpoint], (widget) => {
+      return (widget.fieldName);
+    });
+
+    return (
+      <Fields names={names} component={this.responsiveGridLayout} />
     );
   }
 

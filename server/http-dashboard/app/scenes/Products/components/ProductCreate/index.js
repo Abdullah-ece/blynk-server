@@ -16,7 +16,7 @@ import {
   Events      as EventsTab,
   Metadata    as MetadataTab,
   DataStreams as DataStreamsTab,
-  // Dashboard   as DashboardTab,
+  Dashboard   as DashboardTab,
 } from '../ProductManage';
 
 // import DashboardTab                         from 'scenes/Products/scenes/Dashboard';
@@ -297,9 +297,9 @@ class ProductCreate extends React.Component {
               <FieldArray component={EventsTab} name={`events`}/>
             </Tabs.TabPane>
 
-            {/*<Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>*/}
-              {/*<FieldArray component={DashboardTab} name={`webDashboard`}/>*/}
-            {/*</Tabs.TabPane>*/}
+            <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
+              <FieldArray component={DashboardTab} name={`webDashboard`}/>
+            </Tabs.TabPane>
 
           </Tabs>
 
