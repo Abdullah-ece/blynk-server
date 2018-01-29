@@ -239,10 +239,10 @@ class Create extends React.Component {
   // }
 
   // routerWillLeave(route) {
-    // const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
-    //
-    // if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
-    //   return 'Leave this page without saving your changes?';
+  //   const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
+  //
+  //   if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
+  //     return 'Leave this page without saving your changes?';
   // }
 
   // isMetadataFormInvalid() {
@@ -280,59 +280,20 @@ class Create extends React.Component {
 
   // loading = false;
 
-  // handleSubmit() {
-  //   this.loading = true;
-  //   if (Array.isArray(this.props.product.metadata.fields)) {
-  //     this.props.product.metadata.fields.forEach((field) => {
-  //       this.props.submitFormById(`metadatafield${field.id}`);
-  //     });
-  //   }
-  //
-  //   if (Array.isArray(this.props.product.events.fields)) {
-  //     this.props.product.events.fields.forEach((field) => {
-  //       this.props.submitFormById(`event${field.id}`);
-  //     });
-  //   }
-  //
-  //   if (Array.isArray(this.props.product.dataStreams.fields)) {
-  //     this.props.product.dataStreams.fields.forEach((field) => {
-  //       this.props.submitFormById(`datastreamfield${field.id}`);
-  //     });
-  //   }
-  //
-  //   this.props.submitFormById(`product-edit-info`);
-  //
-  //   this.setState({
-  //     submited: true
-  //   });
-  //
-  //   if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
-  //
-  //     this.props.Create({
-  //       product: prepareProductForSave({
-  //         ...this.props.product,
-  //         webDashboard: {
-  //           ...this.props.dashboard.updateIn(['widgets'], (widgets) => (
-  //             widgets.map((widget) => ({
-  //               ...widget.toJS(),
-  //               width: widget.get('w'),
-  //               height: widget.get('h'),
-  //             }))
-  //           )).toJS()
-  //         }
-  //       }),
-  //       orgId: this.props.orgId
-  //     }).then(() => {
-  //       this.isProductCreated = true;
-  //       this.loading = false;
-  //       this.context.router.push(`/products/?success=true`);
-  //     }).catch((response) => {
-  //       message.error(response && response.error && response.error.response.message || 'Cannot create product');
-  //     });
-  //
-  //   }
-  //
-  // }
+  handleSubmit(product) {
+    this.loading = true;
+
+    return this.props.Create({
+      product: product,
+      orgId: this.props.orgId
+    }).then(() => {
+      // this.isProductCreated = true;
+      this.context.router.push(`/products/?success=true`);
+    }).catch((response) => {
+      message.error(response && response.error && response.error.response.message || 'Cannot create product');
+    });
+
+  }
   //
   // onInfoValuesChange(values) {
   //   this.props.ProductEditInfoValuesUpdate(values);
@@ -360,18 +321,6 @@ class Create extends React.Component {
 
   handleCancel() {
     this.context.router.push(`/products`);
-  }
-
-  handleSubmit() {
-
-    return this.props.Create({
-      product: this.props.formValues.toJS(),
-      orgId: this.props.orgId,
-    }).then(() => {
-      this.context.router.push(`/products/?success=true`);
-    }).catch((response) => {
-      message.error(response && response.error && response.error.response.message || 'Cannot create product');
-    });
   }
 
   render() {
