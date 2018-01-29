@@ -4,7 +4,7 @@ import {BackTop} from 'components';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
 import {fromJS} from 'immutable';
-import {Unit, FORMS, isDataStreamPristine} from "services/Products";
+import {Unit, FORMS, isDataStreamPristine, getNextId} from "services/Products";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import _ from 'lodash';
 import {change, getFormSyncErrors} from 'redux-form';
@@ -213,7 +213,7 @@ class List extends React.Component {
 
     const cloned = _.find(this.props.fields.getAll(), {id: id});
 
-    const nextId = new Date().getTime();
+    const nextId = getNextId(this.props.fields.getAll());
 
     let name = '';
     let nameUnique = !cloned.label; //if cloned name is empty don't find unique name
@@ -248,7 +248,7 @@ class List extends React.Component {
 
   addDataStreamsField() {
 
-    const nextId = new Date().getTime();
+    const nextId = getNextId(this.props.fields.getAll());
 
     this.props.fields.push({
       id: nextId,

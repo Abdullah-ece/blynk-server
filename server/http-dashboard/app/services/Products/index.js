@@ -7,12 +7,21 @@ import {
   DEFAULT_CONNECTION_TYPE,
 } from 'services/Devices';
 
+import {List, fromJS} from 'immutable';
+
 export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',
   DATA_STREAMS: 'datastreams',
   EVENTS: 'events',
   DASHBOARD: 'dashboard'
+};
+
+export const getNextId = (items) => {
+  if(!(items instanceof List))
+    items = fromJS(items);
+
+  return items.reduce((acc, item) => Number(item.get('id')) > acc ? Number(item.get('id')) : acc, 0) + 1;
 };
 
 export const FORMS = {

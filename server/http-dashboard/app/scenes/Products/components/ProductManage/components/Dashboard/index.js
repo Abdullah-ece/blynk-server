@@ -4,6 +4,7 @@ import {
   Grid
 } from './components';
 import PropTypes from 'prop-types';
+import {getNextId} from 'services/Products';
 import {fromJS} from 'immutable';
 import './styles.less';
 
@@ -23,7 +24,7 @@ class Dashboard extends React.Component {
   handleWidgetAdd(widget) {
     this.props.fields.push({
       ...widget,
-      id: new Date().getTime(),
+      id: getNextId(this.props.fields.getAll()),
     });
   }
 

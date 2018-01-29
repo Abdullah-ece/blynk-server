@@ -2,7 +2,7 @@ import React from 'react';
 import Scroll from 'react-scroll';
 // import {BackTop} from 'components';
 import {Online, Offline, Info, Warning, Critical, Add} from 'scenes/Products/components/Events';
-import {EVENT_TYPES, FORMS} from 'services/Products';
+import {EVENT_TYPES, FORMS, getNextId} from 'services/Products';
 // import {getNextId} from 'services/Entity';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import _ from 'lodash';
@@ -150,7 +150,7 @@ class List extends React.Component {
     this.props.fields.push({
       ...cloned,
       name: name,
-      id: new Date().getTime(),
+      id: getNextId(this.props.fields.getAll()),
       isRecentlyCreated: true,
     });
 
@@ -226,7 +226,7 @@ class List extends React.Component {
   //
   handleAddField(type) {
 
-    const nextId = new Date().getTime();
+    const nextId = getNextId(this.props.fields.getAll());
 
     this.props.fields.push({
       id: nextId,

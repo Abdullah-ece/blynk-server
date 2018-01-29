@@ -7,6 +7,7 @@ import {
   hardcodedRequiredMetadataFieldsNames,
   FORMS,
   isMetadataPristine,
+  getNextId
 } from 'services/Products';
 import Metadata from "scenes/Products/components/Metadata";
 import {MetadataRolesDefault} from 'services/Roles';
@@ -280,7 +281,7 @@ class ProductMetadata extends React.Component {
     this.props.fields.push({
       ...cloned,
       name: name,
-      id: new Date().getTime()
+      id: getNextId(this.props.fields.getAll())
     });
 
     const newIndex = this.props.fields.getAll().length;
@@ -391,7 +392,7 @@ class ProductMetadata extends React.Component {
 
   addMetadataField(params) {
 
-    const nextId = new Date().getTime();
+    const nextId = getNextId(this.props.fields.getAll());
     this.props.fields.push({
       id: nextId,
       role: MetadataRolesDefault,
