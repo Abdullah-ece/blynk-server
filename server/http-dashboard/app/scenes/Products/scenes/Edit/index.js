@@ -95,6 +95,7 @@ import PropTypes from 'prop-types';
 //   // Fetch: bindActionCreators(API.ProductsFetch, dispatch),
   Create: bindActionCreators(API.ProductCreate, dispatch),
   Update: bindActionCreators(API.ProductUpdate, dispatch),
+  Delete: bindActionCreators(API.ProductDelete, dispatch),
   updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
 //   // destroyForm: bindActionCreators(destroy, dispatch),
 //   initializeForm: bindActionCreators(initialize, dispatch),
@@ -129,6 +130,7 @@ class Edit extends React.Component {
 
     Create: PropTypes.func,
     Update: PropTypes.func,
+    Delete: PropTypes.func,
     updateDevicesByProduct: PropTypes.func,
   };
 
@@ -136,6 +138,7 @@ class Edit extends React.Component {
     super(props);
 
     this.state = {
+      isDeleteDialogVisible: false,
       isDevicesForceUpdateVisible: false,
       deviceForceUpdateLoading: false
     };
@@ -145,7 +148,10 @@ class Edit extends React.Component {
     // this.handleProductDeviceForceUpdateCancel = this.handleProductDeviceForceUpdateCancel.bind(this);
     // this.handleProductDeviceForceUpdateSubmit = this.handleProductDeviceForceUpdateSubmit.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleHideDeleteDialog = this.handleHideDeleteDialog.bind(this);
+    this.handleShowDeleteDialog = this.handleShowDeleteDialog.bind(this);
     // this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     // this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
@@ -400,14 +406,26 @@ class Edit extends React.Component {
     });
   }
   //
-  // handleDeleteSubmit() {
-  //   return this.props.Delete(this.props.params.id).then(() => {
-  //     this.context.router.push('/products?deleted=true');
-  //   }).catch((err) => {
-  //     message.error(err.message || 'Cannot delete product');
-  //   });
-  // }
-  //
+  handleDelete() {
+    return this.props.Delete(this.props.params.id).then(() => {
+      this.context.router.push('/products?deleted=true');
+    }).catch((err) => {
+      message.error(err.message || 'Cannot delete product');
+    });
+  }
+
+  handleHideDeleteDialog() {
+    this.setState({
+      isDeleteDialogVisible: false
+    });
+  }
+
+  handleShowDeleteDialog() {
+    this.setState({
+      isDeleteDialogVisible: true
+    });
+  }
+
 
 
   render() {
@@ -429,7 +447,10 @@ class Edit extends React.Component {
                      onTabChange={this.handleTabChange}
                      onCancel={this.handleCancel}
                      onSubmit={this.handleSubmit}
-
+                     onDelete={this.handleDelete}
+                     isDeleteDialogVisible={this.state.isDeleteDialogVisible}
+                     onHideDeleteDialog={this.handleHideDeleteDialog}
+                     onShowDeleteDialog={this.handleShowDeleteDialog}
                      isDevicesForceUpdateVisible={this.state.isDevicesForceUpdateVisible}
                      deviceForceUpdateLoading={this.state.deviceForceUpdateLoading}
                      onDevicesForceUpdateSubmit={this.handleDevicesForceUpdateSubmit}

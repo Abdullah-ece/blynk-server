@@ -17,7 +17,7 @@ import {
 
 // import _                        from 'lodash';
 // import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
-// import DeleteModal              from './components/Delete';
+import DeleteModal              from './components/Delete';
 
 import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
 
@@ -47,7 +47,11 @@ class ProductEdit extends React.Component {
     onCancel: PropTypes.func,
     onDevicesForceUpdateSubmit: PropTypes.func,
     onDevicesForceUpdateCancel: PropTypes.func,
+    onHideDeleteDialog: PropTypes.func,
+    onShowDeleteDialog: PropTypes.func,
+    onDelete: PropTypes.func,
 
+    isDeleteDialogVisible: PropTypes.bool,
     isDevicesForceUpdateVisible: PropTypes.bool,
     deviceForceUpdateLoading: PropTypes.bool,
 
@@ -92,15 +96,13 @@ class ProductEdit extends React.Component {
     // });
     //
     this.state = {
-      activeTab: props && props.activeTab || TABS.INFO,
       metadataIntroVisible: false,
-      showDeleteModal: false,
     };
     //
     // this.toggleDelete = this.toggleDelete.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
-    // this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     // this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
 
   }
@@ -152,10 +154,10 @@ class ProductEdit extends React.Component {
     // });
   }
 
-  handleDeleteSubmit() {
-    // return this.props.onDelete(this.props.params.id).then(() => {
-    //   this.toggleDelete();
-    // });
+  handleDelete() {
+    return this.props.onDelete().then(() => {
+      this.props.onHideDeleteDialog();
+    });
   }
 
   productInfoInvalidIcon() {
@@ -232,7 +234,7 @@ class ProductEdit extends React.Component {
                              options={(
 
                                <div>
-                                 <Button type="danger" onClick={this.toggleDelete}>Delete</Button>
+                                 <Button type="danger" onClick={this.props.onShowDeleteDialog}>Delete</Button>
                                  <Button type="default"
                                          onClick={this.props.onCancel}>
                                    Cancel
@@ -286,9 +288,11 @@ class ProductEdit extends React.Component {
 
             </Tabs>
 
-            {/*<DeleteModal deviceCount={this.state.currentProduct.deviceCount} onCancel={this.toggleDelete}*/}
-                         {/*visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit}*/}
-                         {/*productName={this.state.currentProduct.name}/>*/}
+            <DeleteModal deviceCount={this.props.initialValues.deviceCount}
+                         onCancel={this.props.onHideDeleteDialog}
+                         handleSubmit={this.handleDelete}
+                         visible={this.props.isDeleteDialogVisible}
+                         productName={this.props.initialValues.name}/>
 
             <ProductDevicesForceUpdate
               isModalVisible={this.props.isDevicesForceUpdateVisible}
