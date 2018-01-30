@@ -16,7 +16,7 @@ import {
 import {fromJS, Map} from 'immutable';
 import {message} from 'antd';
 import {MainLayout} from 'components';
-// import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
+import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 // import {OrganizationFetch} from 'data/Organization/actions';
 import {
   // repareProductForSave,
@@ -42,6 +42,8 @@ import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => {
   return {
+
+    isMetadataFirstTime: state.Storage.products.metadataFirstTime,
 
     formSyncErrors:  fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
 
@@ -97,6 +99,7 @@ import PropTypes from 'prop-types';
   Update: bindActionCreators(API.ProductUpdate, dispatch),
   Delete: bindActionCreators(API.ProductDelete, dispatch),
   updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
+  updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
 //   // destroyForm: bindActionCreators(destroy, dispatch),
 //   initializeForm: bindActionCreators(initialize, dispatch),
 //   // ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
@@ -124,6 +127,8 @@ class Edit extends React.Component {
       tab: PropTypes.string,
     }),
 
+    isMetadataFirstTime: PropTypes.bool,
+
     orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     formSyncErrors: PropTypes.instanceOf(Map),
@@ -132,6 +137,7 @@ class Edit extends React.Component {
     Update: PropTypes.func,
     Delete: PropTypes.func,
     updateDevicesByProduct: PropTypes.func,
+    updateMetadataFirstTimeFlag: PropTypes.func,
   };
 
   constructor(props) {
@@ -455,6 +461,8 @@ class Edit extends React.Component {
                      deviceForceUpdateLoading={this.state.deviceForceUpdateLoading}
                      onDevicesForceUpdateSubmit={this.handleDevicesForceUpdateSubmit}
                      onDevicesForceUpdateCancel={this.handleDevicesForceUpdateCancel}
+                     isMetadataInfoRead={!this.props.isMetadataFirstTime}
+                     updateMetadataFirstTimeFlag={this.props.updateMetadataFirstTimeFlag}
     //                  invalid={this.props.invalid}
     //                  loading={this.props.loading}
     //                  submitting={this.props.submitting}

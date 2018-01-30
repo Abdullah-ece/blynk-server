@@ -3,7 +3,7 @@ import {
   Button,
   Tabs,
   Icon,
-  // Popover
+  Popover
 }                                           from 'antd';
 import {MainLayout}                         from 'components';
 import {TABS}                               from 'services/Products';
@@ -16,7 +16,7 @@ import {
 }                                           from '../ProductManage';
 
 // import _                        from 'lodash';
-// import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
+import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 import DeleteModal              from './components/Delete';
 
 import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
@@ -50,10 +50,12 @@ class ProductEdit extends React.Component {
     onHideDeleteDialog: PropTypes.func,
     onShowDeleteDialog: PropTypes.func,
     onDelete: PropTypes.func,
+    updateMetadataFirstTimeFlag: PropTypes.func,
 
     isDeleteDialogVisible: PropTypes.bool,
     isDevicesForceUpdateVisible: PropTypes.bool,
     deviceForceUpdateLoading: PropTypes.bool,
+    isMetadataInfoRead: PropTypes.bool,
 
     /*reduxForm props*/
     submitFailed: PropTypes.bool,
@@ -103,7 +105,7 @@ class ProductEdit extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    // this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
+    this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
 
   }
 
@@ -116,24 +118,24 @@ class ProductEdit extends React.Component {
   }
 
   isMetadataIntroductionMessageVisible() {
-    // if (!this.props.isMetadataInfoRead) return true;
-    //
-    // return this.state.metadataIntroVisible;
+    if (!this.props.isMetadataInfoRead) return true;
+
+    return this.state.metadataIntroVisible;
   }
 
 
   toggleMetadataIntroductionMessage() {
 
-    // this.setState({
-    //   metadataIntroVisible: !this.state.metadataIntroVisible,
-    // });
-    //
-    // if (!this.props.isMetadataInfoRead) {
-    //   this.props.updateMetadataFirstTimeFlag(false);
-    //   this.setState({
-    //     metadataIntroVisible: false
-    //   });
-    // }
+    this.setState({
+      metadataIntroVisible: !this.state.metadataIntroVisible,
+    });
+
+    if (!this.props.isMetadataInfoRead) {
+      this.props.updateMetadataFirstTimeFlag(false);
+      this.setState({
+        metadataIntroVisible: false
+      });
+    }
   }
 
   handleTabChange(key) {
@@ -250,16 +252,16 @@ class ProductEdit extends React.Component {
                              )}
           />
           <MainLayout.Content className="product-edit-content">
-            {/*{this.state.activeTab === TABS.METADATA && <Popover*/}
-              {/*placement="bottomRight"*/}
-              {/*content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage}/>}*/}
-              {/*visible={this.isMetadataIntroductionMessageVisible()}*/}
-              {/*overlayClassName="products-metadata-introduction-message-popover"*/}
-              {/*trigger="click">*/}
+            {this.props.activeTab === TABS.METADATA && <Popover
+              placement="bottomRight"
+              content={<MetadataIntroductionMessage onGotItClick={this.toggleMetadataIntroductionMessage}/>}
+              visible={this.isMetadataIntroductionMessageVisible()}
+              overlayClassName="products-metadata-introduction-message-popover"
+              trigger="click">
 
-              {/*<Icon type="info-circle" className="products-metadata-info"*/}
-                    {/*onClick={this.toggleMetadataIntroductionMessage}/>*/}
-            {/*</Popover>}*/}
+              <Icon type="info-circle" className="products-metadata-info"
+                    onClick={this.toggleMetadataIntroductionMessage}/>
+            </Popover>}
 
             <Tabs defaultActiveKey={TABS.INFO}
                   activeKey={this.props.activeTab}
