@@ -1,6 +1,6 @@
 import React                                from 'react';
 import {
-  // Button,
+  Button,
   Tabs,
   Icon,
   // Popover
@@ -18,6 +18,8 @@ import {
 // import _                        from 'lodash';
 // import MetadataIntroductionMessage          from '../MetadataIntroductionMessage';
 // import DeleteModal              from './components/Delete';
+
+import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
 
 import {
   FieldArray,
@@ -42,9 +44,19 @@ class ProductEdit extends React.Component {
     formSyncErrors: PropTypes.instanceOf(Map),
 
     onTabChange: PropTypes.func,
+    onCancel: PropTypes.func,
+    onDevicesForceUpdateSubmit: PropTypes.func,
+    onDevicesForceUpdateCancel: PropTypes.func,
+
+    isDevicesForceUpdateVisible: PropTypes.bool,
+    deviceForceUpdateLoading: PropTypes.bool,
 
     /*reduxForm props*/
     submitFailed: PropTypes.bool,
+    submitting: PropTypes.bool,
+    dirty: PropTypes.bool,
+    invalid: PropTypes.bool,
+    handleSubmit: PropTypes.func,
     /*end reduxForm props*/
 
     // onTabChange: React.PropTypes.func,
@@ -86,7 +98,7 @@ class ProductEdit extends React.Component {
     };
     //
     // this.toggleDelete = this.toggleDelete.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     // this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
     // this.toggleMetadataIntroductionMessage = this.toggleMetadataIntroductionMessage.bind(this);
@@ -131,12 +143,7 @@ class ProductEdit extends React.Component {
   }
 
   handleSubmit() {
-    //
-    // this.setState({
-    //   submited: true
-    // });
-    //
-    // this.props.handleSubmit();
+    this.props.handleSubmit();
   }
 
   toggleDelete() {
@@ -222,23 +229,23 @@ class ProductEdit extends React.Component {
 
         <div>
           <MainLayout.Header title={this.props.initialValues.name}
-                             // options={(
-                               /*
+                             options={(
+
                                <div>
                                  <Button type="danger" onClick={this.toggleDelete}>Delete</Button>
                                  <Button type="default"
-                                         onClick={this.props.handleCancel}>
+                                         onClick={this.props.onCancel}>
                                    Cancel
                                  </Button>
                                  <Button type="primary"
                                          onClick={this.handleSubmit}
-                                         loading={this.props.loading}
-                                         disabled={this.props.isFormDirty === false || (this.state.submited && (this.props.isDataStreamsFormInvalid || this.props.isInfoFormInvalid || this.props.isMetadataFormInvalid))}>
-                                   {this.props.successButtonLabel || 'Save'}
+                                         loading={this.props.submitting}
+                                         disabled={this.props.dirty === false || (this.props.submitFailed && this.props.invalid)}>
+                                   Save
                                  </Button>
                                </div>
-                               */
-                             //)}
+
+                             )}
           />
           <MainLayout.Content className="product-edit-content">
             {/*{this.state.activeTab === TABS.METADATA && <Popover*/}
@@ -278,9 +285,18 @@ class ProductEdit extends React.Component {
               </Tabs.TabPane>
 
             </Tabs>
+
             {/*<DeleteModal deviceCount={this.state.currentProduct.deviceCount} onCancel={this.toggleDelete}*/}
                          {/*visible={this.state.showDeleteModal} handleSubmit={this.handleDeleteSubmit}*/}
                          {/*productName={this.state.currentProduct.name}/>*/}
+
+            <ProductDevicesForceUpdate
+              isModalVisible={this.props.isDevicesForceUpdateVisible}
+              loading={this.props.deviceForceUpdateLoading}
+              product={this.props.initialValues}
+              onSave={this.props.onDevicesForceUpdateSubmit}
+              onCancel={this.props.onDevicesForceUpdateCancel}/>
+
           </MainLayout.Content>
         </div>
 

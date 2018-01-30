@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.less';
 
 import {connect} from 'react-redux';
-// import {bindActionCreators} from 'redux';
+import {bindActionCreators} from 'redux';
 
 import {
   // submit,
@@ -14,18 +14,18 @@ import {
 } from 'redux-form';
 
 import {fromJS, Map} from 'immutable';
-// import {message} from 'antd';
+import {message} from 'antd';
 import {MainLayout} from 'components';
 // import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 // import {OrganizationFetch} from 'data/Organization/actions';
 import {
   // repareProductForSave,
   // TABS,
-  // DEVICE_FORCE_UPDATE,
+  DEVICE_FORCE_UPDATE,
   FORMS
 } from 'services/Products';
 // import {prepareWidgetForProductEdit} from 'services/Widgets';
-// import * as API from 'data/Product/api';
+import * as API from 'data/Product/api';
 // import {
 //   ProductSetEdit,
 //   ProductEditEventsFieldsUpdate,
@@ -39,7 +39,6 @@ import {
 // import _ from 'lodash';
 import ProductEdit from 'scenes/Products/components/ProductEdit';
 import PropTypes from 'prop-types';
-// import ProductDevicesForceUpdate from 'scenes/Products/components/ProductDevicesForceUpdate';
 
 @connect((state, ownProps) => {
   return {
@@ -91,10 +90,12 @@ import PropTypes from 'prop-types';
 //     // isMetadataFirstTime: state.Storage.products.metadataFirstTime,
 //     // dashboard: fromJS(getFormValues(FORMS.DASHBOARD)(state) || {}),
   };
-}, (/*dispatch*/) => ({
+}, (dispatch) => ({
 //   // submitFormById: bindActionCreators(submit, dispatch),
 //   // Fetch: bindActionCreators(API.ProductsFetch, dispatch),
-//   Create: bindActionCreators(API.ProductCreate, dispatch),
+  Create: bindActionCreators(API.ProductCreate, dispatch),
+  Update: bindActionCreators(API.ProductUpdate, dispatch),
+  updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
 //   // destroyForm: bindActionCreators(destroy, dispatch),
 //   initializeForm: bindActionCreators(initialize, dispatch),
 //   // ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
@@ -122,24 +123,29 @@ class Edit extends React.Component {
       tab: PropTypes.string,
     }),
 
-    formSyncErrors: PropTypes.instanceOf(Map)
+    orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+    formSyncErrors: PropTypes.instanceOf(Map),
+
+    Create: PropTypes.func,
+    Update: PropTypes.func,
+    updateDevicesByProduct: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    // this.state = {
-    //   activeTab: props && props.params.tab || TABS.INFO,
-    //   isDevicesForceUpdateVisible: false,
-    //   deviceForceUpdateLoading: false
-    // };
+    this.state = {
+      isDevicesForceUpdateVisible: false,
+      deviceForceUpdateLoading: false
+    };
 
     // this.routerWillLeave = this.routerWillLeave.bind(this);
     //
     // this.handleProductDeviceForceUpdateCancel = this.handleProductDeviceForceUpdateCancel.bind(this);
     // this.handleProductDeviceForceUpdateSubmit = this.handleProductDeviceForceUpdateSubmit.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
-    // this.handleCancel = this.handleCancel.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     // this.handleDeleteSubmit = this.handleDeleteSubmit.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     // this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
@@ -148,7 +154,9 @@ class Edit extends React.Component {
     // this.onEventsFieldsChange = this.onEventsFieldsChange.bind(this);
     // this.onDataStreamsFieldChange = this.onDataStreamsFieldChange.bind(this);
     // this.onDataStreamsFieldsChange = this.onDataStreamsFieldsChange.bind(this);
-    // this.handleProductSaveSuccess = this.handleProductSaveSuccess.bind(this);
+    this.handleProductSaveSuccess = this.handleProductSaveSuccess.bind(this);
+    this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdateSubmit.bind(this);
+    this.handleDevicesForceUpdateCancel = this.handleDevicesForceUpdateCancel.bind(this);
   }
 
   componentWillMount() {
@@ -234,52 +242,24 @@ class Edit extends React.Component {
   // }
   //
   handleCancel() {
-  //   if (this.state.activeTab) {
-  //     this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}`);
-  //   } else {
-  //     this.context.router.push(`/product/${this.props.params.id}`);
-  //   }
+    if (this.state.activeTab) {
+      this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}`);
+    } else {
+      this.context.router.push(`/product/${this.props.params.id}`);
+    }
   }
   //
-  handleSubmit() {
-  //
-  //   if (Array.isArray(this.props.product.metadata.fields)) {
-  //     this.props.product.metadata.fields.forEach((field) => {
-  //       this.props.submitFormById(`metadatafield${field.id}`);
-  //     });
-  //   }
-  //
-  //   if (Array.isArray(this.props.product.events.fields)) {
-  //     this.props.product.events.fields.forEach((field) => {
-  //       this.props.submitFormById(`event${field.id}`);
-  //     });
-  //   }
-  //
-  //   if (Array.isArray(this.props.product.dataStreams.fields)) {
-  //     this.props.product.dataStreams.fields.forEach((field) => {
-  //       this.props.submitFormById(`datastreamfield${field.id}`);
-  //     });
-  //   }
-  //
-  //   this.props.submitFormById(`product-edit-info`);
-  //
-  //   this.setState({
-  //     submited: true
-  //   });
-  //
-  //   if (!this.isDataStreamsFormInvalid() && !this.isMetadataFormInvalid() && !this.isInfoFormInvalid() && !this.isEventsFormInvalid()) {
-  //
-  //     if (this.doesProductHaveDevices()) {
-  //       this.setState({
-  //         isDevicesForceUpdateVisible: true
-  //       });
-  //     } else {
-  //       this.saveProductWithoutDevicesUpdate();
-  //     }
-  //
-  //
-  //   }
-  //
+  handleSubmit(product) {
+    if (this.doesProductHaveDevices()) {
+      this.setState({
+        isDevicesForceUpdateVisible: true
+      });
+
+      this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdateSubmit.bind(this, product);
+    } else {
+      this.saveProductWithoutDevicesUpdate(product);
+    }
+
   }
   //
   handleTabChange(key) {
@@ -310,42 +290,44 @@ class Edit extends React.Component {
   //   this.props.ProductEditEventsFieldsUpdate(field);
   // }
   //
-  // handleProductDeviceForceUpdateSubmit(value) {
-  //   if (value === DEVICE_FORCE_UPDATE.UPDATE_DEVICES) {
-  //     this.saveProductAndUpdateDevices();
-  //   } else if (value === DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE) {
-  //     this.saveProductWithoutDevicesUpdate();
-  //   } else if (value === DEVICE_FORCE_UPDATE.CLONE_PRODUCT) {
-  //     this.cloneProductWithoutSaving();
-  //   }
-  // }
-  //
-  // doesProductHaveDevices() {
-  //   let product = _.find(this.props.products, product => Number(product.id) === Number(this.props.params.id));
-  //
-  //   return product.deviceCount;
-  // }
-  //
-  // saveProduct(product) {
-  //   this.setState({
-  //     deviceForceUpdateLoading: true
-  //   });
-  //   return this.props.Update(product);
-  // }
-  //
-  // updateDevicesByProduct(product) {
-  //   return this.props.updateDevicesByProduct(product);
-  // }
-  //
-  // handleProductSaveSuccess(response) {
-  //   this.isProductSaved = true;
-  //   if (this.state.activeTab) {
-  //     this.context.router.push(`/product/${response.payload.data.id}/${this.state.activeTab}?save=true`);
-  //   } else {
-  //     this.context.router.push(`/product/${response.payload.data.id}?save=true`);
-  //   }
-  // }
-  //
+
+  handleDevicesForceUpdateSubmit(product, value) {
+    if (value === DEVICE_FORCE_UPDATE.UPDATE_DEVICES) {
+      this.saveProductAndUpdateDevices(product);
+    } else if (value === DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE) {
+      this.saveProductWithoutDevicesUpdate(product);
+    } else if (value === DEVICE_FORCE_UPDATE.CLONE_PRODUCT) {
+      this.cloneProductWithoutSaving(product);
+    }
+  }
+
+  doesProductHaveDevices() {
+    return this.props.product.get('deviceCount') || 0;
+  }
+
+  saveProduct(product) {
+    this.setState({
+      deviceForceUpdateLoading: true
+    });
+    return this.props.Update(product);
+  }
+
+  updateDevicesByProduct(product) {
+    return this.props.updateDevicesByProduct(product);
+  }
+
+  handleProductSaveSuccess(response) {
+    const { tab } = this.props.params;
+
+    this.isProductSaved = true;
+
+    if (tab) {
+      this.context.router.push(`/product/${response.payload.data.id}/${tab}?save=true`);
+    } else {
+      this.context.router.push(`/product/${response.payload.data.id}?save=true`);
+    }
+  }
+
   // getDashboardValues() {
   //   return {
   //     webDashboard: {
@@ -360,71 +342,63 @@ class Edit extends React.Component {
   //   };
   // }
   //
-  // saveProductAndUpdateDevices() {
-  //   let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
+  saveProductAndUpdateDevices(product) {
+
+    this.saveProduct({
+      product: product,
+      orgId: this.props.orgId
+    }).then(() => {
+      this.updateDevicesByProduct({
+        product: product,
+        orgId: this.props.orgId
+      })
+        .then(this.handleProductSaveSuccess)
+        .catch((response) => {
+          this.setState({
+            deviceForceUpdateLoading: false
+          });
+          message.error(response && response.error && response.error.response.message || 'Cannot save product');
+        });
+    }).catch((response) => {
+      this.setState({
+        deviceForceUpdateLoading: false
+      });
+      message.error(response && response.error && response.error.response.message || 'Cannot save product');
+    });
+  }
+
+  saveProductWithoutDevicesUpdate(product) {
+    this.saveProduct({
+      product: product,
+      orgId: this.props.orgId
+    })
+      .then(this.handleProductSaveSuccess)
+      .catch((response) => {
+        message.error(response && response.error && response.error.response.message || 'Cannot save product');
+      });
+  }
+
+  cloneProductWithoutSaving(product) {
+    product.name = `${product.name} Copy`;
+
+    this.props.Create({
+      product: product,
+      orgId: this.props.orgId
+    }).then(this.handleProductSaveSuccess)
+      .catch((response) => {
+        this.setState({
+          deviceForceUpdateLoading: false
+        });
+        message.error(response && response.error && response.error.response.message || 'Cannot clone product');
+      });
+
+  }
   //
-  //   this.saveProduct({
-  //     product: product,
-  //     orgId: this.props.orgId
-  //   }).then(() => {
-  //     this.updateDevicesByProduct({
-  //       product: product,
-  //       orgId: this.props.orgId
-  //     })
-  //       .then(this.handleProductSaveSuccess)
-  //       .catch((response) => {
-  //         this.setState({
-  //           deviceForceUpdateLoading: false
-  //         });
-  //         message.error(response && response.error && response.error.response.message || 'Cannot save product');
-  //       });
-  //   }).catch((response) => {
-  //     this.setState({
-  //       deviceForceUpdateLoading: false
-  //     });
-  //     message.error(response && response.error && response.error.response.message || 'Cannot save product');
-  //   });
-  // }
-  //
-  // saveProductWithoutDevicesUpdate() {
-  //   let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
-  //
-  //   this.saveProduct({
-  //     product: product,
-  //     orgId: this.props.orgId
-  //   })
-  //     .then(this.handleProductSaveSuccess)
-  //     .catch((response) => {
-  //       this.setState({
-  //         deviceForceUpdateLoading: false
-  //       });
-  //       message.error(response && response.error && response.error.response.message || 'Cannot save product');
-  //     });
-  // }
-  //
-  // cloneProductWithoutSaving() {
-  //   let product = prepareProductForSave({...this.props.product, ...this.getDashboardValues()});
-  //
-  //   product.name = `${product.name} Copy`;
-  //
-  //   this.props.Create({
-  //     product: product,
-  //     orgId: this.props.orgId
-  //   }).then(this.handleProductSaveSuccess)
-  //     .catch((response) => {
-  //       this.setState({
-  //         deviceForceUpdateLoading: false
-  //       });
-  //       message.error(response && response.error && response.error.response.message || 'Cannot clone product');
-  //     });
-  //
-  // }
-  //
-  // handleProductDeviceForceUpdateCancel() {
-  //   this.setState({
-  //     isDevicesForceUpdateVisible: false
-  //   });
-  // }
+  handleDevicesForceUpdateCancel() {
+    this.setState({
+      isDevicesForceUpdateVisible: false
+    });
+  }
   //
   // handleDeleteSubmit() {
   //   return this.props.Delete(this.props.params.id).then(() => {
@@ -434,6 +408,8 @@ class Edit extends React.Component {
   //   });
   // }
   //
+
+
   render() {
     // if (!this.props.product.info.values.id)
     //   return null;
@@ -444,13 +420,6 @@ class Edit extends React.Component {
     // };
     //
 
-    //     <ProductDevicesForceUpdate
-    //       isModalVisible={this.state.isDevicesForceUpdateVisible}
-    //       loading={this.state.deviceForceUpdateLoading}
-    //       product={_.find(this.props.products, product => Number(product.id) === Number(this.props.params.id))}
-    //       onSave={this.handleProductDeviceForceUpdateSubmit}
-    //       onCancel={this.handleProductDeviceForceUpdateCancel}/>
-
     return (
       <MainLayout>
         <ProductEdit form={FORMS.PRODUCTS_PRODUCT_MANAGE}
@@ -458,10 +427,16 @@ class Edit extends React.Component {
                      activeTab={this.props.params.tab}
                      formSyncErrors={this.props.formSyncErrors}
                      onTabChange={this.handleTabChange}
+                     onCancel={this.handleCancel}
+                     onSubmit={this.handleSubmit}
+
+                     isDevicesForceUpdateVisible={this.state.isDevicesForceUpdateVisible}
+                     deviceForceUpdateLoading={this.state.deviceForceUpdateLoading}
+                     onDevicesForceUpdateSubmit={this.handleDevicesForceUpdateSubmit}
+                     onDevicesForceUpdateCancel={this.handleDevicesForceUpdateCancel}
     //                  invalid={this.props.invalid}
     //                  loading={this.props.loading}
     //                  submitting={this.props.submitting}
-    //                  onSubmit={this.handleSubmit}
     //                  onCancel={this.handleCancel}
     //                  form={FORMS.PRODUCTS_PRODUCT_MANAGE}
     //                  formSyncErrors={this.props.formSyncErrors}
