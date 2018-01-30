@@ -23,7 +23,7 @@ import {connect} from 'react-redux';
 @connect((state) => ({
   contactMetaFields: (() => {
     /* get MetaFields type Contact and Hardcoded Device Owner to display those metaFields on Notifications select */
-    const formValues = fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state));
+    const formValues = fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state));
 
     return fromJS((formValues.get('metaFields') || []).filter(
       (metaField) => (

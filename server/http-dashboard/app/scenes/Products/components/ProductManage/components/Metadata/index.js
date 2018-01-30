@@ -87,7 +87,7 @@ class ProductMetadata extends React.Component {
     });
 
     if(shouldUpdateFields)
-      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, 'metaFields', fields);
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'metaFields', fields);
   }
 
   handleChangeField(/*values, dispatch*/) {

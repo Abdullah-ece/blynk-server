@@ -25,7 +25,7 @@ export const getNextId = (items) => {
 };
 
 export const FORMS = {
-  PRODUCTS_PRODUCT_CREATE: 'products-product-create-form',
+  PRODUCTS_PRODUCT_MANAGE: 'products-product-manage',
   DASHBOARD: 'products-manage-dashboard-form'
 };
 

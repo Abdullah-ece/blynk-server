@@ -46,7 +46,7 @@ import {FORMS} from 'services/Products';
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
   dataStreams: (() => {
-    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state);
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
 
     return (formValues && formValues.dataStreams || []);
   })(),

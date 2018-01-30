@@ -54,8 +54,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 
 @connect((state) => {
   return {
-    formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
-    formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_CREATE)(state) || {}),
+    formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
+    formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
 
     organization: fromJS(state.Organization),
 
@@ -177,7 +177,7 @@ class Create extends React.Component {
 
   componentWillMount() {
 
-    this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_CREATE, {
+    this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, {
       ...PRODUCT_CREATE_INITIAL_VALUES({
         timezoneDefaultValue: this.props.organization.get('tzName'),
         manufacturerDefaultValue: this.props.organization.get('name')
@@ -347,7 +347,7 @@ class Create extends React.Component {
         submitting={this.props.submitting}
         onSubmit={this.handleSubmit}
         onCancel={this.handleCancel}
-        form={FORMS.PRODUCTS_PRODUCT_CREATE}
+        form={FORMS.PRODUCTS_PRODUCT_MANAGE}
         formSyncErrors={this.props.formSyncErrors}
         params={params}
         // product={this.props.product}

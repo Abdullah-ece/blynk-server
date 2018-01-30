@@ -71,7 +71,7 @@ class List extends React.Component {
     });
 
     if(shouldUpdateFields)
-      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, 'events', fields);
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'events', fields);
   }
   //
   // handleFieldChange(values, /*dispatch, props*/) {

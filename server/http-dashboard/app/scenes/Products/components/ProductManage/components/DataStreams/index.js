@@ -14,7 +14,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 @connect((state) => ({
-  formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_CREATE)(state))
+  formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state))
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
@@ -75,7 +75,7 @@ class List extends React.Component {
     });
 
     if(shouldUpdateFields)
-      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, 'dataStreams', fields);
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, 'dataStreams', fields);
   }
 
   // componentDidUpdate() {

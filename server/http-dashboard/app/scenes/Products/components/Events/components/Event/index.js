@@ -96,7 +96,7 @@ class Event extends React.Component {
   onNameChange(newValue, oldValue) {
     const eventCode = this.props.field.get('eventCode');
     if (!eventCode || convertUserFriendlyEventCode(oldValue) === eventCode) {
-      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_CREATE, `${this.props.field.get('fieldPrefix')}.eventCode`, convertUserFriendlyEventCode(newValue));
+      this.props.changeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, `${this.props.field.get('fieldPrefix')}.eventCode`, convertUserFriendlyEventCode(newValue));
     }
   }
 
