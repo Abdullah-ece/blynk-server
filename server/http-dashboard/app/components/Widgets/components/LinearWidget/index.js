@@ -288,8 +288,8 @@ class LinearWidget extends React.Component {
 
   renderRealDataChart() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length)
-      return (<div>No data</div>);
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId)
+      return (<div className="bar-chart-widget-no-data">No Data</div>);
 
     if (!this.props.widgets.hasIn([String(this.props.deviceId), 'loading']) || this.props.widgets.getIn([this.props.deviceId, 'loading']))
       return (<Icon type="loading" />);

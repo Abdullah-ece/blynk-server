@@ -84,10 +84,6 @@ class BarChartSettings extends React.Component {
 
     initialValues: PropTypes.object,
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
-
     formValues: PropTypes.shape({
       id: PropTypes.any,
       dataSource: PropTypes.array, // type|pin|columnType, e.g. dataStream|100|Start Time

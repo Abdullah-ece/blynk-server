@@ -85,6 +85,9 @@ class Switch extends React.Component {
 
   render() {
 
+    if(!this.props.deviceId)
+      return (<div className="bar-chart-widget-no-data">No Data</div>);
+
     const onChange = (value) => {
       this.setState({
         checked: value
