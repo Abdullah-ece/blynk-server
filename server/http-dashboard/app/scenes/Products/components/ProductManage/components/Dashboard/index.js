@@ -6,24 +6,41 @@ import {
 } from './components';
 import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
-import {fromJS} from 'immutable';
+import {fromJS, List} from 'immutable';
 import {getCoordinatesToSet} from 'services/Widgets';
 import './styles.less';
 import _ from 'lodash';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {DevicesFetch} from 'data/Devices/api';
 
-
+@connect((state, ownProps) => ({
+  orgId: Number(state.Account.orgId),
+  devicesListForPreview: state.Devices.get('devices').filter((device) => {
+    return Number(device.get('productId')) === Number(ownProps.productId);
+  }),
+  devicesLoading: state.Devices.devicesLoading,
+}), (dispatch) => ({
+  fetchDevicesList: bindActionCreators(DevicesFetch, dispatch)
+}))
 class Dashboard extends React.Component {
 
   static propTypes = {
     onWidgetAdd: PropTypes.func,
     onWidgetsChange: PropTypes.func,
+    fetchDevicesList: PropTypes.func,
     onDeviceForPreviewChange: PropTypes.func,
+
+    orgId: PropTypes.number,
+    productId: PropTypes.number,
 
     selectedDeviceIdForPreview: PropTypes.any,
 
-    devicesListForPreview: PropTypes.array,
+    devicesListForPreview: PropTypes.instanceOf(List),
 
     widgets: PropTypes.instanceOf(List),
+
+    devicesLoading: PropTypes.bool,
 
     fields: PropTypes.object,
   };
@@ -31,9 +48,20 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      devicePreviewId: '',
+    };
+
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.handleWidgetClone = this.handleWidgetClone.bind(this);
+    this.handleDevicePreviewIdChange = this.handleDevicePreviewIdChange.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.fetchDevicesList({
+      orgId: this.props.orgId
+    });
   }
 
   handleWidgetDelete(id) {
@@ -79,9 +107,15 @@ class Dashboard extends React.Component {
     });
   }
 
+  handleDevicePreviewIdChange(id) {
+    this.setState({
+      devicePreviewId: id
+    });
+  }
+
   render() {
 
-    const {devicesListForPreview, onDeviceForPreviewChange, selectedDeviceIdForPreview} = this.props;
+    const {devicesListForPreview} = this.props;
 
     const widgets = fromJS(this.props.fields.map((prefix, index, fields) => {
       return {
@@ -94,27 +128,6 @@ class Dashboard extends React.Component {
       id: 1
     };
 
-    const deviceId = 1;
-
-    const devicesList = [
-      {
-        key: '1',
-        value: 'Test Device 1'
-      },
-      {
-        key: '2',
-        value: 'Test Device 2'
-      },
-      {
-        key: '3',
-        value: 'Test Device 3'
-      }
-    ];
-
-    const onChange = () => {
-
-    };
-
     return (
       <div className="products-manage-dashboard">
 
@@ -122,14 +135,17 @@ class Dashboard extends React.Component {
           <div className={`products-manage-dashboard--tools--widget-add`}>
             <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
           </div>
-          <div className={`products-manage-dashboard--tools--device-select`}>
-            <DeviceSelect devicesList={devicesListForPreview} value={selectedDeviceIdForPreview} onChange={onDeviceForPreviewChange}/>
-          </div>
+          { this.props.productId && (
+            <div className={`products-manage-dashboard--tools--device-select`}>
+              <DeviceSelect loading={this.props.devicesLoading} devicesList={devicesListForPreview}
+                            value={this.state.devicePreviewId} onChange={this.handleDevicePreviewIdChange}/>
+            </div>
+          )}
         </div>
 
         <Grid widgets={widgets}
               params={params}
-              deviceId={Number(selectedDeviceIdForPreview)}
+              deviceId={Number(this.state.devicePreviewId)}
               onWidgetDelete={this.handleWidgetDelete}
               onWidgetClone={this.handleWidgetClone}
               onChange={this.handleWidgetsChange}

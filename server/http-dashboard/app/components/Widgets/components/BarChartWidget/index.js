@@ -24,8 +24,6 @@ class BarChartWidget extends React.Component {
 
     deviceId: PropTypes.any,
 
-    deviceId: PropTypes.number,
-
     editable: PropTypes.bool,
     previewMode: PropTypes.bool,
     name: PropTypes.string,

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Select} from 'antd';
 import PropTypes from 'prop-types';
+import {List} from 'immutable';
 
 class DeviceSelect extends React.Component {
 
@@ -8,7 +9,7 @@ class DeviceSelect extends React.Component {
 
     value: PropTypes.string,
 
-    devicesList: PropTypes.array,
+    devicesList: PropTypes.instanceOf(List),
 
     onChange: PropTypes.func,
   };
@@ -18,14 +19,14 @@ class DeviceSelect extends React.Component {
     const { value, onChange} = this.props;
 
     let devicesList = this.props.devicesList.map((device) => ({
-      key: device.id,
-      value: device.name,
-    }));
+      key: device.get('id'),
+      value: device.get('name'),
+    })).toJS();
 
     return (
-      <Select value={value} onChange={onChange} placeholder={`Select device for preview`}>
+      <Select value={String(value) || undefined} onChange={onChange} placeholder={`Select device for preview`}>
         { devicesList.map((device) => (
-          <Select.Option key={`${device.key}`}>{device.value}</Select.Option>
+          <Select.Option key={`${device.key}`} value={`${device.key}`}>{device.value}</Select.Option>
         ))}
       </Select>
     );

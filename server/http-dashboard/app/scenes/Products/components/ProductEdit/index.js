@@ -57,6 +57,8 @@ class ProductEdit extends React.Component {
     deviceForceUpdateLoading: PropTypes.bool,
     isMetadataInfoRead: PropTypes.bool,
 
+    productId: PropTypes.number,
+
     /*reduxForm props*/
     submitFailed: PropTypes.bool,
     submitting: PropTypes.bool,
@@ -285,7 +287,7 @@ class ProductEdit extends React.Component {
               </Tabs.TabPane>
 
               <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
-                <FieldArray component={DashboardTab} name={`webDashboard.widgets`}/>
+                <FieldArray component={DashboardTab} name={`webDashboard.widgets`} productId={this.props.productId || null}/>
               </Tabs.TabPane>
 
             </Tabs>

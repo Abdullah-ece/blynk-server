@@ -446,7 +446,8 @@ class Edit extends React.Component {
 
     return (
       <MainLayout>
-        <ProductEdit form={FORMS.PRODUCTS_PRODUCT_MANAGE}
+        <ProductEdit productId={Number(this.props.params.id) || null}
+                     form={FORMS.PRODUCTS_PRODUCT_MANAGE}
                      initialValues={this.props.product.toJS()}
                      activeTab={this.props.params.tab}
                      formSyncErrors={this.props.formSyncErrors}

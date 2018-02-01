@@ -25,8 +25,6 @@ class LabelWidget extends React.Component {
 
     isChartPreview: PropTypes.bool,
 
-    deviceId: PropTypes.number,
-
     fakeData: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,

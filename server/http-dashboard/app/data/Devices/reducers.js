@@ -18,6 +18,7 @@ const cutDeviceNameMetaFieldFromMetaFields = (device) => {
 };
 
 const initialState = fromJS({
+  devicesLoading: false,
   devices: [],
   timeline: {},
   sorting: {
@@ -44,8 +45,16 @@ const initialState = fromJS({
 export default function Devices(state = initialState, action) {
 
   switch (action.type) {
+
+    case "API_DEVICES_FETCH":
+      return state.set('devicesLoading', true);
+
+    case "API_DEVICES_FAILURE":
+      return state.set('devicesLoading', true);
+
     case "API_DEVICES_FETCH_SUCCESS":
-      return state.set('devices', fromJS(action.payload.data));
+      return state.set('devices', fromJS(action.payload.data))
+        .set('devicesLoading', false);
 
     case "API_DEVICE_FETCH_SUCCESS":
       return state.update('devices', (devices) => {

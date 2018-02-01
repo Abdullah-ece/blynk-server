@@ -9,7 +9,7 @@ import {FORMS} from 'services/Products';
 
 import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
 import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
-import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+import {buildDataQueryRequestForWidgets, getCoordinatesToSet} from 'services/Widgets';
 import {WidgetsHistory} from 'data/Widgets/api';
 
 import {
@@ -20,7 +20,6 @@ import PropTypes from 'prop-types';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {getCoordinatesToSet} from 'services/Widgets';
 
 @connect((state) => ({
   orgId: state.Account.orgId,

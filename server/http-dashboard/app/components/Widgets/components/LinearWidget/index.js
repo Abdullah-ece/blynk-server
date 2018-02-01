@@ -33,8 +33,6 @@ class LinearWidget extends React.Component {
 
     onWidgetDelete: PropTypes.func,
 
-    deviceId: PropTypes.number,
-
     widgets: PropTypes.instanceOf(Map),
   };
 
