@@ -18,6 +18,7 @@ class Grid extends React.Component {
     }).isRequired,
 
     onWidgetDelete: PropTypes.func,
+    onWidgetClone: PropTypes.func,
 
   };
 
@@ -44,6 +45,7 @@ class Grid extends React.Component {
           data={widgets}
           params={this.props.params}
           onWidgetDelete={this.props.onWidgetDelete}
+          onWidgetClone={this.props.onWidgetClone}
         />
       </div>
     );

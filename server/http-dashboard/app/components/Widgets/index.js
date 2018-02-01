@@ -7,7 +7,6 @@ import './styles.less';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Scroll from 'react-scroll';
-import {getCoordinatesToSet} from 'services/Widgets';
 import {Field, Fields} from 'redux-form';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -35,6 +34,7 @@ class Widgets extends React.Component {
     }).isRequired,
 
     onWidgetDelete: PropTypes.func,
+    onWidgetClone: PropTypes.func,
   };
 
   constructor(props) {
@@ -45,7 +45,7 @@ class Widgets extends React.Component {
     };
 
     this.widget = this.widget.bind(this);
-    // this.handleWidgetClone = this.handleWidgetClone.bind(this);
+    this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.responsiveGridLayout = this.responsiveGridLayout.bind(this);
@@ -97,27 +97,12 @@ class Widgets extends React.Component {
     });
   }
 
-   handleWidgetClone(widget) {
-
-     const widgets = [...this.props.data.lg];
-
-     const coords = getCoordinatesToSet(widget, widgets, this.state.currentBreakpoint);
-
-     widgets.push({
-       ...widget,
-       id: _.random(1, 999999999),
-       label: `${widget.label} Copy`,
-       x: coords.x,
-       y: coords.y,
-    });
-
-    this.props.onChange(
-      widgets
-    );
-  }
-
   handleWidgetDelete(id) {
     this.props.onWidgetDelete(id);
+  }
+
+  handleWidgetClone(id) {
+    this.props.onWidgetClone(id, this.state.currentBreakpoint);
   }
 
   widget(props) {

@@ -137,7 +137,7 @@ class Widget extends React.Component {
   }
 
   handleWidgetClone() {
-    this.props.onWidgetClone(this.props.data);
+    this.props.onWidgetClone(this.props.id);
   }
 
   handleWidgetDelete() {
