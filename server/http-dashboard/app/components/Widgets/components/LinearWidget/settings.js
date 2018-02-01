@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS, Map, List} from 'immutable';
 import PropTypes from 'prop-types';
-import Widget from '../Widget';
+// import Widget from '../Widget';
 import WidgetSettings from '../WidgetSettings';
 
 @connect((state, ownProps) => ({
@@ -178,14 +178,18 @@ class LinearWidgetSettings extends React.Component {
         )}
 
         preview={(
-          <div className="widgets">
-            <Widget isPreviewOnly={true}
-                    style={{height: '200px'}}
-                    fetchRealData={false}
-                    params={{}}
-                    data={this.props.formValues.toJS()} />
-          </div>
+          null
         )}
+
+        // preview={(
+        //   <div className="widgets">
+        //     <Widget isPreviewOnly={true}
+        //             style={{height: '200px'}}
+        //             fetchRealData={false}
+        //             params={{}}
+        //             data={this.props.formValues.toJS()} />
+        //   </div>
+        // )}
       />
     );
   }

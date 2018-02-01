@@ -80,6 +80,8 @@ class BarChartSettings extends React.Component {
     initializeForm: PropTypes.func,
     clearWidgetDevicePreviewHistory: PropTypes.func,
 
+    deviceId: PropTypes.number,
+
     initialValues: PropTypes.object,
 
     params: PropTypes.shape({
@@ -737,7 +739,7 @@ class BarChartSettings extends React.Component {
         )}
 
         preview={(
-          <Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} params={this.props.params} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
+          <Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} deviceId={this.props.deviceId} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
         )}
       />
     );

@@ -81,6 +81,8 @@ class Dashboard extends React.Component {
       id: 1
     };
 
+    const deviceId = 1;
+
     return (
       <div className="products-manage-dashboard">
 
@@ -88,6 +90,7 @@ class Dashboard extends React.Component {
 
         <Grid widgets={widgets}
               params={params}
+              deviceId={Number(deviceId)}
               onWidgetDelete={this.handleWidgetDelete}
               onWidgetClone={this.handleWidgetClone}
         />

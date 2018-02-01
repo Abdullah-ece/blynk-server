@@ -29,9 +29,7 @@ class Widgets extends React.Component {
     data: PropTypes.object,
     breakpoints: PropTypes.object,
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
+    deviceId: PropTypes.number,
 
     onWidgetDelete: PropTypes.func,
     onWidgetClone: PropTypes.func,
@@ -122,7 +120,7 @@ class Widgets extends React.Component {
               onTouchStart={props.onTouchStart}
               onTouchEnd={props.onTouchEnd}
               fetchRealData={this.props.fetchRealData}
-              params={this.props.params}
+              deviceId={this.props.deviceId}
               data={widget}
               editable={this.props.editable}
               onWidgetChange={onChange}

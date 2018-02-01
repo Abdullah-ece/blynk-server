@@ -16,6 +16,8 @@ class Switch extends React.Component {
     data: PropTypes.object,
     params: PropTypes.object,
 
+    deviceId: PropTypes.number,
+
     onClose: PropTypes.func,
     resetForm: PropTypes.func,
     changeForm: PropTypes.func,

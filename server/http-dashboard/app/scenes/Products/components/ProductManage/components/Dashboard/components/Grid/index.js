@@ -17,6 +17,8 @@ class Grid extends React.Component {
       id: PropTypes.number.isRequired
     }).isRequired,
 
+    deviceId: PropTypes.number,
+
     onWidgetDelete: PropTypes.func,
     onWidgetClone: PropTypes.func,
 
@@ -43,7 +45,7 @@ class Grid extends React.Component {
         <Widgets
           editable={true}
           data={widgets}
-          params={this.props.params}
+          deviceId={this.props.deviceId}
           onWidgetDelete={this.props.onWidgetDelete}
           onWidgetClone={this.props.onWidgetClone}
         />

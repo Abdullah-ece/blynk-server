@@ -26,6 +26,8 @@ class BarChartWidget extends React.Component {
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
 
+    deviceId: PropTypes.number,
+
     editable: PropTypes.bool,
     previewMode: PropTypes.bool,
     name: PropTypes.string,
@@ -174,7 +176,7 @@ class BarChartWidget extends React.Component {
 
     this.props.data.sources.forEach((source, sourceIndex) => {
       const storage = this.props.widgets.getIn([
-        String(this.props.params.id),
+        String(this.props.deviceId),
         String(this.props.data.id),
         String(sourceIndex),
         'data',

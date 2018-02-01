@@ -30,6 +30,8 @@ class Widget extends React.Component {
 
     id: PropTypes.number,
 
+    deviceId: PropTypes.number,
+
     editable: PropTypes.bool,
     isPreviewOnly: PropTypes.bool,
     fetchRealData: PropTypes.bool,
@@ -40,10 +42,6 @@ class Widget extends React.Component {
     onTouchEnd: PropTypes.func,
     onMouseDown: PropTypes.func,
     onWidgetDelete: PropTypes.func,
-
-    params: PropTypes.shape({
-      // id: PropTypes.number.isRequired
-    }).isRequired,
   };
 
   constructor(props) {
@@ -64,7 +62,7 @@ class Widget extends React.Component {
     const attributes = {
       key            :widget.id,
       fetchRealData  :this.props.fetchRealData,
-      params         :this.props.params,
+      deviceId       :this.props.deviceId,
       data           :widget,
       name           :widget.type + widget.id,
       editable       :this.props.editable,
@@ -109,6 +107,7 @@ class Widget extends React.Component {
 
     const attributes = {
       visible: this.state.isConfigVisible,
+      deviceId: this.props.deviceId,
       initialValues: widget,
       form: `widget-settings-${widget.id}`,
       onClose: this.toggleSettingsVisibility,

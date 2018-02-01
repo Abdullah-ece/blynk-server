@@ -25,6 +25,8 @@ class LabelWidget extends React.Component {
 
     isChartPreview: PropTypes.bool,
 
+    deviceId: PropTypes.number,
+
     fakeData: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
@@ -124,7 +126,7 @@ class LabelWidget extends React.Component {
       return null;
 
     const pin = this.props.widgets.getIn([
-      String(this.props.params.id),
+      String(this.props.deviceId),
       String(this.props.data.id),
       String(sourceIndex)
     ]);
@@ -142,7 +144,7 @@ class LabelWidget extends React.Component {
     if (!this.props.data.sources || !this.props.data.sources.length)
       return (<div>No data</div>);
 
-    if (!this.props.widgets.hasIn([String(this.props.params.id), 'loading']) || this.props.widgets.getIn([this.props.params.id, 'loading']))
+    if (!this.props.widgets.hasIn([String(this.props.deviceId), 'loading']) || this.props.widgets.getIn([this.props.deviceId, 'loading']))
       return (<Icon type="loading"/>);
 
     const sources = fromJS(this.props.data.sources);
