@@ -565,7 +565,7 @@ const DASHBOARD_WIDTH = {
   lg: 8,
 };
 
-export const getCoordinatesToSet = (newWidget, widgets, breakpoint) => {
+export const getCoordinatesToSet = (newWidget, widgets = [], breakpoint) => {
   if(!widgets.length){
     return {x:0,y:0};
   }
