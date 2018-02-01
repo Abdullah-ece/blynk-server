@@ -17,8 +17,12 @@ export function DevicesListForProductDashboardPreviewFetch(params = {}) {
   if(!params.orgId)
     throw new Error('Missing orgId parameter for DevicesListForProductDashboardPreviewFetch');
 
+  if(!params.productId)
+    throw new Error('Missing productId parameter for DevicesListForProductDashboardPreviewFetch');
+
   return {
     type: 'API_DEVICES_LIST_FOR_PRODUCT_DASHBOARD_PREVIEW_FETCH',
+    productId: params.productId,
     payload: {
       request: {
         method: 'get',

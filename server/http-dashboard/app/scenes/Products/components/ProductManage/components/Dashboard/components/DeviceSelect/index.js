@@ -7,7 +7,7 @@ class DeviceSelect extends React.Component {
 
   static propTypes = {
 
-    value: PropTypes.string,
+    value: PropTypes.number,
 
     devicesList: PropTypes.instanceOf(List),
 
@@ -24,7 +24,7 @@ class DeviceSelect extends React.Component {
     })).toJS();
 
     return (
-      <Select value={String(value) || undefined} onChange={onChange} placeholder={`Select device for preview`}>
+      <Select value={value ? String(value) : undefined} onChange={onChange} placeholder={`Select device for preview`}>
         { devicesList.map((device) => (
           <Select.Option key={`${device.key}`} value={`${device.key}`}>{device.value}</Select.Option>
         ))}

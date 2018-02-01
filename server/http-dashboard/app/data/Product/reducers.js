@@ -33,7 +33,7 @@ const initialState = {
   dashboardPreview: {
     isLoading: false,
     devicesList: [],
-    selectedDeviceId: undefined,
+    selectedDeviceId: 0,
   },
   products: null
 };
@@ -64,7 +64,7 @@ export default function Product(state = initialState, action) {
         ...state,
         dashboardPreview: {
           ...state.dashboardPreview,
-          devicesList: action.payload.data,
+          devicesList: action.payload.data.filter((device) => Number(device.productId) === Number(action.meta.previousAction.productId)),
           isLoading: false,
         }
       };

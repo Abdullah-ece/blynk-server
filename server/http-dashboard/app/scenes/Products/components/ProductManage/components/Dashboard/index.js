@@ -6,39 +6,41 @@ import {
 } from './components';
 import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
+import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
 import {fromJS, List} from 'immutable';
 import {getCoordinatesToSet} from 'services/Widgets';
 import './styles.less';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {DevicesFetch} from 'data/Devices/api';
+import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
 
-@connect((state, ownProps) => ({
+@connect((state) => ({
   orgId: Number(state.Account.orgId),
-  devicesListForPreview: state.Devices.get('devices').filter((device) => {
-    return Number(device.get('productId')) === Number(ownProps.productId);
-  }),
+  devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
+  devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
   devicesLoading: state.Devices.devicesLoading,
 }), (dispatch) => ({
-  fetchDevicesList: bindActionCreators(DevicesFetch, dispatch)
+  changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
+  fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
 }))
 class Dashboard extends React.Component {
 
   static propTypes = {
     onWidgetAdd: PropTypes.func,
     onWidgetsChange: PropTypes.func,
-    fetchDevicesList: PropTypes.func,
-    onDeviceForPreviewChange: PropTypes.func,
+    changeDeviceIdForPreview: PropTypes.func,
 
     orgId: PropTypes.number,
     productId: PropTypes.number,
 
-    selectedDeviceIdForPreview: PropTypes.any,
+    devicePreviewId: PropTypes.number,
 
     devicesListForPreview: PropTypes.instanceOf(List),
 
     widgets: PropTypes.instanceOf(List),
+
+    fetchDevicesListForPreview: PropTypes.func,
 
     devicesLoading: PropTypes.bool,
 
@@ -48,10 +50,6 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      devicePreviewId: '',
-    };
-
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.handleWidgetClone = this.handleWidgetClone.bind(this);
@@ -59,8 +57,9 @@ class Dashboard extends React.Component {
   }
 
   componentWillMount() {
-    this.props.fetchDevicesList({
-      orgId: this.props.orgId
+    this.props.fetchDevicesListForPreview({
+      orgId: this.props.orgId,
+      productId: this.props.productId,
     });
   }
 
@@ -108,9 +107,7 @@ class Dashboard extends React.Component {
   }
 
   handleDevicePreviewIdChange(id) {
-    this.setState({
-      devicePreviewId: id
-    });
+    this.props.changeDeviceIdForPreview(id);
   }
 
   render() {
@@ -138,14 +135,14 @@ class Dashboard extends React.Component {
           { this.props.productId && (
             <div className={`products-manage-dashboard--tools--device-select`}>
               <DeviceSelect loading={this.props.devicesLoading} devicesList={devicesListForPreview}
-                            value={this.state.devicePreviewId} onChange={this.handleDevicePreviewIdChange}/>
+                            value={Number(this.props.devicePreviewId)} onChange={this.handleDevicePreviewIdChange}/>
             </div>
           )}
         </div>
 
         <Grid widgets={widgets}
               params={params}
-              deviceId={Number(this.state.devicePreviewId)}
+              deviceId={Number(this.props.devicePreviewId)}
               onWidgetDelete={this.handleWidgetDelete}
               onWidgetClone={this.handleWidgetClone}
               onChange={this.handleWidgetsChange}
