@@ -17,6 +17,8 @@ class Grid extends React.Component {
       id: PropTypes.number.isRequired
     }).isRequired,
 
+    onWidgetDelete: PropTypes.func,
+
   };
 
   constructor(props) {
@@ -37,7 +39,12 @@ class Grid extends React.Component {
 
     return (
       <div className="product-manage-dashboard-grid">
-        <Widgets editable={true} data={widgets} params={this.props.params}/>
+        <Widgets
+          editable={true}
+          data={widgets}
+          params={this.props.params}
+          onWidgetDelete={this.props.onWidgetDelete}
+        />
       </div>
     );
   }

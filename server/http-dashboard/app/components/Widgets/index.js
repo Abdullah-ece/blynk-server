@@ -33,6 +33,8 @@ class Widgets extends React.Component {
     params: PropTypes.shape({
       id: PropTypes.number.isRequired
     }).isRequired,
+
+    onWidgetDelete: PropTypes.func,
   };
 
   constructor(props) {
@@ -45,7 +47,7 @@ class Widgets extends React.Component {
     this.widget = this.widget.bind(this);
     // this.handleWidgetClone = this.handleWidgetClone.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
-    // this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+    this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.responsiveGridLayout = this.responsiveGridLayout.bind(this);
   }
 
@@ -114,13 +116,9 @@ class Widgets extends React.Component {
     );
   }
 
-  // handleWidgetDelete(id) {
-  //
-  //   if (this.props.onChange)
-  //     this.props.onChange(
-  //       this.props.data.lg.filter((widget) => Number(widget.id) !== Number(id))
-  //     );
-  // }
+  handleWidgetDelete(id) {
+    this.props.onWidgetDelete(id);
+  }
 
   widget(props) {
 

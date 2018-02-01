@@ -19,6 +19,18 @@ class Dashboard extends React.Component {
     super(props);
 
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
+    this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
+  }
+
+  handleWidgetDelete(id) {
+    let fieldIndex = null;
+
+    this.props.fields.getAll().forEach((field, index) => {
+      if(Number(field.id) === Number(id))
+        fieldIndex = index;
+    });
+
+    this.props.fields.remove(fieldIndex);
   }
 
   handleWidgetAdd(widget) {
@@ -48,7 +60,7 @@ class Dashboard extends React.Component {
 
         <Grid widgets={widgets}
               params={params}
-              onChange={this.handleWidgetsChange}
+              onWidgetDelete={this.handleWidgetDelete}
         />
 
       </div>
