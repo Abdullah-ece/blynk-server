@@ -17,7 +17,7 @@ export const TABS = {
   DASHBOARD: 'dashboard'
 };
 
-export const getNextId = (items) => {
+export const getNextId = (items = []) => {
   if(!(items instanceof List))
     items = fromJS(items);
 
