@@ -154,8 +154,10 @@ class Widgets extends React.Component {
         ...item.input.value,
         x: newItem.x,
         y: newItem.y,
-        width: newItem.width,
-        height: newItem.height,
+        w: newItem.w,
+        h: newItem.h,
+        width: newItem.w,
+        height: newItem.h,
       });
     };
 

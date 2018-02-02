@@ -8,12 +8,13 @@ import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
 import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
 import {fromJS, List} from 'immutable';
-import {getCoordinatesToSet} from 'services/Widgets';
+import {getCoordinatesToSet, buildDataQueryRequestForWidgets} from 'services/Widgets';
 import './styles.less';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
+import {WidgetsHistory} from 'data/Widgets/api';
 
 @connect((state) => ({
   orgId: Number(state.Account.orgId),
@@ -23,12 +24,14 @@ import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
 }), (dispatch) => ({
   changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
   fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
+  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
 }))
 class Dashboard extends React.Component {
 
   static propTypes = {
     onWidgetAdd: PropTypes.func,
     onWidgetsChange: PropTypes.func,
+    fetchWidgetHistory: PropTypes.func,
     changeDeviceIdForPreview: PropTypes.func,
 
     orgId: PropTypes.number,
@@ -61,6 +64,33 @@ class Dashboard extends React.Component {
       orgId: this.props.orgId,
       productId: this.props.productId,
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.devicePreviewId !== this.props.devicePreviewId) {
+      this.getDataForWidgets();
+    }
+  }
+
+  getDataForWidgets() {
+
+    let dataQueryRequests = [];
+
+    if (this.props.fields.getAll() && this.props.fields.getAll().length && this.props.devicePreviewId)
+
+      dataQueryRequests = buildDataQueryRequestForWidgets({
+        widgets: this.props.fields.getAll(),
+        deviceId: this.props.devicePreviewId,
+        timeFrom: new Date().getTime() - 1000 * 60 * 60 * 24 * 7, // 7 days ago,
+        timeTo: new Date().getTime()
+      });
+
+    if (dataQueryRequests.length)
+      this.props.fetchWidgetHistory({
+        deviceId: this.props.devicePreviewId,
+        dataQueryRequests: dataQueryRequests,
+      });
+
   }
 
   handleWidgetDelete(id) {
@@ -103,6 +133,8 @@ class Dashboard extends React.Component {
       id: getNextId(this.props.fields.getAll()),
       x: coordinatesForNewWidget.x,
       y: coordinatesForNewWidget.y,
+      width: widget.w,
+      height: widget.h,
     });
   }
 
@@ -115,9 +147,12 @@ class Dashboard extends React.Component {
     const {devicesListForPreview} = this.props;
 
     const widgets = fromJS(this.props.fields.map((prefix, index, fields) => {
+      const field = fields.get(index);
       return {
-        ...fields.get(index),
+        ...field,
         fieldName: prefix,
+        w: field.width,
+        h: field.height,
       };
     }));
 
