@@ -11,13 +11,18 @@ import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} fro
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fromJS, Map, List} from 'immutable';
+import {FORMS} from 'services/Products';
 import PropTypes from 'prop-types';
 // import Widget from '../Widget';
 import WidgetSettings from '../WidgetSettings';
 
 @connect((state, ownProps) => ({
   formValues: fromJS(getFormValues(ownProps.form)(state) || {}),
-  dataStreams: fromJS(state.Product.edit.dataStreams.fields || []),
+  dataStreams: fromJS((() => {
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
+
+    return (formValues && formValues.dataStreams || []);
+  })()),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -137,11 +142,11 @@ class LinearWidgetSettings extends React.Component {
 
   render() {
 
-    const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.hasIn(['values', 'label']) && dataStream.getIn(['values', 'label']).length)
+    const dataStreams = this.props.dataStreams.filter(dataStream => dataStream.has('label') && dataStream.get('label').length)
       .map((dataStream) => (fromJS({
-        key: String(dataStream.getIn(['values', 'pin'])),
-        value: dataStream.getIn(['values', 'label']),
-        values: dataStream.get('values'),
+        key: String(dataStream.get('pin')),
+        value: dataStream.get('label'),
+        values: dataStream,
       })));
 
     return (
