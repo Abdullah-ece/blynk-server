@@ -14,7 +14,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 @connect((state) => ({
-  formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state))
+  formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {})
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch)
 }))
