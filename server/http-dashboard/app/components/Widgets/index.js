@@ -49,16 +49,19 @@ class Widgets extends React.Component {
     this.responsiveGridLayout = this.responsiveGridLayout.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    const difference = _.differenceBy(this.props.data[this.state.currentBreakpoint],
-                                      prevProps.data[this.state.currentBreakpoint],
-                                      "name");
-    if(difference.length !== 0){
-      const newWidget = difference[0];
+  // TEMPORARILY comment this to prevent error
 
-      this.scrollToWidget(newWidget);
-    }
-  }
+  // componentDidUpdate(prevProps) {
+    // const difference = _.differenceBy(this.props.data[this.state.currentBreakpoint],
+    //                                   prevProps.data[this.state.currentBreakpoint],
+    //                                   "name");
+
+    // if(difference.length !== 0){
+      // const newWidget = difference[0];
+
+      // this.scrollToWidget(newWidget);
+    // }
+  // }
 
   scrollToWidget(newWidget) {
     //Getting all necessary widget position information
@@ -189,7 +192,7 @@ class Widgets extends React.Component {
     });
 
     return (
-      <Fields names={names} component={this.responsiveGridLayout} />
+      <Fields names={names} component={this.responsiveGridLayout} deviceId={this.props.deviceId} />
     );
   }
 
