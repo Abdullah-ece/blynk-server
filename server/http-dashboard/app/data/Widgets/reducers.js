@@ -83,12 +83,12 @@ export default function Product(state = initialState, action) {
   switch (action.type) {
 
     case "API_WIDGETS_HISTORY":
-      // return state;
+
       return action.value.dataQueryRequests.reduce((state, request) => {
         return state.setIn(['widgetsData', String(action.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS({
           data: []
         }));
-      }, state.setIn(['widgetsData', String(action.value.deviceId), 'loading'], true));
+      }, state).setIn(['widgetsData', String(action.value.deviceId), 'loading'], true);
 
     case "API_WIDGETS_HISTORY_SUCCESS":
 
@@ -98,7 +98,7 @@ export default function Product(state = initialState, action) {
             data: parseHistoryData(action.payload.data[key])
           }
         ));
-      }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
+      }, state).setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), 'loading'], false);
 
     case "API_WIDGETS_HISTORY_BY_PIN_SUCCESS":
 
@@ -111,7 +111,7 @@ export default function Product(state = initialState, action) {
             data: []
           }
         ));
-      }, state.setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false));
+      }, state).setIn(['widgetsData', action.meta.previousAction.value.deviceId, 'loading'], false);
 
 
     case "API_WIDGET_DEVICES_PREVIEW_LIST_FETCH":
