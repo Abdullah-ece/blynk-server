@@ -4,6 +4,8 @@ import {Chart} from 'components';
 
 import {Map} from 'immutable';
 
+import {Icon} from 'antd';
+
 import PropTypes from 'prop-types';
 
 import {connect} from 'react-redux';
@@ -11,6 +13,8 @@ import {connect} from 'react-redux';
 import BarChartSettings from './settings';
 
 import _ from 'lodash';
+
+import './styles.less';
 
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
@@ -163,6 +167,12 @@ class BarChartWidget extends React.Component {
   }
 
   renderRealData() {
+
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId || !this.props.widgets.hasIn([String(this.props.deviceId), 'loading']))
+      return (<div className="bar-chart-widget-no-data">No Data</div>);
+
+    if (this.props.widgets.getIn([String(this.props.deviceId), 'loading']))
+      return (<Icon type="loading"/>);
 
     let config = {
       ...this.defaultParams.chartConfigs

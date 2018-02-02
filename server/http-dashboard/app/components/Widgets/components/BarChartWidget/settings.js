@@ -7,7 +7,9 @@ import {fromJS} from 'immutable';
 import Validation from 'services/Validation';
 import ColorPicker from 'components/ColorPicker';
 
-import {Preview} from './scenes';
+import {FORMS} from 'services/Products';
+
+// import {Preview} from './scenes';
 
 import _ from 'lodash';
 
@@ -56,7 +58,11 @@ import {
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
-  dataStreams: (state.Product.edit.dataStreams && state.Product.edit.dataStreams.fields || []),
+  dataStreams: (() => {
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
+
+    return (formValues && formValues.dataStreams || []);
+  })(),
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -110,15 +116,13 @@ class BarChartSettings extends React.Component {
 
     dataStreams: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number,
-      values: PropTypes.shape({
-        pin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        label: PropTypes.string,
-        tableDescriptor: PropTypes.shape({
-          columns: PropTypes.arrayOf(PropTypes.shape({
-            columnName: PropTypes.string,
-            label: PropTypes.string,
-          }))
-        })
+      pin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      label: PropTypes.string,
+      tableDescriptor: PropTypes.shape({
+        columns: PropTypes.arrayOf(PropTypes.shape({
+          columnName: PropTypes.string,
+          label: PropTypes.string,
+        }))
       })
     }))
   };
@@ -188,7 +192,7 @@ class BarChartSettings extends React.Component {
       return null;
 
     return _.find(this.props.dataStreams, (stream) => {
-      return String(stream.values.id) === String(this.props.formValues.sources[0].dataStream.id);
+      return String(stream.id) === String(this.props.formValues.sources[0].dataStream.id);
     });
   }
 
@@ -199,7 +203,7 @@ class BarChartSettings extends React.Component {
     if(!stream)
       return null;
 
-    return stream.values.tableDescriptor && stream.values.tableDescriptor.columns || [];
+    return stream.tableDescriptor && stream.tableDescriptor.columns || [];
   }
 
   getColumnsMetadata(columns) {
@@ -256,18 +260,18 @@ class BarChartSettings extends React.Component {
 
     this.props.dataStreams.forEach((stream) => {
 
-      if(parseInt(stream.values.pin) < 100)
+      if(parseInt(stream.pin) < 100)
         return null;
 
       dataStreamsOptions.push({
-        key: `${stream.values.pin}`,
-        value: stream.values.label,
+        key: `${stream.pin}`,
+        value: stream.label,
       });
 
-      if (stream.values.tableDescriptor && stream.values.tableDescriptor.columns) {
-        stream.values.tableDescriptor.columns.forEach((column) => {
+      if (stream.tableDescriptor && stream.tableDescriptor.columns) {
+        stream.tableDescriptor.columns.forEach((column) => {
           dataStreamsOptions.push({
-            key: `${stream.values.pin}|${column.label}`,
+            key: `${stream.pin}|${column.label}`,
             value: `-- ${column.label}`,
           });
         });
@@ -380,7 +384,7 @@ class BarChartSettings extends React.Component {
 
       const getStreamByPin = (pin) => {
         return _.find(props.dataStreams, (stream) => {
-          return parseInt(stream.values.pin) === parseInt(pin);
+          return parseInt(stream.pin) === parseInt(pin);
         });
       };
 
@@ -401,7 +405,7 @@ class BarChartSettings extends React.Component {
 
         if(columnLabel) {
 
-          let column = getColumnByLabel(columnLabel, dataStream.values.tableDescriptor.columns);
+          let column = getColumnByLabel(columnLabel, dataStream.tableDescriptor.columns);
 
           selectedColumns.push({
             name: column.columnName,
@@ -413,14 +417,14 @@ class BarChartSettings extends React.Component {
 
       });
 
-      if(!dataStream || !dataStream.values) {
+      if(!dataStream) {
         props.input.onChange({});
         props.changeForm(this.props.form, 'sources.0.selectedColumns', []);
         return null;
       }
 
       props.input.onChange(
-        fromJS(dataStream.values).set('tableDescriptor', null).toJS()
+        fromJS(dataStream).set('tableDescriptor', null).toJS()
       );
 
       props.changeForm(this.props.form, 'sources.0.selectedColumns', selectedColumns);
@@ -734,9 +738,11 @@ class BarChartSettings extends React.Component {
           </div>
         )}
 
-        preview={(
-          <Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} deviceId={this.props.deviceId} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
-        )}
+        preview={(null)}
+
+        // preview={(
+          //<Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} deviceId={this.props.deviceId} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
+        // )}
       />
     );
   }

@@ -146,7 +146,7 @@ class Widgets extends React.Component {
   responsiveGridLayout(props) {
     const onDragStop = (layout, oldItem, newItem) => {
 
-      const item = _.find(props.webDashboard, (item) => {
+      const item = _.find(props.webDashboard.widgets, (item) => {
         return Number(item.input.value.id) === Number(newItem.i);
       });
 
