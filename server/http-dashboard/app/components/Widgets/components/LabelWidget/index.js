@@ -60,13 +60,13 @@ class LabelWidget extends React.Component {
   }
 
   getValueSizeClassName(cellSize) {
-    if(Number(cellSize) === 1)
+    if (Number(cellSize) === 1)
       return 'widgets--widget-web-label--value-size-1';
 
-    if(Number(cellSize) === 2)
+    if (Number(cellSize) === 2)
       return 'widgets--widget-web-label--value-size-2';
 
-    if(Number(cellSize) >= 3)
+    if (Number(cellSize) >= 3)
       return 'widgets--widget-web-label--value-size-3';
   }
 
@@ -91,7 +91,7 @@ class LabelWidget extends React.Component {
 
     return (
       <div className={`widgets--widget-web-label ${alignmentClassName}`}>
-        { !isNoData && (
+        {!isNoData && (
           <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
             <Dotdotdot clamp={1}>
               <span
@@ -108,15 +108,6 @@ class LabelWidget extends React.Component {
         )}
       </div>
     );
-  }
-
-  renderFakeDataLabel() {
-
-    return this.renderLabelByParams({
-      value: undefined,
-      suffix: this.props.data.valueSuffix,
-      alignment: this.props.data.alignment
-    });
   }
 
   generateData(source, sourceIndex) {
@@ -156,22 +147,8 @@ class LabelWidget extends React.Component {
     });
   }
 
-  renderLabelByData() {
-    return this.renderLabelByParams({
-      value: this.props.fakeData,
-      suffix: this.props.data.valueSuffix,
-      alignment: this.props.data.alignment,
-    });
-  }
-
   render() {
-    if (this.props.fetchRealData)
-      return this.renderRealDataLabel();
-
-    if(this.props.isChartPreview)
-      return this.renderLabelByData();
-
-    return this.renderFakeDataLabel();
+    return this.renderRealDataLabel();
   }
 
 }

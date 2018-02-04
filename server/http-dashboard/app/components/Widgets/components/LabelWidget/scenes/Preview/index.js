@@ -41,6 +41,8 @@ export default class PreviewScene extends React.Component {
 
     devicesLoading: PropTypes.bool,
 
+    deviceId: PropTypes.number,
+
     fetchDevicesList: PropTypes.func,
     fetchDevicePreviewHistory: PropTypes.func,
     clearWidgetDevicesPreviewList: PropTypes.func,
@@ -102,30 +104,14 @@ export default class PreviewScene extends React.Component {
 
   render() {
 
-    const widgetData = {
-      id: 1,
-      w: 2,
-      h: 1,
-    };
-
     const data = {
       ...this.props.data,
-      height: widgetData.h,
+      height: 1,
     };
 
-    let labelData = null;
-
-    if (this.props.devicePreviewData && this.props.devicePreviewData.size)
-      labelData = this.props.devicePreviewData.last().get('y');
-
     return (
-      <Preview onSubmit={this.handleSubmit}
-               form={'widgets-widget-label-preview'}
-               labelData={labelData}
-               widgetData={widgetData}
-               data={data}
-               devicesList={this.props.devicesList}
-               devicesLoading={this.props.devicesLoading}/>
+      <Preview data={data}
+               deviceId={this.props.deviceId}/>
     );
   }
 
