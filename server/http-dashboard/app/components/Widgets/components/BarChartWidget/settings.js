@@ -97,7 +97,7 @@ class BarChartSettings extends React.Component {
         sourceType: PropTypes.oneOf(['RAW_DATA', 'SUM', 'AVG', 'MED', 'MIN', 'MAX', 'COUNT']),
         dataStream: PropTypes.shape({
           id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-          pin: PropTypes.number,
+          pin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
           name: PropTypes.string
         }),
         selectedColumns: PropTypes.arrayOf(PropTypes.shape({
