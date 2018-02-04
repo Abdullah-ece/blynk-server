@@ -58,6 +58,7 @@ import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.web.WebBarGraph;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
+import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.CopyObject;
@@ -81,6 +82,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = WebLabel.class, name = "WEB_LABEL"),
         @JsonSubTypes.Type(value = WebLineGraph.class, name = "WEB_LINE_GRAPH"),
         @JsonSubTypes.Type(value = WebBarGraph.class, name = "WEB_BAR_GRAPH"),
+        @JsonSubTypes.Type(value = WebSwitch.class, name = "WEB_SWITCH"),
 
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),

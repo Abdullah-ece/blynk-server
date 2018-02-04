@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
@@ -296,6 +297,13 @@ public class DashboardModelAPITest extends APIBaseTest {
             product = fromApi[0];
         }
 
+        WebSwitch webSwitch = new WebSwitch();
+        webSwitch.onLabel = "updated";
+        webSwitch.x = 3;
+        webSwitch.y = 4;
+        webSwitch.height = 50;
+        webSwitch.width = 60;
+
         WebLabel webLabel = new WebLabel();
         webLabel.label = "updated";
         webLabel.x = 3;
@@ -303,7 +311,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         webLabel.height = 50;
         webLabel.width = 60;
         product.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
+                webLabel, webSwitch
         });
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
@@ -317,8 +325,15 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(product.name, fromApi.name);
             assertEquals(product.description, fromApi.description);
             assertNotNull(fromApi.webDashboard);
-            assertEquals(1, fromApi.webDashboard.widgets.length);
+            assertEquals(2, fromApi.webDashboard.widgets.length);
+
             assertEquals("updated", fromApi.webDashboard.widgets[0].label);
+            assertEquals(3, fromApi.webDashboard.widgets[0].x);
+            assertEquals(4, fromApi.webDashboard.widgets[0].y);
+            assertEquals(50, fromApi.webDashboard.widgets[0].height);
+            assertEquals(60, fromApi.webDashboard.widgets[0].width);
+
+            assertEquals("updated", ((WebSwitch) fromApi.webDashboard.widgets[1]).onLabel);
             assertEquals(3, fromApi.webDashboard.widgets[0].x);
             assertEquals(4, fromApi.webDashboard.widgets[0].y);
             assertEquals(50, fromApi.webDashboard.widgets[0].height);
@@ -333,7 +348,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             Device device = JsonParser.parseDevice(responseString);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertEquals("updated", device.webDashboard.widgets[0].label);
             assertEquals(3, device.webDashboard.widgets[0].x);
             assertEquals(4, device.webDashboard.widgets[0].y);
