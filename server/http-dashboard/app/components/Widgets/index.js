@@ -51,28 +51,30 @@ class Widgets extends React.Component {
 
   // TEMPORARILY comment this to prevent error
 
-  // componentDidUpdate(prevProps) {
-    // const difference = _.differenceBy(this.props.data[this.state.currentBreakpoint],
-    //                                   prevProps.data[this.state.currentBreakpoint],
-    //                                   "name");
+  componentDidUpdate(prevProps) {
+    const difference = _.differenceBy(this.props.data[this.state.currentBreakpoint],
+                                      prevProps.data[this.state.currentBreakpoint],
+                                      "id");
 
-    // if(difference.length !== 0){
-      // const newWidget = difference[0];
+    if(difference.length !== 0){
+      const newWidget = difference[0];
 
-      // this.scrollToWidget(newWidget);
-    // }
-  // }
+      this.scrollToWidget(newWidget);
+    }
+  }
 
   scrollToWidget(newWidget) {
     //Getting all necessary widget position information
+
+    const newWidgetName = newWidget.type + newWidget.id;
     const chartDefaultPadding = 15;
 
     const docScrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
     const docViewBottom = window.innerHeight + docScrollTop;
 
-    const chartHeight = document.getElementById(newWidget.name).clientHeight;
+    const chartHeight = document.getElementById(newWidgetName).clientHeight;
 
-    const rect = document.getElementById(newWidget.name).getBoundingClientRect(), bodyElt = document.body;
+    const rect = document.getElementById(newWidgetName).getBoundingClientRect(), bodyElt = document.body;
 
     const chartOffset = {
       top: rect.top + bodyElt .scrollTop,
@@ -80,7 +82,6 @@ class Widgets extends React.Component {
     };
 
     const chartBottom = chartOffset.top + chartHeight + chartDefaultPadding;
-    // ----
 
     const visible = (chartBottom <= docViewBottom) && (chartOffset.top >= docScrollTop);
 
