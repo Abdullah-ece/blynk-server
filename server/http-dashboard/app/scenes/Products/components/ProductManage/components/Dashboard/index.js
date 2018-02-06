@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   AddWidgetTools,
-  Grid,
   DeviceSelect,
 } from './components';
 import PropTypes from 'prop-types';
@@ -15,6 +14,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
 import {WidgetsHistory} from 'data/Widgets/api';
+import {Fields, Field} from 'redux-form';
+import {Grids} from 'components';
+import {WidgetEditable} from "components/Widgets";
 
 @connect((state) => ({
   orgId: Number(state.Account.orgId),
@@ -158,9 +160,17 @@ class Dashboard extends React.Component {
       };
     }));
 
-    const params = {
-      id: 1
-    };
+    const names = widgets.map((widget) => (widget.get('fieldName'))).toJS();
+
+    const gridWidgets = widgets.map((widget) => (
+      <Field name={`${widget.get('fieldName')}`}
+             key={widget.get('id')}
+             component={WidgetEditable}
+             deviceId={Number(this.props.devicePreviewId)}
+             onWidgetDelete={this.handleWidgetDelete}
+             onWidgetClone={this.handleWidgetDelete}
+      />
+    )).toJS();
 
     return (
       <div className="products-manage-dashboard">
@@ -177,12 +187,7 @@ class Dashboard extends React.Component {
           )}
         </div>
 
-        <Grid widgets={widgets}
-              params={params}
-              deviceId={Number(this.props.devicePreviewId)}
-              onWidgetDelete={this.handleWidgetDelete}
-              onWidgetClone={this.handleWidgetClone}
-        />
+        <Fields names={names} widgets={gridWidgets} component={Grids.GridManage} deviceId={this.props.devicePreviewId} />
 
       </div>
     );

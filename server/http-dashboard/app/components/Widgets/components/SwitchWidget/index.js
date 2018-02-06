@@ -13,16 +13,31 @@ class Switch extends React.Component {
   static propTypes = {
     visible: PropTypes.bool,
 
-    data: PropTypes.object,
+    data  : PropTypes.object,
     params: PropTypes.object,
 
     deviceId: PropTypes.number,
 
-    onClose: PropTypes.func,
-    resetForm: PropTypes.func,
-    changeForm: PropTypes.func,
-    destroyForm: PropTypes.func,
-    handleSubmit: PropTypes.func,
+    parentElementProps: PropTypes.shape({
+      id         : PropTypes.string,
+      onMouseUp  : PropTypes.func,
+      onTouchEnd : PropTypes.func,
+      onMouseDown: PropTypes.func,
+      style      : PropTypes.object,
+    }),
+
+    tools        : PropTypes.element,
+    settingsModal: PropTypes.element,
+    resizeHandler: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element,
+    ]),
+
+    onClose       : PropTypes.func,
+    resetForm     : PropTypes.func,
+    changeForm    : PropTypes.func,
+    destroyForm   : PropTypes.func,
+    handleSubmit  : PropTypes.func,
     initializeForm: PropTypes.func,
   };
 
@@ -83,7 +98,7 @@ class Switch extends React.Component {
       return data.offLabel;
   }
 
-  render() {
+  renderSwitch() {
 
     if(!this.props.deviceId)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
@@ -115,6 +130,28 @@ class Switch extends React.Component {
             </span>
           )}
         </div>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div {...this.props.parentElementProps} className={`widgets--widget`}>
+        <div className="widgets--widget-label">
+          { !this.props.data.isHideWidgetNameEnabled && (
+            <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          ) }
+          {this.props.tools}
+        </div>
+
+        { /* widget content */ }
+
+        { this.renderSwitch() }
+
+        { /* end widget content */ }
+
+        {this.props.settingsModal}
+        {this.props.resizeHandler}
       </div>
     );
   }

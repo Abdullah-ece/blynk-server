@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Widget
+  Widget,
 } from './components';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import './styles.less';
@@ -200,5 +200,11 @@ class Widgets extends React.Component {
   }
 
 }
+
+export WidgetEditable from './components/WidgetEditable';
+export LinearWidget from './components/LinearWidget';
+export BarChartWidget from './components/BarChartWidget';
+export LabelWidget from './components/LabelWidget';
+export SwitchWidget from './components/SwitchWidget';
 
 export default Widgets;

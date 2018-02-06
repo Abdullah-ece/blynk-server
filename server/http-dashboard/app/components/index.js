@@ -16,4 +16,5 @@ export Chart            from './Chart';
 export TimeFiltering    from './TimeFiltering';
 export SimpleContentEditable from './SimpleContentEditable';
 export FontAwesome      from './FontAwesome';
+export Grids            from './Grids';
 export UI from './UI';
