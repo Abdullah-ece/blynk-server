@@ -29,10 +29,6 @@ import {
 } from "components/UI";
 
 import {
-  WidgetDevicesPreviewHistoryClear
-} from 'data/Widgets/actions';
-
-import {
   MetadataSelect as Select
 } from 'components/Form';
 
@@ -67,7 +63,6 @@ import {
   initializeForm: bindActionCreators(initialize, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
   changeForm: bindActionCreators(change, dispatch),
-  clearWidgetDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryClear, dispatch),
 }))
 @reduxForm()
 class BarChartSettings extends React.Component {
@@ -84,7 +79,6 @@ class BarChartSettings extends React.Component {
     changeForm: PropTypes.func,
     handleSubmit: PropTypes.func,
     initializeForm: PropTypes.func,
-    clearWidgetDevicePreviewHistory: PropTypes.func,
 
     deviceId: PropTypes.number,
 
@@ -141,7 +135,6 @@ class BarChartSettings extends React.Component {
   componentWillUpdate(nextProps) {
 
     if(!nextProps.visible && this.props.visible !== nextProps.visible) {
-      this.props.clearWidgetDevicePreviewHistory();
       this.props.resetForm('bar-chart-widget-preview');
     }
 

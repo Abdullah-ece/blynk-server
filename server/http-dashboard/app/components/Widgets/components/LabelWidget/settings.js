@@ -37,10 +37,6 @@ import {
   ItemsGroup
 } from "components/UI";
 
-import {
-  WidgetDevicesPreviewHistoryClear
-} from 'data/Widgets/actions';
-
 import {FORMS} from 'services/Products';
 
 @connect((state, ownProps) => ({
@@ -55,7 +51,6 @@ import {FORMS} from 'services/Products';
   resetForm: bindActionCreators(reset, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   destroyForm: bindActionCreators(destroy, dispatch),
-  clearWidgetDevicePreviewHistory: bindActionCreators(WidgetDevicesPreviewHistoryClear, dispatch),
 }))
 @reduxForm()
 class LabelWidgetSettings extends React.Component {
@@ -99,8 +94,6 @@ class LabelWidgetSettings extends React.Component {
       })
     })),
 
-    clearWidgetDevicePreviewHistory: PropTypes.func,
-
     initializeForm: PropTypes.func,
 
     deviceId: PropTypes.number,
@@ -124,7 +117,6 @@ class LabelWidgetSettings extends React.Component {
 
   componentWillUpdate(nextProps) {
     if(!nextProps.visible && this.props.visible !== nextProps.visible) {
-      this.props.clearWidgetDevicePreviewHistory();
       this.props.resetForm('bar-chart-widget-preview');
     }
 
