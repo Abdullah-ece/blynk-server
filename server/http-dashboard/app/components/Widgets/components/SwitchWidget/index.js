@@ -37,26 +37,11 @@ class Switch extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.handleSave = this.handleSave.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
   }
 
   state = {
     checked: false
   };
-
-  handleCancel() {
-    if (typeof this.props.onClose === 'function')
-      this.props.onClose();
-
-    // this.props.resetForm(this.props.form);
-  }
-
-  handleSave() {
-    if(typeof this.props.handleSubmit === 'function')
-      this.props.handleSubmit();
-  }
 
   getAlignmentClassName(alignment) {
     if(alignment === WIDGETS_SWITCH_ALIGNMENT.LEFT)
