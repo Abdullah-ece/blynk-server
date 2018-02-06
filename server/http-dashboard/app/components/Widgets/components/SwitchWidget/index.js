@@ -33,12 +33,6 @@ class Switch extends React.Component {
       PropTypes.element,
     ]),
 
-    onClose       : PropTypes.func,
-    resetForm     : PropTypes.func,
-    changeForm    : PropTypes.func,
-    destroyForm   : PropTypes.func,
-    handleSubmit  : PropTypes.func,
-    initializeForm: PropTypes.func,
   };
 
   constructor(props) {
