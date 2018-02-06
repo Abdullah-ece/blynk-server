@@ -10,8 +10,9 @@ import './styles.less';
 import {connect} from 'react-redux';
 import {Map, fromJS, List} from 'immutable';
 import moment from 'moment';
-import _ from 'lodash';
 import Canvasjs from 'canvasjs';
+
+import Dotdotdot from 'react-dotdotdot';
 
 @connect((state) => ({
   widgets: state.Widgets && state.Widgets.get('widgetsData'),
@@ -19,19 +20,27 @@ import Canvasjs from 'canvasjs';
 class LinearWidget extends React.Component {
 
   static propTypes = {
-    data: PropTypes.object,
+
+    parentElementProps: PropTypes.shape({
+      id         : PropTypes.string,
+      onMouseUp  : PropTypes.func,
+      onTouchEnd : PropTypes.func,
+      onMouseDown: PropTypes.func,
+      style      : PropTypes.object,
+    }),
+
+    tools        : PropTypes.element,
+    settingsModal: PropTypes.element,
+    resizeHandler: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element,
+    ]),
+
+    data  : PropTypes.object,
     params: PropTypes.object,
-    name: PropTypes.string,
+    name  : PropTypes.string,
 
     deviceId: PropTypes.any,
-
-    editable: PropTypes.bool,
-
-    previewMode: PropTypes.bool,
-
-    fetchRealData: PropTypes.bool,
-
-    onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
   };
@@ -40,7 +49,6 @@ class LinearWidget extends React.Component {
     super(props);
 
     this.generateData = this.generateData.bind(this);
-    this.generateFakeData = this.generateFakeData.bind(this);
   }
 
   dataDefaultOptions = {
@@ -50,7 +58,7 @@ class LinearWidget extends React.Component {
   };
 
   defaultToolTip = {
-    enabled:  !(this.props.editable && !this.props.previewMode),
+    enabled:  true,
     shared: true,
     contentFormatter: (data) => {
 
@@ -205,55 +213,6 @@ class LinearWidget extends React.Component {
 
   }
 
-  generateFakeData(source) {
-    let dataSource = fromJS({
-      ...this.dataDefaultOptions,
-      color: `#${source.get('color')}` || null,
-      name: source.get('label') || null,
-      dataPoints: [],
-      xValueFormatString: 'DD-MMMs',
-      yValueFormatString: '#,###,##',
-    });
-
-    for(let i = 0; i < 7; i++) {
-      dataSource = dataSource.update('dataPoints', (dataPoints) => dataPoints.push(fromJS(
-        { x: moment().subtract(i, 'days').toDate(), y: _.random(0,500)}
-      )));
-    }
-
-    return dataSource;
-  }
-
-  renderFakeDataChart() {
-
-    const MAX_LABEL_LENGTH = 60;
-    const DEFAULT_TICK_FORMAT = 'DDD, hh:mm TT';
-    const DEFAULT_HOVER_FORMAT = 'DDD, DD MMM, hh:mm TT';
-
-    const data = fromJS(this.props.data);
-
-    if(!data.has('sources') || !data.get('sources').size)
-      return null;
-
-    const dataSources = data.get('sources')
-      .map(this.generateFakeData)
-      .map(dataSource =>
-        dataSource.set('xValueFormatString', DEFAULT_HOVER_FORMAT).set('yValueFormatString', '###,###,###,###')
-      );
-
-    const config = {
-      axisX: {
-        labelMaxWidth: MAX_LABEL_LENGTH,
-        labelAngle: 0,
-        valueFormatString: DEFAULT_TICK_FORMAT,
-      },
-      toolTip: this.defaultToolTip,
-      data: dataSources.toJS()
-    };
-
-    return this.renderChartByParams(config);
-  }
-
   generateData(source, sourceIndex) {
 
     if(!source.has('dataStream') || !source.hasIn(['dataStream', 'pin']))
@@ -343,10 +302,24 @@ class LinearWidget extends React.Component {
   }
 
   render() {
-    if (!this.props.fetchRealData)
-      return this.renderFakeDataChart();
 
-    return this.renderRealDataChart();
+    return (
+      <div {...this.props.parentElementProps} className={`widgets--widget`}>
+        <div className="widgets--widget-label">
+          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          {this.props.tools}
+        </div>
+
+        { /* widget content */ }
+
+        { this.renderRealDataChart() }
+
+        { /* end widget content */ }
+
+        {this.props.settingsModal}
+        {this.props.resizeHandler}
+      </div>
+    );
   }
 
 }
