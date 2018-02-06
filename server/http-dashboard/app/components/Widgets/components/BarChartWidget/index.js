@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 
 import BarChartSettings from './settings';
 
-import _ from 'lodash';
+import Dotdotdot from 'react-dotdotdot';
 
 import './styles.less';
 
@@ -22,17 +22,14 @@ import './styles.less';
 class BarChartWidget extends React.Component {
 
   static propTypes = {
-    fetchRealData: PropTypes.bool,
-
     widgets: PropTypes.instanceOf(Map),
 
     deviceId: PropTypes.any,
 
-    editable: PropTypes.bool,
-    previewMode: PropTypes.bool,
     name: PropTypes.string,
 
     data: PropTypes.shape({
+      label: PropTypes.string,
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       w: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       h: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -41,17 +38,27 @@ class BarChartWidget extends React.Component {
       }))
     }),
 
-    fakeData: PropTypes.shape({
-      x: PropTypes.arrayOf(PropTypes.number),
-      y: PropTypes.arrayOf(PropTypes.string)
+    parentElementProps: PropTypes.shape({
+      id         : PropTypes.string,
+      onMouseUp  : PropTypes.func,
+      onTouchEnd : PropTypes.func,
+      onMouseDown: PropTypes.func,
+      style      : PropTypes.object,
     }),
-    isChartPreview: PropTypes.bool,
+
+    tools        : PropTypes.element,
+    settingsModal: PropTypes.element,
+    resizeHandler: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element,
+    ]),
+
   };
 
   defaultParams = {
     chartConfigs: {
       toolTip:{
-        enabled: !(this.props.editable && !this.props.previewMode),
+        enabled: true,
         fontColor: "#0f0f13",
         fontSize: 12,
         fontFamily: 'PF DinDisplay Pro',
@@ -120,52 +127,6 @@ class BarChartWidget extends React.Component {
     );
   }
 
-  generateFakeData(){
-    let labels = ['Column 1','Column 2','Column 3','Column 4','Column 5'];
-    const length = _.random(2,5);
-    let dataSource = [];
-    for(let i = 0; i < length; i++) {
-      dataSource.push({
-        label: labels.splice(0, 1).toString(),
-        y: _.random(1000),
-      });
-    }
-    return dataSource;
-  }
-  renderFakeData() {
-    let config = {
-      ...this.defaultParams.chartConfigs
-    };
-
-    let data = this.props.fakeData;
-    if(!data || !data.x || !data.y
-      || ( Array.isArray(data.x) && !data.x.length )
-      || ( Array.isArray(data.y) && !data.y.length )){
-
-
-      if(this.props.isChartPreview){
-        return (
-          <div className="bar-chart-widget-no-data">No Data</div>
-        );
-      }else {
-        config.data[0].dataPoints = this.generateFakeData();
-        return this.renderChartByParams(config);
-      }
-    }
-
-    const length = data.x.length;
-    let dataSource = [];
-    for(let i = 0; i < length; i++) {
-      dataSource.push({
-        label:data.y[i],
-        y: data.x[i],
-      });
-    }
-    config.data[0].dataPoints = dataSource;
-
-    return this.renderChartByParams(config);
-  }
-
   renderRealData() {
 
     if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId || !this.props.widgets.hasIn([String(this.props.deviceId), 'loading']))
@@ -206,10 +167,23 @@ class BarChartWidget extends React.Component {
 
   render() {
 
-    if(!this.props.fetchRealData)
-      return this.renderFakeData();
+    return (
+      <div {...this.props.parentElementProps} className={`widgets--widget`}>
+        <div className="widgets--widget-label">
+          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          {this.props.tools}
+        </div>
 
-    return this.renderRealData();
+        { /* widget content */ }
+
+        { this.renderRealData() }
+
+        { /* end widget content */ }
+
+        {this.props.settingsModal}
+        {this.props.resizeHandler}
+      </div>
+    );
   }
 
 }
