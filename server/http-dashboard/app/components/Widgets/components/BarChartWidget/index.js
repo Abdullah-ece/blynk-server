@@ -8,21 +8,21 @@ import {Icon} from 'antd';
 
 import PropTypes from 'prop-types';
 
-import {connect} from 'react-redux';
-
 import BarChartSettings from './settings';
 
 import Dotdotdot from 'react-dotdotdot';
 
 import './styles.less';
 
-@connect((state) => ({
-  widgets: state.Widgets && state.Widgets.get('widgetsData'),
-}))
 class BarChartWidget extends React.Component {
 
   static propTypes = {
-    widgets: PropTypes.instanceOf(Map),
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
+
+    history: PropTypes.instanceOf(Map),
 
     deviceId: PropTypes.any,
 
@@ -129,10 +129,10 @@ class BarChartWidget extends React.Component {
 
   renderRealData() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId || !this.props.widgets.hasIn([String(this.props.deviceId), 'loading']))
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
-    if (this.props.widgets.getIn([String(this.props.deviceId), 'loading']))
+    if (this.props.loading)
       return (<Icon type="loading"/>);
 
     let config = {
@@ -142,9 +142,7 @@ class BarChartWidget extends React.Component {
     let dataSource = [];
 
     this.props.data.sources.forEach((source, sourceIndex) => {
-      const storage = this.props.widgets.getIn([
-        String(this.props.deviceId),
-        String(this.props.data.id),
+      const storage = this.props.history.getIn([
         String(sourceIndex),
         'data',
       ]) || [];

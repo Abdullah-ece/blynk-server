@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import {Map, fromJS} from 'immutable';
 import {Icon} from 'antd';
 import Dotdotdot from 'react-dotdotdot';
@@ -10,9 +9,6 @@ import './styles.less';
 
 import LabelWidgetSettings from './settings';
 
-@connect((state) => ({
-  widgets: state.Widgets && state.Widgets.get('widgetsData'),
-}))
 class LabelWidget extends React.Component {
 
   static propTypes = {

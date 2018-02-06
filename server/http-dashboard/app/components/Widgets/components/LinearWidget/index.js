@@ -7,19 +7,22 @@ import {
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
-import {connect} from 'react-redux';
 import {Map, fromJS, List} from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
 
 import Dotdotdot from 'react-dotdotdot';
 
-@connect((state) => ({
-  widgets: state.Widgets && state.Widgets.get('widgetsData'),
-}))
 class LinearWidget extends React.Component {
 
   static propTypes = {
+
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
+
+    history: PropTypes.instanceOf(Map),
 
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
@@ -218,11 +221,7 @@ class LinearWidget extends React.Component {
     if(!source.has('dataStream') || !source.hasIn(['dataStream', 'pin']))
       return null;
 
-    const pin = this.props.widgets.getIn([
-      String(this.props.deviceId),
-      String(this.props.data.id),
-      String(sourceIndex)
-    ]);
+    const pin = this.props.history.get(String(sourceIndex));
 
     if(!pin)
       return null;
@@ -247,10 +246,10 @@ class LinearWidget extends React.Component {
 
   renderRealDataChart() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId || !this.props.widgets.hasIn([String(this.props.deviceId), 'loading']))
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
-    if (this.props.widgets.getIn([String(this.props.deviceId), 'loading']))
+    if (this.props.loading)
       return (<Icon type="loading"/>);
 
     const sources = fromJS(this.props.data.sources);
