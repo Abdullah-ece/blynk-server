@@ -6,7 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
 import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
-import {fromJS, List} from 'immutable';
+import {fromJS, List, Map} from 'immutable';
 import {getCoordinatesToSet, buildDataQueryRequestForWidgets} from 'services/Widgets';
 import './styles.less';
 import _ from 'lodash';
@@ -23,6 +23,7 @@ import {WidgetEditable} from "components/Widgets";
   devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
   devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
   devicesLoading: state.Devices.devicesLoading,
+  history: state.Widgets && state.Widgets.get('widgetsData'),
 }), (dispatch) => ({
   changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
   fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
@@ -42,8 +43,9 @@ class Dashboard extends React.Component {
     devicePreviewId: PropTypes.number,
 
     devicesListForPreview: PropTypes.instanceOf(List),
+    widgets              : PropTypes.instanceOf(List),
+    history              : PropTypes.instanceOf(Map),
 
-    widgets: PropTypes.instanceOf(List),
 
     fetchDevicesListForPreview: PropTypes.func,
 
@@ -162,15 +164,30 @@ class Dashboard extends React.Component {
 
     const names = widgets.map((widget) => (widget.get('fieldName'))).toJS();
 
-    const gridWidgets = widgets.map((widget) => (
-      <Field name={`${widget.get('fieldName')}`}
-             key={widget.get('id')}
-             component={WidgetEditable}
-             deviceId={Number(this.props.devicePreviewId)}
-             onWidgetDelete={this.handleWidgetDelete}
-             onWidgetClone={this.handleWidgetDelete}
-      />
-    )).toJS();
+    const gridWidgets = widgets.map((widget) => {
+
+      const history = this.props.history.getIn([
+        String(this.props.devicePreviewId),
+        String(widget.get('id'))
+      ]);
+
+      const loading = this.props.history.getIn([
+        String(this.props.devicePreviewId),
+        'loading'
+      ]);
+
+      return (
+        <Field name={`${widget.get('fieldName')}`}
+               key={widget.get('id')}
+               component={WidgetEditable}
+               deviceId={Number(this.props.devicePreviewId)}
+               onWidgetDelete={this.handleWidgetDelete}
+               onWidgetClone={this.handleWidgetDelete}
+               loading={loading}
+               history={history}
+        />
+      );
+    }).toJS();
 
     return (
       <div className="products-manage-dashboard">

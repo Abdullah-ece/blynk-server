@@ -24,6 +24,10 @@ class WidgetEditable extends React.Component {
       onChange: PropTypes.func
     }),
 
+    loading: PropTypes.bool,
+
+    history: PropTypes.object,
+
     style: PropTypes.object,
 
     children: PropTypes.oneOfType([
@@ -149,6 +153,8 @@ class WidgetEditable extends React.Component {
       data         : widget,
       name         : widget.type + widget.id,
       resizeHandler: this.props.children, // resize handler from react-grid-layout
+      history      : this.props.history,
+      loading      : this.props.loading,
     };
 
     attributes.parentElementProps = {

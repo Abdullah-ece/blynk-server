@@ -24,7 +24,12 @@ class LabelWidget extends React.Component {
 
     onWidgetDelete: PropTypes.func,
 
-    widgets: PropTypes.instanceOf(Map),
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
+
+    history: PropTypes.instanceOf(Map),
 
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
@@ -122,11 +127,7 @@ class LabelWidget extends React.Component {
     if (!source.has('dataStream') || !source.hasIn(['dataStream', 'pin']))
       return null;
 
-    const pin = this.props.widgets.getIn([
-      String(this.props.deviceId),
-      String(this.props.data.id),
-      String(sourceIndex)
-    ]);
+    const pin = this.props.history.get(String(sourceIndex));
 
     if (!pin)
       return null;
@@ -138,10 +139,10 @@ class LabelWidget extends React.Component {
 
   renderRealDataLabel() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.deviceId || !this.props.widgets.hasIn([String(this.props.deviceId), 'loading']))
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
-    if (this.props.widgets.getIn([String(this.props.deviceId), 'loading']))
+    if (this.props.loading)
       return (<Icon type="loading"/>);
 
     const sources = fromJS(this.props.data.sources);
