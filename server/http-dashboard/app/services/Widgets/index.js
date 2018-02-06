@@ -21,8 +21,6 @@ export const buildDataQueryRequestForWidgets = ({ widgets, timeFrom, timeTo, dev
 
       widget.get('sources').forEach((source, sourceIndex) => {
 
-        console.log('build source', source.toJS());
-
         if (!source || !source.get('dataStream'))
           return null;
 

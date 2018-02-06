@@ -68,10 +68,6 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if(!_.isEqual(prevProps.fields, this.props.fields)) {
-      console.log('new fields', prevProps.fields.getAll(), this.props.fields.getAll());
-    }
-
     if(prevProps.devicePreviewId !== this.props.devicePreviewId) {
       this.getDataForWidgets();
     }
@@ -81,8 +77,6 @@ class Dashboard extends React.Component {
 
 
     let dataQueryRequests = [];
-
-    console.log('dataQueryRequestFields', this.props.fields.getAll());
 
     if (this.props.fields.getAll() && this.props.fields.getAll().length && this.props.devicePreviewId)
 

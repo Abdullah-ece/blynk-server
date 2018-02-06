@@ -194,8 +194,6 @@ class Widgets extends React.Component {
       return (widget.fieldName);
     });
 
-    console.log(names);
-
     return (
       <Fields names={names} component={this.responsiveGridLayout} deviceId={this.props.deviceId} />
     );
