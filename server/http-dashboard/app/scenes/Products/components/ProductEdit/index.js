@@ -287,7 +287,7 @@ class ProductEdit extends React.Component {
               </Tabs.TabPane>
 
               <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
-                <FieldArray component={DashboardTab} name={`webDashboard.widgets`} productId={this.props.productId || null}/>
+                <FieldArray component={DashboardTab} name={`webDashboard.widgets`} productId={this.props.productId || null} rerenderOnEveryChange={true}/>
               </Tabs.TabPane>
 
             </Tabs>
