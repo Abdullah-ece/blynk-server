@@ -17,22 +17,30 @@ class LabelWidget extends React.Component {
 
   static propTypes = {
     data: PropTypes.object,
-    editable: PropTypes.bool,
-
-    fetchRealData: PropTypes.bool,
 
     deviceId: PropTypes.any,
 
-    isChartPreview: PropTypes.bool,
-
-    fakeData: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    style: PropTypes.object,
 
     onWidgetDelete: PropTypes.func,
 
     widgets: PropTypes.instanceOf(Map),
+
+    parentElementProps: PropTypes.shape({
+      id         : PropTypes.string,
+      onMouseUp  : PropTypes.func,
+      onTouchEnd : PropTypes.func,
+      onMouseDown: PropTypes.func,
+      style      : PropTypes.object,
+    }),
+
+    tools        : PropTypes.element,
+    settingsModal: PropTypes.element,
+    resizeHandler: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element,
+    ]),
+
   };
 
   constructor(props) {
@@ -148,7 +156,31 @@ class LabelWidget extends React.Component {
   }
 
   render() {
-    return this.renderRealDataLabel();
+
+    let style = {
+      ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
+      ...this.props.style,
+    };
+
+
+
+    return (
+      <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
+        <div className="widgets--widget-label">
+          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          {this.props.tools}
+        </div>
+
+        { /* widget content */ }
+
+        { this.renderRealDataLabel() }
+
+        { /* end widget content */ }
+
+        {this.props.settingsModal}
+        {this.props.resizeHandler}
+      </div>
+    );
   }
 
 }

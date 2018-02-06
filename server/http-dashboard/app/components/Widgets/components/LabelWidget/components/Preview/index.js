@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Dotdotdot from 'react-dotdotdot';
-
 import {LabelWidget} from 'components/Widgets/components';
 
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
@@ -51,18 +49,10 @@ class Preview extends React.Component {
     labelStyles.textAlign = getTextAlignStyle(this.props.data.alignment);
 
     return (
-      <div>
-
-        <div className="widgets--widget label-widget-preview" style={labelStyles}>
-          <div className="widgets--widget-label" style={{padding: 0}}>
-            <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
-          </div>
-          <LabelWidget fetchRealData={true}
-                       deviceId={this.props.deviceId}
-                       data={this.props.data}
-                       isChartPreview={true}/>
-        </div>
-
+      <div className="label-widget-preview">
+        <LabelWidget style={labelStyles}
+                     deviceId={this.props.deviceId}
+                     data={this.props.data}/>
       </div>
     );
   }
