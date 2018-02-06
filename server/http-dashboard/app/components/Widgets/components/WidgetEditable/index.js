@@ -24,7 +24,7 @@ class WidgetEditable extends React.Component {
       onChange: PropTypes.func
     }),
 
-    style: PropTypes.string,
+    style: PropTypes.object,
 
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
