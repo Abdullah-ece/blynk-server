@@ -182,7 +182,6 @@ class Dashboard extends React.Component {
               deviceId={Number(this.props.devicePreviewId)}
               onWidgetDelete={this.handleWidgetDelete}
               onWidgetClone={this.handleWidgetClone}
-              onChange={this.handleWidgetsChange}
         />
 
       </div>
