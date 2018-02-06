@@ -20,6 +20,9 @@ export const buildDataQueryRequestForWidgets = ({ widgets, timeFrom, timeTo, dev
     if (widget.has('sources') && widget.get('sources').size) {
 
       widget.get('sources').forEach((source, sourceIndex) => {
+
+        console.log('build source', source.toJS());
+
         if (!source || !source.get('dataStream'))
           return null;
 
@@ -309,9 +312,6 @@ export const WIDGETS_CONFIGS = {
     minW: 2,
     minH: 1,
     maxH: 3,
-    source: {
-      'sourceType': WIDGETS_SOURCE_TYPES.RAW_DATA
-    }
   },
   [WIDGET_TYPES.LINEAR]: {
     minW: 3,
@@ -388,12 +388,21 @@ export const WIDGETS_SOURCE_TYPES_LIST = [
 ];
 
 export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
-  label: 'Source Label',
-  sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
-  color: '007dc4',
-  graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
-  connectMissingPointsEnabled: false,
-  dataStream: {}
+  [WIDGET_TYPES.LINEAR]: {
+    label: 'Source Label',
+    sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+    color: '007dc4',
+    graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+    connectMissingPointsEnabled: false,
+    dataStream: {}
+  },
+  [WIDGET_TYPES.LABEL]: {
+    label: 'Source Label',
+    sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+    color: '007dc4',
+    graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+    connectMissingPointsEnabled: false,
+  }
 };
 
 export const WIDGETS_LABEL_DATA_TYPES = {
@@ -434,7 +443,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [
       {
         id: 1,
-        ...WIDGETS_PREDEFINED_SOURCE_OPTIONS
+        ...WIDGETS_PREDEFINED_SOURCE_OPTIONS[WIDGET_TYPES.LINEAR]
       }
     ],
     isShowTitleEnabled: false,
@@ -469,7 +478,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [
       {
         id: 1,
-        ...WIDGETS_CONFIGS[WIDGET_TYPES.LABEL].source,
+        ...WIDGETS_PREDEFINED_SOURCE_OPTIONS[WIDGET_TYPES.LABEL]
       }
     ],
     isColorSetEnabled: false,
