@@ -135,21 +135,46 @@ class LabelWidget extends React.Component {
 
   renderRealDataLabel() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
+    const labelValue = this.getLabelValue();
+
+    if (labelValue === null)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
     if (this.props.loading)
       return (<Icon type="loading"/>);
 
+    return this.renderLabelByParams({
+      value: labelValue,
+      suffix: this.props.data.valueSuffix,
+      alignment: this.props.data.alignment
+    });
+  }
+
+  getLabelValue() {
+
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
+      return null;
+
     const sources = fromJS(this.props.data.sources);
 
     const dataSources = sources.map(this.generateData).filter((source) => source !== null);
 
-    return this.renderLabelByParams({
-      value: dataSources.get(0) || null,
-      suffix: this.props.data.valueSuffix,
-      alignment: this.props.data.alignment
-    });
+    return dataSources.get(0) || null;
+  }
+
+  getLabelStyles() {
+    const labelValue = this.getLabelValue();
+    const currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] || {backgroundColor:"ffffff",textColor:"black"};
+
+    return !this.props.data.isColorSetEnabled ? {
+      backgroundColor: "#" + this.props.data.backgroundColor,
+      color: "#" + this.props.data.textColor
+    } : (({ backgroundColor,textColor }) => {
+      return {
+        backgroundColor: "#" + backgroundColor,
+        color: "#" + textColor
+      };
+    })(currentColorSet);
   }
 
   render() {
@@ -157,9 +182,8 @@ class LabelWidget extends React.Component {
     let style = {
       ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
       ...this.props.style,
+      ...this.getLabelStyles()
     };
-
-
 
     return (
       <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
