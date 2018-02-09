@@ -112,13 +112,13 @@ class Dashboard extends React.Component {
     this.props.fields.remove(fieldIndex);
   }
 
-  handleWidgetClone(id, breakPoint) {
+  handleWidgetClone(id) {
 
     const widgets = this.props.fields.getAll();
 
     const widget = _.find(widgets, (widget) => Number(widget.id) === id);
 
-    const coordinatesForNewWidget = getCoordinatesToSet(widget, widgets, breakPoint);
+    const coordinatesForNewWidget = getCoordinatesToSet(widget, widgets, 'lg');
 
     this.props.fields.push({
       ...widget,
@@ -184,7 +184,7 @@ class Dashboard extends React.Component {
                component={WidgetEditable}
                deviceId={Number(this.props.devicePreviewId)}
                onWidgetDelete={this.handleWidgetDelete}
-               onWidgetClone={this.handleWidgetDelete}
+               onWidgetClone={this.handleWidgetClone}
                loading={loading}
                history={history}
         />
