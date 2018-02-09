@@ -16,7 +16,7 @@ import {
   Field as FormField,
 } from 'components/Form';
 
-
+import {Preview} from './scenes';
 
 import Validation from 'services/Validation';
 
@@ -66,11 +66,11 @@ class SwitchSettings extends React.Component {
     dataStreams: PropTypes.array,
 
     form: PropTypes.string,
+    deviceId: PropTypes.number,
     formValues: PropTypes.object,
     initialValues: PropTypes.object,
 
     visible: PropTypes.bool,
-
     onClose: PropTypes.func,
     resetForm: PropTypes.func,
     changeForm: PropTypes.func,
@@ -339,6 +339,10 @@ class SwitchSettings extends React.Component {
         visible={this.props.visible}
         onSave={this.handleSave}
         onCancel={this.handleCancel}
+        preview={(
+          <Preview  deviceId={this.props.deviceId}
+                    data={this.props.formValues}/>
+        )}
         config={(
           <div>
             <div className="modal-window-widget-settings-config-column-header">
