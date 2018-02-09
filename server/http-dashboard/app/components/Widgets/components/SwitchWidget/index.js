@@ -77,6 +77,12 @@ class Switch extends React.Component {
       return data.offLabel;
   }
 
+  getSwitchPositionClassName(isNameHidden) {
+    if(isNameHidden)
+      return `widgets--widget-switch--centered`;
+    return null;
+  }
+
   renderSwitch() {
 
     if(!this.props.deviceId)
@@ -92,18 +98,20 @@ class Switch extends React.Component {
 
     const labelAlignmentClassName = this.getLabelAlignmentClassName(this.props.data.labelPosition);
 
+    const switchPositionClassName = this.getSwitchPositionClassName(this.props.data.isWidgetNameHidden);
+
     const label = this.getLabelByStatus(this.state.checked, this.props.data);
 
     const color = this.getSwitchColorByStatus(this.state.checked, this.props.data.color);
 
-    const {isShowOnOffLabelsEnabled} = this.props.data;
+    const {isSwitchLabelsEnabled} = this.props.data;
 
     return (
-      <div className={`widgets--widget-switch ${alignmentClassName} ${isShowOnOffLabelsEnabled && labelAlignmentClassName || ''}`}>
+      <div className={`widgets--widget-switch ${alignmentClassName} ${switchPositionClassName} ${isSwitchLabelsEnabled && labelAlignmentClassName || ''}`}>
         <div className={`widgets--widget-switch-wrapper`}>
           <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={this.state.checked} onChange={onChange}/>
 
-          { isShowOnOffLabelsEnabled && (
+          { isSwitchLabelsEnabled && (
             <span className={`widgets--widget-switch--label`}>
               <Dotdotdot clamp={1}>{ label }</Dotdotdot>
             </span>
@@ -116,13 +124,13 @@ class Switch extends React.Component {
   render() {
     return (
       <div {...this.props.parentElementProps} className={`widgets--widget`}>
-        <div className="widgets--widget-label">
-          { !this.props.data.isHideWidgetNameEnabled && (
-            <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
-          ) }
-          {this.props.tools}
-        </div>
+        {this.props.tools}
 
+        {(!this.props.data.isWidgetNameHidden || (this.props.data.isWidgetNameHidden && !this.props.data.isSwitchLabelsEnabled)) && (
+          <div className="widgets--widget-label">
+            <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+          </div>
+        )}
         { /* widget content */ }
 
         { this.renderSwitch() }

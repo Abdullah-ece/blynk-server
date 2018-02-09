@@ -33,24 +33,37 @@
     }
   }
 
-  &.widgets--widget-switch--alignment-left .widgets--widget-switch-wrapper {
+  .widgets--widget-switch-wrapper {
     display: flex;
+  }
+
+  &.widgets--widget-switch--label-alignment-left .widgets--widget-switch-wrapper {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  &.widgets--widget-switch--label-alignment-right .widgets--widget-switch-wrapper {
+    flex-direction: row;
     justify-content: flex-start;
-    align-content: flex-start;
+  }
+
+  &.widgets--widget-switch--alignment-left .widgets--widget-switch-wrapper {
+    align-items: flex-start;
   }
 
   &.widgets--widget-switch--alignment-center .widgets--widget-switch-wrapper {
-    display: flex;
     justify-content: center;
-    align-content: center;
+    align-items: center;
   }
 
-  &.widgets--widget-switch--label-alignment-left .widgets--widget-switch-wrapper{
-    flex-direction: row-reverse;
-  }
-
-  &.widgets--widget-switch--label-alignment-right .widgets--widget-switch-wrapper{
-    flex-direction: row;
+  &.widgets--widget-switch--centered {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    .widgets--widget-switch-wrapper {
+      width: 100%;
+    }
   }
 }
 

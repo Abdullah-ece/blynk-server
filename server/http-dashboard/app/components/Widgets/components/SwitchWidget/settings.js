@@ -399,10 +399,10 @@ class SwitchSettings extends React.Component {
                   </Row>
 
                   <Item offset={'normal'}>
-                    <Field name={'isShowOnOffLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
+                    <Field name={'isSwitchLabelsEnabled'} component={this.switchComponent} label={'Show on/off labels'}/>
                   </Item>
 
-                  {this.props.formValues.isShowOnOffLabelsEnabled && (
+                  {this.props.formValues.isSwitchLabelsEnabled && (
 
                     <div>
 
@@ -424,7 +424,7 @@ class SwitchSettings extends React.Component {
                       </Item>
 
                       <Item offset={'normal'}>
-                        <Field name={'isHideWidgetNameEnabled'} component={this.switchComponent} label={'Hide widget name'}/>
+                        <Field name={'isWidgetNameHidden'} component={this.switchComponent} label={'Hide widget name'}/>
                       </Item>
 
                     </div>
