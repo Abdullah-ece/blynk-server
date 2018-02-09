@@ -16,6 +16,8 @@ import {
   Button
 } from 'antd';
 
+import _ from 'lodash';
+
 class WidgetEditable extends React.Component {
 
   static propTypes = {
@@ -55,6 +57,16 @@ class WidgetEditable extends React.Component {
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.handleWidgetChange = this.handleWidgetChange.bind(this);
     this.toggleSettingsModalVisibility = this.toggleSettingsModalVisibility.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      !_.isEqual(nextProps.input.value, this.props.input.value) ||
+      !_.isEqual(nextProps.loading, this.props.loading) ||
+      !_.isEqual(nextProps.history, this.props.history) ||
+      !_.isEqual(nextProps.style, this.props.style) ||
+      !_.isEqual(nextProps.deviceId, this.props.deviceId)
+    );
   }
 
   handleWidgetChange(widgetValues) {

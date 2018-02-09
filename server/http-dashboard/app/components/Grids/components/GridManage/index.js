@@ -53,11 +53,10 @@ class GridManage extends React.Component {
 
   render() {
 
-    if(!this.props.webDashboard || !this.props.webDashboard.widgets || !this.props.webDashboard.widgets.length)
-      return null;
+    let widgets = this.props.webDashboard && this.props.webDashboard.widgets || [];
 
     const layouts = {
-      lg: this.props.webDashboard.widgets.map((item) => {
+      lg: widgets.map((item) => {
         const widget = item.input.value;
 
         return {
@@ -79,7 +78,7 @@ class GridManage extends React.Component {
       <div className="product-manage-dashboard-grid">
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
-          margin={[8,6]}
+          margin={[8, 6]}
           rowHeight={96}
           cols={this.cols}
           className={`widgets widgets-editable`}
@@ -94,28 +93,6 @@ class GridManage extends React.Component {
         </ResponsiveGridLayout>
       </div>
     );
-
-    // if(!this.props.fields.getAll() || !this.props.fields.getAll().length)
-    //   return null;
-    //
-    // const widgets = {
-    //   lg: this.props.widgets.map(
-    //     (item) => item.set('i', (item.get('id')).toString())
-    //   ).toJS()
-    // };
-    //
-    // return (
-    //   <div className="product-manage-dashboard-grid">
-    //     <Widgets
-    //       editable={true}
-    //       data={widgets}
-    //       fetchRealData={true}
-    //       deviceId={this.props.deviceId}
-    //       onWidgetDelete={this.props.onWidgetDelete}
-    //       onWidgetClone={this.props.onWidgetClone}
-    //     />
-    //   </div>
-    // );
   }
 
 }
