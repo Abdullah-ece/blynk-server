@@ -72,9 +72,38 @@ class Dashboard extends React.Component {
       });
   }
 
+  isAnyDataStreamUpdated(oldFields, newFields) {
+
+    const simplyfyToSource = (arr) => {
+      return _.sortBy(fromJS(arr).map((item) => ({
+        id : item.get('id'),
+        pin: item.getIn(['sources', '0', 'dataStream', 'pin']) || null,
+      })).toJS(), ['id']);
+    };
+
+    oldFields = simplyfyToSource(oldFields);
+    newFields = simplyfyToSource(newFields);
+
+    let length = oldFields.length > newFields.length ? oldFields.length : newFields.length;
+
+    for (let i = 0; i < length; i++) {
+      if (!oldFields[i]) continue;
+      if (!newFields[i]) continue;
+
+      if (oldFields[i].id === newFields[i].id && Number(oldFields[i].pin) !== Number(newFields[i].pin)) {
+        return true;
+      }
+    }
+
+  }
+
   componentDidUpdate(prevProps) {
 
     if(this.props.isDevicePreviewEnabled && prevProps.devicePreviewId !== this.props.devicePreviewId) {
+      this.getDataForWidgets();
+    }
+
+    if(this.isAnyDataStreamUpdated(prevProps.fields.getAll(), this.props.fields.getAll())) {
       this.getDataForWidgets();
     }
   }
