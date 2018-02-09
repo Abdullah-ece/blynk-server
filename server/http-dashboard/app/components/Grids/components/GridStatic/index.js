@@ -52,7 +52,7 @@ class GridStatic extends React.Component {
           margin={[8, 6]}
           rowHeight={96}
           cols={this.cols}
-          className={`widgets widgets-editable`}
+          className={`widgets`}
           isDraggable={false}
           isResizable={false}
           autoSize={true}
