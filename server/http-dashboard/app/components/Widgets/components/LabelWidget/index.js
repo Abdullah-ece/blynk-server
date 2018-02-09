@@ -179,7 +179,7 @@ class LabelWidget extends React.Component {
 
   renderLabelLevel() {
 
-    const percentFilled =  Math.round(this.getLabelValue() / (this.props.data.level.max / 100));
+    const percentFilled =  Math.round((this.getLabelValue() - this.props.data.level.min) / ((this.props.data.level.max - this.props.data.level.min) / 100));
     let style = {
       position: "absolute",
       bottom: 0,
