@@ -179,7 +179,7 @@ class LabelWidget extends React.Component {
 
   renderLabelLevel() {
 
-    if(this.props.data.level.min > this.props.data.level.max){
+    if(this.props.data.level.min >= this.props.data.level.max){
 
       return null;
     }
