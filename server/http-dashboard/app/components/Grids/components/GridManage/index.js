@@ -77,7 +77,7 @@ class GridManage extends React.Component {
       <div className="product-manage-dashboard-grid">
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
-          margin={[8, 6]}
+          margin={[8, 8]}
           rowHeight={96}
           cols={this.cols}
           className={`widgets widgets-editable`}

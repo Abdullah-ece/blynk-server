@@ -49,7 +49,7 @@ class GridStatic extends React.Component {
       <div className="product-details-dashboard-grid">
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
-          margin={[8, 6]}
+          margin={[8, 8]}
           rowHeight={96}
           cols={this.cols}
           className={`widgets`}
