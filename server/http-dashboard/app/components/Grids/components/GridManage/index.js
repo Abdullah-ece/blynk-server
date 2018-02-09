@@ -8,6 +8,7 @@ import _ from 'lodash';
 //   fromJS
 // } from 'immutable';
 import {Responsive, WidthProvider} from 'react-grid-layout';
+import {WIDGETS_CONFIGS} from 'services/Widgets';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 class GridManage extends React.Component {
@@ -68,6 +69,7 @@ class GridManage extends React.Component {
           minH: widget.minH,
           maxW: widget.maxW,
           maxH: widget.maxH,
+          ...WIDGETS_CONFIGS[widget.type],
         };
 
       })
