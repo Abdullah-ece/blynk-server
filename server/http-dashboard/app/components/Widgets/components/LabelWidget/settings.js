@@ -547,12 +547,12 @@ class LabelWidgetSettings extends React.Component {
                     <Row>
                       <Col span={6}>
                         <Item label="min value" offset="medium">
-                          <FormField name={'level.min'}/>
+                          <FormField name={'level.min'} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                         </Item>
                       </Col>
                       <Col span={6} offset={1}>
                         <Item label="max value" offset="medium">
-                          <FormField name={'level.max'}/>
+                          <FormField name={'level.max'} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                         </Item>
                       </Col>
                     </Row>
