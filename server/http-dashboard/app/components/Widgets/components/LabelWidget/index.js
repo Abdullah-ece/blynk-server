@@ -177,13 +177,39 @@ class LabelWidget extends React.Component {
     })(currentColorSet);
   }
 
+  renderLabelLevel() {
+
+    const percentFilled =  Math.round(this.getLabelValue() / (this.props.data.level.max / 100));
+    let style = {
+      position: "absolute",
+      bottom: 0,
+        left: 0,
+      backgroundColor: "#" + this.props.data.level.color,
+      height: "100%",
+      width: "100%",
+    };
+
+    if(this.props.data.level.position === "VERTICAL"){
+      style.height = percentFilled +"%";
+    } else {
+      style.width = percentFilled +"%";
+    }
+
+    return(
+      <div className={"web-label-level " + (this.props.data.level.position).toLowerCase()}>
+        <div style={style}></div>
+      </div>
+    );
+  }
+
   render() {
 
     let style = {
+      position:"relative",
       ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
       ...this.props.style,
-      ...this.getLabelStyles()
-    };
+      ...this.getLabelStyles(),
+  };
 
     return (
       <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
@@ -191,6 +217,8 @@ class LabelWidget extends React.Component {
           <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
+
+        {this.props.data.isShowLevelEnabled && this.renderLabelLevel() }
 
         { /* widget content */ }
 
