@@ -197,7 +197,7 @@ class LabelWidget extends React.Component {
 
     return(
       <div className={"web-label-level " + (this.props.data.level.position).toLowerCase()}>
-        <div style={style}></div>
+        <div style={style}/>
       </div>
     );
   }

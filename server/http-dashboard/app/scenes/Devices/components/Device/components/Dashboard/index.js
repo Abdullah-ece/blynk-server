@@ -1,5 +1,4 @@
 import React from 'react';
-import {Widgets} from 'components';
 import _ from 'lodash';
 import './styles.less';
 import {Map} from 'immutable';
@@ -13,6 +12,8 @@ import {TimeFiltering} from './scenes';
 import {getFormValues, initialize} from 'redux-form';
 
 import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+import {Grids} from "components";
+import {WidgetStatic} from "components/Widgets";
 
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
@@ -164,70 +165,11 @@ class Dashboard extends React.Component {
 
   render() {
 
-    let widgets;
-
-    if (this.props.dashboard.has('widgets')) {
-
-      widgets = {
-        lg: this.props.dashboard.get('widgets').map((item) => {
-          return ({
-            ...item.toJS(),
-            i: String(item.get('id')),
-            id: String(item.get('id')),
-            w: item.get('width'),
-            h: item.get('height'),
-            x: item.get('x'),
-            y: item.get('y')
-          });
-        }).toJS()
-      };
-    } else {
-      widgets = {
-        lg: []
-      };
-    }
-
-    // widgets.lg.push({
-    //   typeOfData: 1,
-    //   label: 'Devices By Organization',
-    //   type: 'BAR',
-    //   i: '999',
-    //   id: 999,
-    //   w: 4,
-    //   h: 3,
-    //   x: 0,
-    //   y: 8,
-    // });
-    //
-    // widgets.lg.push({
-    //   typeOfData: 2,
-    //   label: 'Devices By Product',
-    //   type: 'BAR',
-    //   i: '9992',
-    //   id: 9992,
-    //   w: 4,
-    //   h: 3,
-    //   x: 4,
-    //   y: 8,
-    // });
-    //
-    // widgets.lg.push({
-    //   typeOfData: 3,
-    //   label: 'Products By Organization',
-    //   type: 'BAR',
-    //   i: '9993',
-    //   id: 9993,
-    //   w: 8,
-    //   h: 4,
-    //   x: 0,
-    //   y: 12,
-    // });
+    const deviceId = Number(this.props.params.id);
 
     let isLoading = false;
-    if (this.props.widgets.hasIn([this.props.params.id, 'loading']) && this.props.widgets.getIn([this.props.params.id, 'loading']))
+    if (this.props.widgets.hasIn([deviceId, 'loading']) && this.props.widgets.getIn([deviceId, 'loading']))
       isLoading = true;
-
-    // uncomment when start to use real data
 
     if (!isLoading && (!this.props.dashboard.has('widgets') || !this.props.dashboard.get('widgets').size))
       return (
@@ -236,9 +178,22 @@ class Dashboard extends React.Component {
          </div>
        );
 
-    const params = {
-      id: Number(this.props.params.id) || 0
-    };
+    let widgets = this.props.dashboard.get('widgets').map((widget) => {
+
+      const history = this.props.widgets.getIn([
+        String(deviceId),
+        String(widget.get('id'))
+      ]);
+
+      const loading = this.props.widgets.getIn([
+        String(deviceId),
+        'loading'
+      ]);
+
+      return (
+        <WidgetStatic widget={widget.toJS()} key={widget.get('id')} history={history} loading={loading}/>
+      );
+    }).toJS();
 
     return (
       <div className="devices--device-dashboard">
@@ -251,7 +206,7 @@ class Dashboard extends React.Component {
         { isLoading && (
             <Icon type="loading" className="devices--device-dashboard-loading"/>
         ) || (
-          <Widgets params={params} editable={this.state.editable} data={widgets} fetchRealData={true} isPreviewOnly={true}/>
+          <Grids.GridStatic deviceId={deviceId} widgets={widgets} webDashboard={this.props.dashboard.toJS()}/>
         )}
 
       </div>
