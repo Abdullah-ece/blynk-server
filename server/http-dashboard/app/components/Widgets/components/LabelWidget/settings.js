@@ -36,7 +36,9 @@ import {
   Item,
   ItemsGroup
 } from "components/UI";
-
+import {
+  Map,
+} from 'immutable';
 import {FORMS} from 'services/Products';
 
 @connect((state, ownProps) => ({
@@ -62,6 +64,13 @@ class LabelWidgetSettings extends React.Component {
     resetForm: PropTypes.func,
     changeForm: PropTypes.func,
     handleSubmit: PropTypes.func,
+
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
+
+    history: PropTypes.instanceOf(Map),
 
     form: PropTypes.string,
 
@@ -386,10 +395,10 @@ class LabelWidgetSettings extends React.Component {
         visible={this.props.visible}
         preview={(
           <Preview
-            widgetId={this.props.formValues && Number(this.props.formValues.id || 0)}
             deviceId={this.props.deviceId}
-            source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}
-            data={this.props.formValues}/>
+            data={this.props.formValues}
+            history={this.props.history}
+            loading={this.props.loading}/>
         )}
         config={(
           <div>

@@ -105,6 +105,8 @@ class WidgetEditable extends React.Component {
       onSubmit     : this.handleWidgetChange,
       onClose      : this.toggleSettingsModalVisibility,
       visible      : this.state.isSettingsModalVisible,
+      history      : this.props.history,
+      loading      : this.props.loading,
     };
 
     /*

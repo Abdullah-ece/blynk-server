@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import {LabelWidget} from 'components/Widgets/components';
 
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
+import {
+  Map,
+} from 'immutable';
 
 import './styles.less';
 
@@ -15,14 +18,12 @@ class Preview extends React.Component {
 
     deviceId: PropTypes.number,
 
-    devicesLoading: PropTypes.bool,
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
 
-    submitting: PropTypes.bool,
-
-    handleSubmit: PropTypes.func,
-
-    invalid: PropTypes.bool,
-    pristine: PropTypes.bool
+    history: PropTypes.instanceOf(Map),
   };
 
   renderPreview() {
@@ -52,7 +53,7 @@ class Preview extends React.Component {
       <div className="label-widget-preview">
         <LabelWidget style={labelStyles}
                      deviceId={this.props.deviceId}
-                     data={this.props.data}/>
+                     data={this.props.data} history={this.props.history} loading = {this.props.loading} />
       </div>
     );
   }
