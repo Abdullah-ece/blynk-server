@@ -1,3 +1,5 @@
+import './styles.less';
+
 import {
   GridManage,
   GridStatic,

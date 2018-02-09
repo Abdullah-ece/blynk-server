@@ -1,39 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Widgets} from 'components';
+import {Grids} from 'components';
+import {WidgetStatic} from "components/Widgets";
 
 class Dashboard extends React.Component {
 
   static propTypes = {
-    widgets: PropTypes.array
+    webDashboard: PropTypes.object,
   };
 
   render() {
 
-    const params = {
-      id: 0,
-    };
-
-    if (!this.props.widgets)
-      return null;
-
-    if (!this.props.widgets.length)
+    if (!this.props.webDashboard || !this.props.webDashboard.widgets || !this.props.webDashboard.widgets.length)
       return (<div className="product-no-fields">No Dashboard widgets</div>);
 
-    let widgets = {
-      lg: this.props.widgets.map((item) => ({
-        ...item,
-        i: String(item.id),
-        id: String(item.id),
-        w: item.width,
-        h: item.height,
-        x: item.x,
-        y: item.y
-      }))
-    };
+
+    let widgets = this.props.webDashboard.widgets.map((widget) => (
+      <WidgetStatic widget={widget} key={widget.id}/>
+    ));
 
     return (
-      <Widgets editable={false} data={widgets} params={params} isPreviewOnly={true}/>
+      <Grids.GridStatic widgets={widgets} webDashboard={this.props.webDashboard}/>
     );
   }
 

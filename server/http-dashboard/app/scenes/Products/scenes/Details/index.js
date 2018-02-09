@@ -152,7 +152,7 @@ class ProductDetails extends React.Component {
               <Events fields={this.state.product.events}/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="Dashboard" key={TABS.DASHBOARD}>
-              <Dashboard widgets={(this.state.product.webDashboard && this.state.product.webDashboard.widgets) || []}/>
+              <Dashboard webDashboard={this.state.product.webDashboard}/>
             </Tabs.TabPane>
           </Tabs>
         </MainLayout.Content>

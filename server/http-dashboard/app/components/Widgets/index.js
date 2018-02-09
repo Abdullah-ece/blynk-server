@@ -202,6 +202,7 @@ class Widgets extends React.Component {
 }
 
 export WidgetEditable from './components/WidgetEditable';
+export WidgetStatic from './components/WidgetStatic';
 export LinearWidget from './components/LinearWidget';
 export BarChartWidget from './components/BarChartWidget';
 export LabelWidget from './components/LabelWidget';

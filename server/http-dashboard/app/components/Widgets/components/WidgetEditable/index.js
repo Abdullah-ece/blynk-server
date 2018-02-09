@@ -59,13 +59,14 @@ class WidgetEditable extends React.Component {
     this.toggleSettingsModalVisibility = this.toggleSettingsModalVisibility.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
     return (
+      nextState.isSettingsModalVisible !== this.state.isSettingsModalVisible ||
+      nextProps.deviceId !== this.props.deviceId ||
       !_.isEqual(nextProps.input.value, this.props.input.value) ||
       !_.isEqual(nextProps.loading, this.props.loading) ||
       !_.isEqual(nextProps.history, this.props.history) ||
-      !_.isEqual(nextProps.style, this.props.style) ||
-      !_.isEqual(nextProps.deviceId, this.props.deviceId)
+      !_.isEqual(nextProps.style, this.props.style)
     );
   }
 
