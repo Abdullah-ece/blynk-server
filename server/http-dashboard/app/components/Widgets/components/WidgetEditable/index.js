@@ -94,6 +94,16 @@ class WidgetEditable extends React.Component {
       visible      : this.state.isSettingsModalVisible,
     };
 
+    /*
+    *
+    * @TODO
+    * 1) Put history/loading to Settings and Preview inside Settings
+    * 2) Fix getting data by sourceIndex. Use PIN except sourceIndex
+    * 3) Finish WidgetStatic
+    * 4) Apply new Grid to Device Dashboard
+    * */
+
+
     if (widget.type === WIDGET_TYPES.LINEAR)
       return (
         <LinearWidget.Settings {...attributes}/>

@@ -298,7 +298,7 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
-              <FieldArray component={DashboardTab} name={`webDashboard.widgets`}/>
+              <FieldArray component={DashboardTab} name={`webDashboard.widgets`} isDevicePreviewEnabled={false}/>
             </Tabs.TabPane>
 
           </Tabs>

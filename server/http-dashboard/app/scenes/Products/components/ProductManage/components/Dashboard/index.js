@@ -32,12 +32,12 @@ import {WidgetEditable} from "components/Widgets";
 class Dashboard extends React.Component {
 
   static propTypes = {
-    onWidgetAdd: PropTypes.func,
-    onWidgetsChange: PropTypes.func,
-    fetchWidgetHistory: PropTypes.func,
+    onWidgetAdd             : PropTypes.func,
+    onWidgetsChange         : PropTypes.func,
+    fetchWidgetHistory      : PropTypes.func,
     changeDeviceIdForPreview: PropTypes.func,
 
-    orgId: PropTypes.number,
+    orgId    : PropTypes.number,
     productId: PropTypes.number,
 
     devicePreviewId: PropTypes.number,
@@ -49,6 +49,7 @@ class Dashboard extends React.Component {
 
     fetchDevicesListForPreview: PropTypes.func,
 
+    isDevicePreviewEnabled: PropTypes.bool,
     devicesLoading: PropTypes.bool,
 
     fields: PropTypes.object,
@@ -64,15 +65,16 @@ class Dashboard extends React.Component {
   }
 
   componentWillMount() {
-    this.props.fetchDevicesListForPreview({
-      orgId: this.props.orgId,
-      productId: this.props.productId,
-    });
+    if(this.props.isDevicePreviewEnabled)
+      this.props.fetchDevicesListForPreview({
+        orgId    : this.props.orgId,
+        productId: this.props.productId,
+      });
   }
 
   componentDidUpdate(prevProps) {
 
-    if(prevProps.devicePreviewId !== this.props.devicePreviewId) {
+    if(this.props.isDevicePreviewEnabled && prevProps.devicePreviewId !== this.props.devicePreviewId) {
       this.getDataForWidgets();
     }
   }
@@ -196,7 +198,7 @@ class Dashboard extends React.Component {
           <div className={`products-manage-dashboard--tools--widget-add`}>
             <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
           </div>
-          { this.props.productId && (
+          { this.props.isDevicePreviewEnabled && (
             <div className={`products-manage-dashboard--tools--device-select`}>
               <DeviceSelect loading={this.props.devicesLoading} devicesList={devicesListForPreview}
                             value={Number(this.props.devicePreviewId)} onChange={this.handleDevicePreviewIdChange}/>
