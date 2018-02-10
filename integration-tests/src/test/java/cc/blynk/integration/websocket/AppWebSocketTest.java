@@ -59,7 +59,6 @@ public class AppWebSocketTest extends IntegrationBase {
                 new TwitterProperties(Collections.emptyMap()),
                 false
         );
-        tcpWebSocketPort = httpPort;
         webSocketServer = new HardwareAndHttpAPIServer(localHolder).start();
         appServer = new AppAndHttpsServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();

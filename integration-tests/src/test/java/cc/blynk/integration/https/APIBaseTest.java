@@ -2,14 +2,14 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.http.HttpsAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -64,7 +64,7 @@ public abstract class APIBaseTest extends BaseTest {
         this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
-        this.httpsAdminServer = new HttpsAPIServer(holder).start();
+        this.httpsAdminServer = new AppAndHttpsServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, httpsPort);
 

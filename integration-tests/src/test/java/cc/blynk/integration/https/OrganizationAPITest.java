@@ -1,5 +1,8 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.api.http.dashboard.dto.EmailDTO;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
@@ -27,9 +30,6 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebBarGraph;
-import cc.blynk.server.http.web.dto.EmailDTO;
-import cc.blynk.server.http.web.dto.OrganizationDTO;
-import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;

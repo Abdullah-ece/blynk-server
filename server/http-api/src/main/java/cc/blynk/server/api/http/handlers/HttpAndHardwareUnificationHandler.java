@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;

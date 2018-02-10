@@ -3,8 +3,9 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.api.http.dashboard.dto.CommentDTO;
+import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -21,11 +22,9 @@ import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.web.dto.CommentDTO;
-import cc.blynk.server.http.web.dto.DeviceDTO;
-import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -71,8 +70,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void init() throws Exception {
         super.init();
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-        this.httpServer = new HttpAPIServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case

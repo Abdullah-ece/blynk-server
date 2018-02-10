@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web;
+package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFile;

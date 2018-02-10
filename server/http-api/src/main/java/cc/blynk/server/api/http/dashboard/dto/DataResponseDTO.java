@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web.dto;
+package cc.blynk.server.api.http.dashboard.dto;
 
 /**
  * The Blynk Project.

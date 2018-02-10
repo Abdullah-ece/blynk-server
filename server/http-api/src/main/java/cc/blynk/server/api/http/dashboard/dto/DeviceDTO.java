@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web.dto;
+package cc.blynk.server.api.http.dashboard.dto;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;

@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 public class HardwareLogEventMessage extends StringMessage {
 
     public HardwareLogEventMessage(int messageId, String body) {
-        super(messageId, HARDWARE_LOG_EVENT, body.length(), body);
+        super(messageId, HARDWARE_LOG_EVENT, body);
     }
 
     @Override

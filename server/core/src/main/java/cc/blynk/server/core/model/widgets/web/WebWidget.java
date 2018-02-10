@@ -40,6 +40,14 @@ public abstract class WebWidget extends Widget {
         return false;
     }
 
+    @Override
+    public void updateValue(Widget oldWidget) {
+    }
+
+    @Override
+    public void erase() {
+    }
+
     //HAVE IN MIND : value is not compared as it is updated in realtime.
     @Override
     public boolean equals(Object o) {

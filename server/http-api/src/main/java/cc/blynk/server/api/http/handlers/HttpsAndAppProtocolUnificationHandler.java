@@ -1,17 +1,12 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.core.http.handlers.OTAHandler;
-import cc.blynk.core.http.handlers.StaticFile;
-import cc.blynk.core.http.handlers.StaticFileEdsWith;
-import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
@@ -21,6 +16,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
@@ -100,12 +96,11 @@ public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder 
                 .addLast("HttpsObjectAggregator",
                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
-                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
-                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler)
-                .addLast(new OTAHandler(holder,
-                        httpAndWebSocketUnificatorHandler.rootPath + "/ota/start", "/static/ota"));
+                .addLast("HttpUrlMapper", httpAndWebSocketUnificatorHandler.urlReWriterHandler)
+                .addLast("HttpStaticFile", httpAndWebSocketUnificatorHandler.staticFileHandler)
+                .addLast(new HttpContentCompressor())
+                .addLast(httpAndWebSocketUnificatorHandler.externalAPIHandler)
+                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
     }
 
     private ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {

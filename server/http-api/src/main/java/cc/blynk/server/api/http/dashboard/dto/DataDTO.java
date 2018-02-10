@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web.dto;
+package cc.blynk.server.api.http.dashboard.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web;
+package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
@@ -15,6 +15,8 @@ import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.Staff;
 import cc.blynk.core.http.annotation.SuperAdmin;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.EmailDTO;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.HttpSession;
@@ -32,8 +34,6 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.http.web.dto.EmailDTO;
-import cc.blynk.server.http.web.dto.OrganizationDTO;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;

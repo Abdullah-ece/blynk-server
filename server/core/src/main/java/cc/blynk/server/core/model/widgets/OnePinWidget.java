@@ -172,10 +172,10 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         if (rangeMappingOn != that.rangeMappingOn) {
             return false;
         }
-        if (min != that.min) {
+        if (Float.compare(that.min, min) != 0) {
             return false;
         }
-        if (max != that.max) {
+        if (Float.compare(that.max, max) != 0) {
             return false;
         }
         return pinType == that.pinType;
@@ -189,9 +189,8 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         result = 31 * result + (int) pin;
         result = 31 * result + (pwmMode ? 1 : 0);
         result = 31 * result + (rangeMappingOn ? 1 : 0);
-        result = 31 * result + min;
-        result = 31 * result + max;
+        result = 31 * result + (min != +0.0f ? Float.floatToIntBits(min) : 0);
+        result = 31 * result + (max != +0.0f ? Float.floatToIntBits(max) : 0);
         return result;
     }
-
 }

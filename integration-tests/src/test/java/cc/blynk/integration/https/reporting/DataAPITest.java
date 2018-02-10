@@ -3,8 +3,9 @@ package cc.blynk.integration.https.reporting;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.api.http.dashboard.dto.DataDTO;
+import cc.blynk.server.api.http.dashboard.dto.DataQueryRequestGroupDTO;
+import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -23,10 +24,9 @@ import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.web.dto.DataDTO;
-import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
-import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -64,7 +64,7 @@ public class DataAPITest extends APIBaseTest {
     public void init() throws Exception {
         super.init();
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case

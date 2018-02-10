@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web;
+package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
@@ -10,6 +10,8 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.DataQueryRequestGroupDTO;
+import cc.blynk.server.api.http.dashboard.dto.DataResponseDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -20,8 +22,6 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
-import cc.blynk.server.http.web.dto.DataQueryRequestGroupDTO;
-import cc.blynk.server.http.web.dto.DataResponseDTO;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 

@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -23,7 +24,6 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
-import cc.blynk.server.http.web.dto.ProductAndOrgIdDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -614,7 +614,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            newDevice = JsonParser.parseDevice(responseString);
+            newDevice = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", newDevice.name);
             assertEquals(1, newDevice.id);
             assertNotNull(newDevice.metaFields);
@@ -635,7 +635,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            Device device = JsonParser.parseDevice(responseString);
+            Device device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
@@ -667,7 +667,7 @@ public class ProductAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            Device device = JsonParser.parseDevice(responseString);
+            Device device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);
@@ -722,7 +722,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            newDevice = JsonParser.parseDevice(responseString);
+            newDevice = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", newDevice.name);
             assertEquals(1, newDevice.id);
             assertNotNull(newDevice.metaFields);
@@ -752,7 +752,7 @@ public class ProductAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
-            Device device = JsonParser.parseDevice(responseString);
+            Device device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
             assertNotNull(device.metaFields);

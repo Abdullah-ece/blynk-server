@@ -1,5 +1,7 @@
 package cc.blynk.utils;
 
+import cc.blynk.core.http.handlers.url.UrlMapper;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.

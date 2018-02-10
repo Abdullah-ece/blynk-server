@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
 
-import cc.blynk.integration.BaseTest;;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.HttpEntity;
@@ -28,6 +28,8 @@ import java.io.InputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+;
 
 /**
  * The Blynk Project.

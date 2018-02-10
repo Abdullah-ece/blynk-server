@@ -1,4 +1,4 @@
-package cc.blynk.server.http.web;
+package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
@@ -14,6 +14,8 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.dto.CommentDTO;
+import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -33,8 +35,6 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
-import cc.blynk.server.http.web.dto.CommentDTO;
-import cc.blynk.server.http.web.dto.DeviceDTO;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;

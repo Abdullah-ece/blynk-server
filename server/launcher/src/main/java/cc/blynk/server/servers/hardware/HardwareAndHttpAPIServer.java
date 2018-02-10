@@ -1,8 +1,8 @@
 package cc.blynk.server.servers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.dashboard.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.HttpAndHardwareUnificationHandler;
-import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
@@ -25,7 +25,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port);
+                new HttpAndWebSocketUnificatorHandler(holder, port, "123");
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);

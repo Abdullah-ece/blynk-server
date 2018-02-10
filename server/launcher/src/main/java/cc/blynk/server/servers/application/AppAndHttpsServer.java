@@ -1,7 +1,7 @@
 package cc.blynk.server.servers.application;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.api.http.dashboard.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.HttpsAndAppProtocolUnificationHandler;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
@@ -33,8 +33,8 @@ public class AppAndHttpsServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final GetServerHandler getServerHandler = new GetServerHandler(holder);
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port);
+        HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
+                new HttpAndWebSocketUnificatorHandler(holder, port, "/api");
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
