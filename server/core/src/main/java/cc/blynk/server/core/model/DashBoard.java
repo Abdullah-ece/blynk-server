@@ -19,10 +19,9 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -100,7 +99,8 @@ public class DashBoard {
         return name == null ? "" : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
+    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
+                                           WidgetProperty property, String value) {
         putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
@@ -127,7 +127,7 @@ public class DashBoard {
 
     public Widget findWidgetByPin(int deviceId, String[] splitted) {
         PinType type = PinType.getPinType(splitted[0].charAt(0));
-        byte pin = ParseUtil.parseByte(splitted[1]);
+        byte pin = Byte.parseByte(splitted[1]);
         return findWidgetByPin(deviceId, pin, type);
     }
 
@@ -227,7 +227,7 @@ public class DashBoard {
     }
 
     private Target getDeviceSelector(long targetId) {
-        Widget widget = getWidgetByIdOrThrow(targetId);
+        Widget widget = getWidgetById(targetId);
         if (widget instanceof DeviceSelector) {
             return (DeviceSelector) widget;
         }
@@ -279,17 +279,9 @@ public class DashBoard {
     }
 
     public void eraseValues() {
+        this.pinsStorage = Collections.emptyMap();
         for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                ((OnePinWidget) widget).value = null;
-            }
-            if (widget instanceof MultiPinWidget) {
-                for (DataStream dataStream : ((MultiPinWidget) widget).dataStreams) {
-                    if (dataStream != null) {
-                        dataStream.value = null;
-                    }
-                }
-            }
+            widget.erase();
         }
     }
 
@@ -344,7 +336,7 @@ public class DashBoard {
         if (target != null) {
             for (int deviceId : target.getDeviceIds()) {
                 for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty.label));
+                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
                 }
             }
         }
@@ -365,7 +357,7 @@ public class DashBoard {
         for (Map.Entry<PinStorageKey, String> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                ByteBuf byteBuf = key.makeByteBuf(dashId, entry.getValue());
+                StringMessage byteBuf = key.toStringMessage(dashId, entry.getValue());
                 appChannel.write(byteBuf, appChannel.voidPromise());
             }
         }
@@ -433,21 +425,7 @@ public class DashBoard {
             Widget copyWidget = newWidget.copy();
 
             if (oldWidget != null) {
-                if (oldWidget instanceof OnePinWidget) {
-                    OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
-                    if (onePinWidget.value != null) {
-                        copyWidget.updateIfSame(onePinWidget.deviceId,
-                                onePinWidget.pin, onePinWidget.pinType, onePinWidget.value);
-                    }
-                } else if (oldWidget instanceof MultiPinWidget) {
-                    MultiPinWidget multiPinWidget = (MultiPinWidget) oldWidget;
-                    if (multiPinWidget.dataStreams != null) {
-                        for (DataStream dataStream : multiPinWidget.dataStreams) {
-                            copyWidget.updateIfSame(multiPinWidget.deviceId,
-                                    dataStream.pin, dataStream.pinType, dataStream.value);
-                        }
-                    }
-                }
+                copyWidget.updateValue(oldWidget);
             }
             copyWidget.isDefaultColor = false;
             copy.add(copyWidget);

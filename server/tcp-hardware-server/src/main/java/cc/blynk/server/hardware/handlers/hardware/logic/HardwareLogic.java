@@ -3,19 +3,20 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -49,6 +50,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+        messageReceived(ctx, message, state.userKey, state.user, state.dash, state.device);
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
+                                UserKey userKey, User user, DashBoard dash, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -57,9 +63,6 @@ public class HardwareLogic extends BaseProcessorHandler {
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
-
-        DashBoard dash = state.dash;
-        Device device = state.device;
 
         if (isWriteOperation(body)) {
             String[] splitBody = split3(body);
@@ -71,17 +74,17 @@ public class HardwareLogic extends BaseProcessorHandler {
             }
 
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            byte pin = ParseUtil.parseByte(splitBody[1]);
+            byte pin = Byte.parseByte(splitBody[1]);
             String value = splitBody[2];
             long now = System.currentTimeMillis();
             int deviceId = device.id;
 
-            reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
+            reportingDao.process(user, dash, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
             device.updateWebDashboard(pin, pinType, value, now);
 
-            Session session = sessionDao.userSession.get(state.userKey);
-            process(state.user, dash, deviceId, session, pin, pinType, value, now);
+            Session session = sessionDao.userSession.get(userKey);
+            process(user, dash, deviceId, session, pin, pinType, value, now);
 
             if (dash.isActive) {
                 session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);

@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -44,7 +43,7 @@ public class CreateDeviceLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
@@ -54,10 +53,10 @@ public class CreateDeviceLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dash.devices.length > deviceLimit) {
-            throw new NotAllowedException("Device limit is reached.");
+            throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
-        Device newDevice = JsonParser.parseDevice(deviceString);
+        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
 
@@ -67,7 +66,7 @@ public class CreateDeviceLogic {
 
         for (Device device : dash.devices) {
             if (device.id == newDevice.id) {
-                throw new NotAllowedException("Device with same id already exists.");
+                throw new NotAllowedException("Device with same id already exists.", message.id);
             }
         }
 

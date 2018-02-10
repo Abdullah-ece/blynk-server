@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -36,12 +36,14 @@ public class UpdateAppLogic {
         }
 
         if (appString.length() > maxWidgetSize) {
-            throw new NotAllowedException("App is larger then limit.");
+            throw new NotAllowedException("App is larger then limit.", message.id);
         }
 
-        App newApp = JsonParser.parseApp(appString);
+        App newApp = JsonParser.parseApp(appString, message.id);
 
-        newApp.validate();
+        if (newApp.isNotValid()) {
+            throw new NotAllowedException("App is not valid.", message.id);
+        }
 
         log.debug("Creating new app {}.", newApp);
 
@@ -50,7 +52,7 @@ public class UpdateAppLogic {
         App existingApp = user.profile.getAppById(newApp.id);
 
         if (existingApp == null) {
-            throw new NotAllowedException("App with passed is not exists.");
+            throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
         existingApp.update(newApp);

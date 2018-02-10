@@ -65,6 +65,8 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.IOException;
+
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -173,6 +175,10 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract int getPrice();
 
+    public abstract void updateValue(Widget oldWidget);
+
+    public abstract void erase();
+
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
@@ -207,7 +213,11 @@ public abstract class Widget implements CopyObject<Widget> {
     @Override
     public Widget copy() {
         String copyWidgetString = JsonParser.toJson(this);
-        return JsonParser.parseWidget(copyWidgetString);
+        try {
+            return JsonParser.parseWidget(copyWidgetString);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     public void setProperty(WidgetProperty property, String propertyValue) {

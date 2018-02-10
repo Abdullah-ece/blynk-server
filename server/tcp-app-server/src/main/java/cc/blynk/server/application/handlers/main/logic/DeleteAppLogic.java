@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -33,7 +33,7 @@ public final class DeleteAppLogic {
         int existingAppIndex = user.profile.getAppIndexById(id);
 
         if (existingAppIndex == -1) {
-            throw new NotAllowedException("App with passed is not exists.");
+            throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
         for (int projectId : user.profile.apps[existingAppIndex].projectIds) {

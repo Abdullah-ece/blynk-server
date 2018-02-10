@@ -6,9 +6,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 
 /**
  * Very basic OTA manager implementation.
@@ -78,7 +78,7 @@ public class OTAManager {
     }
 
     private void sendOtaCommand(ChannelHandlerContext ctx, Device device, OTAInfo otaInfo) {
-        ByteBuf msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
+        StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
             device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
                     otaInfo.initiatedAt, System.currentTimeMillis());

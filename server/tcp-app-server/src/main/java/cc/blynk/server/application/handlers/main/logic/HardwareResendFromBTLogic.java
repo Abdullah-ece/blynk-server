@@ -10,10 +10,9 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
@@ -59,8 +58,8 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
 
         //here we have "1-200000"
         String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
-        int deviceId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -74,7 +73,7 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
             }
 
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            byte pin = ParseUtil.parseByte(splitBody[1]);
+            byte pin = Byte.parseByte(splitBody[1]);
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 

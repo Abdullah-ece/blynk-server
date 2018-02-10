@@ -2,12 +2,13 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -61,9 +62,10 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
+                new TwitterProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HardwareAndHttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
@@ -133,6 +135,35 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(1, values.size());
         assertEquals("10", values.get(0));
         assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
+    }
+
+    @Test
+    public void testPutAndGetTerminalValue() throws Exception {
+        Future<Response> f= httpclient.prepareGet(httpsServerUrl + "7b0a3a61322e41a5b50589cf52d775d1/get/v17").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(0, values.size());
+
+        f = httpclient.prepareGet(httpsServerUrl
+                + "7b0a3a61322e41a5b50589cf52d775d1/update/v17?value=10").execute();
+        response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        f = httpclient.prepareGet(httpsServerUrl
+                + "7b0a3a61322e41a5b50589cf52d775d1/update/v17?value=11").execute();
+        response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        f = httpclient.prepareGet(httpsServerUrl + "7b0a3a61322e41a5b50589cf52d775d1/get/v17").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(2, values.size());
+        assertEquals("10", values.get(0));
+        assertEquals("11", values.get(1));
     }
 
     @Test
@@ -208,7 +239,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("No data for pin.", response.getResponseBody());
+        assertEquals("No data.", response.getResponseBody());
         assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/z111").execute();

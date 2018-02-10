@@ -4,12 +4,13 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -50,9 +51,10 @@ public class HttpAPIPinsTest extends BaseTest {
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
+                new TwitterProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HardwareAndHttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
     }

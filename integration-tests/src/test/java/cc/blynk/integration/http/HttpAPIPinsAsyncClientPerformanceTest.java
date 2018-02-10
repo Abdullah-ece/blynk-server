@@ -1,8 +1,8 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -41,7 +41,7 @@ public class HttpAPIPinsAsyncClientPerformanceTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
+            httpServer = new HardwareAndHttpAPIServer(holder).start();
             httpServerUrl = String.format("http://localhost:%s/", 8080);
             httpclient = new DefaultAsyncHttpClient(
                     new DefaultAsyncHttpClientConfig.Builder()

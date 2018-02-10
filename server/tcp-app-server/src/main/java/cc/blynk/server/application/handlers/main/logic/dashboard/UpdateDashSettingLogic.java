@@ -8,13 +8,12 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -39,7 +38,7 @@ public class UpdateDashSettingLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String dashSettingsString = split[1];
 
         if (dashSettingsString == null || dashSettingsString.isEmpty()) {
@@ -47,11 +46,11 @@ public class UpdateDashSettingLogic {
         }
 
         if (dashSettingsString.length() > settingsSizeLimit) {
-            throw new NotAllowedException("User dashboard setting message is larger then limit.");
+            throw new NotAllowedException("User dashboard setting message is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);
-        DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString);
+        DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString, message.id);
 
         User user = state.user;
 

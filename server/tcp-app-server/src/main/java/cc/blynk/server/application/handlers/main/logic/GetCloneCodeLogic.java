@@ -6,18 +6,17 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 /**
  * The Blynk Project.
@@ -40,7 +39,7 @@ public class GetCloneCodeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
@@ -48,7 +47,7 @@ public class GetCloneCodeLogic {
         String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
         blockingIOProcessor.executeDB(() -> {
-            ByteBuf result;
+            MessageBase result;
             try {
                 boolean insertStatus = dbManager.insertClonedProject(token, json);
                 if (insertStatus || fileManager.writeCloneProjectToDisk(token, json)) {

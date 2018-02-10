@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.StringUtils;
 import io.netty.util.CharsetUtil;
@@ -52,6 +51,7 @@ import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 public class WebhookProcessor extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(WebhookProcessor.class);
+    private static final String CONTENT_TYPE = "Content-Type";
 
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
@@ -79,12 +79,8 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        try {
-            checkIfNotificationQuotaLimitIsNotReached(now);
-        } catch (QuotaLimitException qle) {
-            log.debug("Webhook quota limit reached. Ignoring hook.");
-            return;
-        }
+        checkIfNotificationQuotaLimitIsNotReached(now);
+
         process(session, dash.id, deviceId, widget, triggerValue);
     }
 
@@ -95,13 +91,17 @@ public class WebhookProcessor extends NotificationBase {
 
         String newUrl = format(webHook.url, triggerValue, false);
 
+        if (WebHook.isNotValidUrl(newUrl)) {
+            return;
+        }
+
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
                     builder.setHeader(header.name, header.value);
                     if (webHook.body != null && !webHook.body.isEmpty()) {
-                        if (header.name.equals("Content-Type")) {
+                        if (CONTENT_TYPE.equals(header.name)) {
                             String newBody = format(webHook.body, triggerValue, true);
                             log.trace("Webhook formatted body : {}", newBody);
                             buildRequestBody(builder, header.value, newBody);
@@ -132,7 +132,7 @@ public class WebhookProcessor extends NotificationBase {
                 if (response.getStatusCode() == 200 || response.getStatusCode() == 302) {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
-                        //todo could be optimized
+                        //todo could be optimized with response.getResponseBodyAsByteBuffer()
                         String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin,
                                 response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);

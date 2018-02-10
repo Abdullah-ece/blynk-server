@@ -21,8 +21,11 @@ import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.properties.BaseProperties;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.epoll.Epoll;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -86,8 +89,9 @@ public class Holder implements Closeable {
 
     public final SslContextHolder sslContextHolder;
 
-    public Holder(ServerProperties serverProperties, BaseProperties mailProperties,
-                  BaseProperties smsProperties, BaseProperties gcmProperties, boolean restore) {
+    public Holder(ServerProperties serverProperties, MailProperties mailProperties,
+                  SmsProperties smsProperties, GCMProperties gcmProperties, TwitterProperties twitterProperties,
+                  boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
@@ -136,7 +140,7 @@ public class Holder implements Closeable {
                 .build()
         );
 
-        this.twitterWrapper = new TwitterWrapper();
+        this.twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
         this.mailWrapper = new MailWrapper(mailProperties);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
@@ -146,20 +150,21 @@ public class Holder implements Closeable {
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
         this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
-        String contactEmail = serverProperties.getProperty("contact.email",
-                mailProperties.getProperty("mail.smtp.username"));
+        String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
     }
 
     //for tests only
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
-                  MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
+                  MailWrapper mailWrapper,
+                  GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
+                  String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
@@ -205,7 +210,7 @@ public class Holder implements Closeable {
         );
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
         this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
 

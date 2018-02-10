@@ -7,11 +7,11 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.server.http.HttpAPIServer;
 import cc.blynk.server.http.HttpsAPIServer;
 import cc.blynk.utils.FileUtils;
@@ -45,8 +45,9 @@ import java.util.Base64;
 
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
+import static cc.blynk.integration.IntegrationBase.internal;
+import static cc.blynk.integration.IntegrationBase.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -70,7 +71,6 @@ public class OTATest extends BaseTest {
     private BaseServer httpServer;
     private BaseServer httpsServer;
     private BaseServer hardwareServer;
-    private BaseServer appServer;
 
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
@@ -84,16 +84,14 @@ public class OTATest extends BaseTest {
         httpServer.close();
         httpsServer.close();
         hardwareServer.close();
-        appServer.close();
         clientPair.stop();
     }
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
-        httpsServer = new HttpsAPIServer(holder).start();
+        httpServer = new HardwareAndHttpAPIServer(holder).start();
+        httpsServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
 
         String pass = "admin";
@@ -113,13 +111,11 @@ public class OTATest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
     }
 
     @Test
     public void testInitiateOTA() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -135,7 +131,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testInitiateOTAWithFileName() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?fileName=test.bin" + "&token=" + token);
@@ -160,7 +156,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testImprovedUploadMethod() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -189,7 +185,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
 
@@ -201,7 +197,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testOTAFailedWhenNoDevice() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         clientPair.hardwareClient.stop();
@@ -284,7 +280,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatNeverWasOnline() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -313,12 +309,11 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
@@ -337,9 +332,9 @@ public class OTATest extends BaseTest {
     @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatWasOnline() throws Exception {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -368,12 +363,11 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
+        Device[] devices = clientPair.appClient.getDevices(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -386,12 +380,11 @@ public class OTATest extends BaseTest {
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaUpdateAt, 5000);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody(3);
+        devices = clientPair.appClient.getDevices(3);
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -440,7 +433,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
 
@@ -474,17 +467,16 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 123"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertNotNull(devices[0].deviceOtaInfo);
@@ -495,8 +487,8 @@ public class OTATest extends BaseTest {
         assertEquals("123", devices[0].hardwareInfo.build);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
     }
 
@@ -536,8 +528,8 @@ public class OTATest extends BaseTest {
         }
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -593,20 +585,20 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        newHardwareClient.login(token);
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -637,20 +629,20 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        newHardwareClient.login(token);
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -681,20 +673,20 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        newHardwareClient.login(token);
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
 }

@@ -1,15 +1,18 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Purchase;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 
@@ -20,12 +23,16 @@ import static cc.blynk.utils.StringUtils.split2;
  */
 public class AddEnergyLogic {
 
+    private static final Logger log = LogManager.getLogger(AddEnergyLogic.class);
+
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private boolean wasErrorPrinted;
 
     public AddEnergyLogic(DBManager dbManager, BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
         this.dbManager = dbManager;
+        this.wasErrorPrinted = false;
     }
 
     private static boolean isValidTransactionId(String id) {
@@ -56,17 +63,25 @@ public class AddEnergyLogic {
         return true;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] bodyParts = split2(message.body);
+        User user = state.user;
 
-        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
+        int energyAmountToAdd = Integer.parseInt(bodyParts[0]);
+        ResponseMessage response;
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
             insertPurchase(user.email, energyAmountToAdd, bodyParts[1]);
-            user.purchaseEnergy(energyAmountToAdd);
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            user.addEnergy(energyAmountToAdd);
+            response = ok(message.id);
         } else {
-            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.email);
+            if (!wasErrorPrinted) {
+                log.warn("Purchase with invalid transaction id '{}'. {} ({}).",
+                        bodyParts[0], user.email, state.version);
+                wasErrorPrinted = true;
+            }
+            response = notAllowed(message.id);
         }
+        ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
     private void insertPurchase(String email, int reward, String transactionId) {

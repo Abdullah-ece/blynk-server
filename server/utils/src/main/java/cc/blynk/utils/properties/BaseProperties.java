@@ -1,5 +1,6 @@
 package cc.blynk.utils.properties;
 
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 
 import java.io.File;
@@ -111,7 +112,7 @@ public abstract class BaseProperties extends Properties {
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
-        return Integer.parseInt(getProperty(propertyName));
+        return Integer.parseInt(prop);
     }
 
     public boolean isRawDBEnabled() {
@@ -136,6 +137,10 @@ public abstract class BaseProperties extends Properties {
         }
     }
 
+    public String getAdminRootPath() {
+        return getProperty("admin.rootPath", "/admin");
+    }
+
     public long getLongProperty(String propertyName, long defaultValue) {
         String prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {
@@ -152,4 +157,11 @@ public abstract class BaseProperties extends Properties {
         return val.toLowerCase().split(",");
     }
 
+    public boolean getAllowWithoutActiveApp() {
+        return getBoolProperty("allow.reading.widget.without.active.app");
+    }
+
+    public String getProductName() {
+        return getProperty("product.name", AppNameUtil.BLYNK);
+    }
 }

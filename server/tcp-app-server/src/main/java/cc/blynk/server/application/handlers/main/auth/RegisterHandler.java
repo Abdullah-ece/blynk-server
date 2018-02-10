@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -12,6 +13,7 @@ import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
@@ -22,14 +24,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.alreadyRegistered;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Process register message.
@@ -50,19 +51,24 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final UserDao userDao;
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
+    private final MailWrapper mailWrapper;
+    private final BlockingIOProcessor blockingIOProcessor;
     private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
         this(holder.userDao, holder.tokenManager, holder.timerWorker,
+                holder.mailWrapper, holder.blockingIOProcessor,
                 holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
     }
 
     //for tests only
-    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker, String[] allowedUsersArray) {
+    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker,
+                    MailWrapper mailWrapper, BlockingIOProcessor blockingIOProcessor, String[] allowedUsersArray) {
         this.userDao = userDao;
         this.tokenManager = tokenManager;
         this.timerWorker = timerWorker;
-
+        this.mailWrapper = mailWrapper;
+        this.blockingIOProcessor = blockingIOProcessor;
         if (allowedUsersArray != null && allowedUsersArray.length > 0
                 && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
@@ -110,12 +116,23 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         log.info("Registered {}.", email);
 
-        createProjectForExportedApp(newUser, appName);
+        //sending greeting email only for Blynk apps
+        if (AppNameUtil.BLYNK.equals(appName)) {
+            blockingIOProcessor.execute(() -> {
+                try {
+                    mailWrapper.sendWelcomeEmailForNewUser(email);
+                } catch (Exception e) {
+                    log.warn("Error sending greeting email for {}.", email);
+                }
+            });
+        }
+
+        createProjectForExportedApp(newUser, appName, message.id);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
-    private void createProjectForExportedApp(User newUser, String appName) {
+    private void createProjectForExportedApp(User newUser, String appName, int msgId) {
         if (appName.equals(AppNameUtil.BLYNK)) {
             return;
         }
@@ -145,14 +162,13 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
         //todo ugly, but quick. refactor
-        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash));
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;
         clonedDash.createdAt = System.currentTimeMillis();
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
-        clonedDash.pinsStorage = Collections.emptyMap();
         clonedDash.eraseValues();
 
         clonedDash.addTimers(timerWorker, new UserKey(newUser));

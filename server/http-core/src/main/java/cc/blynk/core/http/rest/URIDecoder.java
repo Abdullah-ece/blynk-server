@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.12.15.
  */
-public class URIDecoder extends QueryStringDecoder {
+public class URIDecoder extends QueryStringDecoder implements Closeable {
 
     private static final Logger log = LogManager.getLogger(URIDecoder.class);
 
@@ -31,6 +32,7 @@ public class URIDecoder extends QueryStringDecoder {
     public final Map<String, String> pathData;
     public String contentType;
     public Map<String, String> headers;
+
     private HttpPostRequestDecoder decoder;
     private ByteBuf bodyData;
 
@@ -64,4 +66,10 @@ public class URIDecoder extends QueryStringDecoder {
         return bodyData.toString(StandardCharsets.UTF_8);
     }
 
+    @Override
+    public void close() {
+        if (decoder != null) {
+            decoder.destroy();
+        }
+    }
 }

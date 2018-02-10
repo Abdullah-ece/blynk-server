@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -16,6 +17,7 @@ import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
+import cc.blynk.server.hardware.internal.BridgeForwardMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
@@ -29,6 +31,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
 
 /**
@@ -53,13 +56,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         super(StringMessage.class, holder.limits);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.hardwareLogEventLogic = new HardwareLogEventLogic(holder);
-        this.bridge = new BridgeLogic(holder.sessionDao, hardware);
+        this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
 
         this.email = new MailLogic(holder.blockingIOProcessor,
                 holder.mailWrapper, holder.limits.notificationPeriodLimitSec);
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
-        this.tweet = new TwitLogic(holder.blockingIOProcessor,
-                holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
+        this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
         this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.info = new BlynkInternalLogic(holder.otaManager, holder.limits.hardwareIdleTimeout);
@@ -103,6 +105,23 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case SET_WIDGET_PROPERTY:
                 propertyLogic.messageReceived(ctx, state, msg);
                 break;
+        }
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof BridgeForwardMessage) {
+            BridgeForwardMessage bridgeForwardMessage = (BridgeForwardMessage) evt;
+            TokenValue tokenValue = bridgeForwardMessage.tokenValue;
+            try {
+                hardware.messageReceived(ctx, bridgeForwardMessage.message,
+                        bridgeForwardMessage.userKey, tokenValue.user, tokenValue.dash, tokenValue.device);
+            } catch (NumberFormatException nfe) {
+                log.debug("Error parsing number. {}", nfe.getMessage());
+                ctx.writeAndFlush(illegalCommand(bridgeForwardMessage.message.id), ctx.voidPromise());
+            }
+        } else {
+            ctx.fireUserEventTriggered(evt);
         }
     }
 

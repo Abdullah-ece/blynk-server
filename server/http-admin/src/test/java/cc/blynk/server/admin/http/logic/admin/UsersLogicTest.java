@@ -3,12 +3,12 @@ package cc.blynk.server.admin.http.logic.admin;
 import cc.blynk.core.http.Response;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.EventLoop;
@@ -35,28 +35,33 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UsersLogicTest {
 
-    private static final String TEST_USER = "test_user";
-    private static final String DELETED_DATA_DIR_NAME = "deleted";
-    private static Path userFile;
-    private static Path deletedUserFile;
     @Mock
     private UserDao userDao;
     @Spy
     private SessionDao sessionDao;
     @Mock
     private DBManager dbManager;
+    @Mock
+    private ReportingDao reportingDao;
+
     private User user;
+
     @Mock
     private Session session;
+
     private UsersLogic usersLogic;
+    private static final String TEST_USER = "test_user";
+    private static Path userFile;
+    private static Path deletedUserFile;
+    private static final String DELETED_DATA_DIR_NAME = "deleted";
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null, null);
-        usersLogic = new UsersLogic(userDao, sessionDao, dbManager, fileManager, null, "admin");
+        usersLogic = new UsersLogic(userDao, sessionDao, dbManager, fileManager, null, reportingDao, "admin");
 
         userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", TEST_USER + ".Blynk.user");
         deletedUserFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", DELETED_DATA_DIR_NAME, TEST_USER + ".Blynk.user");

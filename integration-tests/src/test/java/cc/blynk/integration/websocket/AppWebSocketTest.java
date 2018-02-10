@@ -4,15 +4,14 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.HttpsAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -58,11 +56,13 @@ public class AppWebSocketTest extends IntegrationBase {
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
+                new TwitterProperties(Collections.emptyMap()),
                 false
         );
-        appServer = new AppServer(localHolder).start();
+        tcpWebSocketPort = httpPort;
+        webSocketServer = new HardwareAndHttpAPIServer(localHolder).start();
+        appServer = new AppAndHttpsServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();
-        webSocketServer = new HttpsAPIServer(localHolder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 
@@ -71,9 +71,9 @@ public class AppWebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", httpsPort, "/websocket", true);
         webSocketClient.start();
         webSocketClient.send("login " + DEFAULT_TEST_USER + " 1");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
 

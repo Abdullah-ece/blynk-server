@@ -5,13 +5,12 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -33,9 +32,9 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
 
     public boolean rangeMappingOn;
 
-    public int min;
+    public float min;
 
-    public int max;
+    public float max;
 
     public volatile String value;
 
@@ -118,16 +117,32 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         switch (property) {
             case MIN :
                 //accepting floats as valid, but using int for min/max due to back compatibility
-                this.min = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
+                this.min = Float.parseFloat(propertyValue);
                 break;
             case MAX :
                 //accepting floats as valid, but using int for min/max due to back compatibility
-                this.max = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
+                this.max = Float.parseFloat(propertyValue);
                 break;
             default:
                 super.setProperty(property, propertyValue);
                 break;
         }
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
+            if (onePinWidget.value != null) {
+                updateIfSame(onePinWidget.deviceId,
+                        onePinWidget.pin, onePinWidget.pinType, onePinWidget.value);
+            }
+        }
+    }
+
+    @Override
+    public void erase() {
+        this.value = null;
     }
 
     //HAVE IN MIND : value is not compared as it is updated in realtime.
@@ -178,4 +193,5 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         result = 31 * result + max;
         return result;
     }
+
 }

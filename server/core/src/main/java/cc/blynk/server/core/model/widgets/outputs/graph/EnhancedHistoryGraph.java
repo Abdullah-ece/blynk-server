@@ -36,6 +36,14 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean allowFullScreen;
 
+    public boolean overrideYAxis;
+
+    public float yAxisMin;
+
+    public float yAxisMax;
+
+    public boolean isPercentMaxMin;
+
     public String goalText;
 
     public GoalLine goalLine;
@@ -61,5 +69,13 @@ public class EnhancedHistoryGraph extends Widget {
     @Override
     public int getPrice() {
         return 900;
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+    }
+
+    @Override
+    public void erase() {
     }
 }

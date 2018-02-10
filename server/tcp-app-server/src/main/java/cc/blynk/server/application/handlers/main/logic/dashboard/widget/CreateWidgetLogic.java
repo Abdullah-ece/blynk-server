@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
@@ -20,7 +19,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -47,14 +47,14 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
 
         long widgetAddToId;
         long templateIdAddToId;
         String widgetString;
         if (split.length == 4) {
-            widgetAddToId = ParseUtil.parseLong(split[1]);
-            templateIdAddToId = ParseUtil.parseLong(split[2]);
+            widgetAddToId = Long.parseLong(split[1]);
+            templateIdAddToId = Long.parseLong(split[2]);
             widgetString = split[3];
         } else {
             widgetAddToId = -1;
@@ -67,30 +67,39 @@ public class CreateWidgetLogic {
         }
 
         if (widgetString.length() > maxWidgetSize) {
-            throw new NotAllowedException("Widget is larger then limit.");
+            throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString);
+        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.");
+            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
         }
 
-        log.debug("Creating new widget {}.", widgetString);
+        log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
-                throw new NotAllowedException("Widget with same id already exists.");
+                throw new NotAllowedException("Widget with same id already exists.", message.id);
             }
             if (widget instanceof DeviceTiles) {
-                ((DeviceTiles) widget).checkForSameWidgetId(newWidget.id);
+                Widget widgetInTiles = ((DeviceTiles) widget).getWidgetById(newWidget.id);
+                if (widgetInTiles != null) {
+                    throw new NotAllowedException("Widget with same id already exists.", message.id);
+                }
             }
         }
 
-        user.subtractEnergy(newWidget.getPrice());
+        int price = newWidget.getPrice();
+        if (user.notEnoughEnergy(price)) {
+            log.debug("Not enough energy.");
+            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
+            return;
+        }
+        user.subtractEnergy(price);
 
         //widget could be added to project or to other widget like DeviceTiles
         if (widgetAddToId == -1) {
@@ -103,7 +112,9 @@ public class CreateWidgetLogic {
         }
 
         dash.cleanPinStorage(newWidget, true);
-        dash.updatedAt = user.lastModifiedTs;
+        long now = System.currentTimeMillis();
+        user.lastModifiedTs = now;
+        dash.updatedAt = now;
 
         if (newWidget instanceof Timer) {
             timerWorker.add(state.userKey, (Timer) newWidget, dashId);

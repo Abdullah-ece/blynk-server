@@ -12,7 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -41,11 +41,11 @@ public class UpdateDashLogic {
         }
 
         if (dashString.length() > dashMaxSize) {
-            throw new NotAllowedException("User dashboard is larger then limit.");
+            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        DashBoard updatedDash = JsonParser.parseDashboard(dashString);
+        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
             throw new IllegalCommandException("Project parsing error.");

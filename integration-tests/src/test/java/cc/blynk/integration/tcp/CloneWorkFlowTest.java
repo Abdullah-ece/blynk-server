@@ -3,12 +3,12 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -23,10 +23,6 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -49,8 +45,8 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertNotNull(holder.dbManager.getConnection());
 
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-        this.httpServer = new HttpAPIServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
+        this.httpServer = new HardwareAndHttpAPIServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
         holder.dbManager.executeSQL("DELETE FROM cloned_projects");
@@ -67,7 +63,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
     @Test
     public void testGetNonExistingQR() throws Exception  {
         clientPair.appClient.send("getProjectByCloneCode " + 123);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(serverError(1)));
+        clientPair.appClient.verifyResult(serverError(1));
     }
 
     @Test
@@ -80,9 +76,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        String dashJson = clientPair.appClient.getBody(2);
-        assertNotNull(dashJson);
-        DashBoard dashBoard = JsonParser.parseDashboard(dashJson);
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -102,9 +96,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        String dashJson = clientPair.appClient.getBody(2);
-        assertNotNull(dashJson);
-        DashBoard dashBoard = JsonParser.parseDashboard(dashJson);
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -127,7 +119,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(200, response.getStatusCode());
         String responseBody = response.getResponseBody();
         assertNotNull(responseBody);
-        DashBoard dashBoard = JsonParser.parseDashboard(responseBody);
+        DashBoard dashBoard = JsonParser.parseDashboard(responseBody, 0);
         assertEquals("My Dashboard", dashBoard.name);
     }
 

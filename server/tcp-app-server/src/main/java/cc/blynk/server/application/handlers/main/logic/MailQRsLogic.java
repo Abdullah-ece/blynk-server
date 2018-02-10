@@ -8,11 +8,9 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.StringUtils;
@@ -24,8 +22,9 @@ import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Sends email from application.
@@ -54,18 +53,22 @@ public class MailQRsLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dash.devices.length == 0) {
-            throw new IllegalCommandBodyException("No devices in project.");
+            log.debug("No devices in project.");
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
         }
 
         String appId = split[1];
         App app = user.profile.getAppById(appId);
 
         if (app == null) {
-            throw new IllegalCommandBodyException("App with passed id not found.");
+            log.debug("App with passed id not found.");
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
@@ -95,7 +98,9 @@ public class MailQRsLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }

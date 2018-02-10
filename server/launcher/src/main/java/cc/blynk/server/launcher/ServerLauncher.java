@@ -1,8 +1,6 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -19,24 +17,24 @@ import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.events.WarningEvent;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
-import cc.blynk.server.hardware.HardwareSSLServer;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.hardware.MQTTHardwareServer;
-import cc.blynk.server.http.HttpAPIServer;
-import cc.blynk.server.http.HttpsAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.AppServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareSSLServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
-import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import sun.misc.Unsafe;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.net.BindException;
 import java.security.Security;
 import java.util.HashMap;
@@ -75,26 +73,7 @@ public final class ServerLauncher {
     private ServerLauncher() {
     }
 
-    private static void disableWarning() {
-        try {
-            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafe.setAccessible(true);
-            Unsafe u = (Unsafe) theUnsafe.get(null);
-
-            Class cls = Class.forName("jdk.internal.module.IllegalAccessLogger");
-            Field logger = cls.getDeclaredField("logger");
-            u.putObjectVolatile(cls, u.staticFieldOffset(logger), null);
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
     public static void main(String[] args) throws Exception {
-        //https://stackoverflow.com/questions/46454995/
-        //how-to-hide-warning-illegal-reflective-access-in-java-9-without-jvm-argument
-        //just temporary workaround to avoid warnings in early versions of java 9
-        disableWarning();
-
         Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
         ServerProperties serverProperties = new ServerProperties(cmdProperties);
@@ -107,43 +86,45 @@ public final class ServerLauncher {
         //required to avoid dependencies within model to server.properties
         setGlobalProperties(serverProperties);
 
-        BaseProperties mailProperties = new MailProperties(cmdProperties);
-        BaseProperties smsProperties = new SmsProperties(cmdProperties);
-        BaseProperties gcmProperties = new GCMProperties(cmdProperties);
+        MailProperties mailProperties = new MailProperties(cmdProperties);
+        SmsProperties smsProperties = new SmsProperties(cmdProperties);
+        GCMProperties gcmProperties = new GCMProperties(cmdProperties);
+        TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, twitterProperties, restore);
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        Map<String, String> globalProps = new HashMap<String, String>(4) {
-            {
-                put("terminal.strings.pool.size", "25");
-                put("initial.energy", "2000");
-                put("table.rows.pool.size", "100");
-                put("csv.export.data.points.max", "43200");
-            }
-        };
+        Map<String, String> globalProps = new HashMap<>(4);
+        globalProps.put("terminal.strings.pool.size", "25");
+        globalProps.put("initial.energy", "2000");
+        globalProps.put("table.rows.pool.size", "100");
+        globalProps.put("csv.export.data.points.max", "43200");
 
         for (Map.Entry<String, String> entry : globalProps.entrySet()) {
             String name = entry.getKey();
-            System.setProperty(name, serverProperties.getProperty(name, entry.getValue()));
+            String value = serverProperties.getProperty(name, entry.getValue());
+            System.setProperty(name, value);
         }
     }
 
-    private static void start(ServerProperties serverProperties, BaseProperties mailProperties,
-                              BaseProperties smsProperties, BaseProperties gcmProperties,
+    private static void start(ServerProperties serverProperties, MailProperties mailProperties,
+                              SmsProperties smsProperties, GCMProperties gcmProperties,
+                              TwitterProperties twitterProperties,
                               boolean restore) {
-        Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+        Holder holder = new Holder(serverProperties,
+                mailProperties, smsProperties, gcmProperties, twitterProperties,
+                restore);
 
         BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
-                new HttpAPIServer(holder),
-                new HttpsAPIServer(holder),
+                new HardwareAndHttpAPIServer(holder),
+                new AppAndHttpsServer(holder),
                 new MQTTHardwareServer(holder)
         };
 

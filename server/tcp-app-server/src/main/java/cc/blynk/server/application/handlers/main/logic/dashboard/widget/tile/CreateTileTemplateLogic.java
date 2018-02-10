@@ -10,13 +10,12 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -38,8 +37,8 @@ public final class CreateTileTemplateLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        long widgetId = ParseUtil.parseLong(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        long widgetId = Long.parseLong(split[1]);
         String tileTemplateString = split[2];
 
         if (tileTemplateString == null || tileTemplateString.isEmpty()) {
@@ -56,10 +55,10 @@ public final class CreateTileTemplateLogic {
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
 
-        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString);
+        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             if (tileTemplate.id == newTileTemplate.id) {
-                throw new NotAllowedException("tile template with same id already exists.");
+                throw new NotAllowedException("tile template with same id already exists.", message.id);
             }
         }
 

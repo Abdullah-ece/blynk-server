@@ -109,6 +109,29 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     }
 
     @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) oldWidget;
+            if (multiPinWidget.dataStreams != null) {
+                for (DataStream dataStream : multiPinWidget.dataStreams) {
+                    updateIfSame(multiPinWidget.deviceId,
+                            dataStream.pin, dataStream.pinType, dataStream.value);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void erase() {
+        if (dataStreams != null) {
+            for (DataStream dataStream : this.dataStreams) {
+                if (dataStream != null) {
+                    dataStream.value = null;
+                }
+            }
+        }
+    }
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

@@ -1,6 +1,6 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.dao.functions.Function;
+import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -21,11 +21,13 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_BYTES;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
@@ -49,6 +51,8 @@ public class ReportingDao implements Closeable {
 
     private final boolean enableRawDbDataStore;
 
+    private static final Function<Path, Boolean> NO_FILTER = s -> true;
+
     //for test only
     public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
                         boolean isEnabled) {
@@ -69,25 +73,13 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin,
-                                          GraphGranularityType type) {
-        switch (type) {
-            case MINUTE :
-                return formatMinute(dashId, deviceId, pinType, pin);
-            case HOURLY :
-                return formatHour(dashId, deviceId, pinType, pin);
-            default :
-                return formatDaily(dashId, deviceId, pinType, pin);
-        }
-    }
-
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
                                             PinType pinType, byte pin, int count,
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
                 FileUtils.getUserReportingDir(user.email, user.appName),
-                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type)
+                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label)
         );
         if (Files.exists(userDataFile)) {
             try {
@@ -110,7 +102,7 @@ public class ReportingDao implements Closeable {
     }
 
     private ByteBuffer getDataForTag(User user, GraphPinRequest graphPinRequest) {
-        TreeMap<Long, Function> data = new TreeMap<>();
+        TreeMap<Long, GraphFunction> data = new TreeMap<>();
         for (int deviceId : graphPinRequest.deviceIds) {
             ByteBuffer localByteBuf = getByteBufferFromDisk(user,
                     graphPinRequest.dashId, deviceId,
@@ -124,28 +116,29 @@ public class ReportingDao implements Closeable {
         return toByteBuf(data);
     }
 
-    private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType,
-                                   ByteBuffer localByteBuf) {
+    private static void addBufferToResult(TreeMap<Long, GraphFunction> data,
+                                          AggregationFunctionType functionType,
+                                          ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
             ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();
-                Function functionObj = data.get(ts);
-                if (functionObj == null) {
-                    functionObj = functionType.produce();
-                    data.put(ts, functionObj);
+                GraphFunction graphFunctionObj = data.get(ts);
+                if (graphFunctionObj == null) {
+                    graphFunctionObj = functionType.produce();
+                    data.put(ts, graphFunctionObj);
                 }
-                functionObj.apply(newVal);
+                graphFunctionObj.apply(newVal);
             }
         }
     }
 
-    private ByteBuffer toByteBuf(TreeMap<Long, Function> data) {
+    private static ByteBuffer toByteBuf(TreeMap<Long, GraphFunction> data) {
         ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
-        for (Map.Entry<Long, Function> entry : data.entrySet()) {
+        for (Map.Entry<Long, GraphFunction> entry : data.entrySet()) {
             result.putDouble(entry.getValue().getResult())
-                  .putLong(entry.getKey());
+                    .putLong(entry.getKey());
         }
         return result;
     }
@@ -168,40 +161,54 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType,
-                                     byte pin, int count, GraphGranularityType type) {
-        return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
+    private Path getUserReportingFolderPath(User user) {
+        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
+    }
+
+    public int delete(User user) {
+        return delete(user, NO_FILTER);
+    }
+
+    public int delete(User user, Function<Path, Boolean> filter) {
+        log.debug("Removing all reporting data for {}", user.email);
+        Path reportingFolderPath = getUserReportingFolderPath(user);
+
+        int removedFilesCounter = 0;
+        try {
+            if (Files.exists(reportingFolderPath)) {
+                try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
+                    for (Path reportingFile : reportingFolder) {
+                        if (filter.apply(reportingFile)) {
+                            log.trace("Removing {}", reportingFile);
+                            FileUtils.deleteQuietly(reportingFile);
+                            removedFilesCounter++;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error removing file : {}.", reportingFolderPath);
+        }
+        return removedFilesCounter;
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        Path userDataMinuteFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
-                formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
-                formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
-                formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
-        FileUtils.deleteQuietly(userDataMinuteFile);
-        FileUtils.deleteQuietly(userDataHourlyFile);
-        FileUtils.deleteQuietly(userDataDailyFile);
+        String userReportingDir = getUserReportingFolderPath(user).toString();
+
+        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
+            delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);
+        }
     }
 
-    static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
-        return format("minute", dashId, deviceId, pinType, pin);
+    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
+                               GraphGranularityType reportGranularity) {
+        Path userDataFile = Paths.get(userReportingDir,
+                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, reportGranularity.label));
+        FileUtils.deleteQuietly(userDataFile);
     }
 
-    static String formatHour(int dashId, int deviceId, char pinType, byte pin) {
-        return format("hourly", dashId, deviceId, pinType, pin);
-    }
-
-    static String formatDaily(int dashId, int deviceId, char pinType, byte pin) {
-        return format("daily", dashId, deviceId, pinType, pin);
-    }
-
-    private static String format(String type, int dashId, int deviceId, char pinType, byte pin) {
+    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
         //todo this is back compatibility code. should be removed in future versions.
         if (deviceId == 0) {
             return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";
@@ -237,7 +244,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {
+    public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) throws NoDataException {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {

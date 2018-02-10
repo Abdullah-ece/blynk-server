@@ -28,6 +28,7 @@ public final class StringUtils {
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
+    public static final String WEBSOCKET_PATH = "/websocket";
 
     private StringUtils() {
     }
@@ -109,7 +110,7 @@ public final class StringUtils {
         return split2(DEVICE_SEPARATOR, body);
     }
 
-    private static String[] split2(char separator, String body) {
+    public static String[] split2(char separator, String body) {
         final int i1 = body.indexOf(separator, 1);
         if (i1 == -1) {
             return new String[] {body};
@@ -123,10 +124,6 @@ public final class StringUtils {
     }
 
     public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
-        //todo this is back compatibility code. remove in future versions
-        if (deviceId == 0) {
-            return "" + dashId + BODY_SEPARATOR + body;
-        }
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 

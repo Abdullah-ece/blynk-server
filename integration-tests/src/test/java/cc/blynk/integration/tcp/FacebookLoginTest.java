@@ -4,28 +4,22 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,7 +42,7 @@ public class FacebookLoginTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
     }
 
     @After
@@ -62,7 +56,7 @@ public class FacebookLoginTest extends IntegrationBase {
         String host = "localhost";
         String email = "shartax@gmail.com";
 
-        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email + " 1", null, properties, 10000);
+        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
@@ -70,7 +64,7 @@ public class FacebookLoginTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient(host, tcpAppPort, properties);
         appClient.start();
         appClient.send("login " + email + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         String expected = readTestUserProfile();
 
@@ -78,7 +72,7 @@ public class FacebookLoginTest extends IntegrationBase {
         appClient.send("loadProfileGzipped");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = parseProfile(appClient.getBody());
+        Profile profile = appClient.getProfile();
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expected, profile.toString());
     }
@@ -119,24 +113,19 @@ public class FacebookLoginTest extends IntegrationBase {
         int dashId = profile.dashBoards[0].id;
 
         appClient.send("login " + user + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.send("addEnergy " + 10000 + "\0" + "123456");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         saveProfile(appClient, profile.dashBoards);
 
-        appClient.send("activate " + dashId);
-        appClient.send("getToken " + dashId);
+        appClient.activate(dashId);
+        appClient.getToken(dashId);
+        String token = appClient.getBody(4 + profile.dashBoards.length + expectedSyncCommandsCount);
 
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token = getGetTokenMessage(arguments).body;
-
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, String.valueOf(dashId))));
+        hardClient.login(token);
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
+        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, String.valueOf(dashId))));
 
         appClient.reset();
         hardClient.reset();

@@ -7,11 +7,12 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.server.internal.ParseUtil;
-import io.netty.buffer.ByteBuf;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,10 +21,11 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.noData;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 /**
  * The Blynk Project.
@@ -47,54 +49,65 @@ public class LoadProfileGzippedLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //load all
+        String email = state.user.email;
+        boolean isNewProtocol = state.isNewProtocol();
+        int msgId = message.id;
+
         if (message.length == 0) {
             Profile profile = state.user.profile;
-            write(ctx, gzipProfile(profile), message.id);
+            write(ctx, gzipProfile(profile), msgId, email, isNewProtocol);
             return;
         }
 
-        String[] parts = message.body.split(" |\0");
+        String[] parts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
         if (parts.length == 1) {
             //load specific by id
-            int dashId = ParseUtil.parseInt(message.body);
+            int dashId = Integer.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), message.id);
+            write(ctx, gzipDash(dash), msgId, email, isNewProtocol);
         } else {
             String token = parts[0];
-            int dashId = ParseUtil.parseInt(parts[1]);
+            int dashId = Integer.parseInt(parts[1]);
             String publishingEmail = parts[2];
+            //this is for simplification of testing.
+            String appName = parts.length == 4 ? parts[3] : state.userKey.appName;
 
             blockingIOProcessor.executeDB(() -> {
                 try {
                     FlashedToken flashedToken = dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
-                        User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
+                        User publishingUser = userDao.getByName(publishingEmail, appName);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
-                        write(ctx, gzipDashRestrictive(dash), message.id);
+                        //todo ugly. but ok for now
+                        String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
+                        DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
+                        copyDash.eraseValues();
+                        write(ctx, gzipDashRestrictive(copyDash), msgId, email, isNewProtocol);
                     }
                 } catch (Exception e) {
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
                     log.error("Error getting publishing profile.", e.getMessage());
                 }
             });
         }
     }
 
-    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email, boolean isNewProtocol) {
         if (ctx.channel().isWritable()) {
-            ByteBuf outputMsg;
-            if (data == null) {
-                outputMsg = noData(msgId);
-            } else {
-                if (data.length > 65_535) {
-                    log.error("User profile is too big. Size : {}", data.length);
-                    outputMsg = serverError(msgId);
-                } else {
-                    outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
-                }
-            }
+            MessageBase outputMsg = makeResponse(data, msgId, email, isNewProtocol);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
+    }
+
+    private static MessageBase makeResponse(byte[] data, int msgId, String email, boolean isNewProtocol) {
+        if (data == null) {
+            return noData(msgId);
+        }
+        if (!isNewProtocol && data.length > PROTOCOL_MAX_LENGTH) {
+            log.error("Profile for user {} is too big. Size : {}", email, data.length);
+            return serverError(msgId);
+        }
+        return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
     }
 
 }

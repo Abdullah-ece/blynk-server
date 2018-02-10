@@ -19,7 +19,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -58,22 +59,22 @@ public class CreateDashLogic {
         }
 
         if (dashString.length() > dashMaxSize) {
-            throw new NotAllowedException("User dashboard is larger then limit.");
+            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        DashBoard newDash = JsonParser.parseDashboard(dashString);
+        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
 
         log.info("Creating new dashboard.");
 
         User user = state.user;
         if (user.profile.dashBoards.length >= dashMaxLimit) {
-            throw new QuotaLimitException("Dashboards limit reached.");
+            throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
-                throw new NotAllowedException("Dashboard already exists.");
+                throw new NotAllowedException("Dashboard already exists.", message.id);
             }
         }
 
@@ -81,7 +82,13 @@ public class CreateDashLogic {
             newDash.createdAt = System.currentTimeMillis();
         }
 
-        user.subtractEnergy(newDash.energySum());
+        int price = newDash.energySum();
+        if (user.notEnoughEnergy(price)) {
+            log.debug("Not enough energy.");
+            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
+            return;
+        }
+        user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
         if (newDash.devices == null) {

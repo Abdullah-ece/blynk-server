@@ -10,14 +10,14 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -87,8 +87,8 @@ public class BlynkInternalLogic {
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
             int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
-            ctx.pipeline().replace(ReadTimeoutHandler.class,
-                    "H_ReadTimeout_Replaced", new ReadTimeoutHandler(newReadTimeout));
+            ctx.pipeline().replace(IdleStateHandler.class,
+                    "H_IdleStateHandler_Replaced", new IdleStateHandler(newReadTimeout, newReadTimeout, 0));
         }
 
         DashBoard dashBoard = state.dash;

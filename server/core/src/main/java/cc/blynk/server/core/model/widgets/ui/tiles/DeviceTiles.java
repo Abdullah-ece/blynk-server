@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
@@ -39,13 +38,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     public int columns;
 
     public SortType sortType;
-
-    public void checkForSameWidgetId(long id) {
-        Widget widget = getWidgetById(id);
-        if (widget != null) {
-            throw new NotAllowedException("Widget with same id already exists.");
-        }
-    }
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
         ArrayList<DeviceTile> list = new ArrayList<>();
@@ -184,5 +176,24 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
             sum += template.getPrice();
         }
         return sum;
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof  DeviceTiles) {
+            this.tiles = ((DeviceTiles) oldWidget).tiles;
+        }
+    }
+
+    @Override
+    public void erase() {
+        //for export apps tiles are fully removed
+        //tiles will be created during provisioning.
+        tiles = EMPTY_DEVICE_TILES;
+        if (templates != null) {
+            for (TileTemplate tileTemplate : templates) {
+                tileTemplate.erase();
+            }
+        }
     }
 }

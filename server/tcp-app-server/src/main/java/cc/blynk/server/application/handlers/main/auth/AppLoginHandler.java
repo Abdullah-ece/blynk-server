@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -29,13 +28,15 @@ import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
-import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
+import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAuthenticated;
+import static cc.blynk.server.internal.CommonByteBufUtil.notRegistered;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -93,24 +94,26 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         }
 
         String email = messageParts[0].toLowerCase();
-        OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
-        String version = messageParts.length > 3 ? messageParts[3] : null;
+
+        Version version = messageParts.length > 3
+                ? new Version(messageParts[2], messageParts[3])
+                : Version.UNKNOWN_VERSION;
 
         if (messageParts.length == 5) {
             if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
-                facebookLogin(ctx, message.id, email, messageParts[1], osType, version);
+                facebookLogin(ctx, message.id, email, messageParts[1], version);
             } else {
                 String appName = messageParts[4];
-                blynkLogin(ctx, message.id, email, messageParts[1], osType, version, appName);
+                blynkLogin(ctx, message.id, email, messageParts[1], version, appName);
             }
         } else {
             //todo this is for back compatibility
-            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppNameUtil.BLYNK);
+            blynkLogin(ctx, message.id, email, messageParts[1], version, AppNameUtil.BLYNK);
         }
     }
 
     private void facebookLogin(ChannelHandlerContext ctx, int messageId, String email,
-                               String token, OsType osType, String version) {
+                               String token, Version version) {
         asyncHttpClient.prepareGet(URL + token)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
@@ -136,7 +139,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                                     user = holder.userDao.addFacebookUser(email, AppNameUtil.BLYNK);
                                 }
 
-                                login(ctx, messageId, user, osType, version);
+                                login(ctx, messageId, user, version);
                             }
                         } catch (Exception e) {
                             log.error("Error during facebook response parsing for user {}. Reason : {}",
@@ -157,35 +160,35 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
-                            OsType osType, String version, String appName) {
+                            Version version, String appName) {
         User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_REGISTERED), ctx.voidPromise());
+            ctx.writeAndFlush(notRegistered(msgId), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS), ctx.voidPromise());
+            ctx.writeAndFlush(facebookUserLoginWithPass(msgId), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            ctx.writeAndFlush(notAuthenticated(msgId), ctx.voidPromise());
             return;
         }
 
-        login(ctx, msgId, user, osType, version);
+        login(ctx, msgId, user, version);
     }
 
-    private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
+    private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
         ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
-        AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
+        AppStateHolder appStateHolder = new AppStateHolder(user, version);
         pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
@@ -199,13 +202,13 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, messageId));
+                    completeLogin(channelFuture.channel(), session, user, messageId, version));
         } else {
-            completeLogin(channel, session, user, messageId);
+            completeLogin(channel, session, user, messageId, version);
         }
     }
 
-    private void completeLogin(Channel channel, Session session, User user, int msgId) {
+    private void completeLogin(Channel channel, Session session, User user, int msgId, Version version) {
         user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         user.lastLoggedAt = System.currentTimeMillis();
 
@@ -214,10 +217,19 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                 log.trace("{}-{}. Sending App Connected event to hardware.", user.email, user.appName);
-                session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
+                session.sendMessageToHardware(dashBoard.id, BLYNK_INTERNAL, 7777, "acon");
             }
         }
-        log.info("{} {}-app joined.", user.email, user.appName);
+
+        if (version.isOutdated()) {
+            channel.writeAndFlush(
+                    makeASCIIStringMessage(OUTDATED_APP_NOTIFICATION, msgId,
+                            "Your app is outdated. Please update to the latest app version. "
+                                    + "Ignoring this notice may affect your projects."),
+                    channel.voidPromise());
+        }
+
+        log.info("{} {}-app ({}) joined.", user.email, user.appName, version);
     }
 
     @Override

@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -45,13 +44,13 @@ public class DeleteWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        long widgetId = ParseUtil.parseLong(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        long widgetId = Long.parseLong(split[1]);
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        log.debug("Removing widget with id {}.", widgetId);
+        log.debug("Removing widget with id {} for dashId {}.", widgetId, dashId);
 
         Widget widgetToDelete = null;
         boolean inDeviceTiles = false;
@@ -65,8 +64,10 @@ public class DeleteWidgetLogic {
             if (widget instanceof DeviceTiles) {
                 deviceTiles = ((DeviceTiles) widget);
                 widgetToDelete = deviceTiles.getWidgetById(widgetId);
-                inDeviceTiles = true;
-                break;
+                if (widgetToDelete != null) {
+                    inDeviceTiles = true;
+                    break;
+                }
             }
         }
 
@@ -78,7 +79,7 @@ public class DeleteWidgetLogic {
             deleteTabs(timerWorker, user, state.userKey, dash, 0);
         }
 
-        user.recycleEnergy(widgetToDelete.getPrice());
+        user.addEnergy(widgetToDelete.getPrice());
         if (inDeviceTiles) {
             deviceTiles.deleteWidget(widgetId);
         } else {
@@ -117,7 +118,7 @@ public class DeleteWidgetLogic {
             }
         }
 
-        user.recycleEnergy(removedWidgetPrice);
+        user.addEnergy(removedWidgetPrice);
         dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
         dash.updatedAt = System.currentTimeMillis();
     }

@@ -4,9 +4,10 @@
  * Created on 30.09.17.
  */
 module cc.blynk.utils {
-    requires log4j.api;
+    requires org.apache.logging.log4j;
 
     exports cc.blynk.utils;
+    exports cc.blynk.utils.http;
     exports cc.blynk.utils.properties;
     exports cc.blynk.utils.structure;
     exports cc.blynk.utils.validators;

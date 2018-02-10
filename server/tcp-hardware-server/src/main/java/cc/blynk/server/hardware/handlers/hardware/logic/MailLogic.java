@@ -16,8 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Sends email from received from hardware. Via google smtp server.
@@ -47,7 +47,7 @@ public class MailLogic extends NotificationBase {
         Mail mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null || !dash.isActive) {
-            throw new NotAllowedException("User has no mail widget or active dashboard.");
+            throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
         }
 
         if (message.body.isEmpty()) {
@@ -84,19 +84,25 @@ public class MailLogic extends NotificationBase {
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
-        mail(ctx.channel(), user.email, to, subj, body, message.id);
+        mail(ctx.channel(), user.email, to, subj, body, message.id, mail.isText());
         user.emailMessages++;
     }
 
-    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String email, String to, String subj, String body, int msgId, boolean isText) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendHtml(to, subj, body);
+                if (isText) {
+                    mailWrapper.sendText(to, subj, body);
+                } else {
+                    mailWrapper.sendHtml(to, subj, body);
+                }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
                         email, to, e.getMessage());
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }

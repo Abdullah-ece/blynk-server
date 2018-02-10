@@ -2,28 +2,19 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -41,7 +32,7 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
     }
@@ -60,19 +51,17 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -85,15 +74,14 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard Updated", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.send("updateDevice 1\0" + device0.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.updateDevice(1, device0);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -104,8 +92,8 @@ public class DeviceCommandsTest extends IntegrationBase {
     public void testUpdateNonExistingDevice() throws Exception {
         Device device = new Device(100, "My Dashboard Updated", "UNO");
 
-        clientPair.appClient.send("updateDevice 1\0" + device.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
+        clientPair.appClient.updateDevice(1, device);
+        clientPair.appClient.verifyResult(illegalCommandBody(1));
     }
 
     @Test
@@ -114,9 +102,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -129,9 +116,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -141,15 +127,14 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.name = "My Dashboard UPDATED";
         device0.token = "123";
 
-        clientPair.appClient.send("updateDevice 1\0" + device0.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.updateDevice(1, device0);
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
+        devices = clientPair.appClient.getDevices();
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -166,19 +151,17 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -186,14 +169,12 @@ public class DeviceCommandsTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
 
         clientPair.appClient.send("deleteDevice 1\0" + device1.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        devices = clientPair.appClient.getDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

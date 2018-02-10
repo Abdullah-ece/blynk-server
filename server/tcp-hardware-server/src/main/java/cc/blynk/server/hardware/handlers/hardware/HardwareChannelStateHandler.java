@@ -18,7 +18,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,33 +60,34 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
                 session.removeHardChannel(hardwareChannel);
-                log.trace("Hardware channel disconnect.");
-                sentOfflineMessage(ctx, session, state);
+                Device device = state.device;
+                log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
+                        state.userKey, state.dash.id, device.id, device.token);
+                sentOfflineMessage(ctx, session, state.dash, device);
             }
         }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof ReadTimeoutException) {
-            log.trace("Hardware timeout disconnect.");
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            log.trace("State handler. Hardware timeout disconnect. Event : {}. Closing.",
+                    ((IdleStateEvent) evt).state());
+            ctx.close();
         } else {
-            super.exceptionCaught(ctx, cause);
+            ctx.fireUserEventTriggered(evt);
         }
     }
 
-    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, HardwareStateHolder state) {
-        DashBoard dashBoard = state.dash;
-        Device device = state.device;
-
+    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, DashBoard dashBoard, Device device) {
         //this is special case.
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
-            log.trace("Disconnected device id {}, dash id {}", device.id, dashBoard.id);
-            disconnect(ctx, device, state);
+            log.trace("Changing device status. DeviceId {}, dashId {}", device.id, dashBoard.id);
+            disconnect(ctx, device);
         }
 
         if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
@@ -102,8 +103,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void disconnect(ChannelHandlerContext ctx, Device device, HardwareStateHolder state) {
-        log.trace("Disconnected device: {}", state);
+    private void disconnect(ChannelHandlerContext ctx, Device device) {
+        log.trace("Disconnected device: {}", device);
         device.disconnected();
 
         Product product = organizationDao.getProductByIdOrNull(device.productId);

@@ -4,14 +4,13 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -22,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -47,9 +45,9 @@ public class MultiAppTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HardwareAndHttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
+        appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         httpclient = new DefaultAsyncHttpClient(
@@ -91,43 +89,43 @@ public class MultiAppTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient1.send("login " + token1);
-        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
-        hardClient2.send("login " + token2);
-        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
+        hardClient1.login(token1);
+        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
+        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
+        hardClient2.login(token2);
+        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
 
         hardClient1.send("hardware vw 1 100");
-        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 1 100"))));
-        verify(appClient2.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 100"))));
+        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        verify(appClient2.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 1 100"))));
 
         appClient1.reset();
         appClient2.reset();
 
         hardClient2.send("hardware vw 1 100");
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 1 100"))));
-        verify(appClient1.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 100"))));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        verify(appClient1.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 1 100"))));
 
     }
 
     private String workflowForUser(TestAppClient appClient, String email, String pass, String appName) throws Exception{
-        appClient.send("register " + email + " " + pass + " " + appName);
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        appClient.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
+        appClient.register(email, pass, appName);
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient.login(email, pass, "Android", "1.10.4", appName);
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         DashBoard dash = new DashBoard();
         dash.id = 1;
         dash.name = "test";
-        appClient.send("createDash " + dash.toString());
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(3, OK)));
-        appClient.send("activate 1");
+        appClient.createDash(dash);
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+        appClient.activate(1);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 
         appClient.reset();
-        appClient.send("getToken 1");
+        appClient.getToken(1);
 
         String token = appClient.getBody();
         assertNotNull(token);

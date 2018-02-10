@@ -9,16 +9,14 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
-import cc.blynk.server.core.protocol.model.messages.hardware.TwitMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,27 +77,10 @@ public class TwitHandlerTest {
 		state = new HardwareStateHolder(user, dash, device);
     }
 
-	@Test(expected = NotificationBodyInvalidException.class)
-	public void testTweetMessageWithEmptyBody() {
-		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, "");
-        state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(blockingIOProcessor, twitterWrapper, 60);
-		tweetHandler.messageReceived(ctx, state, twitMessage);
-	}
-
-	@Test(expected = NotificationBodyInvalidException.class)
-	public void testTweetMessageWithBodyMoreThen140Symbols() {
-		final String longBody = RandomStringUtils.random(150);
-		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, longBody);
-        state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(blockingIOProcessor, twitterWrapper, 60);
-		tweetHandler.messageReceived(ctx, state, twitMessage);
-	}
-
 	@Test(expected = QuotaLimitException.class)
 	public void testSendQuotaLimitationException() throws InterruptedException {
-		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
-		TwitLogic tweetHandler = spy(new TwitLogic(blockingIOProcessor, twitterWrapper, 60));
+		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
+		TwitLogic tweetHandler = spy(new TwitLogic(twitterWrapper, 60));
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -114,11 +95,11 @@ public class TwitHandlerTest {
 
 	@Test
 	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
-		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
+		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
 		ServerProperties props = new ServerProperties(Collections.emptyMap());
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-		TwitLogic tweetHandler = spy(new TwitLogic(blockingIOProcessor, twitterWrapper, 60));
+		TwitLogic tweetHandler = spy(new TwitLogic(twitterWrapper, 60));
 		state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";

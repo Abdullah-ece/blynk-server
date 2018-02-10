@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 
 /**
@@ -42,7 +41,7 @@ public class ActivateDashboardLogic {
         User user = state.user;
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString);
+        int dashId = Integer.parseInt(dashBoardIdString);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.email);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);

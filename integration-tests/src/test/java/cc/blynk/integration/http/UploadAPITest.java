@@ -1,9 +1,9 @@
 package cc.blynk.integration.http;
 
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.http.HttpAPIServer;
+import cc.blynk.integration.BaseTest;;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -43,7 +43,7 @@ public class UploadAPITest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HardwareAndHttpAPIServer(holder).start();
         httpclient = HttpClients.createDefault();
     }
 

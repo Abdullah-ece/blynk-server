@@ -55,6 +55,7 @@ public final class Response extends DefaultFullHttpResponse {
         super(version, status, Unpooled.copiedBuffer(content.toString(), StandardCharsets.UTF_8));
         fillHeaders(contentType);
     }
+    final static Response NO_RESPONSE = null;
 
     private Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null

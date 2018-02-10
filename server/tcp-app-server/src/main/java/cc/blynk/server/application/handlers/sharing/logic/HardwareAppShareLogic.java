@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -19,11 +18,11 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.application.handlers.main.logic.HardwareAppLogic.processDeviceSelectorCommand;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.noActiveDash;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.noActiveDash;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
@@ -56,13 +55,13 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
         String[] split = split2(message.body);
 
         String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         //deviceId or tagId or device selector widget id
         int targetId = 0;
 
         //new logic for multi devices
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
@@ -109,7 +108,7 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
                 }
 
                 PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-                byte pin = ParseUtil.parseByte(splitBody[1]);
+                byte pin = Byte.parseByte(splitBody[1]);
                 String value = splitBody[2];
                 long now = System.currentTimeMillis();
 

@@ -1,6 +1,7 @@
 package cc.blynk.server.notifications.mail;
 
-import java.util.Properties;
+import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.properties.MailProperties;
 
 /**
  * The Blynk Project.
@@ -10,14 +11,20 @@ import java.util.Properties;
 public class MailWrapper {
 
     private final MailClient client;
+    private final String emailBody;
 
-    public MailWrapper(Properties mailProperties) {
+    public MailWrapper(MailProperties mailProperties) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties);
         } else {
             client = new GMailClient(mailProperties);
         }
+        this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
+    }
+
+    public void sendWelcomeEmailForNewUser(String to) throws Exception {
+        sendHtml(to, "Get started with Blynk", emailBody);
     }
 
     public void sendText(String to, String subj, String body) throws Exception {

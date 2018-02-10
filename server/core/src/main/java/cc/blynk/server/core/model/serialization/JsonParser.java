@@ -33,8 +33,11 @@ import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.StringJoiner;
 import java.util.zip.DeflaterOutputStream;
 
@@ -251,6 +254,12 @@ public final class JsonParser {
         return null;
     }
 
+    public static User parseUserFromFile(Path path) throws IOException {
+        try (InputStream is = Files.newInputStream(path)) {
+            return userReader.readValue(is);
+        }
+    }
+
     public static Organization parseOrganization(File orgFile) throws IOException {
         return organizationReader.readValue(orgFile);
     }
@@ -279,66 +288,70 @@ public final class JsonParser {
         return organizationReader.readValue(org);
     }
 
-    public static DashboardSettings parseDashboardSettings(String reader) {
+    public static DashboardSettings parseDashboardSettings(String reader, int msgId) {
         try {
             return dashboardSettingsReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard settings.");
+            throw new IllegalCommandBodyException("Error parsing dashboard settings.", msgId);
         }
     }
 
-    public static DashBoard parseDashboard(String reader) {
+    public static DashBoard parseDashboard(String reader, int msgId) {
         try {
             return dashboardReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard.");
+            throw new IllegalCommandBodyException("Error parsing dashboard.", msgId);
         }
     }
 
-    public static TileTemplate parseTileTemplate(String reader) {
+    public static TileTemplate parseTileTemplate(String reader, int msgId) {
         try {
             return tileTemplateReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tile template.");
+            throw new IllegalCommandBodyException("Error parsing tile template.", msgId);
         }
     }
 
-    public static Widget parseWidget(String reader) {
+    public static Widget parseWidget(String reader) throws IOException {
+        return widgetReader.readValue(reader);
+    }
+
+    public static Widget parseWidget(String reader, int msgId) {
         try {
             return widgetReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing widget.");
+            throw new IllegalCommandBodyException("Error parsing widget.", msgId);
         }
     }
 
-    public static App parseApp(String reader) {
+    public static App parseApp(String reader, int msgId) {
         try {
             return appReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing app.");
+            throw new IllegalCommandBodyException("Error parsing app.", msgId);
         }
     }
 
-    public static Device parseDevice(String reader) {
+    public static Device parseDevice(String reader, int msgId) {
         try {
             return deviceReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing device.");
+            throw new IllegalCommandBodyException("Error parsing device.", msgId);
         }
     }
 
-    public static Tag parseTag(String reader) {
+    public static Tag parseTag(String reader, int msgId) {
         try {
             return tagReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tag.");
+            throw new IllegalCommandBodyException("Error parsing tag.", msgId);
         }
     }
 

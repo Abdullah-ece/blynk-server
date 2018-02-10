@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -14,7 +15,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,9 +22,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.noData;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -46,7 +47,7 @@ public class GetEnhancedGraphDataLogic {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
@@ -56,7 +57,7 @@ public class GetEnhancedGraphDataLogic {
         int targetId = -1;
         String[] dashIdAndTargetIdString = split2Device(messageParts[0]);
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
@@ -68,7 +69,7 @@ public class GetEnhancedGraphDataLogic {
         }
         int skipCount = graphPeriod.numberOfPoints * page;
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
         Widget widget = dash.getWidgetById(widgetId);
 
         //special case for device tiles widget.
@@ -78,7 +79,6 @@ public class GetEnhancedGraphDataLogic {
                 widget = deviceTiles.getWidgetById(widgetId);
             }
         }
-
 
         if (!(widget instanceof EnhancedHistoryGraph)) {
             throw new IllegalCommandException("Passed wrong widget id.");
@@ -114,16 +114,17 @@ public class GetEnhancedGraphDataLogic {
             i++;
         }
 
-        readGraphData(ctx.channel(), user, requestedPins, message.id);
+        readGraphData(ctx.channel(), state.user, state.isNewProtocol(), requestedPins, message.id);
     }
 
-    private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
+    private void readGraphData(Channel channel, User user, boolean isNewProtocol,
+                               GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
                 byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                if (compressed.length > Short.MAX_VALUE * 2) {
+                if (!isNewProtocol && compressed.length > PROTOCOL_MAX_LENGTH) {
                     log.error("Data set for history graph is too large {}, for {}.", compressed.length, user.email);
                     channel.writeAndFlush(serverError(msgId), channel.voidPromise());
                 } else {

@@ -2,13 +2,13 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -18,7 +18,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  */
 public class Terminal extends OnePinWidget {
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     public boolean autoScrollOn;
@@ -54,9 +54,13 @@ public class Terminal extends OnePinWidget {
         if (isNotValid() || lastCommands.size() == 0) {
             return null;
         }
-        return pwmMode
-                ? makeHardwareBody(PinType.ANALOG, pin, lastCommands.getLast())
-                : makeHardwareBody(pinType, pin, lastCommands.getLast());
+        //terminal supports only virtual pins
+        return makeHardwareBody(pinType, pin, lastCommands.getLast());
+    }
+
+    @Override
+    public String getJsonValue() {
+        return JsonParser.toJson(lastCommands);
     }
 
     @Override

@@ -31,9 +31,9 @@ public class DataStream implements CopyObject<DataStream> {
 
     public volatile String value;
 
-    public final int min;
+    public final float min;
 
-    public final int max;
+    public final float max;
 
     public final String label;
 
@@ -48,8 +48,8 @@ public class DataStream implements CopyObject<DataStream> {
                       @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
                       @JsonProperty("pinType") PinType pinType,
                       @JsonProperty("value") String value,
-                      @JsonProperty("min") int min,
-                      @JsonProperty("max") int max,
+                      @JsonProperty("min") float min,
+                      @JsonProperty("max") float max,
                       @JsonProperty("label") String label,
                       @JsonProperty("units") MeasurementUnit units) {
         this.id = id;
@@ -103,12 +103,12 @@ public class DataStream implements CopyObject<DataStream> {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public boolean isNotValid() {
-        return pin == NO_PIN || pinType == null;
+    public boolean isValid() {
+        return pin != NO_PIN && pinType != null;
     }
 
     public boolean notEmpty() {
-        return value != null && !isNotValid();
+        return value != null && isValid();
     }
 
     @Override
@@ -138,19 +138,19 @@ public class DataStream implements CopyObject<DataStream> {
         if (rangeMappingOn != that.rangeMappingOn) {
             return false;
         }
-        if (min != that.min) {
+        if (Float.compare(that.min, min) != 0) {
             return false;
         }
-        if (max != that.max) {
+        if (Float.compare(that.max, max) != 0) {
             return false;
         }
         if (pinType != that.pinType) {
             return false;
         }
-        if (label != null ? !label.equals(that.label) : that.label != null) {
+        if (value != null ? !value.equals(that.value) : that.value != null) {
             return false;
         }
-        return units == that.units;
+        return label != null ? label.equals(that.label) : that.label == null;
     }
 
     @Override
@@ -159,8 +159,10 @@ public class DataStream implements CopyObject<DataStream> {
         result = 31 * result + (pwmMode ? 1 : 0);
         result = 31 * result + (rangeMappingOn ? 1 : 0);
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
-        result = 31 * result + min;
-        result = 31 * result + max;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (min != +0.0f ? Float.floatToIntBits(min) : 0);
+        result = 31 * result + (max != +0.0f ? Float.floatToIntBits(max) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (units != null ? units.hashCode() : 0);
         return result;

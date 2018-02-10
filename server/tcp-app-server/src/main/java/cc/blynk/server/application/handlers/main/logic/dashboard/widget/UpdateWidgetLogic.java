@@ -13,14 +13,13 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -47,7 +46,7 @@ public class UpdateWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
@@ -55,16 +54,16 @@ public class UpdateWidgetLogic {
         }
 
         if (widgetString.length() > maxWidgetSize) {
-            throw new NotAllowedException("Widget is larger then limit.");
+            throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString);
+        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.");
+            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
         }
 
         log.debug("Updating widget {}.", widgetString);
@@ -73,16 +72,19 @@ public class UpdateWidgetLogic {
         boolean inDeviceTiles = false;
         DeviceTiles deviceTiles = null;
 
+        long widgetId = newWidget.id;
         for (Widget widget : dash.widgets) {
-            if (widget.id == newWidget.id) {
+            if (widget.id == widgetId) {
                 prevWidget = widget;
                 break;
             }
             if (widget instanceof DeviceTiles) {
                 deviceTiles = ((DeviceTiles) widget);
-                prevWidget = deviceTiles.getWidgetById(newWidget.id);
-                inDeviceTiles = true;
-                break;
+                prevWidget = deviceTiles.getWidgetById(widgetId);
+                if (prevWidget != null) {
+                    inDeviceTiles = true;
+                    break;
+                }
             }
         }
 

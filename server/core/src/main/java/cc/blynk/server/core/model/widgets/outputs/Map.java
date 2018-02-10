@@ -4,13 +4,12 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 
@@ -21,7 +20,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  */
 public class Map extends OnePinWidget {
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("map.strings.pool.size", "25"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("map.strings.pool.size", "25"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     public boolean isPinToLatestPoint;

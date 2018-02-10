@@ -3,8 +3,6 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.DataStream;
@@ -22,8 +20,10 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
         this.clientPair = initAppAndHardPair();
     }
 
@@ -117,8 +117,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        String serverProfileString = appClient2.getBody(2);
-        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        Profile serverProfile = appClient2.getProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         Profile profile = parseProfile(readTestUserProfile());
@@ -136,7 +135,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = parseProfile(clientPair.appClient.getBody(2));
+        profile = clientPair.appClient.getProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
         Notification originalNotification = profile.dashBoards[0].getWidgetByType(Notification.class);
@@ -210,13 +209,13 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         DashBoard dash = new DashBoard();
         dash.id = 2;
         dash.name = "test";
-        clientPair.appClient.send("createDash " + dash.toString());
+        clientPair.appClient.createDash(dash);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         DashboardSettings settings = new DashboardSettings(dash.name, true, Theme.Blynk, false, false, false);
 
         clientPair.appClient.send("updateSettings 2\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getShareToken 2");
 
@@ -334,9 +333,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 1"))));
 
         clientPair.appClient.send("loadProfileGzipped");
-        String profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        Profile profile = parseProfile(profileString);
+        Profile profile = clientPair.appClient.getProfile();
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -350,9 +347,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        profile = parseProfile(profileString);
+        profile = clientPair.appClient.getProfile();
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -361,13 +356,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 3 151"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        profile = parseProfile(profileString);
+        profile = clientPair.appClient.getProfile();
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -390,9 +383,63 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("sharing 1 off");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+    }
+
+    @Test
+    public void checkSharingMessageWasReceivedMultipleRecievers() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("sharing 1 off");
+        clientPair.appClient.verifyResult(ok(2));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+    }
+
+    @Test
+    public void checkSharingMessageWasReceivedAlsoForNonSharedApp() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
+
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("sharing 1 off");
+        clientPair.appClient.verifyResult(ok(2));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
     }
 
     @Test
@@ -407,8 +454,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
                 rule
         };
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getShareToken 1");
 
@@ -427,9 +474,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 1 38"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 38"))));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
     }
 
     @Test
@@ -448,18 +495,16 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 3 151"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 3 151"))));
 
         clientPair.hardwareClient.send("hardware aw 3 152");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 3 152"))));
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 3 152"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 aw 3 152"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 aw 3 152"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        String profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        Profile profile = parseProfile(profileString);
+        Profile profile = clientPair.appClient.getProfile();
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -538,17 +583,43 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.deactivate(1);
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
 
-        clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(3));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
+    }
+
+    @Test
+    public void testDeactivateOnLogout() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("deactivate");
+        clientPair.appClient.verifyResult(ok(2));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
     }
 
     @Test
@@ -657,8 +728,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        String serverProfileString = appClient2.getBody(2);
-        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        Profile serverProfile = appClient2.getProfile(2);
         DashBoard dashboard = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
@@ -680,8 +750,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient4.send("loadProfileGzipped");
-        serverProfileString = appClient4.getBody(2);
-        serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        serverProfile = appClient4.getProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
@@ -707,7 +776,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     public void testMasterMasterSyncWorksWithoutToken() throws Exception {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
-        appClient2.send("login " + "dima@mail.ua 1 Android 24");
+        appClient2.login("dima@mail.ua", "1", "Android", "24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -758,8 +827,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         device.name = "123";
         dash.devices = new Device[] {device};
 
-        clientPair.appClient.send("createDash " + dash.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createDash(dash);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getShareToken 333");
         String token = clientPair.appClient.getBody(2);
@@ -773,8 +842,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 1"))));
-        verify(appClient2.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 1"))));
+        verify(appClient2.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 1"))));
     }
 
     private static void clearPrivateData(Notification n) {

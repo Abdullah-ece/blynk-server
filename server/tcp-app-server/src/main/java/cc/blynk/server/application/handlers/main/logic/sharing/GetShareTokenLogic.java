@@ -8,7 +8,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -33,7 +34,7 @@ public class GetShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -41,8 +42,13 @@ public class GetShareTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
+            if (user.notEnoughEnergy(PRIVATE_TOKEN_PRICE)) {
+                ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
+                return;
+            }
             token = tokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
+            user.lastModifiedTs = System.currentTimeMillis();
         }
 
         if (ctx.channel().isWritable()) {

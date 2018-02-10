@@ -3,27 +3,21 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.startsWith;
@@ -46,7 +40,7 @@ public class AppMailTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
     }
@@ -62,8 +56,8 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmail() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(ok(1));
 
         appClient.send("email 1");
         verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
@@ -73,8 +67,8 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForDevice() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(ok(1));
 
         appClient.send("email 1 0");
         verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
@@ -84,13 +78,12 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForSingleDevice() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
         appClient.send("email 1");
@@ -103,8 +96,8 @@ public class AppMailTest extends IntegrationBase {
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.10/Blynk_Release_v0.4.10.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.29.1/server-0.29.1.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.0/Blynk_Release_v0.5.0.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.31.0/server-0.31.0.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -117,22 +110,20 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device2", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
 
         appClient.send("email 1");
 
@@ -145,8 +136,8 @@ public class AppMailTest extends IntegrationBase {
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.10/Blynk_Release_v0.4.10.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.29.1/server-0.29.1.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.0/Blynk_Release_v0.5.0.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.31.0/server-0.31.0.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -160,12 +151,12 @@ public class AppMailTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         //adding email widget
-        clientPair.appClient.send("createWidget 1\0{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, "{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to subj body");
         verify(mailWrapper, after(500).never()).sendHtml(eq("to"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(1));
     }
 
     @Test
@@ -174,18 +165,31 @@ public class AppMailTest extends IntegrationBase {
 
         //no email widget
         clientPair.hardwareClient.send("email to subj body");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+        clientPair.hardwareClient.verifyResult(notAllowed(1));
 
         //adding email widget
-        clientPair.appClient.send("createWidget 1\0{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, "{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to@to.com subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("to@to.com"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.send("email to@to.com subj body");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT)));
+        clientPair.hardwareClient.verifyResult(new ResponseMessage(3, QUOTA_LIMIT));
+    }
+
+    @Test
+    public void testPlainTextIsAllowed() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email to@to.com subj body");
+        verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("subj"), eq("body"));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
@@ -193,12 +197,12 @@ public class AppMailTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         //adding email widget
-        clientPair.appClient.send("createWidget 1\0{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"to\":\"test@mail.ua\", \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, "{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"to\":\"test@mail.ua\", \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("test@mail.ua"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
@@ -206,12 +210,12 @@ public class AppMailTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         //adding email widget
-        clientPair.appClient.send("createWidget 1\0{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"width\":1, \"height\":1, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, "{\"orgId\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"width\":1, \"height\":1, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("dima@mail.ua"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
 }

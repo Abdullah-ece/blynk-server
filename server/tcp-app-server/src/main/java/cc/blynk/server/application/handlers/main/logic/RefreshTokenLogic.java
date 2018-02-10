@@ -9,12 +9,11 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -35,12 +34,12 @@ public class RefreshTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         int deviceId = 0;
 
         //new value for multi devices
         if (split.length == 2) {
-            deviceId = ParseUtil.parseInt(split[1]);
+            deviceId = Integer.parseInt(split[1]);
         }
 
         User user = state.user;

@@ -1,14 +1,13 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -111,24 +110,20 @@ public class User {
         return email + "-" + appName;
     }
 
+    public boolean notEnoughEnergy(int price) {
+        return price > energy && AppNameUtil.BLYNK.equals(appName);
+    }
+
     public boolean hasAccess(int orgId) {
         return isSuperAdmin() || this.orgId == orgId;
     }
 
     public void subtractEnergy(int price) {
-        if (AppNameUtil.BLYNK.equals(appName) && price > energy) {
-            throw new EnergyLimitException("Not enough energy.");
-        }
         //non-atomic. we are fine with that
         this.energy -= price;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void recycleEnergy(int price) {
-        purchaseEnergy(price);
-    }
-
-    public void purchaseEnergy(int price) {
+    public void addEnergy(int price) {
         //non-atomic. we are fine with that
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
@@ -147,6 +142,19 @@ public class User {
             this.emailMessages = 0;
             this.emailSentTs = now;
         }
+    }
+
+    public boolean isUpdated(long lastStart) {
+        return (lastStart <= lastModifiedTs) || isDashUpdated(lastStart);
+    }
+
+    private boolean isDashUpdated(long lastStart) {
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (lastStart <= dashBoard.updatedAt) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isAdmin() {

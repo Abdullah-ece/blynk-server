@@ -6,14 +6,13 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.structure.LimitedArrayDeque;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -34,7 +33,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private transient long lastRequestTS;
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
@@ -108,12 +107,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
         for (DataStream dataStream : dataStreams) {
-            if (dataStream.isNotValid()) {
-                continue;
+            if (dataStream.isValid()) {
+                StringMessage msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                        DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
+                channel.write(msg, channel.voidPromise());
             }
-            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
-                    DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
-            channel.write(msg, channel.voidPromise());
         }
     }
 

@@ -8,14 +8,13 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -38,7 +37,7 @@ public class DeleteDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         deleteDash(state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();
@@ -54,7 +53,7 @@ public class DeleteDashLogic {
 
         DashBoard dash = user.profile.dashBoards[index];
 
-        user.recycleEnergy(dash.energySum());
+        user.addEnergy(dash.energySum());
 
         dash.deleteTimers(timerWorker, state.userKey);
 
