@@ -26,6 +26,8 @@ public class WebSwitch extends WebWidget {
 
     public boolean isWidgetNameHidden;
 
+    public String color;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;
