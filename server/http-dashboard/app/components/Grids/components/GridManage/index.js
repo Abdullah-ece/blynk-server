@@ -28,10 +28,24 @@ class GridManage extends React.Component {
 
   constructor(props) {
     super(props);
+    this.handleResize   = this.handleResize.bind(this);
     this.handleDragStop = this.handleDragStop.bind(this);
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
+
+  handleResize(layout, oldItem, newItem) {
+
+      const item = _.find(this.props.webDashboard.widgets, (item) => {
+        return Number(item.input.value.id) === Number(newItem.i);
+      });
+
+      item.input.onChange({
+        ...item.input.value,
+        h: newItem.h,
+        height: newItem.h,
+      });
+  }
 
   handleDragStop(layout, oldItem, newItem) {
 
@@ -88,6 +102,7 @@ class GridManage extends React.Component {
           autoSize={true}
           measureBeforeMount={true}
           onDragStop={this.handleDragStop}
+          onResize = {this.handleResize}
           layouts={layouts}
         >
           {this.props.widgets}
