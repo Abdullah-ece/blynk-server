@@ -254,8 +254,8 @@ class Edit extends React.Component {
   // }
   //
   handleCancel() {
-    if (this.state.activeTab) {
-      this.context.router.push(`/product/${this.props.params.id}/${this.state.activeTab}`);
+    if (this.props.params.tab) {
+      this.context.router.push(`/product/${this.props.params.id}/${this.props.params.tab}`);
     } else {
       this.context.router.push(`/product/${this.props.params.id}`);
     }
