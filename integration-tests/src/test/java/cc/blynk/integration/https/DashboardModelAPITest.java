@@ -23,8 +23,7 @@ import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -56,22 +55,19 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class DashboardModelAPITest extends APIBaseTest {
 
-    private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
         super.init();
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
     }
 
     @After
     public void shutdown() {
-        this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
         super.shutdown();

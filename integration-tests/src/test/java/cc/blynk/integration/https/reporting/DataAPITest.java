@@ -25,8 +25,7 @@ import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -56,15 +55,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class DataAPITest extends APIBaseTest {
 
-    private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
         super.init();
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
@@ -74,7 +71,6 @@ public class DataAPITest extends APIBaseTest {
     @After
     public void shutdown() {
         super.shutdown();
-        this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
     }

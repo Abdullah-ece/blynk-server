@@ -127,7 +127,7 @@ public abstract class BaseTest {
 
         //https.port is correct. new protocol is handled in https port
         tcpAppPort = properties.getIntProperty("https.port");
-        tcpHardPort = properties.getIntProperty("hardware.default.port");
+        tcpHardPort = properties.getIntProperty("http.port");
 
         httpPort = properties.getIntProperty("http.port");
         httpsPort = properties.getIntProperty("https.port");

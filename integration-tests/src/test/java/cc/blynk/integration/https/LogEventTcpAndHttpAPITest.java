@@ -23,8 +23,7 @@ import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -61,16 +60,13 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
-    private BaseServer httpServer;
-    private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
         super.init();
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
@@ -80,9 +76,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     @After
     public void shutdown() {
         super.shutdown();
-        this.appServer.close();
         this.hardwareServer.close();
-        this.httpServer.close();
         this.clientPair.stop();
     }
 
@@ -90,7 +84,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testBasicLogEventFlow() throws Exception {
         String token = createProductAndDevice();
 
-        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
         newHardClient.start();
         newHardClient.send("login " + token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
