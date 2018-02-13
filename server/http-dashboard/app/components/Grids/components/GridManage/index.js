@@ -9,6 +9,8 @@ import _ from 'lodash';
 // } from 'immutable';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import {WIDGETS_CONFIGS} from 'services/Widgets';
+import Scroll from 'react-scroll';
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 class GridManage extends React.Component {
@@ -25,11 +27,52 @@ class GridManage extends React.Component {
 
   };
 
-
   constructor(props) {
     super(props);
     this.handleResize   = this.handleResize.bind(this);
     this.handleDragStop = this.handleDragStop.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+
+    const difference = _.differenceBy(this.props.widgets, prevProps.widgets, "key");
+
+    if(difference.length !== 0){
+      const newWidget = _.find(this.props.webDashboard.widgets, (item) => {
+          return Number(item.input.value.id) === Number(difference[0].key);
+        }).input.value;
+
+      this.scrollToWidget(newWidget);
+    }
+  }
+
+  scrollToWidget(newWidget) {
+    //Getting all necessary widget position information
+
+    const newWidgetName = newWidget.type + newWidget.id;
+
+    const chartDefaultPadding = 15;
+
+    const docScrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    const docViewBottom = window.innerHeight + docScrollTop;
+
+    const chartHeight = document.getElementById(newWidgetName).clientHeight;
+
+    const rect = document.getElementById(newWidgetName).getBoundingClientRect(), bodyElt = document.body;
+
+    const chartOffset = {
+      top: rect.top + bodyElt .scrollTop,
+      left: rect.left + bodyElt .scrollLeft
+    };
+
+    const chartBottom = chartOffset.top + chartHeight + chartDefaultPadding;
+
+    const visible = (chartBottom <= docViewBottom) && (chartOffset.top >= docScrollTop);
+
+    if (!visible) {
+      const scroll = Scroll.animateScroll;
+      scroll.scrollTo( chartOffset.top+chartHeight - window.innerHeight + chartDefaultPadding + docScrollTop);
+    }
   }
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
