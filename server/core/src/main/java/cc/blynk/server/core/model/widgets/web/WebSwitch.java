@@ -18,8 +18,6 @@ public class WebSwitch extends WebWidget {
 
     public String offLabel;
 
-    public String color;
-
     public TextAlignment alignment;
 
     public TextAlignment labelPosition;
