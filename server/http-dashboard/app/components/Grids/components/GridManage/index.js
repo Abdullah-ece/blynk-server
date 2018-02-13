@@ -85,7 +85,9 @@ class GridManage extends React.Component {
 
       item.input.onChange({
         ...item.input.value,
+        w: newItem.w,
         h: newItem.h,
+        width: newItem.w,
         height: newItem.h,
       });
   }
