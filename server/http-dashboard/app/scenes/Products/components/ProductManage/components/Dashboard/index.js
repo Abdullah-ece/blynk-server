@@ -72,6 +72,17 @@ class Dashboard extends React.Component {
       });
   }
 
+  componentDidUpdate(prevProps) {
+
+    if(this.props.isDevicePreviewEnabled && prevProps.devicePreviewId !== this.props.devicePreviewId) {
+      this.getDataForWidgets();
+    }
+
+    if(this.isAnyDataStreamUpdated(prevProps.fields.getAll(), this.props.fields.getAll())) {
+      this.getDataForWidgets();
+    }
+  }
+
   isAnyDataStreamUpdated(oldFields, newFields) {
 
     const simplyfyToSource = (arr) => {
@@ -95,17 +106,6 @@ class Dashboard extends React.Component {
       }
     }
 
-  }
-
-  componentDidUpdate(prevProps) {
-
-    if(this.props.isDevicePreviewEnabled && prevProps.devicePreviewId !== this.props.devicePreviewId) {
-      this.getDataForWidgets();
-    }
-
-    if(this.isAnyDataStreamUpdated(prevProps.fields.getAll(), this.props.fields.getAll())) {
-      this.getDataForWidgets();
-    }
   }
 
   getDataForWidgets() {
