@@ -83,19 +83,18 @@ class Dashboard extends React.Component {
     }
   }
 
+  _simplifyToSource(arr = []){
+    return _.sortBy(fromJS(arr).map((item) => ({
+      id : item.get('id'),
+      pin: item.getIn(['sources', '0', 'dataStream', 'pin']) || null,
+    })).toJS(), ['id']);
+  }
+
   isAnyDataStreamUpdated(oldFields, newFields) {
+    oldFields = this._simplifyToSource(oldFields);
+    newFields = this._simplifyToSource(newFields);
 
-    const simplyfyToSource = (arr) => {
-      return _.sortBy(fromJS(arr).map((item) => ({
-        id : item.get('id'),
-        pin: item.getIn(['sources', '0', 'dataStream', 'pin']) || null,
-      })).toJS(), ['id']);
-    };
-
-    oldFields = simplyfyToSource(oldFields);
-    newFields = simplyfyToSource(newFields);
-
-    let length = oldFields.length > newFields.length ? oldFields.length : newFields.length;
+    let length = Math.max(oldFields.length, newFields.length);
 
     for (let i = 0; i < length; i++) {
       if (!oldFields[i]) continue;
@@ -105,7 +104,6 @@ class Dashboard extends React.Component {
         return true;
       }
     }
-
   }
 
   getDataForWidgets() {
