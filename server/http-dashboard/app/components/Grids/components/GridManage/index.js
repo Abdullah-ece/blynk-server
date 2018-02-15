@@ -147,7 +147,7 @@ class GridManage extends React.Component {
           autoSize={true}
           measureBeforeMount={true}
           onDragStop={this.handleDragStop}
-          onResize = {this.handleResize}
+          onResizeStop = {this.handleResize}
           layouts={layouts}
         >
           {this.props.widgets}
