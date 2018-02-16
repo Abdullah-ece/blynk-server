@@ -413,12 +413,12 @@ class SwitchSettings extends React.Component {
                       <Row>
                         <Col span={8}>
                           <Item label="on label" offset="medium">
-                            <FormField name={'onLabel'} placeholder={`For e.g. System On`}/>
+                            <FormField name={'onLabel'} placeholder={`For e.g. On`}/>
                           </Item>
                         </Col>
                         <Col span={8} offset={1}>
                           <Item label="off label" offset="medium">
-                            <FormField name={'offLabel'} placeholder={`For e.g. System Off`}/>
+                            <FormField name={'offLabel'} placeholder={`For e.g. Off`}/>
                           </Item>
                         </Col>
                       </Row>
