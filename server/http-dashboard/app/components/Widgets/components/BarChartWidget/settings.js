@@ -2,14 +2,14 @@ import React from 'react';
 import WidgetSettings from '../WidgetSettings';
 import PropTypes from 'prop-types';
 
-import {fromJS} from 'immutable';
+import {fromJS, Map} from 'immutable';
 
 import Validation from 'services/Validation';
 import ColorPicker from 'components/ColorPicker';
 
 import {FORMS} from 'services/Products';
 
-// import {Preview} from './scenes';
+import {Preview} from './components';
 
 import _ from 'lodash';
 
@@ -118,7 +118,11 @@ class BarChartSettings extends React.Component {
           label: PropTypes.string,
         }))
       })
-    }))
+    })),
+
+    history: PropTypes.instanceOf(Map),
+
+    loading: PropTypes.bool,
   };
 
   constructor(props) {
@@ -731,11 +735,13 @@ class BarChartSettings extends React.Component {
           </div>
         )}
 
-        preview={(null)}
-
-        // preview={(
-          //<Preview widgetId={this.props.formValues && Number(this.props.formValues.id || 0)} deviceId={this.props.deviceId} source={this.props.formValues && this.props.formValues.sources && this.props.formValues.sources[0] || {}}/>
-        // )}
+        preview={(
+          <Preview
+            deviceId={this.props.deviceId}
+            data={this.props.formValues}
+            history={this.props.history}
+            loading={this.props.loading}/>
+        )}
       />
     );
   }

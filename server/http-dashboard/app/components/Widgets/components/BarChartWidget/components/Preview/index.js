@@ -1,48 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {List} from 'immutable';
-import Validation from 'services/Validation';
-import {
-  Button,
-  Icon,
-} from 'antd';
+import {Map} from 'immutable';
 import {BarChartWidget} from 'components/Widgets/components';
-
-import {MetadataSelect as Select} from 'components/Form';
-
-import {reduxForm} from 'redux-form';
+import {Icon} from 'antd';
 
 import './styles.less';
 
-@reduxForm()
 class Preview extends React.Component {
 
   static propTypes = {
-    devicesList: PropTypes.instanceOf(List),
+    data: PropTypes.object,
 
-    params: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }).isRequired,
+    deviceId: PropTypes.number,
 
-    widgetData: PropTypes.shape({
-      id: PropTypes.number,
-      w: PropTypes.number,
-      h: PropTypes.number
-    }).isRequired,
+    loading: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
 
-    chartData: PropTypes.shape({
-      x: PropTypes.array.isRequired,
-      y: PropTypes.array.isRequired,
-    }).isRequired,
-
-    devicesLoading: PropTypes.bool,
-
-    submitting: PropTypes.bool,
-
-    handleSubmit: PropTypes.func,
-
-    invalid: PropTypes.bool,
-    pristine: PropTypes.bool
+    history: PropTypes.instanceOf(Map),
   };
 
   renderLoading() {
@@ -54,49 +30,20 @@ class Preview extends React.Component {
   }
 
   renderPreview() {
-    let devicesOptions = [];
-
-    this.props.devicesList.forEach((device) => {
-      devicesOptions.push({
-        key: String(device.get('id')),
-        value: `${device.get('productName')} - ${String(device.get('name'))} - ${device.get('token')}`
-      });
-    });
 
     return (
-      <div>
-        <div>
-          <Select name="deviceId"
-                  values={devicesOptions}
-                  placeholder="Choose device for data preview"
-                  notFoundContent={devicesOptions.length > 0 ? "No Devices match search" : "Create at least one device to preview data"}
-          validate={devicesOptions.length > 0 ? [Validation.Rules.required] : []}/>
-        </div>
-
-        <div className="widgets--widget bar-widget-preview">
-          <BarChartWidget fetchRealData={false}
-                          data={this.props.widgetData}
-                          fakeData={this.props.chartData}
-                          isChartPreview={true}/>
-        </div>
-
-        <div>
-          <Button type="submit"
-                  onClick={this.props.handleSubmit}
-                  loading={this.props.submitting}
-                  disabled={this.props.invalid || this.props.pristine || devicesOptions.length === 0}>
-
-            Update Chart
-          </Button>
-        </div>
-
+      <div className="bar-chart-widget-preview">
+        <BarChartWidget history={this.props.history}
+                        data={this.props.data}
+                        deviceId={this.props.deviceId}
+                        loading={this.props.loading}/>
       </div>
     );
   }
 
   render() {
 
-    if(this.props.devicesLoading || this.props.devicesList === null)
+    if(this.props.loading)
       return this.renderLoading();
 
     return this.renderPreview();
