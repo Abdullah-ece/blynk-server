@@ -7,6 +7,7 @@ import {
   WIDGETS_PREDEFINED_SOURCE_OPTIONS
 } from 'services/Widgets';
 import _ from 'lodash';
+import {Preview} from './components';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -49,6 +50,12 @@ class LinearWidgetSettings extends React.Component {
     destroyForm: PropTypes.func,
     handleSubmit: PropTypes.func,
     initializeForm: PropTypes.func,
+
+    history: PropTypes.instanceOf(Map),
+
+    deviceId: PropTypes.number,
+
+    loading: PropTypes.bool,
   };
 
   constructor(props) {
@@ -183,7 +190,11 @@ class LinearWidgetSettings extends React.Component {
         )}
 
         preview={(
-          null
+          <Preview
+            deviceId={this.props.deviceId}
+            data={this.props.formValues.toJS()}
+            history={this.props.history}
+            loading={this.props.loading}/>
         )}
 
         // preview={(
