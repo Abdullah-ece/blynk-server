@@ -1,27 +1,23 @@
 package cc.blynk.server.servers.application;
 
-import cc.blynk.core.http.handlers.CookieBasedUrlReWriterHandler;
-import cc.blynk.core.http.handlers.NoCacheStaticFile;
 import cc.blynk.core.http.handlers.NoMatchHandler;
-import cc.blynk.core.http.handlers.OTAHandler;
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UploadHandler;
+import cc.blynk.core.http.handlers.url.UrlMapper;
 import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
-import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.ConfigsLogic;
-import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
-import cc.blynk.server.admin.http.logic.OTALogic;
-import cc.blynk.server.admin.http.logic.StatsLogic;
-import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.api.http.dashboard.AccountHandler;
+import cc.blynk.server.api.http.dashboard.AuthCookieHandler;
+import cc.blynk.server.api.http.dashboard.DataHandler;
+import cc.blynk.server.api.http.dashboard.DevicesHandler;
+import cc.blynk.server.api.http.dashboard.ExternalAPIHandler;
+import cc.blynk.server.api.http.dashboard.OrganizationHandler;
+import cc.blynk.server.api.http.dashboard.ProductHandler;
+import cc.blynk.server.api.http.dashboard.WebLoginHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordLogic;
-import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
-import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
@@ -38,6 +34,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.servers.BaseServer;
+import cc.blynk.utils.UrlStartWithMapper;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -50,9 +47,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import static cc.blynk.core.http.Response.redirect;
-import static cc.blynk.utils.StringUtils.BLYNK_LANDING;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
+import static cc.blynk.utils.properties.ServerProperties.STATIC_FILES_FOLDER;
 
 /**
  * The Blynk Project.
@@ -74,29 +70,30 @@ public class AppAndHttpsServer extends BaseServer {
         UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         GetServerHandler getServerHandler = new GetServerHandler(holder);
 
-        String rootPath = holder.props.getAdminRootPath();
-
-        IpFilterHandler ipFilterHandler = new IpFilterHandler(
-                holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
+        String apiPath = holder.props.getApiPath();
 
         GlobalStats stats = holder.stats;
         WebSocketsGenericLoginHandler genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
 
         //http API handlers
-        ResetPasswordLogic resetPasswordLogic = new ResetPasswordLogic(holder);
-        HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
         NoMatchHandler noMatchHandler = new NoMatchHandler();
 
-        //admin API handlers
-        OTALogic otaLogic = new OTALogic(holder, rootPath);
-        UsersLogic usersLogic = new UsersLogic(holder, rootPath);
-        StatsLogic statsLogic = new StatsLogic(holder, rootPath);
-        ConfigsLogic configsLogic = new ConfigsLogic(holder, rootPath);
-        HardwareStatsLogic hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
-        AdminAuthHandler adminAuthHandler = new AdminAuthHandler(holder, rootPath);
+        ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
+        UrlReWriterHandler urlReWriterHandler = new UrlReWriterHandler(
+                new UrlMapper("/favicon.ico", "/static/favicon.ico"),
+                new UrlMapper("/", "/static/index.html"),
+                new UrlStartWithMapper("/dashboard", "/static/index.html")
+        );
+
+        String jarPath = holder.props.jarPath;
+
+        WebLoginHandler webLoginHandler = new WebLoginHandler(holder, apiPath);
         AuthCookieHandler authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler =
-                new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
+        AccountHandler accountHandler = new AccountHandler(holder, apiPath);
+        DevicesHandler devicesHandler = new DevicesHandler(holder, apiPath);
+        DataHandler dataHandler = new DataHandler(holder, apiPath);
+        ProductHandler productHandler = new ProductHandler(holder, apiPath);
+        OrganizationHandler organizationHandler = new OrganizationHandler(holder, apiPath);
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -104,18 +101,8 @@ public class AppAndHttpsServer extends BaseServer {
                 FullHttpRequest req = (FullHttpRequest) msg;
                 String uri = req.uri();
 
-                log.debug("In http and websocket unificator handler.");
-                if (uri.equals("/")) {
-                    //for local server do redirect to admin page
-                    try {
-                        ctx.writeAndFlush(redirect(holder.isLocalRegion() ? rootPath : BLYNK_LANDING));
-                    } finally {
-                        req.release();
-                    }
-                    return;
-                } else if (uri.startsWith(rootPath)) {
-                    initAdminPipeline(ctx);
-                } else if (uri.startsWith(WEBSOCKET_PATH)) {
+                log.debug("In https and websocket unificator handler.");
+                if (uri.startsWith(WEBSOCKET_PATH)) {
                     initWebSocketPipeline(ctx, WEBSOCKET_PATH);
                 } else {
                     initHttpPipeline(ctx);
@@ -124,37 +111,16 @@ public class AppAndHttpsServer extends BaseServer {
                 ctx.fireChannelRead(msg);
             }
 
-            private void initAdminPipeline(ChannelHandlerContext ctx) {
-                if (!ipFilterHandler.accept(ctx)) {
-                    ctx.close();
-                    return;
-                }
-
-                ChannelPipeline pipeline = ctx.pipeline();
-
-                pipeline.addLast(new UploadHandler(holder.props.jarPath, "/upload", "/static/ota"))
-                        .addLast(new OTAHandler(holder, rootPath + "/ota/start", "/static/ota"))
-                        .addLast(adminAuthHandler)
-                        .addLast(authCookieHandler)
-                        .addLast(cookieBasedUrlReWriterHandler);
-
-                pipeline.remove(StaticFileHandler.class);
-                pipeline.addLast(new StaticFileHandler(holder.props, new NoCacheStaticFile("/static")))
-                        .addLast(otaLogic)
-                        .addLast(usersLogic)
-                        .addLast(statsLogic)
-                        .addLast(configsLogic)
-                        .addLast(hardwareStatsLogic)
-                        .addLast(resetPasswordLogic)
-                        .addLast(httpAPILogic)
-                        .addLast(noMatchHandler)
-                        .remove(this);
-            }
-
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
-                        .addLast(resetPasswordLogic)
-                        .addLast(httpAPILogic)
+                        .addLast(webLoginHandler)
+                        .addLast(authCookieHandler)
+                        .addLast(new UploadHandler(jarPath, "/api/upload", "/" + STATIC_FILES_FOLDER))
+                        .addLast(accountHandler)
+                        .addLast(devicesHandler)
+                        .addLast(dataHandler)
+                        .addLast(productHandler)
+                        .addLast(organizationHandler)
                         .addLast(noMatchHandler)
                         .remove(this);
             }
@@ -164,15 +130,21 @@ public class AppAndHttpsServer extends BaseServer {
 
                 //websockets specific handlers
                 pipeline.addLast("WSWebSocketServerProtocolHandler",
-                        new WebSocketServerProtocolHandler(websocketPath, true))
-                        .addLast("WSWebSocket", new WebSocketHandler(stats))
-                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
-                        .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
-                        .addLast("WSMessageEncoder", new MessageEncoder(stats))
-                        .addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
+                        new WebSocketServerProtocolHandler(websocketPath, true));
+                pipeline.addLast("WSWebSocket", new WebSocketHandler(stats));
+                pipeline.addLast("WSMessageDecoder", new MessageDecoder(stats));
+                pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
+                pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
+                pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
+
+                //remove static file handlers
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);
+                pipeline.remove(HttpObjectAggregator.class);
+                pipeline.remove(HttpServerKeepAliveHandler.class);
+                pipeline.remove(ExternalAPIHandler.class);
+
                 pipeline.remove(this);
             }
         };
@@ -192,11 +164,11 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpsObjectAggregator",
                                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
                                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                                .addLast("HttpUrlMapper",
-                                        new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
+                                .addLast("HttpUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
                                         new StaticFileHandler(holder.props, new StaticFile("/static"),
                                                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
+                                .addLast(externalAPIHandler)
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
 

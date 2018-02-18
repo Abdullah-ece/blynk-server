@@ -45,7 +45,7 @@ public class DataHandler extends BaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
 
-    DataHandler(Holder holder, String rootPath) {
+    public DataHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;

@@ -67,7 +67,7 @@ public class DevicesHandler extends BaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
 
-    DevicesHandler(Holder holder, String rootPath) {
+    public DevicesHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;

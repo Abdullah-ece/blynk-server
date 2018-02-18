@@ -29,7 +29,7 @@ public class AccountHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
 
-    AccountHandler(Holder holder, String rootPath) {
+    public AccountHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
     }

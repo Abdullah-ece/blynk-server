@@ -141,6 +141,10 @@ public abstract class BaseProperties extends Properties {
         return getProperty("admin.rootPath", "/admin");
     }
 
+    public String getApiPath() {
+        return getProperty("api.path", "/api");
+    }
+
     public long getLongProperty(String propertyName, long defaultValue) {
         String prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {

@@ -44,7 +44,7 @@ public class ProductHandler extends BaseHttpHandler {
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    ProductHandler(Holder holder, String rootPath) {
+    public ProductHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
