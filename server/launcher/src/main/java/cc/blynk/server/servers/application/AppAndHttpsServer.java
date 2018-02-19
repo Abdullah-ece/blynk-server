@@ -48,6 +48,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static cc.blynk.utils.properties.ServerProperties.STATIC_FILES_FOLDER;
 
 /**
@@ -77,6 +78,8 @@ public class AppAndHttpsServer extends BaseServer {
 
         //http API handlers
         NoMatchHandler noMatchHandler = new NoMatchHandler();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(stats);
+        WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
 
         ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
         UrlReWriterHandler urlReWriterHandler = new UrlReWriterHandler(
@@ -104,6 +107,8 @@ public class AppAndHttpsServer extends BaseServer {
                 log.debug("In https and websocket unificator handler.");
                 if (uri.startsWith(WEBSOCKET_PATH)) {
                     initWebSocketPipeline(ctx, WEBSOCKET_PATH);
+                } else if (uri.equals(WEBSOCKET_WEB_PATH)) {
+                    initWebDashboardSocket(ctx);
                 } else {
                     initHttpPipeline(ctx);
                 }
@@ -125,19 +130,37 @@ public class AppAndHttpsServer extends BaseServer {
                         .remove(this);
             }
 
+            private void initWebDashboardSocket(ChannelHandlerContext ctx) {
+                ChannelPipeline pipeline = ctx.pipeline();
+
+                //websockets specific handlers
+                pipeline.addLast("AChannelState", appChannelStateHandler)
+                        .addLast("WSWebSocketServerProtocolHandler",
+                        new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
+                        .addLast("WSWebSocket", webSocketHandler)
+                        .addLast("WSMessageDecoder", new AppMessageDecoder(stats))
+                        .addLast("WSSocketWrapper", webSocketWrapperEncoder)
+                        .addLast("WSMessageEncoder", new AppMessageEncoder(stats))
+                        .addLast("AGetServer", getServerHandler)
+                        .addLast("ALogin", appLoginHandler)
+                        .addLast("ANotLogged", userNotLoggedHandler);
+                pipeline.remove(ChunkedWriteHandler.class);
+                pipeline.remove(UrlReWriterHandler.class);
+                pipeline.remove(StaticFileHandler.class);
+                pipeline.remove(this);
+            }
+
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
                 pipeline.addLast("WSWebSocketServerProtocolHandler",
-                        new WebSocketServerProtocolHandler(websocketPath, true));
-                pipeline.addLast("WSWebSocket", new WebSocketHandler(stats));
-                pipeline.addLast("WSMessageDecoder", new MessageDecoder(stats));
-                pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
-                pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
-                pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
-
-                //remove static file handlers
+                        new WebSocketServerProtocolHandler(websocketPath, true))
+                        .addLast("WSWebSocket", webSocketHandler)
+                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
+                        .addLast("WSSocketWrapper", webSocketWrapperEncoder)
+                        .addLast("WSMessageEncoder", new MessageEncoder(stats))
+                        .addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);

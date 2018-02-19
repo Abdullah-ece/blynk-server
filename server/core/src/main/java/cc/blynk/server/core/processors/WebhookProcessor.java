@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
-import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -36,10 +35,6 @@ import static cc.blynk.utils.StringUtils.PIN_PATTERN_6;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_7;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_8;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_9;
-import static cc.blynk.utils.http.MediaType.APPLICATION_FORM_URLENCODED;
-import static cc.blynk.utils.http.MediaType.APPLICATION_JSON;
-import static cc.blynk.utils.http.MediaType.TEXT_HTML;
-import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 
 /**
  * Handles all webhooks logic.
@@ -93,7 +88,7 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
+        BoundRequestBuilder builder = httpclient.prepare(webHook.method.name(), newUrl);
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
@@ -102,7 +97,7 @@ public class WebhookProcessor extends NotificationBase {
                         if (CONTENT_TYPE.equals(header.name)) {
                             String newBody = format(webHook.body, triggerValue, true);
                             log.trace("Webhook formatted body : {}", newBody);
-                            buildRequestBody(builder, header.value, newBody);
+                            builder.setBody(newBody);
                         }
                     }
                 }
@@ -193,33 +188,4 @@ public class WebhookProcessor extends NotificationBase {
         }
         return data;
     }
-
-    private static void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
-        switch (header) {
-            case APPLICATION_FORM_URLENCODED :
-            case APPLICATION_JSON :
-            case TEXT_PLAIN :
-            case TEXT_HTML :
-                builder.setBody(body);
-                break;
-            default :
-                throw new IllegalArgumentException("Unsupported content-type for webhook.");
-        }
-    }
-
-    private BoundRequestBuilder buildRequestMethod(SupportedWebhookMethod method, String url) {
-        switch (method) {
-            case GET :
-                return httpclient.prepareGet(url);
-            case POST :
-                return httpclient.preparePost(url);
-            case PUT :
-                return httpclient.preparePut(url);
-            case DELETE :
-                return httpclient.prepareDelete(url);
-            default :
-                throw new IllegalArgumentException("Unsupported method type for webhook.");
-        }
-    }
-
 }
