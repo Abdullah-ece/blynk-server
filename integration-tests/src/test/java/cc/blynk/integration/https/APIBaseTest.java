@@ -117,14 +117,14 @@ public abstract class APIBaseTest extends BaseTest {
         return getRelativeDataFolder("/profiles");
     }
 
-    protected void login(String name, String pass) throws Exception {
-        login(httpclient, httpsAdminServerUrl, name, pass);
+    protected void login(String email, String pass) throws Exception {
+        login(httpclient, httpsAdminServerUrl, email, pass);
     }
 
-    protected void login(CloseableHttpClient httpclient, String server, String name, String pass) throws Exception {
+    protected void login(CloseableHttpClient httpclient, String server, String email, String pass) throws Exception {
         HttpPost loginRequest = new HttpPost(server + "/login");
         List <NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", name));
+        nvps.add(new BasicNameValuePair("email", email));
         nvps.add(new BasicNameValuePair("password", pass));
         loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
 
@@ -135,8 +135,8 @@ public abstract class APIBaseTest extends BaseTest {
             assertTrue(cookieHeader.getValue().startsWith("session="));
             User user = JsonParser.parseUserFromString(consumeText(response));
             assertNotNull(user);
-            assertEquals(name, user.email);
-            assertEquals(name, user.name);
+            assertEquals(email, user.email);
+            assertEquals(email, user.name);
             assertNull(user.pass);
         }
     }

@@ -16,6 +16,7 @@
 package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -107,6 +108,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         } catch (Exception e) {
             log.error(e);
         }
+    }
+
+    public void login(User user) {
+        //user.pass is hashed password here actually
+        send("login " + user.email + StringUtils.BODY_SEPARATOR + user.pass);
     }
 
     public void login(String email, String pass) {

@@ -2,9 +2,11 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -42,6 +44,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
     private static final Logger log = LogManager.getLogger(HardwareAppLogic.class);
 
     private final SessionDao sessionDao;
+    private final DeviceDao deviceDao;
 
     public HardwareAppLogic(Holder holder, String email) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
@@ -51,6 +54,28 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 holder.stats,
                 email));
         this.sessionDao = holder.sessionDao;
+        this.deviceDao = holder.deviceDao;
+    }
+
+    private void processWebDashState(ChannelHandlerContext ctx, int deviceId, String body, int msgId) {
+        Device device = deviceDao.getById(deviceId);
+        if (device == null) {
+            return;
+        }
+
+        String[] splitBody = split3(body);
+
+        if (splitBody.length < 3) {
+            log.debug("Not valid write command.");
+            ctx.writeAndFlush(illegalCommandBody(msgId), ctx.voidPromise());
+            return;
+        }
+
+        PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+        byte pin = Byte.parseByte(splitBody[1]);
+        String value = splitBody[2];
+
+        device.webDashboard.update(device.id, pin, pinType, value);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -62,6 +87,9 @@ public class HardwareAppLogic extends BaseProcessorHandler {
         //here we have "1-200000"
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+
+        //todo temp solution
+        processWebDashState(ctx, dashId, split[1], message.id);
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 

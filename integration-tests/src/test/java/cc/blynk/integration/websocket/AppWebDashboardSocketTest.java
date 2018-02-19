@@ -68,6 +68,4 @@ public class AppWebDashboardSocketTest extends IntegrationBase {
         appWebSocketClient.verifyResult(ok(2));
     }
 
-
-
 }
