@@ -147,6 +147,9 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);
+                pipeline.remove(HttpObjectAggregator.class);
+                pipeline.remove(HttpServerKeepAliveHandler.class);
+                pipeline.remove(ExternalAPIHandler.class);
                 pipeline.remove(this);
             }
 
