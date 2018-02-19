@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
+    public final static String PRODUCT_NAME = "{productName}";
+    public final static String ORGANIZATION = "{organization}";
     public final static String BLYNK_LANDING = "https://www.blynk.cc";
 
     public static final char BODY_SEPARATOR = '\0';

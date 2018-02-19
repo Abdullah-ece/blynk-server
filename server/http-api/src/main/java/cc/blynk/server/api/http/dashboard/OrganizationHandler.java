@@ -37,6 +37,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
@@ -73,6 +74,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     private final String host;
     private final BlockingIOProcessor blockingIOProcessor;
     private final TokensPool tokensPool;
+    private final String productName;
 
     public OrganizationHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
@@ -80,6 +82,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.organizationDao = holder.organizationDao;
         this.fileManager = holder.fileManager;
         this.dbManager = holder.dbManager;
+        this.productName = holder.props.getProductName();
 
         this.inviteTemplate = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
@@ -405,7 +408,8 @@ public class OrganizationHandler extends BaseHttpHandler {
             try {
                 tokensPool.addToken(token, invitedUser);
                 String message = inviteTemplate
-                        .replace("{productName}", org.name)
+                        .replace(StringUtils.ORGANIZATION, org.name)
+                        .replace(StringUtils.PRODUCT_NAME, productName)
                         .replace("{host}", this.host)
                         .replace("{link}", inviteURL + token + "&email="
                                 + URLEncoder.encode(userInvite.email, "UTF-8"));

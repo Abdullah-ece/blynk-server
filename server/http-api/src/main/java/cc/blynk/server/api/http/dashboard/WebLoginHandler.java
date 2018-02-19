@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.validators.BlynkEmailValidator;
@@ -56,6 +57,7 @@ public class WebLoginHandler extends BaseHttpHandler {
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
     private final TokensPool tokensPool;
+    private final String productName;
 
     public WebLoginHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
@@ -68,6 +70,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
+        this.productName = holder.props.getProductName();
     }
 
     private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
@@ -206,8 +209,8 @@ public class WebLoginHandler extends BaseHttpHandler {
             return ok("Email was sent.");
         }
 
-        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
-        if (organization == null) {
+        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
+        if (org == null) {
             log.info("Organization with orgId {} not found.", user.orgId);
             return badRequest("Organization for that user is no longer exist.");
         }
@@ -218,11 +221,11 @@ public class WebLoginHandler extends BaseHttpHandler {
             Response response;
             try {
                 String body = emailBody
-                        .replace("{organization}", organization.name)
+                        .replace(StringUtils.ORGANIZATION, org.name)
+                        .replace(StringUtils.PRODUCT_NAME, productName)
                         .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
-                String subject = "Reset your {organization} Dashboard password".replace("{organization}",
-                        organization.name);
+                String subject = "Reset your " + org.name + " Dashboard password";
 
                 mailWrapper.sendHtml(email, subject, body);
                 log.info("Reset email sent to {}.", email);
