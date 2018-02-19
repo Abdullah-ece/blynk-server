@@ -19,7 +19,6 @@ class Chart extends React.Component {
   };
 
   componentDidMount() {
-
     const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
 
     if(Array.isArray(this.props.colorSets))
@@ -30,16 +29,26 @@ class Chart extends React.Component {
     this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
 
     this.chart.render();
-
   }
 
   componentDidUpdate() {
-
     const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
-
+    
+    this.destroyChart();
     this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
 
     this.chart.render();
+  }
+
+  componentWillUnmount(){
+    this.destroyChart();
+  }
+
+  destroyChart(){
+    // destroy instance of chart to prevent memory leaks
+    if (this.chart){
+      this.chart.destroy();
+    }
   }
 
   legendDefaultOptions = {
