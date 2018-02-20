@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -19,17 +18,18 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
-import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
@@ -51,7 +51,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  */
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+        implements DefaultReregisterHandler {
 
     private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=";
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
@@ -72,7 +72,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             pipeline.remove(GetServerHandler.class);
 
             //app pipeline sepcific handlers
-            if (pipeline.get(WebSocketHandler.class) != null) {
+            if (pipeline.get(WebSocketServerProtocolHandler.class) == null) {
                 pipeline.remove(RegisterHandler.class);
                 pipeline.remove(AppShareLoginHandler.class);
             }

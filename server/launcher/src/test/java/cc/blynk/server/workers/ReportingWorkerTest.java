@@ -5,7 +5,6 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -13,6 +12,8 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +45,8 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ReportingWorkerTest {
+
+    private final static Logger log = LogManager.getLogger(ReportingWorkerTest.class);
 
     private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
 
@@ -80,6 +83,17 @@ public class ReportingWorkerTest {
         createReportingFolder(reportingFolder, "test2");
 
         reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, true);
+    }
+
+    private static void createReportingFolder(String reportingFolder, String email) {
+        Path reportingPath = Paths.get(reportingFolder, email);
+        if (Files.notExists(reportingPath)) {
+            try {
+                Files.createDirectories(reportingPath);
+            } catch (IOException ioe) {
+                log.error("Error creating report folder. {}", reportingPath);
+            }
+        }
     }
 
     @Test

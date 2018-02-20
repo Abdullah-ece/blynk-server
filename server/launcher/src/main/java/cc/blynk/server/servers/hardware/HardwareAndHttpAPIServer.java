@@ -1,9 +1,7 @@
 package cc.blynk.server.servers.hardware;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
-import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UploadHandler;
-import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.AccountHandler;
 import cc.blynk.server.api.http.dashboard.AuthCookieHandler;
@@ -18,7 +16,6 @@ import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
-import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -36,7 +33,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
@@ -77,7 +73,6 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
 
         GlobalStats stats = holder.stats;
-        WebSocketsGenericLoginHandler genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
 
         //http API handlers
         NoMatchHandler noMatchHandler = new NoMatchHandler();
@@ -111,27 +106,30 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast(organizationHandler)
                         .addLast(noMatchHandler)
                         .remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized http pipeline. {}", ctx.pipeline().names());
+                }
             }
 
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addLast("WSWebSocketServerProtocolHandler",
-                        new WebSocketServerProtocolHandler(websocketPath, true));
-                pipeline.addLast("WSWebSocket", new WebSocketHandler(stats));
-                pipeline.addLast("WSMessageDecoder", new MessageDecoder(stats));
-                pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
-                pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
-                pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
-
-                pipeline.remove(ChunkedWriteHandler.class);
-                pipeline.remove(UrlReWriterHandler.class);
-                pipeline.remove(StaticFileHandler.class);
-                pipeline.remove(HttpObjectAggregator.class);
-                pipeline.remove(HttpServerKeepAliveHandler.class);
+                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+                        .addLast("WSChannelState", hardwareChannelStateHandler)
+                        .addLast("WSWebSocketServerProtocolHandler",
+                        new WebSocketServerProtocolHandler(websocketPath, true))
+                        .addLast("WSWebSocket", new WebSocketHandler(stats))
+                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
+                        .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
+                        .addLast("WSMessageEncoder", new MessageEncoder(stats))
+                        .addLast("WSLogin", hardwareLoginHandler)
+                        .addLast("WSNotLogged", new HardwareNotLoggedHandler())
                 pipeline.remove(ExternalAPIHandler.class);
                 pipeline.remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized hardware websocket pipeline. {}", ctx.pipeline().names());
+                }
             }
         };
 
@@ -155,7 +153,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                             public ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {
                                 log.trace("Blynk protocol connection detected.", pipeline.channel());
                                 return pipeline
-                                        .addLast("H_IdleStateHandler",
+                                        .addFirst("H_IdleStateHandler",
                                                 new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
                                         .addLast("H_ChannelState", hardwareChannelStateHandler)
                                         .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
