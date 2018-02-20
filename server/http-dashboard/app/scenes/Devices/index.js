@@ -157,10 +157,16 @@ class Devices extends React.Component {
   }
 
   getDevicesList() {
-    let devices = this.props.devices;
+    // WHY TO MUTATE DEVICES ???
+    let { devices } = this.props;
+    const { devicesSearchFormValues } = this.props;
 
-    if (this.props.devicesSearchFormValues.get('name')) {
-      devices = devices.filter(device => device.get('name').trim().toLowerCase().indexOf(this.props.devicesSearchFormValues.get('name').trim().toLowerCase()) !== -1);
+    const nameToSearch = (devicesSearchFormValues.get('name') || '').trim().toLowerCase();
+
+    if (nameToSearch) {
+      devices = devices.filter(device =>
+        device.get('name').toLowerCase().indexOf(nameToSearch) !== -1
+      );
     }
 
     return devices;
