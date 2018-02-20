@@ -7,6 +7,9 @@ import { DEVICES_SEARCH_FORM_NAME } from 'services/Devices';
 import { Select } from 'antd';
 import './styles.less';
 
+const SORTING_OPTIONS_SIZE = 100;
+const INPUTS_MARGIN = 4;
+
 @connect(state => ({ smartSearch: state.Storage.deviceSmartSearch }))
 @reduxForm({
   form: DEVICES_SEARCH_FORM_NAME,
@@ -27,7 +30,7 @@ class DevicesSearch extends React.Component {
   renderSortingOptions(){
     const { sortingOptions, devicesSortValue, devicesSortChange } = this.props;
 
-    return <Select style={{width: '100px', maxWidth: '100px', minWidth: '100px'}}
+    return <Select style={{width: SORTING_OPTIONS_SIZE, maxWidth: SORTING_OPTIONS_SIZE, minWidth: SORTING_OPTIONS_SIZE}}
                    optionLabelProp={'label'}
                    value={devicesSortValue}
                    onChange={devicesSortChange}
@@ -46,8 +49,10 @@ class DevicesSearch extends React.Component {
 
     // slightly different layout when Smart Search are enabled
     if (smartSearch){
+      const selectorWidth = `calc(100% - ${SORTING_OPTIONS_SIZE + INPUTS_MARGIN}px)`;
+      
       return <div className="devices-search">
-        <Select style={{width: 'calc(100% - 104px)', marginRight: 4}}
+        <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
                 name="name"
                 mode="tags"
                 placeholder="Smart Search" />
@@ -66,7 +71,7 @@ class DevicesSearch extends React.Component {
                    autoComplete="off"
                    notFoundContent="Search is on development"/>
             </Item>
-          <Item style={{width: '100px'}}>{this.renderSortingOptions()}</Item>
+          <Item style={{width: SORTING_OPTIONS_SIZE}}>{this.renderSortingOptions()}</Item>
         </ItemsGroup>
       </div>
     );
