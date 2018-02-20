@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -104,6 +105,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.send("hardware 1 vw 1 222");
+        clientPair.hardwareClient.verifyResult(new HardwareMessage(1, "1 vw 1 222"));
 
         HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevice)) {

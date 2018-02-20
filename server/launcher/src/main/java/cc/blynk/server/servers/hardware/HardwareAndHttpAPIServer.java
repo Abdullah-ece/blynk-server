@@ -124,7 +124,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
-                        .addLast("WSNotLogged", new HardwareNotLoggedHandler())
+                        .addLast("WSNotLogged", new HardwareNotLoggedHandler());
                 pipeline.remove(ExternalAPIHandler.class);
                 pipeline.remove(this);
                 if (log.isTraceEnabled()) {
