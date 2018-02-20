@@ -4,3 +4,10 @@ export function ProductsUpdateMetadataFirstTime(data) {
     data: data
   };
 }
+
+export function DeviceSmartSearchState(value=false){
+  return {
+    type: 'DeviceSmartSearch',
+    value
+  };
+}

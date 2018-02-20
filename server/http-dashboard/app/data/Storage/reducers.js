@@ -1,7 +1,8 @@
 const initialState = {
   products: {
     metadataFirstTime: false
-  }
+  },
+  deviceSmartSearch: false
 };
 
 export default function Account(state = initialState, action) {
@@ -15,8 +16,13 @@ export default function Account(state = initialState, action) {
         }
       };
 
+    case 'DeviceSmartSearch':
+      return {
+        ...state,
+        deviceSmartSearch: action.value
+      };
+
     default:
       return state;
   }
 }
-

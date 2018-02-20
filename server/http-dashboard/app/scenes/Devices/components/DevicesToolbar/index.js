@@ -4,12 +4,20 @@ import DeviceCreateModal from '../DeviceCreateModal';
 import {
   reduxForm,
 } from 'redux-form';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {DeviceSmartSearchState} from 'data/Storage/actions';
 import {
   DEVICES_FILTER_FORM_NAME,
   DEVICES_FILTERS,
 } from 'services/Devices';
 import './styles.less';
 
+@connect((state) => ({
+  smartSearch: state.Storage.deviceSmartSearch
+}), (dispatch) => ({
+  setSmartSearch: bindActionCreators(DeviceSmartSearchState, dispatch)
+}))
 @reduxForm({
   form: DEVICES_FILTER_FORM_NAME,
   initialValues: {
@@ -28,7 +36,10 @@ class DevicesToolbar extends React.Component {
     onFilterChange: React.PropTypes.func,
 
     location: React.PropTypes.object,
-    params: React.PropTypes.object
+    params: React.PropTypes.object,
+    
+    smartSearch: React.PropTypes.bool,
+    setSmartSearch: React.PropTypes.func
   };
 
   constructor(props) {
@@ -37,6 +48,7 @@ class DevicesToolbar extends React.Component {
     this.handleAllDevicesSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.ALL_DEVICES);
     this.handleByLocationSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_LOCATION);
     this.handleByProductSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_PRODUCT);
+    this.setSmartSearch = this._setSmartSearch.bind(this);
   }
 
   state = {
@@ -51,12 +63,19 @@ class DevicesToolbar extends React.Component {
     return (
       this.props.filterValue !== nextProps.filterValue ||
       this.props.location.pathname !== nextProps.location.pathname ||
+      this.props.smartSearch !== nextProps.smartSearch || // super fuzzy logic
+                                                          // don't forget to add your props here
       this.state.isDeviceCreateModalVisible !== nextState.isDeviceCreateModalVisible
     );
   }
 
   componentDidUpdate() {
     this.checkModalVisibility();
+  }
+
+  _setSmartSearch(){
+    const { setSmartSearch, smartSearch } = this.props;
+    return setSmartSearch(!smartSearch);
   }
 
   onDeviceCreateModalClose() {
@@ -85,7 +104,7 @@ class DevicesToolbar extends React.Component {
 
   render() {
 
-    const {filterValue} = this.props;
+    const {filterValue, smartSearch} = this.props;
 
     return (
       <div className="devices--toolbar">
@@ -107,6 +126,11 @@ class DevicesToolbar extends React.Component {
         <span/>
         <Tooltip placement="top" title="Create new device">
           <Button icon="plus-square-o" size="small" onClick={this.handleDeviceCreateClick.bind(this)}/>
+        </Tooltip>
+        <Tooltip placement="topRight" title="Smart Search" mouseEnterDelay={.75}>
+          <Button icon="search" size="small"
+                  onClick={this.setSmartSearch}
+                  className={smartSearch ? 'active' : null}/>
         </Tooltip>
 
         <DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}
