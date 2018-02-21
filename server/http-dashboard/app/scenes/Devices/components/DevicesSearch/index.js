@@ -8,7 +8,7 @@ import {Input, Item, ItemsGroup} from 'components/UI';
 import { DEVICES_SEARCH_FORM_NAME } from 'services/Devices';
 import { v4 as uuid } from 'node-uuid';
 import { Select } from 'antd';
-const { Option, OptGroup } = Select;
+const { Option } = Select;
 import { fromJS, List } from 'immutable';
 import './styles.less';
 
@@ -82,7 +82,7 @@ class DevicesSearch extends React.Component {
     // last tag is the one that was added recently
     // we should check it
     const lastTagAsString = value[value.length - 1];
-    
+
     if (!lastTagAsString){
       // looks like the last tag was removed
       return this.pushTagsToReduxForm([]);
@@ -91,10 +91,10 @@ class DevicesSearch extends React.Component {
     try{
       // check for tag in the list
       const lastTag = JSON.parse(lastTagAsString);
-  
+
       const { smartSearchSuggestions=[] } = this.state;
       const isLastTagInTheList = smartSearchSuggestions.filter(s => s.id === lastTag.id).length > 0;
-  
+
       if (isLastTagInTheList){
         this.smartSearchTagsCollection[lastTag.id] = lastTag;
       }
@@ -107,7 +107,7 @@ class DevicesSearch extends React.Component {
         const id = JSON.parse(t).id;
         return this.smartSearchTagsCollection[id];
       } catch(e){
-        // we won't be able to find tag by its ID based on various conditions(related to antd data model) 
+        // we won't be able to find tag by its ID based on various conditions(related to antd data model)
         // in this case we also trying to find it by its TITLE
         return _.filter(this.smartSearchTagsCollection, tag => tag.title === t)[0] || null;
       }
@@ -122,7 +122,7 @@ class DevicesSearch extends React.Component {
 
     const {devices} = this.props;
     const deviceResults = this.findDeviceByField(['name'], query, devices.toArray());
-    
+
     const options = _.map(deviceResults, (results, i) => {
       const id = uuid();
       const devices = results.map(r => r.device.get('id'));
@@ -167,7 +167,7 @@ class DevicesSearch extends React.Component {
     // slightly different layout when Smart Search are enabled
     if (smartSearch){
       const selectorWidth = `calc(100% - ${SORTING_OPTIONS_SIZE + INPUTS_MARGIN}px)`;
-      
+
       return <div className="devices-search">
         <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
                 mode="tags"

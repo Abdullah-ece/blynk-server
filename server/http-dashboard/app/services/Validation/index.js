@@ -31,7 +31,7 @@ export const Rules = {
     return !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value) ? Messages.email : undefined;
   },
   minLength: (n) => (value) => !value || value.length < n ? Messages.minLength(n) : undefined,
-  required: (value) => !value ? Messages.required : undefined,
+  required: (value) => value === undefined || value === null || (value.trim && value.trim() === ""    ) ? Messages.required : undefined,
   imageRequired: (value) => !value ? Messages.imageRequired : undefined,
   number: (value) => value && isNaN(Number(value)) ? Messages.number : Number(value) > MAX_NUMBER || Number(value) < MIN_NUMBER ? Messages.numberLong : undefined,
   // latitude: (value) => value && !/^([-+]?\d{1,2}[.]\d+)$/.test(value) ? Messages.latitude : undefined,
