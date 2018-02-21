@@ -4,3 +4,10 @@
   flex-shrink: 0;
   margin: @style-size-4 @style-size-4 0;
 }
+
+.smart-search--dropdown{
+  li:first-child{
+    /* don't show default antd tag suggestion */
+    display: none;
+  }
+}
