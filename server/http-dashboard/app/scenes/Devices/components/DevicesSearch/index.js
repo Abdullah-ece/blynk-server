@@ -143,18 +143,18 @@ class DevicesSearch extends React.Component {
   renderSortingOptions(){
     const { sortingOptions, devicesSortValue, devicesSortChange } = this.props;
 
-    return <Select style={{width: SORTING_OPTIONS_SIZE, maxWidth: SORTING_OPTIONS_SIZE, minWidth: SORTING_OPTIONS_SIZE}}
-                   optionLabelProp={'label'}
-                   value={devicesSortValue}
-                   onChange={devicesSortChange}
-                   dropdownMatchSelectWidth={false}>
+    return (<Select style={{width: SORTING_OPTIONS_SIZE, maxWidth: SORTING_OPTIONS_SIZE, minWidth: SORTING_OPTIONS_SIZE}}
+                    optionLabelProp={'label'}
+                    value={devicesSortValue}
+                    onChange={devicesSortChange}
+                    dropdownMatchSelectWidth={false}>
       {sortingOptions && sortingOptions.map(option => (
-          <Select.Option key={option.key}
-                         label={option.label}>
-            {option.text}
-          </Select.Option>
+        <Select.Option key={option.key}
+                       label={option.label}>
+          {option.text}
+        </Select.Option>
       ))}
-    </Select>;
+    </Select>);
   }
 
   render() {
@@ -168,16 +168,19 @@ class DevicesSearch extends React.Component {
     if (smartSearch){
       const selectorWidth = `calc(100% - ${SORTING_OPTIONS_SIZE + INPUTS_MARGIN}px)`;
 
-      return <div className="devices-search">
-        <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
-                mode="tags"
-                value={tagTitles}
-                placeholder="Smart Search"
-                dropdownClassName="smart-search--dropdown"
-                onChange={this.handleTagsChange.bind(this)}
-                onSearch={this.handleTagsSearch.bind(this)}>{smartSearchSuggestions && smartSearchSuggestions.map(e => e.element)}</Select>
-        {this.renderSortingOptions()}
-      </div>;
+      return (<div className="devices-search">
+                <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
+                        mode="tags"
+                        value={tagTitles}
+                        placeholder="Smart Search"
+                        dropdownClassName="smart-search--dropdown"
+                        onChange={this.handleTagsChange.bind(this)}
+                        onSearch={this.handleTagsSearch.bind(this)}>
+
+                  {smartSearchSuggestions && smartSearchSuggestions.map(e => e.element)}
+                </Select>
+                {this.renderSortingOptions()}
+            </div>);
     }
 
     return (

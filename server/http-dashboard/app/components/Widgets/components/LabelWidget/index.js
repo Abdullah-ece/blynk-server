@@ -207,6 +207,18 @@ class LabelWidget extends React.Component {
     );
   }
 
+  getTextAlignStyle(alignment){
+    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
+      return 'left';
+
+    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER)
+      return 'center';
+
+    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT)
+      return 'right';
+  }
+
+
   render() {
 
     let style = {
@@ -214,7 +226,8 @@ class LabelWidget extends React.Component {
       ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
       ...this.props.style,
       ...this.getLabelStyles(),
-  };
+      textAlign: this.getTextAlignStyle(this.props.data.alignment),
+    };
 
     return (
       <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
