@@ -20,7 +20,6 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
@@ -124,7 +123,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
-                        .addLast("WSNotLogged", new HardwareNotLoggedHandler());
+                        .addLast("WSNotLogged", alreadyLoggedHandler);
                 pipeline.remove(ExternalAPIHandler.class);
                 pipeline.remove(this);
                 if (log.isTraceEnabled()) {
@@ -159,7 +158,6 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
                                         .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
                                         .addLast("H_Login", hardwareLoginHandler)
-                                        .addLast("H_NotLogged", new HardwareNotLoggedHandler())
                                         .addLast("H_AlreadyLogged", alreadyLoggedHandler);
                             }
                         }
