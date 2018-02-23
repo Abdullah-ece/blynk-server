@@ -39,6 +39,7 @@ public enum MeasurementUnit {
     Fahrenheit,
     Kelvin,
 
-    Percentage
+    Percentage,
 
+    RPM
 }
