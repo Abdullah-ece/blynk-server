@@ -177,7 +177,7 @@ class OrganizationUsers extends React.Component {
                       onConfirm={this.handleDeleteUsers.bind(this)}
                       overlayClassName="danger">
             <Button type="danger"
-                    disabled={!this.state.selectedRows}
+                    disabled={!this.state.selectedRows.length}
                     loading={this.state.usersDeleteLoading}>Delete</Button>
           </Popconfirm>
         </div>
