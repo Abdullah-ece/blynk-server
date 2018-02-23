@@ -29,6 +29,7 @@ import {List, fromJS, Map} from "immutable";
   devicesSearchFormValues: fromJS(getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {}),
   devicesFilterFormValues: fromJS(getFormValues(DEVICES_FILTER_FORM_NAME)(state) || {filter: DEVICES_FILTERS.DEFAULT}),
   organization: state.Organization,
+  smartSearch: state.Storage.deviceSmartSearch
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   devicesSortChange: bindActionCreators(DevicesSortChange, dispatch)
@@ -52,6 +53,7 @@ class Devices extends React.Component {
     devicesSortChange: React.PropTypes.func,
 
     organization: React.PropTypes.object,
+    smartSearch: React.PropTypes.bool
   };
 
   static getLocationName(device) {
@@ -84,6 +86,9 @@ class Devices extends React.Component {
 
   componentWillMount() {
     this.redirectToFirstDeviceIfIdParameterMissed();
+
+    // empty tags if they are still in the store from the previous search
+    this.props.changeForm(DEVICES_SEARCH_FORM_NAME, 'tags', []);
   }
 
   componentWillUpdate(nextProps) {
@@ -157,16 +162,29 @@ class Devices extends React.Component {
   }
 
   getDevicesList() {
-    // WHY TO MUTATE DEVICES ???
-    let { devices } = this.props;
-    const { devicesSearchFormValues } = this.props;
+    const { devices, devicesSearchFormValues, smartSearch } = this.props;
 
-    const nameToSearch = (devicesSearchFormValues.get('name') || '').trim().toLowerCase();
+    if (smartSearch){
+      // search by smart tags
+      const tags = devicesSearchFormValues.get('tags');
 
-    if (nameToSearch) {
-      devices = devices.filter(device =>
-        device.get('name').toLowerCase().indexOf(nameToSearch) !== -1
-      );
+      if (!tags || tags.size === 0){
+        return devices;
+      }
+
+      const _tags = tags.toJS();
+      const deviceIds = _.intersection(..._tags.map(t => t.devices));
+
+      return devices.filter(d => deviceIds.indexOf(d.get('id')) !== -1);
+    } else {
+      // search by query
+      const nameToSearch = (devicesSearchFormValues.get('name') || '').trim().toLowerCase();
+  
+      if (nameToSearch) {
+        return devices.filter(device =>
+          device.get('name').toLowerCase().indexOf(nameToSearch) !== -1
+        );
+      }
     }
 
     return devices;

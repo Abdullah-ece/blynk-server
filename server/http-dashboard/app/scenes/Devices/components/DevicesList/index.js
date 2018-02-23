@@ -4,11 +4,15 @@ import {
   ByLocation,
   ByProduct
 } from './components';
-import {DEVICES_FILTERS} from "services/Devices";
+import {DEVICES_FILTERS} from 'services/Devices';
+import {connect} from 'react-redux';
 
 import './styles.less';
 import {List, Map} from "immutable";
 
+@connect(state => ({
+  smartSearch: state.Storage.deviceSmartSearch
+}))
 class DevicesList extends React.Component {
 
   static propTypes = {
@@ -21,6 +25,8 @@ class DevicesList extends React.Component {
     type: React.PropTypes.string,
     onDeviceSelect: React.PropTypes.func,
     devicesSearchValue: React.PropTypes.string,
+
+    smartSearch: React.PropTypes.bool
   };
 
   // track scroll to display go top button
@@ -47,27 +53,33 @@ class DevicesList extends React.Component {
   }
 
   render() {
+    const {
+      devicesSearchValue,
+      smartSearch,
+      devices,
+      type
+    } = this.props;
 
     const props = {
       isActive: this.isActive,
-      devices: this.props.devices,
+      devices: devices,
       handleDeviceSelect: this.handleDeviceSelect,
     };
 
-    if (!this.props.devices || this.props.devices && !this.props.devices.size)
-      return (<div className="navigation-devices-list">No devices found for "{this.props.devicesSearchValue}"</div>);
+    if (!this.props.devices || this.props.devices && !this.props.devices.size){
+      const noDevicesMessage = smartSearch ? 'No devices found' : `No devices found for "${devicesSearchValue}"`;
+      return (<div className="navigation-devices-list">{noDevicesMessage}</div>);
+    }
 
-    if (this.props.devices.size && !this.props.type || this.props.type && this.props.type === DEVICES_FILTERS.ALL_DEVICES)
+    if (devices.size && !type || type && type === DEVICES_FILTERS.ALL_DEVICES)
       return (<AllDevices {...props}/>);
 
-    if (this.props.devices.size && this.props.type && this.props.type === DEVICES_FILTERS.BY_LOCATION)
+    if (devices.size && type && type === DEVICES_FILTERS.BY_LOCATION)
       return (<ByLocation {...props}/>);
 
-    if (this.props.devices.size && this.props.type && this.props.type === DEVICES_FILTERS.BY_PRODUCT)
+    if (devices.size && type && type === DEVICES_FILTERS.BY_PRODUCT)
       return (<ByProduct {...props}/>);
-
   }
-
 }
 
 export default DevicesList;

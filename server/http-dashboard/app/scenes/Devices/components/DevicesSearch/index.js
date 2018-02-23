@@ -68,7 +68,11 @@ class DevicesSearch extends React.Component {
   }
 
   smartSearchTopics = {
-    'device.name': 'Name'
+    'device.name': 'Name',
+    'device.boardType': 'Board Type',
+    'device.orgName': 'Organization',
+    'device.status': 'Status',
+    'device.productName': 'Product'
   }
 
   smartSearchTagsCollection = {}
@@ -120,8 +124,14 @@ class DevicesSearch extends React.Component {
       return this.setState({ smartSearchSuggestions: undefined });
     }
 
-    const {devices} = this.props;
-    const deviceResults = this.findDeviceByField(['name'], query, devices.toArray());
+    const { devices } = this.props;
+    const deviceResults = this.findDeviceByField([
+      'name',
+      'boardType',
+      'orgName',
+      'status',
+      'productName'
+    ], query, devices.toArray());
 
     const options = _.map(deviceResults, (results, i) => {
       const id = uuid();
