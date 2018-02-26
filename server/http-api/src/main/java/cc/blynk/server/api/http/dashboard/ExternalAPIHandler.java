@@ -16,6 +16,7 @@ import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.TokenValue;
@@ -93,6 +94,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
+    private final DeviceDao deviceDao;
 
     public ExternalAPIHandler(Holder holder, String rootPath) {
         super(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
@@ -103,6 +105,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         this.gcmWrapper = holder.gcmWrapper;
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
+        this.deviceDao = holder.deviceDao;
     }
 
     @GET
@@ -520,6 +523,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
 
+        Device device = deviceDao.getById(deviceId);
+        device.webDashboard.update(deviceId, pin, pinType, pinValue);
         dash.update(deviceId, pin, pinType, pinValue, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
@@ -532,11 +537,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         eventorProcessor.process(user, session, dash, deviceId, pin, pinType, pinValue, now);
 
-        session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
-
-        if (dash.isActive) {
-            session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
-        }
+        session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
+        session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
 
         return ok();
     }

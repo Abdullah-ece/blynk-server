@@ -131,6 +131,60 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void webSocketRetrievesCommandFromExternalApi() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        Device device;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            device = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.token);
+            assertNotNull(device.metaFields);
+            assertEquals(2, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(1, device.webDashboard.widgets.length);
+            assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
+            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
+            assertEquals(1, webSwitch.sources[0].dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webSwitch.sources[0].dataStream.pinType);
+            assertEquals("123", webSwitch.label);
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet putValueViaGet = new HttpGet(apiUrl + device.token + "/update/v10?value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 10 1")));
+
+    }
+
     private int createProduct() throws Exception {
         Product product = new Product();
         product.name = "My Product";

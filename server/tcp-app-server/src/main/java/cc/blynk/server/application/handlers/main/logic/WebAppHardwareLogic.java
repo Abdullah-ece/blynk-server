@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -39,7 +39,7 @@ public class WebAppHardwareLogic {
         this.deviceDao = holder.deviceDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.userKey);
 
         //here expecting command in format "200000 vw 88 1"

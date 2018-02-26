@@ -112,7 +112,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
-        AppStateHolder appStateHolder = new AppStateHolder(user, version);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user, version);
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
