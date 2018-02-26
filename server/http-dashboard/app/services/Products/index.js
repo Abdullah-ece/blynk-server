@@ -322,7 +322,13 @@ export const Unit = {
     abbreviation: '%',
     key: 'Percentage',
     value: 'Percentage'
+  },
+  RPM: {
+    abbreviation: 'rpm',
+    key: 'RPM',
+    value: 'RPM'
   }
+
 };
 
 export const Currency = {

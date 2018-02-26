@@ -103,7 +103,8 @@ class BaseField extends React.Component {
       Unit.Kelvin
     ],
     'Other': [
-      Unit.Percentage
+      Unit.Percentage,
+      Unit.RPM,
     ]
   };
 
