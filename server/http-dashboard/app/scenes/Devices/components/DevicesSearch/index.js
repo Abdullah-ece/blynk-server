@@ -179,7 +179,8 @@ class DevicesSearch extends React.Component {
       const selectorWidth = `calc(100% - ${SORTING_OPTIONS_SIZE + INPUTS_MARGIN}px)`;
 
       return (<div className="devices-search">
-                <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
+                <Select style={{ width: selectorWidth, marginRight: INPUTS_MARGIN }}
+                        className="smart-search--select"
                         mode="tags"
                         value={tagTitles}
                         placeholder="Smart Search"
