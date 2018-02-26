@@ -20,6 +20,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
+import static cc.blynk.server.internal.StateHolderUtil.isSameDeviceId;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -108,8 +109,18 @@ public class Session {
         return targetChannels;
     }
 
-    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int deviceId) {
-        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceId), cmd, msgId, body);
+    private Set<Channel> filter(int deviceId) {
+        Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : hardwareChannels) {
+            if (isSameDeviceId(channel, deviceId)) {
+                targetChannels.add(channel);
+            }
+        }
+        return targetChannels;
+    }
+
+    public boolean sendMessageToHardware(short cmd, int msgId, String body, int deviceId) {
+        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(deviceId), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {

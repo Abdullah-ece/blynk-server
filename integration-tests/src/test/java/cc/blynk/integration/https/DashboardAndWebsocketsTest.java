@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.DataStream;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -76,13 +78,15 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
 
+        Device device;
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            Device device = JsonParser.parseDevice(responseString, 0);
+            device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
+            assertNotNull(device.token);
             assertNotNull(device.metaFields);
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
@@ -104,15 +108,21 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+
+        TestHardClient testHardClient = new TestHardClient("localhost", httpPort);
+        testHardClient.start();
+        testHardClient.login(device.token);
+        testHardClient.verifyResult(ok(1));
+
         appWebSocketClient.send("hardware 1 vw 1 222");
-        clientPair.hardwareClient.verifyResult(new HardwareMessage(1, "1 vw 1 222"));
+        testHardClient.verifyResult(new HardwareMessage(2, b("vw 1 222")));
 
         HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
             assertNotNull(response);
-            Device device = JsonParser.parseDevice(responseString, 0);
+            device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
             assertEquals(1, device.webDashboard.widgets.length);

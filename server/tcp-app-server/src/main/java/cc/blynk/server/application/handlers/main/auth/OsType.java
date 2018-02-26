@@ -9,6 +9,7 @@ public enum OsType {
 
     ANDROID("android"),
     IOS("iOS"),
+    WEB_SOCKET("ws"),
     //3d party clients or unknown clients
     OTHER("unknown");
 
@@ -24,6 +25,8 @@ public enum OsType {
                 return IOS;
             case "android" :
                 return ANDROID;
+            case "ws" :
+                return WEB_SOCKET;
             default:
                 return OTHER;
         }

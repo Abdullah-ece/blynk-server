@@ -44,6 +44,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Random;
 
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+
 public final class AppWebSocketClient extends BaseTestAppClient {
 
     private final SslContext sslCtx;
@@ -105,9 +107,13 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         }
     }
 
-    public void login(User user) {
+    public void login(User user, String type, String version) {
         //user.pass is hashed password here actually
-        send("login " + user.email + StringUtils.BODY_SEPARATOR + user.pass);
+        send("login " + user.email + BODY_SEPARATOR + user.pass + BODY_SEPARATOR + type + BODY_SEPARATOR + version);
+    }
+
+    public void login(User user) {
+        login(user, "ws", "1.0.0");
     }
 
     public void login(String email, String pass) {

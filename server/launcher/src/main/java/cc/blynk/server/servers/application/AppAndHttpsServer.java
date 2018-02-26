@@ -24,6 +24,7 @@ import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
+import cc.blynk.server.application.handlers.main.auth.WebAppLoginHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
@@ -91,6 +92,7 @@ public class AppAndHttpsServer extends BaseServer {
 
         WebAppMessageDecoder webAppMessageDecoder = new WebAppMessageDecoder(stats);
         WebAppMessageEncoder webAppMessageEncoder = new WebAppMessageEncoder();
+        WebAppLoginHandler webAppLoginHandler = new WebAppLoginHandler(holder);
 
         ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
         UrlReWriterHandler urlReWriterHandler = new UrlReWriterHandler(
@@ -157,7 +159,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast("WSMessageDecoder", webAppMessageDecoder)
                         .addLast("WSMessageEncoder", webAppMessageEncoder)
                         .addLast("AGetServer", getServerHandler)
-                        .addLast("ALogin", appLoginHandler)
+                        .addLast("ALogin", webAppLoginHandler)
                         .addLast("ANotLogged", userNotLoggedHandler);
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
