@@ -72,7 +72,7 @@ import PropTypes from 'prop-types';
         return product;
 
       } else {
-        throw new Error('Cannot find product for Edit');
+        return null;
       }
     })(),
 
@@ -447,7 +447,9 @@ class Edit extends React.Component {
     // map widget.width to widget.w and widget.height to widget.h
     // because GRID library support only `w` and `h` as parameters
     // and our server support `width` and `height`
-
+    if(this.props.product === null) {
+      return null;
+    }
     const product = this.props.product.updateIn(['webDashboard', 'widgets'], (widgets) => widgets.map((widget) => (
       widget.set('w', widget.get('width')).set('h', widget.get('height'))
     )));
