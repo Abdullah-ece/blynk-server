@@ -67,6 +67,37 @@ class DevicesSearch extends React.Component {
     return results;
   }
 
+  findDeviceByMetadata(value, devices){
+    const preparedValue = value.trim().toLowerCase();
+    const results = {};
+
+    for(let j in devices){
+      const device = devices[j];
+      const metadata = device.get('metaFields');
+
+      if (!metadata || metadata.size === 0){
+        continue;
+      }
+
+      const metadataArray = metadata.toJS();
+
+      for(let i in metadataArray){
+        const metadataEntity = metadataArray[i];
+        const fieldValue = String(metadataEntity.value).toLowerCase();
+
+        if (fieldValue.indexOf(preparedValue) !== -1){
+          if (!results[metadataEntity.name]){
+            results[metadataEntity.name] = [];
+          }
+
+          results[metadataEntity.name].push({ field: metadataEntity.name, parentType: 'metadata', device });
+        }
+      }
+    }
+
+    return results;
+  }
+
   smartSearchTopics = {
     'device.name': 'Name',
     'device.boardType': 'Board Type',
@@ -125,22 +156,28 @@ class DevicesSearch extends React.Component {
     }
 
     const { devices } = this.props;
+    const devicesArray = devices.toArray();
     const deviceResults = this.findDeviceByField([
       'name',
       'boardType',
       'orgName',
       'status',
       'productName'
-    ], query, devices.toArray());
+    ], query, devicesArray);
+    const metadataResults = this.findDeviceByMetadata(query, devicesArray);
 
-    const options = _.map(deviceResults, (results, i) => {
+    const options = _.map({
+      ...deviceResults,
+      ...metadataResults
+    }, (results, i) => {
       const id = uuid();
       const devices = results.map(r => r.device.get('id'));
-      const title = `${this.smartSearchTopics[i]}: ${query} [${results.length}]`;
+      const topic = this.smartSearchTopics[i] || i;
+      const title = `${topic}: ${query} [${results.length}]`;
       // query should always be in model since antd won't show any option without query in its value
       // query is included in title now
       // this model are going to be saved into the redux form store once tag will be chosen
-      const model = { id, title, devices };
+      const model = { id, title, devices, type: results[0].parentType };
       // only way to pass the model is to stringify it since antd supports strings only in value attribute
       const element = <Option key={i} value={JSON.stringify(model)}>{ title }</Option>;
 
@@ -159,12 +196,42 @@ class DevicesSearch extends React.Component {
                     onChange={devicesSortChange}
                     dropdownMatchSelectWidth={false}>
       {sortingOptions && sortingOptions.map(option => (
-        <Select.Option key={option.key}
+        <Option key={option.key}
                        label={option.label}>
           {option.text}
-        </Select.Option>
+        </Option>
       ))}
     </Select>);
+  }
+
+  createLabelOption(label, condition){
+    let conditionResult = true;
+
+    if (typeof condition === 'function'){
+      conditionResult = !!condition();
+    }
+
+    if (conditionResult){
+      return <Option className="smart-search--label-option" disabled key={label}>{ label }</Option>;
+    }
+
+    return null;
+  }
+
+  renderSuggestionOptions(smartSearchSuggestions){
+    if (!smartSearchSuggestions){
+      return null;
+    }
+
+    const metadataSuggestions = smartSearchSuggestions.filter(e => e.type === 'metadata');
+
+    return _.compact([
+      // unfortunally there is a bug in rc-select that is used in ant 2.x.x and hotkeys won't work with
+      // <OptGroup /> so we need to emulate this behaviour manually
+      ...smartSearchSuggestions.filter(e => e.type === 'device').map(e => e.element),
+      this.createLabelOption('Metadata', () => metadataSuggestions.length > 0),
+      ...smartSearchSuggestions.filter(e => e.type === 'metadata').map(e => e.element)
+    ]);
   }
 
   render() {
@@ -179,15 +246,16 @@ class DevicesSearch extends React.Component {
       const selectorWidth = `calc(100% - ${SORTING_OPTIONS_SIZE + INPUTS_MARGIN}px)`;
 
       return (<div className="devices-search">
-                <Select style={{width: selectorWidth, marginRight: INPUTS_MARGIN}}
+                <Select style={{ width: selectorWidth, marginRight: INPUTS_MARGIN }}
+                        className="smart-search--select"
                         mode="tags"
+                        filterOption={false}
                         value={tagTitles}
                         placeholder="Smart Search"
                         dropdownClassName="smart-search--dropdown"
                         onChange={this.handleTagsChange.bind(this)}
                         onSearch={this.handleTagsSearch.bind(this)}>
-
-                  {smartSearchSuggestions && smartSearchSuggestions.map(e => e.element)}
+                  {this.renderSuggestionOptions(smartSearchSuggestions)}
                 </Select>
                 {this.renderSortingOptions()}
             </div>);
