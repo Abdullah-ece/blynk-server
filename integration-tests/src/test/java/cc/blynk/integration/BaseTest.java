@@ -150,7 +150,7 @@ public abstract class BaseTest {
 
     @After
     public void closeTransport() {
-        this.holder.close();
+        holder.close();
     }
 
     @AfterClass

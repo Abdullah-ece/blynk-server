@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
@@ -13,7 +14,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareServer;
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
 
         Device[] devices = clientPair.appClient.getDevices(2);
-        TestCase.assertNotNull(devices);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
@@ -98,14 +98,14 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.appClient.createDevice(1, device2);
         Device device = clientPair.appClient.getDevice();
-        TestCase.assertNotNull(device);
-        TestCase.assertNotNull(device.token);
+        assertNotNull(device);
+        assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
 
         Device[] devices = clientPair.appClient.getDevices(2);
-        TestCase.assertNotNull(devices);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
@@ -153,14 +153,14 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.appClient.createDevice(1, device2);
         Device device = clientPair.appClient.getDevice(3);
-        TestCase.assertNotNull(device);
-        TestCase.assertNotNull(device.token);
+        assertNotNull(device);
+        assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(3, device));
 
         clientPair.appClient.send("getDevices 1");
 
         Device[] devices = clientPair.appClient.getDevices(4);
-        TestCase.assertNotNull(devices);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
@@ -176,5 +176,68 @@ public class OfflineNotificationTest extends IntegrationBase {
         hardClient2.stop();
 
         clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
+    }
+
+    @Test
+    public void deviceGoesOfflineAfterBeingIdle() throws Exception {
+        Device device2 = new Device(1, "My Device", "ESP8266");
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.send("getDevices 1");
+
+        Device[] devices = clientPair.appClient.getDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
+
+        hardClient2.send("internal " + b("ver 0.3.1 h-beat 1 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
+        hardClient2.verifyResult(ok(2));
+
+        //just waiting 2.5 secs so server trigger idle event
+        sleep(2500);
+
+        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+    }
+
+    @Test
+    public void sessionDisconnectChangeState() throws Exception {
+        Device device2 = new Device(1, "My Device", "ESP8266");
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.send("getDevices 1");
+
+        Device[] devices = clientPair.appClient.getDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+        assertEquals(0, devices[1].disconnectTime);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
+
+        holder.sessionDao.close();
+
+        TestAppClient testAppClient = new TestAppClient("localhost", tcpAppPort);
+        testAppClient.start();
+        testAppClient.login(DEFAULT_TEST_USER, "1");
+        testAppClient.verifyResult(ok(1));
+
+        testAppClient.send("getDevices 1");
+        devices = testAppClient.getDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+        assertEquals(1, devices[1].id);
+        assertEquals(System.currentTimeMillis(), devices[1].disconnectTime, 5000);
     }
 }
