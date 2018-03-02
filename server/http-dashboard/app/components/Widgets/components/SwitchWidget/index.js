@@ -39,10 +39,6 @@ class Switch extends React.Component {
     super(props);
   }
 
-  state = {
-    checked: false
-  };
-
   getAlignmentClassName(alignment) {
     if(alignment === WIDGETS_SWITCH_ALIGNMENT.LEFT)
       return `widgets--widget-switch--alignment-left`;
@@ -85,14 +81,23 @@ class Switch extends React.Component {
 
   renderSwitch() {
 
-    if(!this.props.deviceId)
-      return (<div className="bar-chart-widget-no-data">No Data</div>);
-
     const onChange = (value) => {
       this.setState({
         checked: value
       });
     };
+
+    const checked = (() => {
+
+      if (this.props.data.sources && this.props.data.sources.length && this.props.data.sources[0].dataStream) {
+        const value = this.props.data.sources[0].dataStream.value;
+
+        return String(value).toLowerCase() === String(this.props.data.onValue).toLowerCase();
+      }
+
+      return false;
+
+    })();
 
     const alignmentClassName = this.getAlignmentClassName(this.props.data.alignment);
 
@@ -100,16 +105,16 @@ class Switch extends React.Component {
 
     const switchPositionClassName = this.getSwitchPositionClassName(this.props.data.isWidgetNameHidden);
 
-    const label = this.getLabelByStatus(this.state.checked, this.props.data);
+    const label = this.getLabelByStatus(checked, this.props.data);
 
-    const color = this.getSwitchColorByStatus(this.state.checked, this.props.data.color);
+    const color = this.getSwitchColorByStatus(checked, this.props.data.color);
 
     const {isSwitchLabelsEnabled} = this.props.data;
 
     return (
       <div className={`widgets--widget-switch ${alignmentClassName} ${switchPositionClassName} ${isSwitchLabelsEnabled && labelAlignmentClassName || ''}`}>
         <div className={`widgets--widget-switch-wrapper`}>
-          <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={this.state.checked} onChange={onChange}/>
+          <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={checked} onChange={onChange}/>
 
           { isSwitchLabelsEnabled && (
             <span className={`widgets--widget-switch--label`}>
