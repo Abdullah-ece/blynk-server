@@ -215,7 +215,8 @@ class SwitchSettings extends React.Component {
 
       if(!dataStream)
         return props.changeForm(this.props.form, 'sources.0.dataStream', {
-          pin: value
+          pin: value,
+          pinType: "VIRTUAL",
         });
 
       props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
