@@ -4,6 +4,8 @@ import {combineReducers} from 'redux';
 // Redux-Form reducer
 import {reducer as formReducer} from 'redux-form';
 
+import reducer from './blynk-websocket-middleware/reducer';
+
 // There are in-app reducers we want to connect to store
 
 import Login from '../data/Login/reducers';
@@ -19,6 +21,7 @@ import UserProfile from '../data/UserProfile/reducers';
 
 const reducers = {
   form: formReducer,
+  BlynkWS: reducer,
   Login,
   Account,
   Organization,
