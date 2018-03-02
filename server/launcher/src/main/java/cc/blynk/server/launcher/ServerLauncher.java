@@ -22,7 +22,6 @@ import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.application.AppServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.HardwareSSLServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
@@ -120,7 +119,6 @@ public final class ServerLauncher {
                 restore);
 
         BaseServer[] servers = new BaseServer[] {
-                new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
                 new HardwareAndHttpAPIServer(holder),

@@ -10,7 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -46,7 +45,6 @@ public class MultiAppTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
-        hardwareServer = new HardwareServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
@@ -67,7 +65,6 @@ public class MultiAppTest extends IntegrationBase {
     public void shutdown() {
         httpServer.close();
         appServer.close();
-        hardwareServer.close();
         clientPair.stop();
     }
 
