@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Map, fromJS} from 'immutable';
+import {Map, /*fromJS*/} from 'immutable';
 import {Icon} from 'antd';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
@@ -152,14 +152,21 @@ class LabelWidget extends React.Component {
 
   getLabelValue() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
+    // if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
+    //   return null;
+
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.data.sources[0].dataStream || !this.props.data.sources[0].dataStream.value)
       return null;
 
-    const sources = fromJS(this.props.data.sources);
+    return this.props.data.sources[0].dataStream.value;
 
-    const dataSources = sources.map(this.generateData).filter((source) => source !== null);
-
-    return dataSources.get(0) || null;
+    // console.log(this.props.data.sources);
+    //
+    // const sources = fromJS(this.props.data.sources);
+    //
+    // const dataSources = sources.map(this.generateData).filter((source) => source !== null);
+    //
+    // return dataSources.get(0) || null;
   }
 
   getLabelStyles() {
