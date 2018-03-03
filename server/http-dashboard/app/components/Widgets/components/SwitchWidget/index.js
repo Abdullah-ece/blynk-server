@@ -92,6 +92,8 @@ class Switch extends React.Component {
       if (this.props.data.sources && this.props.data.sources.length && this.props.data.sources[0].dataStream) {
         const value = this.props.data.sources[0].dataStream.value;
 
+        if(this.props.data.onValue === undefined) return false; // fix enabled status on Dashboard Edit
+
         return String(value).toLowerCase() === String(this.props.data.onValue).toLowerCase();
       }
 
