@@ -17,6 +17,7 @@ import {encryptUserPassword} from 'services/Crypto';
   return {};
 }, (dispatch) => {
   return {
+    AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
     AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
     Login: bindActionCreators(API.Login, dispatch)
   };
@@ -31,6 +32,7 @@ export default class Login extends React.Component {
     Login: React.PropTypes.func,
     UnmarkAsRecentRegistered: React.PropTypes.func,
     AccountFetch: React.PropTypes.func,
+    AccountSaveCredentials: React.PropTypes.func,
     isRecentlyRegistered: React.PropTypes.bool
   };
 
@@ -58,6 +60,10 @@ export default class Login extends React.Component {
       });
       throw new SubmissionError({_error: 'Incorrect email or password. Please try again.'});
     }).then(() => {
+      this.props.AccountSaveCredentials({
+        username: values.email,
+        password: password,
+      });
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
         this.context.router.push('/devices');

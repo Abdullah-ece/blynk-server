@@ -8,7 +8,9 @@ import {blynkWsConnect, blynkWsLogin} from 'store/blynk-websocket-middleware/act
 
 import './styles.less';
 
-@connect(() => ({}), (dispatch) => ({
+@connect((state) => ({
+  Account: state.Account
+}), (dispatch) => ({
   fetchAccount  : bindActionCreators(AccountActions.Account, dispatch),
   blynkWsConnect: bindActionCreators(blynkWsConnect, dispatch),
   blynkWsLogin  : bindActionCreators(blynkWsLogin, dispatch),
@@ -16,6 +18,7 @@ import './styles.less';
 class UserLayout extends React.Component {
 
   static propTypes = {
+    Account       : React.PropTypes.object,
     children      : React.PropTypes.object,
     location      : React.PropTypes.object,
     fetchAccount  : React.PropTypes.func,
@@ -33,8 +36,8 @@ class UserLayout extends React.Component {
   componentWillMount() {
     this.props.blynkWsConnect().then(() => {
       this.props.blynkWsLogin({
-        username: 'admin@blynk.cc',
-        hash    : '84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM='
+        username: this.props.Account.credentials.username,
+        hash    : this.props.Account.credentials.password
       });
     });
   }
