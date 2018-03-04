@@ -15,6 +15,8 @@ import {buildDataQueryRequestForWidgets} from 'services/Widgets';
 import {Grids} from "components";
 import {WidgetStatic} from "components/Widgets";
 
+import {blynkWsHardware} from 'store/blynk-websocket-middleware/actions';
+
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
 @connect((state) => ({
@@ -22,7 +24,8 @@ const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filteri
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
-  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch)
+  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
+  blynkWsHardware: bindActionCreators(blynkWsHardware, dispatch),
 }))
 class Dashboard extends React.Component {
 
@@ -33,6 +36,7 @@ class Dashboard extends React.Component {
     timeFilteringValues: PropTypes.object,
     fetchWidgetHistory: PropTypes.func,
     initializeForm: PropTypes.func,
+    blynkWsHardware: PropTypes.func,
   };
 
   constructor(props) {
@@ -44,6 +48,7 @@ class Dashboard extends React.Component {
     };
 
     this.handleTimeFilterChange = this.handleTimeFilterChange.bind(this);
+    this.handleWidgetWriteVirtualPin = this.handleWidgetWriteVirtualPin.bind(this, props.params.id);
   }
 
   componentWillMount() {
@@ -163,6 +168,14 @@ class Dashboard extends React.Component {
 
   }
 
+  handleWidgetWriteVirtualPin(deviceId, {pin, value}) {
+    this.props.blynkWsHardware({
+      deviceId: deviceId,
+      pin: pin,
+      value: value
+    });
+  }
+
   render() {
 
     const deviceId = Number(this.props.params.id);
@@ -191,7 +204,7 @@ class Dashboard extends React.Component {
       ]);
 
       return (
-        <WidgetStatic widget={widget.toJS()} key={widget.get('id')} history={history} loading={loading}/>
+        <WidgetStatic onWriteToVirtualPin={this.handleWidgetWriteVirtualPin} widget={widget.toJS()} key={widget.get('id')} history={history} loading={loading}/>
       );
     }).toJS();
 

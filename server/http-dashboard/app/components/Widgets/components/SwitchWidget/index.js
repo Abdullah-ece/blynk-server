@@ -2,7 +2,7 @@ import React from 'react';
 
 import SwitchSettings from './settings';
 import PropTypes from 'prop-types';
-import {Switch as AntdSwitch} from 'antd';
+import {Switch as AntdSwitch, message} from 'antd';
 import {WIDGETS_SWITCH_ALIGNMENT} from "services/Widgets";
 import './styles.less';
 import Dotdotdot from 'react-dotdotdot';
@@ -33,10 +33,14 @@ class Switch extends React.Component {
       PropTypes.element,
     ]),
 
+    onWriteToVirtualPin: PropTypes.func
+
   };
 
   constructor(props) {
     super(props);
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
   getAlignmentClassName(alignment) {
@@ -79,13 +83,25 @@ class Switch extends React.Component {
     return null;
   }
 
-  renderSwitch() {
+  handleChange(value) {
 
-    const onChange = (value) => {
-      this.setState({
-        checked: value
+    if(this.props.data.offValue === undefined || this.props.data.onValue === undefined) {
+      return message.warning("Please set On/Off value for Switch before use it");
+    }
+
+    if (this.props.data.sources && this.props.data.sources.length && this.props.data.sources[0].dataStream) {
+
+      const pin = this.props.data.sources[0].dataStream.pin;
+
+      this.props.onWriteToVirtualPin({
+        pin  : pin,
+        value: value ? this.props.data.onValue : this.props.data.offValue
       });
-    };
+
+    }
+  }
+
+  renderSwitch() {
 
     const checked = (() => {
 
@@ -116,7 +132,7 @@ class Switch extends React.Component {
     return (
       <div className={`widgets--widget-switch ${alignmentClassName} ${switchPositionClassName} ${isSwitchLabelsEnabled && labelAlignmentClassName || ''}`}>
         <div className={`widgets--widget-switch-wrapper`}>
-          <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={checked} onChange={onChange}/>
+          <AntdSwitch style={{'backgroundColor': color, 'borderColor': color}} checked={checked} onChange={this.handleChange}/>
 
           { isSwitchLabelsEnabled && (
             <span className={`widgets--widget-switch--label`}>

@@ -48,6 +48,18 @@ export default function Devices(state = initialState, action) {
 
   switch (action.type) {
 
+    case ACTIONS.BLYNK_WS_HARDWARE:
+      return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
+        return widgets.map((widget) => {
+          return widget.update('sources', (sources) => sources.map((source) => {
+            if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
+              return source.setIn(['dataStream', 'value'], action.value.value);
+            }
+            return source;
+          }));
+        });
+      });
+
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
 
       return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
