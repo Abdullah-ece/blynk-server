@@ -4,6 +4,7 @@ export const ACTIONS = {
   'BLYNK_WS_CONNECT'      : 'BLYNK_WS_CONNECT',
   'BLYNK_WS_LOGIN'        : 'BLYNK_WS_LOGIN',
   'BLYNK_WS_VIRTUAL_WRITE': 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE'     : 'BLYNK_WS_HARDWARE',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -55,6 +56,15 @@ export const blynkWsLogin = (params) => ({
   value: {
     user: params.username,
     hash: params.hash
+  }
+});
+
+export const blynkWsHardware = ({ deviceId, pin, value }) => ({
+  type : ACTIONS.BLYNK_WS_HARDWARE,
+  value: {
+    deviceId,
+    pin,
+    value
   }
 });
 

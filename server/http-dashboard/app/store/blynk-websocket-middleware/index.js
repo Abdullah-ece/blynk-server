@@ -4,6 +4,7 @@ import {
   blynkWsConnect,
   blynkWsLogin,
   blynkWsMessage,
+  blynkWsHardware,
 } from './commands';
 
 export const createBlynkWsMiddleware = (options = {}) => {
@@ -35,6 +36,10 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
     if (action && action.type === blynkWsActions.BLYNK_WS_LOGIN) {
       blynkWsLogin(params);
+    }
+
+    if (action && action.type === blynkWsActions.BLYNK_WS_HARDWARE) {
+      blynkWsHardware(params);
     }
 
     return next(action);

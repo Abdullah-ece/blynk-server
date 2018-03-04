@@ -126,6 +126,7 @@ export const createWsMiddleware = (options = {}) => {
     };
 
     if(action && action.type === WS_ACTIONS.WEBSOCKET_CONNECT) {
+      next(action);
       return new Promise((resolve) => {
         socket = wsConnect({
           ...params,

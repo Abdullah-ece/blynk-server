@@ -62,6 +62,8 @@ const persisStoreConfigProd = {};
 
 function configureStoreProd(initialState) {
   const middlewares = [
+    wsMiddleware,
+    blynkWsMiddleware,
     thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];

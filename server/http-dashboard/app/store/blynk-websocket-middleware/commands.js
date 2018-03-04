@@ -74,6 +74,33 @@ export const blynkWsLogin = (params) => {
 
 };
 
+export const blynkWsHardware = (params) => {
+
+  const {store, action, options} = params;
+
+  if (options.isDebugMode)
+    options.debug("blynkWsHardware", action);
+
+  const {deviceId, pin, value} = action.value;
+
+  const request = str2ab(
+    blynkHeader(
+      COMMANDS.HARDWARE, ++MSG_ID
+    ) + `${deviceId}\0vw\0${pin}\0${value}`
+  );
+
+  store.dispatch(blynkWsRequest({
+    id     : MSG_ID,
+    request: {
+      command: COMMANDS.HARDWARE,
+      value  : `${deviceId}\0vw\0${pin}\0${value}`
+    }
+  }));
+
+  store.dispatch(websocketSend(request));
+
+};
+
 export const blynkWsMessage = (params) => {
 
   const {action, options, store} = params;
