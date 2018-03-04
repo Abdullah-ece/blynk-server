@@ -85,6 +85,9 @@ class Switch extends React.Component {
 
   handleChange(value) {
 
+    if(!this.props.onWriteToVirtualPin)
+      return false;
+
     if(this.props.data.offValue === undefined || this.props.data.onValue === undefined) {
       return message.warning("Please set On/Off value for Switch before use it");
     }
