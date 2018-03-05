@@ -105,6 +105,7 @@
 @btn-border-radius-base: 30px;
 @btn-border-radius-sm: 30px;
 
+/*** PRIMARY BUTTON ***/
 @btn-primary-idle-color: @color-white;
 @btn-primary-idle-border-color: transparent;
 @btn-primary-idle-bg: @color-dark-grey-75;
@@ -122,12 +123,25 @@
 @btn-primary-disabled-border-color: transparent;
 @btn-primary-disabled-bg: @color-dark-grey-75;
 
-//
-//@btn-primary-hover-bg: @color-dark-grey;
-//@btn-primary-hover-bg: @color-dark-grey;
-//
-//@btn-primary-active-bg: @color-dark-grey-75;
-//@btn-primary-disabled-bg: @color-primary;
+/*** GHOST BUTTON ***/
+
+@btn-ghost-idle-color: @color-dark-grey-75;
+@btn-ghost-idle-border-color: @color-dark-grey-75;
+@btn-ghost-idle-bg: @color-white;
+
+@btn-ghost-hover-color: @color-dark-grey-75;
+@btn-ghost-hover-border-color: @color-dark-grey-75;
+@btn-ghost-hover-bg: @color-dark-grey-05;
+
+@btn-ghost-active-color: @color-dark-grey-75;
+@btn-ghost-active-border-color: @color-dark-grey-75;
+@btn-ghost-active-bg: @color-dark-grey-12;
+@btn-ghost-active-shadow: 0 0 0 2px @color-dark-grey-12;
+
+@btn-ghost-disabled-color: @color-dark-grey-75;
+@btn-ghost-disabled-border-color: @color-dark-grey-75;
+@btn-ghost-disabled-bg: @color-white;
+
 
 @btn-default-color: @color-dark-grey;
 @btn-default-bg: transparent;
@@ -350,19 +364,46 @@
     line-height: 14px;
     .font-ghost-button;
 
+    .buttonGenerator(
+      @btn-ghost-idle-color,
+      @btn-ghost-idle-border-color,
+      @btn-ghost-idle-bg
+    );
+
+    &:focus {
+      .buttonGenerator(
+        @btn-ghost-idle-color,
+        @btn-ghost-idle-border-color,
+        @btn-ghost-idle-bg
+      );
+    }
+
+    &:hover {
+      .buttonGenerator(
+        @btn-ghost-hover-color,
+        @btn-ghost-hover-border-color,
+        @btn-ghost-hover-bg
+      );
+    }
+
     &:active {
-      box-shadow: 0 0 0 2px @color-primary-2;
+      .buttonGenerator(
+        @btn-ghost-active-color,
+        @btn-ghost-active-border-color,
+        @btn-ghost-active-bg,
+        @btn-ghost-active-shadow
+      );
     }
 
     &[disabled], &[disabled]:hover, &[disabled]:active {
       .font-ghost-button;
       opacity: 0.4;
-      background-color: @color-white;
-      border-color: @color-primary;
-    }
 
-    &:hover {
-      background-color: @color-primary-01;
+      .buttonGenerator(
+        @btn-ghost-disabled-color,
+        @btn-ghost-disabled-border-color,
+        @btn-ghost-disabled-bg
+      );
     }
 
     // Button primary
