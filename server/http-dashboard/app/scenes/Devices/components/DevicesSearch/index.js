@@ -18,6 +18,7 @@ const INPUTS_MARGIN = 4;
 @connect(state => ({
   smartSearch: state.Storage.deviceSmartSearch,
   devices: state.Devices.get('devices'),
+  products: state.Product.products,
   devicesSearchFormValues: fromJS(getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {}),
 }), dispatch => ({
   changeForm: bindActionCreators(change, dispatch)
@@ -32,6 +33,7 @@ const INPUTS_MARGIN = 4;
 class DevicesSearch extends React.Component {
   static propTypes = {
     devices: propTypes.instanceOf(List),
+    products: propTypes.instanceOf(Array),
     devicesSearchFormValues: propTypes.any,
     devicesSortValue: propTypes.string,
     devicesSortChange: propTypes.func,
@@ -43,23 +45,42 @@ class DevicesSearch extends React.Component {
     changeForm: React.PropTypes.func
   };
 
+  static smartSearchTopics = {
+    'device.name': 'Name',
+    'device.boardType': 'Board Type',
+    'device.orgName': 'Organization',
+    'device.status': 'Status',
+    'device.productName': 'Product',
+    'dashboard.label': 'Label',
+    'dashboard.dataType': 'Data Type',
+    'dashboard.alignment': 'Alignment',
+    'datastream.pin': 'Pin',
+    'datastream.pinType': 'Pin Type',
+    'datastream.min': 'Min',
+    'datastream.max': 'Max',
+    'datastream.label': 'Label',
+    'datastream.units': 'Units'
+  };
+
   state = {
     smartSearchSuggestions: undefined
   }
 
-  findDeviceByField(fields=[], value, devices){
+  findDeviceByField(fields=[], value='', devices=[]){
     const preparedValue = value.trim().toLowerCase();
     const results = {};
 
     for(let j in devices){
       const device = devices[j];
       for(let i in fields){
-        const fieldValue = (device.get(fields[i]) || '').toLowerCase();
+        const field = fields[i];
+        const fieldValue = (device.get(field) || '').toLowerCase();
+
         if (fieldValue.indexOf(preparedValue) !== -1){
-          if (!results[`device.${fields[i]}`]){
-            results[`device.${fields[i]}`] = [];
+          if (!results[`device.${field}`]){
+            results[`device.${field}`] = [];
           }
-          results[`device.${fields[i]}`].push({ field: fields[i], parentType: 'device', device });
+          results[`device.${field}`].push({ field, parentType: 'device', device });
         }
       }
     }
@@ -67,7 +88,7 @@ class DevicesSearch extends React.Component {
     return results;
   }
 
-  findDeviceByMetadata(value, devices){
+  findDeviceByMetadata(value='', devices=[]){
     const preparedValue = value.trim().toLowerCase();
     const results = {};
 
@@ -98,12 +119,65 @@ class DevicesSearch extends React.Component {
     return results;
   }
 
-  smartSearchTopics = {
-    'device.name': 'Name',
-    'device.boardType': 'Board Type',
-    'device.orgName': 'Organization',
-    'device.status': 'Status',
-    'device.productName': 'Product'
+  findDeviceByDashboard(fields=[], value='', devices=[]){
+    const preparedValue = value.trim().toLowerCase();
+    const results = {};
+
+    for(let j in devices){
+      const device = devices[j];
+      const widgets = device.toJS().webDashboard.widgets;
+      for(let k in widgets){
+        const widget = widgets[k];
+
+        for(let i in fields){
+          const field = fields[i];
+          const fieldValue = (widget[field] || '').toLowerCase();
+
+          if (fieldValue.indexOf(preparedValue) !== -1){
+            if (!results[`dashboard.${field}`]){
+              results[`dashboard.${field}`] = [];
+            }
+            results[`dashboard.${field}`].push({ field, parentType: 'dashboard', device });
+          }
+        }
+      }
+    }
+
+    return results;
+  }
+
+  findDeviceByDataStream(fields=[], value='', devices=[], products=[]){
+    const preparedValue = value.trim().toLowerCase();
+    const results = {};
+
+    for(let j in devices){
+      const device = devices[j];
+      
+      const productId = device.get('productId');
+      const product = products.filter(p => p.id === productId)[0];
+
+      if (!product || !product.dataStreams || product.dataStreams.length === 0){
+        continue;
+      }
+
+      const dataStreams = product.dataStreams || [];
+      for(let k in dataStreams){
+        const dataStream = dataStreams[k];
+        for(let i in fields){
+          const field = fields[i];
+          const fieldValue = (String(dataStream[field]) || '').toLowerCase();
+
+          if (fieldValue.indexOf(preparedValue) !== -1){
+            if (!results[`datastream.${field}`]){
+              results[`datastream.${field}`] = [];
+            }
+            results[`datastream.${field}`].push({ field, parentType: 'datastream', device });
+          }
+        }
+      }
+    }
+
+    return results;
   }
 
   smartSearchTagsCollection = {}
@@ -112,7 +186,6 @@ class DevicesSearch extends React.Component {
     this.props.changeForm(DEVICES_SEARCH_FORM_NAME, 'tags', tags);
   }
 
-  // refactor me gently
   handleTagsChange(value=[]){
     // last tag is the one that was added recently
     // we should check it
@@ -155,8 +228,9 @@ class DevicesSearch extends React.Component {
       return this.setState({ smartSearchSuggestions: undefined });
     }
 
-    const { devices } = this.props;
+    const { devices, products } = this.props;
     const devicesArray = devices.toArray();
+    const productsArray = products;
     const deviceResults = this.findDeviceByField([
       'name',
       'boardType',
@@ -165,14 +239,29 @@ class DevicesSearch extends React.Component {
       'productName'
     ], query, devicesArray);
     const metadataResults = this.findDeviceByMetadata(query, devicesArray);
+    const dashboardResults = this.findDeviceByDashboard([
+      'label',
+      'dataType',
+      'alignment'
+    ], query, devicesArray);
+    const dataStreamResults = this.findDeviceByDataStream([
+      'pin',
+      'pinType',
+      'min',
+      'max',
+      'label',
+      'units'
+    ], query, devicesArray, productsArray);
 
     const options = _.map({
       ...deviceResults,
-      ...metadataResults
+      ...metadataResults,
+      ...dashboardResults,
+      ...dataStreamResults
     }, (results, i) => {
       const id = uuid();
       const devices = results.map(r => r.device.get('id'));
-      const topic = this.smartSearchTopics[i] || i;
+      const topic = DevicesSearch.smartSearchTopics[i] || i;
       const title = `${topic}: ${query} [${results.length}]`;
       // query should always be in model since antd won't show any option without query in its value
       // query is included in title now
@@ -224,13 +313,19 @@ class DevicesSearch extends React.Component {
     }
 
     const metadataSuggestions = smartSearchSuggestions.filter(e => e.type === 'metadata');
+    const dashboardSuggestions = smartSearchSuggestions.filter(e => e.type === 'dashboard');
+    const dataStreamSuggestions = smartSearchSuggestions.filter(e => e.type === 'datastream');
 
     return _.compact([
       // unfortunally there is a bug in rc-select that is used in ant 2.x.x and hotkeys won't work with
       // <OptGroup /> so we need to emulate this behaviour manually
       ...smartSearchSuggestions.filter(e => e.type === 'device').map(e => e.element),
       this.createLabelOption('Metadata', () => metadataSuggestions.length > 0),
-      ...smartSearchSuggestions.filter(e => e.type === 'metadata').map(e => e.element)
+      ...metadataSuggestions.map(e => e.element),
+      this.createLabelOption('Dashboard', () => dashboardSuggestions.length > 0),
+      ...dashboardSuggestions.map(e => e.element),
+      this.createLabelOption('Data Streams', () => dataStreamSuggestions.length > 0),
+      ...dataStreamSuggestions.map(e => e.element)
     ]);
   }
 
