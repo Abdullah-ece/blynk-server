@@ -1,5 +1,4 @@
 import {createStore, compose, applyMiddleware} from 'redux';
-import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import axios from 'axios';
@@ -68,7 +67,6 @@ function configureStoreProd(initialState) {
 
 function configureStoreDev() {
   const middlewares = [
-    reduxImmutableStateInvariant(),
     thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
