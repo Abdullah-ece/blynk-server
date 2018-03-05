@@ -7,7 +7,7 @@
 @primary-color: @color-primary-6;
 @success-color: @green-6;
 @error-color: @red-6;
-@highlight-color: @red-6;
+@highlight-color: @color-dark-grey-50;
 @warning-color: @yellow-6;
 @normal-color: #d9d9d9;
 
@@ -89,8 +89,8 @@
 
 // Buttons
 @btn-font-weight: 300;
-@btn-border-radius-base: @border-radius-base;
-@btn-border-radius-sm: @border-radius-base;
+@btn-border-radius-base: 30px;
+@btn-border-radius-sm: 30px;
 
 @btn-primary-color: @color-white;
 @btn-primary-bg: @color-primary-5;
@@ -384,7 +384,10 @@
         display: none; // hide ant transition effect
       }
     }
-
+    border-radius: 3px;
+    &:not(.ant-btn-icon-only){
+      border-radius: 100px;
+    }
     &:not(.ant-btn-icon-only) > .anticon {
       line-height: 0; // fix icon height
     }
@@ -466,7 +469,7 @@
     &:focus {
       box-shadow: none;
       background: @color-white;
-      border-color: @color-primary-3;
+      border-color: @color-dark-grey-50;
     }
 
     //Input Disabled
@@ -587,7 +590,7 @@
       }
     }
     .ant-select-selection__choice {
-      background: @color-primary-5;
+      background: @color-positive;
       color: @color-white;
       .ant-select-selection__choice__remove:before {
         color: @color-white;
@@ -599,12 +602,13 @@
     .@{ant-prefix} {
       &-select-selection {
         box-shadow: none;
+        border-color: @color-dark-grey-50;
         &:hover {
           background: @color-white;
-          border-color: @color-primary-3;
+          //border-color: @color-primary-3;
         }
         &:focus {
-          border-color: @color-primary-3;
+          //border-color: @color-primary-3;
           box-shadow: none;
         }
       }
@@ -854,6 +858,13 @@
     font-size: 16px;
   }
 
+  &-switch {
+    &.ant-switch-checked{
+      border-color: @color-positive;
+      background-color: @color-positive;
+    }
+  }
+
   //&-btn {
   //  padding: 8px 16px !important;
   //  border: 0;
@@ -1011,4 +1022,8 @@ span.switch-label {
   top: 0;
   text-align: left;
   padding-bottom: 24px;
+}
+
+.ant-input-affix-wrapper:hover .ant-input:focus{
+  border-color: @color-dark-grey-25;
 }
