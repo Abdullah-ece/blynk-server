@@ -40,7 +40,7 @@ class DeviceItem extends React.Component {
           </div>
           <div className="navigation-devices-list-item-events">
             {this.props.device.has('criticalSinceLastView') && (
-              <Badge count={this.props.device.get('criticalSinceLastView')} className="criticalSinceLastView"/>
+              <Badge count={this.props.device.get('criticalSinceLastView')} className="critical"/>
             )}
             {!this.props.device.has('criticalSinceLastView') && this.props.device.has('warningSinceLastView') && (
               <Badge count={this.props.device.get('warningSinceLastView')} className="warning"/>
