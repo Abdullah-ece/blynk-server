@@ -1173,13 +1173,17 @@
   height: 30px;
 }
 
-.ant-input-affix-wrapper:hover {
-  .ant-input {
+.ant-input-affix-wrapper {
+  .ant-input:hover {
     border-color: @color-dark-grey-25;
   }
-  .ant-input:focus {
-    border-color: @color-primary-3;
+  .ant-input:active, .ant-input:focus {
+    border-color: @color-dark-grey-50 !important;
   }
+}
+
+.has-error .ant-form-explain {
+  color: @color-dark-grey-50;
 }
 
 a:focus {
@@ -1220,6 +1224,3 @@ span.switch-label {
   padding-bottom: 24px;
 }
 
-.ant-input-affix-wrapper:hover .ant-input:focus{
-  border-color: @color-dark-grey-25;
-}
