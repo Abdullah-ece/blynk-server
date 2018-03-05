@@ -3,14 +3,34 @@ import React from 'react';
 import ui from 'components/UI';
 import Validation from 'services/Validation';
 
-import {Button, Input, Checkbox, Select, Radio} from 'antd';
+import {Button, Input, Checkbox, Select, Radio, Switch} from 'antd';
 
 import './styles.less';
 
 class StyleGuide extends React.Component {
   render() {
+    const Option = Select.Option;
+    const children = [];
+    for (let i = 10; i < 36; i++) {
+      children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+    }
+
     return (
       <div className="style-guide">
+        <div className="style-guide-element">
+          <Select
+            mode="tags"
+            style={{ width: '100%' }}
+            placeholder="Tags Mode"
+          >
+            {children}
+          </Select>
+        </div>
+        <div className="style-guide-element">
+          <Switch />
+          <br />
+          <Switch size="small" />
+        </div>
         <div className="style-guide-element">
           <Button type="primary">Button</Button> <Button type="primary" disabled>Button</Button>
         </div>
