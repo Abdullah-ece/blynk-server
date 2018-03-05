@@ -3,19 +3,20 @@
 
 .user-layout--header {
   height: @style-size-5;
-  background: @color-primary-5;
+  background: white;
   padding: 0 @style-size-4;
 }
 
 .user-layout--header--fixed {
   padding: 0 @style-size-4;
-  background: @color-primary-5;
+  background: white;
   height: @style-size-5;
   position: fixed;
   right: 0;
   top: 0;
   left: 0;
   z-index: 100;
+  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.1);
 }
 
 .user-layout--header-logo {
@@ -38,31 +39,18 @@
       .font-menu-item;
       margin: 0 @style-size-3;
       padding: 0 @style-size-2;
-      border-radius: @style-size-1;
       height: @style-size-4;
-      border: 0 !important;
-      &:hover {
-        color: @color-white;
-        background: @color-primary-4-30;
-      }
+      color: rgba(15, 15, 19, 0.5);
+      font-weight: bold;
     }
     &.ant-menu-item-selected {
-      color: @color-white;
-      background: @color-primary-6;
-      &:hover {
-        background: @color-primary-6;
-      }
-    }
-    &.ant-menu-item-active {
-      color: @color-white;
-      background: @color-primary-6;
-      border-bottom: 0 !important;
+      border-bottom: 2px solid @color-primary-6;
     }
   }
 }
 
 .user-layout--header-user {
-  .font-simple-white;
+  .font-simple-gray;
   float: right;
   height: @style-size-4;
   margin: calc(@style-size-4 / 2) 0 calc(@style-size-4 / 2) 30px;
@@ -71,7 +59,7 @@
 .user-layout--header-user-button {
   border: 0;
   transition-timing-function: ease;
-  background-color: @color-primary-6;
+  //background-color: @color-primary-6;
   margin-left: 8px;
   i {
     font-size: @style-font-size-2 !important;
