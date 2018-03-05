@@ -3,20 +3,20 @@
 
 .user-layout--header {
   height: @style-size-5;
-  background: white;
+  background: @main-header-background;
   padding: 0 @style-size-4;
 }
 
 .user-layout--header--fixed {
   padding: 0 @style-size-4;
-  background: white;
+  background: @main-header-background;
   height: @style-size-5;
   position: fixed;
   right: 0;
   top: 0;
   left: 0;
   z-index: 100;
-  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px 0 @main-header-shadow-color;
 }
 .user-layout--header-flex-container{
   display: flex;
@@ -34,7 +34,7 @@
 }
 
 .user-layout--header-menu {
-  background: none;
+  background: @main-header-background;
   border: 0;
   padding: calc(@style-size-4 / 2) 0;
   float: right;
@@ -44,11 +44,14 @@
       margin: 0 @style-size-3;
       padding: 0 @style-size-2;
       height: @style-size-4;
-      color: rgba(15, 15, 19, 0.5);
+      color: @main-header-item-color;
       font-weight: bold;
+      &:hover{
+        color: @main-header-item-hover-color;
+      }
     }
     &.ant-menu-item-selected {
-      border-bottom: 2px solid @color-primary-6;
+      border-bottom: 2px solid @main-header-item-border-color;
     }
   }
 }
@@ -62,9 +65,25 @@
 
 .user-layout--header-user-button {
   border: 0;
+  background-color: @main-header-item-bg-color;
+  border-radius: 0;
   transition-timing-function: ease;
-  //background-color: @color-primary-6;
   margin-left: 8px;
+  &:hover {
+    -webkit-box-shadow: 0 2px 0 0 @main-header-item-border-hover-color;
+    -moz-box-shadow: 0 2px 0 0 @main-header-item-border-hover-color;
+    box-shadow: 0 2px 0 0 @main-header-item-border-hover-color;
+    background-color: @main-header-item-bg-hover-color;
+  }
+  &:active {
+    background-color: @main-header-item-bg-active-color;
+    -webkit-box-shadow: 0 2px 0 0 @main-header-item-border-active-color;
+    -moz-box-shadow: 0 2px 0 0 @main-header-item-border-active-color;
+    box-shadow: 0 2px 0 0 @main-header-item-border-active-color;
+  }
+  &:focus{
+    background-color: @main-header-item-bg-focus-color;
+  }
   i {
     font-size: @style-font-size-2 !important;
   }
