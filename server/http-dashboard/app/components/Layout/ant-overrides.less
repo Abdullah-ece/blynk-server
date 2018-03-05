@@ -142,6 +142,25 @@
 @btn-ghost-disabled-border-color: @color-dark-grey-75;
 @btn-ghost-disabled-bg: @color-white;
 
+/*** DANGER BUTTON ***/
+
+@btn-danger-idle-color: @color-critical;
+@btn-danger-idle-border-color: @color-critical;
+@btn-danger-idle-bg: @color-white;
+
+@btn-danger-hover-color: @color-critical;
+@btn-danger-hover-border-color: @color-critical;
+@btn-danger-hover-bg: @color-critical-12;
+
+@btn-danger-active-color: @color-critical;
+@btn-danger-active-border-color: @color-critical;
+@btn-danger-active-bg: @color-critical-12;
+@btn-danger-active-shadow: 0 0 0 2px @color-critical-12;
+
+@btn-danger-disabled-color: @color-critical;
+@btn-danger-disabled-border-color: @color-critical;
+@btn-danger-disabled-bg: @color-white;
+
 
 @btn-default-color: @color-dark-grey;
 @btn-default-bg: transparent;
@@ -453,20 +472,47 @@
     // Button danger
     &-danger {
       .font-ghost-button-critical;
-      border-color: @color-critical;
+
+      .buttonGenerator(
+        @btn-danger-idle-color,
+        @btn-danger-idle-border-color,
+        @btn-danger-idle-bg
+      );
+
+      &:focus {
+        .buttonGenerator(
+          @btn-danger-idle-color,
+          @btn-danger-idle-border-color,
+          @btn-danger-idle-bg
+        );
+      }
+
       &:hover {
-        color: @color-white;
-        border-color: @color-critical;
-        background-color: @color-critical;
+        .buttonGenerator(
+          @btn-danger-hover-color,
+          @btn-danger-hover-border-color,
+          @btn-danger-hover-bg
+        );
       }
+
       &:active {
-        box-shadow: 0 0 0 2px @color-critical-25;
+        .buttonGenerator(
+          @btn-danger-active-color,
+          @btn-danger-active-border-color,
+          @btn-danger-active-bg,
+          @btn-danger-active-shadow
+        );
       }
+
       &[disabled], &[disabled]:hover, &[disabled]:active {
         .font-ghost-button-critical;
         opacity: 0.4;
-        border-color: @color-critical;
-        background-color: @color-white;
+
+        .buttonGenerator(
+          @btn-danger-disabled-color,
+          @btn-danger-disabled-border-color,
+          @btn-danger-disabled-bg
+        );
       }
     }
 
