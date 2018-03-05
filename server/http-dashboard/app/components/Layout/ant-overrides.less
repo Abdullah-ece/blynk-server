@@ -161,17 +161,23 @@
 @btn-danger-disabled-border-color: @color-critical;
 @btn-danger-disabled-bg: @color-white;
 
+/*** DASHED BUTTON ***/
+@btn-dashed-idle-color: @color-dark-grey-75;
+@btn-dashed-idle-border-color: @color-dark-grey-75;
+@btn-dashed-idle-bg: @color-white;
 
-@btn-default-color: @color-dark-grey;
-@btn-default-bg: transparent;
-@btn-default-border: @color-primary;
+@btn-dashed-hover-color: @color-dark-grey-75;
+@btn-dashed-hover-border-color: @color-dark-grey-75;
+@btn-dashed-hover-bg: @color-dark-grey-05;
 
-@btn-danger-color: @color-critical;
-@btn-danger-bg: @color-white;
+@btn-dashed-active-color: @color-dark-grey-75;
+@btn-dashed-active-border-color: @color-dark-grey-75;
+@btn-dashed-active-bg: @color-dark-grey-12;
+@btn-dashed-active-shadow: 0 0 0 2px @color-dark-grey-12;
 
-@btn-disable-color: @disabled-color;
-@btn-disable-bg: @background-color-base;
-@btn-disable-border: @border-color-base;
+@btn-dashed-disabled-color: @color-dark-grey-75;
+@btn-dashed-disabled-border-color: @color-dark-grey-75;
+@btn-dashed-disabled-bg: @color-white;
 
 @btn-padding-base: @style-size-2 @style-size-3;
 @btn-font-size-lg: @font-size-lg;
@@ -518,13 +524,51 @@
 
     // Button dashed
     &-dashed {
+
+      border-radius: 5px !important;
+
+      .buttonGenerator(
+        @btn-dashed-idle-color,
+        @btn-dashed-idle-border-color,
+        @btn-dashed-idle-bg
+      );
+
+      &:focus {
+        .buttonGenerator(
+          @btn-dashed-idle-color,
+          @btn-dashed-idle-border-color,
+          @btn-dashed-idle-bg
+        );
+      }
+
       &:hover {
-        background-color: @color-primary-01;
+        .buttonGenerator(
+          @btn-dashed-hover-color,
+          @btn-dashed-hover-border-color,
+          @btn-dashed-hover-bg
+        );
       }
+
       &:active {
-        background-color: @color-primary-1;
-        box-shadow: 0 0 0 2px @color-primary-1;
+        .buttonGenerator(
+          @btn-dashed-active-color,
+          @btn-dashed-active-border-color,
+          @btn-dashed-active-bg,
+          @btn-dashed-active-shadow
+        );
       }
+
+      &[disabled], &[disabled]:hover, &[disabled]:active {
+        .font-ghost-button-critical;
+        opacity: 0.4;
+
+        .buttonGenerator(
+          @btn-danger-disabled-color,
+          @btn-danger-disabled-border-color,
+          @btn-danger-disabled-bg
+        );
+      }
+
     }
 
     &-clicked {
