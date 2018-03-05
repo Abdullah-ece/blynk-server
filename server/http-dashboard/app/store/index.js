@@ -1,5 +1,4 @@
 import {createStore, compose, applyMiddleware} from 'redux';
-import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import axios from 'axios';
@@ -85,7 +84,6 @@ function configureStoreDev() {
   const middlewares = [
     wsMiddleware,
     blynkWsMiddleware,
-    reduxImmutableStateInvariant(),
     thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
