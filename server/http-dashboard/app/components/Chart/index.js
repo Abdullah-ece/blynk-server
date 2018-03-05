@@ -31,13 +31,37 @@ class Chart extends React.Component {
     this.chart.render();
   }
 
-  componentDidUpdate() {
-    const chartConfig = _.merge(this.chartDefaultOptions, this.props.config || {});
-    
-    this.destroyChart();
-    this.chart = new Canvasjs.Chart(this.chartRef, chartConfig);
+  componentDidUpdate(prevProps) {
 
-    this.chart.render();
+    const config = _.cloneDeep(this.props.config);
+    const dataPoints = _.cloneDeep(config.data[0].dataPoints);
+    delete config.data[0].dataPoints;
+
+    const prevConfig = _.cloneDeep(prevProps.config);
+    const prevDataPoints = _.cloneDeep(prevConfig.data[0].dataPoints);
+    delete prevConfig.data[0].dataPoints;
+
+    if(!_.isEqual(config, prevConfig)) {
+
+      this.chart.options = _.merge({},
+        this.chart.options,
+        this.props.config,
+      );
+
+      this.chart.render();
+
+    } else {
+      if(!_.isEqual(dataPoints, prevDataPoints)) {
+
+        const points = dataPoints.slice(prevDataPoints.length);
+
+        points.forEach((point) => {
+          this.chart.data[0].dataPoints.push(_.clone(point));
+        });
+
+        this.chart.render();
+      }
+    }
   }
 
   componentWillUnmount(){
