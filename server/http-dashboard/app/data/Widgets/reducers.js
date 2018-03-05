@@ -58,6 +58,7 @@ const initialState = fromJS({
       loading: bool,
       widgetId: {
         sourceIndex: {
+          pin: value
           data: Array
         }
       }
@@ -86,6 +87,7 @@ export default function Product(state = initialState, action) {
 
       return action.value.dataQueryRequests.reduce((state, request) => {
         return state.setIn(['widgetsData', String(action.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS({
+          pin: String(request.pin),
           data: []
         }));
       }, state).setIn(['widgetsData', String(action.value.deviceId), 'loading'], true);
@@ -95,6 +97,7 @@ export default function Product(state = initialState, action) {
       return action.meta.previousAction.value.dataQueryRequests.reduce((state, request, key) => {
         return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS(
           {
+            pin: String(request.pin),
             data: parseHistoryData(action.payload.data[key])
           }
         ));
