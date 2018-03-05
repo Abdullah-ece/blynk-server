@@ -309,7 +309,8 @@ class DevicesSearch extends React.Component {
 
   renderSuggestionOptions(smartSearchSuggestions){
     if (!smartSearchSuggestions){
-      return null;
+      // null here are going to trigger a series of errors in rc-select
+      return [];
     }
 
     const metadataSuggestions = smartSearchSuggestions.filter(e => e.type === 'metadata');
