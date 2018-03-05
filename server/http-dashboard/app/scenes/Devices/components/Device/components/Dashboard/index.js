@@ -73,7 +73,7 @@ class Dashboard extends React.Component {
     let timeFilter = {};
 
     if (params.from === undefined) {
-      timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
+      timeFilter = this.getTimeOffsetForData({time: TIMELINE_TIME_FILTERS.LIVE.key});
     } else {
       timeFilter = {
         from: params.from,
@@ -208,12 +208,16 @@ class Dashboard extends React.Component {
       );
     }).toJS();
 
+    const timeFilteringInitialValues = {
+      time: TIMELINE_TIME_FILTERS.LIVE.key
+    };
+
     return (
       <div className="devices--device-dashboard">
 
         <div>
           <TimeFiltering onChange={this.handleTimeFilterChange} form={DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME}
-                         formValues={this.props.timeFilteringValues}/>
+                         formValues={this.props.timeFilteringValues} initialValues={timeFilteringInitialValues}/>
         </div>
 
         { isLoading && (

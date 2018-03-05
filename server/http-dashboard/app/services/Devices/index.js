@@ -414,12 +414,13 @@ export const STATUS = {
 export const TIMELINE_TIME_FILTERS = {
   'LIVE': {
     'key': 'LIVE',
-    'value': 'Live'
+    'value': 'Live',
+    'time': 60 * 60 * 1000,
   },
   'HOUR': {
     'key': 'HOUR',
     'value': '1 hour',
-    'time': 60 * 60 * 1000
+    'time': 60 * 60 * 1000,
   },
   'DAY': {
     'key': 'DAY',
