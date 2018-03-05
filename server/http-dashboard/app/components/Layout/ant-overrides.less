@@ -393,6 +393,10 @@
     line-height: 14px;
     .font-ghost-button;
 
+    i {
+      .font-button-normal-icon;
+    }
+
     .buttonGenerator(
       @btn-ghost-idle-color,
       @btn-ghost-idle-border-color,
@@ -437,7 +441,7 @@
 
     // Button primary
     &-primary {
-      .font-primary-button;
+      .font-button-normal;
 
       .buttonGenerator(
         @btn-primary-idle-color,
@@ -469,7 +473,6 @@
         );
       }
       &[disabled], &[disabled]:hover, &[disabled]:active {
-        .font-primary-button;
         opacity: 0.4;
         .buttonGenerator(
           @btn-primary-disabled-color,
@@ -481,7 +484,6 @@
 
     // Button danger
     &-danger {
-      .font-ghost-button-critical;
 
       .buttonGenerator(
         @btn-danger-idle-color,
@@ -515,7 +517,6 @@
       }
 
       &[disabled], &[disabled]:hover, &[disabled]:active {
-        .font-ghost-button-critical;
         opacity: 0.4;
 
         .buttonGenerator(
@@ -563,7 +564,6 @@
       }
 
       &[disabled], &[disabled]:hover, &[disabled]:active {
-        .font-ghost-button-critical;
         opacity: 0.4;
 
         .buttonGenerator(
@@ -1224,3 +1224,11 @@ span.switch-label {
   padding-bottom: 24px;
 }
 
+.ant-btn-group {
+  > button {
+    border-radius: 5px;
+  }
+  > .ant-btn:not(.ant-btn-icon-only) {
+    border-radius: 5px;
+  }
+}
