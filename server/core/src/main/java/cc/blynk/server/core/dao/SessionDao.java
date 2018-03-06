@@ -4,9 +4,11 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.CookieUtil;
 import io.netty.channel.EventLoop;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,4 +86,13 @@ public class SessionDao {
         return null;
     }
 
+    public void close() {
+        System.out.println("Closing all sockets...");
+        DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+        userSession.forEach((userKey, session) -> {
+            allChannels.addAll(session.appChannels);
+            allChannels.addAll(session.hardwareChannels);
+        });
+        allChannels.close().awaitUninterruptibly();
+    }
 }

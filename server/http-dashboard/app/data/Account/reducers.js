@@ -3,7 +3,11 @@ const initialState = {
   email: '',
   role: '',
   orgId: null,
-  resetPasswordProcessing: false
+  resetPasswordProcessing: false,
+  credentials: {
+    username: null,
+    password: null,
+  }
 };
 
 export default function Account(state = initialState, action) {
@@ -13,6 +17,24 @@ export default function Account(state = initialState, action) {
       return {
         ...state,
         ...action.payload.data
+      };
+
+    case "API_LOGOUT_SUCCESS":
+      return {
+        ...state,
+        credentials: {
+          username: null,
+          password: null,
+        }
+      };
+
+    case "ACCOUNT_SAVE_CREDENTIALS":
+      return {
+        ...state,
+        credentials: {
+          username: action.value.username,
+          password: action.value.password
+        }
       };
     case "API_ACCOUNT_FAILURE":
       return {

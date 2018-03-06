@@ -59,11 +59,18 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (state != null) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                session.removeHardChannel(hardwareChannel);
                 Device device = state.device;
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
-                sentOfflineMessage(ctx, session, state.dash, device);
+
+                Product product = organizationDao.getProductByIdOrNull(device.productId);
+                int ignorePeriod = product == null ? 0 : product.getIgnorePeriod();
+                if (ignorePeriod > 0) {
+                    ctx.executor().schedule(
+                            new DelayedOfflineSystemEvent(device), ignorePeriod, TimeUnit.MILLISECONDS);
+                } else {
+                    sentOfflineMessage(ctx, session, state.dash, device);
+                }
             }
         }
     }
@@ -86,9 +93,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
-            log.trace("Changing device status. DeviceId {}, dashId {}", device.id, dashBoard.id);
-            disconnect(ctx, device);
+            log.trace("Changing device status. Device {}, dashId {}", device, dashBoard.id);
+            device.disconnected();
         }
+
+        //do insert anyway, as device was disconnected even it was relogged quickly
+        dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
 
         if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
             return;
@@ -100,23 +110,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             sendPushNotification(ctx, notification, dashBoard.id, device);
         } else {
             session.sendOfflineMessageToApps(dashBoard.id, device.id);
-        }
-    }
-
-    private void disconnect(ChannelHandlerContext ctx, Device device) {
-        log.trace("Disconnected device: {}", device);
-        device.disconnected();
-
-        Product product = organizationDao.getProductByIdOrNull(device.productId);
-        if (product != null) {
-            int ignorePeriod = product.getIgnorePeriod();
-            //means no ignore period
-            if (ignorePeriod == 0) {
-                dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
-            } else {
-                ctx.executor().schedule(new DelayedSystemEvent(device, ignorePeriod),
-                        ignorePeriod, TimeUnit.MILLISECONDS);
-            }
         }
     }
 
@@ -137,21 +130,23 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private final class DelayedSystemEvent implements Runnable {
+    private final class DelayedOfflineSystemEvent implements Runnable {
 
         private final Device device;
-        private final int ignorePeriod;
+        private final long submittedTime;
 
-        DelayedSystemEvent(Device device, int ignorePeriod) {
+        DelayedOfflineSystemEvent(Device device) {
             this.device = device;
-            this.ignorePeriod = ignorePeriod;
+            this.submittedTime = System.currentTimeMillis();
         }
 
         @Override
         public void run() {
-            final long now = System.currentTimeMillis();
-            if (device.status == Status.OFFLINE && now - device.disconnectTime > ignorePeriod) {
+            if (submittedTime > device.connectTime) {
                 dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
+            } else {
+                log.debug("Hardware was logged. Delayed task skipped. Device id {}, token {}.",
+                        device.id, device.token);
             }
         }
     }

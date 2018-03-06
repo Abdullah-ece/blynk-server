@@ -42,11 +42,13 @@ export default class Item extends React.Component {
   }
 
   reduxItem(props) {
-    const {displayError = true, input, validateOnBlur = false, meta: {touched, error, warning, active}} = props;
+    const {displayError = true, parentProps, input, validateOnBlur = false, meta: {touched, error, warning, active}} = props;
+
+    const parentDisplayError = parentProps.displayError === undefined ? true : parentProps.displayError;
 
     const validateStatus = () => {
       let validateStatus = 'success';
-      if (touched && displayError && error) {
+      if (touched && parentDisplayError && displayError && error) {
         validateStatus = 'error';
       }
 
@@ -62,7 +64,7 @@ export default class Item extends React.Component {
 
     const help = () => {
       let help = '';
-      if (touched && displayError && error) {
+      if (touched && parentDisplayError && displayError && error) {
         help = error || warning || '';
       }
 
@@ -109,6 +111,7 @@ export default class Item extends React.Component {
     if (hasName(element)) {
       return (
         <ReduxField {...element.props}
+                    parentProps={this.props}
                     element={element}
                     label={this.props.label}
                     offset={this.props.offset}

@@ -23,7 +23,7 @@ import {WidgetEditable} from "components/Widgets";
   devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
   devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
   devicesLoading: state.Devices.devicesLoading,
-  history: state.Widgets && state.Widgets.get('widgetsData'),
+  history: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
 }), (dispatch) => ({
   changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
   fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),

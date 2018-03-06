@@ -31,24 +31,27 @@ public class ShutdownHookWorker implements Runnable {
     @Override
     public void run() {
         System.out.println("Catch shutdown hook.");
-
         System.out.println("Stopping servers...");
+
         for (BaseServer server : servers) {
             try {
-                server.close();
+                server.close().sync();
             } catch (Throwable t) {
-                System.out.println("Error on serve shutdown : " + t.getCause());
+                System.out.println("Error on server shutdown : " + t.getCause());
             }
         }
 
         System.out.println("Stopping scheduler...");
         scheduler.shutdown();
 
+        try {
+            holder.close();
+        } catch (Exception e) {
+            System.out.println("Error stopping holder...");
+        }
+
         System.out.println("Saving user profiles...");
         profileSaverWorker.close();
-
-        System.out.println("Stopping aggregator...");
-        holder.close();
 
         System.out.println("Done.");
     }

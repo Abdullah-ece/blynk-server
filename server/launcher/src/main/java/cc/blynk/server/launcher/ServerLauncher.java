@@ -2,14 +2,18 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.InformationEvent;
@@ -17,12 +21,14 @@ import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.events.WarningEvent;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.application.AppServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.HardwareSSLServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
@@ -40,6 +46,7 @@ import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 
 /**
@@ -120,7 +127,6 @@ public final class ServerLauncher {
                 restore);
 
         BaseServer[] servers = new BaseServer[] {
-                new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
                 new HardwareAndHttpAPIServer(holder),
@@ -168,6 +174,25 @@ public final class ServerLauncher {
                     new TextMetaField(1, "Device Name", Role.ADMIN, true, "Default device")
             };
             product.events = createDefaultEvents();
+
+            WebLabel webLabel = new WebLabel();
+            webLabel.label = "Test val";
+            webLabel.id = 1;
+            webLabel.x = 0;
+            webLabel.y = 0;
+            webLabel.height = 1;
+            webLabel.width = 2;
+            webLabel.sources = new WebSource[] {
+                    new WebSource("some Label", "#334455",
+                            false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
+                            null,
+                            null,
+                            null, SortOrder.ASC, 10)
+            };
+
+            product.webDashboard = new WebDashboard(new Widget[] {
+                    webLabel
+            });
 
             holder.organizationDao.createProduct(mainOrg.id, product);
 

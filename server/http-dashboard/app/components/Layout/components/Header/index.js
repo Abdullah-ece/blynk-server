@@ -117,33 +117,35 @@ class Header extends React.Component {
     return (
       <div className="user-layout--header">
         <div className="user-layout--header--fixed">
-          <div className="user-layout--header-logo">
-            <Link to="/">
-              <img src={this.props.Organization.logoUrl} alt=""/>
-            </Link>
-          </div>
-          <div className="user-layout--header-user">
-            <div className="dark user-layout--header-user-link">
-              { this.props.Account.name }
-              <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
-                <Button type="primary" icon="user" className="user-layout--header-user-button dark"/>
-              </Dropdown>
+          <div className="user-layout--header-flex-container">
+            <div className="user-layout--header-logo">
+              <Link to="/">
+                <img src={this.props.Organization.logoUrl} alt=""/>
+              </Link>
+            </div>
+            <Menu mode="horizontal"
+                  className="user-layout--header-menu"
+                  onClick={this.handleClick.bind(this)}
+                  selectedKeys={this.currentActivePage(this.state.current)}>
+              {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
+              <Menu.Item key="/devices">Devices</Menu.Item>
+              { this.props.Organization && this.props.Organization.canCreateOrgs && (
+                <Menu.Item key="/products">Products</Menu.Item>
+              ) || (null)}
+              { this.props.Organization && this.props.Organization.canCreateOrgs && (
+                <Menu.Item key="/organizations">Organizations</Menu.Item>
+              ) || (null)}
+              {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
+            </Menu>
+            <div className="user-layout--header-user">
+              <div className="dark user-layout--header-user-link">
+                { this.props.Account.name }
+                <Dropdown overlay={this.AccountMenu()} trigger={['click']}>
+                  <Button type="primary" icon="user" className="user-layout--header-user-button"/>
+                </Dropdown>
+              </div>
             </div>
           </div>
-          <Menu mode="horizontal"
-                className="user-layout--header-menu"
-                onClick={this.handleClick.bind(this)}
-                selectedKeys={this.currentActivePage(this.state.current)}>
-            {/*<Menu.Item key="/dashboard">Dashboard</Menu.Item>*/}
-            <Menu.Item key="/devices">Devices</Menu.Item>
-            { this.props.Organization && this.props.Organization.canCreateOrgs && (
-              <Menu.Item key="/products">Products</Menu.Item>
-            ) || (null)}
-            { this.props.Organization && this.props.Organization.canCreateOrgs && (
-              <Menu.Item key="/organizations">Organizations</Menu.Item>
-            ) || (null)}
-            {/*<Menu.Item key="/organizations">Organizations</Menu.Item>*/}
-          </Menu>
         </div>
       </div>
     );

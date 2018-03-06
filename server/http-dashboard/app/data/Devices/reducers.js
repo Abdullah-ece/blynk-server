@@ -1,7 +1,11 @@
 import {fromJS} from 'immutable';
 import {
-  DEVICES_SORT
+  DEVICES_SORT,
+  TIMELINE_TIME_FILTERS
 } from 'services/Devices';
+
+import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
+import {WIDGET_TYPES} from "services/Widgets";
 
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.has('metaFields')) {
@@ -39,12 +43,48 @@ const initialState = fromJS({
   deviceCreate: {
     organizationLoading: false,
     data: null
-  }
+  },
+  timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
 });
 
 export default function Devices(state = initialState, action) {
 
   switch (action.type) {
+
+    case "DEVICES_TIME_FILTER_UPDATE":
+      return state.set('timeFilter', action.value);
+
+    case ACTIONS.BLYNK_WS_HARDWARE:
+      return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
+        return widgets.map((widget) => {
+          // do not update dataStream of linear and bar chart
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+            return widget;
+          return widget.update('sources', (sources) => sources.map((source) => {
+            if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
+              return source.setIn(['dataStream', 'value'], action.value.value);
+            }
+            return source;
+          }));
+        });
+      });
+
+    case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
+
+      return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
+        return widgets.map((widget) => {
+          // do not update dataStream of linear and bar chart
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+            return widget;
+
+          return widget.update('sources', (sources) => sources.map((source) => {
+            if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
+              return source.setIn(['dataStream', 'value'], action.value.value);
+            }
+            return source;
+          }));
+        });
+      });
 
     case "API_DEVICES_FETCH":
       return state.set('devicesLoading', true);

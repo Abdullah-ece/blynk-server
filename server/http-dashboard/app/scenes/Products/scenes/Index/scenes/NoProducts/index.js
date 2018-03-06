@@ -35,7 +35,7 @@ export default class NoProducts extends React.Component {
   }
 
   render() {
-    if(this.props.organization.parentId) {
+    if(this.props.organization.parentId !== -1) {
       return this.renderForSubOrgs();
     } else {
       return this.renderForSuperOrg();

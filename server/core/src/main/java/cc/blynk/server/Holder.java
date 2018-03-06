@@ -31,8 +31,6 @@ import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
-import java.io.Closeable;
-
 import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
 /**
@@ -42,7 +40,7 @@ import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
  * Created by Dmitriy Dumanskiy.
  * Created on 28.09.15.
  */
-public class Holder implements Closeable {
+public class Holder {
 
     public final FileManager fileManager;
 
@@ -231,17 +229,16 @@ public class Holder implements Closeable {
         return region.equals("local");
     }
 
-    @Override
     public void close() {
-        this.reportingDao.close();
+        sessionDao.close();
+
+        transportTypeHolder.close();
+
+        reportingDao.close();
 
         System.out.println("Stopping BlockingIOProcessor...");
-        this.blockingIOProcessor.close();
-
+        blockingIOProcessor.close();
         System.out.println("Stopping DBManager...");
-        this.dbManager.close();
-
-        System.out.println("Stopping Transport Holder...");
-        transportTypeHolder.close();
+        dbManager.close();
     }
 }
