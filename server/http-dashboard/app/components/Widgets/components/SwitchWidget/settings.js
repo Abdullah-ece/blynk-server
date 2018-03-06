@@ -215,7 +215,8 @@ class SwitchSettings extends React.Component {
 
       if(!dataStream)
         return props.changeForm(this.props.form, 'sources.0.dataStream', {
-          pin: value
+          pin: value,
+          pinType: "VIRTUAL",
         });
 
       props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
@@ -378,13 +379,13 @@ class SwitchSettings extends React.Component {
 
                   <Row>
                     <Col span={8}>
-                      <Item label="on value" offset="medium">
-                        <FormField name={'onValue'} placeholder={`For example: 1`}/>
+                      <Item label="on value" offset="medium" displayError={false}>
+                        <FormField name={'onValue'} placeholder={`For example: 1`} validate={[Validation.Rules.required]}/>
                       </Item>
                     </Col>
                     <Col span={8} offset={1}>
-                      <Item label="off value" offset="medium">
-                        <FormField name={'offValue'} placeholder={`For example: 0`}/>
+                      <Item label="off value" offset="medium" displayError={false}>
+                        <FormField name={'offValue'} placeholder={`For example: 0`} validate={[Validation.Rules.required]}/>
                       </Item>
                     </Col>
                   </Row>
@@ -412,12 +413,12 @@ class SwitchSettings extends React.Component {
 
                       <Row>
                         <Col span={8}>
-                          <Item label="on label" offset="medium">
+                          <Item label="on label" offset="medium" displayError={false}>
                             <FormField name={'onLabel'} placeholder={`For e.g. On`}/>
                           </Item>
                         </Col>
                         <Col span={8} offset={1}>
-                          <Item label="off label" offset="medium">
+                          <Item label="off label" offset="medium" displayError={false}>
                             <FormField name={'offLabel'} placeholder={`For e.g. Off`}/>
                           </Item>
                         </Col>

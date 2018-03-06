@@ -59,7 +59,7 @@
 
 .navigation-devices-list-items--title {
   font-size: @style-font-size-3;
-  color: @color-primary-5;
+  color: @color-primary;
   margin-top: @style-size-2;
   margin-bottom: @style-size-2;
 }
@@ -84,7 +84,7 @@
 }
 
 .navigation-devices-list-item-active:before {
-  border-left: 4px solid @color-primary-5;
+  border-left: 4px solid @color-primary;
   height: 100%;
   border-radius: 5px 0 0 5px;
   position: absolute;
@@ -108,12 +108,14 @@
 .navigation-devices-list-item-name {
   .font-body-text;
   padding-right: 36px;
+  font-weight: normal;
 }
 
 .navigation-devices-list-item-product-name {
   margin-top: 4px;
   padding-right: 36px;
-  .font-field-name-label;
+  .font-field-name-label-small;
+  font-weight: normal;
 }
 
 .navigation-devices-list-item-events {
@@ -159,11 +161,11 @@
         }
 
         &:hover {
-          background: @color-primary-5-01;
+          background: @color-primary-01;
         }
 
         &:active {
-          background: @color-primary-5-01 !important;
+          background: @color-primary-01 !important;
         }
       }
       > .ant-collapse-content {

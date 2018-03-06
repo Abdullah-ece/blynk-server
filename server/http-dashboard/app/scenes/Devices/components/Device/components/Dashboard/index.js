@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
@@ -15,14 +14,20 @@ import {buildDataQueryRequestForWidgets} from 'services/Widgets';
 import {Grids} from "components";
 import {WidgetStatic} from "components/Widgets";
 
+import {DeviceTimeFilterUpdate} from 'data/Devices/actions';
+
+import {blynkWsHardware} from 'store/blynk-websocket-middleware/actions';
+
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
 @connect((state) => ({
-  widgets: state.Widgets && state.Widgets.get('widgetsData'),
+  widgets: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
-  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch)
+  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
+  blynkWsHardware: bindActionCreators(blynkWsHardware, dispatch),
+  deviceTimeFilterUpdate: bindActionCreators(DeviceTimeFilterUpdate, dispatch),
 }))
 class Dashboard extends React.Component {
 
@@ -33,6 +38,8 @@ class Dashboard extends React.Component {
     timeFilteringValues: PropTypes.object,
     fetchWidgetHistory: PropTypes.func,
     initializeForm: PropTypes.func,
+    blynkWsHardware: PropTypes.func,
+    deviceTimeFilterUpdate: PropTypes.func,
   };
 
   constructor(props) {
@@ -44,6 +51,7 @@ class Dashboard extends React.Component {
     };
 
     this.handleTimeFilterChange = this.handleTimeFilterChange.bind(this);
+    this.handleWidgetWriteVirtualPin = this.handleWidgetWriteVirtualPin.bind(this, props.params.id);
   }
 
   componentWillMount() {
@@ -53,7 +61,7 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if((prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id)) || !_.isEqual(prevProps.dashboard, this.props.dashboard)) {
+    if((prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id))) {
       this.fetchWidgetsData();
     }
 
@@ -68,7 +76,7 @@ class Dashboard extends React.Component {
     let timeFilter = {};
 
     if (params.from === undefined) {
-      timeFilter = this.getTimeOffsetForData({time: 'HOUR'});
+      timeFilter = this.getTimeOffsetForData({time: TIMELINE_TIME_FILTERS.LIVE.key});
     } else {
       timeFilter = {
         from: params.from,
@@ -159,8 +167,18 @@ class Dashboard extends React.Component {
       ...this.getTimeOffsetForData(values) || {}
     };
 
+    this.props.deviceTimeFilterUpdate(values.time);
+
     this.fetchWidgetsData(params);
 
+  }
+
+  handleWidgetWriteVirtualPin(deviceId, {pin, value}) {
+    this.props.blynkWsHardware({
+      deviceId: deviceId,
+      pin: pin,
+      value: value
+    });
   }
 
   render() {
@@ -191,16 +209,20 @@ class Dashboard extends React.Component {
       ]);
 
       return (
-        <WidgetStatic widget={widget.toJS()} key={widget.get('id')} history={history} loading={loading}/>
+        <WidgetStatic onWriteToVirtualPin={this.handleWidgetWriteVirtualPin} widget={widget.toJS()} key={widget.get('id')} history={history} loading={loading}/>
       );
     }).toJS();
+
+    const timeFilteringInitialValues = {
+      time: TIMELINE_TIME_FILTERS.LIVE.key
+    };
 
     return (
       <div className="devices--device-dashboard">
 
         <div>
           <TimeFiltering onChange={this.handleTimeFilterChange} form={DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME}
-                         formValues={this.props.timeFilteringValues}/>
+                         formValues={this.props.timeFilteringValues} initialValues={timeFilteringInitialValues}/>
         </div>
 
         { isLoading && (

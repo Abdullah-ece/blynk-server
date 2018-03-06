@@ -14,6 +14,13 @@ export function DeviceDetailsUpdate(value) {
   };
 }
 
+export function DeviceTimeFilterUpdate(value) {
+  return {
+    type: 'DEVICES_TIME_FILTER_UPDATE',
+    value: value
+  };
+}
+
 export function DeviceCreateUpdate(value) {
   return {
     type: 'DeviceCreateUpdate',

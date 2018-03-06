@@ -3,14 +3,66 @@ import React from 'react';
 import ui from 'components/UI';
 import Validation from 'services/Validation';
 
-import {Button, Input, Checkbox, Select, Radio} from 'antd';
+import {Button, Input, Checkbox, Select, Radio, Switch, Icon} from 'antd';
 
 import './styles.less';
 
 class StyleGuide extends React.Component {
   render() {
+    const Option = Select.Option;
+    const children = [];
+    for (let i = 10; i < 36; i++) {
+      children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+    }
+
     return (
       <div className="style-guide">
+        <div className="style-guide-element">
+          <Select
+            mode="tags"
+            style={{ width: '100%' }}
+            placeholder="Tags Mode"
+          >
+            {children}
+          </Select>
+        </div>
+        <div className="style-guide-element">
+          <Switch />
+          <br />
+          <Switch size="small" />
+        </div>
+        <div className="style-guide-element">
+          <Radio.Group>
+            <Radio.Button value={1}>
+              Radio Group 1
+            </Radio.Button>
+            <Radio.Button value={2}>
+              Radio Group 2
+            </Radio.Button>
+            <Radio.Button value={3}>
+              Radio Group 3
+            </Radio.Button>
+            <Radio.Button value={4}>
+              Radio Group 4
+            </Radio.Button>
+          </Radio.Group>
+        </div>
+        <div className="style-guide-element">
+          <Button.Group>
+            <Button>Button</Button>
+            <Button> <Icon type={`plus`}/> Button</Button>
+            <Button disabled={true}><Icon type={`plus`}/> Disabled with icon </Button>
+            <Button disabled={true}> Disabled </Button>
+          </Button.Group>
+        </div>
+        <div className="style-guide-element">
+          <Button.Group>
+            <Button><Icon type={`plus`}/></Button>
+            <Button><Icon type={`edit`}/></Button>
+            <Button disabled={true}><Icon type={`user`}/> </Button>
+            <Button disabled={true}> <Icon type={`plus`}/> </Button>
+          </Button.Group>
+        </div>
         <div className="style-guide-element">
           <Button type="primary">Button</Button> <Button type="primary" disabled>Button</Button>
         </div>

@@ -1,11 +1,23 @@
 import {createStore, compose, applyMiddleware} from 'redux';
-import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 import {responseInterceptor as axiosResponseInterceptor} from './axios';
 import {persistStore, autoRehydrate} from 'redux-persist';
+
+import {createWsMiddleware} from "store/redux-websocket-middleware";
+import {createBlynkWsMiddleware} from "store/blynk-websocket-middleware";
+
+const wsMiddleware = createWsMiddleware({
+  defaultEndpoint: 'wss://localhost:9443/dashws',
+  isDebugMode: true,
+  ping: false,
+});
+
+const blynkWsMiddleware = createBlynkWsMiddleware({
+  isDebugMode: true,
+});
 
 /* instance for basic API */
 axios.defaults.headers['Content-Type'] = 'application/json';
@@ -49,6 +61,8 @@ const persisStoreConfigProd = {};
 
 function configureStoreProd(initialState) {
   const middlewares = [
+    wsMiddleware,
+    blynkWsMiddleware,
     thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
@@ -68,7 +82,8 @@ function configureStoreProd(initialState) {
 
 function configureStoreDev() {
   const middlewares = [
-    reduxImmutableStateInvariant(),
+    wsMiddleware,
+    blynkWsMiddleware,
     thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];

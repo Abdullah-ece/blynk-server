@@ -1,4 +1,10 @@
 import {fromJS} from 'immutable';
+import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
+import {WIDGET_TYPES} from "services/Widgets";
+import {
+  TIMELINE_TIME_FILTERS
+} from 'services/Devices';
+
 
 const parseLineWidgetData = (response) => {
 
@@ -58,6 +64,7 @@ const initialState = fromJS({
       loading: bool,
       widgetId: {
         sourceIndex: {
+          pin: value
           data: Array
         }
       }
@@ -79,13 +86,55 @@ const initialState = fromJS({
   }
 });
 
-export default function Product(state = initialState, action) {
+export default function Product(state = initialState, action, DevicesState) {
   switch (action.type) {
+
+    case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
+      return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
+        if(widget.map) {
+
+          if(DevicesState.get('timeFilter') !== TIMELINE_TIME_FILTERS.LIVE.key)
+            return widget;
+
+          return widget.map((source) => {
+            if(String(source.get('pin')) === String(action.value.pin)) {
+              return source.update('data', (data) => data.push(fromJS({
+                x: new Date().getTime(),
+                y: Number(action.value.value)
+              })));
+            }
+            return source;
+          });
+        }
+        return widget;
+      }));
+
+    case ACTIONS.BLYNK_WS_HARDWARE:
+      return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
+        if(widget.map) {
+
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0 && DevicesState.get('timeFilter') !== TIMELINE_TIME_FILTERS.LIVE.key)
+            return widget;
+
+          return widget.map((source) => {
+            if(String(source.get('pin')) === String(action.value.pin)) {
+              return source.update('data', (data) => data.push(fromJS({
+                x: new Date().getTime(),
+                y: Number(action.value.value)
+              })));
+            }
+            return source;
+          });
+        }
+        return widget;
+      }));
+
 
     case "API_WIDGETS_HISTORY":
 
       return action.value.dataQueryRequests.reduce((state, request) => {
         return state.setIn(['widgetsData', String(action.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS({
+          pin: String(request.pin),
           data: []
         }));
       }, state).setIn(['widgetsData', String(action.value.deviceId), 'loading'], true);
@@ -95,6 +144,7 @@ export default function Product(state = initialState, action) {
       return action.meta.previousAction.value.dataQueryRequests.reduce((state, request, key) => {
         return state.setIn(['widgetsData', String(action.meta.previousAction.value.deviceId), String(request.widgetId), String(request.sourceIndex)], fromJS(
           {
+            pin: String(request.pin),
             data: parseHistoryData(action.payload.data[key])
           }
         ));

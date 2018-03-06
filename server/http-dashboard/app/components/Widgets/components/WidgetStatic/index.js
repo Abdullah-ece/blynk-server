@@ -30,6 +30,8 @@ class WidgetStatic extends React.Component {
     ]),
 
     deviceId: PropTypes.number,
+
+    onWriteToVirtualPin: PropTypes.func,
   };
 
   constructor(props) {
@@ -50,12 +52,13 @@ class WidgetStatic extends React.Component {
     const widget = this.props.widget;
 
     const attributes = {
-      key          : widget.id,
-      deviceId     : this.props.deviceId,
-      data         : widget,
-      name         : widget.type + widget.id,
-      history      : this.props.history,
-      loading      : this.props.loading,
+      key                : widget.id,
+      deviceId           : this.props.deviceId,
+      data               : widget,
+      name               : widget.type + widget.id,
+      history            : this.props.history,
+      loading            : this.props.loading,
+      onWriteToVirtualPin: this.props.onWriteToVirtualPin,
     };
 
     attributes.parentElementProps = {

@@ -83,7 +83,7 @@ class LinearWidget extends React.Component {
             `<div class="chart-tooltip-legends-legend">
                 <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
                 <div class="chart-tooltip-legends-legend-name">${name}:</div>
-                <div class="chart-tooltip-legends-legend-value">${value}</div>
+                <div class="chart-tooltip-legends-legend-value">${String(value)}</div>
               </div>`
           );
         };
@@ -120,8 +120,13 @@ class LinearWidget extends React.Component {
             if(value instanceof Date)
               return Canvasjs.formatDate(value, format);
 
-            if(!isNaN(Number(value)))
+            if(!isNaN(Number(value))) {
+              // hardcode for 0 because formatNumber doesn't work for 0
+              if (Number(value) === 0)
+                return 0;
+
               return Canvasjs.formatNumber(value, format);
+            }
           }
 
           return value;
@@ -180,38 +185,38 @@ class LinearWidget extends React.Component {
     if (dateTo.diff(dateFrom, 'hours') === 0) {
       return {
         tickFormat: 'hh:mm TT',
-        hoverFormat: 'DDD, DD MMM, hh:mm:ss TT',
+        hoverFormat: 'DDD, D MMM, hh:mm:ss TT',
         labelMaxWidth: 50,
       };
     } else if (dateTo.diff(dateFrom, 'days') === 0) {
       return {
         tickFormat: 'hh:mm TT',
-        hoverFormat: 'DDD, DD MMM, hh:mm TT',
+        hoverFormat: 'DDD, D MMM, hh:mm TT',
         labelMaxWidth: 50,
       };
     } else if (dateTo.diff(dateFrom, 'days') >= 1 && dateTo.diff(dateFrom, 'days') <= 6) {
       return {
         tickFormat: 'DDD, hh:mm TT',
-        hoverFormat: 'DDD, DD MMM, hh:mm TT',
+        hoverFormat: 'DDD, D MMM, hh:mm TT',
         labelMaxWidth: 60,
       };
     } else if (dateTo.diff(dateFrom, 'days') >= 7 && dateTo.diff(dateFrom, 'month') === 0) {
       return {
         tickFormat: 'DD MMM, hh:mm TT',
-        hoverFormat: 'DDD, DD MMM, hh:mm TT',
+        hoverFormat: 'DDD, D MMM, hh:mm TT',
         labelMaxWidth: 100,
       };
     } else if (dateTo.diff(dateFrom, 'month') >= 1) {
       return {
         tickFormat: 'DD MMM, hh:mm TT',
-        hoverFormat: 'DDD, DD MMM, hh:mm TT, YYYY',
+        hoverFormat: 'DDD, D MMM, hh:mm TT, YYYY',
         labelMaxWidth: 100,
       };
     }
 
     return {
       tickFormat: null,
-      hoverFormat: 'DDD, DD MMM, hh:mm:ss TT'
+      hoverFormat: 'DDD, D MMM, hh:mm:ss TT'
     };
 
   }
