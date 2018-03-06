@@ -773,6 +773,13 @@
     min-height: @style-size-4;
     .font-input;
 
+    &.@{ant-prefix}-select-focused {
+      .@{ant-prefix}-select-selection {
+        border-color: @color-dark-grey-25;
+        box-shadow: none;
+      }
+    }
+
     .@{ant-prefix} {
       &-select-selection {
         &:hover {
@@ -783,6 +790,7 @@
           border-color: @color-dark-grey-25;
           box-shadow: none;
         }
+        box-shadow: none;
       }
     }
     .ant-select-selection__choice {
