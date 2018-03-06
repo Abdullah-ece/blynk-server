@@ -4,6 +4,7 @@ import {
 } from 'services/Devices';
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
+import {WIDGET_TYPES} from "services/Widgets";
 
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.has('metaFields')) {
@@ -51,6 +52,9 @@ export default function Devices(state = initialState, action) {
     case ACTIONS.BLYNK_WS_HARDWARE:
       return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
         return widgets.map((widget) => {
+          // do not update dataStream of linear and bar chart
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+            return widget;
           return widget.update('sources', (sources) => sources.map((source) => {
             if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
               return source.setIn(['dataStream', 'value'], action.value.value);
@@ -64,6 +68,10 @@ export default function Devices(state = initialState, action) {
 
       return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
         return widgets.map((widget) => {
+          // do not update dataStream of linear and bar chart
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+            return widget;
+
           return widget.update('sources', (sources) => sources.map((source) => {
             if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
               return source.setIn(['dataStream', 'value'], action.value.value);

@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import './styles.less';
 import {Map} from 'immutable';
 import PropTypes from 'prop-types';
@@ -20,7 +19,7 @@ import {blynkWsHardware} from 'store/blynk-websocket-middleware/actions';
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
 
 @connect((state) => ({
-  widgets: state.Widgets && state.Widgets.get('widgetsData'),
+  widgets: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
   timeFilteringValues: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state) || {}
 }), (dispatch) => ({
   initializeForm: bindActionCreators(initialize, dispatch),
@@ -58,7 +57,7 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if((prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id)) || !_.isEqual(prevProps.dashboard, this.props.dashboard)) {
+    if((prevProps.params && prevProps.params.id && Number(prevProps.params.id) !== Number(this.props.params.id))) {
       this.fetchWidgetsData();
     }
 

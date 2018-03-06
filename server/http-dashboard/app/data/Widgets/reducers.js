@@ -1,4 +1,5 @@
 import {fromJS} from 'immutable';
+import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 
 const parseLineWidgetData = (response) => {
 
@@ -82,6 +83,39 @@ const initialState = fromJS({
 
 export default function Product(state = initialState, action) {
   switch (action.type) {
+
+    case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
+      return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
+        if(widget.map) {
+          return widget.map((source) => {
+            if(String(source.get('pin')) === String(action.value.pin)) {
+              return source.update('data', (data) => data.push(fromJS({
+                x: new Date().getTime(),
+                y: Number(action.value.value)
+              })));
+            }
+            return source;
+          });
+        }
+        return widget;
+      }));
+
+    case ACTIONS.BLYNK_WS_HARDWARE:
+      return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
+        if(widget.map) {
+          return widget.map((source) => {
+            if(String(source.get('pin')) === String(action.value.pin)) {
+              return source.update('data', (data) => data.push(fromJS({
+                x: new Date().getTime(),
+                y: Number(action.value.value)
+              })));
+            }
+            return source;
+          });
+        }
+        return widget;
+      }));
+
 
     case "API_WIDGETS_HISTORY":
 
