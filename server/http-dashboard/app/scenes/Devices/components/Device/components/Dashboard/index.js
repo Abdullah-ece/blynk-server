@@ -14,6 +14,8 @@ import {buildDataQueryRequestForWidgets} from 'services/Widgets';
 import {Grids} from "components";
 import {WidgetStatic} from "components/Widgets";
 
+import {DeviceTimeFilterUpdate} from 'data/Devices/actions';
+
 import {blynkWsHardware} from 'store/blynk-websocket-middleware/actions';
 
 const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filtering';
@@ -25,6 +27,7 @@ const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'device-dashboard-time-filteri
   initializeForm: bindActionCreators(initialize, dispatch),
   fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
   blynkWsHardware: bindActionCreators(blynkWsHardware, dispatch),
+  deviceTimeFilterUpdate: bindActionCreators(DeviceTimeFilterUpdate, dispatch),
 }))
 class Dashboard extends React.Component {
 
@@ -36,6 +39,7 @@ class Dashboard extends React.Component {
     fetchWidgetHistory: PropTypes.func,
     initializeForm: PropTypes.func,
     blynkWsHardware: PropTypes.func,
+    deviceTimeFilterUpdate: PropTypes.func,
   };
 
   constructor(props) {
@@ -162,6 +166,8 @@ class Dashboard extends React.Component {
     const params = {
       ...this.getTimeOffsetForData(values) || {}
     };
+
+    this.props.deviceTimeFilterUpdate(values.time);
 
     this.fetchWidgetsData(params);
 

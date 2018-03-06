@@ -1,5 +1,10 @@
 import {fromJS} from 'immutable';
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
+import {WIDGET_TYPES} from "services/Widgets";
+import {
+  TIMELINE_TIME_FILTERS
+} from 'services/Devices';
+
 
 const parseLineWidgetData = (response) => {
 
@@ -81,12 +86,16 @@ const initialState = fromJS({
   }
 });
 
-export default function Product(state = initialState, action) {
+export default function Product(state = initialState, action, DevicesState) {
   switch (action.type) {
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
       return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
         if(widget.map) {
+
+          if(DevicesState.get('timeFilter') !== TIMELINE_TIME_FILTERS.LIVE.key)
+            return widget;
+
           return widget.map((source) => {
             if(String(source.get('pin')) === String(action.value.pin)) {
               return source.update('data', (data) => data.push(fromJS({
@@ -103,6 +112,10 @@ export default function Product(state = initialState, action) {
     case ACTIONS.BLYNK_WS_HARDWARE:
       return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
         if(widget.map) {
+
+          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0 && DevicesState.get('timeFilter') !== TIMELINE_TIME_FILTERS.LIVE.key)
+            return widget;
+
           return widget.map((source) => {
             if(String(source.get('pin')) === String(action.value.pin)) {
               return source.update('data', (data) => data.push(fromJS({

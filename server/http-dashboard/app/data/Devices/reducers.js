@@ -1,6 +1,7 @@
 import {fromJS} from 'immutable';
 import {
-  DEVICES_SORT
+  DEVICES_SORT,
+  TIMELINE_TIME_FILTERS
 } from 'services/Devices';
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
@@ -42,12 +43,16 @@ const initialState = fromJS({
   deviceCreate: {
     organizationLoading: false,
     data: null
-  }
+  },
+  timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
 });
 
 export default function Devices(state = initialState, action) {
 
   switch (action.type) {
+
+    case "DEVICES_TIME_FILTER_UPDATE":
+      return state.set('timeFilter', action.value);
 
     case ACTIONS.BLYNK_WS_HARDWARE:
       return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {

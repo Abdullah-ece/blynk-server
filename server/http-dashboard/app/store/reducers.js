@@ -29,7 +29,7 @@ function combineDevicesAndWidgets (state, action) {
 
   const devicesState = Devices(state, action);
 
-  const widgetsState = Widgets(devicesState && devicesState.get('Widgets'), action);
+  const widgetsState = Widgets(devicesState && devicesState.get('Widgets'), action, devicesState);
 
   return fromJS({
       ...devicesState.toJS(),
