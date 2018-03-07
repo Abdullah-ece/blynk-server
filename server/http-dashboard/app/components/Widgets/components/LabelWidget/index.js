@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Map} from 'immutable';
-import {Icon} from 'antd';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
 import Canvasjs from 'canvasjs';
@@ -142,9 +141,6 @@ class LabelWidget extends React.Component {
 
     if (labelValue === null)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
-
-    if (this.props.loading)
-      return (<Icon type="loading"/>);
 
     return this.renderLabelByParams({
       value: labelValue,
