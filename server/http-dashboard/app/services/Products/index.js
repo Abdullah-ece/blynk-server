@@ -132,7 +132,6 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
-      value: 'ihor.bra@gmail.com'
     },
     {
       id: 3,
