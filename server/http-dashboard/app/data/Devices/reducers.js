@@ -47,6 +47,28 @@ const initialState = fromJS({
   timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
 });
 
+
+function updateDeviceDetailsWidgets(state, action) {
+  let deviceId = state.getIn(['deviceDetails', 'info', 'data', 'id']);
+
+  if(Number(action.value.deviceId) !== Number(deviceId))
+    return state;
+
+  return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
+    return widgets.map((widget) => {
+      // do not update dataStream of linear and bar chart
+      if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+        return widget;
+      return widget.update('sources', (sources) => sources.map((source) => {
+        if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
+          return source.setIn(['dataStream', 'value'], action.value.value);
+        }
+        return source;
+      }));
+    });
+  });
+}
+
 export default function Devices(state = initialState, action) {
 
   switch (action.type) {
@@ -55,36 +77,10 @@ export default function Devices(state = initialState, action) {
       return state.set('timeFilter', action.value);
 
     case ACTIONS.BLYNK_WS_HARDWARE:
-      return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
-        return widgets.map((widget) => {
-          // do not update dataStream of linear and bar chart
-          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
-            return widget;
-          return widget.update('sources', (sources) => sources.map((source) => {
-            if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
-              return source.setIn(['dataStream', 'value'], action.value.value);
-            }
-            return source;
-          }));
-        });
-      });
+      return updateDeviceDetailsWidgets(state, action);
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
-
-      return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
-        return widgets.map((widget) => {
-          // do not update dataStream of linear and bar chart
-          if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
-            return widget;
-
-          return widget.update('sources', (sources) => sources.map((source) => {
-            if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
-              return source.setIn(['dataStream', 'value'], action.value.value);
-            }
-            return source;
-          }));
-        });
-      });
+      return updateDeviceDetailsWidgets(state, action);
 
     case "API_DEVICES_FETCH":
       return state.set('devicesLoading', true);

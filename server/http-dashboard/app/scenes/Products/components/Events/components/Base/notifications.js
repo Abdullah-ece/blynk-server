@@ -29,12 +29,23 @@ class Notifications extends React.Component {
       if(!Array.isArray(props.input.value))
         return [];
 
-      return props.input.value.filter((id) => (
-        this.props.contactMetaFields.some((field) => Number(id) === Number(field.get('id')))
-      ));
+      return props.input.value.filter((value) => (
+        this.props.contactMetaFields.some((field) => Number(value.metaFieldId) === Number(field.get('id')))
+      )).map((value) => String(value.metaFieldId));
     };
 
     const onChange = (value) => {
+      if(value)
+        value = value.map((id) => {
+          const field = this.props.contactMetaFields.find((field) => Number(field.get('id')) === Number(id));
+
+          return {
+            metaFieldId: field.get('id'),
+            type: field.get('type'),
+            value: field.get('name')
+          };
+        });
+
       props.input.onChange(value);
     };
 

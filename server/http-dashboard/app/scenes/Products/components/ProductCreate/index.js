@@ -83,6 +83,8 @@ class ProductCreate extends React.Component {
 
     formSyncErrors: PropTypes.object,
 
+    isProductClone: PropTypes.bool,
+
     loading: PropTypes.bool,
     invalid: PropTypes.bool,
     submitting: PropTypes.bool,
@@ -268,7 +270,7 @@ class ProductCreate extends React.Component {
                                        onClick={this.props.handleSubmit}
                                        loading={this.props.loading}
                                        disabled={(this.props.submitFailed && this.props.invalid) || this.props.submitting}>
-                                 Create
+                                 {this.props.isProductClone ? "Clone" : "Create"}
                                </Button>
                              </div>
                            )}

@@ -54,7 +54,7 @@ class NoDevices extends React.Component {
             <br/>
             <br/>
             You need to have at least one Product set up before adding new devices. <br/><br/>
-            Please contact {this.props.organization.parentOrgName} for details
+            Please contact {this.props.organization.name} for details
           </div>
         </div>
       );

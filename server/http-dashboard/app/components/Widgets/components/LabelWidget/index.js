@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Map} from 'immutable';
-import {Icon} from 'antd';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
 import Canvasjs from 'canvasjs';
@@ -83,6 +82,9 @@ class LabelWidget extends React.Component {
     if (!this.props.data.decimalFormat)
       return (value).toLocaleString();
 
+    if (!isNaN(Number(value)) && Number(value) === 0)
+      return 0;
+
     return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
   }
 
@@ -140,9 +142,6 @@ class LabelWidget extends React.Component {
     if (labelValue === null)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
-    if (this.props.loading)
-      return (<Icon type="loading"/>);
-
     return this.renderLabelByParams({
       value: labelValue,
       suffix: this.props.data.valueSuffix,
@@ -162,9 +161,9 @@ class LabelWidget extends React.Component {
     const labelValue = this.getLabelValue();
     let currentColorSet = null;
     if(this.props.data.colorsSet) {
-      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] || {backgroundColor:"ffffff",textColor:"black"};
+      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] || {backgroundColor:"ffffff",textColor:"000000"};
     } else {
-      currentColorSet = {backgroundColor:"ffffff",textColor:"black"};
+      currentColorSet = {backgroundColor:"ffffff",textColor:"0000"};
     }
 
     return !this.props.data.isColorSetEnabled ? {

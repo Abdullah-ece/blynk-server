@@ -10,6 +10,8 @@ import {bindActionCreators} from 'redux';
 import {ProductInfoUpdateInvalidFlag} from 'data/Product/actions';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
 
+import './styles.less';
+
 @connect(() => ({
 
 }), (dispatch) => ({
@@ -77,7 +79,9 @@ class Info extends React.Component {
           <FormItem>
             <FormItem.Title>description</FormItem.Title>
             <FormItem.Content>
-              <Field name="description" type="textarea" rows="5" placeholder="Description (optional)"/>
+              <div className="textarea-wrapper">
+                <Field name="description" className="test" type="textarea" rows="5" placeholder="Description (optional)"/>
+              </div>
             </FormItem.Content>
           </FormItem>
         </Col>
