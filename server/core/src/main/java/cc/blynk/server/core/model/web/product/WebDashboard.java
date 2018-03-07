@@ -34,13 +34,6 @@ public class WebDashboard implements CopyObject<WebDashboard> {
         return new WebDashboard(ArrayUtil.copy(this.widgets, Widget.class));
     }
 
-    //todo update without erasing value field?
-    public void update(WebDashboard updatedDashboard) {
-        if (updatedDashboard.widgets != null) {
-            this.widgets = updatedDashboard.widgets;
-        }
-    }
-
     public boolean update(int deviceId, byte pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {

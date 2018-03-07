@@ -20,6 +20,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
+import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -39,6 +40,7 @@ import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -96,7 +98,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals(1, webSwitch.sources[0].dataStream.pin);
@@ -125,7 +127,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals("222", webSwitch.sources[0].dataStream.value);
         }
@@ -160,7 +162,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(1, device.webDashboard.widgets.length);
+            assertEquals(2, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals(1, webSwitch.sources[0].dataStream.pin);
@@ -182,7 +184,68 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
 
         appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 10 1")));
+    }
 
+    @Test
+    public void webSocketRetrievesCommandFromExternalApiForOneDeviceOnly() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        Device newDevice2 = new Device();
+        newDevice2.name = "My New Device 2";
+        newDevice2.productId = newDevice.productId;
+
+        String token;
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.parseDevice(responseString, 0);
+            token = device.token;
+            assertEquals(1, device.id);
+        }
+
+        HttpPut httpPut2 = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut2.setEntity(new StringEntity(newDevice2.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(httpPut2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.parseDevice(responseString, 0);
+            assertEquals(2, device.id);
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet putValueViaGet = new HttpGet(apiUrl + token + "/update/v2?value=666");
+        try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 2 666")));
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(3, devices.length);
+
+            Device device1 = getDeviceById(devices, 1);
+            Device device2 = getDeviceById(devices, 2);
+            assertEquals("666", ((WebLabel) device1.webDashboard.widgets[1]).sources[0].dataStream.value);
+            assertNull(((WebLabel) device2.webDashboard.widgets[1]).sources[0].dataStream.value);
+
+            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+        }
     }
 
     private int createProduct() throws Exception {
@@ -204,15 +267,30 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webSwitch.height = 10;
         webSwitch.width = 20;
         webSwitch.sources = new WebSource[] {
-                new WebSource("some Label", "#334455",
+                new WebSource("some switch", "#334455",
                         false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10)
         };
 
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
+        };
+
         product.webDashboard = new WebDashboard(new Widget[] {
-                webSwitch
+                webSwitch,
+                webLabel
         });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -226,6 +304,15 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, fromApi.id);
             return fromApi.id;
         }
+    }
+
+    private static Device getDeviceById(Device[] devices, int id) {
+        for (Device device : devices) {
+            if (device.id == id) {
+                return device;
+            }
+        }
+        throw new RuntimeException("No device with id " + id);
     }
 
     public static class TestDevice extends Device {

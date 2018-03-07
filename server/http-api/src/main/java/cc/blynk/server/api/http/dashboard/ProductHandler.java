@@ -151,7 +151,7 @@ public class ProductHandler extends BaseHttpHandler {
             List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
             long now = System.currentTimeMillis();
             for (Device device : devices) {
-                device.webDashboard.update(updatedProduct.webDashboard);
+                device.webDashboard = updatedProduct.webDashboard.copy();
                 device.updatedAt = now;
             }
             log.info("{} devices updated with new dashboard.", devices.size());
