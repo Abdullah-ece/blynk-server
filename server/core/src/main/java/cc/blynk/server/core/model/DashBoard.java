@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
@@ -199,6 +200,24 @@ public class DashBoard {
         throw new IllegalCommandException("Device with passed id not found.");
     }
 
+    public boolean hasWidgetsByDeviceId(int deviceId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof OnePinWidget) {
+                OnePinWidget onePinWidget = (OnePinWidget) widget;
+                if (onePinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+            if (widget instanceof MultiPinWidget) {
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                if (multiPinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns list of device ids that should receive user command.
      * Widget could be assigned to specific device or to tag that
@@ -239,6 +258,10 @@ public class DashBoard {
     }
 
     public Widget getWidgetById(long id) {
+        return getWidgetById(widgets, id);
+    }
+
+    private static Widget getWidgetById(Widget[] widgets, long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
                 return widget;
@@ -411,27 +434,27 @@ public class DashBoard {
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;
-        this.widgets = copyWidgets(parent.widgets);
+        this.widgets = copyWidgetsAndPreservePrevValues(this.widgets, parent.widgets);
+        //export app specific requirement
+        for (Widget widget : widgets) {
+            widget.isDefaultColor = false;
+        }
     }
 
-    private Widget[] copyWidgets(Widget[] widgetsToCopy) {
-        if (widgetsToCopy.length == 0) {
-            return widgetsToCopy;
-        }
-        ArrayList<Widget> copy = new ArrayList<>(widgetsToCopy.length);
-        for (Widget newWidget : widgetsToCopy) {
-            Widget oldWidget = getWidgetById(newWidget.id);
+    public static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
+        ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
+        for (Widget newWidget : newWidgets) {
+            Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
 
             Widget copyWidget = newWidget.copy();
 
             if (oldWidget != null) {
                 copyWidget.updateValue(oldWidget);
             }
-            copyWidget.isDefaultColor = false;
             copy.add(copyWidget);
         }
 
-        return copy.toArray(new Widget[widgetsToCopy.length]);
+        return copy.toArray(new Widget[newWidgets.length]);
     }
 
     private Tag[] copyTags(Tag[] tagsToCopy) {
@@ -443,6 +466,14 @@ public class DashBoard {
             copy[i] = tagsToCopy[i].copy();
         }
         return copy;
+    }
+
+    //removes devices that has no widgets assigned to
+    //probably those devices were added via device tiles widget
+    public void removeDevicesProvisionedFromDeviceTiles() {
+        List<Device> list = new ArrayList<>(Arrays.asList(this.devices));
+        list.removeIf(device -> !hasWidgetsByDeviceId(device.id));
+        this.devices = list.toArray(new Device[list.size()]);
     }
 
     @Override
