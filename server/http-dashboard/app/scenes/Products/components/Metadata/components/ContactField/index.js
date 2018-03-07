@@ -22,13 +22,88 @@ class ContactField extends BaseField {
   }
 
   getPreviewValues() {
-
     const name = this.props.field.get('name');
-    const value = this.props.field.get('value');
+    let value = [];
+
+    const fields = [
+      {
+        name: 'firstName',
+        check: 'isFirstNameEnabled'
+      },
+      {
+        name: 'lastName',
+        check: 'isLastNameEnabled'
+      },
+      {
+        name: 'email',
+        check: 'isEmailEnabled'
+      },
+      {
+        name: 'phone',
+        check: 'isPhoneEnabled'
+      },
+      {
+        name: 'streetAddress',
+        check: 'isStreetAddressEnabled'
+      },
+      {
+        name: 'city',
+        check: 'isCityEnabled'
+      },
+      {
+        name: 'state',
+        check: 'isStateEnabled'
+      },
+      {
+        name: 'zip',
+        check: 'isZipEnabled'
+      },
+
+    ];
+
+    const placeholders = {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'mail@example.com',
+      phone: '+1 555 55 55',
+      streetAddress: 'Street Address',
+      city: 'City',
+      state: 'State',
+      zip: 'ZIP'
+    };
+
+    const checkIsFieldValid = (field) => {
+      return !!this.props.field.get(field.check);
+    };
+
+    if( fields.slice(0, 2).every(checkIsFieldValid) ) {
+      let firstName, lastName;
+      if(this.props.field.get('isDefaultsEnabled')) {
+        firstName = this.props.field.get(fields[0].name) || placeholders.firstName;
+        lastName = this.props.field.get(fields[1].name) || placeholders.lastName;
+      } else {
+        firstName = placeholders.firstName;
+        lastName = placeholders.lastName;
+      }
+      value.push(`${firstName}, ${lastName}`);
+    }
+
+    (value.length ? fields.slice(2) : fields).forEach((field) => {
+      if (checkIsFieldValid(field)) {
+        if (this.props.field.get('isDefaultsEnabled') && this.props.field.get(field.name)) {
+          value.push(
+            this.props.field.get(field.name)
+          );
+        } else {
+          value.push(placeholders[field.name]);
+        }
+      }
+    });
 
     return {
       name: name && typeof name === 'string' ? `${name.trim()}` : null,
-      value: value && typeof value === 'string' ? value.trim() : null
+      value: value.length ? value.join('\n') : null,
+      inline: !!value.length
     };
   }
 

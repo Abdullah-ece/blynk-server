@@ -274,7 +274,7 @@ class ProductEdit extends React.Component {
               </Tabs.TabPane>
 
               <Tabs.TabPane tab={<span>{this.productMetadataInvalidIcon()}Metadata</span>} key={TABS.METADATA} forceRender={true}>
-                <FieldArray name={`metaFields`} component={MetadataTab}/>
+                <FieldArray name={`metaFields`} component={MetadataTab} rerenderOnEveryChange={true}/>
               </Tabs.TabPane>
 
               <Tabs.TabPane tab={<span>{this.productDataStreamsInvalidIcon()}Data Streams</span>} key={TABS.DATA_STREAMS} forceRender={true}>
