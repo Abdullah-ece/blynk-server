@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.web.WebSource;
 
 /**
  * The Blynk Project.
@@ -25,6 +26,7 @@ public final class EmptyArraysUtil {
     }
 
     public static final int[] EMPTY_INTS = {};
+    public static final WebSource[] EMPTY_WEB_SOURCES = {};
     public static final DashBoard[] EMPTY_DASHBOARDS = {};
     public static final Tag[] EMPTY_TAGS = {};
     public static final Device[] EMPTY_DEVICES = {};

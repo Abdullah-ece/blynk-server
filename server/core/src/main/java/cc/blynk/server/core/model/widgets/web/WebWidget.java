@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.widgets.Widget;
 
 import java.util.Arrays;
 
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WEB_SOURCES;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -13,7 +15,7 @@ import java.util.Arrays;
  */
 public abstract class WebWidget extends Widget {
 
-    public WebSource[] sources;
+    public WebSource[] sources = EMPTY_WEB_SOURCES;
 
     @Override
     //deviceId is not actually used here. this api is left from mobile
