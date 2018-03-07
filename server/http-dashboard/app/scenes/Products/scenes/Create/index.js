@@ -350,6 +350,7 @@ class Create extends React.Component {
         form={FORMS.PRODUCTS_PRODUCT_MANAGE}
         formSyncErrors={this.props.formSyncErrors}
         params={params}
+        isProductClone={false}
         // product={this.props.product}
         // isInfoFormInvalid={this.props.isProductInfoInvalid}
         // isEventsFormInvalid={this.isEventsFormInvalid()}
