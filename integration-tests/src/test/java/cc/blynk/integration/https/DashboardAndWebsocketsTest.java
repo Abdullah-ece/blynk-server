@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.IntegrationBase.appSync;
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
@@ -185,6 +186,23 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
 
         appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 10 1")));
+    }
+
+    @Test
+    public void webSocketDoesNotRetrieveCommandForItself() throws Exception {
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(regularUser);
+        appWebSocketClient2.verifyResult(ok(1));
+
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.verifyResult(appSync(2, b("0-0 vw 10 100")));
+        appWebSocketClient.never(appSync(2, b("0-0 vw 10 100")));
     }
 
     @Test

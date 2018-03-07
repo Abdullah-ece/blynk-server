@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
@@ -16,6 +17,7 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -70,7 +72,8 @@ public class WebAppHardwareLogic {
         device.webDashboard.update(device.id, pin, pinType, value);
 
         //sending to shared dashes and master-master apps
-        session.sendToApps(APP_SYNC, message.id, 0, deviceId, message.body);
+        session.sendToSharedApps(ctx.channel(), SharedTokenManager.ALL,
+                APP_SYNC, message.id, "0" + DEVICE_SEPARATOR + message.body);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
             log.debug("No device in session.");
