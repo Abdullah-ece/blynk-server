@@ -67,6 +67,39 @@ export const Handlers = (params) => {
     }));
   };
 
+  const appSyncHandler = ({ msgId }) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage AppSync", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: bodyArray
+      });
+
+    store.dispatch(blynkWsResponse({
+      id      : msgId,
+      response: {
+        command: command,
+        body   : bodyArray
+      }
+    }));
+
+    const deviceId = bodyArray[0].replace('0-', '');
+    const pin = bodyArray[2];
+    const value = bodyArray[3];
+
+    store.dispatch(blynkVW({
+      deviceId: Number(deviceId),
+      pin: Number(pin),
+      value: value
+    }));
+
+  };
+
   const unknownCommandHandler = () => {
 
     if (options.isDebugMode)
@@ -87,6 +120,7 @@ export const Handlers = (params) => {
   return {
     ResponseHandler: responseHandler,
     HardwareHandler: hardwareHandler,
+    AppSyncHandler: appSyncHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };
 };

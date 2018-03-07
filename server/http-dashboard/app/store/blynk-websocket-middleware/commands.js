@@ -20,6 +20,7 @@ export const COMMANDS = {
   RESPONSE: 0,
   LOGIN   : 2,
   HARDWARE: 20,
+  APP_SYNC: 25,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -135,6 +136,12 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.HARDWARE) {
 
     handlers.HardwareHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.APP_SYNC) {
+
+    handlers.AppSyncHandler({
       msgId: ++MSG_ID
     });
 
