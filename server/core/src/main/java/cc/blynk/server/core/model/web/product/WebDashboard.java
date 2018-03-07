@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.ArrayUtil;
@@ -32,6 +33,10 @@ public class WebDashboard implements CopyObject<WebDashboard> {
     @Override
     public WebDashboard copy() {
         return new WebDashboard(ArrayUtil.copy(this.widgets, Widget.class));
+    }
+
+    public void update(WebDashboard updatedDashboard) {
+        this.widgets = DashBoard.copyWidgetsAndPreservePrevValues(widgets, updatedDashboard.widgets);
     }
 
     public boolean update(int deviceId, byte pin, PinType type, String value) {

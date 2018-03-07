@@ -26,6 +26,7 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -75,7 +76,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = createProduct();
+        newDevice.productId = createProduct().id;
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
@@ -139,7 +140,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = createProduct();
+        newDevice.productId = createProduct().id;
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
@@ -190,9 +191,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
     public void webSocketRetrievesCommandFromExternalApiForOneDeviceOnly() throws Exception {
         login(regularUser.email, regularUser.pass);
 
+        Product product = createProduct();
+
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = createProduct();
+        newDevice.productId = product.id;
 
         Device newDevice2 = new Device();
         newDevice2.name = "My New Device 2";
@@ -243,25 +246,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             Device device2 = getDeviceById(devices, 2);
             assertEquals("666", ((WebLabel) device1.webDashboard.widgets[1]).sources[0].dataStream.value);
             assertNull(((WebLabel) device2.webDashboard.widgets[1]).sources[0].dataStream.value);
-
-            System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
         }
-    }
-
-    private int createProduct() throws Exception {
-        Product product = new Product();
-        product.name = "My Product";
-        product.description = "Description";
-        product.boardType = "ESP8266";
-        product.logoUrl = "/logoUrl";
-        product.connectionType = ConnectionType.WI_FI;
-        product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
-        };
 
         WebSwitch webSwitch = new WebSwitch();
         webSwitch.label = "123";
+        webSwitch.id = 1;
         webSwitch.x = 1;
         webSwitch.y = 2;
         webSwitch.height = 10;
@@ -276,6 +265,112 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         WebLabel webLabel = new WebLabel();
         webLabel.label = "123";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
+        };
+
+        WebLabel webLabelNew = new WebLabel();
+        webLabelNew.label = "123";
+        webLabelNew.id = 3;
+        webLabelNew.x = 4;
+        webLabelNew.y = 2;
+        webLabelNew.height = 10;
+        webLabelNew.width = 20;
+        webLabelNew.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 3, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
+        };
+
+        product.webDashboard.widgets = new Widget[] {
+                webSwitch,
+                webLabel,
+                webLabelNew
+        };
+
+        HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(3, devices.length);
+
+            Device device1 = getDeviceById(devices, 1);
+            Device device2 = getDeviceById(devices, 2);
+            assertEquals("666", ((WebLabel) device1.webDashboard.widgets[1]).sources[0].dataStream.value);
+            assertNull(((WebLabel) device2.webDashboard.widgets[1]).sources[0].dataStream.value);
+        }
+
+        putValueViaGet = new HttpGet(apiUrl + token + "/update/v2?value=777");
+        try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 2 777")));
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device[] devices = JsonParser.readAny(responseString, Device[].class);
+            assertNotNull(devices);
+            assertEquals(3, devices.length);
+
+            Device device1 = getDeviceById(devices, 1);
+            Device device2 = getDeviceById(devices, 2);
+            assertEquals("777", ((WebLabel) device1.webDashboard.widgets[1]).sources[0].dataStream.value);
+            assertNull(((WebLabel) device2.webDashboard.widgets[1]).sources[0].dataStream.value);
+        }
+    }
+
+    private Product createProduct() throws Exception {
+        Product product = new Product();
+        product.name = "My Product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.logoUrl = "/logoUrl";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
+        };
+
+        WebSwitch webSwitch = new WebSwitch();
+        webSwitch.label = "123";
+        webSwitch.id = 1;
+        webSwitch.x = 1;
+        webSwitch.y = 2;
+        webSwitch.height = 10;
+        webSwitch.width = 20;
+        webSwitch.sources = new WebSource[] {
+                new WebSource("some switch", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
+        };
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.id = 2;
         webLabel.x = 4;
         webLabel.y = 2;
         webLabel.height = 10;
@@ -302,7 +397,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(fromApi));
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
-            return fromApi.id;
+            return fromApi;
         }
     }
 
