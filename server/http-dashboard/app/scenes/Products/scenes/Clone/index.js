@@ -203,7 +203,10 @@ class Clone extends React.Component {
 
   componentWillMount() {
 
-    this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, this.props.product.toJS());
+    this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, {
+      ...this.props.product.toJS(),
+      name: this.props.product.toJS().name + " copy"
+    });
 
     //
     // const checkForPermission = (org) => {
