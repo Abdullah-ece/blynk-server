@@ -90,6 +90,10 @@ export default function Product(state = initialState, action, DevicesState) {
   switch (action.type) {
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
+
+      if(!state.hasIn(['widgetsData', String(action.value.deviceId)]))
+        return state;
+
       return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
         if(widget.map) {
 
@@ -110,6 +114,9 @@ export default function Product(state = initialState, action, DevicesState) {
       }));
 
     case ACTIONS.BLYNK_WS_HARDWARE:
+      if(!state.hasIn(['widgetsData', String(action.value.deviceId)]))
+        return state;
+
       return state.updateIn(['widgetsData', String(action.value.deviceId)], (device) => device.map((widget) => {
         if(widget.map) {
 
