@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.web;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 
@@ -15,6 +16,7 @@ public abstract class WebWidget extends Widget {
     public WebSource[] sources;
 
     @Override
+    //deviceId is not actually used here. this api is left from mobile
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         for (WebSource source : sources) {
             if (source.dataStream.isSame(pin, type)) {
@@ -42,6 +44,13 @@ public abstract class WebWidget extends Widget {
 
     @Override
     public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof WebWidget) {
+            WebWidget oldWebWidget = (WebWidget) oldWidget;
+            for (WebSource oldSource : oldWebWidget.sources) {
+                DataStream oldDataStream = oldSource.dataStream;
+                updateIfSame(0, oldDataStream.pin, oldDataStream.pinType, oldDataStream.value);
+            }
+        }
     }
 
     @Override
