@@ -46,6 +46,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
@@ -168,6 +169,7 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.remove(HttpObjectAggregator.class);
                 pipeline.remove(HttpServerKeepAliveHandler.class);
                 pipeline.remove(ExternalAPIHandler.class);
+                pipeline.remove(HttpContentCompressor.class);
                 pipeline.remove(this);
                 if (log.isTraceEnabled()) {
                     log.trace("Initialized web dashboard pipeline. {}", ctx.pipeline().names());
@@ -194,7 +196,7 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.remove(HttpObjectAggregator.class);
                 pipeline.remove(HttpServerKeepAliveHandler.class);
                 pipeline.remove(ExternalAPIHandler.class);
-
+                pipeline.remove(HttpContentCompressor.class);
                 pipeline.remove(this);
                 if (log.isTraceEnabled()) {
                     log.trace("Initialized secured hardware websocket pipeline. {}", ctx.pipeline().names());
@@ -214,6 +216,7 @@ public class AppAndHttpsServer extends BaseServer {
                         return pipeline
                                 .addLast("HttpsServerCodec", new HttpServerCodec())
                                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
+                                .addLast("HttpCompressor", new HttpContentCompressor())
                                 .addLast("HttpsObjectAggregator",
                                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
                                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
