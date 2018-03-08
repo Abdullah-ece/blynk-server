@@ -49,6 +49,21 @@ class Notifications extends React.Component {
       props.input.onChange(value);
     };
 
+    const onBlur = (value) => {
+      if(value)
+        value = value.map((id) => {
+          const field = this.props.contactMetaFields.find((field) => Number(field.get('id')) === Number(id));
+
+          return {
+            metaFieldId: field.get('id'),
+            type: field.get('type'),
+            value: field.get('name')
+          };
+        });
+
+      props.input.onBlur(value);
+    };
+
     const options = this.props.contactMetaFields.map((field) => {
 
       return (
@@ -64,7 +79,7 @@ class Notifications extends React.Component {
       <Select mode="tags"
               style={{width: '100%'}}
               onFocus={props.input.onFocus}
-              onBlur={props.input.onBlur}
+              onBlur={onBlur}
               value={getValue()}
               onChange={onChange}
               allowClear={true}

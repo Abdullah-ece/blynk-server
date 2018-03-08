@@ -28,7 +28,7 @@ import {connect} from 'react-redux';
     return fromJS((formValues.get('metaFields') || []).filter(
       (metaField) => (
         (metaField.get('type') === Metadata.Fields.CONTACT && metaField.get('isEmailEnabled')) ||
-        (metaField.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner && !!metaField.get('value'))
+        (metaField.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner)
       )
     ));
   })()
