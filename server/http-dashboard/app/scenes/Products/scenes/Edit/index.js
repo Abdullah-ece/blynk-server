@@ -167,7 +167,7 @@ class Edit extends React.Component {
     // this.onDataStreamsFieldChange = this.onDataStreamsFieldChange.bind(this);
     // this.onDataStreamsFieldsChange = this.onDataStreamsFieldsChange.bind(this);
     this.handleProductSaveSuccess = this.handleProductSaveSuccess.bind(this);
-    this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdateSubmit.bind(this);
+    this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdate.bind(this);
     this.handleDevicesForceUpdateCancel = this.handleDevicesForceUpdateCancel.bind(this);
   }
 
@@ -267,7 +267,7 @@ class Edit extends React.Component {
         isDevicesForceUpdateVisible: true
       });
 
-      this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdateSubmit.bind(this, product);
+      this.handleDevicesForceUpdateSubmit = this.handleDevicesForceUpdate.bind(this, product);
     } else {
       this.saveProductWithoutDevicesUpdate(product);
     }
@@ -303,7 +303,10 @@ class Edit extends React.Component {
   // }
   //
 
-  handleDevicesForceUpdateSubmit(product, value) {
+  handleDevicesForceUpdate(product, value) {
+
+    console.log('go', value);
+
     if (value === DEVICE_FORCE_UPDATE.UPDATE_DEVICES) {
       this.saveProductAndUpdateDevices(product);
     } else if (value === DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE) {
