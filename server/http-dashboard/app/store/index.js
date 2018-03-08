@@ -1,5 +1,4 @@
 import {createStore, compose, applyMiddleware} from 'redux';
-import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
@@ -64,7 +63,6 @@ function configureStoreProd(initialState) {
   const middlewares = [
     wsMiddleware,
     blynkWsMiddleware,
-    thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
 
@@ -96,7 +94,6 @@ function configureStoreDev() {
   const middlewares = [
     wsMiddleware,
     blynkWsMiddleware,
-    thunk,
     axiosMiddleware(axiosAPI, axiosMiddlewareOptions)
   ];
 
