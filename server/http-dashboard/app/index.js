@@ -4,9 +4,19 @@ import {Router, Route, Redirect, useRouterHistory} from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 import Perf from 'react-addons-perf';
+import wdu from 'why-did-you-update';
+
 import './canvasjs';
 
-window.Perf = Perf;
+(() => {
+  if (process.env.NODE_ENV !== 'production') {
+    wdu(React, {
+      groupByComponent: true
+    });
+
+    window.Perf = Perf;
+  }
+})();
 
 /* components */
 import Layout, {UserLayout} from './components/Layout';

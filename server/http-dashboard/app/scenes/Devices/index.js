@@ -5,12 +5,6 @@ import {
 
 import PropTypes from 'prop-types';
 
-import wdu from 'why-did-you-update';
-
-wdu(React, {
-  groupByComponent: true
-});
-
 class Devices extends React.Component {
 
   static propTypes = {
