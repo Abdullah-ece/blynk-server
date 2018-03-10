@@ -1,8 +1,8 @@
 import {fromJS} from 'immutable';
-import {
-  DEVICES_SORT,
-  TIMELINE_TIME_FILTERS
-} from 'services/Devices';
+// import {
+//   DEVICES_SORT,
+//   TIMELINE_TIME_FILTERS
+// } from 'services/Devices';
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 import {WIDGET_TYPES} from "services/Widgets";
@@ -21,31 +21,34 @@ const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   return device;
 };
 
-const initialState = fromJS({
-  devicesLoading: false,
-  devices: [],
-  timeline: {},
-  sorting: {
-    value: DEVICES_SORT.REQUIRE_ATTENTION.key
-  },
-  deviceDetails: {
-    info: {
-      loading: true,
-      data: null
-    },
-    timeline: {
-      loading: true,
-      data: null
-    },
-    dashboard: {},
-    labels: {}
-  },
-  deviceCreate: {
-    organizationLoading: false,
-    data: null
-  },
-  timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
-});
+const initialState = {
+
+  devices: []
+
+  // devicesLoading: false,
+  // devices: [],
+  // timeline: {},
+  // sorting: {
+  //   value: DEVICES_SORT.REQUIRE_ATTENTION.key
+  // },
+  // deviceDetails: {
+  //   info: {
+  //     loading: true,
+  //     data: null
+  //   },
+  //   timeline: {
+  //     loading: true,
+  //     data: null
+  //   },
+  //   dashboard: {},
+  //   labels: {}
+  // },
+  // deviceCreate: {
+  //   organizationLoading: false,
+  //   data: null
+  // },
+  // timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
+};
 
 
 function updateDeviceDetailsWidgets(state, action) {
@@ -83,22 +86,42 @@ export default function Devices(state = initialState, action) {
       return updateDeviceDetailsWidgets(state, action);
 
     case "API_DEVICES_FETCH":
-      return state.set('devicesLoading', true);
+      return {
+        ...state,
+        devicesLoading: true
+      };
 
     case "API_DEVICES_FAILURE":
-      return state.set('devicesLoading', true);
+      return {
+        ...state,
+        devicesLoading: false
+      };
 
     case "API_DEVICES_FETCH_SUCCESS":
-      return state.set('devices', fromJS(action.payload.data))
-        .set('devicesLoading', false);
+      return {
+        ...state,
+        devices: action.payload.data.map((device) => ({
+          id: Number(device.id),
+          name: device.name,
+          productName: device.productName,
+          criticalSinceLastView: device.criticalSinceLastView,
+          warningSinceLastView: device.warningSinceLastView,
+        })),
+        devicesLoading: false
+      };
 
     case "API_DEVICE_FETCH_SUCCESS":
-      return state.update('devices', (devices) => {
-        return devices.map((device) => (
-          device.get('id') === action.payload.data.id ?
-            fromJS(action.payload.data) : device
-        ));
+      const devices = [...state.devices].map((device) => {
+        if(device.id === action.payload.data.id)
+          return action.payload.data;
+
+        return device;
       });
+
+      return {
+        ...state,
+        devices: devices
+      };
 
     case "API_DEVICES_UPDATE_SUCCESS":
       return state.set('devices', fromJS(action.payload.data));

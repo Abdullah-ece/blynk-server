@@ -2,14 +2,22 @@ import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
 import {Badge} from 'antd';
 import classnames from 'classnames';
-import {Map} from 'immutable';
+import PropTypes from 'prop-types';
+import {onlyUpdateForKeys} from 'recompose';
 
+@onlyUpdateForKeys(['device', 'active'])
 class DeviceItem extends React.Component {
 
   static propTypes = {
-    device: React.PropTypes.instanceOf(Map),
-    onClick: React.PropTypes.func,
-    active: React.PropTypes.bool
+    device: PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      productName: PropTypes.string,
+      criticalSinceLastView: PropTypes.number,
+      warningSinceLastView: PropTypes.number,
+    }),
+    onClick: PropTypes.func,
+    active: PropTypes.bool
   };
 
   constructor(props) {
@@ -17,6 +25,13 @@ class DeviceItem extends React.Component {
 
     this.handleDeviceClick = this.handleDeviceClick.bind(this);
   }
+
+  // shouldComponentUpdate(nextProps) {
+  //   return (
+  //     !_.isEqual(nextProps.device, this.props.device) ||
+  //     !_.isEqual(nextProps.active, this.props.active)
+  //   );
+  // }
 
   handleDeviceClick() {
     this.props.onClick(this.props.device);
@@ -32,18 +47,18 @@ class DeviceItem extends React.Component {
       <div className={className} onClick={this.handleDeviceClick}>
         <div className="navigation-devices-list-item-inner">
           <div className="navigation-devices-list-item-name">
-            <Dotdotdot clamp={1}>{this.props.device.get('name')}</Dotdotdot>
+            <Dotdotdot clamp={1}>{this.props.device.name}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-product-name">
-            <Dotdotdot clamp={1}>{this.props.device.has('productName') && this.props.device.get('productName') || (
+            <Dotdotdot clamp={1}>{this.props.device.productName || (
               <i>No Product Name</i>)}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-events">
-            {this.props.device.has('criticalSinceLastView') && (
-              <Badge count={this.props.device.get('criticalSinceLastView')} className="critical"/>
+            {this.props.device.criticalSinceLastView && (
+              <Badge count={this.props.device.criticalSinceLastView} className="critical"/>
             )}
-            {!this.props.device.has('criticalSinceLastView') && this.props.device.has('warningSinceLastView') && (
-              <Badge count={this.props.device.get('warningSinceLastView')} className="warning"/>
+            {!this.props.device.criticalSinceLastView && this.props.device.warningSinceLastView && (
+              <Badge count={this.props.device.warningSinceLastView} className="warning"/>
             )}
           </div>
         </div>

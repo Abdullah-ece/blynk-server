@@ -1,23 +1,26 @@
 import React from 'react';
-import {List} from 'immutable';
 import DeviceItem from '../DeviceItem';
+import PropTypes from 'prop-types';
 
 class AllDevices extends React.Component {
 
   static propTypes = {
-    devices: React.PropTypes.instanceOf(List),
+    devices: PropTypes.array,
 
-    isActive: React.PropTypes.func,
-    handleDeviceSelect: React.PropTypes.func,
+    activeDeviceId    : PropTypes.number,
+    handleDeviceSelect: PropTypes.func,
   };
 
   render() {
+
+    const {activeDeviceId} = this.props;
+
     return (
       <div className="navigation-devices-list">
         {this.props.devices && this.props.devices.map((device) => (
-          <DeviceItem key={device.get('id')}
+          <DeviceItem key={device.id}
                       device={device}
-                      active={this.props.isActive(device)}
+                      active={device.id === activeDeviceId}
                       onClick={this.props.handleDeviceSelect}
           />
         ))}

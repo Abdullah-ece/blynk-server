@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import {Router, Route, Redirect, useRouterHistory} from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
-
+import Perf from 'react-addons-perf';
 import './canvasjs';
+
+window.Perf = Perf;
 
 /* components */
 import Layout, {UserLayout} from './components/Layout';

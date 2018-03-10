@@ -1,17 +1,12 @@
 import React from 'react';
-import DevicesList from './../DevicesList';
+import DevicesListScene from 'scenes/Devices/scenes/DevicesList';
 import PageLayout from 'components/PageLayout';
-import DevicesSearch from './../DevicesSearch';
-import DevicesToolbar from './../DevicesToolbar';
-import {
-  DeviceDetails as DeviceDetailsScene
-} from 'scenes/Devices/scenes';
 import _ from 'lodash';
 import {
   Icon
 } from 'antd';
 import {
-  DEVICES_FILTERS,
+  // DEVICES_FILTERS,
   DEVICES_SORT,
 } from 'services/Devices';
 import {List} from "immutable";
@@ -74,12 +69,18 @@ class Index extends React.Component {
     }
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleDeviceSelect = this.handleDeviceSelect.bind(this);
+  }
+
   shouldComponentUpdate(nextProps) {
     return !(_.isEqual(nextProps.devicesSearchValue, this.props.devicesSearchValue)) || !(_.isEqual(nextProps.filterValue, this.props.filterValue)) || !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
   }
 
   handleDeviceSelect(device) {
-    this.context.router.push(`/devices/${device.get('id')}`);
+    this.context.router.push(`/devices/${device.id}`);
   }
 
   render() {
@@ -87,42 +88,43 @@ class Index extends React.Component {
     if (!this.props.params.id)
       return null;
 
-    let sortingOptionsList = [];
-
-    if(this.props.filterValue === DEVICES_FILTERS.ALL_DEVICES) {
-      sortingOptionsList = [
-        Index.sortingOptions.STATUS,
-        Index.sortingOptions.AZ,
-        Index.sortingOptions.ZA,
-        Index.sortingOptions.DATE_ASC,
-        Index.sortingOptions.DATE_DESC,
-        Index.sortingOptions.REPORTED_ASC,
-        Index.sortingOptions.REPORTED_DESC,
-      ];
-    } else {
-      sortingOptionsList = [
-        Index.sortingOptions.STATUS,
-        Index.sortingOptions.AZ,
-        Index.sortingOptions.ZA,
-      ];
-    }
+    // let sortingOptionsList = [];
+    //
+    // if(this.props.filterValue === DEVICES_FILTERS.ALL_DEVICES) {
+    //   sortingOptionsList = [
+    //     Index.sortingOptions.STATUS,
+    //     Index.sortingOptions.AZ,
+    //     Index.sortingOptions.ZA,
+    //     Index.sortingOptions.DATE_ASC,
+    //     Index.sortingOptions.DATE_DESC,
+    //     Index.sortingOptions.REPORTED_ASC,
+    //     Index.sortingOptions.REPORTED_DESC,
+    //   ];
+    // } else {
+    //   sortingOptionsList = [
+    //     Index.sortingOptions.STATUS,
+    //     Index.sortingOptions.AZ,
+    //     Index.sortingOptions.ZA,
+    //   ];
+    // }
 
     return (
       <PageLayout>
         <PageLayout.Navigation>
-          <DevicesSearch sortingOptions={sortingOptionsList}
-                         devicesSortValue={this.props.devicesSortValue}
-                         devicesSortChange={this.props.devicesSortChange}/>
-          <DevicesToolbar filterValue={this.props.filterValue}
-                          onFilterChange={this.props.onFilterChange}
-                          location={this.props.location} params={this.props.params}/>
-          <DevicesList type={this.props.filterValue}
-                       devicesSearchValue={this.props.devicesSearchValue}
-                       devices={this.props.devices} activeId={Number(this.props.params.id)}
-                       onDeviceSelect={this.handleDeviceSelect.bind(this)}/>
+          <DevicesListScene activeDeviceId={Number(this.props.params.id)} onDeviceSelect={this.handleDeviceSelect}/>
+          {/*<DevicesSearch sortingOptions={sortingOptionsList}*/}
+                         {/*devicesSortValue={this.props.devicesSortValue}*/}
+                         {/*devicesSortChange={this.props.devicesSortChange}/>*/}
+          {/*<DevicesToolbar filterValue={this.props.filterValue}*/}
+                          {/*onFilterChange={this.props.onFilterChange}*/}
+                          {/*location={this.props.location} params={this.props.params}/>*/}
+          {/*<DevicesList type={this.props.filterValue}*/}
+                       {/*devicesSearchValue={this.props.devicesSearchValue}*/}
+                       {/*devices={this.props.devices} activeId={Number(this.props.params.id)}*/}
+                       {/*onDeviceSelect={this.handleDeviceSelect.bind(this)}/>*/}
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <DeviceDetailsScene params={this.props.params} location={this.props.location}/>
+          {/*<DeviceDetailsScene params={this.props.params} location={this.props.location}/>*/}
         </PageLayout.Content>
       </PageLayout>
     );
