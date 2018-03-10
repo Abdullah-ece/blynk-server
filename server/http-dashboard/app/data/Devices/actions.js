@@ -7,6 +7,13 @@ export function DevicesSortChange(value) {
   };
 }
 
+export function DevicesListFilterValueChange(value) {
+  return {
+    type: 'DEVICES_LIST_FILTER_VALUE_CHANGE',
+    value,
+  };
+}
+
 export function DeviceDetailsUpdate(value) {
   return {
     type: 'DEVICES_DEVICE_DETAILS_UPDATE',

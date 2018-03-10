@@ -1,15 +1,15 @@
 import React from 'react';
 import {Icon} from "antd";
-import {List} from "immutable";
 import FilteredBy from '../FilteredBy';
+import PropTypes from 'prop-types';
 
 class ByProduct extends React.Component {
 
   static propTypes = {
-    devices: React.PropTypes.instanceOf(List),
+    devices: PropTypes.array,
 
-    isActive: React.PropTypes.func,
-    handleDeviceSelect: React.PropTypes.func,
+    activeDeviceId: PropTypes.number,
+    handleDeviceSelect: PropTypes.func,
   };
 
   render() {
@@ -18,7 +18,7 @@ class ByProduct extends React.Component {
       <FilteredBy icon={(<Icon type="appstore-o"/>)}
                   othersLabel={'Devices with no Products assigned'}
                   devices={this.props.devices}
-                  isActive={this.props.isActive}
+                  activeDeviceId={this.props.activeDeviceId}
                   handleDeviceSelect={this.props.handleDeviceSelect}/>
     );
   }

@@ -1,17 +1,17 @@
 import React from 'react';
 import {Collapse} from "antd";
-import {List} from "immutable";
 import DeviceItem from '../DeviceItem';
 import PropTypes from 'prop-types';
 
 class FilteredBy extends React.Component {
 
   static propTypes = {
-    devices: PropTypes.instanceOf(List),
+    devices: PropTypes.array,
 
     othersLabel: PropTypes.string,
 
-    isActive: PropTypes.func,
+    activeDeviceId: PropTypes.number,
+
     handleDeviceSelect: PropTypes.func,
 
     icon: PropTypes.oneOfType([
@@ -28,25 +28,25 @@ class FilteredBy extends React.Component {
 
           {this.props.devices && this.props.devices.map((group) => {
 
-            if (!group.get('items').size)
+            if (!group.items || !group.items.length)
               return null;
 
             let header = '';
 
-            if (group.get('isOthers')) {
+            if (group.isOthers) {
               header = (<span>{this.props.othersLabel}</span>);
             } else {
-              header = (<div>{this.props.icon || null} {group.get('name')}</div>);
+              header = (<div>{this.props.icon || null} {group.name}</div>);
             }
 
             return (
-              <Collapse.Panel header={header} key={group.get('name')}>
+              <Collapse.Panel header={header} key={group.name}>
 
                 <div className="navigation-devices-list-items--content">
-                  {group && group.get('items').size && group.get('items').map((device) => (
-                    <DeviceItem key={device.get('id')}
+                  {group && group.items && group.items.length && group.items.map((device) => (
+                    <DeviceItem key={device.id}
                                 device={device}
-                                active={this.props.isActive(device)}
+                                active={this.props.activeDeviceId === device.id}
                                 onClick={this.props.handleDeviceSelect}
                     />
                   )) || null}

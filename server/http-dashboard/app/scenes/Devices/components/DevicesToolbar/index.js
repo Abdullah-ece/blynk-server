@@ -1,54 +1,42 @@
 import React from 'react';
 import {Button, Tooltip} from 'antd';
-import DeviceCreateModal from '../DeviceCreateModal';
+// import DeviceCreateModal from '../DeviceCreateModal';
 import {
-  reduxForm,
-} from 'redux-form';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {DeviceSmartSearchState} from 'data/Storage/actions';
-import {
-  DEVICES_FILTER_FORM_NAME,
   DEVICES_FILTERS,
 } from 'services/Devices';
 import './styles.less';
+import PropTypes from 'prop-types';
 
-@connect((state) => ({
-  smartSearch: state.Storage.deviceSmartSearch
-}), (dispatch) => ({
-  setSmartSearch: bindActionCreators(DeviceSmartSearchState, dispatch)
-}))
-@reduxForm({
-  form: DEVICES_FILTER_FORM_NAME,
-  initialValues: {
-    filter: DEVICES_FILTERS.DEFAULT
-  }
-})
 class DevicesToolbar extends React.Component {
 
   static contextTypes = {
-    router: React.PropTypes.object,
+    router: PropTypes.object,
   };
 
   static propTypes = {
-    filterValue: React.PropTypes.string,
+    devicesFilter: PropTypes.string,
 
-    onFilterChange: React.PropTypes.func,
+    onSmartSearchChange: PropTypes.func,
+    onDevicesFilterChange: PropTypes.func,
 
-    location: React.PropTypes.object,
-    params: React.PropTypes.object,
-    
-    smartSearch: React.PropTypes.bool,
-    setSmartSearch: React.PropTypes.func
+    location: PropTypes.object,
+    params  : PropTypes.object,
+
+    smartSearch: PropTypes.bool,
   };
 
   constructor(props) {
     super(props);
 
-    this.handleAllDevicesSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.ALL_DEVICES);
-    this.handleByLocationSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_LOCATION);
-    this.handleByProductSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_PRODUCT);
-    this.setSmartSearch = this._setSmartSearch.bind(this);
+    // this.handleAllDevicesSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.ALL_DEVICES);
+    // this.handleByLocationSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_LOCATION);
+    // this.handleByProductSelect = this.handleFilterSelect.bind(this, DEVICES_FILTERS.BY_PRODUCT);
+
+    this.displayListOfDevices = this.displayListOfDevices.bind(this);
+    this.filterDevicesByProduct = this.filterDevicesByProduct.bind(this);
+    this.filterDevicesByLocation = this.filterDevicesByLocation.bind(this);
+
+    this.handleSmartSearchChange = this.handleSmartSearchChange.bind(this);
   }
 
   state = {
@@ -61,7 +49,7 @@ class DevicesToolbar extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      this.props.filterValue !== nextProps.filterValue ||
+      this.props.devicesFilter !== nextProps.devicesFilter ||
       this.props.location.pathname !== nextProps.location.pathname ||
       this.props.smartSearch !== nextProps.smartSearch || // super fuzzy logic
                                                           // don't forget to add your props here
@@ -73,9 +61,12 @@ class DevicesToolbar extends React.Component {
     this.checkModalVisibility();
   }
 
-  _setSmartSearch(){
-    const { setSmartSearch, smartSearch } = this.props;
-    return setSmartSearch(!smartSearch);
+  handleSmartSearchChange() {
+    if(typeof this.props.onSmartSearchChange === 'function') {
+      return this.props.onSmartSearchChange(!this.props.smartSearch);
+    }
+
+    return false;
   }
 
   onDeviceCreateModalClose() {
@@ -98,30 +89,43 @@ class DevicesToolbar extends React.Component {
     }
   }
 
-  handleFilterSelect(value) {
-    this.props.onFilterChange(value);
+  handleDevicesFilterChange(value) {
+    if(typeof this.props.onDevicesFilterChange === 'function')
+      this.props.onDevicesFilterChange(value);
+  }
+
+  filterDevicesByLocation() {
+    this.handleDevicesFilterChange(DEVICES_FILTERS.BY_LOCATION);
+  }
+
+  filterDevicesByProduct() {
+    this.handleDevicesFilterChange(DEVICES_FILTERS.BY_PRODUCT);
+  }
+
+  displayListOfDevices() {
+    this.handleDevicesFilterChange(DEVICES_FILTERS.ALL_DEVICES);
   }
 
   render() {
 
-    const {filterValue, smartSearch} = this.props;
+    const {devicesFilter, smartSearch} = this.props;
 
     return (
       <div className="devices--toolbar">
         <Tooltip placement="topRight" title="All Devices" mouseEnterDelay={.75}>
           <Button icon="switcher" size="small"
-                  onClick={this.handleAllDevicesSelect}
-                  className={filterValue === DEVICES_FILTERS.ALL_DEVICES ? 'active' : null}/>
+                  onClick={this.displayListOfDevices}
+                  className={devicesFilter === DEVICES_FILTERS.ALL_DEVICES ? 'active' : null}/>
         </Tooltip>
         <Tooltip placement="top" title="Filter By Location"  mouseEnterDelay={.75}>
           <Button icon="environment-o" size="small"
-                  onClick={this.handleByLocationSelect}
-                  className={filterValue === DEVICES_FILTERS.BY_LOCATION ? 'active' : null}/>
+                  onClick={this.filterDevicesByLocation}
+                  className={devicesFilter === DEVICES_FILTERS.BY_LOCATION ? 'active' : null}/>
         </Tooltip>
         <Tooltip placement="top" title="Filter By Product"  mouseEnterDelay={.75}>
           <Button icon="appstore-o" size="small"
-                  onClick={this.handleByProductSelect}
-                  className={filterValue === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
+                  onClick={this.filterDevicesByProduct}
+                  className={devicesFilter === DEVICES_FILTERS.BY_PRODUCT ? 'active' : null}/>
         </Tooltip>
         <span/>
         <Tooltip placement="top" title="Create new device">
@@ -129,12 +133,12 @@ class DevicesToolbar extends React.Component {
         </Tooltip>
         <Tooltip placement="topRight" title="Smart Search" mouseEnterDelay={.75}>
           <Button icon="search" size="small"
-                  onClick={this.setSmartSearch}
+                  onClick={this.handleSmartSearchChange}
                   className={smartSearch ? 'active' : null}/>
         </Tooltip>
 
-        <DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}
-                           onClose={this.onDeviceCreateModalClose.bind(this)}/>
+        {/*<DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}*/}
+                           {/*onClose={this.onDeviceCreateModalClose.bind(this)}/>*/}
 
       </div>
     );

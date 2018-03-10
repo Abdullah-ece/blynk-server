@@ -11,7 +11,9 @@ import './canvasjs';
 (() => {
   if (process.env.NODE_ENV !== 'production') {
     wdu(React, {
-      groupByComponent: true
+      groupByComponent: true,
+      /* excluding ANT components */
+      exclude: /^(Button|Tooltip|ScrollNumber|AnimateChild|Badge|LazyRenderBox|PopupInner|Popup|PanelContent)/
     });
 
     window.Perf = Perf;

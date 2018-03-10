@@ -1,8 +1,13 @@
 import {fromJS} from 'immutable';
-// import {
-//   DEVICES_SORT,
-//   TIMELINE_TIME_FILTERS
-// } from 'services/Devices';
+import {
+  // DEVICES_SORT,
+  // TIMELINE_TIME_FILTERS,
+  DEVICES_FILTERS
+} from 'services/Devices';
+import {
+  hardcodedRequiredMetadataFieldsNames
+} from 'services/Products';
+
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 import {WIDGET_TYPES} from "services/Widgets";
@@ -23,7 +28,9 @@ const cutDeviceNameMetaFieldFromMetaFields = (device) => {
 
 const initialState = {
 
-  devices: []
+  devices: [],
+
+  devicesListFilterValue: DEVICES_FILTERS.DEFAULT
 
   // devicesLoading: false,
   // devices: [],
@@ -79,6 +86,12 @@ export default function Devices(state = initialState, action) {
     case "DEVICES_TIME_FILTER_UPDATE":
       return state.set('timeFilter', action.value);
 
+    case "DEVICES_LIST_FILTER_VALUE_CHANGE":
+      return {
+        ...state,
+        devicesListFilterValue: action.value,
+      };
+
     case ACTIONS.BLYNK_WS_HARDWARE:
       return updateDeviceDetailsWidgets(state, action);
 
@@ -98,6 +111,16 @@ export default function Devices(state = initialState, action) {
       };
 
     case "API_DEVICES_FETCH_SUCCESS":
+
+      const getLocationMetaFieldOnly = (metaFields) => {
+        if(!metaFields || !metaFields.length)
+          return [];
+
+        return metaFields.map((field) => (
+          field && field.name && String(field.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName
+        ));
+      };
+
       return {
         ...state,
         devices: action.payload.data.map((device) => ({
@@ -106,6 +129,8 @@ export default function Devices(state = initialState, action) {
           productName: device.productName,
           criticalSinceLastView: device.criticalSinceLastView,
           warningSinceLastView: device.warningSinceLastView,
+          //get location metafield to be able group devices list by location
+          metaFields: getLocationMetaFieldOnly(device.metaFields)
         })),
         devicesLoading: false
       };
