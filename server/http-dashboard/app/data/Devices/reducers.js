@@ -30,7 +30,12 @@ const initialState = {
 
   devices: [],
 
-  devicesListFilterValue: DEVICES_FILTERS.DEFAULT
+  devicesListFilterValue: DEVICES_FILTERS.DEFAULT,
+
+  deviceCreationModal: {
+    organizations: [],
+    organizationsLoading: false
+  }
 
   // devicesLoading: false,
   // devices: [],
@@ -179,8 +184,33 @@ export default function Devices(state = initialState, action) {
         });
       });
 
+    case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH":
+      return {
+        ...state,
+        deviceCreationModal: {
+          ...state.deviceCreationModal,
+          organizationsLoading: true
+        }
+      };
+
     case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH_SUCCESS":
-      return state.setIn(['deviceCreate', 'data'], fromJS(action.payload.data));
+      return {
+        ...state,
+        deviceCreationModal: {
+          ...state.deviceCreationModal,
+          organizations: action.payload.data,
+          organizationsLoading: false
+        }
+      };
+
+    case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH_FAILURE":
+      return {
+        ...state,
+        deviceCreationModal: {
+          ...state.deviceCreationModal,
+          organizationsLoading: false
+        }
+      };
 
     case "DEVICES_DEVICE_DETAILS_UPDATE":
       return state.set('deviceDetails', action.value);

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Tooltip} from 'antd';
-// import DeviceCreateModal from '../DeviceCreateModal';
+import {DeviceCreateModal} from 'scenes/Devices/scenes';
 import {
   DEVICES_FILTERS,
 } from 'services/Devices';
@@ -37,6 +37,7 @@ class DevicesToolbar extends React.Component {
     this.filterDevicesByLocation = this.filterDevicesByLocation.bind(this);
 
     this.handleSmartSearchChange = this.handleSmartSearchChange.bind(this);
+    this.handleDeviceCreateModalClose = this.handleDeviceCreateModalClose.bind(this);
   }
 
   state = {
@@ -69,7 +70,7 @@ class DevicesToolbar extends React.Component {
     return false;
   }
 
-  onDeviceCreateModalClose() {
+  handleDeviceCreateModalClose() {
     this.context.router.push(`/devices/${this.props.params.id}`);
   }
 
@@ -137,8 +138,8 @@ class DevicesToolbar extends React.Component {
                   className={smartSearch ? 'active' : null}/>
         </Tooltip>
 
-        {/*<DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}*/}
-                           {/*onClose={this.onDeviceCreateModalClose.bind(this)}/>*/}
+        <DeviceCreateModal visible={this.state.isDeviceCreateModalVisible}
+                           onClose={this.handleDeviceCreateModalClose}/>
 
       </div>
     );
