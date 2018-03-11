@@ -1,6 +1,7 @@
 import React from 'react';
 import DeviceItem from '../DeviceItem';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 class AllDevices extends React.Component {
 
@@ -10,6 +11,13 @@ class AllDevices extends React.Component {
     activeDeviceId    : PropTypes.number,
     handleDeviceSelect: PropTypes.func,
   };
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      !_.isEqual(nextProps.devices, this.props.devices) ||
+      !_.isEqual(nextProps.activeDeviceId, this.props.activeDeviceId)
+    );
+  }
 
   render() {
 

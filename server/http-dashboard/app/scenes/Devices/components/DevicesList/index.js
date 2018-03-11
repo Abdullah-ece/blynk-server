@@ -4,7 +4,11 @@ import {
   ByLocation,
   ByProduct
 } from './components';
-import {DEVICES_FILTERS} from 'services/Devices';
+import {
+  DEVICES_FILTERS,
+  DEVICES_SORT,
+  FILTERED_DEVICES_SORT,
+} from 'services/Devices';
 import {
   hardcodedRequiredMetadataFieldsNames
 } from 'services/Products';
@@ -23,12 +27,17 @@ class DevicesList extends React.Component {
       })
     ),
 
-    activeId: React.PropTypes.number,
-    devicesFilterValue: React.PropTypes.string,
-    onDeviceSelect: React.PropTypes.func,
-    devicesSearchValue: React.PropTypes.string,
+    devicesSearchFormValues: PropTypes.object,
 
-    smartSearch: React.PropTypes.bool
+    activeId: PropTypes.number,
+
+    devicesSortValue  : PropTypes.string,
+    devicesFilterValue: PropTypes.string,
+    devicesSearchValue: PropTypes.string,
+
+    onDeviceSelect: PropTypes.func,
+
+    smartSearch: PropTypes.bool
   };
 
   // track scroll to display go top button
@@ -67,15 +76,15 @@ class DevicesList extends React.Component {
 
     _.forEach(filteredDevices, ((value, key) => {
       filteredDevicesList.push({
-        name: key,
+        name : key,
         items: value
       });
     }));
 
     filteredDevicesList.push({
-      name: 'Other Devices',
+      name    : 'Other Devices',
       isOthers: true,
-      items: devicesWithoutLocation
+      items   : devicesWithoutLocation
     });
 
     return filteredDevicesList;
@@ -85,7 +94,7 @@ class DevicesList extends React.Component {
   getLocationName(device) {
     if (device && device.metaFields && device.metaFields.length) {
       return device.metaFields.reduce((location, item) => {
-        if(String(item.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName)
+        if (String(item.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName)
           return item.value;
         return location;
       });
@@ -94,7 +103,7 @@ class DevicesList extends React.Component {
   }
 
   getProductName(device) {
-    if(device && device.productName)
+    if (device && device.productName)
       return device.productName;
 
     return null;
@@ -125,8 +134,62 @@ class DevicesList extends React.Component {
   }
 
   getDevicesList() {
-    const {devices} = this.props;
+
+    const {devices, devicesSearchFormValues, smartSearch} = this.props;
+
+    if (smartSearch) {
+      // search by smart tags
+      const tags = devicesSearchFormValues.tags;
+
+      if (!tags || tags.length === 0) {
+        return devices;
+      }
+
+      const _tags = [...tags];
+      const deviceIds = _.intersection(..._tags.map(t => t.devices));
+
+      return devices.filter(d => deviceIds.indexOf(d.id) !== -1);
+    } else {
+      // search by query
+      const nameToSearch = (devicesSearchFormValues.name || '').trim().toLowerCase();
+
+      if (nameToSearch) {
+        return devices.filter(device =>
+          device.name.toLowerCase().indexOf(nameToSearch) !== -1
+        );
+      }
+    }
+
     return devices;
+
+    // const {devices} = this.props;
+    // return devices;
+  }
+
+  sortDevicesMap(devices, sort) {
+    if (!FILTERED_DEVICES_SORT[sort])
+      return null;
+
+    devices = devices.sort((a, b) => FILTERED_DEVICES_SORT[sort].compare(a, b));
+
+    return devices.map(device => ({
+      ...device,
+      items: this.sortDevicesList(device.items, sort),
+    }));
+  }
+
+  sortDevicesList(devices, sort) {
+    return devices.sort((a, b) => DEVICES_SORT[sort].compare(a, b));
+  }
+
+  sortDevicesBasedOnFilter(devices, sort, filter) {
+
+    if (filter === DEVICES_FILTERS.ALL_DEVICES)
+      return this.sortDevicesList(devices, sort);
+
+    if (filter === DEVICES_FILTERS.BY_LOCATION || filter === DEVICES_FILTERS.BY_PRODUCT)
+      return this.sortDevicesMap(devices, sort);
+
   }
 
   render() {
@@ -140,13 +203,15 @@ class DevicesList extends React.Component {
 
     devices = this.applyDevicesFilter(devices, devicesFilterValue);
 
+    devices = this.sortDevicesBasedOnFilter(devices, this.props.devicesSortValue, devicesFilterValue);
+
     const props = {
-      activeDeviceId: this.props.activeId,
-      devices: devices,
+      activeDeviceId    : this.props.activeId,
+      devices           : devices,
       handleDeviceSelect: this.handleDeviceSelect,
     };
 
-    if (!this.props.devices || this.props.devices && !this.props.devices.length){
+    if (!this.props.devices || this.props.devices && !this.props.devices.length) {
       const noDevicesMessage = smartSearch ? 'No devices found' : `No devices found for "${devicesSearchValue}"`;
       return (<div className="navigation-devices-list">{noDevicesMessage}</div>);
     }

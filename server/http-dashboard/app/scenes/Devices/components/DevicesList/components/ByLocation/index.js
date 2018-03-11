@@ -2,6 +2,7 @@ import React from 'react';
 import {Icon} from "antd";
 import FilteredBy from '../FilteredBy';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 class ByProduct extends React.Component {
 
@@ -11,6 +12,13 @@ class ByProduct extends React.Component {
     activeDeviceId: PropTypes.number,
     handleDeviceSelect: PropTypes.func,
   };
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      !_.isEqual(nextProps.devices, this.props.devices) ||
+      !_.isEqual(nextProps.activeDeviceId, this.props.activeDeviceId)
+    );
+  }
 
   render() {
 

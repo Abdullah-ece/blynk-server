@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   DevicesList,
-  DevicesToolbar
+  DevicesToolbar,
+  DevicesSearch
 } from 'scenes/Devices/scenes';
 import PageLayout from 'components/PageLayout';
 import _ from 'lodash';
@@ -114,15 +115,12 @@ class Index extends React.Component {
     return (
       <PageLayout>
         <PageLayout.Navigation>
+          <DevicesSearch />
           <DevicesToolbar location={this.props.location} params={this.props.params}/>
           <DevicesList activeDeviceId={Number(this.props.params.id)} onDeviceSelect={this.handleDeviceSelect}/>
           {/*<DevicesSearch sortingOptions={sortingOptionsList}*/}
                          {/*devicesSortValue={this.props.devicesSortValue}*/}
                          {/*devicesSortChange={this.props.devicesSortChange}/>*/}
-          {/*<DevicesList type={this.props.filterValue}*/}
-                       {/*devicesSearchValue={this.props.devicesSearchValue}*/}
-                       {/*devices={this.props.devices} activeId={Number(this.props.params.id)}*/}
-                       {/*onDeviceSelect={this.handleDeviceSelect.bind(this)}/>*/}
         </PageLayout.Navigation>
         <PageLayout.Content>
           {/*<DeviceDetailsScene params={this.props.params} location={this.props.location}/>*/}

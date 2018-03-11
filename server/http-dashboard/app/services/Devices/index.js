@@ -448,10 +448,10 @@ export const DEVICES_SORT = {
   REQUIRE_ATTENTION: {
     key: 'REQUIRE_ATTENTION',
     compare: (a, b) => {
-      const aCritical = a.get('criticalSinceLastView') || 0;
-      const aWarning = a.get('warningSinceLastView') || 0;
-      const bCritical = b.get('criticalSinceLastView') || 0;
-      const bWarning = b.get('warningSinceLastView') || 0;
+      const aCritical = a.criticalSinceLastView || 0;
+      const aWarning = a.warningSinceLastView || 0;
+      const bCritical = b.criticalSinceLastView || 0;
+      const bWarning = b.warningSinceLastView || 0;
       if (aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
       } else {
@@ -462,37 +462,37 @@ export const DEVICES_SORT = {
   AZ: {
     key: 'AZ',
     compare: (a, b) => {
-      return String(a.get('name')) > String(b.get('name')) ? 1 : -1;
+      return String(a.name) > String(b.name) ? 1 : -1;
     }
   },
   ZA: {
     key: 'ZA',
     compare: (a, b) => {
-      return String(a.get('name')) > String(b.get('name')) ? -1 : 1;
+      return String(a.name) > String(b.name) ? -1 : 1;
     }
   },
   DATE_ADDED_ASC: {
     key: 'DATE_ADDED_ASC',
     compare: (a, b) => {
-      return Number(a.get('createdAt')) > Number(b.get('createdAt')) ? -1 : 1;
+      return Number(a.createdAt) > Number(b.createdAt) ? -1 : 1;
     }
   },
   DATE_ADDED_DESC: {
     key: 'DATE_ADDED_DESC',
     compare: (a, b) => {
-      return Number(a.get('createdAt')) > Number(b.get('createdAt')) ? 1 : -1;
+      return Number(a.createdAt) > Number(b.createdAt) ? 1 : -1;
     }
   },
   LAST_REPORTED_ASC: {
     key: 'LAST_REPORTED_ASC',
     compare: (a, b) => {
-      return Number(a.get('dataReceivedAt')) > Number(b.get('dataReceivedAt')) ? -1 : 1;
+      return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? -1 : 1;
     }
   },
   LAST_REPORTED_DESC: {
     key: 'LAST_REPORTED_DESC',
     compare: (a, b) => {
-      return Number(a.get('dataReceivedAt')) > Number(b.get('dataReceivedAt')) ? 1 : -1;
+      return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? 1 : -1;
     },
   },
 
@@ -502,10 +502,10 @@ export const FILTERED_DEVICES_SORT = {
   REQUIRE_ATTENTION: {
     key: 'REQUIRE_ATTENTION',
     compare: (a, b) => {
-      const aCritical = a.get('items').reduce((val, device) => val + (device.get('criticalSinceLastView') || 0), 0);
-      const bCritical = b.get('items').reduce((val, device) => val + (device.get('criticalSinceLastView') || 0), 0);
-      const aWarning = a.get('items').reduce((val, device) => val + (device.get('warningSinceLastView') || 0), 0);
-      const bWarning = b.get('items').reduce((val, device) => val + (device.get('warningSinceLastView') || 0), 0);
+      const aCritical = a.items.reduce((val, device) => val + (device.criticalSinceLastView || 0), 0);
+      const bCritical = b.items.reduce((val, device) => val + (device.criticalSinceLastView || 0), 0);
+      const aWarning = a.items.reduce((val, device) => val + (device.warningSinceLastView || 0), 0);
+      const bWarning = b.items.reduce((val, device) => val + (device.warningSinceLastView || 0), 0);
 
       if (aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
@@ -517,21 +517,21 @@ export const FILTERED_DEVICES_SORT = {
   AZ: {
     key: 'AZ',
     compare: (a, b) => {
-      if(a.get('isOthers'))
+      if(a.isOthers)
         return 1;
-      if(b.get('isOthers'))
+      if(b.isOthers)
         return -1;
-      return String(a.get('name')) > String(b.get('name')) ? 1 : -1;
+      return String(a.name) > String(b.name) ? 1 : -1;
     }
   },
   ZA: {
     key: 'ZA',
     compare: (a, b) => {
-      if(a.get('isOthers'))
+      if(a.isOthers)
         return 1;
-      if(b.get('isOthers'))
+      if(b.isOthers)
         return -1;
-      return String(a.get('name')) > String(b.get('name')) ? -1 : 1;
+      return String(a.name) > String(b.name) ? -1 : 1;
     }
   },
 };

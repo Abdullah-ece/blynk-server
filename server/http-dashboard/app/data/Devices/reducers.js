@@ -1,6 +1,6 @@
 import {fromJS} from 'immutable';
 import {
-  // DEVICES_SORT,
+  DEVICES_SORT,
   // TIMELINE_TIME_FILTERS,
   DEVICES_FILTERS
 } from 'services/Devices';
@@ -30,11 +30,17 @@ const initialState = {
 
   devices: [],
 
+  devicesForSearch: [],
+
   devicesListFilterValue: DEVICES_FILTERS.DEFAULT,
 
   deviceCreationModal: {
     organizations: [],
     organizationsLoading: false
+  },
+
+  devicesListSorting: {
+    value: DEVICES_SORT.REQUIRE_ATTENTION.key
   }
 
   // devicesLoading: false,
@@ -137,6 +143,8 @@ export default function Devices(state = initialState, action) {
           //get location metafield to be able group devices list by location
           metaFields: getLocationMetaFieldOnly(device.metaFields)
         })),
+        // save full devices for smart search
+        devicesForSearch: action.payload.data,
         devicesLoading: false
       };
 
@@ -150,7 +158,9 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        devices: devices
+        // @todo add simplify to devices
+        devices: devices,
+        devicesForSearch: devices,
       };
 
     case "API_DEVICES_UPDATE_SUCCESS":
@@ -166,7 +176,13 @@ export default function Devices(state = initialState, action) {
       return state.set('timeline', fromJS(action.payload.data));
 
     case "DEVICES_SORT_CHANGE":
-      return state.setIn(['sorting', 'value'], action.value);
+      return {
+        ...state,
+        devicesListSorting: {
+          ...state.devicesListSorting,
+          value: action.value
+        }
+      };
 
     case "API_DEVICE_DETAILS_FETCH_SUCCESS":
       return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
