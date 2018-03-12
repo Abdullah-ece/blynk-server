@@ -65,6 +65,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
+import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
@@ -159,6 +160,7 @@ public final class MessageFactory {
             case GET_PROJECT_BY_CLONE_CODE :
             case DEVICE_OFFLINE :
             case OUTDATED_APP_NOTIFICATION :
+            case TRACK_DEVICE :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);

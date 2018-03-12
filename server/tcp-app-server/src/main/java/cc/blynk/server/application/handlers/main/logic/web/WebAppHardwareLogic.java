@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic;
+package cc.blynk.server.application.handlers.main.logic.web;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,6 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -71,9 +71,13 @@ public class WebAppHardwareLogic {
 
         device.webDashboard.update(device.id, pin, pinType, value);
 
+        Channel channel = ctx.channel();
+
         //sending to shared dashes and master-master apps
-        session.sendToSharedApps(ctx.channel(), SharedTokenManager.ALL,
-                APP_SYNC, message.id, "0" + DEVICE_SEPARATOR + message.body);
+        session.sendToSharedApps(channel, SharedTokenManager.ALL,
+                APP_SYNC, message.id, message.body);
+
+        session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, deviceId, split[1]);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
             log.debug("No device in session.");

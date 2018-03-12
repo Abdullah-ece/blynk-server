@@ -131,7 +131,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         user.lastLoggedAt = System.currentTimeMillis();
 
-        session.addAppChannel(channel);
+        session.addWebChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
 
         log.info("{} {}-app ({}) joined.", user.email, user.appName, version);

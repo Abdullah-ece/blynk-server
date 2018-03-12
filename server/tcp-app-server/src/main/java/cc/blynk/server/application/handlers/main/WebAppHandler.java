@@ -2,7 +2,8 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.WebAppHardwareLogic;
+import cc.blynk.server.application.handlers.main.logic.web.TrackDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.web.WebAppHardwareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -12,6 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 
 /**
  * The Blynk Project.
@@ -40,6 +42,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         switch (msg.command) {
             case HARDWARE :
                 webAppHardwareLogic.messageReceived(ctx, state, msg);
+                break;
+            case TRACK_DEVICE :
+                TrackDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

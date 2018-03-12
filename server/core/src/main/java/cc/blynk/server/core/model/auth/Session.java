@@ -23,6 +23,7 @@ import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDeviceId;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -37,9 +38,11 @@ public class Session {
     private static final Logger log = LogManager.getLogger(Session.class);
 
     public final EventLoop initialEventLoop;
+    public final Set<Channel> webChannels = new ConcurrentSet<>();
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
+    private final ChannelFutureListener webRemover = future -> webChannels.remove(future.channel());
     private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
     private final ChannelFutureListener hardRemover = future -> hardwareChannels.remove(future.channel());
 
@@ -85,6 +88,12 @@ public class Session {
     public void addHardChannel(Channel hardChannel) {
         if (hardwareChannels.add(hardChannel)) {
             hardChannel.closeFuture().addListener(hardRemover);
+        }
+    }
+
+    public void addWebChannel(Channel webChannel) {
+        if (webChannels.add(webChannel)) {
+            webChannel.closeFuture().addListener(webRemover);
         }
     }
 
@@ -175,10 +184,33 @@ public class Session {
         }
     }
 
+    public void sendToSelectedDeviceOnWeb(short cmd, int msgId, int deviceId, String body) {
+        sendToSelectedDeviceOnWeb(null, cmd, msgId, deviceId, body);
+    }
+
+    public void sendToSelectedDeviceOnWeb(Channel channel, short cmd, int msgId, int deviceId, String body) {
+        log.info("AAAAA");
+        if (isWebConnected()) {
+            log.info("BBBB");
+            String finalBody = String.valueOf(deviceId) + BODY_SEPARATOR + body;
+            filterBySelectedDeviceAndSendWeb(channel, cmd, msgId, deviceId, finalBody);
+        }
+    }
+
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
         if (isAppConnected()) {
             String finalBody = prependDashIdAndDeviceId(dashId, deviceId, body);
             sendToApps(cmd, msgId, dashId, finalBody);
+        }
+    }
+
+    private void filterBySelectedDeviceAndSendWeb(Channel self, short cmd, int msgId, int deviceId, String finalBody) {
+        Set<Channel> targetChannels = filterByDevice(self, deviceId);
+
+        int targetsNum = targetChannels.size();
+        log.info("CCCCc: {}", targetChannels);
+        if (targetsNum > 0) {
+            send(targetChannels, cmd, msgId, finalBody);
         }
     }
 
@@ -189,6 +221,16 @@ public class Session {
         if (targetsNum > 0) {
             send(targetChannels, cmd, msgId, finalBody);
         }
+    }
+
+    private Set<Channel> filterByDevice(Channel self, int deviceId) {
+        Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : webChannels) {
+            if (channel != self && isSameDeviceId(channel, deviceId)) {
+                targetChannels.add(channel);
+            }
+        }
+        return targetChannels;
     }
 
     private Set<Channel> filterByDash(int dashId) {
@@ -232,6 +274,10 @@ public class Session {
         return appChannels.size() > 0;
     }
 
+    public boolean isWebConnected() {
+        return webChannels.size() > 0;
+    }
+
     public int getAppRequestRate() {
         return getRequestRate(appChannels);
     }
@@ -259,6 +305,7 @@ public class Session {
     public void closeAll() {
         hardwareChannels.forEach(io.netty.channel.Channel::close);
         appChannels.forEach(io.netty.channel.Channel::close);
+        webChannels.forEach(io.netty.channel.Channel::close);
     }
 
 }

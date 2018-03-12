@@ -86,11 +86,10 @@ public class HardwareLogic extends BaseProcessorHandler {
             Session session = sessionDao.userSession.get(userKey);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
-            //if (dash.isActive) {
+            if (dash.isActive) {
                 session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
-            //} else {
-            //    log.trace("No active dashboard.");
-           // }
+            }
+            session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, deviceId, body);
         }
     }
 

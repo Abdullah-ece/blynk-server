@@ -122,6 +122,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("login " + email + StringUtils.BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
     }
 
+    public void track(int deviceId) {
+        send("track " + deviceId);
+    }
+
     public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
     }

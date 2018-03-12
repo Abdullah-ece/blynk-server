@@ -1,7 +1,4 @@
-import {
-  blynkWsResponse,
-  blynkVW,
-} from './actions';
+import {blynkVW, blynkWsResponse,} from './actions';
 
 
 const decodeBody = (dataView) => {
@@ -56,7 +53,7 @@ export const Handlers = (params) => {
       }
     }));
 
-    const deviceId = bodyArray[0].replace('0-', '');
+    const deviceId = bodyArray[0];
     const pin = bodyArray[2];
     const value = bodyArray[3];
 
@@ -88,7 +85,7 @@ export const Handlers = (params) => {
       }
     }));
 
-    const deviceId = bodyArray[0].replace('0-', '');
+    const deviceId = bodyArray[0];
     const pin = bodyArray[2];
     const value = bodyArray[3];
 

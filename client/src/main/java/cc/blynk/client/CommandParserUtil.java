@@ -52,6 +52,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
+import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
@@ -211,6 +212,8 @@ public final class CommandParserUtil {
                 return GET_CLONE_CODE;
             case "getprojectbyclonecode" :
                 return GET_PROJECT_BY_CLONE_CODE;
+            case "track" :
+                return TRACK_DEVICE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

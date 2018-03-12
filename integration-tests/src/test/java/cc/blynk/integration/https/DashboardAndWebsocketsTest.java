@@ -176,6 +176,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(device.id);
 
         String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
@@ -185,7 +186,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 10 1")));
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("1 vw 10 1")));
     }
 
     @Test
@@ -199,10 +200,89 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
+        appWebSocketClient2.track(0);
+        appWebSocketClient2.verifyResult(ok(2));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appWebSocketClient2.verifyResult(appSync(2, b("0-0 vw 10 100")));
-        appWebSocketClient.never(appSync(2, b("0-0 vw 10 100")));
+        appWebSocketClient2.verifyResult(appSync(2, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
+    }
+
+    @Test
+    public void trackCommandWorks() throws Exception {
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(regularUser);
+        appWebSocketClient2.verifyResult(ok(1));
+
+        //do not track any device by purpose
+        //appWebSocketClient2.track(0);
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
+    }
+
+    @Test
+    public void senderShouldNotGetCommandHeSent() throws Exception {
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(0);
+        appWebSocketClient.verifyResult(ok(2));
+
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(regularUser);
+        appWebSocketClient2.verifyResult(ok(1));
+        appWebSocketClient2.track(0);
+        appWebSocketClient2.verifyResult(ok(2));
+
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
+    }
+
+    @Test
+    public void trackCommandWorks2() throws Exception {
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(regularUser);
+        appWebSocketClient2.verifyResult(ok(1));
+
+        //do not track any device by purpose
+        //appWebSocketClient2.track(0);
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
+
+        appWebSocketClient2.track(0);
+        appWebSocketClient2.verifyResult(ok(2));
+
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.verifyResult(appSync(3, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(3, b("0 vw 10 100")));
+
+        appWebSocketClient.send("hardware 1 vw 10 100");
+        appWebSocketClient2.never(appSync(4, b("1 vw 10 100")));
+        appWebSocketClient.never(appSync(4, b("1 vw 10 100")));
+
+        appWebSocketClient2.track(-1);
+        appWebSocketClient2.verifyResult(ok(3));
+
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appWebSocketClient2.never(appSync(5, b("0 vw 10 100")));
+        appWebSocketClient.never(appSync(5, b("0 vw 10 100")));
     }
 
     @Test
@@ -243,6 +323,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
 
         String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
@@ -250,7 +331,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
-        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 2 666")));
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("1 vw 2 666")));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
@@ -342,7 +423,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
-        appWebSocketClient.verifyResult(new HardwareMessage(111, b("0-1 vw 2 777")));
+        appWebSocketClient.verifyResult(new HardwareMessage(111, b("1 vw 2 777")));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
