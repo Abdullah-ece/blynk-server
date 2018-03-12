@@ -41,6 +41,10 @@ class DevicesToolbarScene extends React.Component {
     this.handleSmartSearchEnableChange = this.handleSmartSearchEnableChange.bind(this);
   }
 
+  componentWillUnmount() {
+    this.props.changeFilter(DEVICES_FILTERS.ALL_DEVICES);
+  }
+
   handleDevicesFilterChange(value) {
     this.props.changeFilter(value);
   }

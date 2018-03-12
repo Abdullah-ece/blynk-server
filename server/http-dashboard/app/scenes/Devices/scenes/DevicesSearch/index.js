@@ -62,6 +62,35 @@ class DevicesSearchScene extends React.Component {
     );
   }
 
+  componentWillMount() {
+    // empty tags if they are still in the store from the previous search
+    this.props.changeForm(DEVICES_SEARCH_FORM_NAME, 'tags', []);
+  }
+
+  componentWillUnmount() {
+    this.props.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
+  }
+
+  componentWillUpdate(nextProps) {
+    const sortingUnavailableOnSpecificFilters = [
+      DEVICES_SORT.DATE_ADDED_ASC.key,
+      DEVICES_SORT.DATE_ADDED_DESC.key,
+      DEVICES_SORT.LAST_REPORTED_ASC.key,
+      DEVICES_SORT.LAST_REPORTED_DESC.key,
+    ];
+
+    const specificFilters = [
+      DEVICES_FILTERS.BY_PRODUCT,
+      DEVICES_FILTERS.BY_LOCATION,
+    ];
+
+    const devicesFilterValue = nextProps.devicesFilter;
+
+    if (devicesFilterValue && nextProps.devicesSortValue && specificFilters.indexOf(devicesFilterValue) !== -1 && sortingUnavailableOnSpecificFilters.indexOf(nextProps.devicesSortValue) !== -1) {
+      nextProps.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
+    }
+  }
+
   sortingOptions = {
     STATUS       : {
       key  : DEVICES_SORT.REQUIRE_ATTENTION.key,

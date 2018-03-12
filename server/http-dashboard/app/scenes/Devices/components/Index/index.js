@@ -82,9 +82,6 @@ class Index extends React.Component {
           <DevicesSearch />
           <DevicesToolbar location={this.props.location} params={this.props.params}/>
           <DevicesList activeDeviceId={Number(this.props.params.id)} onDeviceSelect={this.handleDeviceSelect}/>
-          {/*<DevicesSearch sortingOptions={sortingOptionsList}*/}
-                         {/*devicesSortValue={this.props.devicesSortValue}*/}
-                         {/*devicesSortChange={this.props.devicesSortChange}/>*/}
         </PageLayout.Navigation>
         <PageLayout.Content>
           {/*<DeviceDetailsScene params={this.props.params} location={this.props.location}/>*/}
