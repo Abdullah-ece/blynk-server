@@ -5,7 +5,6 @@ import {
   DevicesSearch
 } from 'scenes/Devices/scenes';
 import PageLayout from 'components/PageLayout';
-import _ from 'lodash';
 import {
   Icon
 } from 'antd';
@@ -13,26 +12,14 @@ import {
   // DEVICES_FILTERS,
   DEVICES_SORT,
 } from 'services/Devices';
-import {List} from "immutable";
 
 class Index extends React.Component {
 
-  static contextTypes = {
-    router: React.PropTypes.object
-  };
-
   static propTypes = {
-    devices: React.PropTypes.instanceOf(List),
-    products: React.PropTypes.array,
     location: React.PropTypes.object,
     params: React.PropTypes.object,
 
-    filterValue: React.PropTypes.string,
-    devicesSortValue: React.PropTypes.string,
-    devicesSearchValue: React.PropTypes.string,
-
-    onFilterChange: React.PropTypes.func,
-    devicesSortChange: React.PropTypes.func,
+    redirectToDeviceId: React.PropTypes.func,
   };
 
   static sortingOptions = {
@@ -79,38 +66,15 @@ class Index extends React.Component {
     this.handleDeviceSelect = this.handleDeviceSelect.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !(_.isEqual(nextProps.devicesSearchValue, this.props.devicesSearchValue)) || !(_.isEqual(nextProps.filterValue, this.props.filterValue)) || !(_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)) || !(_.isEqual(nextProps.devices, this.props.devices)) || this.props.params.id !== nextProps.params.id || this.props.location.pathname !== nextProps.location.pathname;
-  }
-
   handleDeviceSelect(device) {
-    this.context.router.push(`/devices/${device.id}`);
+    if(typeof this.props.redirectToDeviceId === 'function')
+      this.props.redirectToDeviceId(device.id);
   }
 
   render() {
 
     if (!this.props.params.id)
       return null;
-
-    // let sortingOptionsList = [];
-    //
-    // if(this.props.filterValue === DEVICES_FILTERS.ALL_DEVICES) {
-    //   sortingOptionsList = [
-    //     Index.sortingOptions.STATUS,
-    //     Index.sortingOptions.AZ,
-    //     Index.sortingOptions.ZA,
-    //     Index.sortingOptions.DATE_ASC,
-    //     Index.sortingOptions.DATE_DESC,
-    //     Index.sortingOptions.REPORTED_ASC,
-    //     Index.sortingOptions.REPORTED_DESC,
-    //   ];
-    // } else {
-    //   sortingOptionsList = [
-    //     Index.sortingOptions.STATUS,
-    //     Index.sortingOptions.AZ,
-    //     Index.sortingOptions.ZA,
-    //   ];
-    // }
 
     return (
       <PageLayout>

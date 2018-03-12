@@ -179,7 +179,7 @@ class DevicesList extends React.Component {
   }
 
   sortDevicesList(devices, sort) {
-    return devices.sort((a, b) => DEVICES_SORT[sort].compare(a, b));
+    return [...devices.sort((a, b) => DEVICES_SORT[sort].compare(a, b))];
   }
 
   sortDevicesBasedOnFilter(devices, sort, filter) {

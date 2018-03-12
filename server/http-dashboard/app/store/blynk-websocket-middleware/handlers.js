@@ -1,5 +1,10 @@
 import {blynkVW, blynkWsResponse,} from './actions';
 
+import {
+  getTrackDeviceId,
+  getTrackOnlyByDeviceId
+} from './selectors';
+
 
 const decodeBody = (dataView) => {
   const dec = new TextDecoder("utf-8");
@@ -34,16 +39,31 @@ export const Handlers = (params) => {
 
     // receive newly generated msgId because hardwareHandler has now own unique ID
 
+    const trackDeviceId = getTrackDeviceId(store.getState());
+    const trackOnlyByDeviceId = getTrackOnlyByDeviceId(store.getState());
+
     const body = decodeBody(dataView);
 
     const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0].replace('0-', '');
+    const pin = bodyArray[2];
+    const value = bodyArray[3];
+
+    const deviceIdEqualTrackDeviceId = Number(trackDeviceId) === Number(deviceId);
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage Hardware", action, {
         command     : command,
         msgId       : msgId,
-        bodyArray: bodyArray
+        bodyArray: bodyArray,
+        trackDeviceId,
+        trackOnlyByDeviceId,
+        deviceIdEqualTrackDeviceId
       });
+
+    if(trackOnlyByDeviceId && !deviceIdEqualTrackDeviceId)
+      return false;
 
     store.dispatch(blynkWsResponse({
       id      : msgId,
@@ -52,10 +72,6 @@ export const Handlers = (params) => {
         body   : bodyArray
       }
     }));
-
-    const deviceId = bodyArray[0];
-    const pin = bodyArray[2];
-    const value = bodyArray[3];
 
     store.dispatch(blynkVW({
       deviceId: Number(deviceId),

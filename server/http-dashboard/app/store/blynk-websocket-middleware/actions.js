@@ -1,10 +1,11 @@
 export const ACTIONS = {
-  'BLYNK_WS_REQUEST'      : 'BLYNK_WS_REQUEST',
-  'BLYNK_WS_RESPONSE'     : 'BLYNK_WS_RESPONSE',
-  'BLYNK_WS_CONNECT'      : 'BLYNK_WS_CONNECT',
-  'BLYNK_WS_LOGIN'        : 'BLYNK_WS_LOGIN',
-  'BLYNK_WS_VIRTUAL_WRITE': 'BLYNK_WS_VIRTUAL_WRITE',
-  'BLYNK_WS_HARDWARE'     : 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_TRACK_DEVICE_ID': 'BLYNK_WS_TRACK_DEVICE_ID',
+  'BLYNK_WS_REQUEST'        : 'BLYNK_WS_REQUEST',
+  'BLYNK_WS_RESPONSE'       : 'BLYNK_WS_RESPONSE',
+  'BLYNK_WS_CONNECT'        : 'BLYNK_WS_CONNECT',
+  'BLYNK_WS_LOGIN'          : 'BLYNK_WS_LOGIN',
+  'BLYNK_WS_VIRTUAL_WRITE'  : 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE'       : 'BLYNK_WS_HARDWARE',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -19,6 +20,15 @@ export const blynkWsRequest = (message = {}) => {
   return {
     type : ACTIONS.BLYNK_WS_REQUEST,
     value: message
+  };
+};
+
+export const blynkWsSetTrackDeviceId = (deviceId) => {
+  return {
+    type: ACTIONS.BLYNK_WS_TRACK_DEVICE_ID,
+    value: {
+      deviceId
+    }
   };
 };
 

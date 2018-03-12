@@ -1,12 +1,16 @@
 import React from 'react';
 import {Index, NoDevices} from './../../components';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
+import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
 
 @connect((state) => ({
   productsCounts: state.Product.products && state.Product.products.length,
   devices: state.Devices.devices,
   organization: state.Organization,
+}), (dispatch) => ({
+  blynkWsSetTrackDeviceId: bindActionCreators(blynkWsSetTrackDeviceId, dispatch)
 }))
 class Devices extends React.Component {
 
@@ -23,9 +27,11 @@ class Devices extends React.Component {
 
     productsCount: PropTypes.number,
 
-    location: PropTypes.object,
-    params: PropTypes.object,
+    location    : PropTypes.object,
+    params      : PropTypes.object,
     organization: PropTypes.object,
+
+    blynkWsSetTrackDeviceId: PropTypes.func
   };
 
   // static getLocationName(device) {
@@ -52,11 +58,14 @@ class Devices extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.devicesSortChange = this.devicesSortChange.bind(this);
-    // this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.redirectToDeviceId = this.redirectToDeviceId.bind(this);
   }
 
   componentWillMount() {
+    if(this.props.params.id) {
+      this.props.blynkWsSetTrackDeviceId(this.props.params.id);
+    }
+
     this.redirectToFirstDeviceIfIdParameterMissed();
 
     // empty tags if they are still in the store from the previous search
@@ -89,6 +98,7 @@ class Devices extends React.Component {
   }
 
   componentWillUnmount() {
+    this.props.blynkWsSetTrackDeviceId(null);
     // this.props.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
   }
 
@@ -104,9 +114,14 @@ class Devices extends React.Component {
   // return this.props.devices.find(device => Number(device.get('id')) === Number(id));
   // }
 
+  redirectToDeviceId(deviceId) {
+    this.props.blynkWsSetTrackDeviceId(deviceId);
+    this.context.router.push('/devices/' + deviceId);
+  }
+
   redirectToFirstDeviceIfIdParameterMissed() {
-    if (isNaN(Number(this.props.params.id)) && this.props.devices.id && this.props.devices.length) {
-      this.context.router.push('/devices/' + this.props.devices[0].id);
+    if (isNaN(Number(this.props.params.id)) && this.props.devices.length) {
+      this.redirectToDeviceId(this.props.devices[0].id);
     }
   }
 
@@ -237,7 +252,8 @@ class Devices extends React.Component {
 
       // devices = this.sortDevicesBasedOnFilter(devices, this.props.devicesSortValue, devicesFilterValue);
 
-      return (<Index location={this.props.location}
+      return (<Index redirectToDeviceId={this.redirectToDeviceId}
+                     location={this.props.location}
                      params={this.props.params}/>);
     }
 

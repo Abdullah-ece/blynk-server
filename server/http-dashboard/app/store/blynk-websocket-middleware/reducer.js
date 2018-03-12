@@ -15,12 +15,17 @@ const initialState = fromJS({
     //     value: ''
     //   }
     // }
-  ]
+  ],
+  trackDeviceId: null,
+  trackOnlyByDeviceId: true
 });
 
 export default function createReducer(state = initialState, action) {
 
   switch (action.type) {
+
+    case ACTIONS.BLYNK_WS_TRACK_DEVICE_ID:
+      return state.set('trackDeviceId', action.value.deviceId);
 
     case ACTIONS.BLYNK_WS_REQUEST:
 

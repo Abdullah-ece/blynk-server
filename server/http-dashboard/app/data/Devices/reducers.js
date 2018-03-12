@@ -10,7 +10,6 @@ import {
 
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
-import {WIDGET_TYPES} from "services/Widgets";
 
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.has('metaFields')) {
@@ -41,7 +40,8 @@ const initialState = {
 
   devicesListSorting: {
     value: DEVICES_SORT.REQUIRE_ATTENTION.key
-  }
+  },
+  devicesWidgetsData: {}
 
   // devicesLoading: false,
   // devices: [],
@@ -70,24 +70,49 @@ const initialState = {
 
 
 function updateDeviceDetailsWidgets(state, action) {
-  let deviceId = state.getIn(['deviceDetails', 'info', 'data', 'id']);
 
-  if(Number(action.value.deviceId) !== Number(deviceId))
-    return state;
+  let {pin, deviceId, value} = action.value;
 
-  return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
-    return widgets.map((widget) => {
-      // do not update dataStream of linear and bar chart
-      if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
-        return widget;
-      return widget.update('sources', (sources) => sources.map((source) => {
-        if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
-          return source.setIn(['dataStream', 'value'], action.value.value);
-        }
-        return source;
-      }));
-    });
-  });
+  pin = Number(pin);
+  deviceId = Number(deviceId);
+  value = String(value);
+
+  let devicesWidgetsData = {...state.devicesWidgetsData};
+
+  if (!devicesWidgetsData[deviceId])
+    devicesWidgetsData[deviceId] = {};
+
+  if (!devicesWidgetsData[deviceId][pin])
+    devicesWidgetsData[deviceId][pin] = value;
+
+  devicesWidgetsData[deviceId] = {
+    ...devicesWidgetsData[deviceId],
+    [pin]: value
+  };
+
+  return {
+    ...state,
+    devicesWidgetsData
+  };
+
+  // let deviceId = state.getIn(['deviceDetails', 'info', 'data', 'id']);
+  //
+  // if(Number(action.value.deviceId) !== Number(deviceId))
+  //   return state;
+  //
+  // return state.updateIn(['deviceDetails', 'info', 'data', 'webDashboard', 'widgets'], (widgets) => {
+  //   return widgets.map((widget) => {
+  //     // do not update dataStream of linear and bar chart
+  //     if([WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.get('type'))>=0)
+  //       return widget;
+  //     return widget.update('sources', (sources) => sources.map((source) => {
+  //       if(String(source.getIn(['dataStream', 'pin'])) === String(action.value.pin)) {
+  //         return source.setIn(['dataStream', 'value'], action.value.value);
+  //       }
+  //       return source;
+  //     }));
+  //   });
+  // });
 }
 
 export default function Devices(state = initialState, action) {
@@ -141,7 +166,9 @@ export default function Devices(state = initialState, action) {
           criticalSinceLastView: device.criticalSinceLastView,
           warningSinceLastView: device.warningSinceLastView,
           //get location metafield to be able group devices list by location
-          metaFields: getLocationMetaFieldOnly(device.metaFields)
+          metaFields: getLocationMetaFieldOnly(device.metaFields),
+          createdAt: device.createdAt,
+          dataReceivedAt: device.dataReceivedAt,
         })),
         // save full devices for smart search
         devicesForSearch: action.payload.data,
