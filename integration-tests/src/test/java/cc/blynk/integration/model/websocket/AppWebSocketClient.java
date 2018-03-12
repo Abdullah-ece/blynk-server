@@ -16,8 +16,8 @@
 package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.Limits;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
