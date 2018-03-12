@@ -2,6 +2,7 @@ import React from 'react';
 import {Index, NoDevices} from './../../components';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {DEVICES_SORT} from 'services/Devices';
 import PropTypes from 'prop-types';
 import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
 
@@ -64,8 +65,14 @@ class Devices extends React.Component {
 
   redirectToFirstDeviceIfIdParameterMissed() {
     if (isNaN(Number(this.props.params.id)) && this.props.devices.length) {
-      this.redirectToDeviceId(this.props.devices[0].id);
+      // sort devices by status because it's default sort and params.id can be missed
+      // only when user loads page first time
+      this.redirectToDeviceId(this.sortDevicesByStatus(this.props.devices)[0].id);
     }
+  }
+
+  sortDevicesByStatus(devices) {
+    return devices.sort((a, b) => DEVICES_SORT.REQUIRE_ATTENTION.compare(a, b));
   }
 
   render() {
