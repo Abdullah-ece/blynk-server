@@ -38,4 +38,8 @@ public final class HardwareStateHolder extends StateHolderBase {
     public boolean isSameDash(int inDashId) {
         return dash.id == inDashId;
     }
+
+    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
+        return isSameDash(inDashId) && device.id == deviceId;
+    }
 }
