@@ -305,8 +305,6 @@ class Edit extends React.Component {
 
   handleDevicesForceUpdate(product, value) {
 
-    console.log('go', value);
-
     if (value === DEVICE_FORCE_UPDATE.UPDATE_DEVICES) {
       this.saveProductAndUpdateDevices(product);
     } else if (value === DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE) {
