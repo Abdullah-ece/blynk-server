@@ -2,7 +2,8 @@ import React from 'react';
 import {
   DevicesList,
   DevicesToolbar,
-  DevicesSearch
+  DevicesSearch,
+  DeviceDetails,
 } from 'scenes/Devices/scenes';
 import PageLayout from 'components/PageLayout';
 import {
@@ -84,7 +85,7 @@ class Index extends React.Component {
           <DevicesList activeDeviceId={Number(this.props.params.id)} onDeviceSelect={this.handleDeviceSelect}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          {/*<DeviceDetailsScene params={this.props.params} location={this.props.location}/>*/}
+          <DeviceDetails params={this.props.params} location={this.props.location}/>
         </PageLayout.Content>
       </PageLayout>
     );

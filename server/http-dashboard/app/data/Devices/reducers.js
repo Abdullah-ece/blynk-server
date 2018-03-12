@@ -12,18 +12,40 @@ import {
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
-  if (!device.has('metaFields')) {
+  if (!device.metaFields) {
     return device;
   }
 
-  device = device.update('metaFields',(metaFields)=>{
-    return metaFields.filter(metaField=>{
-      return metaField.get('name') !== 'Device Name';
-    });
+  const metaFields = device.metaFields.filter((metaField) => {
+    return metaField.name !== 'Device Name';
   });
 
-  return device;
+  return {
+    ...device,
+    metaFields: metaFields
+  };
 };
+
+const getLocationMetaFieldOnly = (metaFields) => {
+  if(!metaFields || !metaFields.length)
+    return [];
+
+  return metaFields.map((field) => (
+    field && field.name && String(field.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName
+  ));
+};
+
+const getFieldsForDevicesList = (device) => ({
+  id: Number(device.id),
+  name: device.name,
+  productName: device.productName,
+  criticalSinceLastView: device.criticalSinceLastView,
+  warningSinceLastView: device.warningSinceLastView,
+  //get location metafield to be able group devices list by location
+  metaFields: getLocationMetaFieldOnly(device.metaFields),
+  createdAt: device.createdAt,
+  dataReceivedAt: device.dataReceivedAt,
+});
 
 const initialState = {
 
@@ -41,7 +63,10 @@ const initialState = {
   devicesListSorting: {
     value: DEVICES_SORT.REQUIRE_ATTENTION.key
   },
-  devicesWidgetsData: {}
+
+  devicesWidgetsData: {},
+
+  deviceDetails: {}
 
   // devicesLoading: false,
   // devices: [],
@@ -148,28 +173,9 @@ export default function Devices(state = initialState, action) {
 
     case "API_DEVICES_FETCH_SUCCESS":
 
-      const getLocationMetaFieldOnly = (metaFields) => {
-        if(!metaFields || !metaFields.length)
-          return [];
-
-        return metaFields.map((field) => (
-          field && field.name && String(field.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName
-        ));
-      };
-
       return {
         ...state,
-        devices: action.payload.data.map((device) => ({
-          id: Number(device.id),
-          name: device.name,
-          productName: device.productName,
-          criticalSinceLastView: device.criticalSinceLastView,
-          warningSinceLastView: device.warningSinceLastView,
-          //get location metafield to be able group devices list by location
-          metaFields: getLocationMetaFieldOnly(device.metaFields),
-          createdAt: device.createdAt,
-          dataReceivedAt: device.dataReceivedAt,
-        })),
+        devices: action.payload.data.map((device) => getFieldsForDevicesList(device)),
         // save full devices for smart search
         devicesForSearch: action.payload.data,
         devicesLoading: false
@@ -212,20 +218,41 @@ export default function Devices(state = initialState, action) {
       };
 
     case "API_DEVICE_DETAILS_FETCH_SUCCESS":
-      return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
-        return devices.map((device) => {
 
-          if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
+      // let devicesList = state.devices.map((device) => {
+      //   if(device.id !== action.payload.data.id) return device;
+      //
+      //   const criticalSinceLastView = device.criticalSinceLastView || 0;
+      //   const warningSinceLastView = device.warningSinceLastView || 0;
+      //
+      //   return {
+      //     ...device,
+      //     criticalSinceLastView: device.get('criticalSinceLastView') || 0,
+      //     warningSinceLastView: device.get('warningSinceLastView') || 0,
+      //   };
+      // });
 
-          const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
-          const warningSinceLastView = device.get('warningSinceLastView') || 0;
+      return {
+        ...state,
+        deviceDetails: {
+          ...cutDeviceNameMetaFieldFromMetaFields(action.payload.data)
+        }
+      };
 
-          return fromJS(action.payload.data)
-            .set('criticalSinceLastView', criticalSinceLastView)
-            .set('warningSinceLastView', warningSinceLastView);
-
-        });
-      });
+      // return state.setIn(['deviceDetails', 'info', 'data'], cutDeviceNameMetaFieldFromMetaFields(fromJS(action.payload.data))).update('devices', (devices) => {
+      //   return devices.map((device) => {
+      //
+      //     if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
+      //
+      //     const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
+      //     const warningSinceLastView = device.get('warningSinceLastView') || 0;
+      //
+      //     return fromJS(action.payload.data)
+      //       .set('criticalSinceLastView', criticalSinceLastView)
+      //       .set('warningSinceLastView', warningSinceLastView);
+      //
+      //   });
+      // });
 
     case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH":
       return {
@@ -262,20 +289,14 @@ export default function Devices(state = initialState, action) {
       // this is call back fires when user updates
       // device name. update device name only to keep
       // critical & warning state
-      return state.update('devices', (devices) => {
-        return devices.map((device) => {
 
-          if(Number(device.get('id')) !== Number(action.payload.data.id)) return device;
-
-          const criticalSinceLastView = device.get('criticalSinceLastView') || 0;
-          const warningSinceLastView = device.get('warningSinceLastView') || 0;
-
-          return fromJS(action.payload.data)
-            .set('criticalSinceLastView', criticalSinceLastView)
-            .set('warningSinceLastView', warningSinceLastView);
-
-        });
-      });
+      return {
+        ...state,
+        deviceDetails: {
+          ...state.deviceDetails,
+          name: action.payload.data.name
+        }
+      };
 
     case "API_DEVICE_UPDATE_SUCCESS":
       return state.update('devices', (devices) => {

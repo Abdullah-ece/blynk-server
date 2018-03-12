@@ -51,6 +51,11 @@ class DevicesSearchScene extends React.Component {
     this.handleUpdateTags = this.handleUpdateTags.bind(this);
   }
 
+  componentWillMount() {
+    // empty tags if they are still in the store from the previous search
+    this.props.changeForm(DEVICES_SEARCH_FORM_NAME, 'tags', []);
+  }
+
   shouldComponentUpdate(nextProps) {
     return (
       !_.isEqual(nextProps.smartSearch, this.props.smartSearch) ||
@@ -60,15 +65,6 @@ class DevicesSearchScene extends React.Component {
       !_.isEqual(nextProps.devicesFilter, this.props.devicesFilter) ||
       !_.isEqual(nextProps.devicesSortValue, this.props.devicesSortValue)
     );
-  }
-
-  componentWillMount() {
-    // empty tags if they are still in the store from the previous search
-    this.props.changeForm(DEVICES_SEARCH_FORM_NAME, 'tags', []);
-  }
-
-  componentWillUnmount() {
-    this.props.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
   }
 
   componentWillUpdate(nextProps) {
@@ -89,6 +85,10 @@ class DevicesSearchScene extends React.Component {
     if (devicesFilterValue && nextProps.devicesSortValue && specificFilters.indexOf(devicesFilterValue) !== -1 && sortingUnavailableOnSpecificFilters.indexOf(nextProps.devicesSortValue) !== -1) {
       nextProps.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.devicesSortChange(DEVICES_SORT.REQUIRE_ATTENTION.key);
   }
 
   sortingOptions = {
