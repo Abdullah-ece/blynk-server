@@ -2,8 +2,6 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.StateHolderBase;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -11,8 +9,6 @@ import org.apache.logging.log4j.Logger;
  * Created on 13.09.15.
  */
 public class WebAppStateHolder extends StateHolderBase {
-
-    private static final Logger log = LogManager.getLogger(WebAppStateHolder.class);
 
     private static final int NO_DEVICE = -1;
 
@@ -37,7 +33,6 @@ public class WebAppStateHolder extends StateHolderBase {
 
     @Override
     public boolean isSameDevice(int deviceId) {
-        log.info("DDDDD selected {},  in {}", selectedDeviceId, deviceId);
         return selectedDeviceId == deviceId;
     }
 

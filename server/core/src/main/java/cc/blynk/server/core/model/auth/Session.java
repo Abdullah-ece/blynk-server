@@ -189,9 +189,7 @@ public class Session {
     }
 
     public void sendToSelectedDeviceOnWeb(Channel channel, short cmd, int msgId, int deviceId, String body) {
-        log.info("AAAAA");
         if (isWebConnected()) {
-            log.info("BBBB");
             String finalBody = String.valueOf(deviceId) + BODY_SEPARATOR + body;
             filterBySelectedDeviceAndSendWeb(channel, cmd, msgId, deviceId, finalBody);
         }
@@ -208,7 +206,6 @@ public class Session {
         Set<Channel> targetChannels = filterByDevice(self, deviceId);
 
         int targetsNum = targetChannels.size();
-        log.info("CCCCc: {}", targetChannels);
         if (targetsNum > 0) {
             send(targetChannels, cmd, msgId, finalBody);
         }
