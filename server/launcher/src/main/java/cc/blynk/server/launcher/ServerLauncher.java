@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.web.Organization;
@@ -204,6 +205,7 @@ public final class ServerLauncher {
             for (int i = 0; i < 20; i++) {
                 Device device = new Device("My Device " + i, "Particle Photon", "auth_123",
                         product.id, ConnectionType.WI_FI);
+                device.hardwareInfo = new HardwareInfo("0.5.0", "Particle Photon", "atm33", "WI-FI", "0.0.0", 1);
                 holder.deviceDao.create(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {
