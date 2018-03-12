@@ -5,6 +5,7 @@ import {
   blynkWsLogin,
   blynkWsMessage,
   blynkWsHardware,
+  blynkWsTrackDevice,
 } from './commands';
 
 export const createBlynkWsMiddleware = (options = {}) => {
@@ -17,7 +18,24 @@ export const createBlynkWsMiddleware = (options = {}) => {
     };
   }
 
+  let connectionReadyResolve = null;
+
+  let connectionReadyPromise = new Promise((resolve) => {
+    connectionReadyResolve = resolve;
+  });
+
   return store => next => action => {
+    const execCommand = (command, ...params) => {
+
+      if(connectionReadyPromise) {
+        connectionReadyPromise.then(() => {
+          command.apply(this, params);
+        });
+      } else {
+        command.apply(this, params);
+      }
+
+    };
 
     const params = {
       store,
@@ -25,6 +43,11 @@ export const createBlynkWsMiddleware = (options = {}) => {
       action,
       options
     };
+
+    /*
+      use execCommand(cmd, params) if your command should be executed
+      when connection ready and user logged in
+    */
 
     if (action && action.type === blynkWsActions.BLYNK_WS_CONNECT) {
       return blynkWsConnect(params);
@@ -35,11 +58,17 @@ export const createBlynkWsMiddleware = (options = {}) => {
     }
 
     if (action && action.type === blynkWsActions.BLYNK_WS_LOGIN) {
-      blynkWsLogin(params);
+      return blynkWsLogin(params).then(() => {
+        connectionReadyResolve();
+      });
     }
 
     if (action && action.type === blynkWsActions.BLYNK_WS_HARDWARE) {
-      blynkWsHardware(params);
+      execCommand(blynkWsHardware, params);
+    }
+
+    if (action && action.type === blynkWsActions.BLYNK_WS_TRACK_DEVICE_ID) {
+      execCommand(blynkWsTrackDevice, params);
     }
 
     return next(action);

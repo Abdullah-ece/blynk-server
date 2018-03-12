@@ -11,6 +11,14 @@ import {Handlers} from './handlers';
 
 let MSG_ID = 0;
 
+let messages = [
+  // {
+  //   id: MSG_ID,
+  //   promise: Promise,
+  //   resolve: Resolve,
+  // }
+];
+
 export const RESPONSE_CODES = {
   OK             : 200,
   ILLEGAL_COMMAND: 2,
@@ -21,6 +29,7 @@ export const COMMANDS = {
   LOGIN   : 2,
   HARDWARE: 20,
   APP_SYNC: 25,
+  TRACK_DEVICE: 73
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -71,8 +80,20 @@ export const blynkWsLogin = (params) => {
     }
   }));
 
+  let promiseResolve;
+  let promise = new Promise((resolve) => {
+    promiseResolve = resolve;
+  });
+
+  messages.push({
+    msgId: MSG_ID,
+    promise: promise,
+    promiseResolve: promiseResolve
+  });
+
   store.dispatch(websocketSend(value));
 
+  return promise;
 };
 
 export const blynkWsHardware = (params) => {
@@ -95,6 +116,33 @@ export const blynkWsHardware = (params) => {
     request: {
       command: COMMANDS.HARDWARE,
       value  : `${deviceId}\0vw\0${pin}\0${value}`
+    }
+  }));
+
+  store.dispatch(websocketSend(request));
+
+};
+
+export const blynkWsTrackDevice = (params) => {
+
+  const {store, action, options} = params;
+
+  if (options.isDebugMode)
+    options.debug("blynkWsTrackDevice", action);
+
+  const {deviceId} = action.value;
+
+  const request = str2ab(
+    blynkHeader(
+      COMMANDS.TRACK_DEVICE, ++MSG_ID
+    ) + `${deviceId}`
+  );
+
+  store.dispatch(blynkWsRequest({
+    id     : MSG_ID,
+    request: {
+      command: COMMANDS.TRACK_DEVICE,
+      value  : `${deviceId}`
     }
   }));
 
@@ -125,6 +173,12 @@ export const blynkWsMessage = (params) => {
     dataView: dataView,
     command : command,
     msgId   : msgId
+  });
+
+  messages.forEach((message) => {
+    if(Number(message.msgId) === Number(msgId) && typeof message.promiseResolve === 'function') {
+      message.promiseResolve();
+    }
   });
 
   if (command === COMMANDS.RESPONSE) {
