@@ -92,19 +92,19 @@ class Base extends React.Component {
 
     if (type === EVENT_TYPES.INFO) {
       return {
-        color: '#007dc4' // primary
+        color: '#23be1b' // primary
       };
     }
 
     if (type === EVENT_TYPES.WARNING) {
       return {
-        color: '#ed9d00' // warning
+        color: '#eb7a21' // warning
       };
     }
 
     if (type === EVENT_TYPES.CRITICAL) {
       return {
-        color: '#d3435c' // critical
+        color: '#da1d4e' // critical
       };
     }
 
