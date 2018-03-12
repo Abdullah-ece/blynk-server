@@ -8,6 +8,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -39,11 +40,19 @@ public class Session {
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    private final ChannelFutureListener appRemover = future -> removeAppChannel(future.channel());
-    private final ChannelFutureListener hardRemover = future -> removeHardChannel(future.channel());
+    private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
+    private final ChannelFutureListener hardRemover = future -> hardwareChannels.remove(future.channel());
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
+    }
+
+    public boolean isSameEventLoop(ChannelHandlerContext ctx) {
+        return isSameEventLoop(ctx.channel());
+    }
+
+    public boolean isSameEventLoop(Channel channel) {
+        return initialEventLoop == channel.eventLoop();
     }
 
     private static int getRequestRate(Set<Channel> channels) {
@@ -73,21 +82,9 @@ public class Session {
         }
     }
 
-    public void removeAppChannel(Channel appChannel) {
-        if (appChannels.remove(appChannel)) {
-            appChannel.closeFuture().removeListener(appRemover);
-        }
-    }
-
     public void addHardChannel(Channel hardChannel) {
         if (hardwareChannels.add(hardChannel)) {
             hardChannel.closeFuture().addListener(hardRemover);
-        }
-    }
-
-    public void removeHardChannel(Channel hardChannel) {
-        if (hardwareChannels.remove(hardChannel)) {
-            hardChannel.closeFuture().removeListener(hardRemover);
         }
     }
 
