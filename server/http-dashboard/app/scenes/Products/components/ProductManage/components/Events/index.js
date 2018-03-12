@@ -125,31 +125,37 @@ class List extends React.Component {
 
   handleCloneField(id) {
 
-    const isNameAlreadyExists = (name) => {
+    const isValueAlreadyExists = (property, value) => {
       return this.props.fields.getAll().some((field) => {
-        return field.name && field.name.trim() === name.trim();
+        return field[property] && field[property].trim() === value.trim();
       });
+    };
+
+    const getUniqueValue = (property, oldValue) => {
+      let value = '';
+      let uniqueValue = !oldValue;
+
+      while (!uniqueValue) {
+        value = `${oldValue || ''}${property === "eventCode" ? "_copy": " Copy"}` ;
+        if (!isValueAlreadyExists(property, value)) {
+          uniqueValue = true;
+        }
+      }
+
+      return value;
     };
 
     const cloned = _.find(this.props.fields.getAll(), {id: id});
 
-    let name = '';
-    let nameUnique = !cloned.name;
-    let i = 0;
-
-    while (!nameUnique) {
-      name = `${cloned.name || ''} Copy ${!i ? '' : i}`.trim();
-      if (!isNameAlreadyExists(name)) {
-        nameUnique = true;
-      }
-      i++;
-    }
+    const name = getUniqueValue("name", cloned.name);
+    const eventCode = getUniqueValue("eventCode", cloned.eventCode);
 
     const originalIndex = _.findIndex(this.props.fields.getAll(), {id: id});
 
     this.props.fields.push({
       ...cloned,
       name: name,
+      eventCode: eventCode,
       id: getNextId(this.props.fields.getAll()),
       isRecentlyCreated: true,
     });

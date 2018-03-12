@@ -296,7 +296,7 @@ class ProductCreate extends React.Component {
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productEventsInvalidIcon()}Events</span>} key={TABS.EVENTS} forceRender={true}>
-              <FieldArray component={EventsTab} name={`events`}/>
+              <FieldArray rerenderOnEveryChange={true} component={EventsTab} name={`events`}/>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab={<span>{this.productDashboardInvalidIcon()}Dashboard</span>} key={TABS.DASHBOARD} forceRender={true}>
