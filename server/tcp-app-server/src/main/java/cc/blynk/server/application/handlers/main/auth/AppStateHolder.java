@@ -32,4 +32,14 @@ public class AppStateHolder extends StateHolderBase {
         //we can send larger header
         return version.largerOrEqualThan(21800);
     }
+
+    @Override
+    public boolean isSameDevice(int deviceId) {
+        return true;
+    }
+
+    @Override
+    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
+        return true;
+    }
 }
