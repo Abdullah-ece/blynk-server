@@ -36,7 +36,9 @@ export default class LoginForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <span className="form-header">Log In</span>
+      <div className="form-header">
+        <span >Log In</span>
+      </div>
 
       <div className="login-error">{ error && error }</div>
 
