@@ -13,7 +13,7 @@ import './canvasjs';
     wdu(React, {
       groupByComponent: true,
       /* excluding ANT components */
-      exclude: /^(Button|Tooltip|ScrollNumber|AnimateChild|Badge|LazyRenderBox|PopupInner|Popup|PanelContent|Col|Row|Select|Field|Item|Input|Modal)/
+      exclude: /^(Button|Tooltip|ScrollNumber|AnimateChild|Badge|LazyRenderBox|PopupInner|Popup|PanelContent|Col|Row|Select|Field|Item|Input|Modal|Radio|RadioButton)/
     });
 
     window.Perf = Perf;

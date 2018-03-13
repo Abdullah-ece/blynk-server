@@ -1,6 +1,6 @@
 import React from "react";
-// import {Tabs} from "antd";
-// import {Dashboard, DeviceInfo, Timeline} from "./components";
+import {Tabs} from "antd";
+import {Dashboard, /*DeviceInfo, Timeline*/} from "./components";
 // import _ from "lodash";
 import "./styles.less";
 // import {connect} from "react-redux";
@@ -28,10 +28,10 @@ class Device extends React.Component {
     // this.onMetadataChange = this.onMetadataChange.bind(this);
   }
 
-  shouldComponentUpdate(/*nextProps*/) {
+  // shouldComponentUpdate(/*nextProps*/) {
     // return !(_.isEqual(nextProps.device, this.props.device)) ||
     //   !(_.isEqual(nextProps.location, this.props.location));
-  }
+  // }
 
   // onMetadataChange(metadata) {
   //   return this.props.onMetadataChange(metadata);
@@ -47,12 +47,19 @@ class Device extends React.Component {
 
   render() {
 
-    // const TabPane = Tabs.TabPane;
+    const TabPane = Tabs.TabPane;
 
     return (
       <div className="devices--device">
         <div className="devices--device-name">
           <DeviceName />
+          <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
+            <TabPane tab="Dashboard" key="1">
+              <div className="devices-device-tab-inner">
+                <Dashboard params={this.props.params}/>
+              </div>
+            </TabPane>
+          </Tabs>
         </div>
       </div>
     );
@@ -62,7 +69,7 @@ class Device extends React.Component {
     //    <div className="devices--device-name">
     //      <ContentEditable value={this.props.device.get('name')} onChange={this.handleDeviceNameChange.bind(this)}/>
     //    </div>
-    //    <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
+    //   <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
     //      <TabPane tab="Dashboard" key="1">
     //        <div className="devices-device-tab-inner">
     //          <Dashboard params={this.props.params} dashboard={this.props.device.get('webDashboard')}/>

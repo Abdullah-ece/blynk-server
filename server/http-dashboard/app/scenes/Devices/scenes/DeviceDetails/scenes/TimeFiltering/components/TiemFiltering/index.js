@@ -4,7 +4,7 @@ import {TimeFiltering} from 'components';
 import {reduxForm} from 'redux-form';
 
 @reduxForm()
-class TimeFilteringScene extends React.Component {
+class TimeFilteringFormWrapper extends React.Component {
 
   static propTypes = {
     formValues: PropTypes.object
@@ -18,4 +18,4 @@ class TimeFilteringScene extends React.Component {
 
 }
 
-export default TimeFilteringScene;
+export default TimeFilteringFormWrapper;

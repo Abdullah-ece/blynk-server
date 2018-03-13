@@ -46,8 +46,12 @@ class SpecificTimeSelect extends React.Component {
       return current && current.valueOf() > Date.now();
     };
 
+    const styles = {
+      display: Boolean(this.props.visible) === true ? 'block' : 'none'
+    };
+
     return (
-      <div className="devices--device-timeline--time-filtering-specific-time-select">
+      <div className="devices--device-timeline--time-filtering-specific-time-select" style={styles}>
         <DatePicker.RangePicker showTime={true}
                                 disabledDate={disabledDate}
                                 format="MMM D, YYYY hh:mm A"

@@ -442,6 +442,9 @@ export const TIMELINE_TIME_FILTERS = {
     'value': 'Custom Range'
   }
 };
+
+export const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'DEVICE_DASHBOARD_TIME_FILTERING';
+
 export const TIMELINE_ITEMS_PER_PAGE = 25;
 
 export const DEVICES_SORT = {
