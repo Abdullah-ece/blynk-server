@@ -41,7 +41,7 @@ class NumberField extends BaseField {
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField maxLength="15" onFocus={this.onFocus} onBlur={this.onBlur} name={`metaFields.${this.props.metaFieldKey}.value`}
+            <MetadataFormField maxLength={15} onFocus={this.onFocus} onBlur={this.onBlur} name={`metaFields.${this.props.metaFieldKey}.value`}
                                type="text" placeholder="Default value(optional)" validate={[
               Validation.Rules.number
             ]}/>
