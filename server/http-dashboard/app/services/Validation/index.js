@@ -10,7 +10,7 @@ export const Messages = {
   required: 'Field is required',
   imageRequired: 'Image is required',
   minLength: (n) => `Minimal length should be ${n} symbols`,
-  number: 'Field should contain number',
+  number: 'Only numbers allowed',
   numberLong: 'Number max length is 15 symbols. Use instead Text Metadata Field.',
   latitude: 'Latitude is not correct',
   longitude: 'Longitude is not correct',
