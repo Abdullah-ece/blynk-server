@@ -169,6 +169,23 @@ export const DeviceDetailsUpdate = (params, data) => {
   };
 };
 
+export const DeviceDashboardFetch = ({orgId}) => {
+
+  if(!orgId)
+    throw new Error('Parameter orgId is missed');
+
+  return {
+    type: 'API_DEVICE_DASHBOARD_FETCH',
+
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.device().get({ orgId })
+      }
+    }
+  };
+};
+
 export const DeviceAvailableOrganizationsFetch = () => {
 
   return {

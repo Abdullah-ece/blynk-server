@@ -31,6 +31,7 @@ import PropTypes from 'prop-types';
 // }))
 
 import TimeFiltering from 'scenes/Devices/scenes/DeviceDetails/scenes/TimeFiltering';
+import WidgetsDashboard from 'scenes/Devices/scenes/DeviceDetails/scenes/Dashboard';
 
 class Dashboard extends React.Component {
 
@@ -225,6 +226,7 @@ class Dashboard extends React.Component {
 
         <div>
           <TimeFiltering params={this.props.params}/>
+          <WidgetsDashboard params={this.props.params} />
         </div>
 
       </div>

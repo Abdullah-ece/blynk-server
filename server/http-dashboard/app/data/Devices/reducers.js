@@ -66,7 +66,12 @@ const initialState = {
 
   devicesWidgetsData: {},
 
-  deviceDetails: {}
+  deviceDetails: {},
+
+  deviceDashboardLiveData: {},
+  deviceDashboardData: {},
+  deviceDashboard: {},
+  deviceDashboardLoading: true,
 
   // devicesLoading: false,
   // devices: [],
@@ -158,6 +163,82 @@ export default function Devices(state = initialState, action) {
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
       return updateDeviceDetailsWidgets(state, action);
+
+    case "API_DEVICE_DASHBOARD_FETCH":
+      return {
+        ...state,
+        deviceDashboardLiveData: {},
+        deviceDashboardData: {},
+        deviceDashboard: {},
+        deviceDashboardLoading: true,
+      };
+
+    case "API_DEVICE_DASHBOARD_FETCH_SUCCESS":
+
+      let widgets = [];
+
+      if(action.payload.data && action.payload.data.webDashboard && action.payload.data.webDashboard.widgets) {
+        widgets = action.payload.data.webDashboard.widgets.map((widget) => {
+          widget = {...widget};
+
+          delete widget.tableDescriptor;
+
+          return widget;
+        });
+      }
+
+      const dashboard = {
+        ...action.payload.data && action.payload.data.webDashboard,
+        widgets: [
+          widgets
+        ]
+      };
+
+      const sources = [];
+
+      if (dashboard && dashboard.widgets && dashboard.widgets.length) {
+
+        dashboard.widgets.map((widget) => {
+
+          let dataStream = null;
+          if (widget && widget.sources && widget.sources[0] && !isNaN(Number(widget.sources[0].dataStream.pin))) {
+            dataStream = widget.sources[0].dataStream;
+          }
+
+          if (dataStream)
+            sources.push({
+              widgetId: widget.id,
+              pin     : dataStream.pin,
+              value   : dataStream.value
+            });
+        });
+
+      }
+
+      const deviceDashboardData = {};
+      const deviceDashboardLiveData = {};
+
+      sources.forEach((source) => {
+        deviceDashboardData[source.widgetId] = {
+          pin  : source.pin,
+          value: source.value
+        };
+        deviceDashboardLiveData[source.pin] = source.value;
+      });
+
+      return {
+        ...state,
+        deviceDashboardLiveData: deviceDashboardLiveData,
+        deviceDashboardData    : deviceDashboardData,
+        deviceDashboard        : dashboard,
+        deviceDashboardLoading : false
+      };
+
+    case "API_DASHBOARD_FETCH_FAILURE":
+      return {
+        deviceDashboard: [],
+        deviceDashboardLoading: false
+      };
 
     case "API_DEVICES_FETCH":
       return {
