@@ -1,10 +1,20 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import {Form, Input, Icon} from 'antd';
 
 import {Field as FormField} from 'redux-form';
 
 export default class Field extends React.Component {
+
+  static propTypes = {
+    maxLength: PropTypes.number
+  };
+
+  constructor(props) {
+    super(props);
+    this.renderField = this.renderField.bind(this);
+  }
+
   renderField({validateOnBlur = false, className, disabled = false, displayError = true, style, placeholder, input, type, icon, meta: {active, touched, error, warning}}) {
 
     let validateStatus = 'success';
@@ -29,7 +39,7 @@ export default class Field extends React.Component {
                  help={help}
                  style={style}
                  className={className}>
-        <Input {...input} type={type} placeholder={placeholder} disabled={disabled}
+        <Input maxLength={this.props.maxLength || false} {...input} type={type} placeholder={placeholder} disabled={disabled}
                prefix={icon ? <Icon type={icon} className="form--field-icon"/> : null}/>
       </Form.Item>
     );
