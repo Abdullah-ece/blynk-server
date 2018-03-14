@@ -60,6 +60,13 @@ class DashboardScene extends React.Component {
 
     if(!prevProps.orgId && this.props.orgId)
       this.fetchDashboard().then(this.fetchDashboardData);
+
+    if(prevProps.timeFilter.time !== this.props.timeFilter.time)
+      this.fetchDashboardData();
+
+    if(prevProps.timeFilter.customTime[0] !== this.props.timeFilter.customTime[0] || prevProps.timeFilter.customTime[1] !== this.props.timeFilter.customTime[1])
+      this.fetchDashboardData();
+
   }
 
   fetchDashboardData() {
