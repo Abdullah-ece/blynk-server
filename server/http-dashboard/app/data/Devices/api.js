@@ -169,6 +169,33 @@ export const DeviceDetailsUpdate = (params, data) => {
   };
 };
 
+export const DeviceDashboardDataFetch = ({deviceId, dataQueryRequests, isLive}) => {
+  if (!deviceId)
+    throw new Error('Missing device id parameter for device dashboard data fetch');
+
+  if (!dataQueryRequests)
+    throw new Error('Missing dataQueryRequests parameter for device dashboard data fetch');
+
+  return {
+    type: 'API_DEVICE_DASHBOARD_DATA_FETCH',
+    value: {
+      deviceId,
+      dataQueryRequests,
+      isLive,
+    },
+    payload: {
+      request: {
+        method: 'post',
+        url: API_URL.widgets().history({deviceId, dataQueryRequests}),
+        data: {
+          deviceId,
+          dataQueryRequests,
+        },
+      }
+    }
+  };
+};
+
 export const DeviceDashboardFetch = ({orgId, deviceId }) => {
 
   if(!orgId)

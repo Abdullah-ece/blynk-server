@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const HARDWARES = {
   "Arduino 101": {
     "key": "Arduino 101",
@@ -416,26 +418,31 @@ export const TIMELINE_TIME_FILTERS = {
     'key': 'LIVE',
     'value': 'Live',
     'time': 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'hour').valueOf()
   },
   'HOUR': {
     'key': 'HOUR',
     'value': '1 hour',
     'time': 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'hour').valueOf()
   },
   'DAY': {
     'key': 'DAY',
     'value': '1 day',
-    'time': 24 * 60 * 60 * 1000
+    'time': 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'day').valueOf()
   },
   'WEEK': {
     'key': 'WEEK',
     'value': '1 week',
-    'time': 7 * 24 * 60 * 60 * 1000
+    'time': 7 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'week').valueOf()
   },
   'MONTH': {
     'key': 'MONTH',
     'value': 'Month',
     'time': 30 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'month').valueOf()
   },
   'CUSTOM': {
     'key': 'CUSTOM',

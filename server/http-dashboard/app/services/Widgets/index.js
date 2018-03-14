@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import {fromJS} from 'immutable';
 
 export const WIDGET_TYPES = {
   LABEL: 'WEB_LABEL',
@@ -10,21 +9,22 @@ export const WIDGET_TYPES = {
 
 
 export const buildDataQueryRequestForWidgets = ({ widgets, timeFrom, timeTo, deviceId }) => {
-
-  if(!widgets.isList)
-    widgets = fromJS(widgets);
-
   let dataQueryRequests = [];
 
-  widgets.forEach((widget) => {
-    if (widget.has('sources') && widget.get('sources').size) {
+  const filterWidgetByTypes = (widget) => {
+    // data builder should build queries only for charts
+    return [WIDGET_TYPES.LINEAR, WIDGET_TYPES.BAR].indexOf(widget.type) >= 0;
+  };
 
-      widget.get('sources').forEach((source, sourceIndex) => {
+  widgets.filter(filterWidgetByTypes).forEach((widget) => {
+    if (widget.sources && widget.sources.length) {
 
-        if (!source || !source.get('dataStream'))
+      widget.sources.forEach((source, sourceIndex) => {
+
+        if (!source || !source.dataStream)
           return null;
 
-        let pin = source.getIn(['dataStream', 'pin']);
+        let pin = source.dataStream.pin;
 
         let timeFilter = {
           from: timeFrom,
@@ -33,28 +33,28 @@ export const buildDataQueryRequestForWidgets = ({ widgets, timeFrom, timeTo, dev
 
         const additionalParams = {};
 
-        if (source.has('selectedColumns') && source.get('selectedColumns').size) {
-          additionalParams.selectedColumns = source.get('selectedColumns').toJS();
+        if (source.selectedColumns && source.selectedColumns.length) {
+          additionalParams.selectedColumns = source.selectedColumns;
         }
 
-        if (source.has('groupByFields') && source.get('groupByFields').size) {
-          additionalParams.groupByFields = source.get('groupByFields').toJS();
+        if (source.groupByFields && source.groupByFields.length) {
+          additionalParams.groupByFields = source.groupByFields;
         }
 
-        if (source.has('sortByFields') && source.get('sortByFields').size) {
-          additionalParams.sortByFields = source.get('sortByFields').toJS();
+        if (source.sortByFields && source.sortByFields.length) {
+          additionalParams.sortByFields = source.sortByFields;
         }
 
         dataQueryRequests.push({
           "deviceId": deviceId,
-          "widgetId": widget.get('id'),
+          "widgetId": widget.id,
           "sourceIndex": sourceIndex,
           "pinType": "VIRTUAL",
           "pin": pin,
-          "sortOrder": source.get('sortOrder'),
-          "sourceType": source.get('sourceType'),
+          // "sortOrder": source.sortOrder || null,
+          "sourceType": source.sourceType,
           "offset": 0,
-          "limit": source.get('limit') || 10000,
+          "limit": source.limit || 10000,
           ...timeFilter,
           ...additionalParams,
         });

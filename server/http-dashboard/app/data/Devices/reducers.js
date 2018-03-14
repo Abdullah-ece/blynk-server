@@ -11,6 +11,45 @@ import {
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 
+const parseChartData = (response) => {
+
+  const parseLineWidgetData = (response) => {
+
+    return response.data.map((item) => {
+      const key = item.key;
+      const value = item.value;
+
+      return {
+        x: Number(key),
+        y: Number(value)
+      };
+    });
+  };
+
+  const parseBarWidgetData = (response) => {
+
+    return Object.keys(response.data).map((key) => {
+      const value = response.data[key];
+
+      return {
+        name: String(key),
+        value: Number(value)
+      };
+    });
+  };
+
+  if (!response.data) return [];
+
+  if (Array.isArray(response.data)) {
+    // parse line chart data
+    return parseLineWidgetData(response);
+  } else {
+    // parse bar chart data
+    return parseBarWidgetData(response);
+  }
+
+};
+
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.metaFields) {
     return device;
@@ -173,6 +212,90 @@ export default function Devices(state = initialState, action) {
         deviceDashboardLoading: true,
       };
 
+
+    case "API_DEVICE_DASHBOARD_DATA_FETCH":
+
+      let queries = action.value.dataQueryRequests || [];
+
+      if (action.value.isLive) {
+
+        let deviceDashboardChartLiveData = {};
+
+        queries.forEach((query) => {
+          deviceDashboardChartLiveData[query.pin] = {
+            loading: true,
+            data   : []
+          };
+        });
+
+        return {
+          ...state,
+          deviceDashboardChartLiveData: deviceDashboardChartLiveData
+        };
+
+      } else {
+
+        let deviceDashboardChartData = {};
+
+        queries.forEach((query) => {
+          deviceDashboardChartData[query.widgetId] = {
+            pin    : query.pin,
+            loading: true,
+            data   : []
+          };
+        });
+
+        return {
+          ...state,
+          deviceDashboardChartData,
+        };
+
+      }
+
+    case "API_DEVICE_DASHBOARD_DATA_FETCH_SUCCESS":
+
+      queries = action.meta.previousAction.value.dataQueryRequests || [];
+
+      if (!action.payload.data || !action.payload.data.length)
+        return state;
+
+      if (action.meta.previousAction.value.isLive) {
+
+        let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
+
+        queries.forEach((query, key) => {
+
+          deviceDashboardChartLiveData[query.pin] = {
+            loading: false,
+            data: parseChartData(action.payload.data[key])
+          };
+        });
+
+        return {
+          ...state,
+          deviceDashboardChartLiveData: deviceDashboardChartLiveData
+        };
+
+      } else {
+
+        let deviceDashboardChartData = {...state.deviceDashboardChartData};
+
+        queries.forEach((query, key) => {
+
+          deviceDashboardChartData[query.widgetId] = {
+            pin    : query.pin,
+            loading: false,
+            data   : parseChartData(action.payload.data[key])
+          };
+        });
+
+        return {
+          ...state,
+          deviceDashboardChartData: deviceDashboardChartData
+        };
+
+      }
+
     case "API_DEVICE_DASHBOARD_FETCH_SUCCESS":
 
       const dashboard = {
@@ -214,10 +337,12 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        deviceDashboardLiveData: deviceDashboardLiveData,
-        deviceDashboardData    : deviceDashboardData,
-        deviceDashboard        : dashboard,
-        deviceDashboardLoading : false
+        deviceDashboardLiveData     : deviceDashboardLiveData,
+        deviceDashboardChartData    : {},
+        deviceDashboardChartLiveData: {},
+        deviceDashboardData         : deviceDashboardData,
+        deviceDashboard             : dashboard,
+        deviceDashboardLoading      : false
       };
 
     case "API_DASHBOARD_FETCH_FAILURE":
