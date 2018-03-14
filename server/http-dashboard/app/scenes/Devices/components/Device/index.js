@@ -52,15 +52,15 @@ class Device extends React.Component {
     return (
       <div className="devices--device">
         <div className="devices--device-name">
-          <DeviceName />
-          <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
-            <TabPane tab="Dashboard" key="1">
-              <div className="devices-device-tab-inner">
-                <Dashboard params={this.props.params}/>
-              </div>
-            </TabPane>
-          </Tabs>
+          <DeviceName/>
         </div>
+        <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
+          <TabPane tab="Dashboard" key="1">
+            <div className="devices-device-tab-inner">
+              <Dashboard params={this.props.params}/>
+            </div>
+          </TabPane>
+        </Tabs>
       </div>
     );
 

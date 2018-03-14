@@ -17,6 +17,9 @@ import {
 class DashboardScene extends React.Component {
 
   static propTypes = {
+    dashboard: PropTypes.shape({
+      widgets: PropTypes.array,
+    }),
     params: PropTypes.object,
 
     orgId: PropTypes.number,
@@ -47,12 +50,25 @@ class DashboardScene extends React.Component {
   fetchDashboard() {
     if (this.props.orgId) {
       return this.props.fetchDeviceDashboard({
-        orgId: this.props.orgId
+        orgId: this.props.orgId,
+        deviceId: this.props.params.id,
       });
     }
   }
 
   render() {
+
+    if(this.props.loading)
+      return (
+        <Icon type="loading" className="devices--device-dashboard-loading"/>
+      );
+
+    if(this.props.dashboard && ((!this.props.dashboard.widgets) || (!this.props.dashboard.widgets.length))) {
+      return (
+        <div className="product-no-fields">No Dashboard widgets</div>
+      );
+    }
+
     return (
       <div>
         { this.props.loading ? <Icon type="loading" /> : "dash"}

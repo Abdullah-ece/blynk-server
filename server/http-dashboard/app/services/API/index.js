@@ -22,7 +22,7 @@ export const API_URL = {
   products: () => `/product`,
   organization: (params = {}) => `/organization${params.id ? `/${params.id}` : ''}`,
   device: () => ({
-    get: (params) => `/devices/${params.orgId}`,
+    get: (params) => `/devices/${params.orgId}${params.deviceId ? `/${params.deviceId}` : '' }`,
     update: (params) => `/devices/${params.orgId}`,
     metadata: () => ({
       update: (params) => `/devices/${params.orgId}/${params.deviceId}/updateMetaField`

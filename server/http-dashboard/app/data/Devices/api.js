@@ -169,7 +169,7 @@ export const DeviceDetailsUpdate = (params, data) => {
   };
 };
 
-export const DeviceDashboardFetch = ({orgId}) => {
+export const DeviceDashboardFetch = ({orgId, deviceId }) => {
 
   if(!orgId)
     throw new Error('Parameter orgId is missed');
@@ -180,7 +180,7 @@ export const DeviceDashboardFetch = ({orgId}) => {
     payload: {
       request: {
         method: 'get',
-        url: API_URL.device().get({ orgId })
+        url: API_URL.device().get({ orgId, deviceId })
       }
     }
   };

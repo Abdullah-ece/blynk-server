@@ -175,23 +175,9 @@ export default function Devices(state = initialState, action) {
 
     case "API_DEVICE_DASHBOARD_FETCH_SUCCESS":
 
-      let widgets = [];
-
-      if(action.payload.data && action.payload.data.webDashboard && action.payload.data.webDashboard.widgets) {
-        widgets = action.payload.data.webDashboard.widgets.map((widget) => {
-          widget = {...widget};
-
-          delete widget.tableDescriptor;
-
-          return widget;
-        });
-      }
-
       const dashboard = {
         ...action.payload.data && action.payload.data.webDashboard,
-        widgets: [
-          widgets
-        ]
+        widgets: action.payload.data.webDashboard.widgets || []
       };
 
       const sources = [];
