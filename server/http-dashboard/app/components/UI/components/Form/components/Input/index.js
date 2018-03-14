@@ -8,6 +8,7 @@ export default class Input extends React.Component {
     type: React.PropTypes.any,
     icon: React.PropTypes.any,
     input: React.PropTypes.any,
+    suffix: React.PropTypes.any,
     disabled: React.PropTypes.any,
     isChecked: React.PropTypes.any,
     placeholder: React.PropTypes.any,
@@ -28,6 +29,7 @@ export default class Input extends React.Component {
                  type={type}
                  placeholder={placeholder}
                  prefix={this.prefix(icon)}
+                 suffix={this.props.suffix}
       />
     );
   }

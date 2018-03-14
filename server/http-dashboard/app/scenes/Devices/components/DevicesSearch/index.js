@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {Input, Item, ItemsGroup} from 'components/UI';
 import { DEVICES_SEARCH_FORM_NAME } from 'services/Devices';
 import { v4 as uuid } from 'node-uuid';
-import { Select } from 'antd';
+import { Select, Icon } from 'antd';
 const { Option } = Select;
 import { fromJS, List } from 'immutable';
 import './styles.less';
@@ -61,6 +61,11 @@ class DevicesSearch extends React.Component {
     'datastream.label': 'Label',
     'datastream.units': 'Units'
   };
+
+  constructor(props) {
+    super(props);
+    this.emitEmpty = this.emitEmpty.bind(this);
+  }
 
   state = {
     smartSearchSuggestions: undefined
@@ -152,7 +157,7 @@ class DevicesSearch extends React.Component {
 
     for(let j in devices){
       const device = devices[j];
-      
+
       const productId = device.get('productId');
       const product = products.filter(p => p.id === productId)[0];
 
@@ -329,7 +334,9 @@ class DevicesSearch extends React.Component {
       ...dataStreamSuggestions.map(e => e.element)
     ]);
   }
-
+  emitEmpty(){
+    this.props.changeForm("devicesSearchForm","name","");
+  }
   render() {
     const { smartSearch, devicesSearchFormValues } = this.props;
     const { smartSearchSuggestions } = this.state;
@@ -364,8 +371,10 @@ class DevicesSearch extends React.Component {
             <Input style={{width: '100%'}}
                    name="name"
                    mode="multiple"
+                   value={this.props.devicesSearchFormValues.get('name')}
                    placeholder="Search by device name"
                    autoComplete="off"
+                   suffix={this.props.devicesSearchFormValues.get('name') ?  <Icon type="close-circle" onClick={this.emitEmpty} /> : null}
                    notFoundContent="Search is on development"/>
             </Item>
           <Item style={{width: SORTING_OPTIONS_SIZE}}>{this.renderSortingOptions()}</Item>
