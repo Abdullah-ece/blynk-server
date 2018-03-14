@@ -1,6 +1,7 @@
 import React        from 'react';
 import moment       from 'moment';
 import {DatePicker} from 'antd';
+import _ from 'lodash';
 
 class SpecificTimeSelect extends React.Component {
 
@@ -10,6 +11,13 @@ class SpecificTimeSelect extends React.Component {
     onChange: React.PropTypes.func,
     onCancel: React.PropTypes.func,
   };
+
+  shouldComponentUpdate(nextProps) {
+    return (
+      !_.isEqual(nextProps.input.value, this.props.input.value) ||
+      !_.isEqual(nextProps.visible, this.props.visible)
+    );
+  }
 
   handleCancelClick() {
     this.props.onCancel();
