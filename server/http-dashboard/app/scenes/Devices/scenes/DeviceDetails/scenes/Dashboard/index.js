@@ -73,8 +73,6 @@ class DashboardScene extends React.Component {
 
   fetchDashboardData() {
 
-    const LIVE = true;
-
     const time = this.getTimeFilerRange();
 
     const dataQueryRequests = buildDataQueryRequestForWidgets({
@@ -88,7 +86,7 @@ class DashboardScene extends React.Component {
       this.props.fetchDeviceDashboardData({
         deviceId         : this.props.params.id,
         dataQueryRequests: dataQueryRequests,
-        isLive           : LIVE
+        isLive           : this.props.timeFilter.time === TIMELINE_TIME_FILTERS.LIVE.key
       });
   }
 

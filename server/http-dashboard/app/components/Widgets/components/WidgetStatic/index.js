@@ -51,6 +51,7 @@ class WidgetStatic extends React.Component {
     return (
       !_.isEqual(nextProps.widget, this.props.widget) ||
       !_.isEqual(nextProps.loading, this.props.loading) ||
+      !_.isEqual(nextProps.isLive, this.props.isLive) ||
       !_.isEqual(nextProps.style, this.props.style) ||
       !_.isEqual(nextProps.deviceId, this.props.deviceId)
     );

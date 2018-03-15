@@ -246,8 +246,8 @@ class LinearWidget extends React.Component {
 
   renderRealDataChart() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.value || !this.props.value.length || this.props.loading === undefined)
-      return (<div className="bar-chart-widget-no-data">No Data 1</div>);
+    if (!this.props.data.sources || !this.props.data.sources.length || (!this.props.value && !this.props.loading) || (!this.props.value.length && !this.props.loading) || this.props.loading === undefined)
+      return (<div className="bar-chart-widget-no-data">No Data</div>);
 
     if (this.props.loading)
       return (<Icon type="loading"/>);
@@ -296,7 +296,7 @@ class LinearWidget extends React.Component {
       );
     } else {
       return (
-        <div className="bar-chart-widget-no-data">No Data 2</div>
+        <div className="bar-chart-widget-no-data">No Data</div>
       );
     }
   }

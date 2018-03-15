@@ -4,23 +4,36 @@ import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
 
-  const pin = state.Devices.deviceDashboardChartLiveData[ownProps.pin];
+  if (ownProps.isLive) {
+    const pin = state.Devices.deviceDashboardChartLiveData[ownProps.pin];
 
-  if(!pin)
-    return {
-      value: null
-    };
+    if (!pin)
+      return {
+        value  : [],
+        loading: true
+      };
 
-  if (ownProps.isLive)
     return {
-      value: pin.data,
+      value  : pin.data,
       loading: pin.loading
     };
+  }
 
-  if (!ownProps.isLive)
+
+  if (!ownProps.isLive) {
+    const widget = state.Devices.deviceDashboardChartData[ownProps.widgetId];
+
+    if(!widget)
+      return {
+        value  : [],
+        loading: true
+      };
+
     return {
-      value: state.Devices.deviceDashboardData[ownProps.widgetId].value
+      value: widget.data,
+      loading: widget.loading
     };
+  }
 
 })
 class LineChartWidgetDataWrapper extends React.Component {
