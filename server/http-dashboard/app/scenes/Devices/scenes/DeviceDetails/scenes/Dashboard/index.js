@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Icon} from 'antd';
 import {bindActionCreators} from 'redux';
 import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+import {Grids} from "components";
 import {
   DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME,
   TIMELINE_TIME_FILTERS
@@ -13,6 +14,7 @@ import {
   DeviceDashboardDataFetch,
   DeviceDashboardFetch
 } from 'data/Devices/api';
+import {WidgetStatic} from "components/Widgets";
 
 @connect((state) => ({
   orgId: state.Organization.id,
@@ -44,6 +46,7 @@ class DashboardScene extends React.Component {
     super(props);
 
     this.fetchDashboardData = this.fetchDashboardData.bind(this);
+    this.handleWidgetWriteVirtualPin = this.handleWidgetWriteVirtualPin.bind(this);
   }
 
   componentDidMount() {
@@ -82,11 +85,12 @@ class DashboardScene extends React.Component {
       deviceId: this.props.params.id
     });
 
-    this.props.fetchDeviceDashboardData({
-      deviceId: this.props.params.id,
-      dataQueryRequests: dataQueryRequests,
-      isLive: LIVE
-    });
+    if(dataQueryRequests && dataQueryRequests.length)
+      this.props.fetchDeviceDashboardData({
+        deviceId         : this.props.params.id,
+        dataQueryRequests: dataQueryRequests,
+        isLive           : LIVE
+      });
   }
 
   getTimeFilerRange() {
@@ -111,6 +115,10 @@ class DashboardScene extends React.Component {
     }
   }
 
+  handleWidgetWriteVirtualPin() {
+
+  }
+
   render() {
 
     if(this.props.loading)
@@ -124,10 +132,18 @@ class DashboardScene extends React.Component {
       );
     }
 
+    const widgets = this.props.dashboard.widgets.map((widget) => (
+      <WidgetStatic isLive={this.props.timeFilter.time === TIMELINE_TIME_FILTERS.LIVE.key}
+                    onWriteToVirtualPin={this.handleWidgetWriteVirtualPin}
+                    widget={widget}
+                    key={widget.id}
+                    history={[]}
+                    loading={false}
+      />
+    ));
+
     return (
-      <div>
-        { this.props.loading ? <Icon type="loading" /> : "dash"}
-      </div>
+      <Grids.GridStatic deviceId={Number(this.props.params.id)} widgets={widgets} webDashboard={this.props.dashboard}/>
     );
   }
 

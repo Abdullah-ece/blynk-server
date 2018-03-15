@@ -1,12 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Map} from 'immutable';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
 import Canvasjs from 'canvasjs';
 import './styles.less';
 
 import LabelWidgetSettings from './settings';
+
+/*
+
+why use widget data wrapper:
+rerender only component LabelWidget
+pass data to it based on
+
+*/
 
 class LabelWidget extends React.Component {
 
@@ -24,7 +31,7 @@ class LabelWidget extends React.Component {
       PropTypes.object,
     ]),
 
-    history: PropTypes.instanceOf(Map),
+    value: PropTypes.string,
 
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
@@ -46,7 +53,6 @@ class LabelWidget extends React.Component {
   constructor(props) {
     super(props);
 
-    this.generateData = this.generateData.bind(this);
   }
 
   getTextAlignmentClassNameByAlignment(alignment) {
@@ -121,20 +127,6 @@ class LabelWidget extends React.Component {
     );
   }
 
-  generateData(source, sourceIndex) {
-    if (!source.has('dataStream') || !source.hasIn(['dataStream', 'pin']))
-      return null;
-
-    const pin = this.props.history.get(String(sourceIndex));
-
-    if (!pin)
-      return null;
-
-    const lastPoint = pin.get('data').last();
-
-    return lastPoint && lastPoint.get('y') || null;
-  }
-
   renderRealDataLabel() {
 
     const labelValue = this.getLabelValue();
@@ -150,11 +142,7 @@ class LabelWidget extends React.Component {
   }
 
   getLabelValue() {
-
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.data.sources[0].dataStream || !this.props.data.sources[0].dataStream.value)
-      return null;
-
-    return this.props.data.sources[0].dataStream.value;
+    return this.props.value;
   }
 
   getLabelStyles() {

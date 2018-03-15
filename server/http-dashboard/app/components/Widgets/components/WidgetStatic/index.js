@@ -11,6 +11,8 @@ import {
   SwitchWidget
 } from 'components/Widgets';
 
+import {Label as LabelDataWrapper} from 'scenes/Devices/scenes/WidgetDataWrapper/index';
+
 import _ from 'lodash';
 
 class WidgetStatic extends React.Component {
@@ -18,11 +20,14 @@ class WidgetStatic extends React.Component {
   static propTypes = {
 
     loading: PropTypes.bool,
+    isLive: PropTypes.bool,
 
     widget : PropTypes.object,
-    history: PropTypes.object,
+    history: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object
+    ]),
     style  : PropTypes.object,
-
 
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
@@ -42,7 +47,6 @@ class WidgetStatic extends React.Component {
     return (
       !_.isEqual(nextProps.widget, this.props.widget) ||
       !_.isEqual(nextProps.loading, this.props.loading) ||
-      !_.isEqual(nextProps.history, this.props.history) ||
       !_.isEqual(nextProps.style, this.props.style) ||
       !_.isEqual(nextProps.deviceId, this.props.deviceId)
     );
@@ -66,6 +70,20 @@ class WidgetStatic extends React.Component {
       style      : this.props.style,
     };
 
+    let pin = null;
+
+    if(widget && widget.sources && widget.sources[0] && widget.sources[0].dataStream && widget.sources[0].dataStream.pin) {
+      pin = widget.sources[0].dataStream.pin;
+    }
+
+    const dataWrapperAttributes = {
+      type    : widget.type,
+      isLive  : this.props.isLive,
+      deviceId: this.props.deviceId,
+      widgetId: widget.id,
+      pin     : pin
+    };
+
     if (widget.type === WIDGET_TYPES.LINEAR)
       return (
         <LinearWidget {...attributes}/>
@@ -78,7 +96,9 @@ class WidgetStatic extends React.Component {
 
     if (widget.type === WIDGET_TYPES.LABEL)
       return (
-        <LabelWidget {...attributes}/>
+        <LabelDataWrapper {...dataWrapperAttributes}>
+          <LabelWidget {...attributes}/>
+        </LabelDataWrapper>
       );
 
     if (widget.type === WIDGET_TYPES.SWITCH)

@@ -138,30 +138,23 @@ const initialState = {
 };
 
 
-function updateDeviceDetailsWidgets(state, action) {
+function updateDevicesDashboardLiveData(state, action) {
 
-  let {pin, deviceId, value} = action.value;
+  let {pin, value} = action.value;
 
   pin = Number(pin);
-  deviceId = Number(deviceId);
   value = String(value);
 
-  let devicesWidgetsData = {...state.devicesWidgetsData};
+  let deviceDashboardLiveData = {...state.deviceDashboardLiveData};
 
-  if (!devicesWidgetsData[deviceId])
-    devicesWidgetsData[deviceId] = {};
+  if (!deviceDashboardLiveData[pin])
+    deviceDashboardLiveData[pin] = {};
 
-  if (!devicesWidgetsData[deviceId][pin])
-    devicesWidgetsData[deviceId][pin] = value;
-
-  devicesWidgetsData[deviceId] = {
-    ...devicesWidgetsData[deviceId],
-    [pin]: value
-  };
+  deviceDashboardLiveData[pin] = value;
 
   return {
     ...state,
-    devicesWidgetsData
+    deviceDashboardLiveData
   };
 
   // let deviceId = state.getIn(['deviceDetails', 'info', 'data', 'id']);
@@ -198,10 +191,10 @@ export default function Devices(state = initialState, action) {
       };
 
     case ACTIONS.BLYNK_WS_HARDWARE:
-      return updateDeviceDetailsWidgets(state, action);
+      return updateDevicesDashboardLiveData(state, action);
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
-      return updateDeviceDetailsWidgets(state, action);
+      return updateDevicesDashboardLiveData(state, action);
 
     case "API_DEVICE_DASHBOARD_FETCH":
       return {
