@@ -130,9 +130,9 @@ class LabelWidget extends React.Component {
   renderRealDataLabel() {
 
     const labelValue = this.getLabelValue();
-
-    if (labelValue === null)
-      return (<div className="bar-chart-widget-no-data">No Data</div>);
+    //
+    // if (labelValue === null)
+    //   return (<div className="bar-chart-widget-no-data">No Data</div>);
 
     return this.renderLabelByParams({
       value: labelValue,

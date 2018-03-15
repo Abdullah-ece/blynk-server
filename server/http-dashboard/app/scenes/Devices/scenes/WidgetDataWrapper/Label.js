@@ -4,9 +4,11 @@ import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
 
+  const pin = state.Devices.deviceDashboardLiveData[ownProps.pin];
+
   if (ownProps.isLive)
     return {
-      value: state.Devices.deviceDashboardLiveData[ownProps.pin]
+      value: pin === true ? null : pin
     };
 
   if (!ownProps.isLive)
