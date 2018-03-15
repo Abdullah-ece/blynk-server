@@ -46,7 +46,6 @@ class DashboardScene extends React.Component {
     super(props);
 
     this.fetchDashboardData = this.fetchDashboardData.bind(this);
-    this.handleWidgetWriteVirtualPin = this.handleWidgetWriteVirtualPin.bind(this);
   }
 
   componentDidMount() {
@@ -115,10 +114,6 @@ class DashboardScene extends React.Component {
     }
   }
 
-  handleWidgetWriteVirtualPin() {
-
-  }
-
   render() {
 
     if(this.props.loading)
@@ -133,8 +128,8 @@ class DashboardScene extends React.Component {
     }
 
     const widgets = this.props.dashboard.widgets.map((widget) => (
-      <WidgetStatic isLive={this.props.timeFilter.time === TIMELINE_TIME_FILTERS.LIVE.key}
-                    onWriteToVirtualPin={this.handleWidgetWriteVirtualPin}
+      <WidgetStatic deviceId={Number(this.props.params.id)}
+                    isLive={this.props.timeFilter.time === TIMELINE_TIME_FILTERS.LIVE.key}
                     widget={widget}
                     key={widget.id}
                     history={[]}

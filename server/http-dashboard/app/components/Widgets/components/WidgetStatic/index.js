@@ -13,7 +13,8 @@ import {
 
 import {
   Label as LabelDataWrapper,
-  LineChart as LineChartDataWrapper
+  LineChart as LineChartDataWrapper,
+  Switch as SwitchDataWrapper,
 } from 'scenes/Devices/scenes/WidgetDataWrapper';
 
 import _ from 'lodash';
@@ -107,7 +108,9 @@ class WidgetStatic extends React.Component {
 
     if (widget.type === WIDGET_TYPES.SWITCH)
       return (
-        <SwitchWidget {...attributes}/>
+        <SwitchDataWrapper {...dataWrapperAttributes}>
+          <SwitchWidget {...attributes}/>
+        </SwitchDataWrapper>
       );
 
   }

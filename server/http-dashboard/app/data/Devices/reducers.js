@@ -341,7 +341,7 @@ export default function Devices(state = initialState, action) {
           pin  : source.pin,
           value: source.value
         };
-        deviceDashboardLiveData[source.pin] = source.value || true;
+        deviceDashboardLiveData[source.pin] = source.value === undefined ? true : String(source.value);
       });
 
       return {

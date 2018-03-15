@@ -83,6 +83,10 @@ class Switch extends React.Component {
     return null;
   }
 
+  getValue() {
+    return this.props.value;
+  }
+
   handleChange(value) {
 
     if(!this.props.onWriteToVirtualPin)
@@ -109,7 +113,7 @@ class Switch extends React.Component {
     const checked = (() => {
 
       if (this.props.data.sources && this.props.data.sources.length && this.props.data.sources[0].dataStream) {
-        const value = this.props.data.sources[0].dataStream.value;
+        const value = this.getValue();
 
         if(this.props.data.onValue === undefined) return false; // fix enabled status on Dashboard Edit
 
