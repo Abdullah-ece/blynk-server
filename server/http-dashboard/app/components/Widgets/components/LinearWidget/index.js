@@ -7,7 +7,7 @@ import {
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
-import {Map, fromJS, List} from 'immutable';
+import {Map} from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
 
@@ -22,7 +22,7 @@ class LinearWidget extends React.Component {
       PropTypes.object,
     ]),
 
-    history: PropTypes.instanceOf(Map),
+    value: PropTypes.array,
 
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
@@ -149,14 +149,14 @@ class LinearWidget extends React.Component {
     let min = new Date().getTime();
     let max = 0;
 
-    if(data && data instanceof List && data.size) {
+    if(data && data.length) {
 
       data.forEach(item => {
 
-        if (item.has('dataPoints') && item.get('dataPoints').size) {
-          [min, max] = item.get('dataPoints').reduce(([min, max], dataPoint) => {
+        if (item.dataPoints && item.dataPoints.length) {
+          [min, max] = item.dataPoints.reduce(([min, max], dataPoint) => {
 
-            let value = dataPoint.get('x');
+            let value = dataPoint.x;
 
             if (value) {
               let valueTimestamp = moment(value).format('x');
@@ -221,53 +221,49 @@ class LinearWidget extends React.Component {
 
   }
 
-  generateData(source, sourceIndex) {
+  generateData(source) {
 
-    if(!source.has('dataStream') || !source.hasIn(['dataStream', 'pin']))
+    if(!source.dataStream || !source.dataStream.pin)
       return null;
 
-    const pin = this.props.history.get(String(sourceIndex));
+    const dataPoints = this.props.value.map((item) => {
 
-    if(!pin)
-      return null;
-
-    const dataPoints = pin.get('data').map((item) => {
-
-      return fromJS({
-        x: moment(Number(item.get('x'))).toDate(),
-        y: item.get('y')
-      });
+      return {
+        x: moment(Number(item.x)).toDate(),
+        y: item.y
+      };
     });
 
-    let dataSource = fromJS({
+    let dataSource = {
       ...this.dataDefaultOptions,
-      color: `#${source.get('color')}` || null,
-      name: source.get('label') || null,
+      color: `#${source.color}` || null,
+      name: source.label || null,
       dataPoints: dataPoints || [],
-    });
+    };
 
     return dataSource;
   }
 
   renderRealDataChart() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.history || this.props.loading === undefined)
-      return (<div className="bar-chart-widget-no-data">No Data</div>);
+    if (!this.props.data.sources || !this.props.data.sources.length || !this.props.value || !this.props.value.length || this.props.loading === undefined)
+      return (<div className="bar-chart-widget-no-data">No Data 1</div>);
 
     if (this.props.loading)
       return (<Icon type="loading"/>);
 
-    const sources = fromJS(this.props.data.sources);
-
-    let dataSources = sources.map(this.generateData).filter((source) => source !== null);
+    let dataSources = this.props.data.sources.map(this.generateData).filter((source) => source !== null);
 
     let formats = this.getTimeFormatForRange(
       this.getMinMaxXFromLegendsList(dataSources)
     );
 
-    dataSources = dataSources.map(dataSource =>
-      dataSource.set('xValueFormatString', formats.hoverFormat).set('yValueFormatString', '###,###,###,###')
-    );
+    dataSources = dataSources.map(dataSource => ({
+      ...dataSource,
+      xValueFormatString: formats.hoverFormat,
+      yValueFormatString: '###,###,###,###'
+
+    }));
 
     const config = {
       axisX: {
@@ -277,13 +273,13 @@ class LinearWidget extends React.Component {
         valueFormatString: formats.tickFormat,
       },
       toolTip: this.defaultToolTip,
-      data: dataSources.toJS()
+      data: dataSources
     };
 
     return this.renderChartByParams(config);
   }
-
-  renderChartByParams(config) {
+  renderChartByParams
+  (config) {
 
     const hasData = !!(config.data.reduce((acc, item) => {
       if(Array.isArray(item.dataPoints) && acc < item.dataPoints.length)
@@ -300,7 +296,7 @@ class LinearWidget extends React.Component {
       );
     } else {
       return (
-        <div className="bar-chart-widget-no-data">No Data</div>
+        <div className="bar-chart-widget-no-data">No Data 2</div>
       );
     }
   }

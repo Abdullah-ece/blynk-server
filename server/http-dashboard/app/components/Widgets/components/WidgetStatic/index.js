@@ -11,7 +11,10 @@ import {
   SwitchWidget
 } from 'components/Widgets';
 
-import {Label as LabelDataWrapper} from 'scenes/Devices/scenes/WidgetDataWrapper/index';
+import {
+  Label as LabelDataWrapper,
+  LineChart as LineChartDataWrapper
+} from 'scenes/Devices/scenes/WidgetDataWrapper';
 
 import _ from 'lodash';
 
@@ -61,7 +64,6 @@ class WidgetStatic extends React.Component {
       data               : widget,
       name               : widget.type + widget.id,
       history            : this.props.history,
-      loading            : this.props.loading,
       onWriteToVirtualPin: this.props.onWriteToVirtualPin,
     };
 
@@ -86,7 +88,9 @@ class WidgetStatic extends React.Component {
 
     if (widget.type === WIDGET_TYPES.LINEAR)
       return (
-        <LinearWidget {...attributes}/>
+        <LineChartDataWrapper {...dataWrapperAttributes}>
+          <LinearWidget {...attributes}/>
+        </LineChartDataWrapper>
       );
 
     if (widget.type === WIDGET_TYPES.BAR)

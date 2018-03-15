@@ -147,14 +147,30 @@ function updateDevicesDashboardLiveData(state, action) {
 
   let deviceDashboardLiveData = {...state.deviceDashboardLiveData};
 
-  if (!deviceDashboardLiveData[pin])
-    deviceDashboardLiveData[pin] = {};
+  if (!deviceDashboardLiveData[pin]) {
+    deviceDashboardLiveData = state.deviceDashboardLiveData;
+  } else {
+    deviceDashboardLiveData[pin] = value;
+  }
 
-  deviceDashboardLiveData[pin] = value;
+  let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
+
+  if(!deviceDashboardChartLiveData[pin]) {
+    deviceDashboardChartLiveData = state.deviceDashboardChartLiveData;
+  } else {
+    deviceDashboardChartLiveData[pin].data = [
+      ...deviceDashboardChartLiveData[pin].data,
+      {
+        x: new Date().getTime(),
+        y: Number(value)
+      }
+    ];
+  }
 
   return {
     ...state,
-    deviceDashboardLiveData
+    deviceDashboardLiveData,
+    deviceDashboardChartLiveData
   };
 
   // let deviceId = state.getIn(['deviceDetails', 'info', 'data', 'id']);
@@ -325,7 +341,7 @@ export default function Devices(state = initialState, action) {
           pin  : source.pin,
           value: source.value
         };
-        deviceDashboardLiveData[source.pin] = source.value;
+        deviceDashboardLiveData[source.pin] = source.value || true;
       });
 
       return {
