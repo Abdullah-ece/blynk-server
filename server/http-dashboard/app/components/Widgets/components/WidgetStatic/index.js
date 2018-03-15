@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import {
   LinearWidget,
-  BarChartWidget,
+  // BarChartWidget,
   LabelWidget,
   SwitchWidget
 } from 'components/Widgets';
@@ -95,9 +95,10 @@ class WidgetStatic extends React.Component {
       );
 
     if (widget.type === WIDGET_TYPES.BAR)
-      return (
-        <BarChartWidget {...attributes}/>
-      );
+      return null;
+      // return (
+        {/*<BarChartWidget {...attributes}/>*/}
+      // );
 
     if (widget.type === WIDGET_TYPES.LABEL)
       return (

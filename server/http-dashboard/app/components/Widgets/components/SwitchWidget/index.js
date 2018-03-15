@@ -18,6 +18,8 @@ class Switch extends React.Component {
 
     deviceId: PropTypes.number,
 
+    value: PropTypes.string,
+
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
       onMouseUp  : PropTypes.func,

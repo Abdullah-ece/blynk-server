@@ -41,8 +41,6 @@ class SwitchWidgetDataWrapper extends React.Component {
 
   handleWriteToVirtualPin({pin, value}) {
 
-    console.log('debug', pin, value);
-
     this.props.blynkWsHardware({
       deviceId: this.props.deviceId,
       pin: pin,
