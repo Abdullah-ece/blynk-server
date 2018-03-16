@@ -51,7 +51,7 @@ const persisStoreConfigProd = {};
 function configureStoreProd(initialState) {
 
   const wsMiddleware = createWsMiddleware({
-    defaultEndpoint: `wss://${window.location.hostname}/dashws`,
+    defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
     isDebugMode: true,
     ping: false,
   });
