@@ -7,7 +7,7 @@ import "./styles.less";
 // import {bindActionCreators} from "redux";
 // import {DeviceUpdate} from "data/Devices/api";
 // import {ContentEditable} from 'components';
-import {DeviceName} from 'scenes/Devices/scenes/DeviceDetails/scenes';
+import {DeviceName, DeviceInfo} from 'scenes/Devices/scenes/DeviceDetails/scenes';
 
 class Device extends React.Component {
 
@@ -58,6 +58,11 @@ class Device extends React.Component {
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
               <Dashboard params={this.props.params}/>
+            </div>
+          </TabPane>
+          <TabPane tab="Device Info" key="3">
+            <div className="devices-device-tab-inner">
+              <DeviceInfo params={this.props.params}/>
             </div>
           </TabPane>
         </Tabs>

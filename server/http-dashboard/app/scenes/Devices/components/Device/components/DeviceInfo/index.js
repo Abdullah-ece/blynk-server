@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
-import {Metadata} from 'services/Products';
+import {Fieldset, DeviceStatus, DeviceAuthToken, /*Section, DeviceMetadata,*/ /*BackTop*/} from 'components';
+// import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
 import {DeviceDelete} from 'scenes/Devices/scenes';
@@ -20,12 +20,12 @@ class DeviceInfo extends React.Component {
   }
 
   getDeviceStatus() {
-    if (!this.props.device.has('status'))
+    if (!this.props.device.status)
       return 'offline';
 
-    if (this.props.device && this.props.device.get('status') === 'OFFLINE') {
+    if (this.props.device && this.props.device.status === 'OFFLINE') {
       return 'offline';
-    } else if (this.props.device && this.props.device.get('status') === 'ONLINE') {
+    } else if (this.props.device && this.props.device.status === 'ONLINE') {
       return 'online';
     }
   }
@@ -36,15 +36,15 @@ class DeviceInfo extends React.Component {
 
   render() {
 
-    let time = this.props.device.get('dataReceivedAt');
-    let disconnectTime = this.props.device.get('disconnectTime');
-    let metadataUpdatedAt = this.props.device.get('metadataUpdatedAt');
+    let time = this.props.device.dataReceivedAt;
+    let disconnectTime = this.props.device.disconnectTime;
+    let metadataUpdatedAt = this.props.device.metadataUpdatedAt;
 
     let lastReported = Number(time) ? getCalendarFormatDate(time) : 'Not reported yet';
 
     let lastOnlineTime = getCalendarFormatDate(disconnectTime);
 
-    let deviceActivatedTime = getCalendarFormatDate(this.props.device.get('activatedAt'));
+    let deviceActivatedTime = getCalendarFormatDate(this.props.device.activatedAt);
 
     let metadataUpdatedTime = getCalendarFormatDate(metadataUpdatedAt);
 
@@ -56,7 +56,7 @@ class DeviceInfo extends React.Component {
               <Fieldset.Legend>Status</Fieldset.Legend>
               <DeviceStatus status={this.getDeviceStatus()}/>
             </Fieldset>
-            {!!Number(disconnectTime) && this.props.device.get('status') === 'OFFLINE' && (
+            {!!Number(disconnectTime) && this.props.device.status === 'OFFLINE' && (
               <Fieldset>
                 <Fieldset.Legend>Last Online</Fieldset.Legend>
                 {lastOnlineTime}
@@ -64,11 +64,11 @@ class DeviceInfo extends React.Component {
             )}
             <Fieldset>
               <Fieldset.Legend>Device Activated</Fieldset.Legend>
-              {deviceActivatedTime} <br/> by {this.props.device.get('activatedBy')}
+              {deviceActivatedTime} <br/> by {this.props.device.activatedBy}
             </Fieldset>
             <Fieldset>
               <Fieldset.Legend>Auth Token</Fieldset.Legend>
-              <DeviceAuthToken authToken={this.props.device.get('token')}/>
+              <DeviceAuthToken authToken={this.props.device.token}/>
             </Fieldset>
           </Col>
           <Col span={8}>
@@ -76,123 +76,123 @@ class DeviceInfo extends React.Component {
               <Fieldset.Legend>Last Reported</Fieldset.Legend>
               {lastReported}
             </Fieldset>
-            {this.props.device.has('metadataUpdatedAt') && metadataUpdatedAt > 0 && (
+            {this.props.device.metadataUpdatedAt && metadataUpdatedAt > 0 && (
               <Fieldset>
                 <Fieldset.Legend>Latest Metadata update</Fieldset.Legend>
-                {metadataUpdatedTime} <br/> by {this.props.device.get('metadataUpdatedBy')}
+                {metadataUpdatedTime} <br/> by {this.props.device.metadataUpdatedBy}
               </Fieldset>
             )}
-            {this.props.device.has('orgName') && (
+            {this.props.device.orgName && (
               <Fieldset>
                 <Fieldset.Legend>Organization</Fieldset.Legend>
-                {this.props.device.get('orgName')}
+                {this.props.device.orgName}
               </Fieldset>
             )}
           </Col>
           <Col span={8}>
 
-            <DeviceDelete deviceId={this.props.device.get('id')} />
+            <DeviceDelete deviceId={this.props.device.id} />
 
             <div className="device--device-info-logo">
-              {this.props.device.has('productLogoUrl') && (
-                <img src={this.props.device.get('productLogoUrl')}/>
+              {this.props.device.productLogoUrl && (
+                <img src={this.props.device.productLogoUrl}/>
               )}
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col span={24}>
-            {this.props.device.has('metaFields') && this.props.device.get('metaFields').size !== 0 &&
-            (<Section title="Metadata">
-              <div className="device--device-info-metadata-list">
-                {this.props.device.get('metaFields').map((field) => {
+        {/*<Row>*/}
+          {/*<Col span={24}>*/}
+            {/*{this.props.device.has('metaFields') && this.props.device.get('metaFields').size !== 0 &&*/}
+            {/*(<Section title="Metadata">*/}
+              {/*<div className="device--device-info-metadata-list">*/}
+                {/*{this.props.device.get('metaFields').map((field) => {*/}
 
-                  const form = `device${this.props.device.get('id')}metadataedit${field.get('name')}`;
+                  {/*const form = `device${this.props.device.get('id')}metadataedit${field.get('name')}`;*/}
 
-                  const fieldProps = {
-                    key: form,
-                    form: form,
-                    initialValues: field.toJS(),
-                  };
+                  {/*const fieldProps = {*/}
+                    {/*key: form,*/}
+                    {/*form: form,*/}
+                    {/*initialValues: field.toJS(),*/}
+                  {/*};*/}
 
-                  const props = {
-                    form: form,
-                    data: field,
-                    onChange: this.onChange.bind(this),
-                    account: this.props.account,
-                  };
+                  {/*const props = {*/}
+                    {/*form: form,*/}
+                    {/*data: field,*/}
+                    {/*onChange: this.onChange.bind(this),*/}
+                    {/*account: this.props.account,*/}
+                  {/*};*/}
 
 
-                  if (field.get('type') === Metadata.Fields.TEXT)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Text {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.TEXT)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Text {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.NUMBER)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Number {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.NUMBER)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Number {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.UNIT)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Unit {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.UNIT)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Unit {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.RANGE)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Range {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.RANGE)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Range {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.CONTACT)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Contact {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.CONTACT)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Contact {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.TIME)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Time {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.TIME)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Time {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.COST)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Cost {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.COST)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Cost {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.COORDINATES)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Coordinates {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.COORDINATES)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Coordinates {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                  if (field.get('type') === Metadata.Fields.SWITCH)
-                    return (
-                      <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Switch {...props}/>
-                      </DeviceMetadata.Field>
-                    );
+                  {/*if (field.get('type') === Metadata.Fields.SWITCH)*/}
+                    {/*return (*/}
+                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
+                        {/*<DeviceMetadata.Switch {...props}/>*/}
+                      {/*</DeviceMetadata.Field>*/}
+                    {/*);*/}
 
-                })
-                }
-                {/*<BackTop/>*/}
-              </div>
-            </Section>)}
-          </Col>
-        </Row>
+                {/*})*/}
+                {/*}*/}
+                {/*/!*<BackTop/>*!/*/}
+              {/*</div>*/}
+            {/*</Section>)}*/}
+          {/*</Col>*/}
+        {/*</Row>*/}
       </div>
     );
   }
