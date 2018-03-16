@@ -41,5 +41,13 @@ public enum MeasurementUnit {
 
     Percentage,
 
-    RPM
+    RPM,
+
+    Year,
+    Month,
+    Week,
+    Day,
+    Hour,
+    Minute,
+    Second
 }
