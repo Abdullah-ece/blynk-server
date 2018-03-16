@@ -44,7 +44,7 @@ class AddWidgetTools extends React.Component {
             <Button onClick={this.handleSwitchWidgetAdd}><FontAwesome name="toggle-on" className="product-manage-dashboard--add-widget-tools-buttons--switch"/></Button>
             <Button onClick={this.handleLabelWidgetAdd}><Icon type="laptop" style={{verticalAlign: 'middle'}}/></Button>
             <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
-            <Button onClick={this.handleBarWidgetAdd}><Icon type="bar-chart"/></Button>
+            {/*<Button onClick={this.handleBarWidgetAdd}><Icon type="bar-chart"/></Button>*/}
             <Button disabled={true}><Icon type="close"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>
             <Button disabled={true}><Icon type="close"/></Button>
