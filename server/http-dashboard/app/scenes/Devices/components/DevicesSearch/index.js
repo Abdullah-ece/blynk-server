@@ -128,12 +128,18 @@ class DevicesSearch extends React.Component {
         for (let i in fields) {
           const field = fields[i];
           const fieldValue = (widget[field] || '').toLowerCase();
+          const index = `dashboard.${field}`;
 
           if (fieldValue.indexOf(preparedValue) !== -1) {
-            if (!results[`dashboard.${field}`]) {
-              results[`dashboard.${field}`] = [];
+            if (!results[index]) {
+              results[index] = [];
             }
-            results[`dashboard.${field}`].push({field, parentType: 'dashboard', device});
+
+            if (results[index].filter(e => e.device === device).length === 0){
+              // results don't contain that device for given field
+              // there could be duplications for dashboard widgets
+              results[index].push({field, parentType: 'dashboard', device});
+            }
           }
         }
       }
