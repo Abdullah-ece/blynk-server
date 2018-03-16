@@ -12,15 +12,15 @@ import {connect} from 'react-redux';
 
   const pin = state.Devices.deviceDashboardLiveData[ownProps.pin];
 
-  if (ownProps.isLive)
+  // if (ownProps.isLive)
     return {
       value: pin === true ? null : pin
     };
 
-  if (!ownProps.isLive)
-    return {
-      value: state.Devices.deviceDashboardData[ownProps.widgetId].value
-    };
+  // if (!ownProps.isLive)
+  //   return {
+  //     value: state.Devices.deviceDashboardData[ownProps.widgetId].value
+  //   };
 
 })
 class LabelWidgetDataWrapper extends React.Component {
