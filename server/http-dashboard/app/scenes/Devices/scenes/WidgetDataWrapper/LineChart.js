@@ -4,6 +4,12 @@ import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
 
+  if(ownProps.fetchData === false)
+    return {
+      value  : [],
+      loading: false
+    };
+
   if (ownProps.isLive) {
     const pin = state.Devices.deviceDashboardChartLiveData[ownProps.pin];
 

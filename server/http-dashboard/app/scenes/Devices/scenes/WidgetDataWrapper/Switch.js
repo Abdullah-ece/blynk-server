@@ -6,6 +6,12 @@ import {bindActionCreators} from 'redux';
 
 @connect((state, ownProps) => {
 
+  if(ownProps.fetchData === false)
+    return {
+      value  : null,
+      loading: false
+    };
+
   const pin = state.Devices.deviceDashboardLiveData[ownProps.pin];
 
   if (ownProps.isLive)

@@ -16,7 +16,7 @@ class Dashboard extends React.Component {
 
 
     let widgets = this.props.webDashboard.widgets.map((widget) => (
-      <WidgetStatic widget={widget} key={widget.id}/>
+      <WidgetStatic widget={widget} key={widget.id} fetchData={false}/>
     ));
 
     return (

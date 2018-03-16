@@ -23,6 +23,7 @@ class WidgetStatic extends React.Component {
 
   static propTypes = {
 
+    fetchData: PropTypes.bool,
     loading: PropTypes.bool,
     isLive: PropTypes.bool,
 
@@ -81,11 +82,12 @@ class WidgetStatic extends React.Component {
     }
 
     const dataWrapperAttributes = {
-      type    : widget.type,
-      isLive  : this.props.isLive,
-      deviceId: this.props.deviceId,
-      widgetId: widget.id,
-      pin     : pin
+      type     : widget.type,
+      isLive   : this.props.isLive,
+      deviceId : this.props.deviceId,
+      widgetId : widget.id,
+      pin      : pin,
+      fetchData: this.props.fetchData
     };
 
     if (widget.type === WIDGET_TYPES.LINEAR)
