@@ -1,5 +1,5 @@
 import React from 'react';
-import {BackTop} from 'components';
+// import {BackTop} from 'components';
 import MetadataComponents from 'scenes/Products/components/Metadata';
 import {Metadata as MetadataFields, hardcodedRequiredMetadataFieldsNames} from 'services/Products';
 const {
@@ -298,7 +298,7 @@ class Metadata extends React.Component {
       <ItemsList static={true}>
         { this.getStaticFields() }
         { this.getFields() }
-        <BackTop/>
+        {/*<BackTop/>*/}
       </ItemsList>
     );
   }

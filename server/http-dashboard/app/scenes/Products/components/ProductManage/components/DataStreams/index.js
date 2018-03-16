@@ -1,6 +1,6 @@
 import React from 'react';
 import Scroll from 'react-scroll';
-import {BackTop} from 'components';
+// import {BackTop} from 'components';
 import {AddDataStreamsFields} from 'scenes/Products/components/AddField';
 import {DataStreamsBaseField, DataStreamsItemsList} from "scenes/Products/components/DataStreams";
 import {fromJS} from 'immutable';
@@ -297,7 +297,7 @@ class List extends React.Component {
 
         <AddDataStreamsFields onFieldAdd={this.addDataStreamsField}/>
 
-        <BackTop/>
+        {/*<BackTop/>*/}
       </div>
     );
 

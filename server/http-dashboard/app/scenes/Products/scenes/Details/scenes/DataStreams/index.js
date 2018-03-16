@@ -1,5 +1,5 @@
 import React from 'react';
-import {BackTop} from 'components';
+// import {BackTop} from 'components';
 import {
   DataStreamsItemsList,
   DataStreamsBaseField
@@ -52,7 +52,7 @@ class DataStreams extends React.Component {
     return (
       <DataStreamsItemsList static={true}>
         { this.getFields() }
-        <BackTop/>
+        {/*<BackTop/>*/}
       </DataStreamsItemsList>
     );
   }

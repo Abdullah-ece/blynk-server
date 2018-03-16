@@ -1,6 +1,6 @@
 import React from 'react';
 import {AddMetadataFields} from 'scenes/Products/components/AddField';
-import {BackTop} from 'components';
+// import {BackTop} from 'components';
 import {
   Metadata as MetadataService,
   filterDynamicMetadataFields,
@@ -458,7 +458,7 @@ class ProductMetadata extends React.Component {
         </Metadata.ItemsList>
 
         <AddMetadataFields onFieldAdd={this.addMetadataField}/>
-        <BackTop/>
+        {/*<BackTop/>*/}
       </div>
     );
   }

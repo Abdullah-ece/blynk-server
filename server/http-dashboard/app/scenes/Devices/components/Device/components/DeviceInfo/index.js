@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, BackTop} from 'components';
+import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
 import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
@@ -188,7 +188,7 @@ class DeviceInfo extends React.Component {
 
                 })
                 }
-                <BackTop/>
+                {/*<BackTop/>*/}
               </div>
             </Section>)}
           </Col>

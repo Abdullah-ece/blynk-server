@@ -1,5 +1,5 @@
 import React from 'react';
-import {BackTop} from 'components';
+// import {BackTop} from 'components';
 import {Online, Offline, Info, Warning, Critical} from 'scenes/Products/components/Events';
 import {EVENT_TYPES} from 'services/Products';
 
@@ -120,7 +120,7 @@ class Events extends React.Component {
       <div className="product-events-list">
         { staticFields }
         { dynamicFields }
-        <BackTop/>
+        {/*<BackTop/>*/}
       </div>
     );
   }
