@@ -178,8 +178,8 @@ class WidgetEditable extends React.Component {
       data         : widget,
       name         : widget.type + widget.id,
       resizeHandler: this.props.children, // resize handler from react-grid-layout
-      history      : this.props.history,
-      loading      : this.props.loading,
+      value        : widget.type === WIDGET_TYPES.LINEAR ? [] : null,
+      loading      : false,
     };
 
     attributes.parentElementProps = {

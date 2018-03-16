@@ -1,33 +1,33 @@
 import React from 'react';
 import {
   AddWidgetTools,
-  DeviceSelect,
+  // DeviceSelect,
 } from './components';
 import PropTypes from 'prop-types';
 import {getNextId} from 'services/Products';
-import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
+// import {ProductDashboardDeviceIdForPreviewChange} from 'data/Product/actions';
 import {fromJS, List, Map} from 'immutable';
 import {getCoordinatesToSet, buildDataQueryRequestForWidgets} from 'services/Widgets';
 import './styles.less';
 import _ from 'lodash';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
-import {WidgetsHistory} from 'data/Widgets/api';
+// import {bindActionCreators} from 'redux';
+// import {DevicesListForProductDashboardPreviewFetch} from 'data/Product/api';
+// import {WidgetsHistory} from 'data/Widgets/api';
 import {Fields, Field} from 'redux-form';
 import {Grids} from 'components';
 import {WidgetEditable} from "components/Widgets";
 
 @connect((state) => ({
   orgId: Number(state.Account.orgId),
-  devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
-  devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
-  devicesLoading: state.Devices.devicesLoading,
-  history: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
-}), (dispatch) => ({
-  changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
-  fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
-  fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
+  // devicesListForPreview: fromJS(state.Product.dashboardPreview.devicesList || []),
+  // devicePreviewId: Number(state.Product.dashboardPreview.selectedDeviceId),
+  // devicesLoading: state.Devices.devicesLoading,
+  // history: state.Devices && state.Devices.getIn(['Widgets', 'widgetsData']),
+}), (/*dispatch*/) => ({
+  // changeDeviceIdForPreview: bindActionCreators(ProductDashboardDeviceIdForPreviewChange, dispatch),
+  // fetchDevicesListForPreview: bindActionCreators(DevicesListForProductDashboardPreviewFetch, dispatch),
+  // fetchWidgetHistory: bindActionCreators(WidgetsHistory, dispatch),
 }))
 class Dashboard extends React.Component {
 
@@ -61,15 +61,15 @@ class Dashboard extends React.Component {
     this.handleWidgetAdd = this.handleWidgetAdd.bind(this);
     this.handleWidgetDelete = this.handleWidgetDelete.bind(this);
     this.handleWidgetClone = this.handleWidgetClone.bind(this);
-    this.handleDevicePreviewIdChange = this.handleDevicePreviewIdChange.bind(this);
+    // this.handleDevicePreviewIdChange = this.handleDevicePreviewIdChange.bind(this);
   }
 
   componentWillMount() {
-    if(this.props.isDevicePreviewEnabled)
-      this.props.fetchDevicesListForPreview({
-        orgId    : this.props.orgId,
-        productId: this.props.productId,
-      });
+    // if(this.props.isDevicePreviewEnabled)
+    //   this.props.fetchDevicesListForPreview({
+    //     orgId    : this.props.orgId,
+    //     productId: this.props.productId,
+    //   });
   }
 
   componentDidUpdate(prevProps) {
@@ -173,13 +173,13 @@ class Dashboard extends React.Component {
     });
   }
 
-  handleDevicePreviewIdChange(id) {
-    this.props.changeDeviceIdForPreview(id);
-  }
+  // handleDevicePreviewIdChange(id) {
+  //   this.props.changeDeviceIdForPreview(id);
+  // }
 
   render() {
 
-    const {devicesListForPreview} = this.props;
+    // const {devicesListForPreview} = this.props;
 
     const widgets = fromJS(this.props.fields.map((prefix, index, fields) => {
       const field = fields.get(index);
@@ -195,25 +195,25 @@ class Dashboard extends React.Component {
 
     const gridWidgets = widgets.map((widget) => {
 
-      const history = this.props.history.getIn([
-        String(this.props.devicePreviewId),
-        String(widget.get('id'))
-      ]);
-
-      const loading = this.props.history.getIn([
-        String(this.props.devicePreviewId),
-        'loading'
-      ]);
+      // const history = this.props.history.getIn([
+      //   String(this.props.devicePreviewId),
+      //   String(widget.get('id'))
+      // ]);
+      //
+      // const loading = this.props.history.getIn([
+      //   String(this.props.devicePreviewId),
+      //   'loading'
+      // ]);
 
       return (
         <Field name={`${widget.get('fieldName')}`}
                key={widget.get('id')}
                component={WidgetEditable}
-               deviceId={Number(this.props.devicePreviewId)}
+               // deviceId={Number(this.props.devicePreviewId)}
                onWidgetDelete={this.handleWidgetDelete}
                onWidgetClone={this.handleWidgetClone}
-               loading={loading}
-               history={history}
+               // loading={loading}
+               // history={history}
         />
       );
     }).toJS();
@@ -225,15 +225,15 @@ class Dashboard extends React.Component {
           <div className={`products-manage-dashboard--tools--widget-add`}>
             <AddWidgetTools onWidgetAdd={this.handleWidgetAdd}/>
           </div>
-          { this.props.isDevicePreviewEnabled && (
+          { /* this.props.isDevicePreviewEnabled && (
             <div className={`products-manage-dashboard--tools--device-select`}>
               <DeviceSelect loading={this.props.devicesLoading} devicesList={devicesListForPreview}
                             value={Number(this.props.devicePreviewId)} onChange={this.handleDevicePreviewIdChange}/>
             </div>
-          )}
+          ) */}
         </div>
 
-        <Fields names={names} widgets={gridWidgets} component={Grids.GridManage} deviceId={this.props.devicePreviewId} />
+        <Fields names={names} widgets={gridWidgets} component={Grids.GridManage} /*deviceId={this.props.devicePreviewId}*/ />
 
       </div>
     );
