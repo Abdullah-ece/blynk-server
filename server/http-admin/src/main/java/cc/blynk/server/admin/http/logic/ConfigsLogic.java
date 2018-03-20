@@ -11,14 +11,17 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.enums.SortOrder;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.ChannelHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,16 +54,6 @@ public class ConfigsLogic extends BaseHttpHandler {
         this.serverProperties = holder.props;
     }
 
-    private static Properties readPropertiesFromString(String propertiesAsString) {
-        Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(propertiesAsString));
-        } catch (IOException e) {
-            log.error("Error reading properties as string. {}", e.getMessage());
-        }
-        return properties;
-    }
-
     @GET
     @Path("")
     public Response getConfigs(@QueryParam("_filters") String filterParam,
@@ -86,10 +79,16 @@ public class ConfigsLogic extends BaseHttpHandler {
     @Path("/{name}")
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
-            case TOKEN_MAIL_BODY:
+            case TOKEN_MAIL_BODY :
                 return ok(new Config(name, limits.tokenBody).toString());
             case SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
+            case MAIL_PROPERTIES_FILENAME :
+                return ok(new Config(name, new MailProperties(Collections.emptyMap())).toString());
+            case GCM_PROPERTIES_FILENAME :
+                return ok(new Config(name, new GCMProperties(Collections.emptyMap())).toString());
+            case TWITTER_PROPERTIES_FILENAME :
+                return ok(new Config(name, new TwitterProperties(Collections.emptyMap())).toString());
             default :
                 return badRequest();
         }
@@ -117,52 +116,14 @@ public class ConfigsLogic extends BaseHttpHandler {
         return ok(updatedConfig.toString());
     }
 
-    /**
-     * The Blynk Project.
-     * Created by Dmitriy Dumanskiy.
-     * Created on 04.04.16.
-     */
-    private static class Config {
-
-        String name;
-        String body;
-
-        Config() {
+    private static Properties readPropertiesFromString(String propertiesAsString) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new StringReader(propertiesAsString));
+        } catch (IOException e) {
+            log.error("Error reading properties as string. {}", e.getMessage());
         }
-
-        Config(String name) {
-            this.name = name;
-        }
-
-        Config(String name, String body) {
-            this.name = name;
-            this.body = body;
-        }
-
-        Config(String name, ServerProperties serverProperties) {
-            this.name = name;
-            //return only editable options
-            this.body = makeProperties(serverProperties,
-                    "allowed.administrator.ips",
-                    "user.dashboard.max.limit",
-                    "user.profile.max.size");
-        }
-
-        private static String makeProperties(ServerProperties properties, String... propertyNames) {
-            StringBuilder sb = new StringBuilder();
-            for (String name : propertyNames) {
-                sb.append(name).append(" = ").append(properties.getProperty(name)).append("\n");
-            }
-            return sb.toString();
-        }
-
-        @Override
-        public String toString() {
-            try {
-                return JsonParser.MAPPER.writeValueAsString(this);
-            } catch (Exception e) {
-                return "{}";
-            }
-        }
+        return properties;
     }
+
 }

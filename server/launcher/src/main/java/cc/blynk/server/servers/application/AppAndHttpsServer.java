@@ -79,6 +79,8 @@ public class AppAndHttpsServer extends BaseServer {
         GetServerHandler getServerHandler = new GetServerHandler(holder);
 
         final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        final int appIdleTimeout = holder.limits.appIdleTimeout;
+
         final HardwareChannelStateHandler hardwareChannelStateHandler =
                 new HardwareChannelStateHandler(holder);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
@@ -153,8 +155,8 @@ public class AppAndHttpsServer extends BaseServer {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("AReadTimeout", new IdleStateHandler(600, 0, 0))
-                        .addLast("AChannelState", appChannelStateHandler)
+                pipeline.addFirst("AChannelState", appChannelStateHandler)
+                        .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
                         .addLast("WSMessageDecoder", new WebAppMessageDecoder(stats, holder.limits))
@@ -231,8 +233,8 @@ public class AppAndHttpsServer extends BaseServer {
                     public ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {
                         log.trace("Blynk protocol connection detected.", pipeline.channel());
                         return pipeline
-                                .addFirst("AReadTimeout", new IdleStateHandler(600, 0, 0))
-                                .addLast("AChannelState", appChannelStateHandler)
+                                .addFirst("AChannelState", appChannelStateHandler)
+                                .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
                                 .addLast("AMessageDecoder", new AppMessageDecoder(holder.stats, holder.limits))
                                 .addLast("AMessageEncoder", new AppMessageEncoder(holder.stats))
                                 .addLast("AGetServer", getServerHandler)
