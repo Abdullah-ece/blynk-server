@@ -168,7 +168,7 @@ class DevicesSearchScene extends React.Component {
       <DevicesSearch
         sortingOptions={devicesFilter === DEVICES_FILTERS.ALL_DEVICES ? this.sortingOptionsListAllDevices : this.sortingOptionsListAdvanced}
         devicesSortChange={this.handleDevicesSortChange}
-        devicesSortValue={devicesSortValue} onUpdateTags={this.handleUpdateTags} smartSearch={smartSearch}
+        devicesSortValue={devicesSortValue} changeForm={this.props.changeForm} onUpdateTags={this.handleUpdateTags} smartSearch={smartSearch}
         devices={devices}
         products={products}
         devicesSearchFormValues={devicesSearchFormValues}/>
