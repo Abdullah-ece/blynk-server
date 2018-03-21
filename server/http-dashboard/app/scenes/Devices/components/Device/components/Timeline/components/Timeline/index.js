@@ -1,6 +1,5 @@
 import React from 'react';
 import {Timeline as Timelines, Icon} from 'antd';
-import {Map} from 'immutable';
 import Event from './../Event';
 import TypeFiltering from './../TypeFiltering';
 import TimeFiltering from './../TimeFiltering';
@@ -12,7 +11,7 @@ import './styles.less';
 class Timeline extends React.Component {
 
   static propTypes = {
-    timeline: React.PropTypes.instanceOf(Map),
+    timeline: React.PropTypes.object,
     loading: React.PropTypes.bool,
     formValues: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -26,29 +25,31 @@ class Timeline extends React.Component {
   }
 
   getEventsForCurrentPage() {
-    return this.props.timeline.get('logEvents').splice(
-      this.getLimitForCurrentPage()
-    );
+
+    return this.props.timeline.logEvents.slice(0, this.getLimitForCurrentPage());
   }
 
   render() {
 
     let pending = null;
-    if(this.props.timeline.has('logEvents') &&  this.props.timeline.get('logEvents').size > this.props.page * TIMELINE_ITEMS_PER_PAGE) {
+    if(this.props.timeline.logEvents &&  this.props.timeline.logEvents.length > this.props.page * TIMELINE_ITEMS_PER_PAGE) {
       pending = <a href="javascript:void(0)" onClick={this.props.loadNextPage.bind(this)}>Load more</a>;
     }
+
+    if(!this.props.timeline)
+      return null;
 
     return (
       <div className="devices--device-timeline-timeline">
         <TimeFiltering name="time"
                        formValues={this.props.formValues}/>
         <TypeFiltering name="type"
-                       totalCritical={(this.props.timeline.has('totalCritical') && this.props.timeline.get('totalCritical')) || 0}
-                       totalWarning={(this.props.timeline.has('totalWarning') && this.props.timeline.get('totalWarning')) || 0}
-                       totalResolved={(this.props.timeline.has('totalResolved') && this.props.timeline.get('totalResolved')) || 0}/>
+                       totalCritical={(this.props.timeline.totalCritical && this.props.timeline.totalCritical) || 0}
+                       totalWarning={(this.props.timeline.totalWarning && this.props.timeline.totalWarning) || 0}
+                       totalResolved={(this.props.timeline.totalResolved && this.props.timeline.totalResolved) || 0}/>
         { this.props.loading && (
           <Icon type="loading" className="devices--device-timeline-events devices--device-timeline-events--loading"/>
-        ) || this.props.timeline.has('logEvents') && (
+        ) || this.props.timeline.logEvents && (
           <Timelines className="devices--device-timeline-events"
                      pending={pending}>
             { this.getEventsForCurrentPage().map((event, key) => (
@@ -58,7 +59,7 @@ class Timeline extends React.Component {
           </Timelines>
         )}
 
-        { (!this.props.loading && this.props.timeline.has('logEvents') && !this.props.timeline.get('logEvents').size) || (!this.props.timeline.has('logEvents')) && (
+        { (!this.props.loading && this.props.timeline.logEvents && !this.props.timeline.logEvents.length) || (!this.props.timeline.logEvents) && (
           <div className="no-timeline">No such events during this period</div>
         )}
 

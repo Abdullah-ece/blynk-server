@@ -1,6 +1,6 @@
 import React from "react";
 import {Tabs} from "antd";
-import {Dashboard, /*DeviceInfo, Timeline*/} from "./components";
+import {Dashboard, /*DeviceInfo,*/ Timeline} from "./components";
 // import _ from "lodash";
 import "./styles.less";
 // import {connect} from "react-redux";
@@ -58,6 +58,11 @@ class Device extends React.Component {
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
               <Dashboard params={this.props.params}/>
+            </div>
+          </TabPane>
+          <TabPane tab="Timeline" key="2">
+            <div className="devices-device-tab-inner">
+              <Timeline params={this.props.params}/>
             </div>
           </TabPane>
           <TabPane tab="Device Info" key="3">

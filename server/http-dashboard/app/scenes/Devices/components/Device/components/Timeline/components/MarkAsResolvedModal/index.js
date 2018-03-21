@@ -54,7 +54,7 @@ class MarkAsResolvedModal extends React.Component {
     this.props.resolve({
       orgId: this.props.account.orgId,
       deviceId: this.props.deviceId,
-      eventId: this.props.event.get('id'),
+      eventId: this.props.event.id,
       comment: this.props.formValues && this.props.formValues.comment || ''
     }).then(() => {
       this.setState({
@@ -80,11 +80,11 @@ class MarkAsResolvedModal extends React.Component {
 
     const classNames = classnames({
       'event-resolve-modal': true,
-      'event-resolve-modal--critical': this.props.event.get('eventType') === EVENT_TYPES.CRITICAL,
-      'event-resolve-modal--warning': this.props.event.get('eventType') === EVENT_TYPES.WARNING,
+      'event-resolve-modal--critical': this.props.event.eventType === EVENT_TYPES.CRITICAL,
+      'event-resolve-modal--warning': this.props.event.eventType === EVENT_TYPES.WARNING,
     });
 
-    const time = moment(this.props.event.get('ts')).calendar(null, {
+    const time = moment(this.props.event.ts).calendar(null, {
       sameDay: '[Today], hh:mm A',
       lastDay: '[Yesterday], hh:mm A',
       lastWeek: 'dddd, hh:mm A',
@@ -104,7 +104,7 @@ class MarkAsResolvedModal extends React.Component {
              ]}>
         <div className="event-resolve-modal-header">
           <div className="event-resolve-modal-header-name">
-            { this.props.event.get('name') }
+            { this.props.event.name }
           </div>
           <div className="event-resolve-modal-header-date">
             {time}

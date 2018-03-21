@@ -407,7 +407,10 @@ export default function Devices(state = initialState, action) {
       return state;
 
     case "API_TIMELINE_FETCH_SUCCESS":
-      return state.set('timeline', fromJS(action.payload.data));
+      return {
+        ...state,
+        timeline: action.payload.data
+      };
 
     case "DEVICES_SORT_CHANGE":
       return {

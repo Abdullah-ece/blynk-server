@@ -1,5 +1,4 @@
 import React from 'react';
-import {Map} from 'immutable';
 // import {BackTop} from 'components';
 import {Timeline as Timelines, MarkAsResolvedModal} from './components';
 import {TIMELINE_TYPE_FILTERS, TIMELINE_TIME_FILTERS} from 'services/Devices';
@@ -7,11 +6,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getFormValues} from 'redux-form';
 import {TimelineFetch} from 'data/Devices/api';
+import _ from 'lodash';
 import './styles.less';
 
 @connect((state) => ({
   account: state.Account,
-  timeline: state.Devices.get('timeline'),
+  timeline: state.Devices.timeline,
   formValues: getFormValues('Timeline')(state)
 }), (dispatch) => ({
   fetchTimeline: bindActionCreators(TimelineFetch, dispatch)
@@ -19,7 +19,7 @@ import './styles.less';
 class Timeline extends React.Component {
 
   static propTypes = {
-    timeline: React.PropTypes.instanceOf(Map),
+    timeline: React.PropTypes.object,
     fetchTimeline: React.PropTypes.func,
     formValues: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -115,13 +115,16 @@ class Timeline extends React.Component {
 
   render() {
 
+    if(!this.props.timeline)
+      return null;
+
     return (
       <div className="devices--device-timeline">
-        { this.props.timeline.has('logEvents') && (
+        { this.props.timeline.logEvents && (
           <MarkAsResolvedModal isModalVisible={this.state.isResolveModalVisible}
                                onCancel={this.handleCancel.bind(this)}
                                deviceId={Number(this.props.params.id)}
-                               event={this.props.timeline.get('logEvents').find(event => event.get('id') === this.state.eventId)}
+                               event={_.find(this.props.timeline.logEvents, (event => event.id === this.state.eventId))}
                                onSuccess={this.handleMarkAsResolvesSuccess.bind(this)}/>
         )}
         <Timelines form="Timeline"
