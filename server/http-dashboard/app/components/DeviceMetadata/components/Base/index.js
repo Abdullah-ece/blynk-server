@@ -2,7 +2,6 @@ import React from 'react';
 import {Modal} from 'components';
 import {Button} from 'antd';
 import Item from '../Item';
-import {fromJS} from 'immutable';
 
 import './styles.less';
 
@@ -51,7 +50,6 @@ class Base extends React.Component {
   onOk(metafield) {
     this.props.onChange(metafield).then(() => {
       this.stopLoading();
-      this.props.initialize(this.props.form, this.props.data.toJS());
       this.closeModal();
     });
   }
@@ -69,7 +67,7 @@ class Base extends React.Component {
   handleOkClick() {
     if (this.onOk) {
       this.startLoading();
-      this.onOk(fromJS(this.props.values));
+      this.onOk(this.props.values);
     }
   }
 
@@ -88,12 +86,12 @@ class Base extends React.Component {
     const field = this.props.data;
 
     return (
-      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.get('role')} fieldName={field.get('name')}>
+      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName="device-metadata-modal"
                closable={false}
-               title={field.get('name')}
+               title={field.name}
                onCancel={this.handleCancelClick}
                footer={[
                  <Button key="cancel" type="primary" size="default"

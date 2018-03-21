@@ -16,10 +16,10 @@ class Unit extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        { !field.get('value') && !field.get('units') ? <i>No Value</i> : (
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        { !field.value && !field.units ? <i>No Value</i> : (
           <div>
-            {field.get('value')} {Units[field.get('units')].abbreviation}
+            {field.value} {Units[field.units].abbreviation}
           </div>
         ) }
       </Fieldset>

@@ -15,36 +15,36 @@ class Contact extends Base {
 
     const data = [];
 
-    if (field.get('firstName') && field.get('lastName') && field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
-      data.push(`${field.get('firstName')} ${field.get('lastName')}`);
+    if (field.firstName && field.lastName && field.isLastNameEnabled && field.isFirstNameEnabled)
+      data.push(`${field.firstName} ${field.lastName}`);
 
-    if (field.get('firstName') && !field.get('lastName') && !field.get('isLastNameEnabled') && field.get('isFirstNameEnabled'))
-      data.push(`${field.get('firstName')}`);
+    if (field.firstName && !field.lastName && !field.isLastNameEnabled && field.isFirstNameEnabled)
+      data.push(`${field.firstName}`);
 
-    if (field.get('lastName') && !field.get('firstName') && field.get('isLastNameEnabled') && !field.get('isFirstNameEnabled'))
-      data.push(`${field.get('lastName')}`);
+    if (field.lastName && !field.firstName && field.isLastNameEnabled && !field.isFirstNameEnabled)
+      data.push(`${field.lastName}`);
 
-    if (field.get('email') && field.get('isEmailEnabled'))
-      data.push(`${field.get('email')}`);
+    if (field.email && field.isEmailEnabled)
+      data.push(`${field.email}`);
 
-    if (field.get('phone') && field.get('isPhoneEnabled'))
-      data.push(`${field.get('phone')}`);
+    if (field.phone && field.isPhoneEnabled)
+      data.push(`${field.phone}`);
 
-    if (field.get('streetAddress') && field.get('isStreetAddressEnabled'))
-      data.push(`${field.get('streetAddress')}`);
+    if (field.streetAddress && field.isStreetAddressEnabled)
+      data.push(`${field.streetAddress}`);
 
-    if (field.get('city') && field.get('isCityEnabled'))
-      data.push(`${field.get('city')}`);
+    if (field.city && field.isCityEnabled)
+      data.push(`${field.city}`);
 
-    if (field.get('state') && field.get('isStateEnabled'))
-      data.push(`${field.get('state')}`);
+    if (field.state && field.isStateEnabled)
+      data.push(`${field.state}`);
 
-    if (field.get('zip') && field.get('isZipEnabled'))
-      data.push(`${field.get('zip')}`);
+    if (field.zip && field.isZipEnabled)
+      data.push(`${field.zip}`);
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
         { !data.length && <i>No Value</i>}
         {
           data.map((field, key) => {

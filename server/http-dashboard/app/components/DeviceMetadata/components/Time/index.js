@@ -16,8 +16,8 @@ class Time extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {TimeService.fromTimestamp(field.get('time'))}
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        {TimeService.fromTimestamp(field.time)}
       </Fieldset>
     );
   }

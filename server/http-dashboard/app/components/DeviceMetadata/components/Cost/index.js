@@ -14,17 +14,17 @@ class Cost extends Base {
 
     const field = this.props.data;
 
-    const perValue = field.get('perValue');
-    const price = field.get('price');
-    const units = field.get('units');
-    const currency = field.get('currency');
+    const perValue = field.perValue;
+    const price = field.price;
+    const units = field.units;
+    const currency = field.currency;
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
         { !price && !units ? <i>No Value</i> : (
           <div>
-            { Number(field.get('perValue')) === 1 ? (
+            { Number(field.perValue) === 1 ? (
               <p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>
             ) : (
               <p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>

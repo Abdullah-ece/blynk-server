@@ -18,50 +18,50 @@ class ContactModal extends React.Component {
         name: 'firstName',
         label: 'First Name',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isFirstNameEnabled')
+        isEnabled: this.props.data.isFirstNameEnabled
       },
       {
         name: 'lastName',
         label: 'Last Name',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isLastNameEnabled')
+        isEnabled: this.props.data.isLastNameEnabled
       },
       {
         name: 'streetAddress',
         label: 'Street Address',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isStreetAddressEnabled')
+        isEnabled: this.props.data.isStreetAddressEnabled
       },
       {
         name: 'city',
         label: 'City',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isCityEnabled')
+        isEnabled: this.props.data.isCityEnabled
       },
       {
         name: 'email',
         label: 'E-mail',
         validate: [Validation.Rules.required, Validation.Rules.email],
-        isEnabled: this.props.data.get('isEmailEnabled'),
+        isEnabled: this.props.data.isEmailEnabled,
         validateOnBlur: true
       },
       {
         name: 'state',
         label: 'State',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isStateEnabled')
+        isEnabled: this.props.data.isStateEnabled
       },
       {
         name: 'phone',
         label: 'Phone',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isPhoneEnabled')
+        isEnabled: this.props.data.isPhoneEnabled
       },
       {
         name: 'zip',
         label: 'ZIP',
         validate: [Validation.Rules.required],
-        isEnabled: this.props.data.get('isZipEnabled')
+        isEnabled: this.props.data.isZipEnabled
       }
     ].filter((field) => {
       return !!field.isEnabled;

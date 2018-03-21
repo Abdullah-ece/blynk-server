@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col} from 'antd';
-import {Fieldset, DeviceStatus, DeviceAuthToken, /*Section, DeviceMetadata,*/ /*BackTop*/} from 'components';
-// import {Metadata} from 'services/Products';
+import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
+import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
 import {DeviceDelete} from 'scenes/Devices/scenes';
@@ -100,99 +100,99 @@ class DeviceInfo extends React.Component {
             </div>
           </Col>
         </Row>
-        {/*<Row>*/}
-          {/*<Col span={24}>*/}
-            {/*{this.props.device.has('metaFields') && this.props.device.get('metaFields').size !== 0 &&*/}
-            {/*(<Section title="Metadata">*/}
-              {/*<div className="device--device-info-metadata-list">*/}
-                {/*{this.props.device.get('metaFields').map((field) => {*/}
+        <Row>
+          <Col span={24}>
+            {this.props.device.metaFields && this.props.device.metaFields.length !== 0 &&
+            (<Section title="Metadata">
+              <div className="device--device-info-metadata-list">
+                {this.props.device.metaFields.map((field) => {
 
-                  {/*const form = `device${this.props.device.get('id')}metadataedit${field.get('name')}`;*/}
+                  const form = `device${this.props.device.id}metadataedit${field.name}`;
 
-                  {/*const fieldProps = {*/}
-                    {/*key: form,*/}
-                    {/*form: form,*/}
-                    {/*initialValues: field.toJS(),*/}
-                  {/*};*/}
+                  const fieldProps = {
+                    key: form,
+                    form: form,
+                    initialValues: field,
+                  };
 
-                  {/*const props = {*/}
-                    {/*form: form,*/}
-                    {/*data: field,*/}
-                    {/*onChange: this.onChange.bind(this),*/}
-                    {/*account: this.props.account,*/}
-                  {/*};*/}
+                  const props = {
+                    form: form,
+                    data: field,
+                    onChange: this.onChange.bind(this),
+                    account: this.props.account,
+                  };
 
 
-                  {/*if (field.get('type') === Metadata.Fields.TEXT)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Text {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.TEXT)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Text {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.NUMBER)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Number {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.NUMBER)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Number {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.UNIT)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Unit {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.UNIT)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Unit {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.RANGE)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Range {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.RANGE)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Range {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.CONTACT)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Contact {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.CONTACT)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Contact {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.TIME)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Time {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.TIME)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Time {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.COST)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Cost {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.COST)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Cost {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.COORDINATES)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Coordinates {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.COORDINATES)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Coordinates {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                  {/*if (field.get('type') === Metadata.Fields.SWITCH)*/}
-                    {/*return (*/}
-                      {/*<DeviceMetadata.Field {...fieldProps}>*/}
-                        {/*<DeviceMetadata.Switch {...props}/>*/}
-                      {/*</DeviceMetadata.Field>*/}
-                    {/*);*/}
+                  if (field.type === Metadata.Fields.SWITCH)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Switch {...props}/>
+                      </DeviceMetadata.Field>
+                    );
 
-                {/*})*/}
-                {/*}*/}
-                {/*/!*<BackTop/>*!/*/}
-              {/*</div>*/}
-            {/*</Section>)}*/}
-          {/*</Col>*/}
-        {/*</Row>*/}
+                })
+                }
+                {/*<BackTop/>*/}
+              </div>
+            </Section>)}
+          </Col>
+        </Row>
       </div>
     );
   }

@@ -15,8 +15,8 @@ class Number extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('value')}
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        {field.value}
       </Fieldset>
     );
   }

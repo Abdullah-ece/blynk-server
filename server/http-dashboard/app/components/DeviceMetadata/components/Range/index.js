@@ -16,8 +16,8 @@ class Range extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        from {TimeRange.fromMinutes(field.get('from'))} to {TimeRange.fromMinutes(field.get('to'))}
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        from {TimeRange.fromMinutes(field.from)} to {TimeRange.fromMinutes(field.to)}
       </Fieldset>
     );
   }
@@ -25,7 +25,7 @@ class Range extends Base {
   getEditableComponent() {
     return (
       <div>
-        <RangeModal form={this.props.form} initialValues={this.props.data.toJS()}/>
+        <RangeModal form={this.props.form} initialValues={this.props.data}/>
       </div>
     );
   }

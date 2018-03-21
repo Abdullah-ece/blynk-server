@@ -15,8 +15,8 @@ class Switch extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {Number(field.get('value')) === 0 ? field.get('from') : field.get('to')}
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        {Number(field.value) === 0 ? field.from : field.to}
       </Fieldset>
     );
   }
@@ -24,7 +24,7 @@ class Switch extends Base {
   getEditableComponent() {
     return (
       <div>
-        <SwitchModal initialValues={this.props.data.toJS()}/>
+        <SwitchModal initialValues={this.props.data}/>
       </div>
     );
   }

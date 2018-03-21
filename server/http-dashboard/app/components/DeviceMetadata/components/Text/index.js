@@ -11,11 +11,11 @@ class Text extends Base {
   }
 
   isDeviceOwner() {
-    return this.props.data.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner;
+    return this.props.data.name === hardcodedRequiredMetadataFieldsNames.DeviceOwner;
   }
 
   isTimezoneOfDevice() {
-    return this.props.data.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice;
+    return this.props.data.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice;
   }
 
   getPreviewComponent() {
@@ -23,8 +23,8 @@ class Text extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.get('name')}</Fieldset.Legend>
-        {field.get('value') || <i>No Value</i>}
+        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        {field.value || <i>No Value</i>}
       </Fieldset>
     );
   }
