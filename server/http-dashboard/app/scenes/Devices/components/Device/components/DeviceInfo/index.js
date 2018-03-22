@@ -66,10 +66,12 @@ class DeviceInfo extends React.Component {
               <Fieldset.Legend>Device Activated</Fieldset.Legend>
               {deviceActivatedTime} <br/> by {this.props.device.activatedBy}
             </Fieldset>
-            <Fieldset>
-              <Fieldset.Legend>Auth Token</Fieldset.Legend>
-              <DeviceAuthToken authToken={this.props.device.token}/>
-            </Fieldset>
+            {this.props.device.token && (
+              <Fieldset>
+                <Fieldset.Legend>Auth Token</Fieldset.Legend>
+                <DeviceAuthToken authToken={this.props.device.token}/>
+              </Fieldset>
+            ) || null}
           </Col>
           <Col span={8}>
             <Fieldset>
@@ -81,7 +83,7 @@ class DeviceInfo extends React.Component {
                 <Fieldset.Legend>Latest Metadata update</Fieldset.Legend>
                 {metadataUpdatedTime} <br/> by {this.props.device.metadataUpdatedBy}
               </Fieldset>
-            )}
+            ) || null}
             {this.props.device.orgName && (
               <Fieldset>
                 <Fieldset.Legend>Organization</Fieldset.Legend>
