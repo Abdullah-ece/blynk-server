@@ -29,8 +29,7 @@ class GridManage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleResize   = this.handleResize.bind(this);
-    this.handleDragStop = this.handleDragStop.bind(this);
+    this.handleLayoutChange   = this.handleLayoutChange.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -77,35 +76,30 @@ class GridManage extends React.Component {
 
   cols = {lg: 12, md: 10, sm: 8, xs: 4, xxs: 2};
 
-  handleResize(layout, oldItem, newItem) {
+  handleLayoutChange(layout) {
 
-      const item = _.find(this.props.webDashboard.widgets, (item) => {
-        return Number(item.input.value.id) === Number(newItem.i);
-      });
+    layout.forEach((newItem) => {
+      let originalItem = _.find(this.props.webDashboard.widgets, (item) => Number(item.input.value.id) === Number(newItem.i));
 
-      item.input.onChange({
-        ...item.input.value,
-        w: newItem.w,
-        h: newItem.h,
-        width: newItem.w,
-        height: newItem.h,
-      });
-  }
+      let x1 = Number(originalItem.input.value.x);
+      let y1 = Number(originalItem.input.value.y);
+      let w1 = Number(originalItem.input.value.w);
+      let h1 = Number(originalItem.input.value.h);
 
-  handleDragStop(layout, oldItem, newItem) {
+      let x2 = Number(newItem.x);
+      let y2 = Number(newItem.y);
+      let w2 = Number(newItem.w);
+      let h2 = Number(newItem.h);
 
-    const item = _.find(this.props.webDashboard.widgets, (item) => {
-      return Number(item.input.value.id) === Number(newItem.i);
-    });
-
-    item.input.onChange({
-      ...item.input.value,
-      x: newItem.x,
-      y: newItem.y,
-      w: newItem.w,
-      h: newItem.h,
-      width: newItem.w,
-      height: newItem.h,
+      if(x1 !== x2 || y1 !== y2 || w1 !== w2 || h1 !== h2) {
+        originalItem.input.onChange({
+          ...originalItem.input.value,
+          x: x2,
+          y: y2,
+          width: w2,
+          height: h2,
+        });
+      }
     });
 
   }
@@ -146,8 +140,8 @@ class GridManage extends React.Component {
           isResizable={true}
           autoSize={true}
           measureBeforeMount={true}
-          onDragStop={this.handleDragStop}
-          onResizeStop = {this.handleResize}
+          onDragStop={this.handleLayoutChange}
+          onResizeStop = {this.handleLayoutChange}
           layouts={layouts}
         >
           {this.props.widgets}
