@@ -25,6 +25,11 @@ public class TextMetaField extends MetaField {
     }
 
     @Override
+    public String getNotificationEmail() {
+        return value;
+    }
+
+    @Override
     public MetaField copy() {
         return new TextMetaField(id, name, role, isDefault, value);
     }

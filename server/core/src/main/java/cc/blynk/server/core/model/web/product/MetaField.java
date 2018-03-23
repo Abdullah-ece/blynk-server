@@ -76,6 +76,10 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return field;
     }
 
+    public String getNotificationEmail() {
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

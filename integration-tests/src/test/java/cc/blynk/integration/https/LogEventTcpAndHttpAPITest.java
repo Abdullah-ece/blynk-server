@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -327,6 +328,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         }
 
         verify(mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("You received event."), eq("Temp is super high"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("You received event."), eq("Temp is super high"));
     }
 
     @Test
@@ -571,7 +573,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
-                        "Kyiv", false, "Ukraine", false, "03322", false, false)
+                        "Kyiv", false, "Ukraine", false, "03322", false, false),
+                new TextMetaField(7, "Device Owner", Role.STAFF, false, "owner@blynk.cc")
         };
 
         CriticalEvent criticalEvent = new CriticalEvent(
@@ -581,7 +584,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
                 false,
                 "temp_is_high" ,
                 new EventReceiver[] {
-                    new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                    new EventReceiver(6, MetadataType.Contact, "Farm of Smith"),
+                    new EventReceiver(7, MetadataType.Text, "Device Owner")
                 },
                 null,
                 null

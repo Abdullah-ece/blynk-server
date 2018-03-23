@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
-import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -95,15 +94,17 @@ public class HardwareLogEventLogic {
 
         for (EventReceiver mailReceiver : event.emailNotifications) {
             MetaField metaField = device.findMetaFieldById(mailReceiver.metaFieldId);
-            if (metaField != null && metaField instanceof ContactMetaField) {
-                ContactMetaField contactMetaField = (ContactMetaField) metaField;
-                mail(contactMetaField.email, "You received event.", event.name);
+            if (metaField != null) {
+                String to = metaField.getNotificationEmail();
+                if (to != null && !to.isEmpty()) {
+                    mail(to, "You received event.", event.name);
+                }
             }
         }
 
         for (EventReceiver pushReceiver : event.pushNotifications) {
             MetaField metaField = device.findMetaFieldById(pushReceiver.metaFieldId);
-            if (metaField != null && metaField instanceof ContactMetaField) {
+            if (metaField != null) {
                 push(state, "You received new event : " + event.name);
             }
         }

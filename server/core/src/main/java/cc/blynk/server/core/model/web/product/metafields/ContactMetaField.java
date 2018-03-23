@@ -101,6 +101,11 @@ public class ContactMetaField extends MetaField {
     }
 
     @Override
+    public String getNotificationEmail() {
+        return email;
+    }
+
+    @Override
     public void update(MetaField metaField) {
         super.update(metaField);
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
