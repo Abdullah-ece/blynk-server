@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
-import DeviceCreateModal from './../DeviceCreateModal';
+import {DeviceCreateModal} from 'scenes/Devices/scenes';
 import {Button} from 'antd';
 import './styles.less';
 
