@@ -462,7 +462,9 @@ export const DEVICES_SORT = {
       const aWarning = a.warningSinceLastView || 0;
       const bCritical = b.criticalSinceLastView || 0;
       const bWarning = b.warningSinceLastView || 0;
-      if (aCritical === bCritical) {
+      if (aCritical === bCritical && aWarning === bWarning) {
+        return String(a.name) > String(b.name) ? 1 : -1;
+      } else if(aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
       } else {
         return (aCritical > bCritical) ? -1 : 1;
@@ -517,7 +519,9 @@ export const FILTERED_DEVICES_SORT = {
       const aWarning = a.items.reduce((val, device) => val + (device.warningSinceLastView || 0), 0);
       const bWarning = b.items.reduce((val, device) => val + (device.warningSinceLastView || 0), 0);
 
-      if (aCritical === bCritical) {
+      if (aCritical === bCritical && aWarning === bWarning) {
+        return String(a.name) > String(b.name) ? 1 : -1;
+      } else if(aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
       } else {
         return (aCritical > bCritical) ? -1 : 1;
