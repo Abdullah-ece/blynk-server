@@ -77,7 +77,7 @@ class WidgetStatic extends React.Component {
 
     let pin = null;
 
-    if(widget && widget.sources && widget.sources[0] && widget.sources[0].dataStream && widget.sources[0].dataStream.pin) {
+    if(widget && widget.sources && widget.sources[0] && widget.sources[0].dataStream && !isNaN(Number(widget.sources[0].dataStream.pin))) {
       pin = widget.sources[0].dataStream.pin;
     }
 
