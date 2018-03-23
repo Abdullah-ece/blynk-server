@@ -49,6 +49,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -327,8 +328,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("MyNewDescription", logEvents[0].description);
         }
 
-        verify(mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("You received event."), eq("Temp is super high"));
-        verify(mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("You received event."), eq("Temp is super high"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
     }
 
     @Test

@@ -30,4 +30,12 @@ public class ServerProperties extends BaseProperties {
         this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
     }
 
+    public String getDeviceUrl() {
+        return "https://" + getServerHost() + "/dashboard/devices/";
+    }
+
+    public String getAdminEmail() {
+        return getProperty("admin.email", "admin@blynk.cc");
+    }
+
 }

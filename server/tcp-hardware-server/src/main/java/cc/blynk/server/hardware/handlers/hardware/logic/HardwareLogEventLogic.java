@@ -20,6 +20,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -41,6 +44,9 @@ public class HardwareLogEventLogic {
     private final DBManager dbManager;
     private final GCMWrapper gcmWrapper;
     private final MailWrapper mailWrapper;
+    private final String productName;
+    private final String deviceUrl;
+    private final String adminEmail;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
@@ -49,6 +55,9 @@ public class HardwareLogEventLogic {
         this.dbManager = holder.dbManager;
         this.gcmWrapper = holder.gcmWrapper;
         this.mailWrapper = holder.mailWrapper;
+        this.productName = holder.props.getProductName();
+        this.deviceUrl = holder.props.getDeviceUrl();
+        this.adminEmail = holder.props.getAdminEmail();
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -97,7 +106,7 @@ public class HardwareLogEventLogic {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
-                    mail(to, "You received event.", event.name);
+                    mail(to, device.name + ": " + event.name, makeMailBody(device.id, device.name, event.name));
                 }
             }
         }
@@ -108,6 +117,19 @@ public class HardwareLogEventLogic {
                 push(state, "You received new event : " + event.name);
             }
         }
+    }
+
+    //todo make this mail in 1 place
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM d, yyyy");
+    private String makeMailBody(int deviceId, String deviceName, String eventName) {
+        return "<a href=\"" + deviceUrl + deviceId + "\">" + deviceName + "</a>"
+                + "<br>"
+                + formatter.format(LocalDateTime.now())
+                + "<br>"
+                + "<br>"
+                + "<b>" + eventName + "</b>"
+                + "<br>"
+                + "Please email " + productName + ": " + "<a href=\"mailto:" + adminEmail + "\">" + adminEmail + "</a>";
     }
 
     private void push(HardwareStateHolder state, String message) {
