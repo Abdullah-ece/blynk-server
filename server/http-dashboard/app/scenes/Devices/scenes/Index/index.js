@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
 
 @connect((state) => ({
-  productsCounts: state.Product.products && state.Product.products.length,
+  productsCount: state.Product.products && state.Product.products.length,
   devices: state.Devices.devices,
   organization: state.Organization,
 }), (dispatch) => ({
