@@ -28,6 +28,16 @@ export function DeviceTimeFilterUpdate(value) {
   };
 }
 
+export function DeviceListNameUpdate({deviceId, name}) {
+  return {
+    type: 'DEVICES_LIST_NAME_UPDATE',
+    value: {
+      deviceId,
+      name
+    }
+  };
+}
+
 export function DeviceCreateUpdate(value) {
   return {
     type: 'DeviceCreateUpdate',

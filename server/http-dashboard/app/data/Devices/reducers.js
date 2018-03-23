@@ -366,6 +366,24 @@ export default function Devices(state = initialState, action) {
         devicesLoading: true
       };
 
+    case "DEVICES_LIST_NAME_UPDATE":
+
+      let devicesList = state.devices.map((device) => {
+        if(Number(action.value.deviceId) === Number(device.id)) {
+          return {
+            ...device,
+            name: action.value.name
+          };
+        }
+
+        return device;
+      });
+
+      return {
+        ...state,
+        devices: devicesList
+      };
+
     case "API_DEVICES_FAILURE":
       return {
         ...state,
