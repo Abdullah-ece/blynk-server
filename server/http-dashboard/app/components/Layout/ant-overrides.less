@@ -179,6 +179,9 @@
 @btn-dashed-disabled-border-color: @color-dark-grey-75;
 @btn-dashed-disabled-bg: transparent;
 
+@btn-border-width: 2px;
+@btn-group-border-width: 1px;
+
 /*** SELECT ***/
 
 @select-item-hover-bg: @color-dark-grey-03;
@@ -391,6 +394,7 @@
     //Button default
     height: auto;
     line-height: 14px;
+    border-width: @btn-border-width;
     .font-ghost-button;
 
     i {
@@ -1237,6 +1241,7 @@ span.switch-label {
 
 .ant-btn-group {
   > button {
+    border-width: @btn-group-border-width;
     border-radius: 5px;
   }
   > .ant-btn:not(.ant-btn-icon-only) {
