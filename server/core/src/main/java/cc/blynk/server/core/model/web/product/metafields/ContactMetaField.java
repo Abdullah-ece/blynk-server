@@ -16,41 +16,41 @@ public class ContactMetaField extends MetaField {
 
     public final String firstName;
 
-    public final boolean isFirstNameEnabled;
+    public volatile boolean isFirstNameEnabled;
 
     public final String lastName;
 
-    public final boolean isLastNameEnabled;
+    public volatile boolean isLastNameEnabled;
 
     public final String email;
 
-    public final boolean isEmailEnabled;
+    public volatile boolean isEmailEnabled;
 
     public final String phone;
 
-    public final boolean isPhoneEnabled;
+    public volatile boolean isPhoneEnabled;
 
     public final String streetAddress;
 
-    public final boolean isStreetAddressEnabled;
+    public volatile boolean isStreetAddressEnabled;
 
     public final String country;
 
-    public final boolean isCountryEnabled;
+    public volatile boolean isCountryEnabled;
 
     public final String city;
 
-    public final boolean isCityEnabled;
+    public volatile boolean isCityEnabled;
 
     public final String state;
 
-    public final boolean isStateEnabled;
+    public volatile boolean isStateEnabled;
 
     public final String zip;
 
-    public final boolean isZipEnabled;
+    public volatile boolean isZipEnabled;
 
-    public final boolean isDefaultsEnabled;
+    public volatile boolean isDefaultsEnabled;
 
     @JsonCreator
     public ContactMetaField(@JsonProperty("id") int id,
@@ -98,6 +98,22 @@ public class ContactMetaField extends MetaField {
         this.zip = zip;
         this.isZipEnabled = isZipEnabled;
         this.isDefaultsEnabled = isDefaultsEnabled;
+    }
+
+    @Override
+    public void update(MetaField metaField) {
+        super.update(metaField);
+        ContactMetaField contactMetaField = (ContactMetaField) metaField;
+        this.isFirstNameEnabled = contactMetaField.isFirstNameEnabled;
+        this.isLastNameEnabled = contactMetaField.isLastNameEnabled;
+        this.isEmailEnabled = contactMetaField.isEmailEnabled;
+        this.isPhoneEnabled = contactMetaField.isPhoneEnabled;
+        this.isStreetAddressEnabled = contactMetaField.isStreetAddressEnabled;
+        this.isCountryEnabled = contactMetaField.isCountryEnabled;
+        this.isCityEnabled = contactMetaField.isCityEnabled;
+        this.isStateEnabled = contactMetaField.isStateEnabled;
+        this.isZipEnabled = contactMetaField.isZipEnabled;
+        this.isDefaultsEnabled = contactMetaField.isDefaultsEnabled;
     }
 
     @Override

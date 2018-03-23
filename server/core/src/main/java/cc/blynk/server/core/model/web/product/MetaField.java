@@ -49,11 +49,11 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final int id;
 
-    public String name;
+    public volatile String name;
 
-    public Role role;
+    public volatile Role role;
 
-    public boolean isDefault;
+    public volatile boolean isDefault;
 
     public MetaField(int id, String name, Role role, boolean isDefault) {
         this.id = id;

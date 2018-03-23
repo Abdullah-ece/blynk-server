@@ -39,9 +39,11 @@ import java.util.Currency;
 import java.util.Date;
 
 import static java.time.LocalTime.ofSecondOfDay;
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -763,6 +765,91 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals(Role.USER, textMetaField.role);
             assertEquals("Default Device", textMetaField.value);
 
+        }
+    }
+
+    @Test
+    public void testUpdateContactMetaDataFieldInChildDevices() throws Exception {
+        login(admin.email, admin.pass);
+
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                        "Dmitriy", true, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                        "+38063673333",  false, "My street", false, "Ukraine", false,
+                        "Kyiv", false, "Ukraine", false, "03322", false, false)
+        };
+
+        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
+        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            product = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(product);
+            assertEquals(1, product.id);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        ContactMetaField contactMetaField;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            newDevice = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", newDevice.name);
+            assertEquals(1, newDevice.id);
+            assertNotNull(newDevice.metaFields);
+            assertEquals(1, newDevice.metaFields.length);
+            contactMetaField = (ContactMetaField) newDevice.metaFields[0];
+            assertEquals(1, contactMetaField.id);
+            assertEquals("Farm of Smith", contactMetaField.name);
+            assertEquals(Role.ADMIN, contactMetaField.role);
+            assertTrue(contactMetaField.isFirstNameEnabled);
+            assertFalse(contactMetaField.isLastNameEnabled);
+        }
+
+        product.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                "Dmitriy", true, "Dumanskiy", true, "dmitriy@blynk.cc", false,
+                "+38063673333",  false, "My street", false, "Ukraine", false,
+                "Kyiv", false, "Ukraine", false, "03322", false, false);
+
+        HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");
+        updateProductAndDevicesReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateProductAndDevicesReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(1, fromApi.metaFields.length);
+        }
+
+        HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevice)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.metaFields);
+            assertEquals(1, device.metaFields.length);
+            contactMetaField = (ContactMetaField) device.metaFields[0];
+            assertEquals(1, contactMetaField.id);
+            assertEquals("Farm of Smith", contactMetaField.name);
+            assertEquals(Role.ADMIN, contactMetaField.role);
+            assertTrue(contactMetaField.isFirstNameEnabled);
+            assertTrue(contactMetaField.isLastNameEnabled);
         }
     }
 
