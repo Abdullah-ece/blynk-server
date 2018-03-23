@@ -69,7 +69,7 @@ const getLocationMetaFieldOnly = (metaFields) => {
   if(!metaFields || !metaFields.length)
     return [];
 
-  return metaFields.map((field) => (
+  return metaFields.filter((field) => (
     field && field.name && String(field.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName
   ));
 };

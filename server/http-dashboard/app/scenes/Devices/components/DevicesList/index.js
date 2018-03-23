@@ -94,10 +94,11 @@ class DevicesList extends React.Component {
   getLocationName(device) {
     if (device && device.metaFields && device.metaFields.length) {
       return device.metaFields.reduce((location, item) => {
-        if (String(item.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName)
+        if (String(item.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName) {
           return item.value;
+        }
         return location;
-      });
+      }, '');
     }
     return false;
   }
