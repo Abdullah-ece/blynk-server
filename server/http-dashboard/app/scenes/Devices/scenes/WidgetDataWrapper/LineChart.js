@@ -13,8 +13,6 @@ import {connect} from 'react-redux';
   if (ownProps.isLive) {
     const pin = state.Devices.deviceDashboardChartLiveData[ownProps.pin];
 
-    console.log(pin, ownProps.pin);
-
     if (!pin)
       return {
         value  : [],
