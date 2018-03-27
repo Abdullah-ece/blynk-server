@@ -32,6 +32,15 @@ class UnitField extends BaseField {
         Unit.Kilometer
       ]
     },
+    'Duration':[
+      Unit.Year,
+      Unit.Month,
+      Unit.Week,
+      Unit.Day,
+      Unit.Hour,
+      Unit.Minute,
+      Unit.Second
+    ],
     'Mass': {
       'Imperial': [
         Unit.Ounce,

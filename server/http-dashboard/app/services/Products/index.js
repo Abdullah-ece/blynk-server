@@ -326,7 +326,42 @@ export const Unit = {
     abbreviation: 'rpm',
     key: 'RPM',
     value: 'RPM'
-  }
+  },
+  Year: {
+    abbreviation: 'yr',
+    key: 'Year',
+    value: 'Year'
+  },
+  Month: {
+    abbreviation: 'mo',
+    key: 'Month',
+    value: 'Month'
+  },
+  Week: {
+    abbreviation: 'wk',
+    key: 'Week',
+    value: 'Week'
+  },
+  Day: {
+    abbreviation: 'd',
+    key: 'Day',
+    value: 'Day'
+  },
+  Hour: {
+    abbreviation: 'h',
+    key: 'Hour',
+    value: 'Hour'
+  },
+  Minute: {
+    abbreviation: 'm',
+    key: 'Minute',
+    value: 'Minute'
+  },
+  Second: {
+    abbreviation: 's',
+    key: 'Second',
+    value: 'Second'
+  },
 
 };
 
