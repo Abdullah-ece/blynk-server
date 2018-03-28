@@ -25,6 +25,7 @@ class WidgetSettings extends React.Component {
       <Modal width={'auto'}
              wrapClassName="modal-window-widget-settings"
              visible={this.props.visible}
+             onCancel={this.props.onCancel}
              closable={false}
              footer={[
                <Button key="back" onClick={this.props.onCancel}>
