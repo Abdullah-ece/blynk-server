@@ -88,9 +88,6 @@ public class HardwareAppLogic extends BaseProcessorHandler {
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
-        //todo temp solution
-        processWebDashState(ctx, dashId, split[1], message.id);
-
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
@@ -105,6 +102,9 @@ public class HardwareAppLogic extends BaseProcessorHandler {
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
+
+        //todo temp solution
+        processWebDashState(ctx, targetId, split[1], message.id);
 
         //sending message only if widget assigned to device or tag has assigned devices
         Target target = dash.getTarget(targetId);
