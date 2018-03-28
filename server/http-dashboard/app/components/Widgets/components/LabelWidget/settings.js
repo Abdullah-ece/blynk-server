@@ -141,7 +141,7 @@ class LabelWidgetSettings extends React.Component {
     '#04c0f8',
     '#d3435c',
     '#ea7d26',
-    '#ea7d26',
+    '#e92126',
   ];
 
   colorPickerComponent({input}) {
