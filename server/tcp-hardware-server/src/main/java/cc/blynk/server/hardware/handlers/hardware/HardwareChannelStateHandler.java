@@ -44,6 +44,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private final DBManager dbManager;
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
+    private final String pushNotificationBody;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
@@ -52,6 +53,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         this.dbManager = holder.dbManager;
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
+        this.pushNotificationBody = holder.textHolder.pushNotificationBody;
     }
 
     @Override
