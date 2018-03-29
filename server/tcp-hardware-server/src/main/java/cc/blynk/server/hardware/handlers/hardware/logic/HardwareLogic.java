@@ -89,7 +89,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             if (dash.isActive) {
                 session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
             }
-            session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, deviceId, body);
+            session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceId);
         }
     }
 

@@ -5,6 +5,7 @@ import cc.blynk.server.application.handlers.main.WebAppHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.utils.AppNameUtil;
@@ -112,7 +113,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
-        WebAppStateHolder appStateHolder = new WebAppStateHolder(user, version);
+        WebAppStateHolder appStateHolder = new WebAppStateHolder(user);
         pipeline.addLast("AWebAppHandler", new WebAppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();

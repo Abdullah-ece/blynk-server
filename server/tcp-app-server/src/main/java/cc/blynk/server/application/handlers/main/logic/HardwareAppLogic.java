@@ -152,6 +152,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
 
                 //sending to shared dashes and master-master apps
                 session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
+                session.sendToSelectedDeviceOnWeb(APP_SYNC, message.id, split[1], deviceIds);
 
                 if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)
                         && !dash.isNotificationsOff) {

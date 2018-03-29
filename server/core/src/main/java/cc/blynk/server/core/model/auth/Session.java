@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
@@ -20,6 +21,7 @@ import java.util.Set;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
+import static cc.blynk.server.internal.StateHolderUtil.getWebState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDeviceId;
@@ -184,14 +186,29 @@ public class Session {
         }
     }
 
-    public void sendToSelectedDeviceOnWeb(short cmd, int msgId, int deviceId, String body) {
-        sendToSelectedDeviceOnWeb(null, cmd, msgId, deviceId, body);
+    public void sendToSelectedDeviceOnWeb(short cmd, int msgId, String body, int... deviceIds) {
+        sendToSelectedDeviceOnWeb(null, cmd, msgId, body, deviceIds);
     }
 
-    public void sendToSelectedDeviceOnWeb(Channel channel, short cmd, int msgId, int deviceId, String body) {
-        if (isWebConnected()) {
-            String finalBody = String.valueOf(deviceId) + BODY_SEPARATOR + body;
-            filterBySelectedDeviceAndSendWeb(channel, cmd, msgId, deviceId, finalBody);
+    public void sendToSelectedDeviceOnWeb(Channel self, short cmd, int msgId, String body, int... deviceIds) {
+        if (!isWebConnected()) {
+            return;
+        }
+        for (Channel channel : webChannels) {
+            if (channel != self) {
+                WebAppStateHolder webAppStateHolder = getWebState(channel);
+                if (webAppStateHolder != null) {
+                    for (int deviceId : deviceIds) {
+                        if (webAppStateHolder.isSameDevice(deviceId)) {
+                            String finalBody = String.valueOf(deviceId) + BODY_SEPARATOR + body;
+                            StringMessage msg = makeUTF8StringMessage(cmd, msgId, finalBody);
+                            if (channel.isWritable()) {
+                                channel.writeAndFlush(msg, channel.voidPromise());
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -202,15 +219,6 @@ public class Session {
         }
     }
 
-    private void filterBySelectedDeviceAndSendWeb(Channel self, short cmd, int msgId, int deviceId, String finalBody) {
-        Set<Channel> targetChannels = filterByDevice(self, deviceId);
-
-        int targetsNum = targetChannels.size();
-        if (targetsNum > 0) {
-            send(targetChannels, cmd, msgId, finalBody);
-        }
-    }
-
     public void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
         Set<Channel> targetChannels = filterByDash(dashId);
 
@@ -218,16 +226,6 @@ public class Session {
         if (targetsNum > 0) {
             send(targetChannels, cmd, msgId, finalBody);
         }
-    }
-
-    private Set<Channel> filterByDevice(Channel self, int deviceId) {
-        Set<Channel> targetChannels = new HashSet<>();
-        for (Channel channel : webChannels) {
-            if (channel != self && isSameDeviceId(channel, deviceId)) {
-                targetChannels.add(channel);
-            }
-        }
-        return targetChannels;
     }
 
     private Set<Channel> filterByDash(int dashId) {

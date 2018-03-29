@@ -1,11 +1,11 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.web.TrackDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.web.WebAppHardwareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;

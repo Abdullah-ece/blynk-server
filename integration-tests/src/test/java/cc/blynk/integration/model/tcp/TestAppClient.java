@@ -215,8 +215,12 @@ public class TestAppClient extends BaseTestAppClient {
         send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }
 
+    public void login(String email, String pass, boolean noHash) {
+        send("login " + email + BODY_SEPARATOR + (noHash ? pass : SHA256Util.makeHash(pass, email)));
+    }
+
     public void login(String email, String pass) {
-        send("login " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
+        login(email, pass, false);
     }
 
     public void login(String email, String pass, String os, String version) {

@@ -539,7 +539,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
         session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
-        session.sendToSelectedDeviceOnWeb(HARDWARE, 111, deviceId, body);
+        session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();
     }

@@ -1,7 +1,6 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.core.session;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.session.StateHolderBase;
 
 /**
  * The Blynk Project.
@@ -12,12 +11,10 @@ public class WebAppStateHolder extends StateHolderBase {
 
     private static final int NO_DEVICE = -1;
 
-    public final Version version;
     public int selectedDeviceId;
 
-    public WebAppStateHolder(User user, Version version) {
+    public WebAppStateHolder(User user) {
         super(user);
-        this.version = version;
         this.selectedDeviceId = NO_DEVICE;
     }
 

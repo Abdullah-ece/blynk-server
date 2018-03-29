@@ -1,6 +1,7 @@
 package cc.blynk.server.internal;
 
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.Channel;
 
@@ -20,6 +21,11 @@ public final class StateHolderUtil {
     public static HardwareStateHolder getHardState(Channel channel) {
         BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return handler == null ? null : (HardwareStateHolder) handler.getState();
+    }
+
+    public static WebAppStateHolder getWebState(Channel channel) {
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return handler == null ? null : (WebAppStateHolder) handler.getState();
     }
 
     public static boolean isSameDash(Channel channel, int dashId) {

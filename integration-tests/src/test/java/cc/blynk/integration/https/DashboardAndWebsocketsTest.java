@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
@@ -39,6 +38,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static cc.blynk.integration.IntegrationBase.appSync;
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,20 +54,16 @@ import static org.junit.Assert.assertTrue;
 public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     private BaseServer hardwareServer;
-    private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-
-        this.clientPair = IntegrationBase.initAppAndHardPair();
     }
 
     @After
     public void shutdown() {
         this.hardwareServer.close();
-        this.clientPair.stop();
         super.shutdown();
     }
 
@@ -225,6 +221,44 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.send("hardware 0 vw 10 100");
         appWebSocketClient2.never(appSync(2, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(2, b("0 vw 10 100")));
+    }
+
+    @Test
+    public void commandFromAppIsRetrievedByWeb() throws Exception {
+        login(regularUser.email, regularUser.pass);
+
+        Product product = createProduct();
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = product.id;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            Device device = JsonParser.parseDevice(responseString, 0);
+            assertEquals(1, device.id);
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
+        appWebSocketClient.verifyResult(ok(2));
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.login(regularUser.email, regularUser.pass, true);
+        appClient.verifyResult(ok(1));
+
+        appClient.activate(0);
+        appClient.verifyResult(deviceNotInNetwork(2));
+
+        appClient.send("hardware 0-1 vw 2 222");
+        appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
     }
 
     @Test

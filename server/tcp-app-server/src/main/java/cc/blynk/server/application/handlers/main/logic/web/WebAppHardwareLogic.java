@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.web;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
@@ -9,6 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -77,7 +77,7 @@ public class WebAppHardwareLogic {
         session.sendToSharedApps(channel, SharedTokenManager.ALL,
                 APP_SYNC, message.id, message.body);
 
-        session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, deviceId, split[1]);
+        session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, split[1], deviceId);
 
         if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceId)) {
             log.debug("No device in session.");

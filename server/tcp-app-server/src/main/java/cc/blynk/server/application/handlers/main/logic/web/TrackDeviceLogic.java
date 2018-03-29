@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.web;
 
-import cc.blynk.server.application.handlers.main.auth.WebAppStateHolder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
