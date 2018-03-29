@@ -10,11 +10,8 @@ class Legend extends React.Component {
 
   render() {
 
-    const DARK = 'dark';
-
     const className = classnames({
       "fieldset--legend": true,
-      "fieldset--legend--dark": this.props.type === DARK
     });
 
     return (
