@@ -53,7 +53,6 @@ function configureStoreProd(initialState) {
   const wsMiddleware = createWsMiddleware({
     defaultEndpoint: `wss://${window.location.hostname}:${window.location.port}/dashws`,
     isDebugMode: true,
-    ping: false,
   });
 
   const blynkWsMiddleware = createBlynkWsMiddleware({
@@ -84,7 +83,6 @@ function configureStoreDev() {
   const wsMiddleware = createWsMiddleware({
     defaultEndpoint: 'wss://localhost:9443/dashws',
     isDebugMode: true,
-    ping: false,
   });
 
   const blynkWsMiddleware = createBlynkWsMiddleware({

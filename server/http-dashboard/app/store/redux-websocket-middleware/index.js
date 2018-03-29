@@ -11,11 +11,10 @@ const onSocketOpen = (params) => {
   return () => {
 
     function keepAlive() {
-      if(options.isDebugMode) {
-        options.debug('ping');
+      let timeout = options.pingTimeout || 1000;
+      if(socket && socket.send) {
+        socket.send('');
       }
-      let timeout = options.pingTimeout || 10000;
-      socket.send('');
       setTimeout(keepAlive, timeout);
     }
 
