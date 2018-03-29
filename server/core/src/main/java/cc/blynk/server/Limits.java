@@ -1,6 +1,5 @@
 package cc.blynk.server;
 
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.properties.ServerProperties;
 
 /**
@@ -31,11 +30,6 @@ public class Limits {
     public final int hardwareIdleTimeout;
     public final int appIdleTimeout;
 
-    //texts
-    public volatile String tokenBody;
-    public final String dynamicMailBody;
-    public final String staticMailBody;
-
     public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
 
@@ -55,10 +49,6 @@ public class Limits {
                 isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
         this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
         this.appIdleTimeout = props.getIntProperty("app.socket.idle.timeout", 300);
-
-        this.tokenBody = FileLoaderUtil.readTokenMailBody();
-        this.dynamicMailBody = FileLoaderUtil.readDynamicMailBody();
-        this.staticMailBody = FileLoaderUtil.readStaticMailBody();
     }
 
     private static int isUnlimited(int val, int max) {

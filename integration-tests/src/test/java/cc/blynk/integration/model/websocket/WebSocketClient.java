@@ -91,7 +91,8 @@ public final class WebSocketClient extends BaseClient {
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
                         handler,
-                        new MessageDecoder(new GlobalStats(), new Limits(new ServerProperties(Collections.emptyMap())))
+                        new MessageDecoder(new GlobalStats(),
+                                new Limits(new ServerProperties(Collections.emptyMap())))
                 );
             }
         };

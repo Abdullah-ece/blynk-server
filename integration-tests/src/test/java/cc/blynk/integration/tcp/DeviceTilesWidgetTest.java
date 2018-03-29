@@ -3,6 +3,8 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -15,26 +17,39 @@ import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.Menu;
+import cc.blynk.server.core.model.widgets.ui.Tab;
+import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.FileUtils;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
@@ -48,6 +63,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -1044,6 +1060,63 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     }
 
     @Test
+    public void exportEnhancedHistoryGraphWorksForTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, 0,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", "ESP8266", new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
+
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+        Path userReportFile = Paths.get(userReportDirectory.toString(),
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(ok(4));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_v88_"));
+
+        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
+        clientPair.appClient.verifyResult(ok(5));
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(new ResponseMessage(6, NO_DATA));
+    }
+
+    @Test
     public void energyCalculationsAreCorrectWhenAddingRemovingWidgets() throws Exception {
         long widgetId = 21321;
 
@@ -1191,4 +1264,487 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(500, ((Menu) deviceTiles.templates[0].widgets[0]).labels.length);
     }
 
+    @Test
+    public void createpageTempalteWithIdAndSendEmail() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long templateId = 1;
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + "{\"id\":" + templateId + ",\"templateId\":\"TMPL123\",\"name\":\"My New Template\",\"iconName\":\"iconName\",\"boardType\":\"ESP8266\",\"showDeviceName\":false,\"color\":0,\"tileColor\":0,\"fontSize\":\"LARGE\",\"showTileLabel\":false,\"pin\":{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"min\":0.0,\"max\":255.0}}");
+        clientPair.appClient.verifyResult(ok(2));
+
+
+        clientPair.appClient.send("email template 1 " + widgetId + " " + templateId);
+
+        String expectedBody = "Template ID for {template_name} is: {template_id}.<br>\n" +
+                "<br>\n" +
+                "This ID should be added in <a href=\"https://github.com/blynkkk/blynk-library/blob/master/examples/Export_Demo/Template_ESP32/Settings.h\">Settings.h</a>. Simply change this line\n" +
+                "<br>\n" +
+                "<p>\n" +
+                "    <i>\n" +
+                "#define BOARD_TEMPLATE_ID             \"{template_id}\" // ID of the Tile Template. Can be found in Tile Template Settings\n" +
+                "    </i>\n" +
+                "</p>\n" +
+                "Template ID is used during device provisioning process and defines which template will be assigned to the device of this particular type.\n" +
+                "<br>\n" +
+                "<br>\n" +
+                "--<br>\n" +
+                "<br>\n" +
+                "Blynk Team<br>\n" +
+                "<br>\n" +
+                "<a href=\"https://www.blynk.io\">blynk.io</a>\n" +
+                "<br>\n" +
+                "<a href=\"https://www.blynk.cc\">blynk.cc</a>\n";
+
+        expectedBody = expectedBody
+                        .replace("{template_name}", "My New Template")
+                        .replace("{template_id}", "TMPL123");
+
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("Template ID for My New Template"), eq(expectedBody));
+
+    }
+
+    @Test
+    public void testAddAndRemoveTabs() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Tabs tabs = new Tabs();
+        tabs.id = 172649;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.verifyResult(ok(3));
+
+        Menu menu = new Menu();
+        menu.id = 172650;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(4));
+
+        menu = new Menu();
+        menu.id = 172651;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(5));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172648;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs2);
+        clientPair.appClient.verifyResult(ok(6));
+
+        menu = new Menu();
+        menu.id = 172652;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, menu);
+        clientPair.appClient.verifyResult(ok(7));
+
+        Menu menu2 = new Menu();
+        menu2.id = 172653;
+        menu2.x = 2;
+        menu2.y = 34;
+        menu2.width = 6;
+        menu2.height = 1;
+        menu2.label = "Set Volume";
+        menu2.deviceId = 252521;
+        menu2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, menu2);
+        clientPair.appClient.verifyResult(ok(8));
+
+        clientPair.appClient.deleteWidget(1, tabs.id);
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        assertNotNull(dashBoard);
+        Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
+        assertNotNull(dashTabs);
+        assertEquals(2, dashTabs.tabs.length);
+        assertNotNull(dashBoard.getWidgetById(menu.id));
+        assertNotNull(dashBoard.getWidgetById(menu2.id));
+        DeviceTiles deviceTiles1 = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles1);
+        assertNull(deviceTiles1.getWidgetById(tabs.id));
+        assertEquals(1, deviceTiles1.templates[0].widgets.length);
+        assertEquals(0, deviceTiles1.templates[0].getWidgetIndexByIdOrThrow(172650));
+        assertTrue(deviceTiles1.templates[0].widgets[0] instanceof Menu);
+    }
+
+    @Test
+    public void testAddAndRemoveTabs2() throws Exception {
+        Tabs tabs = new Tabs();
+        tabs.id = 172648;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(2));
+
+        Button button = new Button();
+        button.id = 172649;
+        button.x = 2;
+        button.y = 34;
+        button.width = 6;
+        button.height = 1;
+        button.label = "Set Volume";
+        button.deviceId = 0;
+        button.tabId = 0;
+
+        clientPair.appClient.createWidget(1, button);
+        clientPair.appClient.verifyResult(ok(3));
+
+        Button button2 = new Button();
+        button2.id = 172650;
+        button2.x = 2;
+        button2.y = 34;
+        button2.width = 6;
+        button2.height = 1;
+        button2.label = "Set Volume";
+        button2.deviceId = 0;
+        button2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, button2);
+        clientPair.appClient.verifyResult(ok(4));
+
+        ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(5));
+
+        tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172651;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs2));
+        clientPair.appClient.verifyResult(ok(7));
+
+        Button button3 = new Button();
+        button3.id = 172652;
+        button3.x = 2;
+        button3.y = 34;
+        button3.width = 6;
+        button3.height = 1;
+        button3.label = "Set Volume";
+        button3.deviceId = 0;
+        button3.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button3));
+        clientPair.appClient.verifyResult(ok(8));
+
+        Button button4 = new Button();
+        button4.id = 172653;
+        button4.x = 2;
+        button4.y = 34;
+        button4.width = 6;
+        button4.height = 1;
+        button4.label = "Set Volume";
+        button4.deviceId = 0;
+        button4.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button4));
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.deleteWidget(1, tabs2.id);
+        clientPair.appClient.verifyResult(ok(10));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(11);
+        assertNotNull(dashBoard);
+        Tabs searchTabs = (Tabs) dashBoard.getWidgetById(tabs.id);
+        assertNotNull(searchTabs);
+        assertNotNull(dashBoard.getWidgetById(button.id));
+        assertNotNull(dashBoard.getWidgetById(button2.id));
+    }
+
+    @Test
+    public void testAddAndUpdateTabs() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Tabs tabs = new Tabs();
+        tabs.id = 172649;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.verifyResult(ok(3));
+
+        Menu menu = new Menu();
+        menu.id = 172650;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(4));
+
+        menu = new Menu();
+        menu.id = 172651;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(5));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172648;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs2);
+        clientPair.appClient.verifyResult(ok(6));
+
+        menu = new Menu();
+        menu.id = 172652;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, menu);
+        clientPair.appClient.verifyResult(ok(7));
+
+        Menu menu2 = new Menu();
+        menu2.id = 172653;
+        menu2.x = 2;
+        menu2.y = 34;
+        menu2.width = 6;
+        menu2.height = 1;
+        menu2.label = "Set Volume";
+        menu2.deviceId = 252521;
+        menu2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, menu2);
+        clientPair.appClient.verifyResult(ok(8));
+
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0")
+        };
+
+        clientPair.appClient.updateWidget(1, tabs);
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        assertNotNull(dashBoard);
+        Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
+        assertNotNull(dashTabs);
+        assertEquals(2, dashTabs.tabs.length);
+        assertNotNull(dashBoard.getWidgetById(menu.id));
+        assertNotNull(dashBoard.getWidgetById(menu2.id));
+        DeviceTiles deviceTiles1 = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles1.getWidgetById(tabs.id));
+        assertTrue(deviceTiles1.getWidgetById(tabs.id) instanceof Tabs);
+        assertEquals(2, deviceTiles1.templates[0].widgets.length);
+        int menuWidgetIndex = deviceTiles1.templates[0].getWidgetIndexByIdOrThrow(172650);
+        assertEquals(1, menuWidgetIndex);
+        assertTrue(deviceTiles1.templates[0].widgets[menuWidgetIndex] instanceof Menu);
+    }
+
+    @Test
+    public void testGetPinViaHttpApiWorksForDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getDevices 1");
+        Device[] devices = clientPair.appClient.getDevices(3);
+        Device device = devices[0];
+        assertEquals(0, device.id);
+
+        clientPair.appClient.send("hardware 1-0 vw 111 1");
+
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+
+        String httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + device.token + "/get/v111").execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
+        assertEquals("1", response.getResponseBody());
+    }
+
+    @Test
+    public void testDeviceTileIsUpdatedFromHardware() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.hardwareClient.send("hardware vw 111 1");
+        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 111 1")));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(4);
+        assertNotNull(dashBoard);
+        deviceTiles = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals("1", deviceTiles.tiles[0].dataStream.value);
+    }
 }

@@ -55,6 +55,14 @@ public final class ArrayUtil {
         return false;
     }
 
+    public static int[] convertIntegersToInt(List<Integer> integers) {
+        int[] result = new int[integers.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = integers.get(i);
+        }
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T[] concat(T[] a, T[] b) {
         int aLen = a.length;
@@ -89,7 +97,7 @@ public final class ArrayUtil {
         List<Integer> inSet = arrayToList(in);
         List<Integer> existingSet = arrayToList(in2);
         inSet.removeAll(existingSet);
-        return toInt(inSet);
+        return convertIntegersToInt(inSet);
     }
 
 
@@ -102,15 +110,6 @@ public final class ArrayUtil {
             set.add(i);
         }
         return set;
-    }
-
-    private static int[] toInt(List<Integer> list) {
-        int[] a = new int[list.size()];
-        int i = 0;
-        for (Integer val : list) {
-            a[i++] = val;
-        }
-        return a;
     }
 
     @SuppressWarnings("unchecked")

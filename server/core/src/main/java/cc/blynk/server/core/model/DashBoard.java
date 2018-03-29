@@ -18,9 +18,11 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
 
@@ -168,13 +170,17 @@ public class DashBoard {
         return false;
     }
 
-    public int getWidgetIndexByIdOrThrow(long id) {
+    public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
         for (int i = 0; i < widgets.length; i++) {
             if (widgets[i].id == id) {
                 return i;
             }
         }
         throw new IllegalCommandException("Widget with passed id not found.");
+    }
+
+    public int getWidgetIndexByIdOrThrow(long id) {
+        return getWidgetIndexByIdOrThrow(widgets, id);
     }
 
     public int getTagIndexById(int id) {
@@ -215,6 +221,12 @@ public class DashBoard {
             if (widget instanceof MultiPinWidget) {
                 MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                 if (multiPinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+            if (widget instanceof DeviceSelector) {
+                DeviceSelector deviceSelector = (DeviceSelector) widget;
+                if (ArrayUtil.contains(deviceSelector.deviceIds, deviceId)) {
                     return true;
                 }
             }
@@ -265,6 +277,19 @@ public class DashBoard {
         return getWidgetById(widgets, id);
     }
 
+    public Widget getWidgetByIdInDeviceTilesOrThrow(long id) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                Widget widgetInDeviceTiles = deviceTiles.getWidgetById(id);
+                if (widgetInDeviceTiles != null) {
+                    return widgetInDeviceTiles;
+                }
+            }
+        }
+        throw new IllegalCommandException("Widget with passed id not found.");
+    }
+
     private static Widget getWidgetById(Widget[] widgets, long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
@@ -312,22 +337,14 @@ public class DashBoard {
         }
     }
 
-    public void deleteTimers(TimerWorker timerWorker, UserKey userKey) {
-        for (Widget widget : widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.delete(userKey, (Timer) widget, id);
-            } else if (widget instanceof Eventor) {
-                timerWorker.delete(userKey, (Eventor) widget, id);
-            }
-        }
-    }
-
     public void addTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.add(userKey, (Timer) widget, id);
-            }
-            if (widget instanceof Eventor) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deviceTiles.addTimers(timerWorker, userKey, id);
+            } else if (widget instanceof Timer) {
+                timerWorker.add(userKey, (Timer) widget, id, -1L, -1L);
+            } else if (widget instanceof Eventor) {
                 timerWorker.add(userKey, (Eventor) widget, id);
             }
         }

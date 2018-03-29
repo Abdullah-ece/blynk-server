@@ -87,7 +87,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                         new HttpObjectAggregator(8192),
                         appHandler,
                         new WebAppMessageDecoder(new GlobalStats(),
-                                new Limits(new ServerProperties(Collections.emptyMap())))
+                                new Limits(new ServerProperties(Collections.emptyMap()))
+                        )
                 );
             }
         };

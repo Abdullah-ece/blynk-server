@@ -6,7 +6,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java9-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.33.2/server-0.33.2.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.33.4/server-0.33.4.jar"
         
 
 server.properties
@@ -15,6 +15,7 @@ data.folder=./data
 logs.folder=./logs
 log.level=info
 enable.db=true
+force.port.80.for.csv=true
 admin.rootPath=/admin
 allowed.administrator.ips=
 server.host=xxx.blynk.cc
@@ -29,7 +30,7 @@ password=test
 connection.timeout.millis=30000
 clean.reporting=false
 
-gcm.properties
+gcm.propertiesscp 
 
 mail.properties
 

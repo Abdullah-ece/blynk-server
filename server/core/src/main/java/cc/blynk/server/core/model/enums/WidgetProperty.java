@@ -17,7 +17,7 @@ public enum WidgetProperty {
     IS_ON_PLAY("isOnPlay"),
     URL("url"),
     STEP("step"),
-    FRACTION("fraction");
+    FRACTION("maximumFractionDigits");
 
     public final String label;
 
@@ -47,7 +47,7 @@ public enum WidgetProperty {
                 return URL;
             case "step" :
                 return STEP;
-            case "fraction" :
+            case "maximumFractionDigits" :
                 return FRACTION;
             default:
                 return null;

@@ -15,19 +15,25 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
 /**
  * Timer worker class responsible for triggering all timers at specified time.
@@ -79,12 +85,14 @@ public class TimerWorker implements Runnable {
         for (Map.Entry<UserKey, User> entry : users.entrySet()) {
             for (DashBoard dashBoard : entry.getValue().profile.dashBoards) {
                 for (Widget widget : dashBoard.widgets) {
-                    if (widget instanceof Timer) {
+                    if (widget instanceof DeviceTiles) {
+                        DeviceTiles deviceTiles = (DeviceTiles) widget;
+                        counter += deviceTiles.addTimers(this, entry.getKey(), dashBoard.id);
+                    } else if (widget instanceof Timer) {
                         Timer timer = (Timer) widget;
-                        add(entry.getKey(), timer, dashBoard.id);
+                        add(entry.getKey(), timer, dashBoard.id, -1, -1);
                         counter++;
-                    }
-                    if (widget instanceof Eventor) {
+                    } else if (widget instanceof Eventor) {
                         Eventor eventor = (Eventor) widget;
                         add(entry.getKey(), eventor, dashBoard.id);
                         counter++;
@@ -100,25 +108,34 @@ public class TimerWorker implements Runnable {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
                     add(userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, rule.triggerTime, rule.actions);
+                            rule.triggerTime.id, -1L, -1L, rule.triggerTime, rule.actions);
                 }
             }
         }
     }
 
-    public void add(UserKey userKey, Timer timer, int dashId) {
-        if (timer.isValidStart()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime),
-                    new SetPinAction(timer.pin, timer.pinType, timer.startValue));
-        }
-        if (timer.isValidStop()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime),
-                    new SetPinAction(timer.pin, timer.pinType, timer.stopValue));
+    public void add(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
+        if (timer.isValid()) {
+            if (timer.isValidStart()) {
+                TimerTime timerTime = new TimerTime(timer.startTime);
+                SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.startValue);
+                TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 0,
+                        deviceTilesId, templateId, timerTime);
+                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+            }
+            if (timer.isValidStop()) {
+                TimerTime timerTime = new TimerTime(timer.stopTime);
+                SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.stopValue);
+                TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 1,
+                        deviceTilesId, templateId, timerTime);
+                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+            }
         }
     }
 
     private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
-                     int additionalId, TimerTime time, BaseAction[] actions) {
+                     int additionalId, long deviceTilesId, long templateId,
+                     TimerTime time, BaseAction[] actions) {
         ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
         for (BaseAction action : actions) {
             if (action.isValid()) {
@@ -127,17 +144,9 @@ public class TimerWorker implements Runnable {
         }
         if (!validActions.isEmpty()) {
             timerExecutors[hash(time.time)].put(
-                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time),
+                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
+                            deviceTilesId, templateId, time),
                     validActions.toArray(new BaseAction[validActions.size()]));
-        }
-    }
-
-    private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
-                     int additionalId, TimerTime time, BaseAction action) {
-        if (action.isValid()) {
-            timerExecutors[hash(time.time)].put(
-                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time),
-                    new BaseAction[]{action});
         }
     }
 
@@ -145,23 +154,29 @@ public class TimerWorker implements Runnable {
         if (eventor.rules != null) {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
-                    delete(userKey, dashId, eventor.deviceId, eventor.id, rule.triggerTime.id, rule.triggerTime);
+                    delete(userKey, dashId, eventor.deviceId,
+                            eventor.id, rule.triggerTime.id, -1L, -1L, rule.triggerTime);
                 }
             }
         }
     }
 
-    public void delete(UserKey userKey, Timer timer, int dashId) {
+    public void delete(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
         if (timer.isValidStart()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime));
+            delete(userKey, dashId, timer.deviceId, timer.id, 0,
+                    deviceTilesId, templateId, new TimerTime(timer.startTime));
         }
         if (timer.isValidStop()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime));
+            delete(userKey, dashId, timer.deviceId, timer.id, 1,
+                    deviceTilesId, templateId, new TimerTime(timer.stopTime));
         }
     }
 
-    private void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
-        timerExecutors[hash(time.time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time));
+    private void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId,
+                        long deviceTilesId, long templateId, TimerTime time) {
+        timerExecutors[hash(time.time)].remove(new TimerKey(userKey, dashId, deviceId,
+                widgetId, additionalId,
+                deviceTilesId, templateId, time));
     }
 
     private int actuallySendTimers;
@@ -198,7 +213,7 @@ public class TimerWorker implements Runnable {
     }
 
     private void send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
-                     ZonedDateTime currentDateTime, int curSeconds, long now) {
+                      ZonedDateTime currentDateTime, int curSeconds, long now) {
         for (Map.Entry<TimerKey, BaseAction[]> entry : tickedExecutors.entrySet()) {
             TimerKey key = entry.getKey();
             BaseAction[] actions = entry.getValue();
@@ -220,12 +235,29 @@ public class TimerWorker implements Runnable {
             if (action instanceof SetPinAction) {
                 SetPinAction setPinAction = (SetPinAction) action;
 
-                Target target = dash.getTarget(key.deviceId);
-                if (target == null) {
-                    return;
-                }
+                int[] deviceIds = EMPTY_INTS;
+                if (key.isTilesTimer()) {
+                    Widget widget = dash.getWidgetById(key.deviceTilesId);
+                    if (widget instanceof DeviceTiles) {
+                        List<Integer> list = new ArrayList<>();
+                        DeviceTiles deviceTiles = (DeviceTiles) widget;
+                        for (Tile tile : deviceTiles.tiles) {
+                            if (tile.templateId == key.templateId) {
+                                list.add(tile.deviceId);
+                            }
+                        }
+                        if (list.size() > 0) {
+                            deviceIds = ArrayUtil.convertIntegersToInt(list);
+                        }
+                    }
+                } else {
+                    Target target = dash.getTarget(key.deviceId);
+                    if (target == null) {
+                        return;
+                    }
 
-                int[] deviceIds = target.getDeviceIds();
+                    deviceIds = target.getDeviceIds();
+                }
 
                 if (deviceIds.length == 0) {
                     return;
@@ -256,4 +288,26 @@ public class TimerWorker implements Runnable {
         }
     }
 
+    public void deleteTimers(UserKey userKey, DashBoard dash) {
+        for (Widget widget : dash.widgets) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deleteTimers(userKey, dash.id, deviceTiles);
+            } else if (widget instanceof Timer) {
+                delete(userKey, (Timer) widget, dash.id, -1L, -1L);
+            } else if (widget instanceof Eventor) {
+                delete(userKey, (Eventor) widget, dash.id);
+            }
+        }
+    }
+
+    private void deleteTimers(UserKey userKey, int dashId, DeviceTiles deviceTiles) {
+        for (TileTemplate template : deviceTiles.templates) {
+            for (Widget widgetInTemplate : template.widgets) {
+                if (widgetInTemplate instanceof Timer) {
+                    delete(userKey, (Timer) widgetInTemplate, dashId, deviceTiles.id, template.id);
+                }
+            }
+        }
+    }
 }

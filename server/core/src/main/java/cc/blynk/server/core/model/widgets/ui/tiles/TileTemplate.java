@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
@@ -31,7 +32,7 @@ public abstract class TileTemplate {
 
     public volatile Widget[] widgets;
 
-    public final int[] deviceIds;
+    public volatile int[] deviceIds;
 
     public final String templateId;
 
@@ -78,8 +79,13 @@ public abstract class TileTemplate {
         if (dataStream != null) {
             dataStream.value = null;
         }
+        this.deviceIds = EMPTY_INTS;
         for (Widget widget : widgets) {
             widget.erase();
         }
+    }
+
+    public int getWidgetIndexByIdOrThrow(long widgetId) {
+        return DashBoard.getWidgetIndexByIdOrThrow(widgets, widgetId);
     }
 }

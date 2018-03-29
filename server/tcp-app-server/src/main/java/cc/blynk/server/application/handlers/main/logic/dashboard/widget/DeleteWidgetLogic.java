@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -53,8 +54,10 @@ public class DeleteWidgetLogic {
         log.debug("Removing widget with id {} for dashId {}.", widgetId, dashId);
 
         Widget widgetToDelete = null;
-        boolean inDeviceTiles = false;
         DeviceTiles deviceTiles = null;
+
+        long deviceTilesId = -1;
+        long templateId = -1;
 
         for (Widget widget : dash.widgets) {
             if (widget.id == widgetId) {
@@ -62,11 +65,16 @@ public class DeleteWidgetLogic {
                 break;
             }
             if (widget instanceof DeviceTiles) {
-                deviceTiles = ((DeviceTiles) widget);
-                widgetToDelete = deviceTiles.getWidgetById(widgetId);
-                if (widgetToDelete != null) {
-                    inDeviceTiles = true;
-                    break;
+                deviceTiles = (DeviceTiles) widget;
+                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                    for (Widget tileTemplateWidget : tileTemplate.widgets) {
+                        if (tileTemplateWidget.id == widgetId) {
+                            widgetToDelete = tileTemplateWidget;
+                            deviceTilesId = deviceTiles.id;
+                            templateId = tileTemplate.id;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -75,14 +83,21 @@ public class DeleteWidgetLogic {
             throw new IllegalCommandException("Widget with passed id not found.");
         }
 
-        if (widgetToDelete instanceof Tabs) {
-            deleteTabs(timerWorker, user, state.userKey, dash, 0);
-        }
-
         user.addEnergy(widgetToDelete.getPrice());
-        if (inDeviceTiles) {
-            deviceTiles.deleteWidget(widgetId);
+        if (deviceTilesId != -1) {
+            TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateId);
+            if (widgetToDelete instanceof Tabs) {
+                tileTemplate.widgets = deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, deviceTilesId,
+                        templateId, tileTemplate.widgets, 0);
+            }
+            int index = tileTemplate.getWidgetIndexByIdOrThrow(widgetId);
+            tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, index, Widget.class);
         } else {
+            if (widgetToDelete instanceof Tabs) {
+                dash.widgets = deleteTabs(timerWorker, user, state.userKey, dash.id,
+                        deviceTilesId, templateId, dash.widgets, 0);
+            }
             int index = dash.getWidgetIndexByIdOrThrow(widgetId);
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
         }
@@ -90,7 +105,7 @@ public class DeleteWidgetLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         if (widgetToDelete instanceof Timer) {
-            timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId);
+            timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
         } else if (widgetToDelete instanceof Eventor) {
             timerWorker.delete(state.userKey, (Eventor) widgetToDelete, dashId);
         }
@@ -101,17 +116,18 @@ public class DeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    static void deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
-                                  DashBoard dash, int lastTabIndex) {
+    static Widget[] deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
+                               int dashId, long deviceTilesId, long templateId,
+                               Widget[] widgets, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
-        for (Widget widgetToDelete : dash.widgets) {
+        for (Widget widgetToDelete : widgets) {
             if (widgetToDelete.tabId > lastTabIndex) {
                 removedWidgetPrice += widgetToDelete.getPrice();
                 if (widgetToDelete instanceof Timer) {
-                    timerWorker.delete(userKey, (Timer) widgetToDelete, dash.id);
+                    timerWorker.delete(userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
                 } else if (widgetToDelete instanceof Eventor) {
-                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dash.id);
+                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dashId);
                 }
             } else {
                 zeroTabWidgets.add(widgetToDelete);
@@ -119,8 +135,7 @@ public class DeleteWidgetLogic {
         }
 
         user.addEnergy(removedWidgetPrice);
-        dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
-        dash.updatedAt = System.currentTimeMillis();
+        return zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
     }
 
 }

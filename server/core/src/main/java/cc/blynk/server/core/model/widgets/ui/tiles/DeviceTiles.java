@@ -1,12 +1,15 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -124,26 +127,22 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return null;
     }
 
-    public boolean deleteWidget(long removeWidgetId) {
+    public TileTemplate getTileTemplateByWidgetIdOrThrow(long widgetId) {
         for (TileTemplate tileTemplate : templates) {
-            for (int i = 0; i < tileTemplate.widgets.length; i++) {
-                if (tileTemplate.widgets[i].id == removeWidgetId) {
-                    tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, i, Widget.class);
-                    return true;
+            for (Widget tileTemplateWidget : tileTemplate.widgets) {
+                if (tileTemplateWidget.id == widgetId) {
+                    return tileTemplate;
                 }
             }
         }
-        return false;
+        throw new IllegalCommandException("Widget template not found for passed widget id.");
     }
 
-    public boolean updateWidget(Widget newWidget) {
-        for (TileTemplate tileTemplate : templates) {
-            for (int i = 0; i < tileTemplate.widgets.length; i++) {
-                if (tileTemplate.widgets[i].id == newWidget.id) {
-                    tileTemplate.widgets = ArrayUtil.copyAndReplace(
-                            tileTemplate.widgets, newWidget, i);
-                    return true;
-                }
+    @Override
+    public boolean isSame(int deviceId, byte pin, PinType pinType) {
+        for (Tile tile : tiles) {
+            if (tile.isSame(deviceId, pin, pinType)) {
+                return true;
             }
         }
         return false;
@@ -201,5 +200,27 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 tileTemplate.erase();
             }
         }
+    }
+
+    public int addTimers(TimerWorker timerWorker, UserKey userKey, int dashId) {
+        int counter = 0;
+        for (TileTemplate template : templates) {
+            for (Widget widgetInTemplate : template.widgets) {
+                if (widgetInTemplate instanceof Timer) {
+                    timerWorker.add(userKey, (Timer) widgetInTemplate, dashId, this.id, template.id);
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
+    public String getValue(int deviceId, byte pin, PinType pinType) {
+        for (Tile tile : tiles) {
+            if (tile.isSame(deviceId, pin, pinType)) {
+                return tile.dataStream.value;
+            }
+        }
+        return null;
     }
 }
