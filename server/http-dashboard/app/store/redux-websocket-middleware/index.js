@@ -81,7 +81,7 @@ const wsConnect = (params) => {
   let socket = new WebSocket(options.defaultEndpoint);
 
   socket.binaryType = 'arraybuffer';
-  socket.onopen = onSocketOpen(params);
+  socket.onopen = onSocketOpen({ ...params, socket: socket });
   socket.onclose = onSocketClose(params);
   socket.onmessage = onSocketMessage(params);
   socket.onerror = onSocketError(params);
