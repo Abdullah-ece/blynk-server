@@ -1,9 +1,7 @@
 import React from 'react';
 import {Chart} from 'components';
 // import Widget from '../Widget';
-import {
-  Icon
-} from 'antd';
+import {Icon} from 'antd';
 import PropTypes from 'prop-types';
 import LinearWidgetSettings from './settings';
 import './styles.less';
@@ -278,8 +276,7 @@ class LinearWidget extends React.Component {
 
     return this.renderChartByParams(config);
   }
-  renderChartByParams
-  (config) {
+  renderChartByParams(config) {
 
     const hasData = !!(config.data.reduce((acc, item) => {
       if(Array.isArray(item.dataPoints) && acc < item.dataPoints.length)
