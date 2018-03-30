@@ -392,8 +392,8 @@ public class OrganizationHandler extends BaseHttpHandler {
         User invitedUser = userDao.invite(userInvite, orgId, BLYNK);
 
         if (invitedUser == null) {
-            log.error("User {} is already in a system.", userInvite.email);
-            return forbidden("User is already in a system.");
+            log.error("User {} already exists.", userInvite.email);
+            return forbidden("This user already exists.");
         }
 
         invitedUser.profile.dashBoards = new DashBoard[] {
