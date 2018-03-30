@@ -19,7 +19,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  */
 public class WebDashboard implements CopyObject<WebDashboard> {
 
-    public volatile Widget[] widgets = EMPTY_WIDGETS;
+    public volatile Widget[] widgets;
 
     public WebDashboard() {
         this.widgets = EMPTY_WIDGETS;
@@ -27,7 +27,7 @@ public class WebDashboard implements CopyObject<WebDashboard> {
 
     @JsonCreator
     public WebDashboard(@JsonProperty("widgets") Widget[] widgets) {
-        this.widgets = widgets;
+        this.widgets = widgets == null ? EMPTY_WIDGETS : widgets;
     }
 
     @Override
