@@ -20,7 +20,7 @@ import {connect} from 'react-redux';
       };
 
     return {
-      value  : [],
+      value  : pin.data,
       loading: pin.loading
     };
   }

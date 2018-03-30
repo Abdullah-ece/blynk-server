@@ -221,7 +221,7 @@ class LinearWidget extends React.Component {
 
   generateData(source) {
 
-    if(!source.dataStream || !source.dataStream.pin)
+    if(!source.dataStream || isNaN(Number(source.dataStream.pin)))
       return null;
 
     const dataPoints = this.props.value.map((item) => {
