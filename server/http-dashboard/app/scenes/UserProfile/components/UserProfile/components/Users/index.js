@@ -40,7 +40,7 @@ class Users extends Component {
   }
 
   showInviteError(message) {
-    Modal.error({
+    Modal.warning({
       title: 'Ooops!',
       content: String(message)
     });
