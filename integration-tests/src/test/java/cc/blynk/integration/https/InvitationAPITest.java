@@ -105,7 +105,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
             assertEquals(403, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"User is already in a system.\"}}", consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"This user already exists.\"}}", consumeText(response));
         }
     }
 
