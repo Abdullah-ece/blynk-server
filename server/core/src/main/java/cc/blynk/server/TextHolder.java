@@ -15,6 +15,7 @@ public class TextHolder {
     public final String staticMailBody;
     public final String templateIdMailBody;
     public final String pushNotificationBody;
+    public final String logEventMailBody;
 
     public TextHolder(GCMProperties gcmProperties) {
         this.tokenBody = FileLoaderUtil.readTokenMailBody();
@@ -22,5 +23,6 @@ public class TextHolder {
         this.staticMailBody = FileLoaderUtil.readStaticMailBody();
         this.templateIdMailBody = FileLoaderUtil.readTemplateIdMailBody();
         this.pushNotificationBody = gcmProperties.getNotificationBody();
+        this.logEventMailBody = FileLoaderUtil.readLogEventMailBody();
     }
 }

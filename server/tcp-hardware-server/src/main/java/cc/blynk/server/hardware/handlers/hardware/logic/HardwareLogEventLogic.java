@@ -38,6 +38,8 @@ public class HardwareLogEventLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareLogEventLogic.class);
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM d, yyyy");
+
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -46,7 +48,7 @@ public class HardwareLogEventLogic {
     private final MailWrapper mailWrapper;
     private final String productName;
     private final String deviceUrl;
-    private final String adminEmail;
+    private final String eventLogEmailBody;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
@@ -57,7 +59,7 @@ public class HardwareLogEventLogic {
         this.mailWrapper = holder.mailWrapper;
         this.productName = holder.props.getProductName();
         this.deviceUrl = holder.props.getDeviceUrl();
-        this.adminEmail = holder.props.getAdminEmail();
+        this.eventLogEmailBody = holder.textHolder.logEventMailBody;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -87,12 +89,12 @@ public class HardwareLogEventLogic {
             return;
         }
 
-        String description = split.length > 1 ? split[1] : null;
+        String desc = split.length > 1 ? split[1] : null;
 
         blockingIOProcessor.executeDB(() -> {
             try {
                 long now = System.currentTimeMillis();
-                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
+                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);
                 device.dataReceivedAt = now;
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             } catch (Exception e) {
@@ -106,7 +108,13 @@ public class HardwareLogEventLogic {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
-                    mail(to, device.name + ": " + event.name, makeMailBody(device.id, device.name, event.name));
+                    mail(to, device.name + ": " + event.name,
+                            eventLogEmailBody
+                                    .replace("{DEVICE_URL}", deviceUrl + device.id)
+                                    .replace("{DATE_TIME}", formatter.format(LocalDateTime.now()))
+                                    .replace("{EVENT_NAME}", event.name)
+                                    .replace("{EVENT_DESCRIPTION}", desc == null ? event.description : desc)
+                    );
                 }
             }
         }
@@ -117,19 +125,6 @@ public class HardwareLogEventLogic {
                 push(state, "You received new event : " + event.name);
             }
         }
-    }
-
-    //todo make this mail in 1 place
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM d, yyyy");
-    private String makeMailBody(int deviceId, String deviceName, String eventName) {
-        return "<a href=\"" + deviceUrl + deviceId + "\">" + deviceName + "</a>"
-                + "<br>"
-                + formatter.format(LocalDateTime.now())
-                + "<br>"
-                + "<br>"
-                + "<b>" + eventName + "</b>"
-                + "<br>"
-                + "Please email " + productName + ": " + "<a href=\"mailto:" + adminEmail + "\">" + adminEmail + "</a>";
     }
 
     private void push(HardwareStateHolder state, String message) {

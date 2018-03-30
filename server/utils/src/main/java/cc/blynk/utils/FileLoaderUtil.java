@@ -55,6 +55,10 @@ public final class FileLoaderUtil {
         return readFileAsString("template_id_mail.html");
     }
 
+    public static String readLogEventMailBody() {
+        return readFileAsString("event_log_email.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.
