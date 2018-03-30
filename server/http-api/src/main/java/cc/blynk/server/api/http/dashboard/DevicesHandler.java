@@ -165,6 +165,18 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
+        if (newDevice.productId < 1) {
+            log.error("Device has no product assigned. {}", newDevice);
+            return badRequest("Device has no product assigned.");
+        }
+
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        Product product = org.getProduct(newDevice.productId);
+        if (product == null) {
+            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
+            throw new ProductNotFoundException("Product with passed id " + newDevice.productId + " not found.");
+        }
+
         Device existingDevice = deviceDao.getById(newDevice.id);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
