@@ -20,7 +20,7 @@ export const Time = {
   ),
 
   toTimestamp: (time) => (
-    Math.round((moment().hours(time.split(':')[0]).minutes(time.split(':')[1]).valueOf()) / 1000)
+    Math.round((moment().hours(time.split(':')[0]).minutes(time.split(':')[1]).valueOf()) )
   )
 
 };
