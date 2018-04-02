@@ -663,7 +663,7 @@ public class OrganizationAPITest extends APIBaseTest {
                 new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
                 new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date())
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date().getTime())
         };
 
         product.dataStreams = new DataStream[] {
