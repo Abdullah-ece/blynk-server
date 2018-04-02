@@ -100,6 +100,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
   Create: bindActionCreators(API.ProductCreate, dispatch),
   // destroyForm: bindActionCreators(destroy, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
+  fetchProducts: bindActionCreators(API.ProductsFetch, dispatch)
   // ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   // OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   // ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
@@ -141,6 +142,7 @@ class Clone extends React.Component {
 
     Create: PropTypes.func,
     initializeForm: PropTypes.func,
+    fetchProducts: PropTypes.func,
 
     orgId: PropTypes.oneOfType([
       PropTypes.string,
@@ -202,6 +204,10 @@ class Clone extends React.Component {
   }
 
   componentWillMount() {
+
+    this.props.fetchProducts({
+      id: this.props.orgId
+    });
 
     this.props.initializeForm(FORMS.PRODUCTS_PRODUCT_MANAGE, {
       ...this.props.product.toJS(),

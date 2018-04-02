@@ -79,7 +79,8 @@ export const Metadata = {
     RANGE: 'Range',
     SWITCH: 'Switch',
     DATE: 'Date',
-    CONTACT: 'Contact'
+    CONTACT: 'Contact',
+    DEVICE_REFERENCE: 'DeviceReference'
   }
 };
 
@@ -157,6 +158,13 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
+      role: Roles.USER.value,
+    },
+    {
+      id: 7,
+      type: Metadata.Fields.DEVICE_REFERENCE,
+      name: 'Floor Sensor',
+      value: [],
       role: Roles.USER.value,
     }
   ];

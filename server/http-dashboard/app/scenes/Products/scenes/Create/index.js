@@ -74,6 +74,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
   Create: bindActionCreators(API.ProductCreate, dispatch),
   // destroyForm: bindActionCreators(destroy, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
+  fetchProducts: bindActionCreators(API.ProductsFetch, dispatch)
   // ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
   // OrganizationFetch: bindActionCreators(OrganizationFetch, dispatch),
   // ProductEditClearFields: bindActionCreators(ProductEditClearFields, dispatch),
@@ -92,6 +93,8 @@ class Create extends React.Component {
   };
 
   static propTypes = {
+
+    fetchProducts: PropTypes.func,
 
     formValues: ImmutablePropTypes.contains({
       name: PropTypes.string,
@@ -182,6 +185,10 @@ class Create extends React.Component {
         timezoneDefaultValue: this.props.organization.get('tzName'),
         manufacturerDefaultValue: this.props.organization.get('name')
       }),
+    });
+
+    this.props.fetchProducts({
+      id: this.props.orgId
     });
 
     //

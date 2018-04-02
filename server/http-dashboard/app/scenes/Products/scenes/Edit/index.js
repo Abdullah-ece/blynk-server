@@ -100,6 +100,7 @@ import PropTypes from 'prop-types';
   Delete: bindActionCreators(API.ProductDelete, dispatch),
   updateDevicesByProduct: bindActionCreators(API.ProductUpdateDevices, dispatch),
   updateMetadataFirstTimeFlag: bindActionCreators(ProductsUpdateMetadataFirstTime, dispatch),
+  fetchProducts: bindActionCreators(API.ProductsFetch, dispatch)
 //   // destroyForm: bindActionCreators(destroy, dispatch),
 //   initializeForm: bindActionCreators(initialize, dispatch),
 //   // ProductSetEdit: bindActionCreators(ProductSetEdit, dispatch),
@@ -138,6 +139,7 @@ class Edit extends React.Component {
     Delete: PropTypes.func,
     updateDevicesByProduct: PropTypes.func,
     updateMetadataFirstTimeFlag: PropTypes.func,
+    fetchProducts: PropTypes.func,
   };
 
   constructor(props) {
@@ -172,6 +174,10 @@ class Edit extends React.Component {
   }
 
   componentWillMount() {
+
+    this.props.fetchProducts({
+      id: this.props.orgId
+    });
 
     // const checkForPermission = (org) => {
     //   if (org && org.parentId > 0) {

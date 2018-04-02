@@ -59,6 +59,21 @@ export default class SelectField extends React.Component {
     return options;
   }
 
+  valueFormat(value) {
+
+    const {defaultValue, mode} = this.props;
+
+    let format = String;
+
+    const formatArrayItem = (item) => String(item);
+
+    if(mode === 'multiple') {
+      format = (value) => Array.isArray(value) ? value.map(formatArrayItem) : [];
+    }
+
+    return value !== undefined && value !== null ? format(value) : defaultValue ? format(defaultValue) : undefined;
+  }
+
   render() {
 
     const {
@@ -70,7 +85,6 @@ export default class SelectField extends React.Component {
       displayError = true,
       values,
       disabled = false,
-      defaultValue,
       style,
       placeholder,
       input,
@@ -110,7 +124,7 @@ export default class SelectField extends React.Component {
           placeholder={placeholder}
           notFoundContent={notFoundContent || null}
           optionFilterProp="children"
-          value={input.value !== undefined && input.value !== null ? String(input.value) : defaultValue ? String(defaultValue) : undefined}
+          value={this.valueFormat(input.value)}
           filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           { this.getOptions(values) }

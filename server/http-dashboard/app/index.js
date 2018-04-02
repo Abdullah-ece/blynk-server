@@ -4,17 +4,17 @@ import {Router, Route, Redirect, useRouterHistory} from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 import Perf from 'react-addons-perf';
-import wdu from 'why-did-you-update';
+// import wdu from 'why-did-you-update';
 
 import './canvasjs';
 
 (() => {
   if (process.env.NODE_ENV !== 'production') {
-    wdu(React, {
-      groupByComponent: true,
-      /* excluding ANT components */
-      exclude: /^(RangePicker|PickerWrapper|Button|Tooltip|ScrollNumber|AnimateChild|Badge|LazyRenderBox|PopupInner|Popup|PanelContent|Col|Row|Select|Field|Item|Input|Modal|Radio|RadioButton)/
-    });
+    // wdu(React, {
+    //   groupByComponent: true,
+    //   /* excluding ANT components */
+    //   exclude: /^(RangePicker|PickerWrapper|Button|Tooltip|ScrollNumber|AnimateChild|Badge|LazyRenderBox|PopupInner|Popup|PanelContent|Col|Row|Select|Field|Item|Input|Modal|Radio|RadioButton)/
+    // });
 
     window.Perf = Perf;
   }
