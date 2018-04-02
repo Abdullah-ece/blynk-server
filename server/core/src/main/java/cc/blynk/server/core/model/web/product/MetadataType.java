@@ -7,14 +7,19 @@ package cc.blynk.server.core.model.web.product;
  */
 public enum MetadataType {
 
+    MultiText,
     Text,
     Number,
     Range,
+    Shift,
+    Switch,
     Cost,
     Contact,
     Measurement,
     Time,
     Coordinates,
-    Address
+    Address,
+    List,
+    DeviceReference
 
 }

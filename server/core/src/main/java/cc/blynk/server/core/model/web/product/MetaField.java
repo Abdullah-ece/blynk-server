@@ -33,6 +33,8 @@ import org.jooq.SelectSelectStep;
         property = "type")
 @JsonSubTypes({
 
+        //WARNING, when adding new type - please update MetadataType class too
+
         @JsonSubTypes.Type(value = MultiTextMetaField.class, name = "MultiText"),
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
