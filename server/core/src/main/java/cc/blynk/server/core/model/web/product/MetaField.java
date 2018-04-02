@@ -42,7 +42,8 @@ import org.jooq.SelectSelectStep;
         @JsonSubTypes.Type(value = MeasurementUnitMetaField.class, name = "Measurement"),
         @JsonSubTypes.Type(value = TimeMetaField.class, name = "Time"),
         @JsonSubTypes.Type(value = CoordinatesMetaField.class, name = "Coordinates"),
-        @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address")
+        @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address"),
+        @JsonSubTypes.Type(value = AddressMetaField.class, name = "List")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
