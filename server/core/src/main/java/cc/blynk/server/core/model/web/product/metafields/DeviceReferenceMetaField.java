@@ -12,20 +12,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DeviceReferenceMetaField extends MetaField {
 
-    public final int[] selectedProductsIds;
+    public final int[] selectedProductIds;
 
     @JsonCreator
     public DeviceReferenceMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("isDefault") boolean isDefault,
-                                    @JsonProperty("selectedProductsIds") int[] selectedProductsIds) {
+                                    @JsonProperty("selectedProductIds") int[] selectedProductIds) {
         super(id, name, role, isDefault);
-        this.selectedProductsIds = selectedProductsIds;
+        this.selectedProductIds = selectedProductIds;
     }
 
     @Override
     public MetaField copy() {
-        return new DeviceReferenceMetaField(id, name, role, isDefault, selectedProductsIds);
+        return new DeviceReferenceMetaField(id, name, role, isDefault, selectedProductIds);
     }
 }
