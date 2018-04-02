@@ -1,7 +1,18 @@
 @import 'components/Layout/style-guide';
 
 .add-info-event-button {
-
+  color: @color-positive;
+  border-color: @color-positive;
+  &:hover, &:focus {
+    color: @color-positive;
+    border-color: @color-positive;
+    background: @color-positive-25;
+  }
+  &:active {
+    color: @color-positive;
+    background-color: @color-positive-25;
+    box-shadow: 0 0 0 2px @color-positive-25;
+  }
 }
 
 .add-warning-event-button {
