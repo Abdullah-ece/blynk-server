@@ -353,7 +353,7 @@ export const Unit = {
     value: 'Hour'
   },
   Minute: {
-    abbreviation: 'm',
+    abbreviation: 'min',
     key: 'Minute',
     value: 'Minute'
   },
