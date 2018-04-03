@@ -259,6 +259,9 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         appClient.send("hardware 0-1 vw 2 222");
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
+
+        appWebSocketClient.send("hardware 1 vw 10 100");
+        appClient.verifyResult(appSync(3, b("0-1 vw 10 100")));
     }
 
     @Test

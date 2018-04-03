@@ -74,8 +74,10 @@ public class WebAppHardwareLogic {
         Channel channel = ctx.channel();
 
         //sending to shared dashes and master-master apps
+
+        //"0-" - temp solution, until app will not support new format.
         session.sendToSharedApps(channel, SharedTokenManager.ALL,
-                APP_SYNC, message.id, message.body);
+                APP_SYNC, message.id, "0-" + message.body);
 
         session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, split[1], deviceId);
 
