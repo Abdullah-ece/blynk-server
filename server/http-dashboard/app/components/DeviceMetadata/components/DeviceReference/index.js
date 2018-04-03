@@ -3,6 +3,7 @@ import Base from '../Base';
 import {Fieldset} from 'components';
 import DeviceReferenceModal from './modal';
 import {connect} from 'react-redux';
+import {Link} from 'react-router';
 import _ from 'lodash';
 
 @connect((state) => ({
@@ -19,12 +20,14 @@ class DeviceReference extends Base {
 
     const field = this.props.data;
 
-    const value = _.find(this.props.devices, (device) => Number(device.id) === Number(field.value));
+    const value = _.find(this.props.devices, (device) => Number(device.id) === Number(field.selectedDeviceId));
 
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { value && value.name && (value.name) || (<i>No Device</i>)}
+        { value && value.name && (
+          <Link to={`/devices/${value.id}`}>{value.name}</Link>
+        ) || (<i>Device is not selected</i>)}
         {/*<i>No Device ={productIds}= ={value}=</i>*/}
         {/*{ !price && !units ? <i>No Value</i> : (*/}
           {/*<div>*/}

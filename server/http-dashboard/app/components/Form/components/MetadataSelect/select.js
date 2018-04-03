@@ -16,6 +16,7 @@ export default class SelectField extends React.Component {
     placeholder: React.PropTypes.any,
     mode: React.PropTypes.any,
     input: React.PropTypes.any,
+    allowZero: React.PropTypes.bool,
     meta: React.PropTypes.any,
     dropdownMatchSelectWidth: React.PropTypes.bool,
     notFoundContent: React.PropTypes.string,
@@ -61,7 +62,7 @@ export default class SelectField extends React.Component {
 
   valueFormat(value) {
 
-    const {defaultValue, mode} = this.props;
+    const {defaultValue, mode, allowZero} = this.props;
 
     let format = String;
 
@@ -70,6 +71,8 @@ export default class SelectField extends React.Component {
     if(mode === 'multiple') {
       format = (value) => Array.isArray(value) ? value.map(formatArrayItem) : [];
     }
+
+    if(Number(value) === 0 && allowZero === false) return undefined;
 
     return value !== undefined && value !== null ? format(value) : defaultValue ? format(defaultValue) : undefined;
   }

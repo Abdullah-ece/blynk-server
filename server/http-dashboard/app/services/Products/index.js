@@ -159,13 +159,6 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
-    },
-    {
-      id: 7,
-      type: Metadata.Fields.DEVICE_REFERENCE,
-      name: 'Floor Sensor',
-      value: [],
-      role: Roles.USER.value,
     }
   ];
 };

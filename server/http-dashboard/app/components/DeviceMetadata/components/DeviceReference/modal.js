@@ -13,11 +13,14 @@ class DeviceReference extends React.Component {
   };
 
   render() {
+
+    const notFoundContent = Object.keys(this.props.options).length > 0 ? 'No match' : 'No Devices';
+
     return (
       <div>
         <ItemsGroup>
           <Item label="Value">
-            <MetadataSelect name="value" type="text" placeholder="Choose Device" values={this.props.options} style={{width: '100%'}}/>
+            <MetadataSelect notFoundContent={notFoundContent} allowZero={false} name="selectedDeviceId" type="text" placeholder="Choose Device" values={this.props.options} style={{width: '100%'}}/>
           </Item>
         </ItemsGroup>
       </div>
