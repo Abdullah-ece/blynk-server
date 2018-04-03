@@ -10,3 +10,4 @@ export Cost from './Cost';
 export Coordinates from './Coordinates';
 export Switch from './Switch';
 export Field from './Field';
+export DeviceReference from './DeviceReference';

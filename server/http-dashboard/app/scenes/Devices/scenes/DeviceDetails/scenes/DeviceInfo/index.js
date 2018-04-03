@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
 import {DeviceMetadataUpdate, DeviceDetailsFetch} from 'data/Devices/api';
+import {ProductsFetch} from 'data/Product/api';
 
 @connect((state) => ({
   device: state.Devices.deviceDetails,
@@ -12,6 +13,7 @@ import {DeviceMetadataUpdate, DeviceDetailsFetch} from 'data/Devices/api';
 }), (dispatch) => ({
   updateDeviceMetadata: bindActionCreators(DeviceMetadataUpdate, dispatch),
   fetchDevice: bindActionCreators(DeviceDetailsFetch, dispatch),
+  fetchProducts: bindActionCreators(ProductsFetch, dispatch),
 }))
 class DeviceInfoScene extends React.Component {
 
@@ -22,6 +24,7 @@ class DeviceInfoScene extends React.Component {
     orgId: PropTypes.number,
 
     fetchDevice: PropTypes.func,
+    fetchProducts: PropTypes.func,
     updateDeviceMetadata: PropTypes.func,
   };
 
@@ -29,6 +32,10 @@ class DeviceInfoScene extends React.Component {
     super(props);
 
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.fetchProducts();
   }
 
   handleMetadataChange(values) {

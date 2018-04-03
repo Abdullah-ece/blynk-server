@@ -10,7 +10,8 @@ import {
   Cost,
   Coordinates,
   Switch,
-  Field
+  Field,
+  DeviceReference,
 } from './components';
 
 export default {
@@ -25,5 +26,6 @@ export default {
   Cost,
   Coordinates,
   Switch,
-  Field
+  Field,
+  DeviceReference
 };
