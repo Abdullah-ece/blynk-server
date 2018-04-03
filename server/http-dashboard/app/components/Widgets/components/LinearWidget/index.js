@@ -8,6 +8,7 @@ import './styles.less';
 import {Map} from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
+import {Unit} from 'services/Products';
 
 import Dotdotdot from 'react-dotdotdot';
 
@@ -81,7 +82,9 @@ class LinearWidget extends React.Component {
             `<div class="chart-tooltip-legends-legend">
                 <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
                 <div class="chart-tooltip-legends-legend-name">${name}:</div>
-                <div class="chart-tooltip-legends-legend-value">${String(value)}</div>
+                <div class="chart-tooltip-legends-legend-value">
+                  ${String(value)} ${this.props.data.sources[0].dataStream.units ? Unit[this.props.data.sources[0].dataStream.units].abbreviation : ""}
+                </div>
               </div>`
           );
         };
