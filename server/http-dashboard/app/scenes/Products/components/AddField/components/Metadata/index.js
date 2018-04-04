@@ -45,6 +45,10 @@ export default class AddMetadataFields extends Base {
     {
       type: Metadata.Fields.DEVICE_REFERENCE,
       title: 'Device Reference'
+    },
+    {
+      type: Metadata.Fields.LIST,
+      title: 'List'
     }
   ];
 

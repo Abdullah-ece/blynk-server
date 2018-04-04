@@ -229,7 +229,16 @@ class ProductMetadata extends React.Component {
     if (field.get('type') === MetadataService.Fields.DEVICE_REFERENCE) {
       element = (
         <MetadataFields.DeviceReferenceField // @todo finish
-          isDirty={!isMetadataPristine()[MetadataService.Fields.UNIT](field)}
+          // isDirty={!isMetadataPristine()[MetadataService.Fields.UNIT](field)}
+          {...props}
+        />
+      );
+    }
+
+    if (field.get('type') === MetadataService.Fields.LIST) {
+      element = (
+        <MetadataFields.ListField // @todo finish
+          // isDirty={!isMetadataPristine()[MetadataService.Fields.UNIT](field)}
           {...props}
         />
       );

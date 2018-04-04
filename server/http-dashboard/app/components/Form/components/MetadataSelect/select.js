@@ -68,7 +68,7 @@ export default class SelectField extends React.Component {
 
     const formatArrayItem = (item) => String(item);
 
-    if(mode === 'multiple') {
+    if(mode === 'multiple' || mode === 'tags') {
       format = (value) => Array.isArray(value) ? value.map(formatArrayItem) : [];
     }
 
@@ -128,8 +128,7 @@ export default class SelectField extends React.Component {
           notFoundContent={notFoundContent || null}
           optionFilterProp="children"
           value={this.valueFormat(input.value)}
-          filterOption={(input, option) => option.props.stringValue.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-        >
+          filterOption={(input, option) => (option.props.stringValue || option.props.value).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
           { this.getOptions(values) }
         </Select>
       </Form.Item>

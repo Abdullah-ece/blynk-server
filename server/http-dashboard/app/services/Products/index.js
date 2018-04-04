@@ -80,7 +80,8 @@ export const Metadata = {
     SWITCH: 'Switch',
     DATE: 'Date',
     CONTACT: 'Contact',
-    DEVICE_REFERENCE: 'DeviceReference'
+    DEVICE_REFERENCE: 'DeviceReference',
+    LIST: 'List'
   }
 };
 
