@@ -12,6 +12,7 @@ import {
   Switch,
   Field,
   DeviceReference,
+  List
 } from './components';
 
 export default {
@@ -27,5 +28,6 @@ export default {
   Coordinates,
   Switch,
   Field,
-  DeviceReference
+  DeviceReference,
+  List
 };

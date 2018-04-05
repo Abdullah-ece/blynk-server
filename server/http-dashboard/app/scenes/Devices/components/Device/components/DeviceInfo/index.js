@@ -195,6 +195,13 @@ class DeviceInfo extends React.Component {
                       </DeviceMetadata.Field>
                     );
 
+                  if (field.type === Metadata.Fields.LIST)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.List {...props}/>
+                      </DeviceMetadata.Field>
+                    );
+
                 })
                 }
                 {/*<BackTop/>*/}
