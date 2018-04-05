@@ -2,6 +2,7 @@ package cc.blynk.server.api.http.dashboard.dto;
 
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;
@@ -67,6 +68,8 @@ public class DeviceDTO {
 
     public Integer warningSinceLastView;
 
+    public final HardwareInfo hardwareInfo;
+
     @JsonCreator
     public DeviceDTO(@JsonProperty("id") int id,
                      @JsonProperty("productId") int productId,
@@ -89,7 +92,8 @@ public class DeviceDTO {
                      @JsonProperty("productLogoUrl") String productLogoUrl,
                      @JsonProperty("orgName") String orgName,
                      @JsonProperty("criticalSinceLastView") Integer criticalSinceLastView,
-                     @JsonProperty("warningSinceLastView") Integer warningSinceLastView) {
+                     @JsonProperty("warningSinceLastView") Integer warningSinceLastView,
+                     @JsonProperty("hardwareInfo") HardwareInfo hardwareInfo) {
         this.id = id;
         this.productId = productId;
         this.name = name;
@@ -112,6 +116,7 @@ public class DeviceDTO {
         this.orgName = orgName;
         this.criticalSinceLastView = criticalSinceLastView;
         this.warningSinceLastView = warningSinceLastView;
+        this.hardwareInfo = hardwareInfo;
     }
 
     private DeviceDTO(Device device, Product product) {
@@ -132,6 +137,7 @@ public class DeviceDTO {
         this.activatedBy = device.activatedBy;
         this.metadataUpdatedAt = device.metadataUpdatedAt;
         this.metadataUpdatedBy = device.metadataUpdatedBy;
+        this.hardwareInfo = device.hardwareInfo;
 
         if (product != null) {
             this.productName = product.name;
