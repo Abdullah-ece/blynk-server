@@ -14,18 +14,22 @@ public class ListMetaField extends MetaField {
 
     public final String[] options;
 
+    public final String selectedOption;
+
     @JsonCreator
     public ListMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("isDefault") boolean isDefault,
-                         @JsonProperty("options") String[] options) {
+                         @JsonProperty("options") String[] options,
+                         @JsonProperty("selectedOption") String selectedOption) {
         super(id, name, role, isDefault);
         this.options = options;
+        this.selectedOption = selectedOption;
     }
 
     @Override
     public MetaField copy() {
-        return new ListMetaField(id, name, role, isDefault, options);
+        return new ListMetaField(id, name, role, isDefault, options, selectedOption);
     }
 }

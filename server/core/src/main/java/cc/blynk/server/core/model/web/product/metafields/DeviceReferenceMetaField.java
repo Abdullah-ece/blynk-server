@@ -14,18 +14,22 @@ public class DeviceReferenceMetaField extends MetaField {
 
     public final int[] selectedProductIds;
 
+    public final long selectedDeviceId;
+
     @JsonCreator
     public DeviceReferenceMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("isDefault") boolean isDefault,
-                                    @JsonProperty("selectedProductIds") int[] selectedProductIds) {
+                                    @JsonProperty("selectedProductIds") int[] selectedProductIds,
+                                    @JsonProperty("selectedDeviceId") long selectedDeviceId) {
         super(id, name, role, isDefault);
         this.selectedProductIds = selectedProductIds;
+        this.selectedDeviceId = selectedDeviceId;
     }
 
     @Override
     public MetaField copy() {
-        return new DeviceReferenceMetaField(id, name, role, isDefault, selectedProductIds);
+        return new DeviceReferenceMetaField(id, name, role, isDefault, selectedProductIds, selectedDeviceId);
     }
 }
