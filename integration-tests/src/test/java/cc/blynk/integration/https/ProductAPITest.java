@@ -736,8 +736,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals("Default Device", textMetaField.value);
         }
 
-        product.metaFields[0].role = Role.USER;
-        product.metaFields[0].name = "Me updated test metafield";
+        product.metaFields[0] = new TextMetaField(1, "Me updated test metafield", Role.USER, false, "Default Device");
 
         HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");
         updateProductAndDevicesReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
