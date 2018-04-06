@@ -238,12 +238,12 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        clientPair.appClient.verifyResultAfter(500, createDevice(1, device));
+        clientPair.appClient.verifyResultAfter(1000, createDevice(1, device));
 
         assertEquals("127.0.0.1", holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
 
         clientPair.appClient.send("deleteDevice 1\0" + device.id);
-        clientPair.appClient.verifyResultAfter(500, ok(2));
+        clientPair.appClient.verifyResultAfter(1000, ok(2));
 
         assertNull(holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
     }
@@ -260,6 +260,20 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         hardClient.login(token);
         hardClient.verifyResult(connectRedirect(1, "test_host " + tcpHardPort));
+    }
+
+    @Test
+    public void redirectForHardwareWorksWithForce80Port() throws Exception {
+        String token = "12345678901234567890123456789013";
+
+        assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
+                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+
+        TestHardClient hardClient = new TestHardClient("localhost", plainHardPort2);
+        hardClient.start();
+
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + 80));
     }
 
     @Test

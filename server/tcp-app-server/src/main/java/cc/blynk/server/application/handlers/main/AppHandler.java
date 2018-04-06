@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.AssignTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.CreateAppLogic;
@@ -15,6 +16,7 @@ import cc.blynk.server.application.handlers.main.logic.GetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.GetProjectByClonedTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.GetProjectByTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.GetProvisionTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareResendFromBTLogic;
@@ -87,6 +89,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -99,6 +102,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
@@ -153,6 +157,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final UpdateFaceLogic updateFaceLogic;
     private final GetCloneCodeLogic getCloneCodeLogic;
     private final GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
+    private final GetProvisionTokenLogic getProvisionTokenLogic;
 
     private final GlobalStats stats;
 
@@ -203,6 +208,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         this.getCloneCodeLogic = new GetCloneCodeLogic(holder);
         this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
+        this.getProvisionTokenLogic = new GetProvisionTokenLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -376,6 +382,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case LOGOUT :
                 LogoutLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case SET_WIDGET_PROPERTY :
+                AppSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_PROVISION_TOKEN :
+                getProvisionTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

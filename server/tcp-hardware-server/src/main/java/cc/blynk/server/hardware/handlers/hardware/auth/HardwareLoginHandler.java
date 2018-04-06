@@ -14,6 +14,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.structure.LRUCache;
@@ -63,7 +64,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.holder = holder;
         this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.listenPort = String.valueOf(listenPort);
+        boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
+        this.listenPort = isForce80ForRedirect ? "80" : String.valueOf(listenPort);
     }
 
     private void completeLogin(Channel channel, Session session, User user,
@@ -111,6 +113,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         User user = tokenValue.user;
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
+
+        if (tokenValue.isTemporary) {
+            holder.tokenManager.updateRegularCache(token, tokenValue);
+            dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
+            dash.updatedAt = System.currentTimeMillis();
+        }
 
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
 
