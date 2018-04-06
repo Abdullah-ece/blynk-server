@@ -673,6 +673,12 @@ export const isMetadataPristine = () => ({
   [Metadata.Fields.UNIT]: (field) => (
     !field.get('name') && !field.get('value') && !field.get('units')
   ),
+  [Metadata.Fields.DEVICE_REFERENCE]: (field) => (
+    !field.get('name') && !field.get('selectedProductIds')
+  ),
+  [Metadata.Fields.LIST]: (field) => (
+    !field.get('name') && !field.get('options')
+  ),
   [Metadata.Fields.CONTACT]: (field) => (
     !field.get('name') && !field.get('isFirstNameEnabled') && !field.get('firstName') && !field.get('isLastNameEnabled') && !field.get('lastName') &&
     !field.get('isEmailEnabled') && !field.get('email') && !field.get('isPhoneEnabled') && !field.get('phone') &&
