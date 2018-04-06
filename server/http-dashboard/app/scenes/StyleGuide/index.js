@@ -22,6 +22,7 @@ class StyleGuide extends React.Component {
             mode="tags"
             style={{ width: '100%' }}
             placeholder="Tags Mode"
+            defaultValue={['a10']}
           >
             {children}
           </Select>
