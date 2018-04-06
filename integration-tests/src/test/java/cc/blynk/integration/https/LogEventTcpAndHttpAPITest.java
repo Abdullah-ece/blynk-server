@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.CommentDTO;
 import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
@@ -22,6 +23,7 @@ import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -43,6 +45,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -116,6 +120,29 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
             System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(timeLineResponse));
         }
+    }
+
+    @Test
+    public void testLogEventIsForwardedToWebapp() throws Exception {
+        String token = createProductAndDevice();
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(admin);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
+        appWebSocketClient.verifyResult(ok(2));
+
+        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("logEvent temp_is_high");
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        appWebSocketClient.verifyResult(new HardwareLogEventMessage(2, b("1 temp_is_high")));
+
     }
 
     @Test

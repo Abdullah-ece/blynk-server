@@ -4,7 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -23,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -49,6 +52,7 @@ public class HardwareLogEventLogic {
     private final String productName;
     private final String deviceUrl;
     private final String eventLogEmailBody;
+    private final SessionDao sessionDao;
 
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
@@ -60,6 +64,7 @@ public class HardwareLogEventLogic {
         this.productName = holder.props.getProductName();
         this.deviceUrl = holder.props.getDeviceUrl();
         this.eventLogEmailBody = holder.textHolder.logEventMailBody;
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -90,6 +95,9 @@ public class HardwareLogEventLogic {
         }
 
         String desc = split.length > 1 ? split[1] : null;
+
+        Session session = sessionDao.userSession.get(state.userKey);
+        session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, message.id, message.body, device.id);
 
         blockingIOProcessor.executeDB(() -> {
             try {
