@@ -113,6 +113,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         } else {
             session.sendOfflineMessageToApps(dashBoard.id, device.id);
         }
+
+        session.sendOfflineMessageToWeb(dashBoard.id, device.id);
     }
 
     private void sendPushNotification(ChannelHandlerContext ctx,

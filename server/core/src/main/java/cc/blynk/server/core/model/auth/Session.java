@@ -179,10 +179,20 @@ public class Session {
     public void sendOfflineMessageToApps(int dashId, int deviceId) {
         int targetsNum = appChannels.size();
         if (targetsNum > 0) {
-            log.trace("Sending device offline message.");
+            log.trace("Sending device offline message to app.");
 
             StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
             sendMessageToMultipleReceivers(appChannels, deviceOfflineMessage);
+        }
+    }
+
+    public void sendOfflineMessageToWeb(int dashId, int deviceId) {
+        int targetsNum = webChannels.size();
+        if (targetsNum > 0) {
+            log.trace("Sending device offline message to webapp.");
+
+            StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            sendMessageToMultipleReceivers(webChannels, deviceOfflineMessage);
         }
     }
 
@@ -225,6 +235,13 @@ public class Session {
         int targetsNum = targetChannels.size();
         if (targetsNum > 0) {
             send(targetChannels, cmd, msgId, finalBody);
+        }
+    }
+
+    public void sendToWeb(short cmd, int msgId, String finalBody) {
+        int targetsNum = webChannels.size();
+        if (targetsNum > 0) {
+            send(webChannels, cmd, msgId, finalBody);
         }
     }
 
