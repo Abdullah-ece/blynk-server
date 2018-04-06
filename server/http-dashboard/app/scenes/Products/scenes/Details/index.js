@@ -21,11 +21,13 @@ import {MainLayout} from 'components';
   canEditProduct: state.Organization && state.Organization.parentId && state.Organization.parentId === -1,
 }), (dispatch) => ({
   Fetch: bindActionCreators(API.ProductFetch, dispatch),
+  FetchAll: bindActionCreators(API.ProductsFetch, dispatch),
 }))
 class ProductDetails extends React.Component {
 
   static propTypes = {
     Fetch: React.PropTypes.func,
+    FetchAll: React.PropTypes.func,
 
     params: React.PropTypes.object,
     location: React.PropTypes.object,
@@ -62,6 +64,9 @@ class ProductDetails extends React.Component {
         this.context.router.push(`/product/${this.props.params.id}`);
       }
     }
+
+    this.props.FetchAll();
+
     this.props.Fetch({
       id: this.props.params.id
     }).then(() => {

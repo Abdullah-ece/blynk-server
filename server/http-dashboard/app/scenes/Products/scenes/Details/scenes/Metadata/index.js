@@ -19,7 +19,9 @@ const {
     SwitchField,
     ManufacturerField,
     ModelNameField,
-    TimezoneOfDeviceField
+    TimezoneOfDeviceField,
+    DeviceReferenceField,
+    ListField
   }
 } = MetadataComponents;
 class Metadata extends React.Component {
@@ -173,6 +175,28 @@ class Metadata extends React.Component {
             from={field.from}
             to={field.to}
             role={field.role}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.DEVICE_REFERENCE) {
+        fields.push(
+          <DeviceReferenceField.Static
+            {...props}
+            name={field.name}
+            role={field.role}
+            selectedProductIds={field.selectedProductIds}
+          />
+        );
+      }
+
+      if (field.type === MetadataFields.Fields.LIST) {
+        fields.push(
+          <ListField.Static
+            {...props}
+            name={field.name}
+            role={field.role}
+            options={field.options}
           />
         );
       }
