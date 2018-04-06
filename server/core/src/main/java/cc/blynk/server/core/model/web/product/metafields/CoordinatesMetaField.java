@@ -29,6 +29,11 @@ public class CoordinatesMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new CoordinatesMetaField(id, metaField.name, metaField.role, metaField.isDefault, lat, lon);
+    }
+
+    @Override
     public MetaField copy() {
         return new CoordinatesMetaField(id, name, role, isDefault, lat, lon);
     }

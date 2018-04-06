@@ -29,6 +29,12 @@ public class MeasurementUnitMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new MeasurementUnitMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+                units, value);
+    }
+
+    @Override
     public MetaField copy() {
         return new MeasurementUnitMetaField(id, name, role, isDefault, units, value);
     }

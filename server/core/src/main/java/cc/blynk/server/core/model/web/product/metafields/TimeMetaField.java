@@ -25,6 +25,11 @@ public class TimeMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new TimeMetaField(id, metaField.name, metaField.role, metaField.isDefault, time);
+    }
+
+    @Override
     public MetaField copy() {
         return new TimeMetaField(id, name, role, isDefault, time);
     }

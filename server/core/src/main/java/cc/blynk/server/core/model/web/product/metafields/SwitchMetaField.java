@@ -33,6 +33,12 @@ public class SwitchMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new SwitchMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+                from, to, value);
+    }
+
+    @Override
     public MetaField copy() {
         return new SwitchMetaField(id, name, role, isDefault, from, to, value);
     }

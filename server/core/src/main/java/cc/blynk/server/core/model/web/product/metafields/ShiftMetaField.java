@@ -60,21 +60,23 @@ public class ShiftMetaField extends MetaField {
         return caseConditionStep;
     }
 
-    /*
     @Override
-    public Field<Integer> prepareField(SelectSelectStep<Record> query, String columnName) {
-        return count().filterWhere(DSL.field(columnName).between(from, to)).as(name);
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new ShiftMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+                copyShifts(shifts));
     }
-    */
 
     @Override
     public MetaField copy() {
+        return new ShiftMetaField(id, name, role, isDefault, copyShifts(shifts));
+    }
+
+    private static Shift[] copyShifts(Shift[] shifts) {
         Shift[] copy = new Shift[shifts.length];
         int i = 0;
         for (Shift shift : shifts) {
             copy[i++] = shift.copy();
         }
-
-        return new ShiftMetaField(id, name, role, isDefault, copy);
+        return copy;
     }
 }

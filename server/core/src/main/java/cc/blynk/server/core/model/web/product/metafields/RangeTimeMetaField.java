@@ -47,6 +47,11 @@ public class RangeTimeMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new RangeTimeMetaField(id, metaField.name, metaField.role, metaField.isDefault, from, to);
+    }
+
+    @Override
     public MetaField copy() {
         return new RangeTimeMetaField(id, name, role, isDefault, from, to);
     }

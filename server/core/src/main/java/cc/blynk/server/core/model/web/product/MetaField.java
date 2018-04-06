@@ -55,11 +55,11 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final int id;
 
-    public volatile String name;
+    public final String name;
 
-    public volatile Role role;
+    public final Role role;
 
-    public volatile boolean isDefault;
+    public final boolean isDefault;
 
     public MetaField(int id, String name, Role role, boolean isDefault) {
         this.id = id;
@@ -68,11 +68,7 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.isDefault = isDefault;
     }
 
-    public void update(MetaField metaField) {
-        this.name = metaField.name;
-        this.role = metaField.role;
-        this.isDefault = metaField.isDefault;
-    }
+    public abstract MetaField copySpecificFieldsOnly(MetaField metaField);
 
     public Field<?> prepareField(SelectSelectStep<Record> query, Field<Object> field) {
         return field;

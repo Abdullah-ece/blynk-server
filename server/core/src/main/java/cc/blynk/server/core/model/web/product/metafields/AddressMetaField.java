@@ -60,6 +60,20 @@ public class AddressMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        AddressMetaField addressMetaField = (AddressMetaField) metaField;
+        return new AddressMetaField(
+                id, metaField.name, metaField.role, metaField.isDefault,
+                streetAddress, addressMetaField.isStreetAddressEnabled,
+                city, addressMetaField.isCityEnabled,
+                state, addressMetaField.isStateEnabled,
+                zip, addressMetaField.isZipEnabled,
+                country, addressMetaField.isCountryEnabled,
+                addressMetaField.isDefaultsEnabled
+        );
+    }
+
+    @Override
     public MetaField copy() {
         return new AddressMetaField(
                 id, name, role, isDefault,

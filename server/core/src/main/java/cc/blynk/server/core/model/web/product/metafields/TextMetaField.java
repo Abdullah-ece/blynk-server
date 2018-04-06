@@ -30,6 +30,11 @@ public class TextMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new TextMetaField(id, metaField.name, metaField.role, metaField.isDefault, value);
+    }
+
+    @Override
     public MetaField copy() {
         return new TextMetaField(id, name, role, isDefault, value);
     }

@@ -29,6 +29,12 @@ public class DeviceReferenceMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new DeviceReferenceMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+                selectedProductIds, selectedDeviceId);
+    }
+
+    @Override
     public MetaField copy() {
         return new DeviceReferenceMetaField(id, name, role, isDefault, selectedProductIds, selectedDeviceId);
     }

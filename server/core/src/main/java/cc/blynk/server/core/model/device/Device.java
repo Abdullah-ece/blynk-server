@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_META_FIELDS;
@@ -107,14 +108,19 @@ public class Device implements Target {
     }
 
     public void updateMetaFields(MetaField[] updatedMetaFields) {
+        MetaField[] metaFieldsCopy = Arrays.copyOf(metaFields, metaFields.length);
+
         for (MetaField updatedMetaField : updatedMetaFields) {
-            for (MetaField existingMetaField : metaFields) {
+            for (int i = 0; i < metaFieldsCopy.length; i++) {
+                MetaField existingMetaField = metaFieldsCopy[i];
                 if (existingMetaField.id == updatedMetaField.id) {
-                    existingMetaField.update(updatedMetaField);
+                    metaFieldsCopy[i] = existingMetaField.copySpecificFieldsOnly(updatedMetaField);
                     break;
                 }
             }
         }
+
+        this.metaFields = metaFieldsCopy;
     }
 
     public void addMetaFields(MetaField[] metaFields) {

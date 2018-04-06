@@ -41,6 +41,11 @@ public class MultiTextMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new MultiTextMetaField(id, metaField.name, metaField.role, metaField.isDefault, values);
+    }
+
+    @Override
     public MetaField copy() {
         return new MultiTextMetaField(id, name, role, isDefault, values);
     }

@@ -106,19 +106,20 @@ public class ContactMetaField extends MetaField {
     }
 
     @Override
-    public void update(MetaField metaField) {
-        super.update(metaField);
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
-        this.isFirstNameEnabled = contactMetaField.isFirstNameEnabled;
-        this.isLastNameEnabled = contactMetaField.isLastNameEnabled;
-        this.isEmailEnabled = contactMetaField.isEmailEnabled;
-        this.isPhoneEnabled = contactMetaField.isPhoneEnabled;
-        this.isStreetAddressEnabled = contactMetaField.isStreetAddressEnabled;
-        this.isCountryEnabled = contactMetaField.isCountryEnabled;
-        this.isCityEnabled = contactMetaField.isCityEnabled;
-        this.isStateEnabled = contactMetaField.isStateEnabled;
-        this.isZipEnabled = contactMetaField.isZipEnabled;
-        this.isDefaultsEnabled = contactMetaField.isDefaultsEnabled;
+        return new ContactMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+                contact,
+                firstName, contactMetaField.isFirstNameEnabled,
+                lastName, contactMetaField.isLastNameEnabled,
+                email, contactMetaField.isEmailEnabled,
+                phone, contactMetaField.isPhoneEnabled,
+                streetAddress, contactMetaField.isStreetAddressEnabled,
+                country, contactMetaField.isCountryEnabled,
+                city, contactMetaField.isCityEnabled,
+                state, contactMetaField.isStateEnabled,
+                zip, contactMetaField.isZipEnabled,
+                contactMetaField.isDefaultsEnabled);
     }
 
     @Override

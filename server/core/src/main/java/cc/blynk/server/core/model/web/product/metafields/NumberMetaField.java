@@ -25,6 +25,11 @@ public class NumberMetaField extends MetaField {
     }
 
     @Override
+    public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        return new NumberMetaField(id, metaField.name, metaField.role, metaField.isDefault, value);
+    }
+
+    @Override
     public MetaField copy() {
         return new NumberMetaField(id, name, role, isDefault, value);
     }
