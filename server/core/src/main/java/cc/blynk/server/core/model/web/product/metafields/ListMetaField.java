@@ -30,8 +30,9 @@ public class ListMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
+        ListMetaField listMetaField = (ListMetaField) metaField;
         return new ListMetaField(id, metaField.name, metaField.role, metaField.isDefault,
-                options, selectedOption);
+                listMetaField.options, selectedOption);
     }
 
     @Override
