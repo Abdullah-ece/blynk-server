@@ -90,6 +90,12 @@ class DeviceInfo extends React.Component {
                 {this.props.device.orgName}
               </Fieldset>
             )}
+            {this.props.device.hardwareInfo.version && (
+              <Fieldset>
+                <Fieldset.Legend>Firmware version</Fieldset.Legend>
+                {this.props.device.hardwareInfo.version}
+              </Fieldset>
+            )}
           </Col>
           <Col span={8}>
 
