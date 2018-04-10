@@ -3,8 +3,9 @@
 .product-delete-confirmation-modal.delete-confirmation-modal {
   .delete-confirmation-modal-title {
     .font-h2;
-    text-align: center;
-    font-weight: 400;
+    text-align: left;
+    font-weight: 500;
+    color: @color-dark-grey-75;
     i {
       margin-right: 10px;
       font-size: @style-font-size-5;
@@ -18,7 +19,7 @@
       margin: 20px 0;
       font-weight: 500;
       font-size: 12px;
-      text-align: center;
+      text-align: left;
       span {
         color: @color-critical;
       }
@@ -26,7 +27,7 @@
     .delete-confirmation-modal-content-sub-notice {
       margin: 20px 0;
       font-size: 12px;
-      text-align: center;
+      text-align: left;
     }
     .delete-confirmation-modal-buttons {
       text-align: center;
@@ -44,7 +45,6 @@
       text-align: center;
       input {
         text-align: center;
-        width: 220px;
       }
     }
     .delete-confirmation-modal-buttons-cancel {
@@ -56,5 +56,13 @@
   }
   .delete-confirmation-modal-wrapper {
     padding: 16px;
+  }
+}
+
+.delete-modal-form {
+  .ant-modal-content{
+    .ant-modal-body {
+      padding-bottom: 0;
+    }
   }
 }
