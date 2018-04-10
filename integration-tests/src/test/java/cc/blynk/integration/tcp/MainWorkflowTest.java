@@ -90,6 +90,37 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void registrationAllowedOnlyOncePerConnection() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+
+        appClient.start();
+
+        appClient.register("test1@test.com", "1");
+        appClient.verifyResult(ok(1));
+
+        appClient.register("test2@test.com", "1");
+        appClient.verifyResult(notAllowed(2));
+
+        assertTrue(appClient.isClosed());
+    }
+
+    @Test
+    public void registrationLimitCheck() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+            appClient.start();
+            appClient.register("test" + i + "@test.com", "1");
+            appClient.verifyResult(ok(1));
+            appClient.stop();
+        }
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.register("test" + 11 + "@test.com", "1");
+        appClient.verifyResult(notAllowed(1));
+    }
+
+    @Test
     public void createBasicProfile() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
 
