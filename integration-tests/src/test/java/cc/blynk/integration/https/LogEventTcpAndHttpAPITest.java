@@ -142,7 +142,32 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         appWebSocketClient.verifyResult(new HardwareLogEventMessage(2, b("1 temp_is_high")));
+    }
 
+    @Test
+    public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
+        String token = createProductAndDevice();
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(admin);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
+        appWebSocketClient.verifyResult(ok(2));
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
+        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        appWebSocketClient.verifyResult(new HardwareLogEventMessage(111, b("1 temp_is_high")));
     }
 
     @Test

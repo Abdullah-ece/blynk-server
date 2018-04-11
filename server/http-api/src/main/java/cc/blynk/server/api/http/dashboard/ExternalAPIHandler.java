@@ -64,6 +64,7 @@ import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
@@ -119,15 +120,15 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = tokenValue.device;
 
+        if (eventCode == null) {
+            log.error("Event code is not provided.");
+            return (badRequest("Event code is not provided."));
+        }
+
         Product product = organizationDao.getProductByIdOrNull(device.productId);
         if (product == null) {
             log.error("Product with id {} not exists.", device.productId);
             return (badRequest("Product not exists for device."));
-        }
-
-        if (eventCode == null) {
-            log.error("Event code is not provided.");
-            return (badRequest("Event code is not provided."));
         }
 
         Event event = product.findEventByCode(eventCode.hashCode());
@@ -136,6 +137,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
             return badRequest("Event with code not found in product.");
         }
+
+        Session session = sessionDao.userSession.get(new UserKey(tokenValue.user));
+        session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, eventCode, device.id);
 
         blockingIOProcessor.executeDB(() -> {
             try {
