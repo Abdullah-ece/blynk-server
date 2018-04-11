@@ -1,12 +1,15 @@
 import {fromJS} from 'immutable';
 import {
   DEVICES_SORT,
-  // TIMELINE_TIME_FILTERS,
+  TIMELINE_TIME_FILTERS,
+  TIMELINE_TYPE_FILTERS,
   DEVICES_FILTERS
 } from 'services/Devices';
 import {
   hardcodedRequiredMetadataFieldsNames
 } from 'services/Products';
+
+import _ from 'lodash';
 
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
@@ -112,6 +115,19 @@ const initialState = {
   deviceDashboard: {},
   deviceDashboardLoading: true,
 
+  timelineControls: {
+    type: '',
+    time: '',
+    customTime: []
+  },
+
+  timeline: {
+    logEvents: [],
+    totalCritical: 0,
+    totalResolved: 0,
+    totalWarning: 0,
+  }
+
   // devicesLoading: false,
   // devices: [],
   // timeline: {},
@@ -211,6 +227,61 @@ export default function Devices(state = initialState, action) {
 
     case ACTIONS.BLYNK_WS_VIRTUAL_WRITE:
       return updateDevicesDashboardLiveData(state, action);
+
+    case ACTIONS.BLYNK_WS_LOG_EVENT:
+
+      const product = _.find(state.devicesProducts, (product) => (Number(product.id) === Number(state.deviceDetails.productId)));
+
+      if(!product) return state;
+
+      const event = _.find(product.events, (event) => event.eventCode === action.value.eventCode);
+
+      if(!event) return state;
+
+      const availableTimeFilters = [
+        TIMELINE_TIME_FILTERS.HOUR.key,
+        TIMELINE_TIME_FILTERS.DAY.key,
+        TIMELINE_TIME_FILTERS.WEEK.key,
+        TIMELINE_TIME_FILTERS.MONTH.key,
+      ];
+
+      if(!state.timelineControls || !state.timelineControls.time || !state.timelineControls.type) {
+        return state;
+      }
+
+      if (availableTimeFilters.indexOf(state.timelineControls.time) === -1) {
+        return state;
+      }
+
+      if (state.timelineControls.type !== TIMELINE_TYPE_FILTERS.ALL.key && state.timelineControls.type !== event.type) {
+        return state;
+      }
+
+      if(Number(action.value.deviceId) === Number(state.deviceDetails.id)) {
+        // active device
+
+        let logEvents = Array.isArray(state.timeline && state.timeline.logEvents) ? state.timeline.logEvents : [];
+
+        logEvents = [{
+          id: -1,
+          eventType: event.type,
+          name: event.name,
+          description: event.description,
+          ts: new Date().getTime(),
+          isResolved: false,
+        }, ...logEvents];
+
+        return {
+          ...state,
+          timeline: {
+            ...state.timeline,
+            logEvents: logEvents
+          }
+        };
+
+      }
+
+      return state;
 
     case "API_DEVICE_DASHBOARD_FETCH":
       return {
@@ -428,6 +499,21 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         timeline: action.payload.data
+      };
+
+    case "DEVICE_TIMELINE_CONTROLS_UPDATE":
+      return {
+        ...state,
+        timelineControls: {
+          ...state.timelineControls,
+          ...action.value,
+        }
+      };
+
+    case "API_DEVICE_PRODUCTS_FETCH_SUCCESS":
+      return {
+        ...state,
+        devicesProducts: action.payload.data,
       };
 
     case "DEVICES_SORT_CHANGE":

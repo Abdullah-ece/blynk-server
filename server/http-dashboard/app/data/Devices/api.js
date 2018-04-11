@@ -16,6 +16,19 @@ export const DevicesFetch = (data) => {
   };
 };
 
+export const DeviceProductsFetch = () => {
+
+  return {
+    type: 'API_DEVICE_PRODUCTS_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: API_URL.products()
+      }
+    }
+  };
+};
+
 export const DeviceFetch = (params, data) => {
 
   if (!params.orgId)

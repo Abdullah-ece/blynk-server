@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getFormValues} from 'redux-form';
 import {TimelineFetch} from 'data/Devices/api';
+import {DeviceTimelineControlsUpdate} from 'data/Devices/actions';
 import _ from 'lodash';
 import './styles.less';
 
@@ -14,13 +15,15 @@ import './styles.less';
   timeline: state.Devices.timeline,
   formValues: getFormValues('Timeline')(state)
 }), (dispatch) => ({
-  fetchTimeline: bindActionCreators(TimelineFetch, dispatch)
+  fetchTimeline: bindActionCreators(TimelineFetch, dispatch),
+  updateTimelineControls: bindActionCreators(DeviceTimelineControlsUpdate, dispatch),
 }))
 class Timeline extends React.Component {
 
   static propTypes = {
     timeline: React.PropTypes.object,
     fetchTimeline: React.PropTypes.func,
+    updateTimelineControls: React.PropTypes.func,
     formValues: React.PropTypes.object,
     params: React.PropTypes.object,
     account: React.PropTypes.object,
@@ -65,6 +68,8 @@ class Timeline extends React.Component {
   }
 
   handleValuesChange(values) {
+
+    this.props.updateTimelineControls(values);
 
     const params = {};
 

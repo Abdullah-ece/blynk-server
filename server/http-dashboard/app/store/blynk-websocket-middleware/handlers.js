@@ -1,4 +1,8 @@
-import {blynkVW, blynkWsResponse,} from './actions';
+import {
+  blynkVW,
+  blynkWsResponse,
+  blynkWsLogEvent,
+} from './actions';
 
 import {
   getTrackDeviceId,
@@ -80,6 +84,31 @@ export const Handlers = (params) => {
     }));
   };
 
+  const logEventHandler = ({ msgId }) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0];
+    const eventCode = bodyArray[1];
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage LogEvent", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: bodyArray,
+        deviceId,
+        eventCode
+      });
+
+    store.dispatch(blynkWsLogEvent({
+      deviceId,
+      eventCode,
+    }));
+
+  };
+
   const appSyncHandler = ({ msgId }) => {
 
     const body = decodeBody(dataView);
@@ -133,6 +162,7 @@ export const Handlers = (params) => {
   return {
     ResponseHandler: responseHandler,
     HardwareHandler: hardwareHandler,
+    LogEventHandler: logEventHandler,
     AppSyncHandler: appSyncHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };

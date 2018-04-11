@@ -44,3 +44,10 @@ export function DeviceCreateUpdate(value) {
     value: value
   };
 }
+
+export function DeviceTimelineControlsUpdate(params) {
+  return {
+    type: 'DEVICE_TIMELINE_CONTROLS_UPDATE',
+    value: params
+  };
+}

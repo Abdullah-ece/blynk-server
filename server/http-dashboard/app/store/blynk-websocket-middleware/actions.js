@@ -6,6 +6,7 @@ export const ACTIONS = {
   'BLYNK_WS_LOGIN'          : 'BLYNK_WS_LOGIN',
   'BLYNK_WS_VIRTUAL_WRITE'  : 'BLYNK_WS_VIRTUAL_WRITE',
   'BLYNK_WS_HARDWARE'       : 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_LOG_EVENT'      : 'BLYNK_WS_LOG_EVENT'
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -75,6 +76,14 @@ export const blynkWsHardware = ({ deviceId, pin, value }) => ({
     deviceId,
     pin,
     value
+  }
+});
+
+export const blynkWsLogEvent = ({ deviceId, eventCode }) => ({
+  type : ACTIONS.BLYNK_WS_LOG_EVENT,
+  value: {
+    deviceId,
+    eventCode,
   }
 });
 

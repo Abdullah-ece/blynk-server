@@ -29,7 +29,8 @@ export const COMMANDS = {
   LOGIN   : 2,
   HARDWARE: 20,
   APP_SYNC: 25,
-  TRACK_DEVICE: 73
+  TRACK_DEVICE: 73,
+  LOG_EVENT: 64,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -190,6 +191,12 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.HARDWARE) {
 
     handlers.HardwareHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.LOG_EVENT) {
+
+    handlers.LogEventHandler({
       msgId: ++MSG_ID
     });
 
