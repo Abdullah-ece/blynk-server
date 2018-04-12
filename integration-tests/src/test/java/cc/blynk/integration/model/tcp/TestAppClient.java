@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
-import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -101,12 +100,6 @@ public class TestAppClient extends BaseTestAppClient {
 
     public String getBody() throws Exception {
         return getBody(1);
-    }
-
-    public BinaryMessage getBinaryBody() throws Exception {
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        return objectArgumentCaptor.getValue();
     }
 
     public String getBody(int expectedMessageOrder) throws Exception {

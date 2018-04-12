@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.web;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.SortOrder;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,7 +22,7 @@ public class WebSource {
 
     public final boolean connectMissingPointsEnabled;
 
-    public final SourceType sourceType;
+    public final AggregationFunctionType sourceType;
 
     public final DataStream dataStream;
 
@@ -39,7 +40,7 @@ public class WebSource {
     public WebSource(@JsonProperty("label") String label,
                      @JsonProperty("color") String color,
                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
-                     @JsonProperty("sourceType") SourceType sourceType,
+                     @JsonProperty("sourceType") AggregationFunctionType sourceType,
                      @JsonProperty("dataStream") DataStream dataStream,
                      @JsonProperty("selectedColumns") SelectedColumn[] selectedColumns,
                      @JsonProperty("groupByFields") SelectedColumn[] groupByFields,

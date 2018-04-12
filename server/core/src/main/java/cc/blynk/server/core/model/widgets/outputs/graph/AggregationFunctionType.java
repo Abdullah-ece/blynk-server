@@ -6,6 +6,10 @@ import cc.blynk.server.core.dao.functions.MaxGraphFunction;
 import cc.blynk.server.core.dao.functions.MedianGraphFunction;
 import cc.blynk.server.core.dao.functions.MinGraphFunction;
 import cc.blynk.server.core.dao.functions.SumGraphFunction;
+import cc.blynk.server.core.model.widgets.web.FieldType;
+import cc.blynk.server.core.model.widgets.web.SelectedColumn;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 
 /**
  * The Blynk Project.
@@ -14,11 +18,14 @@ import cc.blynk.server.core.dao.functions.SumGraphFunction;
  */
 public enum AggregationFunctionType {
 
+    RAW_DATA,
     MIN,
     MAX,
     AVG,
     SUM,
-    MED;
+    MED,
+    COUNT,
+    CUMULATIVE_COUNT;
 
     public GraphFunction produce() {
         switch (this) {
@@ -32,6 +39,35 @@ public enum AggregationFunctionType {
                 return new MedianGraphFunction();
             default:
                 return new AverageGraphFunction();
+        }
+    }
+
+    public Field<?> apply(SelectedColumn selectedColumn) {
+        Field<?> field = DSL.field(selectedColumn.name);
+        field = applyAggregation(field);
+        if (selectedColumn.type == FieldType.COLUMN) {
+            return field.as(selectedColumn.label);
+        } else {
+            return field;
+        }
+    }
+
+    private Field<?> applyAggregation(Field<?> field) {
+        switch (this) {
+            case COUNT:
+                return field.count();
+            case SUM :
+                return field.sum();
+            case AVG :
+                return field.avg();
+            case MED :
+                return field.median();
+            case MIN :
+                return field.min();
+            case MAX :
+                return field.max();
+            default :
+                throw new RuntimeException("Not yet supported...");
         }
     }
 

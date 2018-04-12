@@ -2,8 +2,8 @@ package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,7 +16,7 @@ import static cc.blynk.server.db.dao.descriptor.TableDescriptor.getTableByPin;
  */
 public class DataQueryRequestDTO {
 
-    public final SourceType sourceType;
+    public final AggregationFunctionType sourceType;
     public final PinType pinType;
     public final byte pin;
     public final SelectedColumn[] selectedColumns;
@@ -33,7 +33,7 @@ public class DataQueryRequestDTO {
     public transient TableDescriptor tableDescriptor;
     public int deviceId;
 
-    public DataQueryRequestDTO(SourceType sourceType,
+    public DataQueryRequestDTO(AggregationFunctionType sourceType,
                                int deviceId,
                                PinType pinType,
                                byte pin,
@@ -49,7 +49,7 @@ public class DataQueryRequestDTO {
     }
 
     @JsonCreator
-    public DataQueryRequestDTO(@JsonProperty("sourceType") SourceType sourceType,
+    public DataQueryRequestDTO(@JsonProperty("sourceType") AggregationFunctionType sourceType,
                                @JsonProperty("pinType") PinType pinType,
                                @JsonProperty("pin") byte pin,
                                @JsonProperty("selectedColumns") SelectedColumn[] selectedColumns,
@@ -61,7 +61,7 @@ public class DataQueryRequestDTO {
                                @JsonProperty("from") long from,
                                @JsonProperty("to") long to) {
 
-        this.sourceType = sourceType == null ? SourceType.RAW_DATA : sourceType;
+        this.sourceType = sourceType == null ? AggregationFunctionType.RAW_DATA : sourceType;
         this.pinType = pinType;
         this.pin = pin;
         this.selectedColumns = selectedColumns;

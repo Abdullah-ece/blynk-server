@@ -49,6 +49,15 @@ public class WebDashboard implements CopyObject<WebDashboard> {
         return hasWidget;
     }
 
+    public Widget getWidgetById(long id) {
+        for (Widget widget : widgets) {
+            if (widget.id == id) {
+                return widget;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

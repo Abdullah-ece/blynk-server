@@ -40,6 +40,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.Collections;
@@ -129,5 +130,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
+    }
+
+    public void reset() {
+        Mockito.reset(responseMock);
+        msgId = 0;
     }
 }

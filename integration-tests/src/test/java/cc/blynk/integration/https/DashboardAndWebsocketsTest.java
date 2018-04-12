@@ -1,9 +1,11 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -17,12 +19,16 @@ import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -31,13 +37,20 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static cc.blynk.integration.IntegrationBase.appSync;
 import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -96,7 +109,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(2, device.webDashboard.widgets.length);
+            assertEquals(3, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals(1, webSwitch.sources[0].dataStream.pin);
@@ -125,7 +138,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(2, device.webDashboard.widgets.length);
+            assertEquals(3, device.webDashboard.widgets.length);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals("222", webSwitch.sources[0].dataStream.value);
         }
@@ -160,7 +173,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
             assertNotNull(device.webDashboard);
-            assertEquals(2, device.webDashboard.widgets.length);
+            assertEquals(3, device.webDashboard.widgets.length);
             assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
             WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
             assertEquals(1, webSwitch.sources[0].dataStream.pin);
@@ -320,6 +333,75 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.send("hardware 0 vw 10 100");
         appWebSocketClient2.never(appSync(5, b("0 vw 10 100")));
         appWebSocketClient.never(appSync(5, b("0 vw 10 100")));
+    }
+
+    @Test
+    @Ignore
+    //todo finish test, add Bonary message to websocket client
+    public void getWebGraphData() throws Exception {
+        login(regularUser.email, regularUser.pass);
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct().id;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        Device device;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            device = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.token);
+            assertNotNull(device.metaFields);
+            assertEquals(2, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(3, device.webDashboard.widgets.length);
+            assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
+            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
+            assertEquals(1, webSwitch.sources[0].dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webSwitch.sources[0].dataStream.pinType);
+            assertEquals("123", webSwitch.label);
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", regularUser.email);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
+                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL.pintTypeChar, (byte) 3, GraphGranularityType.MINUTE.label));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        appWebSocketClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
     }
 
     @Test
@@ -519,9 +601,20 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         null, SortOrder.ASC, 10)
         };
 
+        WebLineGraph webLineGraph = new WebLineGraph();
+        webLineGraph.id = 432;
+        webLineGraph.sources = new WebSource[] {
+                new WebSource("Temperature", "#334455",
+                        false, AVG, new DataStream((byte) 3, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10)
+        };
+
         product.webDashboard = new WebDashboard(new Widget[] {
                 webSwitch,
-                webLabel
+                webLabel,
+                webLineGraph
         });
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

@@ -5,8 +5,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
-import cc.blynk.server.core.model.widgets.web.SourceType;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
@@ -39,7 +39,6 @@ import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOld
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
-import static cc.blynk.server.core.model.widgets.web.SourceType.COUNT;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.FORMULA_METAINFO_NAME;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.PUMP_METAINFO_NAME;
@@ -182,7 +181,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //https://github.com/blynkkk/knight/issues/778
     public void numberOfLoadsByShift() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
-                COUNT,
+                AggregationFunctionType.COUNT,
                 0,
                 PinType.VIRTUAL, (byte) 100,
                 null,
@@ -219,7 +218,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     //https://github.com/blynkkk/knight/issues/785
     public void totalCostPerProduct() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
-                SourceType.SUM,
+                AggregationFunctionType.SUM,
                 0,
                 PinType.VIRTUAL, (byte) 100,
                 new SelectedColumn[] {
@@ -263,7 +262,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     @Test
     public void selectFormulaNames() throws Exception {
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(
-                SourceType.SUM,
+                AggregationFunctionType.SUM,
                 0,
                 PinType.VIRTUAL, (byte) 100,
                 new SelectedColumn[] {

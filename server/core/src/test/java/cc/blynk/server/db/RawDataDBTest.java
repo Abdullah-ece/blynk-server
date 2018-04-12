@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
-import static cc.blynk.server.core.model.widgets.web.SourceType.RAW_DATA;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

@@ -2,7 +2,9 @@ package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.AppClient;
 import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.utils.properties.ServerProperties;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Random;
@@ -48,5 +50,11 @@ public abstract class BaseTestAppClient extends AppClient {
 
     public void verifyAny() throws Exception {
         verify(responseMock, timeout(500)).channelRead(any(), any());
+    }
+
+    public BinaryMessage getBinaryBody() throws Exception {
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        return objectArgumentCaptor.getValue();
     }
 }

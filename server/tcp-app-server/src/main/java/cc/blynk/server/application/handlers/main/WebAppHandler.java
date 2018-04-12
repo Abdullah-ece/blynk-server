@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.web.GetWebGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.web.TrackDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.web.WebAppHardwareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -11,6 +12,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
@@ -25,12 +27,14 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
 
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
+    private final GetWebGraphDataLogic getWebGraphDataLogic;
 
     private final GlobalStats stats;
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
         this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
+        this.getWebGraphDataLogic = new GetWebGraphDataLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -45,6 +49,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case TRACK_DEVICE :
                 TrackDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case GET_ENHANCED_GRAPH_DATA :
+                getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
