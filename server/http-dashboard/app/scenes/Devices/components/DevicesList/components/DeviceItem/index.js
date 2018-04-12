@@ -40,7 +40,9 @@ class DeviceItem extends React.Component {
   render() {
     const className = classnames({
       'navigation-devices-list-item': true,
-      'navigation-devices-list-item-active': this.props.active
+      'navigation-devices-list-item-active': this.props.active,
+      'navigation-devices-list-item-online': this.props.device.status === 'ONLINE',
+      'navigation-devices-list-item-offline': this.props.device.status === 'OFFLINE',
     });
 
     return (

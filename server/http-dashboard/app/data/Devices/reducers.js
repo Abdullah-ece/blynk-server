@@ -87,6 +87,7 @@ const getFieldsForDevicesList = (device) => ({
   metaFields: getLocationMetaFieldOnly(device.metaFields),
   createdAt: device.createdAt,
   dataReceivedAt: device.dataReceivedAt,
+  status: device.status,
 });
 
 const initialState = {
