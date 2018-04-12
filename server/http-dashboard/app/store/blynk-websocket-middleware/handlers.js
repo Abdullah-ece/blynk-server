@@ -2,6 +2,8 @@ import {
   blynkVW,
   blynkWsResponse,
   blynkWsLogEvent,
+  blynkWsDeviceConnect,
+  blynkWsDeviceDisconnect,
 } from './actions';
 
 import {
@@ -109,6 +111,51 @@ export const Handlers = (params) => {
 
   };
 
+  const deviceConnectHandler = ({ msgId }) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0].replace('0-', '');
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage DeviceConnect", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: bodyArray,
+        deviceId
+      });
+
+    store.dispatch(blynkWsDeviceConnect({
+      deviceId
+    }));
+
+  };
+
+  const deviceDisconnectHandler = ({ msgId }) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0].replace('0-', '');
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage DeviceDisconnect", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: bodyArray,
+        deviceId
+      });
+
+    store.dispatch(blynkWsDeviceDisconnect({
+      deviceId
+    }));
+
+  };
+
+
   const appSyncHandler = ({ msgId }) => {
 
     const body = decodeBody(dataView);
@@ -163,6 +210,8 @@ export const Handlers = (params) => {
     ResponseHandler: responseHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,
+    DeviceConnectHandler: deviceConnectHandler,
+    DeviceDisconnectHandler: deviceDisconnectHandler,
     AppSyncHandler: appSyncHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };

@@ -27,10 +27,12 @@ export const RESPONSE_CODES = {
 export const COMMANDS = {
   RESPONSE: 0,
   LOGIN   : 2,
+  DEVICE_CONNECTED: 4,
   HARDWARE: 20,
   APP_SYNC: 25,
-  TRACK_DEVICE: 73,
   LOG_EVENT: 64,
+  DEVICE_DISCONNECTED: 71,
+  TRACK_DEVICE: 73,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -194,9 +196,29 @@ export const blynkWsMessage = (params) => {
       msgId: ++MSG_ID
     });
 
+    handlers.DeviceConnectHandler({
+      msgId: ++MSG_ID
+    });
+
+    handlers.DeviceDisconnectHandler({
+      msgId: ++MSG_ID
+    });
+
   } else if (command === COMMANDS.LOG_EVENT) {
 
     handlers.LogEventHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.DEVICE_CONNECTED) {
+
+    handlers.DeviceConnectHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.DEVICE_DISCONNECTED) {
+
+    handlers.DeviceDisconnectHandler({
       msgId: ++MSG_ID
     });
 

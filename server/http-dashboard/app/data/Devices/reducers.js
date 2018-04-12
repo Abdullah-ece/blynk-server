@@ -154,6 +154,7 @@ const initialState = {
   // timeFilter: TIMELINE_TIME_FILTERS.LIVE.key,
 };
 
+let deviceDetails;
 
 function updateDevicesDashboardLiveData(state, action) {
 
@@ -221,6 +222,59 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         devicesListFilterValue: action.value,
+      };
+
+    case ACTIONS.BLYNK_WS_DEVICE_CONNECT:
+
+      devicesList = state.devices.map((device) => {
+        if(Number(device.id) === Number(action.value.deviceId))
+          return {
+            ...device,
+            status: 'ONLINE'
+          };
+
+        return device;
+      });
+
+      deviceDetails = state.deviceDetails;
+
+      if(Number(deviceDetails.id) === Number(action.value.deviceId)) {
+        deviceDetails = {
+          ...deviceDetails,
+          status: 'ONLINE'
+        };
+      }
+
+      return {
+        ...state,
+        devices: devicesList,
+        deviceDetails: deviceDetails,
+      };
+
+    case ACTIONS.BLYNK_WS_DEVICE_DISCONNECT:
+      devicesList = state.devices.map((device) => {
+        if(Number(device.id) === Number(action.value.deviceId))
+          return {
+            ...device,
+            status: 'OFFLINE'
+          };
+
+        return device;
+      });
+
+      deviceDetails = state.deviceDetails;
+
+      if(Number(deviceDetails.id) === Number(action.value.deviceId)) {
+        deviceDetails = {
+          ...deviceDetails,
+          status: 'OFFLINE'
+        };
+      }
+
+      return {
+        ...state,
+        devices: devicesList,
+        deviceDetails: deviceDetails,
       };
 
     case ACTIONS.BLYNK_WS_HARDWARE:

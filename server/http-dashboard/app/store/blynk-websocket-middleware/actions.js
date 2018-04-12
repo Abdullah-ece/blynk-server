@@ -1,12 +1,14 @@
 export const ACTIONS = {
-  'BLYNK_WS_TRACK_DEVICE_ID': 'BLYNK_WS_TRACK_DEVICE_ID',
-  'BLYNK_WS_REQUEST'        : 'BLYNK_WS_REQUEST',
-  'BLYNK_WS_RESPONSE'       : 'BLYNK_WS_RESPONSE',
-  'BLYNK_WS_CONNECT'        : 'BLYNK_WS_CONNECT',
-  'BLYNK_WS_LOGIN'          : 'BLYNK_WS_LOGIN',
-  'BLYNK_WS_VIRTUAL_WRITE'  : 'BLYNK_WS_VIRTUAL_WRITE',
-  'BLYNK_WS_HARDWARE'       : 'BLYNK_WS_HARDWARE',
-  'BLYNK_WS_LOG_EVENT'      : 'BLYNK_WS_LOG_EVENT'
+  'BLYNK_WS_TRACK_DEVICE_ID'  : 'BLYNK_WS_TRACK_DEVICE_ID',
+  'BLYNK_WS_REQUEST'          : 'BLYNK_WS_REQUEST',
+  'BLYNK_WS_RESPONSE'         : 'BLYNK_WS_RESPONSE',
+  'BLYNK_WS_CONNECT'          : 'BLYNK_WS_CONNECT',
+  'BLYNK_WS_LOGIN'            : 'BLYNK_WS_LOGIN',
+  'BLYNK_WS_VIRTUAL_WRITE'    : 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE'         : 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_LOG_EVENT'        : 'BLYNK_WS_LOG_EVENT',
+  'BLYNK_WS_DEVICE_CONNECT'   : 'BLYNK_WS_DEVICE_CONNECT',
+  'BLYNK_WS_DEVICE_DISCONNECT': 'BLYNK_WS_DEVICE_DISCONNECT',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -84,6 +86,20 @@ export const blynkWsLogEvent = ({ deviceId, eventCode }) => ({
   value: {
     deviceId,
     eventCode,
+  }
+});
+
+export const blynkWsDeviceConnect = ({ deviceId }) => ({
+  type : ACTIONS.BLYNK_WS_DEVICE_CONNECT,
+  value: {
+    deviceId
+  }
+});
+
+export const blynkWsDeviceDisconnect = ({ deviceId }) => ({
+  type : ACTIONS.BLYNK_WS_DEVICE_DISCONNECT,
+  value: {
+    deviceId
   }
 });
 

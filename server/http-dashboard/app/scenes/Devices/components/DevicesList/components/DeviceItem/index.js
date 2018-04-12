@@ -15,6 +15,7 @@ class DeviceItem extends React.Component {
       productName: PropTypes.string,
       criticalSinceLastView: PropTypes.number,
       warningSinceLastView: PropTypes.number,
+      status: PropTypes.oneOf(['ONLINE', 'OFFLINE']),
     }),
     onClick: PropTypes.func,
     active: PropTypes.bool
