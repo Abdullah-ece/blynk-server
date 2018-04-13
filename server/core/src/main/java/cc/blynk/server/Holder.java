@@ -13,6 +13,7 @@ import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -90,6 +91,8 @@ public class Holder {
 
     public final SslContextHolder sslContextHolder;
 
+    public final TokensPool tokensPool;
+
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties, TwitterProperties twitterProperties,
                   boolean restore) {
@@ -163,6 +166,7 @@ public class Holder {
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     //for tests only
@@ -226,6 +230,7 @@ public class Holder {
         );
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
     }
 
     private static void disableNettyLeakDetector() {
