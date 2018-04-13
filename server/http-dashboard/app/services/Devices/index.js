@@ -498,12 +498,19 @@ export const DEVICES_SORT = {
   LAST_REPORTED_ASC: {
     key: 'LAST_REPORTED_ASC',
     compare: (a, b) => {
+      if(Number(a.dataReceivedAt) === Number(b.dataReceivedAt)) {
+        return String(a.name) > String(b.name) ? 1 : -1;
+      }
       return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? -1 : 1;
     }
   },
   LAST_REPORTED_DESC: {
     key: 'LAST_REPORTED_DESC',
     compare: (a, b) => {
+      if(Number(a.dataReceivedAt) === Number(b.dataReceivedAt)) {
+        return String(a.name) > String(b.name) ? 1 : -1;
+      }
+
       return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? 1 : -1;
     },
   },
