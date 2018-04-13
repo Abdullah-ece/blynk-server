@@ -317,6 +317,22 @@ export default function Devices(state = initialState, action) {
 
         let logEvents = Array.isArray(state.timeline && state.timeline.logEvents) ? state.timeline.logEvents : [];
 
+        let timeline = state.timeline;
+
+        if(event.type === TIMELINE_TYPE_FILTERS.WARNING.key) {
+          timeline = {
+            ...timeline,
+            totalWarning: (timeline.totalWarning || 0) + 1
+          };
+        }
+
+        if(event.type === TIMELINE_TYPE_FILTERS.CRITICAL.key) {
+          timeline = {
+            ...timeline,
+            totalCritical: (timeline.totalCritical || 0) + 1
+          };
+        }
+
         logEvents = [{
           id: -1,
           eventType: event.type,
@@ -329,7 +345,7 @@ export default function Devices(state = initialState, action) {
         return {
           ...state,
           timeline: {
-            ...state.timeline,
+            ...timeline,
             logEvents: logEvents
           }
         };

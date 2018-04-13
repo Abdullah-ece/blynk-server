@@ -26,7 +26,7 @@ class TypeFiltering extends React.Component {
           </Radio.Button>
           <Radio.Button value={TIMELINE_TYPE_FILTERS.WARNING.key}>
             {TIMELINE_TYPE_FILTERS.WARNING.value} {totalWarning && (
-            <Badge count={totalCritical} className="small warning"/>) || (null)}
+            <Badge count={totalWarning} className="small warning"/>) || (null)}
           </Radio.Button>
           <Radio.Button value={TIMELINE_TYPE_FILTERS.RESOLVED.key}>
             {TIMELINE_TYPE_FILTERS.RESOLVED.value} {totalResolved && (<Badge count={totalResolved} className="small positive"
