@@ -196,14 +196,6 @@ export const blynkWsMessage = (params) => {
       msgId: ++MSG_ID
     });
 
-    handlers.DeviceConnectHandler({
-      msgId: ++MSG_ID
-    });
-
-    handlers.DeviceDisconnectHandler({
-      msgId: ++MSG_ID
-    });
-
   } else if (command === COMMANDS.LOG_EVENT) {
 
     handlers.LogEventHandler({
