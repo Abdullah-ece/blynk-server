@@ -290,7 +290,8 @@ public class EventDBDao {
         }
     }
 
-    public void resolveEvent(int id, String name, String comment) throws Exception {
+    public boolean resolveEvent(int id, String name, String comment) throws Exception {
+        int result;
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
 
@@ -299,9 +300,10 @@ public class EventDBDao {
             ps.setString(3, comment);
             ps.setInt(4, id);
 
-            ps.executeUpdate();
+            result = ps.executeUpdate();
             connection.commit();
         }
+        return result == 1;
     }
 
     public void insert(LogEvent logEvent) throws Exception {

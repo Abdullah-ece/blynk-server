@@ -68,6 +68,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
     private BaseServer hardwareServer;
     private ClientPair clientPair;
+    private CloseableHttpClient httpClient;
 
     @Before
     public void init() throws Exception {
@@ -77,6 +78,11 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
         holder.dbManager.executeSQL("DELETE FROM reporting_events");
+
+        this.httpClient = HttpClients.custom()
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
     }
 
     @After
@@ -145,6 +151,68 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     }
 
     @Test
+    public void testLogEventIsResolvedFromWebapp() throws Exception {
+        String token = createProductAndDevice();
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
+        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        long now = System.currentTimeMillis();
+
+        int logEventId;
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+            logEventId = logEvents[0].id;
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(admin);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.resolveEvent(1, logEventId, "resolve comment");
+        appWebSocketClient.verifyResult(ok(2));
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(1, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertTrue(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+            assertEquals("resolve comment", logEvents[0].resolvedComment);
+            assertEquals(logEventId, logEvents[0].id);
+        }
+    }
+
+    @Test
     public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
         String token = createProductAndDevice();
 
@@ -154,11 +222,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
 
         String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
@@ -173,11 +236,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     @Test
     public void testLogEventViaHttpApi() throws Exception {
         String token = createProductAndDevice();
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
 
         String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
@@ -212,11 +270,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     @Test
     public void testSystemLogEventViaHttpApi() throws Exception {
         String token = createProductAndDevice();
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
 
         String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 

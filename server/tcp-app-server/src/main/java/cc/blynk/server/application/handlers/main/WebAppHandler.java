@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.web.GetWebGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.web.ResolveWebEventHandler;
 import cc.blynk.server.application.handlers.main.logic.web.TrackDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.web.WebAppHardwareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -15,6 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 
 /**
@@ -28,6 +30,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
     private final GetWebGraphDataLogic getWebGraphDataLogic;
+    private final ResolveWebEventHandler resolveWebEventHandler;
 
     private final GlobalStats stats;
 
@@ -35,6 +38,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         super(StringMessage.class);
         this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
         this.getWebGraphDataLogic = new GetWebGraphDataLogic(holder);
+        this.resolveWebEventHandler = new ResolveWebEventHandler(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -52,6 +56,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
+                break;
+            case RESOLVE_EVENT :
+                resolveWebEventHandler.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

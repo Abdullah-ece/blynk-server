@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.utils.AdminHttpUtil.sort;
@@ -132,8 +133,12 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 String userComment = comment == null ? "" : comment.comment;
-                dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment);
-                response = ok();
+                if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
+                    response = ok();
+                } else {
+                    log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
+                    response = notFound();
+                }
             } catch (Exception e) {
                 log.error("Error marking event as resolved.", e);
                 response = serverError("Error marking event as resolved.");
