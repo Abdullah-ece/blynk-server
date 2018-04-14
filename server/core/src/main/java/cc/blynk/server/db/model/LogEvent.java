@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class LogEvent {
 
-    public final int id;
+    public final long id;
 
     public final int deviceId;
 
@@ -39,7 +39,7 @@ public class LogEvent {
     }
 
     @JsonCreator
-    public LogEvent(@JsonProperty("id") int id,
+    public LogEvent(@JsonProperty("id") long id,
                     @JsonProperty("deviceId") int deviceId,
                     @JsonProperty("eventType") EventType eventType,
                     @JsonProperty("ts") long ts,

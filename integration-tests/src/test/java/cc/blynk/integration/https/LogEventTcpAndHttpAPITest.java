@@ -163,7 +163,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         long now = System.currentTimeMillis();
 
-        int logEventId;
+        long logEventId;
         HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -516,7 +516,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         long now = System.currentTimeMillis();
 
         HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
-        int logEventId;
+        long logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -551,7 +551,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(1, logEvents.length);
-            int oldLogEventId = logEvents[0].id;
+            long oldLogEventId = logEvents[0].id;
             assertEquals(logEventId, oldLogEventId);
             assertTrue(logEvents[0].isResolved);
             assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);
@@ -593,7 +593,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         long now = System.currentTimeMillis();
 
         HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
-        int logEventId;
+        long logEventId;
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseString = consumeText(response);
@@ -627,7 +627,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(timeLineResponse.logEvents);
             assertNotNull(logEvents);
             assertEquals(3, logEvents.length);
-            int oldLogEventId = logEvents[0].id;
+            long oldLogEventId = logEvents[0].id;
             assertEquals(logEventId, oldLogEventId);
             assertTrue(logEvents[0].isResolved);
             assertEquals(System.currentTimeMillis(), logEvents[0].resolvedAt, 5000);

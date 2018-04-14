@@ -123,7 +123,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response resolveLogEvent(@Context ChannelHandlerContext ctx,
                                     @PathParam("orgId") int orgId,
                                     @PathParam("deviceId") int deviceId,
-                                    @PathParam("logEventId") int logEventId,
+                                    @PathParam("logEventId") long logEventId,
                                     CommentDTO comment) {
         User user = getUser(ctx);
         Device device = deviceDao.getById(deviceId);

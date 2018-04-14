@@ -44,7 +44,7 @@ public class ResolveWebEventHandler {
         String[] split = split3(message.body);
 
         int deviceId = Integer.parseInt(split[0]);
-        int logEventId = Integer.parseInt(split[1]);
+        long logEventId = Long.parseLong(split[1]);
         String comment = split.length == 3 ? split[2] : "";
 
         Device device = deviceDao.getById(deviceId);

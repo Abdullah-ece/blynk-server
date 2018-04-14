@@ -200,7 +200,7 @@ CREATE TABLE invitation_tokens (
 );
 
 CREATE TABLE reporting_events (
-  id SERIAL,
+  id bigserial,
   device_id int4,
   type smallint,
   ts timestamp without time zone default (now() at time zone 'utc'),

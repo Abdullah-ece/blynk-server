@@ -290,7 +290,7 @@ public class EventDBDao {
         }
     }
 
-    public boolean resolveEvent(int id, String name, String comment) throws Exception {
+    public boolean resolveEvent(long id, String name, String comment) throws Exception {
         int result;
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(resolveLogEvent)) {
@@ -298,7 +298,7 @@ public class EventDBDao {
             ps.setString(1, name);
             ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()), UTC_CALENDAR);
             ps.setString(3, comment);
-            ps.setInt(4, id);
+            ps.setLong(4, id);
 
             result = ps.executeUpdate();
             connection.commit();

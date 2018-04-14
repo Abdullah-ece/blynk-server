@@ -128,11 +128,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("track " + deviceId);
     }
 
-    public void resolveEvent(int deviceId, int logEventId) {
+    public void resolveEvent(int deviceId, long logEventId) {
         send("resolveEvent " + deviceId + "\0" + logEventId);
     }
 
-    public void resolveEvent(int deviceId, int logEventId, String comment) {
+    public void resolveEvent(int deviceId, long logEventId, String comment) {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
     }
 
