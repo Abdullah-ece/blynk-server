@@ -98,6 +98,11 @@ class WidgetEditable extends React.Component {
 
     const widget = this.props.input.value;
 
+    if (widget.level && !widget.level.min && !widget.level.max) {
+      widget.level.min = 0;
+      widget.level.max = 100;
+    }
+
     const attributes = {
       form         : `widget-settings-${widget.id}`,
       initialValues: widget,
