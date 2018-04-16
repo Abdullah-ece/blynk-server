@@ -461,7 +461,7 @@ export default function Devices(state = initialState, action) {
         dashboard.widgets.map((widget) => {
 
           let dataStream = null;
-          if (widget && widget.sources && widget.sources[0] && !isNaN(Number(widget.sources[0].dataStream.pin))) {
+          if (widget && widget.sources && widget.sources[0] && widget.sources[0].dataStream && !isNaN(Number(widget.sources[0].dataStream.pin))) {
             dataStream = widget.sources[0].dataStream;
           }
 
