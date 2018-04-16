@@ -43,6 +43,10 @@ class TimeFilteringScene extends React.Component {
       value: TIMELINE_TIME_FILTERS.HOUR.value,
     },
     {
+      key: TIMELINE_TIME_FILTERS['6HOURS'].key,
+      value: TIMELINE_TIME_FILTERS['6HOURS'].value,
+    },
+    {
       key: TIMELINE_TIME_FILTERS.DAY.key,
       value: TIMELINE_TIME_FILTERS.DAY.value,
     },
@@ -53,6 +57,10 @@ class TimeFilteringScene extends React.Component {
     {
       key: TIMELINE_TIME_FILTERS.MONTH.key,
       value: TIMELINE_TIME_FILTERS.MONTH.value,
+    },
+    {
+      key: TIMELINE_TIME_FILTERS['3MONTHS'].key,
+      value: TIMELINE_TIME_FILTERS['3MONTHS'].value,
     },
     {
       key: TIMELINE_TIME_FILTERS.CUSTOM.key,
