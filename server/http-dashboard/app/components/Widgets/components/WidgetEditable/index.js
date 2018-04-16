@@ -98,20 +98,15 @@ class WidgetEditable extends React.Component {
 
     const widget = this.props.input.value;
 
-    if (widget.level && !widget.level.min && !widget.level.max) {
-      widget.level.min = 0;
-      widget.level.max = 100;
-    }
-
     const attributes = {
-      form         : `widget-settings-${widget.id}`,
+      form: `widget-settings-${widget.id}`,
       initialValues: widget,
-      deviceId     : this.props.deviceId,
-      onSubmit     : this.handleWidgetChange,
-      onClose      : this.toggleSettingsModalVisibility,
-      visible      : this.state.isSettingsModalVisible,
-      history      : this.props.history,
-      loading      : this.props.loading,
+      deviceId: this.props.deviceId,
+      onSubmit: this.handleWidgetChange,
+      onClose: this.toggleSettingsModalVisibility,
+      visible: this.state.isSettingsModalVisible,
+      history: this.props.history,
+      loading: this.props.loading,
     };
 
     /*
@@ -134,11 +129,18 @@ class WidgetEditable extends React.Component {
         <BarChartWidget.Settings {...attributes}/>
       );
 
-    if (widget.type === WIDGET_TYPES.LABEL)
+    if (widget.type === WIDGET_TYPES.LABEL) {
+      if (attributes.initialValues.level &&
+        !attributes.initialValues.level.min &&
+        !attributes.initialValues.level.max) {
+
+        attributes.initialValues.level.min = 0;
+        attributes.initialValues.level.max = 100;
+      }
       return (
         <LabelWidget.Settings {...attributes}/>
       );
-
+    }
     if (widget.type === WIDGET_TYPES.SWITCH)
       return (
         <SwitchWidget.Settings {...attributes}/>
