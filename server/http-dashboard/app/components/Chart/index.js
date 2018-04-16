@@ -115,7 +115,7 @@ class Chart extends React.Component {
   };
 
   chartDefaultOptions = {
-    animationEnabled: true,
+    animationEnabled: false,
     axisY:{
       includeZero: false,
       ...this.axisYDefaultOptions
