@@ -426,6 +426,12 @@ export const TIMELINE_TIME_FILTERS = {
     'time': 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'hour').valueOf()
   },
+  '6HOURS': {
+    'key': '6HOURS',
+    'value': '6 hours',
+    'time': 6 * 60 * 60 * 1000,
+    'get': () => moment().subtract(6, 'hour').valueOf()
+  },
   'DAY': {
     'key': 'DAY',
     'value': '1 day',
@@ -440,9 +446,15 @@ export const TIMELINE_TIME_FILTERS = {
   },
   'MONTH': {
     'key': 'MONTH',
-    'value': 'Month',
+    'value': '1 month',
     'time': 30 * 24 * 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'month').valueOf()
+  },
+  '3MONTHS': {
+    'key': '3MONTHS',
+    'value': '3 months',
+    'time': 3 * 30 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(3, 'month').valueOf()
   },
   'CUSTOM': {
     'key': 'CUSTOM',
