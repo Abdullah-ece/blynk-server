@@ -350,7 +350,7 @@ export const Unit = {
     value: 'Day'
   },
   Hour: {
-    abbreviation: 'h',
+    abbreviation: 'hr',
     key: 'Hour',
     value: 'Hour'
   },
