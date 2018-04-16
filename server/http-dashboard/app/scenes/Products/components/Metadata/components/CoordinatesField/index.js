@@ -33,8 +33,8 @@ class CoordinatesField extends BaseField {
       <FormItem offset={false}>
         <FormItem.TitleGroup>
           <FormItem.Title style={{width: '50%'}}>Coordinates</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Lat (optional)</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Long (optional)</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Lat</FormItem.Title>
+          <FormItem.Title style={{width: '25%'}}>Lon</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
