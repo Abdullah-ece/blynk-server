@@ -18,6 +18,9 @@ class TimeSelect extends React.Component {
           <Radio.Button value={TIMELINE_TIME_FILTERS.HOUR.key}>
             {TIMELINE_TIME_FILTERS.HOUR.value}
           </Radio.Button>
+          <Radio.Button value={TIMELINE_TIME_FILTERS['6HOURS'].key}>
+            {TIMELINE_TIME_FILTERS['6HOURS'].value}
+          </Radio.Button>
           <Radio.Button value={TIMELINE_TIME_FILTERS.DAY.key}>
             {TIMELINE_TIME_FILTERS.DAY.value}
           </Radio.Button>
@@ -26,6 +29,9 @@ class TimeSelect extends React.Component {
           </Radio.Button>
           <Radio.Button value={TIMELINE_TIME_FILTERS.MONTH.key}>
             {TIMELINE_TIME_FILTERS.MONTH.value}
+          </Radio.Button>
+          <Radio.Button value={TIMELINE_TIME_FILTERS['3MONTHS'].key}>
+            {TIMELINE_TIME_FILTERS['3MONTHS'].value}
           </Radio.Button>
           <Radio.Button value={TIMELINE_TIME_FILTERS.CUSTOM.key}>
             {TIMELINE_TIME_FILTERS.CUSTOM.value}
