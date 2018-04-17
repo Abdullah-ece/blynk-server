@@ -137,6 +137,7 @@ class WidgetEditable extends React.Component {
         attributes.initialValues.level.min = 0;
         attributes.initialValues.level.max = 100;
       }
+      attributes.initialValues.textColor = "DEFAULT";
       return (
         <LabelWidget.Settings {...attributes}/>
       );

@@ -137,6 +137,7 @@ class LabelWidgetSettings extends React.Component {
   colorPalette = [
     '#000',
     '#fff',
+    '#58595d',
     '#24c48e',
     '#04c0f8',
     '#d3435c',

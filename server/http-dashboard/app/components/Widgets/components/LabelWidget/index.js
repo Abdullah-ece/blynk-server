@@ -222,8 +222,8 @@ class LabelWidget extends React.Component {
 
     return (
       <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
-        <div className="widgets--widget-label">
-          <Dotdotdot clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
+        <div className="widgets--widget-label" style={this.props.data.textColor === "DEFAULT"? {color:"#58595d"}: null} >
+          <Dotdotdot  clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
 
