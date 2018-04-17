@@ -148,10 +148,10 @@ class LabelWidget extends React.Component {
   getLabelStyles() {
     const labelValue = this.getLabelValue();
     let currentColorSet = null;
-    if(this.props.data.colorsSet) {
+    if(this.props.data.colorsSet && labelValue !== null && labelValue !== undefined) {
       currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] || {backgroundColor:"ffffff",textColor:"000000"};
     } else {
-      currentColorSet = {backgroundColor:"ffffff",textColor:"0000"};
+      currentColorSet = {backgroundColor:"ffffff",textColor:"000000"};
     }
 
     return !this.props.data.isColorSetEnabled ? {
