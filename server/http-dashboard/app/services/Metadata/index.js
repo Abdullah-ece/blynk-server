@@ -16,7 +16,7 @@ export const TimeRange = {
 export const Time = {
 
   fromTimestamp: (time) => (
-    moment(time * 1000).format('HH:mm')
+    moment(time).set({second:0}).format('HH:mm')
   ),
 
   toTimestamp: (time) => (
