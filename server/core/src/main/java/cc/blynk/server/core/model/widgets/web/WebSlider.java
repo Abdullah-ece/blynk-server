@@ -18,7 +18,11 @@ public class WebSlider extends WebWidget {
 
     public boolean fineControlStep;
 
-    public TextAlignment labelPosition;
+    public TextAlignment valuePosition;
+
+    public float minValue;
+
+    public float maxValue;
 
     public String decimalFormat;
 
@@ -62,7 +66,7 @@ public class WebSlider extends WebWidget {
         if (fineControlStep != webSlider.fineControlStep) {
             return false;
         }
-        if (labelPosition != webSlider.labelPosition) {
+        if (valuePosition != webSlider.valuePosition) {
             return false;
         }
         if (decimalFormat != null ? !decimalFormat.equals(webSlider.decimalFormat) : webSlider.decimalFormat != null) {
@@ -81,7 +85,7 @@ public class WebSlider extends WebWidget {
         result = 31 * result + (step != +0.0f ? Float.floatToIntBits(step) : 0);
         result = 31 * result + (fineControlEnabled ? 1 : 0);
         result = 31 * result + (fineControlStep ? 1 : 0);
-        result = 31 * result + (labelPosition != null ? labelPosition.hashCode() : 0);
+        result = 31 * result + (valuePosition != null ? valuePosition.hashCode() : 0);
         result = 31 * result + (decimalFormat != null ? decimalFormat.hashCode() : 0);
         result = 31 * result + (valueSuffix != null ? valueSuffix.hashCode() : 0);
         result = 31 * result + (color != null ? color.hashCode() : 0);
