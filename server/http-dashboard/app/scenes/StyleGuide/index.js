@@ -3,7 +3,7 @@ import React from 'react';
 import ui from 'components/UI';
 import Validation from 'services/Validation';
 
-import {Button, Input, Checkbox, Select, Radio, Switch, Icon} from 'antd';
+import {Button, Input, Checkbox, Select, Radio, Switch, Icon, Slider} from 'antd';
 
 import './styles.less';
 
@@ -31,6 +31,12 @@ class StyleGuide extends React.Component {
           <Switch />
           <br />
           <Switch size="small" />
+        </div>
+        <div className="style-guide-element">
+          <Slider tipFormatter={null}/>
+        </div>
+        <div className="style-guide-element">
+          <Slider tipFormatter={null}/>
         </div>
         <div className="style-guide-element">
           <Radio.Group>

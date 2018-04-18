@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export const WIDGET_TYPES = {
   LABEL: 'WEB_LABEL',
+  SLIDER: 'WEB_SLIDER',
   SWITCH: 'WEB_SWITCH',
   LINEAR: 'WEB_LINE_GRAPH',
   BAR: 'WEB_BAR_GRAPH',
@@ -300,6 +301,12 @@ export const WIDGETS_SOURCE_TYPES = {
 };
 
 export const WIDGETS_CONFIGS = {
+  [WIDGET_TYPES.SLIDER]: {
+    minW: 3,
+    minH: 1,
+    maxH: 1,
+    color: `e92126`
+  },
   [WIDGET_TYPES.SWITCH]: {
     minW: 2,
     minH: 1,
@@ -429,6 +436,11 @@ export const WIDGETS_SWITCH_ALIGNMENT = {
   CENTER: 'MIDDLE',
 };
 
+export const WIDGETS_SLIDER_VALUE_POSITION = {
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT',
+};
+
 export const WIDGETS_PREDEFINED_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     id: 1,
@@ -524,6 +536,24 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     sources: [],
     alignment: WIDGETS_SWITCH_ALIGNMENT.LEFT,
     labelPosition: WIDGETS_SWITCH_LABEL_ALIGNMENT.LEFT,
+  },
+  [WIDGET_TYPES.SLIDER]: {
+    ...WIDGETS_CONFIGS[WIDGET_TYPES.SLIDER],
+    type: WIDGET_TYPES.SLIDER,
+    id: 0,
+    x: 0,
+    y: 0,
+    w: 2,
+    h: 1,
+    label: "Slider",
+    sources: [],
+    sendValuesOnRelease: false,
+    step: 0,
+    fineControlEnabled: true,
+    fineControlStep: 0,
+    labelPosition: WIDGETS_SWITCH_ALIGNMENT.LEFT,
+    decimalFormat: '',
+    valueSuffix: ''
   }
 };
 

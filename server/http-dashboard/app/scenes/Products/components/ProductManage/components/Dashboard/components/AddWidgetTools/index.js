@@ -26,6 +26,7 @@ class AddWidgetTools extends React.Component {
     this.handleLabelWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LABEL);
     this.handleLinearWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.LINEAR);
     this.handleSwitchWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.SWITCH);
+    this.handleSliderWidgetAdd = this.handleWidgetAdd.bind(this, WIDGET_TYPES.SLIDER);
   }
 
   handleWidgetAdd(type) {
@@ -41,14 +42,11 @@ class AddWidgetTools extends React.Component {
       <div className="product-manage-dashboard--add-widget-tools">
         <div className="product-manage-dashboard--add-widget-tools-buttons">
           <Button.Group>
+            <Button onClick={this.handleSliderWidgetAdd}><FontAwesome name="sliders" className="product-manage-dashboard--add-widget-tools-buttons--sliders"/></Button>
             <Button onClick={this.handleSwitchWidgetAdd}><FontAwesome name="toggle-on" className="product-manage-dashboard--add-widget-tools-buttons--switch"/></Button>
             <Button onClick={this.handleLabelWidgetAdd}><Icon type="laptop" style={{verticalAlign: 'middle'}}/></Button>
             <Button onClick={this.handleLinearWidgetAdd}><Icon type="area-chart"/></Button>
-            {/*<Button onClick={this.handleBarWidgetAdd}><Icon type="bar-chart"/></Button>*/}
-            <Button disabled={true}><Icon type="close"/></Button>
-            <Button disabled={true}><Icon type="close"/></Button>
-            <Button disabled={true}><Icon type="close"/></Button>
-            <Button disabled={true}><Icon type="close"/></Button>
+            <Button onClick={this.handleBarWidgetAdd} disabled><Icon type="bar-chart"/></Button>
           </Button.Group>
         </div>
       </div>

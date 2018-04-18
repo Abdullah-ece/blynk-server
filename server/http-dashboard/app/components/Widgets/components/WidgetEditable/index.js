@@ -8,7 +8,8 @@ import {
   LinearWidget,
   BarChartWidget,
   LabelWidget,
-  SwitchWidget
+  SwitchWidget,
+  SliderWidget,
 } from 'components/Widgets';
 
 import {
@@ -153,6 +154,12 @@ class WidgetEditable extends React.Component {
         <SwitchWidget.Settings {...attributes}/>
       );
     }
+    if (widget.type === WIDGET_TYPES.SLIDER) {
+      attributes.initialValues.textColor = "DEFAULT";
+      return (
+        <SliderWidget.Settings {...attributes}/>
+      );
+    }
   }
 
   getToolsElements() {
@@ -208,7 +215,6 @@ class WidgetEditable extends React.Component {
 
     attributes.tools =  this.getToolsElements(); // tools for Clone, Delete, Edit widget
 
-
     if (widget.type === WIDGET_TYPES.LINEAR)
       return (
         <LinearWidget {...attributes}/>
@@ -227,6 +233,11 @@ class WidgetEditable extends React.Component {
     if (widget.type === WIDGET_TYPES.SWITCH)
       return (
         <SwitchWidget {...attributes}/>
+      );
+
+    if (widget.type === WIDGET_TYPES.SLIDER)
+      return (
+        <SliderWidget {...attributes}/>
       );
 
   }

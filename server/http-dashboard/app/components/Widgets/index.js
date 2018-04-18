@@ -207,5 +207,6 @@ export LinearWidget from './components/LinearWidget';
 export BarChartWidget from './components/BarChartWidget';
 export LabelWidget from './components/LabelWidget';
 export SwitchWidget from './components/SwitchWidget';
+export SliderWidget from './components/SliderWidget';
 
 export default Widgets;

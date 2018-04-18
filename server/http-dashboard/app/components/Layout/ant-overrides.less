@@ -1085,8 +1085,8 @@
 
   &-switch {
     &.ant-switch-checked{
-      border-color: @color-positive;
-      background-color: @color-positive;
+      border-color: @primary-color;
+      background-color: @primary-color;
     }
   }
 
@@ -1260,6 +1260,19 @@ span.switch-label {
   }
 }
 
+.ant-form-item {
+  font-weight: 400;
+  &-label {
+    label {
+      font-weight: 400;
+    }
+  }
+}
+
+.ant-input, .ant-select, .ant-select-dropdown, .ant-select-dropdown-menu-item, .ant-radio-wrapper {
+  font-weight: 400;
+}
+
 .ant-btn-group {
   > button {
     border-width: @btn-group-border-width;
@@ -1268,4 +1281,69 @@ span.switch-label {
   > .ant-btn:not(.ant-btn-icon-only) {
     border-radius: 5px;
   }
+}
+
+.ant-slider {
+  &-track {
+    background-color: @primary-color;
+  }
+  &:hover {
+    .ant-slider-track {
+      background-color: @primary-color
+    }
+  }
+  &-handle {
+    width: 24px;
+    height: 24px;
+    margin-left: -13px;
+    margin-top: -10px;
+    border: 0;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
+    &.ant-tooltip-open {
+      &:before {
+        width: 8px;
+        height: 8px;
+        margin-top: -4px;
+        margin-left: -4px;
+      }
+    }
+    &:active {
+      box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
+    }
+    &:hover {
+      transform: none;
+    }
+    &:before {
+      transition: .15s;
+      position: absolute;
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 100px;
+      top: 50%;
+      left: 50%;
+      margin-top: -2px;
+      margin-left: -2px;
+      background: red;
+    }
+  }
+  &:hover {
+    .ant-slider-handle {
+      &:before {
+        width: 8px;
+        height: 8px;
+        margin-top: -4px;
+        margin-left: -4px;
+      }
+    }
+  }
+  &.ant-slider-tooltip-disable {
+
+  }
+}
+
+h3 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 22px;
 }
