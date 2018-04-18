@@ -181,7 +181,7 @@ public class AppAndHttpsServer extends BaseServer {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, 0, 0))
                         .addLast("WSChannelState", hardwareChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))

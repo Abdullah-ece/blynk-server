@@ -1,5 +1,6 @@
 package cc.blynk.utils.properties;
 
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 
 import java.util.Map;
@@ -17,6 +18,10 @@ public class ServerProperties extends BaseProperties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
     public static final String STATIC_FILES_FOLDER = "static";
+    public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
+    public static final String DEVICE_NAME = "{DEVICE_NAME}";
+
+    private static final String STATIC_FILES_FOLDER = "static";
 
     public final boolean isUnpacked;
 
@@ -30,6 +35,17 @@ public class ServerProperties extends BaseProperties {
         this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
     }
 
+    public String getProductName() {
+        return getProperty("product.name", AppNameUtil.BLYNK);
+    }
+
+    public String getHttpsPortAsString() {
+        return force80Port() ? "443" : getProperty("https.port");
+    }
+
+    public boolean force80Port() {
+        return getBoolProperty("force.port.80.for.csv");
+    }
     public String getDeviceUrl() {
         return "https://" + getServerHost() + "/dashboard/devices/";
     }

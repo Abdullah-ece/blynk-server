@@ -13,10 +13,10 @@ public class MailWrapper {
     private final MailClient client;
     private final String emailBody;
 
-    public MailWrapper(MailProperties mailProperties) {
+    public MailWrapper(MailProperties mailProperties, String productName) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
-            client = new SparkPostMailClient(mailProperties);
+            client = new SparkPostMailClient(mailProperties, productName);
         } else {
             client = new GMailClient(mailProperties);
         }
@@ -33,6 +33,10 @@ public class MailWrapper {
 
     public void sendHtml(String to, String subj, String body) throws Exception {
         client.sendHtml(to, subj, body);
+    }
+
+    public void sendWithAttachment(String to, String subj, String body, QrHolder attachment) throws Exception {
+        client.sendHtmlWithAttachment(to, subj, body, new QrHolder[] {attachment});
     }
 
     public void sendWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {

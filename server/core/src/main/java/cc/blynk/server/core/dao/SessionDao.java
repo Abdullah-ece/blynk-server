@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Holds session info related to specific user.
@@ -29,7 +28,7 @@ public class SessionDao {
     public final static AttributeKey<HttpSession> userSessionAttributeKey = AttributeKey.valueOf("userSession");
     public static final String SESSION_COOKIE = "session";
     private static final Logger log = LogManager.getLogger(SessionDao.class);
-    public final ConcurrentMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     //threadsafe
@@ -47,6 +46,12 @@ public class SessionDao {
 
         return group;
     }
+
+
+
+
+    public static final String SESSION_COOKIE = "session";
+    private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     public String generateNewSession(User user) {
         String sessionId = UUID.randomUUID().toString();
