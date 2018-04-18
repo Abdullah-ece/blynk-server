@@ -185,7 +185,7 @@ public class DevicesHandler extends BaseHttpHandler {
         Device existingDevice = deviceDao.getById(newDevice.id);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
-        existingDevice.update(newDevice);
+        existingDevice.updateFromWeb(newDevice);
 
         return ok(joinProductAndOrgInfo(newDevice));
     }

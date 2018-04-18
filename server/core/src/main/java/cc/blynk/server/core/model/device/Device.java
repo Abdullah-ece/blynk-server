@@ -155,8 +155,7 @@ public class Device implements Target {
         return id;
     }
 
-    public void update(Device newDevice) {
-        this.productId = newDevice.productId;
+    public void updateFromMobile(Device newDevice) {
         this.name = newDevice.name;
         this.vendor = newDevice.vendor;
         this.boardType = newDevice.boardType;
@@ -165,9 +164,14 @@ public class Device implements Target {
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void updateFromWeb(Device newDevice) {
+        this.productId = newDevice.productId;
         this.metaFields = newDevice.metaFields;
         this.webDashboard = newDevice.webDashboard;
-        this.updatedAt = System.currentTimeMillis();
+        updateFromMobile(newDevice);
     }
 
     public void updateWebDashboard(byte pin, PinType type, String value, long now) {

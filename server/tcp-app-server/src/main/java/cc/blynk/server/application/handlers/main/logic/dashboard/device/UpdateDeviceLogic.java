@@ -58,7 +58,7 @@ public final class UpdateDeviceLogic {
             return;
         }
 
-        existingDevice.update(newDevice);
+        existingDevice.updateFromMobile(newDevice);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
