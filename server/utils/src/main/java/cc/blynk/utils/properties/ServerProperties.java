@@ -21,8 +21,6 @@ public class ServerProperties extends BaseProperties {
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
 
-    private static final String STATIC_FILES_FOLDER = "static";
-
     public final boolean isUnpacked;
 
     public ServerProperties(Map<String, String> cmdProperties) {
@@ -46,6 +44,7 @@ public class ServerProperties extends BaseProperties {
     public boolean force80Port() {
         return getBoolProperty("force.port.80.for.csv");
     }
+
     public String getDeviceUrl() {
         return "https://" + getServerHost() + "/dashboard/devices/";
     }

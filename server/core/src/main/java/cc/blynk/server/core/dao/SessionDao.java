@@ -29,7 +29,7 @@ public class SessionDao {
     public static final String SESSION_COOKIE = "session";
     private static final Logger log = LogManager.getLogger(SessionDao.class);
     public final ConcurrentHashMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, User> httpSession = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     //threadsafe
     public Session getOrCreateSessionByUser(UserKey key, EventLoop initialEventLoop) {
@@ -46,12 +46,6 @@ public class SessionDao {
 
         return group;
     }
-
-
-
-
-    public static final String SESSION_COOKIE = "session";
-    private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     public String generateNewSession(User user) {
         String sessionId = UUID.randomUUID().toString();
