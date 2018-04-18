@@ -36,5 +36,55 @@ public class WebSlider extends WebWidget {
         return 0;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebSlider)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
+        WebSlider webSlider = (WebSlider) o;
+
+        if (sendOnReleaseOn != webSlider.sendOnReleaseOn) {
+            return false;
+        }
+        if (Float.compare(webSlider.step, step) != 0) {
+            return false;
+        }
+        if (fineControlEnabled != webSlider.fineControlEnabled) {
+            return false;
+        }
+        if (fineControlStep != webSlider.fineControlStep) {
+            return false;
+        }
+        if (labelPosition != webSlider.labelPosition) {
+            return false;
+        }
+        if (decimalFormat != null ? !decimalFormat.equals(webSlider.decimalFormat) : webSlider.decimalFormat != null) {
+            return false;
+        }
+        if (valueSuffix != null ? !valueSuffix.equals(webSlider.valueSuffix) : webSlider.valueSuffix != null) {
+            return false;
+        }
+        return color != null ? color.equals(webSlider.color) : webSlider.color == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (sendOnReleaseOn ? 1 : 0);
+        result = 31 * result + (step != +0.0f ? Float.floatToIntBits(step) : 0);
+        result = 31 * result + (fineControlEnabled ? 1 : 0);
+        result = 31 * result + (fineControlStep ? 1 : 0);
+        result = 31 * result + (labelPosition != null ? labelPosition.hashCode() : 0);
+        result = 31 * result + (decimalFormat != null ? decimalFormat.hashCode() : 0);
+        result = 31 * result + (valueSuffix != null ? valueSuffix.hashCode() : 0);
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        return result;
+    }
 }
