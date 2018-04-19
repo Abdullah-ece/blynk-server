@@ -407,6 +407,11 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
     color: '007dc4',
     graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
     connectMissingPointsEnabled: false,
+  },
+  [WIDGET_TYPES.SLIDER]: {
+    label: 'Source Label',
+    sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
+    color: '007dc4'
   }
 };
 
@@ -546,12 +551,17 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     w: 3,
     h: 1,
     label: "Slider",
-    sources: [],
+    sources: [
+      {
+        id: 1,
+        ...WIDGETS_PREDEFINED_SOURCE_OPTIONS[WIDGET_TYPES.SLIDER]
+      }
+    ],
     sendValuesOnRelease: false,
-    step: 0,
+    step: 1,
     fineControlEnabled: true,
-    fineControlStep: 0,
-    labelPosition: WIDGETS_SWITCH_ALIGNMENT.LEFT,
+    fineControlStep: 1,
+    valuePosition: WIDGETS_SWITCH_ALIGNMENT.LEFT,
     decimalFormat: '',
     valueSuffix: ''
   }

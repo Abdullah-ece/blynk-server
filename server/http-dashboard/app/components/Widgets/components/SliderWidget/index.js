@@ -5,6 +5,7 @@ import {WIDGETS_SLIDER_VALUE_POSITION} from 'services/Widgets';
 import {Slider, Icon} from 'antd';
 import Canvasjs from 'canvasjs';
 import './styles.less';
+import _ from 'lodash';
 
 import SliderWidgetSettings from './settings';
 
@@ -26,6 +27,7 @@ class SliderWidget extends React.Component {
     style: PropTypes.object,
 
     onWidgetDelete: PropTypes.func,
+    onWriteToVirtualPin: PropTypes.func,
 
     loading: PropTypes.oneOfType([
       PropTypes.bool,
@@ -54,6 +56,32 @@ class SliderWidget extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      value: null,
+      isDragging: false
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleAfterChange = this.handleAfterChange.bind(this);
+    this.writeToVirtualPin = _.throttle(this.writeToVirtualPin, 100);
+
+    this.sliderWithControls = this.sliderWithControls.bind(this);
+    this.handleFineControlIncrease = this.handleFineControlIncrease.bind(this);
+    this.handleFineControlDecrease = this.handleFineControlDecrease.bind(this);
+  }
+
+  componentWillMount() {
+    this.setState({
+      value: this.props.value
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.value && !this.state.isDragging) {
+      this.setState({
+        value: nextProps.value
+      });
+    }
   }
 
   formatValue(value) {
@@ -69,13 +97,13 @@ class SliderWidget extends React.Component {
   sliderWithControls(slider) {
     return (
       <div className="widgets--widget-slider-wrapper">
-        <div className="widgets--widget-slider--control-left">
+        <div className="widgets--widget-slider--control-left" onClick={this.handleFineControlDecrease}>
           <Icon type="minus"/>
         </div>
         <div className="widgets--widget-slider--control-slider">
           {slider}
         </div>
-        <div className="widgets--widget-slider--control-right">
+        <div className="widgets--widget-slider--control-right" onClick={this.handleFineControlIncrease}>
           <Icon type="plus"/>
         </div>
       </div>
@@ -92,13 +120,13 @@ class SliderWidget extends React.Component {
     );
   }
 
-  sliderValueLeft(isNoData, sliderWrap, value, suffix) {
+  sliderValueLeft(isNoData, width, sliderWrap, value, suffix) {
 
     const className = isNoData ? 'widgets--widget-slider-container--value--value--no-data': '';
 
     return (
       <div className="widgets--widget-slider-container">
-        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-left">
+        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-left" style={{minWidth: width, maxWidth: width}}>
           <div className={`widgets--widget-slider-container--value--value ${className}`}>
             {value}
           </div>
@@ -113,7 +141,21 @@ class SliderWidget extends React.Component {
     );
   }
 
-  sliderValueRight(isNoData, sliderWrap, value, suffix) {
+  handleFineControlIncrease() {
+    let value = this.getValue();
+    let step = Number(this.props.data.fineControlStep);
+
+    this.handleAfterChange(value + step);
+  }
+
+  handleFineControlDecrease() {
+    let value = this.getValue();
+    let step = Number(this.props.data.fineControlStep);
+
+    this.handleAfterChange(value - step);
+  }
+
+  sliderValueRight(isNoData, width, sliderWrap, value, suffix) {
 
     const className = isNoData ? 'widgets--widget-slider-container--value--value--no-data': '';
 
@@ -122,7 +164,7 @@ class SliderWidget extends React.Component {
         <div className="widgets--widget-slider-container--slider">
           { sliderWrap }
         </div>
-        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-right">
+        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-right" style={{minWidth: width, maxWidth: width}}>
           <div className={`widgets--widget-slider-container--value--value ${className}`}>
             {value}
           </div>
@@ -132,6 +174,62 @@ class SliderWidget extends React.Component {
         </div>
       </div>
     );
+  }
+
+  writeToVirtualPin(value) {
+    if(!this.props.onWriteToVirtualPin)
+      return false;
+
+    if (this.props.data.sources && this.props.data.sources.length && this.props.data.sources[0].dataStream) {
+
+      const pin = this.props.data.sources[0].dataStream.pin;
+
+      this.props.onWriteToVirtualPin({
+        pin  : pin,
+        value: value
+      });
+
+    }
+  }
+
+  getValueWidth(minValue, maxValue, suffix) {
+    let suffixWidthOfSymbol = 11;
+    let marginWidth = 4;
+    let valueWidthOfSymbol = 14;
+
+    let minValueSymbols = String(minValue).length;
+    let maxValueSymbols = String(maxValue).length;
+    let suffixSymbols = String(suffix).length;
+
+    let valueSymbols = Math.max(minValueSymbols,maxValueSymbols);
+
+    return valueSymbols * valueWidthOfSymbol + suffixWidthOfSymbol * suffixSymbols + marginWidth;
+  }
+
+  handleChange(value) {
+
+    if(!this.state.isDragging) {
+      this.setState({
+        isDragging: true
+      });
+    }
+
+    this.setState({
+      value: value
+    });
+
+    if(!this.props.data.sendValuesOnRelease) {
+      this.writeToVirtualPin(value);
+    }
+
+  }
+
+  handleAfterChange(value) {
+    this.handleChange(value);
+
+    this.setState({
+      isDragging: false
+    });
   }
 
   renderSliderByParams(params = {
@@ -144,22 +242,39 @@ class SliderWidget extends React.Component {
     maxValue: 1,
   }) {
 
+    const numberCheck = (value, defaultValue) => !isNaN(Number(value)) ? Number(value) : Number(defaultValue);
+
     const isNoData = params.value === null || params.value === undefined;
 
     const value = isNoData ? '--' : params.value;
     const suffix = isNoData ? '' : params.suffix;
 
+    let sliderValue = numberCheck(value, 0);
+    let minValue = numberCheck(params.minValue, 0);
+    let maxValue = numberCheck(params.maxValue, 100);
+    let step = numberCheck(params.step, 1);
+
+    if(Number(sliderValue) < Number(params.minValue)) {
+      sliderValue = Number(params.minValue);
+    }
+
+    if(Number(sliderValue) > Number(params.maxValue)) {
+      sliderValue = Number(params.maxValue);
+    }
+
     const slider = (
-      <Slider min={params.minValue} max={params.maxValue} step={params.step}/>
+      <Slider min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
     );
 
     const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
 
     const controls = params.fineControlEnabled ? this.sliderWithControls : this.sliderWithoutControls;
 
+    let width = this.getValueWidth(minValue, maxValue, suffix);
+
     return (
       <div className={`widgets--widget-slider`}>
-        { position(isNoData, controls(slider), value, suffix) }
+        { position(isNoData, width, controls(slider), value, suffix) }
       </div>
     );
   }
@@ -183,7 +298,7 @@ class SliderWidget extends React.Component {
   }
 
   getValue() {
-    return this.props.value;
+    return this.state.value;
   }
 
   render() {

@@ -31,15 +31,10 @@ import {
 import {
   Map,
 } from 'immutable';
-import {FORMS} from 'services/Products';
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
-  dataStreams: (() => {
-    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
-
-    return (formValues && formValues.dataStreams || []);
-  })(),
+  dataStreams: state.Product.edit.dataStreams.fields || [],
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -59,8 +54,16 @@ import {FORMS} from 'services/Products';
       errors.step = 'Step value is out of range';
     }
 
+    if(!isNaN(Number(values.step)) && values.step <= 0) {
+      errors.step = 'Step value is out of range';
+    }
+
     if(!isNaN(Number(values.step)) && !isNaN(Number(values.minValue)) && !isNaN(Number(values.maxValue)) && (values.fineControlStep > (values.maxValue - values.minValue))) {
       errors.fineControlStep = 'Fine Control Step value is out of range';
+    }
+
+    if(!isNaN(Number(values.fineControlStep)) && values.fineControlStep <= 0) {
+      errors.fineControlStep = 'Step value is out of range';
     }
 
     return errors;
@@ -155,53 +158,6 @@ class SliderWidgetSettings extends React.Component {
     );
   }
 
-  sourceMultipleSelectComponent(props) {
-
-    const onChange = (value) => {
-
-      if(!value)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
-
-      const getStreamByPin = (pin) => {
-        return _.find(props.dataStreams, (stream) => {
-          return parseInt(stream.values.pin) === parseInt(pin);
-        });
-      };
-
-      let dataStream = getStreamByPin(value);
-
-      if(!dataStream)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', {
-          pin: value,
-          pinType: "VIRTUAL",
-        });
-
-      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
-
-    };
-
-    const getValue = () => {
-
-      if(!props.input.value) return [];
-
-      let pin = this.props.formValues.sources[0].dataStream.pin;
-
-      let value = String(pin);
-
-      return value;
-    };
-
-    return this.multipleTagsSelect({
-      ...props,
-      input: {
-        ...props.input,
-        value: getValue(),
-        onChange: onChange,
-        onBlur: () => {},
-      }
-    });
-  }
-
   multipleTagsSelect(props) {
 
     const getOption = (item) => {
@@ -255,6 +211,53 @@ class SliderWidgetSettings extends React.Component {
       </AntdSelect>
     );
 
+  }
+
+  sourceMultipleSelectComponent(props) {
+
+    const onChange = (value) => {
+
+      if(!value)
+        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
+
+      const getStreamByPin = (pin) => {
+        return _.find(props.dataStreams, (stream) => {
+          return parseInt(stream.values.pin) === parseInt(pin);
+        });
+      };
+
+      let dataStream = getStreamByPin(value);
+
+      if(!dataStream)
+        return props.changeForm(this.props.form, 'sources.0.dataStream', {
+          pin: value,
+          pinType: "VIRTUAL",
+        });
+
+      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
+
+    };
+
+    const getValue = () => {
+
+      if(!props.input.value) return [];
+
+      let pin = this.props.formValues.sources[0].dataStream.pin;
+
+      let value = String(pin);
+
+      return value;
+    };
+
+    return this.multipleTagsSelect({
+      ...props,
+      input: {
+        ...props.input,
+        value: getValue(),
+        onChange: onChange,
+        onBlur: () => {},
+      }
+    });
   }
 
   valuePositionComponent(props) {
@@ -394,12 +397,12 @@ class SliderWidgetSettings extends React.Component {
                 <Row>
                   <Col span={8}>
                     <Item label="min" offset="medium" displayError={false}>
-                      <FormField name={'minValue'} placeholder={`0`} validate={[Validation.Rules.required]}/>
+                      <FormField name={'minValue'} placeholder={`0`} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                     </Item>
                   </Col>
                   <Col span={8} offset={1}>
                     <Item label="max" offset="medium" displayError={false}>
-                      <FormField name={'maxValue'} placeholder={`100`} validate={[Validation.Rules.required]}/>
+                      <FormField name={'maxValue'} placeholder={`100`} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                     </Item>
                   </Col>
                 </Row>
@@ -417,7 +420,7 @@ class SliderWidgetSettings extends React.Component {
                 <Row>
                   <Col span={8}>
                     <Item label="step" offset="normal" displayError={false}>
-                      <FormField name={'step'} placeholder={`1`} validate={[Validation.Rules.required]}/>
+                      <FormField name={'step'} placeholder={`1`} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                     </Item>
                   </Col>
                 </Row>
@@ -431,7 +434,7 @@ class SliderWidgetSettings extends React.Component {
                   <Row>
                     <Col span={8}>
                       <Item label="fine control step" offset="medium" displayError={false}>
-                        <FormField name={'fineControlStep'} placeholder={`1`} validate={[Validation.Rules.required]}/>
+                        <FormField name={'fineControlStep'} placeholder={`1`} validate={[Validation.Rules.required, Validation.Rules.number]}/>
                       </Item>
                     </Col>
                   </Row>
