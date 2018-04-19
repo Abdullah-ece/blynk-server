@@ -408,7 +408,7 @@ class SliderWidgetSettings extends React.Component {
                 </Row>
 
                 <Item offset={'normal'}>
-                  <Field name={'sendValuesOnRelease'} component={this.switchComponent} label={'Send values on release only (optimal)'}/>
+                  <Field name={'sendOnReleaseOn'} component={this.switchComponent} label={'Send values on release only (optimal)'}/>
                 </Item>
 
                 <Item label="Color" offset="medium" className="widgets--label-widget--settings-background-color-picker">

@@ -142,14 +142,14 @@ class SliderWidget extends React.Component {
   }
 
   handleFineControlIncrease() {
-    let value = this.getValue();
+    let value = Number(this.getValue());
     let step = Number(this.props.data.fineControlStep);
 
     this.handleAfterChange(value + step);
   }
 
   handleFineControlDecrease() {
-    let value = this.getValue();
+    let value = Number(this.getValue());
     let step = Number(this.props.data.fineControlStep);
 
     this.handleAfterChange(value - step);
@@ -206,7 +206,7 @@ class SliderWidget extends React.Component {
     return valueSymbols * valueWidthOfSymbol + suffixWidthOfSymbol * suffixSymbols + marginWidth;
   }
 
-  handleChange(value) {
+  handleChange(value, onRelease = false) {
 
     if(!this.state.isDragging) {
       this.setState({
@@ -218,14 +218,14 @@ class SliderWidget extends React.Component {
       value: value
     });
 
-    if(!this.props.data.sendValuesOnRelease) {
+    if(!this.props.data.sendOnReleaseOn || onRelease === true) {
       this.writeToVirtualPin(value);
     }
 
   }
 
   handleAfterChange(value) {
-    this.handleChange(value);
+    this.handleChange(value, true);
 
     this.setState({
       isDragging: false
@@ -286,7 +286,7 @@ class SliderWidget extends React.Component {
     return this.renderSliderByParams({
       minValue: this.props.data.minValue,
       maxValue: this.props.data.maxValue,
-      sendValuesOnRelease: this.props.data.sendValuesOnRelease,
+      sendOnReleaseOn: this.props.data.sendOnReleaseOn,
       step: this.props.data.step,
       fineControlStep: this.props.data.fineControlStep,
       fineControlEnabled: this.props.data.fineControlEnabled,
