@@ -235,10 +235,53 @@ class WidgetEditable extends React.Component {
         <SwitchWidget {...attributes}/>
       );
 
-    if (widget.type === WIDGET_TYPES.SLIDER)
+    if (widget.type === WIDGET_TYPES.SLIDER) {
+
+      // attributes.data = {
+      //   label: 'Label 100-500 Left Controls',
+      //   minValue: 100,
+      //   maxValue: 500,
+      //   sendValuesOnRelease: false,
+      //   step: 50,
+      //   fineControlEnabled: true,
+      //   fineControlStep: 1,
+      //   valuePosition: 'LEFT',
+      //   decimalFormat: '##.#',
+      //   valueSuffix: '%',
+      // };
+
+      // attributes.data = {
+      //   label: 'Label -100 100 RIGHT Controls',
+      //   minValue: -100,
+      //   maxValue: 100,
+      //   sendValuesOnRelease: false,
+      //   step: 50,
+      //   fineControlEnabled: true,
+      //   fineControlStep: 1,
+      //   valuePosition: 'RIGHT',
+      //   decimalFormat: '##.#',
+      //   valueSuffix: '%',
+      // };
+
+      // attributes.data = {
+      //   label: 'Label -100 100 RIGHT No Controls',
+      //   minValue: -100,
+      //   maxValue: 100,
+      //   sendValuesOnRelease: false,
+      //   step: 50,
+      //   fineControlEnabled: false,
+      //   fineControlStep: 1,
+      //   valuePosition: 'RIGHT',
+      //   decimalFormat: '##.#',
+      //   valueSuffix: '%',
+      // };
+
+      attributes.value = '50';
+
       return (
         <SliderWidget {...attributes}/>
       );
+    }
 
   }
 

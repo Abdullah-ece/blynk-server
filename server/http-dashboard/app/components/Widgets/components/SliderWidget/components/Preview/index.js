@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {LabelWidget} from 'components/Widgets/components';
+import {SliderWidget} from 'components/Widgets/components';
 
 import {
   Map,
@@ -36,10 +36,10 @@ class Preview extends React.Component {
       labelStyles.color = '#'+this.props.data.textColor;
 
     return (
-      <div className="label-widget-preview">
-        <LabelWidget style={labelStyles}
-                     deviceId={this.props.deviceId}
-                     data={this.props.data} history={this.props.history} loading = {this.props.loading} />
+      <div className="slider-widget-preview">
+        <SliderWidget style={labelStyles}
+                      deviceId={this.props.deviceId}
+                      data={this.props.data} history={this.props.history} loading = {this.props.loading} />
       </div>
     );
   }

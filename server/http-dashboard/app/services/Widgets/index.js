@@ -543,7 +543,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     id: 0,
     x: 0,
     y: 0,
-    w: 2,
+    w: 3,
     h: 1,
     label: "Slider",
     sources: [],

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dotdotdot from 'react-dotdotdot';
-import {WIDGETS_LABEL_TEXT_ALIGNMENT} from 'services/Widgets';
+import {WIDGETS_SLIDER_VALUE_POSITION} from 'services/Widgets';
+import {Slider, Icon} from 'antd';
 import Canvasjs from 'canvasjs';
 import './styles.less';
 
@@ -55,36 +56,7 @@ class SliderWidget extends React.Component {
 
   }
 
-  getTextAlignmentClassNameByAlignment(alignment) {
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
-      return 'widgets--widget-web-label--alignment-left';
-
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER)
-      return 'widgets--widget-web-label--alignment-center';
-
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT)
-      return 'widgets--widget-web-label--alignment-right';
-  }
-
-  getValueClassName(isStringValue) {
-    if (isStringValue)
-      return 'widgets--widget-web-label--string-value';
-
-    return 'widgets--widget-web-label--number-value';
-  }
-
-  getValueSizeClassName(cellSize) {
-    if (Number(cellSize) === 1)
-      return 'widgets--widget-web-label--value-size-1';
-
-    if (Number(cellSize) === 2)
-      return 'widgets--widget-web-label--value-size-2';
-
-    if (Number(cellSize) >= 3)
-      return 'widgets--widget-web-label--value-size-3';
-  }
-
-  formatLabelValue(value) {
+  formatValue(value) {
     if (!this.props.data.decimalFormat)
       return (value).toLocaleString();
 
@@ -94,121 +66,125 @@ class SliderWidget extends React.Component {
     return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
   }
 
-  renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null}) {
+  sliderWithControls(slider) {
+    return (
+      <div className="widgets--widget-slider-wrapper">
+        <div className="widgets--widget-slider--control-left">
+          <Icon type="minus"/>
+        </div>
+        <div className="widgets--widget-slider--control-slider">
+          {slider}
+        </div>
+        <div className="widgets--widget-slider--control-right">
+          <Icon type="plus"/>
+        </div>
+      </div>
+    );
+  }
 
-    const alignmentClassName = this.getTextAlignmentClassNameByAlignment(params.alignment);
+  sliderWithoutControls(slider) {
+    return (
+      <div className="widgets--widget-slider-wrapper">
+        <div className="widgets--widget-slider--control-slider widgets--widget-slider--control-slider-no-controls">
+          {slider}
+        </div>
+      </div>
+    );
+  }
+
+  sliderValueLeft(isNoData, sliderWrap, value, suffix) {
+
+    const className = isNoData ? 'widgets--widget-slider-container--value--value--no-data': '';
+
+    return (
+      <div className="widgets--widget-slider-container">
+        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-left">
+          <div className={`widgets--widget-slider-container--value--value ${className}`}>
+            {value}
+          </div>
+          <div className="widgets--widget-slider-container--value--suffix">
+            {suffix}
+          </div>
+        </div>
+        <div className="widgets--widget-slider-container--slider">
+          {sliderWrap}
+        </div>
+      </div>
+    );
+  }
+
+  sliderValueRight(isNoData, sliderWrap, value, suffix) {
+
+    const className = isNoData ? 'widgets--widget-slider-container--value--value--no-data': '';
+
+    return (
+      <div className="widgets--widget-slider-container">
+        <div className="widgets--widget-slider-container--slider">
+          { sliderWrap }
+        </div>
+        <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-right">
+          <div className={`widgets--widget-slider-container--value--value ${className}`}>
+            {value}
+          </div>
+          <div className="widgets--widget-slider-container--value--suffix">
+            {suffix}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderSliderByParams(params = {
+    fineControlEnabled: false,
+    valuePosition: WIDGETS_SLIDER_VALUE_POSITION.LEFT,
+    value: null,
+    suffix: null,
+    step: 1,
+    minValue: -1,
+    maxValue: 1,
+  }) {
 
     const isNoData = params.value === null || params.value === undefined;
 
-    const isStringValue = isNaN(Number(params.value));
+    const value = isNoData ? '--' : params.value;
+    const suffix = isNoData ? '' : params.suffix;
 
-    const valueClassName = this.getValueClassName(isStringValue);
+    const slider = (
+      <Slider min={params.minValue} max={params.maxValue} step={params.step}/>
+    );
 
-    const valueSizeClassName = this.getValueSizeClassName(this.props.data.height);
+    const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
+
+    const controls = params.fineControlEnabled ? this.sliderWithControls : this.sliderWithoutControls;
 
     return (
-      <div className={`widgets--widget-web-label ${alignmentClassName}`}>
-        {!isNoData && (
-          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
-            <Dotdotdot clamp={1}>
-              <span
-                className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
-              {params.suffix && (
-                <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
-              )}
-            </Dotdotdot>
-          </div>
-        ) || (
-          <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
-            <span className={`widgets--widget-web-label--number-value`}>--</span>
-          </div>
-        )}
+      <div className={`widgets--widget-slider`}>
+        { position(isNoData, controls(slider), value, suffix) }
       </div>
     );
   }
 
-  renderRealDataLabel() {
+  renderSlider() {
 
-    const labelValue = this.getLabelValue();
-    //
-    // if (labelValue === null)
-    //   return (<div className="bar-chart-widget-no-data">No Data</div>);
+    const sliderValue = this.getValue();
 
-    return this.renderLabelByParams({
-      value: labelValue,
-      suffix: this.props.data.valueSuffix,
-      alignment: this.props.data.alignment
+    return this.renderSliderByParams({
+      minValue: this.props.data.minValue,
+      maxValue: this.props.data.maxValue,
+      sendValuesOnRelease: this.props.data.sendValuesOnRelease,
+      step: this.props.data.step,
+      fineControlStep: this.props.data.fineControlStep,
+      fineControlEnabled: this.props.data.fineControlEnabled,
+      valuePosition: this.props.data.valuePosition,
+      decimalFormat: this.props.data.decimalFormat,
+      value: sliderValue,
+      suffix: this.props.data.valueSuffix
     });
   }
 
-  getLabelValue() {
+  getValue() {
     return this.props.value;
   }
-
-  getLabelStyles() {
-    const labelValue = this.getLabelValue();
-    let currentColorSet = null;
-    if(this.props.data.colorsSet && labelValue !== null && labelValue !== undefined) {
-      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] || {backgroundColor:"ffffff",textColor:"000000"};
-    } else {
-      currentColorSet = {backgroundColor:"ffffff",textColor:"000000"};
-    }
-
-    return !this.props.data.isColorSetEnabled ? {
-      backgroundColor: "#" + this.props.data.backgroundColor,
-      color: "#" + this.props.data.textColor
-    } : (({ backgroundColor,textColor }) => {
-      return {
-        backgroundColor: "#" + backgroundColor,
-        color: "#" + textColor
-      };
-    })(currentColorSet);
-  }
-
-  renderLabelLevel() {
-
-    if(this.props.data.level.min >= this.props.data.level.max){
-
-      return null;
-    }
-
-    let percentFilled = 0;
-    if(this.getLabelValue() !== null && this.getLabelValue() !== undefined){
-      percentFilled = Math.round((this.getLabelValue() - this.props.data.level.min) / ((this.props.data.level.max - this.props.data.level.min) / 100));
-    }
-    let style = {
-      position: "absolute",
-      bottom: 0,
-        left: 0,
-      backgroundColor: "#" + this.props.data.level.color,
-      height: "100%",
-      width: "100%",
-    };
-
-    if(this.props.data.level.position === "VERTICAL"){
-      style.height = percentFilled +"%";
-    } else {
-      style.width = percentFilled +"%";
-    }
-
-    return(
-      <div className={"web-label-level " + (this.props.data.level.position).toLowerCase()}>
-        <div style={style}/>
-      </div>
-    );
-  }
-
-  getTextAlignStyle(alignment){
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT)
-      return 'left';
-
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.CENTER)
-      return 'center';
-
-    if (alignment === WIDGETS_LABEL_TEXT_ALIGNMENT.RIGHT)
-      return 'right';
-  }
-
 
   render() {
 
@@ -216,22 +192,18 @@ class SliderWidget extends React.Component {
       position:"relative",
       ...(this.props.parentElementProps && this.props.parentElementProps.style || {}),
       ...this.props.style,
-      ...this.getLabelStyles(),
-      textAlign: this.getTextAlignStyle(this.props.data.alignment),
     };
 
     return (
-      <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
+      <div {...this.props.parentElementProps} style={style} className={`widgets--widget widgets--widget-slider`}>
         <div className="widgets--widget-label" style={this.props.data.textColor === "DEFAULT"? {color:"#58595d"}: null} >
           <Dotdotdot  clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
 
-        {this.props.data.isShowLevelEnabled && this.renderLabelLevel() }
-
         { /* widget content */ }
 
-        { this.renderRealDataLabel() }
+        { this.renderSlider() }
 
         { /* end widget content */ }
 
