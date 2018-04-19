@@ -4,6 +4,7 @@ import {Router, Route, Redirect, useRouterHistory} from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import Scroll from 'react-scroll';
 import Perf from 'react-addons-perf';
+import './utils';
 // import wdu from 'why-did-you-update';
 
 import './canvasjs';

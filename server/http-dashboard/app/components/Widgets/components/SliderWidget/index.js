@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Dotdotdot from 'react-dotdotdot';
 import {WIDGETS_SLIDER_VALUE_POSITION} from 'services/Widgets';
@@ -65,6 +66,11 @@ class SliderWidget extends React.Component {
     this.handleAfterChange = this.handleAfterChange.bind(this);
     this.writeToVirtualPin = _.throttle(this.writeToVirtualPin, 100);
 
+    this.sliderRef = null;
+
+    this.sliderValueRight = this.sliderValueRight.bind(this);
+    this.sliderValueLeft = this.sliderValueLeft.bind(this);
+    this.toggleSliderColor = this.toggleSliderColor.bind(this);
     this.sliderWithControls = this.sliderWithControls.bind(this);
     this.handleFineControlIncrease = this.handleFineControlIncrease.bind(this);
     this.handleFineControlDecrease = this.handleFineControlDecrease.bind(this);
@@ -76,11 +82,30 @@ class SliderWidget extends React.Component {
     });
   }
 
+  componentDidMount() {
+    this.toggleSliderColor();
+  }
+
   componentWillReceiveProps(nextProps) {
     if(nextProps.value && !this.state.isDragging) {
       this.setState({
         value: nextProps.value
       });
+    }
+
+  }
+
+  componentDidUpdate() {
+    this.toggleSliderColor();
+  }
+
+  toggleSliderColor() {
+    if(this.sliderRef) {
+      let slider = ReactDOM.findDOMNode(this.sliderRef);
+      if (slider) {
+        slider.querySelector('.ant-slider-track').style.setProperty('background-color', '#' + this.props.data.color);
+        slider.querySelector('.ant-slider-handle').pseudoStyle('before', 'background', '#' + this.props.data.color + ' !important');
+      }
     }
   }
 
@@ -134,7 +159,7 @@ class SliderWidget extends React.Component {
             {suffix}
           </div>
         </div>
-        <div className="widgets--widget-slider-container--slider">
+        <div className="widgets--widget-slider-container--slider" onMouseMove={this.toggleSliderColor} onMouseLeave={this.toggleSliderColor}>
           {sliderWrap}
         </div>
       </div>
@@ -161,7 +186,7 @@ class SliderWidget extends React.Component {
 
     return (
       <div className="widgets--widget-slider-container">
-        <div className="widgets--widget-slider-container--slider">
+        <div className="widgets--widget-slider-container--slider" onMouseLeave={this.toggleSliderColor} onMouseMove={this.toggleSliderColor}>
           { sliderWrap }
         </div>
         <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-right" style={{minWidth: width, maxWidth: width}}>
@@ -197,9 +222,9 @@ class SliderWidget extends React.Component {
     let marginWidth = 4;
     let valueWidthOfSymbol = 14;
 
-    let minValueSymbols = String(minValue).length;
-    let maxValueSymbols = String(maxValue).length;
-    let suffixSymbols = String(suffix).length;
+    let minValueSymbols = String(minValue || '').length;
+    let maxValueSymbols = String(maxValue || '').length;
+    let suffixSymbols = String(suffix || '').length;
 
     let valueSymbols = Math.max(minValueSymbols,maxValueSymbols);
 
@@ -263,7 +288,7 @@ class SliderWidget extends React.Component {
     }
 
     const slider = (
-      <Slider min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
+      <Slider ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
     );
 
     const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
