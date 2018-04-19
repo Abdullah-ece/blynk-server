@@ -66,7 +66,7 @@ import {FORMS} from 'services/Products';
     return errors;
   }
 })
-class LabelWidgetSettings extends React.Component {
+class SliderWidgetSettings extends React.Component {
 
   static propTypes = {
     visible: PropTypes.bool,
@@ -314,11 +314,11 @@ class LabelWidgetSettings extends React.Component {
       // collect streams described on Data Streams
 
       dataStreamsOptions.push({
-        key: `${stream.values.pin}`,
-        value: `${stream.values.label}`,
+        key: `${stream.pin}`,
+        value: `${stream.label}`,
       });
 
-      pinsDescribedOnDataStreams.push(stream.values.pin);
+      pinsDescribedOnDataStreams.push(stream.pin);
 
       /* Uncomment when need tableDescription fields listed on Dropdown */
 
@@ -468,4 +468,4 @@ class LabelWidgetSettings extends React.Component {
 
 }
 
-export default LabelWidgetSettings;
+export default SliderWidgetSettings;
