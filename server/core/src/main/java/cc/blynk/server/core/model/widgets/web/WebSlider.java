@@ -16,7 +16,7 @@ public class WebSlider extends WebWidget {
 
     public boolean fineControlEnabled;
 
-    public boolean fineControlStep;
+    public float fineControlStep;
 
     public TextAlignment valuePosition;
 
@@ -84,7 +84,7 @@ public class WebSlider extends WebWidget {
         result = 31 * result + (sendOnReleaseOn ? 1 : 0);
         result = 31 * result + (step != +0.0f ? Float.floatToIntBits(step) : 0);
         result = 31 * result + (fineControlEnabled ? 1 : 0);
-        result = 31 * result + (fineControlStep ? 1 : 0);
+        result = 31 * result + (fineControlStep != +0.0f ? Float.floatToIntBits(fineControlStep) : 0);
         result = 31 * result + (valuePosition != null ? valuePosition.hashCode() : 0);
         result = 31 * result + (decimalFormat != null ? decimalFormat.hashCode() : 0);
         result = 31 * result + (valueSuffix != null ? valueSuffix.hashCode() : 0);

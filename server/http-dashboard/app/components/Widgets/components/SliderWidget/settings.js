@@ -411,9 +411,9 @@ class SliderWidgetSettings extends React.Component {
                   <Field name={'sendOnReleaseOn'} component={this.switchComponent} label={'Send values on release only (optimal)'}/>
                 </Item>
 
-                <Item label="Color" offset="medium" className="widgets--label-widget--settings-background-color-picker">
-                  <Field name="color" component={this.colorPickerComponent} />
-                </Item>
+                {/*<Item label="Color" offset="medium" className="widgets--label-widget--settings-background-color-picker">*/}
+                  {/*<Field name="color" component={this.colorPickerComponent} />*/}
+                {/*</Item>*/}
 
                 <h3 className="widgets--switch-widget--settings-h3" style={{'marginTop': '44px'}}>Steps</h3>
 
