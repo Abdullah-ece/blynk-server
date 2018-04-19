@@ -8,10 +8,12 @@ import {
   LinearWidget,
   // BarChartWidget,
   LabelWidget,
-  SwitchWidget
+  SwitchWidget,
+  SliderWidget
 } from 'components/Widgets';
 
 import {
+  Slider as SliderDataWrapper,
   Label as LabelDataWrapper,
   LineChart as LineChartDataWrapper,
   Switch as SwitchDataWrapper,
@@ -115,6 +117,13 @@ class WidgetStatic extends React.Component {
         <SwitchDataWrapper {...dataWrapperAttributes}>
           <SwitchWidget {...attributes}/>
         </SwitchDataWrapper>
+      );
+
+    if (widget.type === WIDGET_TYPES.SLIDER)
+      return (
+        <SliderDataWrapper {...dataWrapperAttributes}>
+          <SliderWidget {...attributes}/>
+        </SliderDataWrapper>
       );
 
   }
