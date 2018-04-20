@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.web;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 
+import java.util.Objects;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -51,44 +53,23 @@ public class WebSlider extends WebWidget {
         if (!super.equals(o)) {
             return false;
         }
-
         WebSlider webSlider = (WebSlider) o;
-
-        if (sendOnReleaseOn != webSlider.sendOnReleaseOn) {
-            return false;
-        }
-        if (Float.compare(webSlider.step, step) != 0) {
-            return false;
-        }
-        if (fineControlEnabled != webSlider.fineControlEnabled) {
-            return false;
-        }
-        if (fineControlStep != webSlider.fineControlStep) {
-            return false;
-        }
-        if (valuePosition != webSlider.valuePosition) {
-            return false;
-        }
-        if (decimalFormat != null ? !decimalFormat.equals(webSlider.decimalFormat) : webSlider.decimalFormat != null) {
-            return false;
-        }
-        if (valueSuffix != null ? !valueSuffix.equals(webSlider.valueSuffix) : webSlider.valueSuffix != null) {
-            return false;
-        }
-        return color != null ? color.equals(webSlider.color) : webSlider.color == null;
+        return sendOnReleaseOn == webSlider.sendOnReleaseOn
+                && Float.compare(webSlider.step, step) == 0
+                && fineControlEnabled == webSlider.fineControlEnabled
+                && Float.compare(webSlider.fineControlStep, fineControlStep) == 0
+                && Float.compare(webSlider.minValue, minValue) == 0
+                && Float.compare(webSlider.maxValue, maxValue) == 0
+                && valuePosition == webSlider.valuePosition
+                && Objects.equals(decimalFormat, webSlider.decimalFormat)
+                && Objects.equals(valueSuffix, webSlider.valueSuffix)
+                && Objects.equals(color, webSlider.color);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (sendOnReleaseOn ? 1 : 0);
-        result = 31 * result + (step != +0.0f ? Float.floatToIntBits(step) : 0);
-        result = 31 * result + (fineControlEnabled ? 1 : 0);
-        result = 31 * result + (fineControlStep != +0.0f ? Float.floatToIntBits(fineControlStep) : 0);
-        result = 31 * result + (valuePosition != null ? valuePosition.hashCode() : 0);
-        result = 31 * result + (decimalFormat != null ? decimalFormat.hashCode() : 0);
-        result = 31 * result + (valueSuffix != null ? valueSuffix.hashCode() : 0);
-        result = 31 * result + (color != null ? color.hashCode() : 0);
-        return result;
+        return Objects.hash(super.hashCode(), sendOnReleaseOn, step,
+                fineControlEnabled, fineControlStep, valuePosition,
+                minValue, maxValue, decimalFormat, valueSuffix, color);
     }
 }

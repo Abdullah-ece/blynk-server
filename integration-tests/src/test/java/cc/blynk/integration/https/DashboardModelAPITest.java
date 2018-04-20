@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
+import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
@@ -294,6 +295,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         }
 
         WebSwitch webSwitch = new WebSwitch();
+        webSwitch.id = 100;
         webSwitch.onLabel = "updated";
         webSwitch.x = 3;
         webSwitch.y = 4;
@@ -301,13 +303,25 @@ public class DashboardModelAPITest extends APIBaseTest {
         webSwitch.width = 60;
 
         WebLabel webLabel = new WebLabel();
+        webLabel.id = 101;
         webLabel.label = "updated";
         webLabel.x = 3;
         webLabel.y = 4;
         webLabel.height = 50;
         webLabel.width = 60;
+
+        WebSlider webSlider = new WebSlider();
+        webSlider.id = 102;
+        webSlider.label = "updated";
+        webSlider.x = 3;
+        webSlider.y = 4;
+        webSlider.height = 50;
+        webSlider.width = 60;
+        webSlider.minValue = 0;
+        webSlider.maxValue = 100;
+
         product.webDashboard = new WebDashboard(new Widget[] {
-                webLabel, webSwitch
+                webLabel, webSwitch, webSlider
         });
 
         HttpPost updateReq = new HttpPost(httpsAdminServerUrl + "/product");
@@ -321,19 +335,74 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(product.name, fromApi.name);
             assertEquals(product.description, fromApi.description);
             assertNotNull(fromApi.webDashboard);
-            assertEquals(2, fromApi.webDashboard.widgets.length);
+            assertEquals(3, fromApi.webDashboard.widgets.length);
 
-            assertEquals("updated", fromApi.webDashboard.widgets[0].label);
-            assertEquals(3, fromApi.webDashboard.widgets[0].x);
-            assertEquals(4, fromApi.webDashboard.widgets[0].y);
-            assertEquals(50, fromApi.webDashboard.widgets[0].height);
-            assertEquals(60, fromApi.webDashboard.widgets[0].width);
+            webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+            assertEquals("updated", webLabel.label);
+            assertEquals(3, webLabel.x);
+            assertEquals(4, webLabel.y);
+            assertEquals(50, webLabel.height);
+            assertEquals(60, webLabel.width);
 
-            assertEquals("updated", ((WebSwitch) fromApi.webDashboard.widgets[1]).onLabel);
-            assertEquals(3, fromApi.webDashboard.widgets[0].x);
-            assertEquals(4, fromApi.webDashboard.widgets[0].y);
-            assertEquals(50, fromApi.webDashboard.widgets[0].height);
-            assertEquals(60, fromApi.webDashboard.widgets[0].width);
+            webSwitch = (WebSwitch) fromApi.webDashboard.widgets[1];
+            assertEquals("updated", webSwitch.onLabel);
+            assertEquals(3, webSwitch.x);
+            assertEquals(4, webSwitch.y);
+            assertEquals(50, webSwitch.height);
+            assertEquals(60, webSwitch.width);
+
+            webSlider = (WebSlider) fromApi.webDashboard.widgets[2];
+            assertEquals("updated", webSlider.label);
+            assertEquals(3, webSlider.x);
+            assertEquals(4, webSlider.y);
+            assertEquals(50, webSlider.height);
+            assertEquals(60, webSlider.width);
+            assertEquals(0, webSlider.minValue, 0.001);
+            assertEquals(100, webSlider.maxValue, 0.001);
+        }
+
+        webSlider.minValue = 1;
+        webSlider.maxValue = 101;
+
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel, webSwitch, webSlider
+        });
+
+        updateReq = new HttpPost(httpsAdminServerUrl + "/product");
+        updateReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(updateReq)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Product fromApi = JsonParser.parseProduct(consumeText(response));
+            assertNotNull(fromApi);
+            assertEquals(1, fromApi.id);
+            assertEquals(product.name, fromApi.name);
+            assertEquals(product.description, fromApi.description);
+            assertNotNull(fromApi.webDashboard);
+            assertEquals(3, fromApi.webDashboard.widgets.length);
+
+            webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+            assertEquals("updated", webLabel.label);
+            assertEquals(3, webLabel.x);
+            assertEquals(4, webLabel.y);
+            assertEquals(50, webLabel.height);
+            assertEquals(60, webLabel.width);
+
+            webSwitch = (WebSwitch) fromApi.webDashboard.widgets[1];
+            assertEquals("updated", webSwitch.onLabel);
+            assertEquals(3, webSwitch.x);
+            assertEquals(4, webSwitch.y);
+            assertEquals(50, webSwitch.height);
+            assertEquals(60, webSwitch.width);
+
+            webSlider = (WebSlider) fromApi.webDashboard.widgets[2];
+            assertEquals("updated", webSlider.label);
+            assertEquals(3, webSlider.x);
+            assertEquals(4, webSlider.y);
+            assertEquals(50, webSlider.height);
+            assertEquals(60, webSlider.width);
+            assertEquals(1, webSlider.minValue, 0.001);
+            assertEquals(101, webSlider.maxValue, 0.001);
         }
 
         HttpGet getDevice = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
@@ -344,12 +413,30 @@ public class DashboardModelAPITest extends APIBaseTest {
             Device device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertNotNull(device.webDashboard);
-            assertEquals(2, device.webDashboard.widgets.length);
-            assertEquals("updated", device.webDashboard.widgets[0].label);
-            assertEquals(3, device.webDashboard.widgets[0].x);
-            assertEquals(4, device.webDashboard.widgets[0].y);
-            assertEquals(50, device.webDashboard.widgets[0].height);
-            assertEquals(60, device.webDashboard.widgets[0].width);
+            assertEquals(3, device.webDashboard.widgets.length);
+
+            webLabel = (WebLabel) device.webDashboard.widgets[0];
+            assertEquals("updated", webLabel.label);
+            assertEquals(3, webLabel.x);
+            assertEquals(4, webLabel.y);
+            assertEquals(50, webLabel.height);
+            assertEquals(60, webLabel.width);
+
+            webSwitch = (WebSwitch) device.webDashboard.widgets[1];
+            assertEquals("updated", webSwitch.onLabel);
+            assertEquals(3, webSwitch.x);
+            assertEquals(4, webSwitch.y);
+            assertEquals(50, webSwitch.height);
+            assertEquals(60, webSwitch.width);
+
+            webSlider = (WebSlider) device.webDashboard.widgets[2];
+            assertEquals("updated", webSlider.label);
+            assertEquals(3, webSlider.x);
+            assertEquals(4, webSlider.y);
+            assertEquals(50, webSlider.height);
+            assertEquals(60, webSlider.width);
+            assertEquals(1, webSlider.minValue, 0.001);
+            assertEquals(101, webSlider.maxValue, 0.001);
         }
     }
 
