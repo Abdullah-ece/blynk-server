@@ -11,3 +11,10 @@ export function DeviceSmartSearchState(value=false){
     value
   };
 }
+
+export function LoginPageTermsAgreement(value=false){
+  return {
+    type: 'LoginPageTermsAgreement',
+    value
+  };
+}

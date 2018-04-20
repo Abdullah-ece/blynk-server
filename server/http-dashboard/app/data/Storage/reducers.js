@@ -2,7 +2,8 @@ const initialState = {
   products: {
     metadataFirstTime: false
   },
-  deviceSmartSearch: false
+  deviceSmartSearch: false,
+  loginPageTermsAgreement: false,
 };
 
 export default function Account(state = initialState, action) {
@@ -20,6 +21,12 @@ export default function Account(state = initialState, action) {
       return {
         ...state,
         deviceSmartSearch: action.value
+      };
+
+    case 'LoginPageTermsAgreement':
+      return {
+        ...state,
+        loginPageTermsAgreement: action.value
       };
 
     default:
