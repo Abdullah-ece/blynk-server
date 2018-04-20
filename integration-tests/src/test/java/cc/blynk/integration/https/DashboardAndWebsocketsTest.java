@@ -37,7 +37,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -57,6 +56,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -336,8 +339,6 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
     }
 
     @Test
-    @Ignore
-    //todo finish test, add Bonary message to websocket client
     public void getWebGraphData() throws Exception {
         login(regularUser.email, regularUser.pass);
         Device newDevice = new Device();
@@ -402,6 +403,67 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void getLiveWebGraphData() throws Exception {
+        login(regularUser.email, regularUser.pass);
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct().id;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        Device device;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            device = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+            assertNotNull(device.token);
+            assertNotNull(device.metaFields);
+            assertEquals(2, device.metaFields.length);
+            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+            assertEquals("Jopa", numberMetaField.name);
+            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(123D, numberMetaField.value, 0.1);
+            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+            assertEquals(regularUser.email, device.activatedBy);
+            assertNotNull(device.webDashboard);
+            assertEquals(3, device.webDashboard.widgets.length);
+            assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
+            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
+            assertEquals(1, webSwitch.sources[0].dataStream.pin);
+            assertEquals(PinType.VIRTUAL, webSwitch.sources[0].dataStream.pinType);
+            assertEquals("123", webSwitch.label);
+        }
+
+        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        newHardClient.start();
+        newHardClient.send("login " + device.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+
+        newHardClient.send("hardware vw 3 123");
+        appWebSocketClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+
+        BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(1, bb.getInt());
+        assertEquals(123D, bb.getDouble(), 0.1);
+        assertEquals(System.currentTimeMillis(), bb.getLong(), 5000);
     }
 
     @Test
