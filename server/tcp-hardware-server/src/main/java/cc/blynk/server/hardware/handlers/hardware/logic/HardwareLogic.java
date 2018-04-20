@@ -79,7 +79,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
             int deviceId = device.id;
 
-            reportingDao.process(user, dash, deviceId, pin, pinType, value, now);
+            reportingDao.process(user, dash, device, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
             device.updateWebDashboard(pin, pinType, value, now);
 

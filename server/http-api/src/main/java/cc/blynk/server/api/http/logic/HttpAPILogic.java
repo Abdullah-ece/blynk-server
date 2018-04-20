@@ -15,6 +15,7 @@ import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.TokenValue;
@@ -24,6 +25,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -80,11 +82,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
+    private final DeviceDao deviceDao;
 
-private final DBManager dbManager;
+    private final DBManager dbManager;
     private final FileManager fileManager;
     private final String host;
     private final String httpsPort;
+
     public HttpAPILogic(Holder holder) {
         super(holder.tokenManager, holder.sessionDao, holder.stats, "");
         this.blockingIOProcessor = holder.blockingIOProcessor;
@@ -96,6 +100,7 @@ private final DBManager dbManager;
         this.fileManager = holder.fileManager;
         this.host = holder.props.getServerHost();
         this.httpsPort = holder.props.getHttpsPortAsString();
+        this.deviceDao = holder.deviceDao;
     }
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
@@ -474,7 +479,8 @@ private final DBManager dbManager;
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
+        Device device = deviceDao.getById(deviceId);
+        reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
 
         dash.update(deviceId, pin, pinType, pinValue, now);
 
@@ -534,8 +540,9 @@ private final DBManager dbManager;
             return badRequest("Wrong pin format.");
         }
 
+        Device device = deviceDao.getById(deviceId);
         for (PinData pinData : pinsData) {
-            reportingDao.process(user, dash, deviceId, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

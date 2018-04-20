@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.web.product;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -56,6 +57,19 @@ public class WebDashboard implements CopyObject<WebDashboard> {
             }
         }
         return null;
+    }
+
+    public boolean needRawDataForGraph(byte pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            //realtime is needed only for webgraph widget
+            if (widget instanceof BaseWebGraph) {
+                //todo fix -1?
+                if (widget.isSame(-1, pin, pinType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

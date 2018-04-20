@@ -21,8 +21,9 @@ public abstract class WebWidget extends Widget {
     //deviceId is not actually used here. this api is left from mobile
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         for (WebSource source : sources) {
-            if (source.dataStream != null && source.dataStream.isSame(pin, type)) {
-                source.dataStream.value = value;
+            DataStream dataStream = source.dataStream;
+            if (dataStream != null && dataStream.isSame(pin, type)) {
+                dataStream.value = value;
                 return true;
             }
         }
@@ -41,6 +42,12 @@ public abstract class WebWidget extends Widget {
 
     @Override
     public boolean isSame(int deviceId, byte pin, PinType type) {
+        for (WebSource source : sources) {
+            DataStream dataStream = source.dataStream;
+            if (dataStream != null && dataStream.isSame(pin, type)) {
+                return true;
+            }
+        }
         return false;
     }
 

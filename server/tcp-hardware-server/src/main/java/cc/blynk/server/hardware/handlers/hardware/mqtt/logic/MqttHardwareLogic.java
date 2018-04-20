@@ -81,7 +81,7 @@ public class MqttHardwareLogic {
 
             long now = System.currentTimeMillis();
 
-            reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
+            reportingDao.process(state.user, dash, state.device, pin, pinType, value, now);
 
             dash.update(0, pin, pinType, value, now);
         }

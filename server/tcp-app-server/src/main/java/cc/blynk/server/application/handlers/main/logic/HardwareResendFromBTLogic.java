@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -62,6 +63,7 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
         int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
 
         if (isWriteOperation(split[1])) {
             String[] splitBody = split3(split[1]);
@@ -77,7 +79,7 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 
-            reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
+            reportingDao.process(state.user, dash, device, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
             Session session = sessionDao.userSession.get(state.userKey);

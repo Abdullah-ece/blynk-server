@@ -525,9 +525,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING,
                 Arrays.copyOf(pinValues, pinValues.length, String[].class));
 
-        reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
-
         Device device = deviceDao.getById(deviceId);
+
+        reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
         dash.update(deviceId, pin, pinType, pinValue, now);
 
@@ -645,8 +645,9 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
+        Device device = deviceDao.getById(deviceId);
         for (PinData pinData : pinsData) {
-            reportingDao.process(user, dash, deviceId, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

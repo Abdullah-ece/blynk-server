@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -216,18 +217,19 @@ public class ReportingDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
-    public void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType, String value, long ts) {
+    public void process(User user, DashBoard dash, Device device, byte pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(user, dash, deviceId, pin, pinType, value, ts, doubleVal);
+            process(user, dash, device, pin, pinType, value, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    private void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType,
+    private void process(User user, DashBoard dash, Device device, byte pin, PinType pinType,
                          String value, long ts, double doubleVal) {
+        int deviceId = device.id;
         if (enableRawDbDataStore) {
             rawDataProcessor.collect(deviceId, pinType, pin, value);
         }
@@ -239,7 +241,8 @@ public class ReportingDao implements Closeable {
 
         BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
         averageAggregator.collect(key, ts, doubleVal);
-        if (dash.needRawDataForGraph(deviceId, pin, pinType)) {
+        if (device.webDashboard.needRawDataForGraph(pin, pinType)
+                || dash.needRawDataForGraph(deviceId, pin, pinType)) {
             rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
         }
     }
