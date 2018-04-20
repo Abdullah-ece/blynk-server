@@ -386,7 +386,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL.pintTypeChar, (byte) 3, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 

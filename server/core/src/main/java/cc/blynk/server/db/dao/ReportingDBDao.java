@@ -149,51 +149,6 @@ public class ReportingDBDao {
         }
     }
 
-    public void insertRawData(Map<AggregationKey, Object> rawData) {
-        long start = System.currentTimeMillis();
-
-        log.info("Storing raw reporting...");
-        int counter = 0;
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
-
-            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry<AggregationKey, Object> entry = iter.next();
-
-                final AggregationKey key = entry.getKey();
-                final Object value = entry.getValue();
-
-                ps.setString(1, key.getEmail());
-                ps.setInt(2, key.getDashId());
-                ps.setInt(3, key.getDeviceId());
-                ps.setByte(4, key.getPin());
-                ps.setString(5, key.getPinType().pinTypeString);
-                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
-
-                if (value instanceof String) {
-                    ps.setString(7, (String) value);
-                    ps.setNull(8, Types.DOUBLE);
-                } else {
-                    ps.setNull(7, Types.VARCHAR);
-                    ps.setDouble(8, (Double) value);
-                }
-
-                ps.addBatch();
-                counter++;
-                iter.remove();
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting raw reporting data in DB.", e);
-        }
-
-        log.info("Storing raw reporting finished. Time {}. Records saved {}",
-                System.currentTimeMillis() - start, counter);
-    }
-
     public void insertStat(String region, Stat stat) {
         final long ts = (stat.ts / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
         final Timestamp timestamp = new Timestamp(ts);
