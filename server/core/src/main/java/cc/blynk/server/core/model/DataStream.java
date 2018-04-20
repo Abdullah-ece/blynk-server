@@ -107,8 +107,12 @@ public class DataStream implements CopyObject<DataStream> {
         return pin != NO_PIN && pinType != null;
     }
 
-    public boolean notEmpty() {
-        return value != null && isValid();
+    public boolean isNotEmpty() {
+        return value != null;
+    }
+
+    public boolean notEmptyAndIsValid() {
+        return isNotEmpty() && isValid();
     }
 
     @Override

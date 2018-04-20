@@ -10,6 +10,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -158,6 +160,16 @@ public class TestAppClient extends BaseTestAppClient {
         createWidget(dashId, JsonParser.MAPPER.writeValueAsString(widget));
     }
 
+    public void createWidget(int dashId, long widgetId, long templateId, String widgetJson) {
+        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+                + BODY_SEPARATOR + templateId + BODY_SEPARATOR + widgetJson);
+    }
+
+    public void createWidget(int dashId, long widgetId, long templateId, Widget widget) throws Exception {
+        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+                + BODY_SEPARATOR + templateId + BODY_SEPARATOR + JsonParser.MAPPER.writeValueAsString(widget));
+    }
+
     public void createWidget(int dashId, String widgetJson) {
         send("createWidget " + dashId + BODY_SEPARATOR + widgetJson);
     }
@@ -246,6 +258,27 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getToken(int dashId) {
         send("getToken " + dashId);
+    }
+
+    public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period) {
+        send("getenhanceddata " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name());
+    }
+
+    public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period, int page) {
+        send("getenhanceddata " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
+    }
+
+    public void createTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
+        createTemplate(dashId, widgetId, JsonParser.MAPPER.writeValueAsString(tileTemplate));
+    }
+
+    public void createTemplate(int dashId, long widgetId, String tileTemplate) throws Exception {
+        send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
+    }
+
+    public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
+        send("updateTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
+                + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
     public void send(String line) {

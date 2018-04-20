@@ -33,10 +33,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public volatile Tile[] tiles = EMPTY_DEVICE_TILES;
 
-    //this field is needed only in the realtime when users selects some template for the device
-    //so we know what reading widgets should update their state at that moment
-    public transient int selectedDeviceId;
-
     public int rows;
 
     public int columns;
@@ -170,7 +166,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     @Override
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         for (Tile tile : tiles) {
-            if (tile.deviceId == targetId && tile.dataStream != null && tile.dataStream.notEmpty()) {
+            if (tile.deviceId == targetId && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
                 String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
