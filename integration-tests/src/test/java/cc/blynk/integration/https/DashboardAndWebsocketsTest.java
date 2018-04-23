@@ -385,11 +385,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.MINUTE));
+                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        appWebSocketClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        appWebSocketClient.send("getenhanceddata 1" + b(" 432 MONTH"));
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
