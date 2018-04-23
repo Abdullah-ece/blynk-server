@@ -3,6 +3,8 @@ package cc.blynk.server.core.reporting.raw;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.structure.LimitedArrayDeque;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +19,8 @@ import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
  * Created on 25.01.17.
  */
 public class RawDataCacheForGraphProcessor {
+
+    private static final Logger log = LogManager.getLogger(RawDataCacheForGraphProcessor.class);
 
     private static final int GRAPH_CACHE_SIZE = 60;
 
@@ -64,6 +68,7 @@ public class RawDataCacheForGraphProcessor {
                 counter++;
                 byteBuffer.putDouble(graphValue.value)
                         .putLong(graphValue.ts);
+                log.trace("Returning point value {}, ts : {}", graphValue.value, graphValue.ts);
             }
             i++;
         }
