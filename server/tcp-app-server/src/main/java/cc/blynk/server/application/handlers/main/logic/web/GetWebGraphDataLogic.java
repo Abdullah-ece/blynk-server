@@ -15,18 +15,21 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.session.WebAppStateHolder;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.ByteArrayOutputStream;
+
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
-import static cc.blynk.utils.ByteUtils.compress;
+import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
 
 /**
  * The Blynk Project.
@@ -98,8 +101,18 @@ public class GetWebGraphDataLogic {
     private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] data = reportingDao.getReportingData(user, requestedPins);
-                byte[] compressed = compress(requestedPins[0].deviceId, data);
+                byte[][] allPinsData = reportingDao.getReportingData(user, requestedPins);
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream(8096);
+                ByteUtils.writeInt(out, requestedPins[0].deviceId);
+                for (byte[] data : allPinsData) {
+                    ByteUtils.writeInt(out, data.length / REPORTING_RECORD_SIZE_BYTES);
+                    out.write(data);
+                }
+
+                //todo for now skipping compression
+                //byte[] compressed = compress(requestedPins[0].deviceId, data);
+                byte[] compressed = out.toByteArray();
 
                 if (channel.isWritable()) {
                     channel.writeAndFlush(

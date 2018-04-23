@@ -1,6 +1,5 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -394,7 +393,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = graphDataResponse.getBytes();
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -457,7 +456,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = graphDataResponse.getBytes();
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());

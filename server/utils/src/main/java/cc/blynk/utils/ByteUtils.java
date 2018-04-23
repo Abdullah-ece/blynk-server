@@ -58,7 +58,7 @@ public final class ByteUtils {
         return baos.toByteArray();
     }
 
-    private static void writeInt(OutputStream out, int value) throws IOException {
+    public static void writeInt(OutputStream out, int value) throws IOException {
         out.write((value >>> 24) & 0xFF);
         out.write((value >>> 16) & 0xFF);
         out.write((value >>>  8) & 0xFF);
