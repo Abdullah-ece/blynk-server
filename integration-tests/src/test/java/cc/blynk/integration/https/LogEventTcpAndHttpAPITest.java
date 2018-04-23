@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.servers.BaseServer;
@@ -46,6 +47,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -190,6 +192,79 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         appWebSocketClient.resolveEvent(1, logEventId, "resolve comment");
         appWebSocketClient.verifyResult(ok(2));
+
+        getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(0, timeLineResponse.totalCritical);
+            assertEquals(1, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertTrue(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+            assertEquals("resolve comment", logEvents[0].resolvedComment);
+            assertEquals(logEventId, logEvents[0].id);
+        }
+    }
+
+    @Test
+    public void testLogEventIsResolvedFromWebappAndForwardedToAnotherWebapp() throws Exception {
+        String token = createProductAndDevice();
+
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+
+        HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
+        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        long now = System.currentTimeMillis();
+
+        long logEventId;
+        HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
+        try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            TimeLineResponse timeLineResponse = JsonParser.readAny(responseString, TimeLineResponse.class);
+            assertNotNull(timeLineResponse);
+            assertEquals(1, timeLineResponse.totalCritical);
+            assertEquals(0, timeLineResponse.totalResolved);
+            LogEvent[] logEvents = timeLineResponse.logEvents;
+            assertNotNull(logEvents);
+            assertEquals(1, logEvents.length);
+            assertEquals(1, logEvents[0].deviceId);
+            assertEquals(EventType.CRITICAL, logEvents[0].eventType);
+            assertFalse(logEvents[0].isResolved);
+            assertEquals("Temp is super high", logEvents[0].name);
+            assertEquals("This is my description", logEvents[0].description);
+            logEventId = logEvents[0].id;
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(admin);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
+        appWebSocketClient.verifyResult(ok(2));
+
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(admin);
+        appWebSocketClient2.verifyResult(ok(1));
+        appWebSocketClient2.track(1);
+        appWebSocketClient2.verifyResult(ok(2));
+
+        appWebSocketClient.resolveEvent(1, logEventId, "resolve comment");
+        appWebSocketClient.verifyResult(ok(3));
+
+        appWebSocketClient2.verifyResult(new StringMessage(3, RESOLVE_EVENT, b("1 " + logEventId + " ") + "resolve comment"));
 
         getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
@@ -532,11 +607,20 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertTrue(logEventId > 1);
         }
 
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(admin);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.track(1);
+        appWebSocketClient.verifyResult(ok(2));
+
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/devices/1/1/resolveEvent/" + logEventId);
         post.setEntity(new StringEntity(new CommentDTO("123").toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
+
+        appWebSocketClient.verifyResult(new StringMessage(1111, RESOLVE_EVENT, b("1 " + logEventId + " 123")));
 
         getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {

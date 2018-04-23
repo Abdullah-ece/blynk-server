@@ -20,7 +20,9 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.SortOrder;
@@ -36,6 +38,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
@@ -52,6 +55,7 @@ import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
@@ -135,6 +139,12 @@ public class DevicesHandler extends BaseHttpHandler {
                 String userComment = comment == null ? "" : comment.comment;
                 if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
                     response = ok();
+                    Session session = sessionDao.userSession.get(new UserKey(user));
+                    String body = String.valueOf(logEventId);
+                    if (comment != null) {
+                        body = body + StringUtils.BODY_SEPARATOR + userComment;
+                    }
+                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, 1111, body, deviceId);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
                     response = notFound();

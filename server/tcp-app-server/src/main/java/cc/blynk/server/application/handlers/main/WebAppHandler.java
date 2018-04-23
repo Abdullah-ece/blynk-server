@@ -58,7 +58,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case RESOLVE_EVENT :
-                resolveWebEventHandler.messageReceived(ctx, state.user, msg);
+                resolveWebEventHandler.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
