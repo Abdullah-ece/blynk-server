@@ -131,7 +131,6 @@ class WidgetEditable extends React.Component {
       );
 
     if (widget.type === WIDGET_TYPES.LABEL) {
-      attributes.initialValues.textColor = "DEFAULT";
       return (
         <LabelWidget.Settings {...attributes}/>
       );
@@ -142,7 +141,6 @@ class WidgetEditable extends React.Component {
       );
     }
     if (widget.type === WIDGET_TYPES.SLIDER) {
-      attributes.initialValues.textColor = "DEFAULT";
       return (
         <SliderWidget.Settings {...attributes}/>
       );

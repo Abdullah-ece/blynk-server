@@ -498,7 +498,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     ],
     isColorSetEnabled: false,
     backgroundColor: '#fff',
-    textColor: '#000',
+    textColor: 'DEFAULT',
     dataType: WIDGETS_LABEL_DATA_TYPES.NUMBER,
     colorsSet: [
       {
@@ -554,6 +554,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     y: 0,
     w: 3,
     h: 1,
+    textColor: 'DEFAULT',
     label: "Slider",
     sources: [
       {
