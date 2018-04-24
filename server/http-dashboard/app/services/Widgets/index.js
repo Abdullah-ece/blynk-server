@@ -540,6 +540,8 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     w: 2,
     h: 1,
     label: "Switch",
+    onValue: 1,
+    offValue: 0,
     sources: [],
     alignment: WIDGETS_SWITCH_ALIGNMENT.LEFT,
     labelPosition: WIDGETS_SWITCH_LABEL_ALIGNMENT.LEFT,

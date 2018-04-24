@@ -137,12 +137,6 @@ class WidgetEditable extends React.Component {
       );
     }
     if (widget.type === WIDGET_TYPES.SWITCH) {
-      if (!attributes.initialValues.onValue &&
-          !attributes.initialValues.offValue) {
-
-        attributes.initialValues.onValue = "1";
-        attributes.initialValues.offValue = "0";
-      }
       return (
         <SwitchWidget.Settings {...attributes}/>
       );
