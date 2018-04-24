@@ -261,6 +261,7 @@ class LinearWidget extends React.Component {
 
     dataSources = dataSources.map(dataSource => ({
       ...dataSource,
+      markerSize: 5,
       xValueFormatString: formats.hoverFormat,
       yValueFormatString: '###,###,###,###'
 
