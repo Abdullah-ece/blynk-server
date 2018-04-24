@@ -24,6 +24,7 @@ import './canvasjs';
 /* components */
 import Layout, {UserLayout} from './components/Layout';
 import LoginLayout from './components/LoginLayout';
+import TermsAndConditions from './components/TermsAndConditions';
 
 /* scenes */
 import Login from './scenes/Login';
@@ -123,6 +124,7 @@ Store().then((store) => {
               <Route path="/invite" component={Invite}/>
             </Route>
           </Route>
+          <Route path="/terms-and-conditions" component={TermsAndConditions}/>
           <Route component={StyleGuide} path="/style-guide"/>
           <Redirect from="*" to="/login"/>
         </Router>
