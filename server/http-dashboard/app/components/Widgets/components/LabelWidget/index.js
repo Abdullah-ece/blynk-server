@@ -219,10 +219,10 @@ class LabelWidget extends React.Component {
       ...this.getLabelStyles(),
       textAlign: this.getTextAlignStyle(this.props.data.alignment),
     };
-
+    const labelColor = (this.props.data.textColor === "DEFAULT" && !this.props.data.isColorSetEnabled)? "#58595d" : null;
     return (
       <div {...this.props.parentElementProps} style={style} className={`widgets--widget`}>
-        <div className="widgets--widget-label" style={this.props.data.textColor === "DEFAULT"? {color:"#58595d"}: null} >
+        <div className="widgets--widget-label" style={{color:labelColor}} >
           <Dotdotdot  clamp={1}>{this.props.data.label || 'No Widget Name'}</Dotdotdot>
           {this.props.tools}
         </div>
