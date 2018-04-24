@@ -526,7 +526,9 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT,
     level: {
       position: WIDGETS_LABEL_LEVEL_POSITION.VERTICAL,
-      color: '007dc4'
+      color: '007dc4',
+      min: 0,
+      max: 100,
     }
   },
   [WIDGET_TYPES.SWITCH]: {
