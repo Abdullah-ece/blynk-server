@@ -13,9 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
 
@@ -73,13 +75,17 @@ public class ReportingWorker implements Runnable {
      */
     private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map,
                                                            GraphGranularityType type) {
-        long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
+        if (map.size() == 0) {
+            return Collections.emptyMap();
+        }
 
-        ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());
-        keys.sort(AggregationKey.AGGREGATION_KEY_COMPARATOR);
+        Set<AggregationKey> aggregationKeySet = map.keySet();
+        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[aggregationKeySet.size()]);
+        Arrays.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
 
+        long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
         for (AggregationKey keyToRemove : keys) {
             //if prev hour
             if (keyToRemove.isOutdated(nowTruncatedToPeriod)) {

@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.35.2-SNAPSHOT</version>
+    <version>0.36.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -60,7 +60,6 @@
     </repositories>
 
     <profiles>
-
         <profile>
             <id>win</id>
             <activation>
@@ -97,9 +96,16 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>10</source>
+                    <target>10</target>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>6.1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -109,15 +115,6 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <argLine>-Xmx1024m</argLine>
                 </configuration>
             </plugin>
 
@@ -161,12 +158,12 @@
         <!-- maven plugins -->
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
-        <maven-surefire-plugin.version>2.20.1</maven-surefire-plugin.version>
+        <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
+        <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.23.Final</netty.version>
+        <netty.version>4.1.24.Final</netty.version>
         <netty.boring.ssl.version>2.0.8.Final</netty.boring.ssl.version>
         <log4j2.version>2.11.0</log4j2.version>
         <jackson-databind.version>2.9.5</jackson-databind.version>
@@ -186,7 +183,7 @@
         <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <junit.version>4.12</junit.version>
-        <mockito-core.version>2.10.0</mockito-core.version>
+        <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>

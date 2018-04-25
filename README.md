@@ -23,6 +23,7 @@ If you need more information, please follow these links:
 - [Download](#blynk-server)
 - [Requirements](#requirements)
 - [Quick Local Server setup](#quick-local-server-setup)
+- [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Quick local server setup on Raspberry PI](#quick-local-server-setup-on-raspberry-pi)
 - [Enabling server auto restart on unix-like systems](#enabling-server-auto-restart-on-unix-like-systems)
 - [Enabling server auto restart on Windows](#enabling-server-auto-restart-on-windows)
@@ -33,7 +34,6 @@ If you need more information, please follow these links:
 - [Administration UI](#administration-ui)
 - [Dashboard UI](https://github.com/blynkkk/blynk-server#dashboard-ui)
 - [HTTP/S RESTful API](#https-restful)
-- [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Enabling sms on local server](#enabling-sms-on-local-server)
 - [Enabling raw data storage](#enabling-raw-data-storage)
 - [Automatic Let's Encrypt Certificates](#automatic-lets-encrypt-certificates-generation)
@@ -64,7 +64,7 @@ messages between Blynk mobile application and various microcontroller boards and
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
-For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
+For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_windows-x64_bin.exe) and install. 
 
 ## Quick local server setup
 
@@ -75,7 +75,7 @@ For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+1
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.35.1.jar -dataFolder /path
+        java -jar server-0.35.3.jar -dataFolder /path
         
 That's it! 
 
@@ -118,11 +118,11 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.35.1/server-0.35.1-java8.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.35.3/server-0.35.3-java8.jar"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.35.1-java8.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.35.3-java8.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -144,7 +144,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.35.1.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.35.3.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -152,7 +152,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.35.1.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.35.3.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -164,7 +164,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.35.1.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.35.3.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -181,7 +181,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.35.1.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.35.3.jar   
         
 + Kill the old process
 
@@ -280,7 +280,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.35.1.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.35.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
