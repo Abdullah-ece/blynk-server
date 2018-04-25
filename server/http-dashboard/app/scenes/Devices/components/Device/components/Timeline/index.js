@@ -47,7 +47,7 @@ class Timeline extends React.Component {
 
   initialValues = {
     type: TIMELINE_TYPE_FILTERS.ALL.key,
-    time: TIMELINE_TIME_FILTERS.HOUR.key,
+    time: TIMELINE_TIME_FILTERS.ONE_HOUR.key,
     customTime: []
   };
 

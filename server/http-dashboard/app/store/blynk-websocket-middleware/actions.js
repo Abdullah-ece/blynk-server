@@ -1,14 +1,16 @@
 export const ACTIONS = {
-  'BLYNK_WS_TRACK_DEVICE_ID'  : 'BLYNK_WS_TRACK_DEVICE_ID',
-  'BLYNK_WS_REQUEST'          : 'BLYNK_WS_REQUEST',
-  'BLYNK_WS_RESPONSE'         : 'BLYNK_WS_RESPONSE',
-  'BLYNK_WS_CONNECT'          : 'BLYNK_WS_CONNECT',
-  'BLYNK_WS_LOGIN'            : 'BLYNK_WS_LOGIN',
-  'BLYNK_WS_VIRTUAL_WRITE'    : 'BLYNK_WS_VIRTUAL_WRITE',
-  'BLYNK_WS_HARDWARE'         : 'BLYNK_WS_HARDWARE',
-  'BLYNK_WS_LOG_EVENT'        : 'BLYNK_WS_LOG_EVENT',
-  'BLYNK_WS_DEVICE_CONNECT'   : 'BLYNK_WS_DEVICE_CONNECT',
-  'BLYNK_WS_DEVICE_DISCONNECT': 'BLYNK_WS_DEVICE_DISCONNECT',
+  'BLYNK_WS_TRACK_DEVICE_ID'    : 'BLYNK_WS_TRACK_DEVICE_ID',
+  'BLYNK_WS_CHART_DATA_RESPONSE': 'BLYNK_WS_CHART_DATA_RESPONSE',
+  'BLYNK_WS_CHART_DATA_FETCH'   : 'BLYNK_WS_CHART_DATA_FETCH',
+  'BLYNK_WS_REQUEST'            : 'BLYNK_WS_REQUEST',
+  'BLYNK_WS_RESPONSE'           : 'BLYNK_WS_RESPONSE',
+  'BLYNK_WS_CONNECT'            : 'BLYNK_WS_CONNECT',
+  'BLYNK_WS_LOGIN'              : 'BLYNK_WS_LOGIN',
+  'BLYNK_WS_VIRTUAL_WRITE'      : 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE'           : 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_LOG_EVENT'          : 'BLYNK_WS_LOG_EVENT',
+  'BLYNK_WS_DEVICE_CONNECT'     : 'BLYNK_WS_DEVICE_CONNECT',
+  'BLYNK_WS_DEVICE_DISCONNECT'  : 'BLYNK_WS_DEVICE_DISCONNECT',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -102,5 +104,25 @@ export const blynkWsDeviceDisconnect = ({ deviceId }) => ({
     deviceId
   }
 });
+
+export const blynkWsChartDataFetch = ({ deviceId, widgetId, period }) => ({
+  type : ACTIONS.BLYNK_WS_CHART_DATA_FETCH,
+  value: {
+    deviceId,
+    widgetId,
+    graphPeriod: period
+  }
+});
+
+export const blynkChartDataResponse = ({ deviceId, widgetId, points, graphPeriod }) => ({
+  type: ACTIONS.BLYNK_WS_CHART_DATA_RESPONSE,
+  value: {
+    deviceId,
+    widgetId,
+    points,
+    graphPeriod
+  }
+});
+
 
 export default ACTIONS;

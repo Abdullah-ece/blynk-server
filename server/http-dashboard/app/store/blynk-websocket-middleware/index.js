@@ -6,6 +6,7 @@ import {
   blynkWsMessage,
   blynkWsHardware,
   blynkWsTrackDevice,
+  blynkWsChartDataFetch
 } from './commands';
 
 export const createBlynkWsMiddleware = (options = {}) => {
@@ -65,6 +66,10 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
     if (action && action.type === blynkWsActions.BLYNK_WS_HARDWARE) {
       execCommand(blynkWsHardware, params);
+    }
+
+    if (action && action.type === blynkWsActions.BLYNK_WS_CHART_DATA_FETCH) {
+      execCommand(blynkWsChartDataFetch, params);
     }
 
     if (action && action.type === blynkWsActions.BLYNK_WS_TRACK_DEVICE_ID) {

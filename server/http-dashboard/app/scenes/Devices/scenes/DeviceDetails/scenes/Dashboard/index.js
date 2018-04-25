@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Icon} from 'antd';
 import {bindActionCreators} from 'redux';
-import {buildDataQueryRequestForWidgets} from 'services/Widgets';
+import {WIDGET_TYPES} from 'services/Widgets';
 import {Grids} from "components";
 import {
   DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME,
@@ -11,10 +11,10 @@ import {
 } from 'services/Devices';
 import {getFormValues} from 'redux-form';
 import {
-  DeviceDashboardDataFetch,
   DeviceDashboardFetch
 } from 'data/Devices/api';
 import {WidgetStatic} from "components/Widgets";
+import {blynkWsChartDataFetch} from 'store/blynk-websocket-middleware/actions';
 
 @connect((state) => ({
   orgId: state.Organization.id,
@@ -23,7 +23,7 @@ import {WidgetStatic} from "components/Widgets";
   timeFilter: getFormValues(DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME)(state)
 }), (dispatch) => ({
   fetchDeviceDashboard: bindActionCreators(DeviceDashboardFetch, dispatch),
-  fetchDeviceDashboardData: bindActionCreators(DeviceDashboardDataFetch, dispatch)
+  fetchDeviceDashboardData: bindActionCreators(blynkWsChartDataFetch, dispatch)
 }))
 class DashboardScene extends React.Component {
 
@@ -75,31 +75,24 @@ class DashboardScene extends React.Component {
 
     const time = this.getTimeFilerRange();
 
-    const dataQueryRequests = buildDataQueryRequestForWidgets({
-      widgets: this.props.dashboard && this.props.dashboard.widgets || [],
-      timeFrom: time[0],
-      timeTo: time[1],
-      deviceId: this.props.params.id
-    });
-
-    if(dataQueryRequests && dataQueryRequests.length)
+    this.props.dashboard.widgets.filter((widget) => (
+      widget.type === WIDGET_TYPES.LINEAR
+    )).forEach((widget) => {
       this.props.fetchDeviceDashboardData({
-        deviceId         : this.props.params.id,
-        dataQueryRequests: dataQueryRequests,
-        isLive           : this.props.timeFilter.time === TIMELINE_TIME_FILTERS.LIVE.key
+        deviceId: this.props.params.id,
+        widgetId: widget.id,
+        period: time
       });
+    });
   }
 
   getTimeFilerRange() {
     const time = this.props.timeFilter.time;
 
     if(time === TIMELINE_TIME_FILTERS.CUSTOM.key) {
-      return this.props.timeFilter.customTime;
+      return 'HOUR'; // temp hardcode
     } else {
-      return [
-        TIMELINE_TIME_FILTERS[time].get(),
-        new Date().getTime(),
-      ];
+      return time;
     }
   }
 

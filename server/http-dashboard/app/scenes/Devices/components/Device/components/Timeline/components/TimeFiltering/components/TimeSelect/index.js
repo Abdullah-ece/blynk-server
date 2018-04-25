@@ -15,11 +15,11 @@ class TimeSelect extends React.Component {
     return (
       <div className="devices--device-timeline--time-filtering-time-select">
         <Radio.Group {...this.props.input}>
-          <Radio.Button value={TIMELINE_TIME_FILTERS.HOUR.key}>
-            {TIMELINE_TIME_FILTERS.HOUR.value}
+          <Radio.Button value={TIMELINE_TIME_FILTERS.ONE_HOUR.key}>
+            {TIMELINE_TIME_FILTERS.ONE_HOUR.value}
           </Radio.Button>
-          <Radio.Button value={TIMELINE_TIME_FILTERS['6HOURS'].key}>
-            {TIMELINE_TIME_FILTERS['6HOURS'].value}
+          <Radio.Button value={TIMELINE_TIME_FILTERS.SIX_HOURS.key}>
+            {TIMELINE_TIME_FILTERS.SIX_HOURS.value}
           </Radio.Button>
           <Radio.Button value={TIMELINE_TIME_FILTERS.DAY.key}>
             {TIMELINE_TIME_FILTERS.DAY.value}

@@ -14,44 +14,46 @@ import _ from 'lodash';
 
 import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 
-const parseChartData = (response) => {
+// temporarily comment
 
-  const parseLineWidgetData = (response) => {
-
-    return response.data.map((item) => {
-      const key = item.key;
-      const value = item.value;
-
-      return {
-        x: Number(key),
-        y: Number(value)
-      };
-    });
-  };
-
-  const parseBarWidgetData = (response) => {
-
-    return Object.keys(response.data).map((key) => {
-      const value = response.data[key];
-
-      return {
-        name: String(key),
-        value: Number(value)
-      };
-    });
-  };
-
-  if (!response.data) return [];
-
-  if (Array.isArray(response.data)) {
-    // parse line chart data
-    return parseLineWidgetData(response);
-  } else {
-    // parse bar chart data
-    return parseBarWidgetData(response);
-  }
-
-};
+// const parseChartData = (response) => {
+//
+//   const parseLineWidgetData = (response) => {
+//
+//     return response.data.map((item) => {
+//       const key = item.key;
+//       const value = item.value;
+//
+//       return {
+//         x: Number(key),
+//         y: Number(value)
+//       };
+//     });
+//   };
+//
+//   const parseBarWidgetData = (response) => {
+//
+//     return Object.keys(response.data).map((key) => {
+//       const value = response.data[key];
+//
+//       return {
+//         name: String(key),
+//         value: Number(value)
+//       };
+//     });
+//   };
+//
+//   if (!response.data) return [];
+//
+//   if (Array.isArray(response.data)) {
+//     // parse line chart data
+//     return parseLineWidgetData(response);
+//   } else {
+//     // parse bar chart data
+//     return parseBarWidgetData(response);
+//   }
+//
+// };
 
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.metaFields) {
@@ -227,7 +229,7 @@ export default function Devices(state = initialState, action) {
     case ACTIONS.BLYNK_WS_DEVICE_CONNECT:
 
       devicesList = state.devices.map((device) => {
-        if(Number(device.id) === Number(action.value.deviceId))
+        if (Number(device.id) === Number(action.value.deviceId))
           return {
             ...device,
             status: 'ONLINE'
@@ -238,7 +240,7 @@ export default function Devices(state = initialState, action) {
 
       deviceDetails = state.deviceDetails;
 
-      if(Number(deviceDetails.id) === Number(action.value.deviceId)) {
+      if (Number(deviceDetails.id) === Number(action.value.deviceId)) {
         deviceDetails = {
           ...deviceDetails,
           status: 'ONLINE'
@@ -247,13 +249,13 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        devices: devicesList,
+        devices      : devicesList,
         deviceDetails: deviceDetails,
       };
 
     case ACTIONS.BLYNK_WS_DEVICE_DISCONNECT:
       devicesList = state.devices.map((device) => {
-        if(Number(device.id) === Number(action.value.deviceId))
+        if (Number(device.id) === Number(action.value.deviceId))
           return {
             ...device,
             status: 'OFFLINE'
@@ -264,7 +266,7 @@ export default function Devices(state = initialState, action) {
 
       deviceDetails = state.deviceDetails;
 
-      if(Number(deviceDetails.id) === Number(action.value.deviceId)) {
+      if (Number(deviceDetails.id) === Number(action.value.deviceId)) {
         deviceDetails = {
           ...deviceDetails,
           status: 'OFFLINE'
@@ -273,7 +275,7 @@ export default function Devices(state = initialState, action) {
 
       return {
         ...state,
-        devices: devicesList,
+        devices      : devicesList,
         deviceDetails: deviceDetails,
       };
 
@@ -287,20 +289,20 @@ export default function Devices(state = initialState, action) {
 
       const product = _.find(state.devicesProducts, (product) => (Number(product.id) === Number(state.deviceDetails.productId)));
 
-      if(!product) return state;
+      if (!product) return state;
 
       const event = _.find(product.events, (event) => event.eventCode === action.value.eventCode);
 
-      if(!event) return state;
+      if (!event) return state;
 
       const availableTimeFilters = [
-        TIMELINE_TIME_FILTERS.HOUR.key,
+        TIMELINE_TIME_FILTERS.ONE_HOUR.key,
         TIMELINE_TIME_FILTERS.DAY.key,
         TIMELINE_TIME_FILTERS.WEEK.key,
         TIMELINE_TIME_FILTERS.MONTH.key,
       ];
 
-      if(!state.timelineControls || !state.timelineControls.time || !state.timelineControls.type) {
+      if (!state.timelineControls || !state.timelineControls.time || !state.timelineControls.type) {
         return state;
       }
 
@@ -312,21 +314,21 @@ export default function Devices(state = initialState, action) {
         return state;
       }
 
-      if(Number(action.value.deviceId) === Number(state.deviceDetails.id)) {
+      if (Number(action.value.deviceId) === Number(state.deviceDetails.id)) {
         // active device
 
         let logEvents = Array.isArray(state.timeline && state.timeline.logEvents) ? state.timeline.logEvents : [];
 
         let timeline = state.timeline;
 
-        if(event.type === TIMELINE_TYPE_FILTERS.WARNING.key) {
+        if (event.type === TIMELINE_TYPE_FILTERS.WARNING.key) {
           timeline = {
             ...timeline,
             totalWarning: (timeline.totalWarning || 0) + 1
           };
         }
 
-        if(event.type === TIMELINE_TYPE_FILTERS.CRITICAL.key) {
+        if (event.type === TIMELINE_TYPE_FILTERS.CRITICAL.key) {
           timeline = {
             ...timeline,
             totalCritical: (timeline.totalCritical || 0) + 1
@@ -334,12 +336,12 @@ export default function Devices(state = initialState, action) {
         }
 
         logEvents = [{
-          id: -1,
-          eventType: event.type,
-          name: event.name,
+          id         : -1,
+          eventType  : event.type,
+          name       : event.name,
           description: event.description,
-          ts: new Date().getTime(),
-          isResolved: false,
+          ts         : new Date().getTime(),
+          isResolved : false,
         }, ...logEvents];
 
         return {
@@ -358,69 +360,95 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         deviceDashboardLiveData: {},
-        deviceDashboardData: {},
-        deviceDashboard: {},
-        deviceDashboardLoading: true,
+        deviceDashboardData    : {},
+        deviceDashboard        : {},
+        deviceDashboardLoading : true,
       };
 
 
-    case "API_DEVICE_DASHBOARD_DATA_FETCH":
+    case ACTIONS.BLYNK_WS_CHART_DATA_FETCH:
 
-      let queries = action.value.dataQueryRequests || [];
+      let isLive = action.value.graphPeriod === 'LIVE'; // @todo use LIVE from service as CONSTANT
 
-      if (action.value.isLive) {
+      let pin = -1;
 
+      try {
+        let widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
+
+        pin = widget.sources[0].dataStream.pin;
+
+      } catch (e) {
+        /* eslint-disable */
+        console.error("Cannot take pin from widget", e);
+        /* eslint-enable */
+      }
+
+      if (pin === -1) {
+        // return state if pin not found
+        return state;
+      }
+
+      if (isLive) {
         let deviceDashboardChartLiveData = {};
 
-        queries.forEach((query) => {
-          deviceDashboardChartLiveData[query.pin] = {
-            loading: true,
-            data   : []
-          };
-        });
+        deviceDashboardChartLiveData[pin] = {
+          loading: true,
+          data   : []
+        };
 
         return {
           ...state,
           deviceDashboardChartLiveData: deviceDashboardChartLiveData
         };
-
       } else {
-
         let deviceDashboardChartData = {};
 
-        queries.forEach((query) => {
-          deviceDashboardChartData[query.widgetId] = {
-            pin    : query.pin,
-            loading: true,
-            data   : []
-          };
-        });
+        deviceDashboardChartData[action.value.widgetId] = {
+          pin    : pin,
+          loading: true,
+          data   : []
+        };
 
         return {
           ...state,
-          deviceDashboardChartData,
+          deviceDashboardChartData: deviceDashboardChartData
         };
-
       }
 
-    case "API_DEVICE_DASHBOARD_DATA_FETCH_SUCCESS":
+    case ACTIONS.BLYNK_WS_CHART_DATA_RESPONSE:
 
-      queries = action.meta.previousAction.value.dataQueryRequests || [];
-
-      if (!action.payload.data || !action.payload.data.length)
+      if(!Array.isArray(action.value.points) || (Array.isArray(action.value.points) && !action.value.points.length)) {
         return state;
+      }
 
-      if (action.meta.previousAction.value.isLive) {
+      isLive = action.value.graphPeriod === 'LIVE';
+
+      pin = -1;
+
+      try {
+        let widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
+
+        pin = widget.sources[0].dataStream.pin;
+
+      } catch (e) {
+        /* eslint-disable */
+        console.error("Cannot take pin from widget", e);
+        /* eslint-enable */
+      }
+
+      if (pin === -1) {
+        // return state if pin not specified
+        return state;
+      }
+
+      if (isLive) {
 
         let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
 
-        queries.forEach((query, key) => {
-
-          deviceDashboardChartLiveData[query.pin] = {
-            loading: false,
-            data: parseChartData(action.payload.data[key])
-          };
-        });
+        deviceDashboardChartLiveData[pin] = {
+          loading: false,
+          data   : action.value.points
+        };
 
         return {
           ...state,
@@ -431,14 +459,11 @@ export default function Devices(state = initialState, action) {
 
         let deviceDashboardChartData = {...state.deviceDashboardChartData};
 
-        queries.forEach((query, key) => {
-
-          deviceDashboardChartData[query.widgetId] = {
-            pin    : query.pin,
-            loading: false,
-            data   : parseChartData(action.payload.data[key])
-          };
-        });
+        deviceDashboardChartData[action.value.widgetId] = {
+          pin    : pin,
+          loading: false,
+          data   : action.value.points
+        };
 
         return {
           ...state,

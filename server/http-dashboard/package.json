@@ -46,6 +46,7 @@
     "moment-duration-format": "2.2.2",
     "object-assign": "4.1.0",
     "outdatedbrowser": "1.1.5",
+    "pako": "1.0.6",
     "prop-types": "15.5.10",
     "react": "15.4.1",
     "react-color": "2.11.4",

@@ -420,14 +420,14 @@ export const TIMELINE_TIME_FILTERS = {
     'time': 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'hour').valueOf()
   },
-  'HOUR': {
-    'key': 'HOUR',
+  'ONE_HOUR': {
+    'key': 'ONE_HOUR',
     'value': '1 hour',
     'time': 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'hour').valueOf()
   },
-  '6HOURS': {
-    'key': '6HOURS',
+  'SIX_HOURS': {
+    'key': 'SIX_HOURS',
     'value': '6 hours',
     'time': 6 * 60 * 60 * 1000,
     'get': () => moment().subtract(6, 'hour').valueOf()

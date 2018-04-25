@@ -4,6 +4,7 @@ import {
   blynkWsLogEvent,
   blynkWsDeviceConnect,
   blynkWsDeviceDisconnect,
+  blynkChartDataResponse,
 } from './actions';
 
 import {
@@ -189,6 +190,67 @@ export const Handlers = (params) => {
 
   };
 
+  const chartDataHandler = ({ msgId, previousAction }) => {
+
+    const DEVICE_ID_OFFSET = 3;
+    const POINTS_COUNT_OFFSET = DEVICE_ID_OFFSET + 4;
+    const POINTS_DATA_OFFSET = POINTS_COUNT_OFFSET + 4;
+
+    const POINT_DATA_VALUE_BYTES = 8;
+    const POINT_DATA_TIMESTAMP_BYTES = 8;
+
+    const POINT_DATA_VALUE_OFFSET = (i) => (POINT_DATA_VALUE_BYTES+POINT_DATA_TIMESTAMP_BYTES)*i;
+    const POINT_DATA_TIMESTAMP_OFFSET = (i) => (POINT_DATA_VALUE_OFFSET(i) + POINT_DATA_VALUE_BYTES);
+
+    const getTimestampLong = (data, i) => {
+      const MAGIC_NUMBER_TO_READ_TIMESTAMP = 12;
+      return data.getUint32(POINT_DATA_TIMESTAMP_OFFSET(i) & 0x001FFFFF) * 4294967296 + data.getUint32((POINT_DATA_VALUE_OFFSET(i))+MAGIC_NUMBER_TO_READ_TIMESTAMP);
+    };
+
+    let deviceId = dataView.getUint32(DEVICE_ID_OFFSET);
+    let widgetId = previousAction.value.widgetId;
+    let graphPeriod = previousAction.value.graphPeriod;
+    let pointsCount = dataView.getUint32(POINTS_COUNT_OFFSET); // deviceId = 4 bytes // pointsCount = 60 dots
+
+    let pointData = new DataView(dataView.buffer, POINTS_DATA_OFFSET);
+
+    const points = [];
+
+    for(let i = 0; i < pointsCount; i++) {
+      let point = pointData.getFloat64(POINT_DATA_VALUE_OFFSET(i));
+      let timestamp = getTimestampLong(pointData, i);
+
+      points.push({
+        x: Number(timestamp),
+        y: Number(point),
+        date: new Date(timestamp).toString()
+      });
+    }
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage ChartData", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+      });
+
+    store.dispatch(blynkWsResponse({
+      id      : msgId,
+      response: {
+        command: command,
+        body   : `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+      }
+    }));
+
+    store.dispatch(blynkChartDataResponse({
+      deviceId,
+      widgetId,
+      graphPeriod,
+      points,
+    }));
+
+  };
+
   const unknownCommandHandler = () => {
 
     if (options.isDebugMode)
@@ -213,6 +275,7 @@ export const Handlers = (params) => {
     DeviceConnectHandler: deviceConnectHandler,
     DeviceDisconnectHandler: deviceDisconnectHandler,
     AppSyncHandler: appSyncHandler,
+    ChartDataHandler: chartDataHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };
 };
