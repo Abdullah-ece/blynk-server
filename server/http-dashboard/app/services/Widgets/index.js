@@ -566,7 +566,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     step: 1,
     fineControlEnabled: true,
     fineControlStep: 1,
-    valuePosition: WIDGETS_SWITCH_ALIGNMENT.LEFT,
+    valuePosition: WIDGETS_SLIDER_VALUE_POSITION.RIGHT,
     decimalFormat: '',
     valueSuffix: ''
   }
