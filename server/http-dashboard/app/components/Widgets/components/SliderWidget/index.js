@@ -74,12 +74,48 @@ class SliderWidget extends React.Component {
     this.sliderWithControls = this.sliderWithControls.bind(this);
     this.handleFineControlIncrease = this.handleFineControlIncrease.bind(this);
     this.handleFineControlDecrease = this.handleFineControlDecrease.bind(this);
+    this.handleFineControlIncreaseMouseUp = this.handleFineControlIncreaseMouseUp.bind(this);
+    this.handleFineControlIncreaseMouseDown = this.handleFineControlIncreaseMouseDown.bind(this);
+
+    this.handleFineControlDecreaseMouseUp = this.handleFineControlDecreaseMouseUp.bind(this);
+    this.handleFineControlDecreaseMouseDown = this.handleFineControlDecreaseMouseDown.bind(this);
+
   }
 
   componentWillMount() {
     this.setState({
       value: this.props.value
     });
+  }
+
+  handleFineControlDecreaseMouseDown() {
+    this.fineControlDecreaseTimeout = setTimeout(() => {
+      this.fineControlDecreaseInterval = setInterval(() => {
+        this.handleFineControlDecrease();
+      }, 100);
+    }, 60);
+  }
+
+  handleFineControlDecreaseMouseUp() {
+    clearTimeout(this.fineControlDecreaseTimeout);
+    clearInterval(this.fineControlDecreaseInterval);
+
+    this.handleFineControlDecrease();
+  }
+
+  handleFineControlIncreaseMouseDown() {
+    this.fineControlIncreaseTimeout = setTimeout(() => {
+      this.fineControlIncreaseInterval = setInterval(() => {
+        this.handleFineControlIncrease();
+      }, 100);
+    }, 60);
+  }
+
+  handleFineControlIncreaseMouseUp() {
+    clearTimeout(this.fineControlIncreaseTimeout);
+    clearInterval(this.fineControlIncreaseInterval);
+
+    this.handleFineControlIncrease();
   }
 
   componentDidMount() {
@@ -122,13 +158,13 @@ class SliderWidget extends React.Component {
   sliderWithControls(slider) {
     return (
       <div className="widgets--widget-slider-wrapper">
-        <div className="widgets--widget-slider--control-left" onClick={this.handleFineControlDecrease}>
+        <div className="widgets--widget-slider--control-left" onMouseDown={this.handleFineControlDecreaseMouseDown} onMouseUp={this.handleFineControlDecreaseMouseUp}>
           <Icon type="minus"/>
         </div>
         <div className="widgets--widget-slider--control-slider">
           {slider}
         </div>
-        <div className="widgets--widget-slider--control-right" onClick={this.handleFineControlIncrease}>
+        <div className="widgets--widget-slider--control-right" onMouseDown={this.handleFineControlIncreaseMouseDown} onMouseUp={this.handleFineControlIncreaseMouseUp}>
           <Icon type="plus"/>
         </div>
       </div>
