@@ -562,7 +562,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
         ...WIDGETS_PREDEFINED_SOURCE_OPTIONS[WIDGET_TYPES.SLIDER]
       }
     ],
-    sendOnReleaseOn: false,
+    sendOnReleaseOn: true,
     step: 1,
     fineControlEnabled: true,
     fineControlStep: 1,
