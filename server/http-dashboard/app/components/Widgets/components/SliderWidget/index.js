@@ -88,36 +88,6 @@ class SliderWidget extends React.Component {
     });
   }
 
-  handleFineControlDecreaseMouseDown() {
-    this.fineControlDecreaseTimeout = setTimeout(() => {
-      this.fineControlDecreaseInterval = setInterval(() => {
-        this.handleFineControlDecrease();
-      }, 100);
-    }, 60);
-  }
-
-  handleFineControlDecreaseMouseUp() {
-    clearTimeout(this.fineControlDecreaseTimeout);
-    clearInterval(this.fineControlDecreaseInterval);
-
-    this.handleFineControlDecrease();
-  }
-
-  handleFineControlIncreaseMouseDown() {
-    this.fineControlIncreaseTimeout = setTimeout(() => {
-      this.fineControlIncreaseInterval = setInterval(() => {
-        this.handleFineControlIncrease();
-      }, 100);
-    }, 60);
-  }
-
-  handleFineControlIncreaseMouseUp() {
-    clearTimeout(this.fineControlIncreaseTimeout);
-    clearInterval(this.fineControlIncreaseInterval);
-
-    this.handleFineControlIncrease();
-  }
-
   componentDidMount() {
     this.toggleSliderColor();
   }
@@ -133,6 +103,44 @@ class SliderWidget extends React.Component {
 
   componentDidUpdate() {
     this.toggleSliderColor();
+  }
+
+  handleFineControlDecreaseMouseDown(event) {
+    event.stopPropagation();
+
+    this.fineControlDecreaseTimeout = setTimeout(() => {
+      this.fineControlDecreaseInterval = setInterval(() => {
+        this.handleFineControlDecrease();
+      }, 100);
+    }, 60);
+  }
+
+  handleFineControlDecreaseMouseUp(event) {
+    event.stopPropagation();
+
+    clearTimeout(this.fineControlDecreaseTimeout);
+    clearInterval(this.fineControlDecreaseInterval);
+
+    this.handleFineControlDecrease();
+  }
+
+  handleFineControlIncreaseMouseDown(event) {
+    event.stopPropagation();
+
+    this.fineControlIncreaseTimeout = setTimeout(() => {
+      this.fineControlIncreaseInterval = setInterval(() => {
+        this.handleFineControlIncrease();
+      }, 100);
+    }, 60);
+  }
+
+  handleFineControlIncreaseMouseUp(event) {
+    event.stopPropagation();
+
+    clearTimeout(this.fineControlIncreaseTimeout);
+    clearInterval(this.fineControlIncreaseInterval);
+
+    this.handleFineControlIncrease();
   }
 
   toggleSliderColor() {
@@ -269,6 +277,11 @@ class SliderWidget extends React.Component {
 
   handleChange(value, onRelease = false) {
 
+    // disable value increase/decrease if value is out of scope
+    if(value > this.props.data.maxValue || value < this.props.data.minValue) {
+      return false;
+    }
+
     if(!this.state.isDragging) {
       this.setState({
         isDragging: true
@@ -324,7 +337,7 @@ class SliderWidget extends React.Component {
     }
 
     const slider = (
-      <Slider ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
+      <Slider included={false} marks={{[minValue]: minValue, [maxValue]: maxValue}} tipFormatter={null} ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
     );
 
     const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
