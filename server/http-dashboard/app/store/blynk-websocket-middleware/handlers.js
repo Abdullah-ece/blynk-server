@@ -24,7 +24,7 @@ export const Handlers = (params) => {
 
   const {store, options, action, command, msgId, dataView} = params;
 
-  const responseHandler = ({ responseCode }) => {
+  const responseOKHandler = ({ responseCode }) => {
 
     store.dispatch(blynkWsResponse({
       id      : msgId,
@@ -35,7 +35,7 @@ export const Handlers = (params) => {
     }));
 
     if (options.isDebugMode)
-      options.debug("blynkWsMessage Response", action, {
+      options.debug("blynkWsMessage ResponseOK", action, {
         command     : command,
         msgId       : msgId,
         responseCode: responseCode
@@ -190,6 +190,42 @@ export const Handlers = (params) => {
 
   };
 
+  const noDataHandler = ({ msgId, previousAction }) => {
+
+    let deviceId = previousAction.value.deviceId;
+
+    let widgetId = previousAction.value.widgetId;
+
+    let graphPeriod = previousAction.value.graphPeriod;
+
+    let pointsCount = 0;
+
+    let points = [];
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage ChartData NoData", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+      });
+
+    store.dispatch(blynkWsResponse({
+      id      : msgId,
+      response: {
+        command: command,
+        body   : `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+      }
+    }));
+
+    store.dispatch(blynkChartDataResponse({
+      deviceId,
+      widgetId,
+      graphPeriod,
+      points,
+    }));
+
+  };
+
   const chartDataHandler = ({ msgId, previousAction }) => {
 
     const DEVICE_ID_OFFSET = 3;
@@ -269,13 +305,14 @@ export const Handlers = (params) => {
 
 
   return {
-    ResponseHandler: responseHandler,
+    ResponseOKHandler: responseOKHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,
     DeviceConnectHandler: deviceConnectHandler,
     DeviceDisconnectHandler: deviceDisconnectHandler,
     AppSyncHandler: appSyncHandler,
     ChartDataHandler: chartDataHandler,
+    NoDataHandler: noDataHandler,
     UnknownCommandHandler: unknownCommandHandler,
   };
 };

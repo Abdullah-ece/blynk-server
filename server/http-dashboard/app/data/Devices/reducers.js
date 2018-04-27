@@ -417,7 +417,7 @@ export default function Devices(state = initialState, action) {
 
     case ACTIONS.BLYNK_WS_CHART_DATA_RESPONSE:
 
-      if(!Array.isArray(action.value.points) || (Array.isArray(action.value.points) && !action.value.points.length)) {
+      if(!Array.isArray(action.value.points)) {
         return state;
       }
 

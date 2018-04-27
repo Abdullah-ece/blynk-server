@@ -21,6 +21,7 @@ let messages = [
 
 export const RESPONSE_CODES = {
   OK             : 200,
+  NO_DATA        : 17,
   ILLEGAL_COMMAND: 2,
 };
 
@@ -123,8 +124,6 @@ export const blynkWsChartDataFetch = (params) => {
     }
   }));
 
-  console.log(`${deviceId}\0${widgetId}\0${graphPeriod}`);
-
   messages.push({
     msgId: MSG_ID,
     value: {
@@ -202,6 +201,12 @@ export const blynkWsMessage = (params) => {
 
   const msgId = dataView.getUint16(1);
 
+  let responseCode = -1;
+
+  if(command === COMMANDS.RESPONSE) {
+    responseCode = dataView.getUint32(3);
+  }
+
   if (options.isDebugMode)
     options.debug("blynkWsMessage", action, {
       command: command,
@@ -229,10 +234,11 @@ export const blynkWsMessage = (params) => {
     }
   });
 
-  if (command === COMMANDS.RESPONSE) {
+  if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.OK) {
 
-    handlers.ResponseHandler({
-      responseCode: dataView.getUint32(3)
+    handlers.ResponseOKHandler({
+      responseCode: responseCode,
+      previousAction: previousAction
     });
 
   } else if (command === COMMANDS.HARDWARE) {
@@ -268,6 +274,13 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.CHART_DATA_FETCH) {
 
     handlers.ChartDataHandler({
+      msgId: ++MSG_ID,
+      previousAction,
+    });
+
+  } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
+
+    handlers.NoDataHandler({
       msgId: ++MSG_ID,
       previousAction,
     });
