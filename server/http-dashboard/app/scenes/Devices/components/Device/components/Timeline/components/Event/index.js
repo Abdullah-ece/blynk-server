@@ -2,6 +2,9 @@ import React          from 'react';
 import Simple         from './simple';
 import Resolved       from './resolved';
 import './styles.less';
+import {EVENT_TYPES} from "services/Products/index";
+import Idle from './idle';
+
 
 class Event extends React.Component {
 
@@ -12,6 +15,9 @@ class Event extends React.Component {
   };
 
   render() {
+    if(this.props.event.eventType === EVENT_TYPES.WAS_OFFLINE){
+      return (<Idle event={this.props.event} />);
+    }
     if (this.props.event.isResolved)
       return (<Resolved event={this.props.event}/>);
 

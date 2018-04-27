@@ -25,6 +25,7 @@ class Simple extends React.Component {
       "devices--device-timeline--event-warning": this.props.event.eventType === EVENT_TYPES.WARNING,
       "devices--device-timeline--event-info": this.props.event.eventType === EVENT_TYPES.INFO,
       "devices--device-timeline--event-success": this.props.event.isResolved === true,
+      "interrupted-tail" : this.props.event.eventType === EVENT_TYPES.ONLINE,
     });
 
     const canBeResolved = this.props.event.eventType === EVENT_TYPES.CRITICAL || this.props.event.eventType === EVENT_TYPES.WARNING;

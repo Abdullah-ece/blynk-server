@@ -5,6 +5,7 @@ import TypeFiltering from './../TypeFiltering';
 import TimeFiltering from './../TimeFiltering';
 import {reduxForm} from 'redux-form';
 import {TIMELINE_ITEMS_PER_PAGE} from 'services/Devices';
+import {EVENT_TYPES} from 'services/Products';
 import './styles.less';
 
 @reduxForm()
@@ -25,10 +26,16 @@ class Timeline extends React.Component {
   }
 
   getEventsForCurrentPage() {
+    if(this.props.timeline.logEvents && this.props.timeline.logEvents.length)
+      return this.props.timeline.logEvents.slice(0, this.getLimitForCurrentPage());
 
-    return this.props.timeline.logEvents.slice(0, this.getLimitForCurrentPage());
+    return [];
   }
-
+  wasOfflineEventTemplate() {
+    return {
+      eventType: EVENT_TYPES.WAS_OFFLINE,
+    };
+  }
   render() {
 
     let pending = null;
@@ -39,6 +46,15 @@ class Timeline extends React.Component {
     if(!this.props.timeline)
       return null;
 
+    let events = this.getEventsForCurrentPage() ;
+     if(events.length > 2){
+        events.map((event, key, events) => {
+          if (event.eventType === EVENT_TYPES.ONLINE && events[key + 1].eventType === EVENT_TYPES.OFFLINE) {
+            const WAS_OFFLINE = {...this.wasOfflineEventTemplate(), ts: event.ts - events[key + 1].ts};
+            events.splice(key + 1, 0, WAS_OFFLINE);
+          }
+        });
+     }
     return (
       <div className="devices--device-timeline-timeline">
         <TimeFiltering name="time"
@@ -52,7 +68,7 @@ class Timeline extends React.Component {
         ) || this.props.timeline.logEvents && (
           <Timelines className="devices--device-timeline-events"
                      pending={pending}>
-            { this.getEventsForCurrentPage().map((event, key) => (
+            {  events.map((event, key) => (
               <Event params={this.props.params} event={event} key={key}
                      onMarkAsResolved={this.props.onMarkAsResolved.bind(this)}/>
             ))}

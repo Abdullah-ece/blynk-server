@@ -40,7 +40,8 @@ export const EVENT_TYPES = {
   OFFLINE: 'OFFLINE',
   INFO: 'INFORMATION',
   WARNING: 'WARNING',
-  CRITICAL: 'CRITICAL'
+  CRITICAL: 'CRITICAL',
+  WAS_OFFLINE: 'WAS_OFFLINE'
 };
 
 export const getEventDefaultName = (type) => {
