@@ -160,7 +160,13 @@ class SliderWidget extends React.Component {
     if (!isNaN(Number(value)) && Number(value) === 0)
       return 0;
 
-    return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
+    let format = Canvasjs.formatNumber(value, this.props.data.decimalFormat);
+
+    if(!isNaN(Number(format))) {
+      format = Number(format).toLocaleString();
+    }
+
+    return format;
   }
 
   sliderWithControls(slider) {
@@ -197,7 +203,7 @@ class SliderWidget extends React.Component {
       <div className="widgets--widget-slider-container">
         <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-left" style={{minWidth: width, maxWidth: width}}>
           <div className={`widgets--widget-slider-container--value--value ${className}`}>
-            {value}
+            {this.formatValue(value)}
           </div>
           <div className="widgets--widget-slider-container--value--suffix">
             {suffix}
@@ -235,7 +241,7 @@ class SliderWidget extends React.Component {
         </div>
         <div className="widgets--widget-slider-container--value widgets--widget-slider-container-value-right" style={{minWidth: width, maxWidth: width}}>
           <div className={`widgets--widget-slider-container--value--value ${className}`}>
-            {value}
+            {this.formatValue(value)}
           </div>
           <div className="widgets--widget-slider-container--value--suffix">
             {suffix}
@@ -261,16 +267,19 @@ class SliderWidget extends React.Component {
     }
   }
 
-  getValueWidth(minValue, maxValue, suffix) {
+  getValueWidth(minValue, maxValue, suffix, step, fineStep) {
     let suffixWidthOfSymbol = 11;
     let marginWidth = 4;
-    let valueWidthOfSymbol = 14;
+    let valueWidthOfSymbol = 12;
 
-    let minValueSymbols = String(minValue || '').length;
-    let maxValueSymbols = String(maxValue || '').length;
+    let stepControlSymbols = String(step).split('.').length > 1 ? String(step).split('.')[1].length : 0;
+    let fineControlSymbols = String(fineStep).split('.').length > 1 ? String(fineStep).split('.')[1].length : 0;
+
+    let minValueSymbols = String(this.formatValue(Number(minValue)) || '').length;
+    let maxValueSymbols = String(this.formatValue(Number(maxValue)) || '').length;
     let suffixSymbols = String(suffix || '').length;
 
-    let valueSymbols = Math.max(minValueSymbols,maxValueSymbols);
+    let valueSymbols = Math.max(minValueSymbols,maxValueSymbols) + Math.max(stepControlSymbols, fineControlSymbols);
 
     return valueSymbols * valueWidthOfSymbol + suffixWidthOfSymbol * suffixSymbols + marginWidth;
   }
@@ -312,6 +321,7 @@ class SliderWidget extends React.Component {
     value: null,
     suffix: null,
     step: 1,
+    fineControlStep: 1,
     minValue: -1,
     maxValue: 1,
   }) {
@@ -337,14 +347,14 @@ class SliderWidget extends React.Component {
     }
 
     const slider = (
-      <Slider included={false} marks={{[minValue]: minValue, [maxValue]: maxValue}} tipFormatter={null} ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
+      <Slider included={false} marks={{[minValue]: this.formatValue(minValue), [maxValue]: this.formatValue(maxValue)}} tipFormatter={null} ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
     );
 
     const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
 
     const controls = params.fineControlEnabled ? this.sliderWithControls : this.sliderWithoutControls;
 
-    let width = this.getValueWidth(minValue, maxValue, suffix);
+    let width = this.getValueWidth(minValue, maxValue, suffix, step, params.fineControlStep);
 
     return (
       <div className={`widgets--widget-slider`}>
