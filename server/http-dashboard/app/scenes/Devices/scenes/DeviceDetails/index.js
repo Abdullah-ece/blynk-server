@@ -21,6 +21,7 @@ import {bindActionCreators} from 'redux';
 @connect((state) => ({
   device: state.Devices.deviceDetails,
   orgId: state.Account.orgId,
+  productId: state.Devices.deviceDetails.productId,
   // deviceDetails: state.Devices.get('deviceDetails'),
 }), (dispatch) => ({
   startLoading: bindActionCreators(StartLoading, dispatch),
@@ -39,6 +40,7 @@ class DeviceDetailsScene extends React.Component {
     location: PropTypes.object,
     //
     orgId: PropTypes.number,
+    productId: PropTypes.number,
     //
     fetchDevice: PropTypes.func,
     fetchProducts: PropTypes.func,
@@ -123,6 +125,7 @@ class DeviceDetailsScene extends React.Component {
     return (
       <Device params={this.props.params}
               location={this.props.location}
+              productId={this.props.productId}
       />
     );
   }

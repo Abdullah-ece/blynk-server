@@ -1,5 +1,7 @@
 import React from 'react';
 import './styles.less';
+import {Link} from 'react-router';
+import {Icon} from 'antd';
 // import {Map} from 'immutable';
 import PropTypes from 'prop-types';
 // import {Icon} from 'antd';
@@ -39,6 +41,7 @@ class Dashboard extends React.Component {
     // dashboard: PropTypes.instanceOf(Map),
     // widgets: PropTypes.instanceOf(Map),
     params: PropTypes.object,
+    productId: PropTypes.number,
     // timeFilteringValues: PropTypes.object,
     // fetchWidgetHistory: PropTypes.func,
     // initializeForm: PropTypes.func,
@@ -225,7 +228,15 @@ class Dashboard extends React.Component {
       <div className="devices--device-dashboard">
 
         <div>
-          <TimeFiltering params={this.props.params}/>
+          <div className="devices--device-dashboard-header-container">
+            <TimeFiltering params={this.props.params}/>
+            <div className="devices--device-dashboard-edit-link">
+              <Link to={"/products/edit/"+this.props.productId+"/dashboard"}>
+                <Icon type="edit"  style={{ fontSize: 25, color: 'rgba(32, 34, 39, 0.75)' }} />
+              </Link>
+            </div>
+          </div>
+
           <WidgetsDashboard params={this.props.params} />
         </div>
 

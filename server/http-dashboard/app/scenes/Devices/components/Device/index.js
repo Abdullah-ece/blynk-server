@@ -16,6 +16,7 @@ class Device extends React.Component {
     // account: React.PropTypes.object,
     params: React.PropTypes.object,
     location: React.PropTypes.object,
+    productId: React.PropTypes.number,
     // onChange: React.PropTypes.func,
     // updateDevice: React.PropTypes.func,
     // onDeviceChange: React.PropTypes.func,
@@ -57,7 +58,7 @@ class Device extends React.Component {
         <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
           <TabPane tab="Dashboard" key="1">
             <div className="devices-device-tab-inner">
-              <Dashboard params={this.props.params}/>
+              <Dashboard params={this.props.params} productId={this.props.productId}/>
             </div>
           </TabPane>
           <TabPane tab="Timeline" key="2">
