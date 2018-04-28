@@ -2,11 +2,18 @@
         sudo apt-get install fail2ban
         sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
+        sudo timedatectl set-ntp no
+        sudo apt-get install ntp
+
+        sudo service ntp stop
+        sudo ntpd -gq
+        sudo service ntp start
+
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
         sudo apt-get install oracle-java9-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.35.3/server-0.35.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.36.0/server-0.36.0.jar"
         
 
 server.properties

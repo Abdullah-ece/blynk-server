@@ -114,7 +114,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     }
 
     private ArrayList<User> saveModifiedUsers() {
-        ArrayList<User> users = new ArrayList<>();
+        var users = new ArrayList<User>();
 
         for (User user : userDao.getUsers().values()) {
             if (user.isUpdated(lastStart)) {

@@ -2,6 +2,9 @@ package cc.blynk.server.core.model.widgets.ui.table;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.storage.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,7 +36,7 @@ public class Table extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
-            String[] values = value.split(BODY_SEPARATOR_STRING);
+            var values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 0) {
                 String tableCommand = values[0];
                 switch (tableCommand) {
@@ -103,6 +106,11 @@ public class Table extends OnePinWidget {
             }
         }
         return null;
+    }
+
+    @Override
+    public PinStorageValue getPinStorageValue() {
+        return new MultiPinStorageValue(MultiPinStorageValueType.TABLE);
     }
 
     @Override

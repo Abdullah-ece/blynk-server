@@ -18,7 +18,6 @@ import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
@@ -51,14 +50,12 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
-        final HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder);
-        final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
-        final int maxWebLength = holder.limits.webRequestMaxSize;
-        final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        var letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
+        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
+        var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var maxWebLength = holder.limits.webRequestMaxSize;
+        var hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
 
         String rootPath = holder.props.getAdminRootPath();
         String jarPath = holder.props.jarPath;
@@ -72,16 +69,16 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         OrganizationHandler organizationHandler = new OrganizationHandler(holder, rootPath);
         ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
 
-        GlobalStats stats = holder.stats;
+        var stats = holder.stats;
 
         //http API handlers
         NoMatchHandler noMatchHandler = new NoMatchHandler();
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
-            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                FullHttpRequest req = (FullHttpRequest) msg;
-                String uri = req.uri();
+            public void channelRead(ChannelHandlerContext ctx, Object msg) {
+                var req = (FullHttpRequest) msg;
+                var uri = req.uri();
 
                 log.debug("In http and websocket unificator handler.");
                 if (uri.startsWith(WEBSOCKET_PATH)) {
@@ -112,7 +109,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
             }
 
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
-                ChannelPipeline pipeline = ctx.pipeline();
+                var pipeline = ctx.pipeline();
 
                 //websockets specific handlers
                 pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, 0, 0))
@@ -133,9 +130,9 @@ public class HardwareAndHttpAPIServer extends BaseServer {
             }
         };
 
-        channelInitializer = new ChannelInitializer<SocketChannel>() {
+        channelInitializer = new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(
                         new BaseHttpAndBlynkUnificationHandler() {
                             @Override

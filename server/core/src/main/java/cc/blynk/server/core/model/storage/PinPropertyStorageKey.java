@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
@@ -17,7 +17,7 @@ public final class PinPropertyStorageKey extends PinStorageKey {
 
     private final WidgetProperty property;
 
-    PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, WidgetProperty property) {
+    public PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, WidgetProperty property) {
         super(deviceId, pinType, pin);
         this.property = property;
     }

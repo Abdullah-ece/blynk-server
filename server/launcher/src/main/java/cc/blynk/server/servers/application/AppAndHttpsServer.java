@@ -33,7 +33,6 @@ import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.WebAppMessageEncoder;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
@@ -71,56 +70,55 @@ public class AppAndHttpsServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
-        RegisterHandler registerHandler = new RegisterHandler(holder);
-        AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
-        AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
-        UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
-        GetServerHandler getServerHandler = new GetServerHandler(holder);
+        var appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
+        var registerHandler = new RegisterHandler(holder);
+        var appLoginHandler = new AppLoginHandler(holder);
+        var appShareLoginHandler = new AppShareLoginHandler(holder);
+        var userNotLoggedHandler = new UserNotLoggedHandler();
+        var getServerHandler = new GetServerHandler(holder);
 
-        final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
-        final int appIdleTimeout = holder.limits.appIdleTimeout;
+        var hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
+        var appIdleTimeout = holder.limits.appIdleTimeout;
 
-        final HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder);
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
+        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
 
-        String apiPath = holder.props.getApiPath();
+        var apiPath = holder.props.getApiPath();
 
-        GlobalStats stats = holder.stats;
+        var stats = holder.stats;
 
         //http API handlers
-        NoMatchHandler noMatchHandler = new NoMatchHandler();
-        WebSocketHandler webSocketHandler = new WebSocketHandler(stats);
-        WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
+        var noMatchHandler = new NoMatchHandler();
+        var webSocketHandler = new WebSocketHandler(stats);
+        var webSocketWrapperEncoder = new WebSocketWrapperEncoder();
 
-        WebAppMessageEncoder webAppMessageEncoder = new WebAppMessageEncoder();
-        WebAppLoginHandler webAppLoginHandler = new WebAppLoginHandler(holder);
+        var webAppMessageEncoder = new WebAppMessageEncoder();
+        var webAppLoginHandler = new WebAppLoginHandler(holder);
 
-        ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
-        UrlReWriterHandler urlReWriterHandler = new UrlReWriterHandler(
+        var externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
+        var urlReWriterHandler = new UrlReWriterHandler(
                 new UrlMapper("/favicon.ico", "/static/favicon.ico"),
                 new UrlMapper("/", "/static/index.html"),
                 new UrlStartWithMapper("/dashboard", "/static/index.html")
         );
 
-        String jarPath = holder.props.jarPath;
+        var jarPath = holder.props.jarPath;
 
-        WebLoginHandler webLoginHandler = new WebLoginHandler(holder, apiPath);
-        AuthCookieHandler authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        AccountHandler accountHandler = new AccountHandler(holder, apiPath);
-        DevicesHandler devicesHandler = new DevicesHandler(holder, apiPath);
-        DataHandler dataHandler = new DataHandler(holder, apiPath);
-        ProductHandler productHandler = new ProductHandler(holder, apiPath);
-        OrganizationHandler organizationHandler = new OrganizationHandler(holder, apiPath);
+        var webLoginHandler = new WebLoginHandler(holder, apiPath);
+        var authCookieHandler = new AuthCookieHandler(holder.sessionDao);
+        var accountHandler = new AccountHandler(holder, apiPath);
+        var devicesHandler = new DevicesHandler(holder, apiPath);
+        var dataHandler = new DataHandler(holder, apiPath);
+        var productHandler = new ProductHandler(holder, apiPath);
+        var organizationHandler = new OrganizationHandler(holder, apiPath);
 
-        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var alreadyLoggedHandler = new AlreadyLoggedHandler();
 
-        BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
+        var baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                FullHttpRequest req = (FullHttpRequest) msg;
-                String uri = req.uri();
+                var req = (FullHttpRequest) msg;
+                var uri = req.uri();
 
                 log.debug("In https and websocket unificator handler.");
                 if (uri.startsWith(WEBSOCKET_PATH)) {
@@ -152,7 +150,7 @@ public class AppAndHttpsServer extends BaseServer {
             }
 
             private void initWebDashboardSocket(ChannelHandlerContext ctx) {
-                ChannelPipeline pipeline = ctx.pipeline();
+                var pipeline = ctx.pipeline();
 
                 //websockets specific handlers
                 pipeline.addFirst("AChannelState", appChannelStateHandler)
@@ -178,10 +176,10 @@ public class AppAndHttpsServer extends BaseServer {
             }
 
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
-                ChannelPipeline pipeline = ctx.pipeline();
+                var pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, 0, 0))
+                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardwareIdleTimeout, 0, 0))
                         .addLast("WSChannelState", hardwareChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))
