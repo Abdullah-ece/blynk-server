@@ -87,7 +87,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile(2);
 
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
         assertEquals(2, notification.androidTokens.size());
         assertEquals(0, notification.iOSTokens.size());
@@ -104,7 +104,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile(2);
 
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
         assertEquals(2, notification.androidTokens.size());
         assertEquals(0, notification.iOSTokens.size());
@@ -118,7 +118,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.getProfile(4);
 
-        notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
         assertEquals(2, notification.androidTokens.size());
         assertEquals(0, notification.iOSTokens.size());
@@ -144,7 +144,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("loadProfileGzipped");
         Profile profile = appClient.getProfile();
 
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
         assertEquals(1, notification.androidTokens.size());
         assertEquals(1, notification.iOSTokens.size());
@@ -156,7 +156,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = false;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -169,7 +169,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineForSecondDeviceSameToken() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = false;
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
@@ -190,7 +190,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineForSecondDeviceNewToken() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = false;
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
@@ -220,7 +220,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushWorks() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -240,7 +240,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUser() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -260,7 +260,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUserWithUID() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -280,7 +280,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUserWithWrongUID() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -297,7 +297,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUser2() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -340,7 +340,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testLoginWith2AppsAndLogoutFrom1() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -373,7 +373,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testLoginWith2AppsAndLogoutFrom2() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -402,7 +402,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testLoginWithSharedAppAndLogoutFrom() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
 
         clientPair.appClient.updateDash(profile.getDashById(1));
@@ -434,7 +434,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     //todo fix
     public void testHardwareDeviceWentOfflineAndPushDelayedWorks() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
         notification.notifyWhenOfflineIgnorePeriod = 1000;
 
@@ -458,7 +458,7 @@ public class NotificationsLogicTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOfflineAndPushDelayedNotTriggeredDueToReconnect() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getNotificationWidget();
         notification.notifyWhenOffline = true;
         notification.notifyWhenOfflineIgnorePeriod = 1000;
 
