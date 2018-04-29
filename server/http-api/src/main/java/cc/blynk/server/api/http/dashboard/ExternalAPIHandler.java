@@ -23,13 +23,15 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.PinStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageValue;
+import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -247,12 +249,16 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
-            String value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return Response.badRequest("Requested pin doesn't exist in the app.");
             }
-            return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
+            if (value instanceof SinglePinStorageValue) {
+                return ok(JsonParser.valueToJsonAsString((SinglePinStorageValue) value));
+            } else {
+                return ok(JsonParser.valueToJsonAsString(value.values()));
+            }
         }
 
         return ok(widget.getJsonValue());

@@ -547,7 +547,7 @@ public class DashBoard {
         }
     }
 
-    private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
+    public static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
         ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
         for (Widget newWidget : newWidgets) {
             Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
