@@ -109,7 +109,7 @@ public final class AnnotationsUtil {
             }
         }
 
-        return processors.toArray(new HandlerWrapper[processors.size()]);
+        return processors.toArray(new HandlerWrapper[0]);
     }
 
 }
