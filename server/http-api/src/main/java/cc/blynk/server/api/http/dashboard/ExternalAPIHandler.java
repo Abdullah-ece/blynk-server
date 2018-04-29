@@ -32,8 +32,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.PinStorageKey;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
-import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -118,30 +116,31 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                              @QueryParam("code") String eventCode,
                              @QueryParam("description") String description) {
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        var tokenValue = tokenManager.getTokenValueByToken(token);
 
-        Device device = tokenValue.device;
+        var device = tokenValue.device;
 
         if (eventCode == null) {
             log.error("Event code is not provided.");
             return (badRequest("Event code is not provided."));
         }
 
-        Product product = organizationDao.getProductByIdOrNull(device.productId);
+        var product = organizationDao.getProductByIdOrNull(device.productId);
         if (product == null) {
             log.error("Product with id {} not exists.", device.productId);
             return (badRequest("Product not exists for device."));
         }
 
-        Event event = product.findEventByCode(eventCode.hashCode());
+        var event = product.findEventByCode(eventCode.hashCode());
 
         if (event == null) {
             log.error("Event with code {} not found in product {}.", eventCode, product.id);
             return badRequest("Event with code not found in product.");
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(tokenValue.user));
-        session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, eventCode, device.id);
+        var session = sessionDao.userSession.get(new UserKey(tokenValue.user));
+        var bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + eventCode;
+        session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, bodyForWeb, device.id);
 
         blockingIOProcessor.executeDB(() -> {
             try {

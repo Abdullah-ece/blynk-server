@@ -149,7 +149,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         newHardClient.send("logEvent temp_is_high");
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appWebSocketClient.verifyResult(new HardwareLogEventMessage(2, b("1 temp_is_high")));
+        appWebSocketClient.verifyResult(new HardwareLogEventMessage(2, b("1 CRITICAL temp_is_high")));
     }
 
     @Test
@@ -305,7 +305,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        appWebSocketClient.verifyResult(new HardwareLogEventMessage(111, b("1 temp_is_high")));
+        appWebSocketClient.verifyResult(new HardwareLogEventMessage(111, b("1 CRITICAL temp_is_high")));
     }
 
     @Test
