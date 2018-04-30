@@ -15,7 +15,7 @@ export default class NoProducts extends React.Component {
       <MainLayout.Content className="products-empty">
         <MainList>
           <MainList.Empty title="There are no products assigned to your organization."
-                          description={"Contact " + this.props.organization.name + " for details"}/>
+                          description={"Contact " + this.props.organization.parentOrgName + " for details"}/>
         </MainList>
       </MainLayout.Content>
     );
