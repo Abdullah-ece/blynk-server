@@ -69,6 +69,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -264,38 +265,23 @@ public abstract class Widget implements CopyObject<Widget> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Widget)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Widget widget = (Widget) o;
-
-        if (id != widget.id) {
-            return false;
-        }
-        if (x != widget.x) {
-            return false;
-        }
-        if (y != widget.y) {
-            return false;
-        }
-        if (width != widget.width) {
-            return false;
-        }
-        if (height != widget.height) {
-            return false;
-        }
-        return label != null ? label.equals(widget.label) : widget.label == null;
+        return id == widget.id
+                && x == widget.x
+                && y == widget.y
+                && color == widget.color
+                && width == widget.width
+                && height == widget.height
+                && tabId == widget.tabId
+                && isDefaultColor == widget.isDefaultColor
+                && Objects.equals(label, widget.label);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + x;
-        result = 31 * result + y;
-        result = 31 * result + width;
-        result = 31 * result + height;
-        result = 31 * result + (label != null ? label.hashCode() : 0);
-        return result;
+        return Objects.hash(id, x, y, color, width, height, tabId, label, isDefaultColor);
     }
 }
