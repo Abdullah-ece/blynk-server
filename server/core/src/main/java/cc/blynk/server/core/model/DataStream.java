@@ -7,6 +7,8 @@ import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.getTableByPin;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -127,48 +129,24 @@ public class DataStream implements CopyObject<DataStream> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DataStream)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         DataStream that = (DataStream) o;
-
-        if (pin != that.pin) {
-            return false;
-        }
-        if (pwmMode != that.pwmMode) {
-            return false;
-        }
-        if (rangeMappingOn != that.rangeMappingOn) {
-            return false;
-        }
-        if (Float.compare(that.min, min) != 0) {
-            return false;
-        }
-        if (Float.compare(that.max, max) != 0) {
-            return false;
-        }
-        if (pinType != that.pinType) {
-            return false;
-        }
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-        return label != null ? label.equals(that.label) : that.label == null;
+        return id == that.id
+                && pin == that.pin
+                && pwmMode == that.pwmMode
+                && rangeMappingOn == that.rangeMappingOn
+                && Float.compare(that.min, min) == 0
+                && Float.compare(that.max, max) == 0
+                && pinType == that.pinType
+                && Objects.equals(value, that.value)
+                && Objects.equals(label, that.label)
+                && units == that.units;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) pin;
-        result = 31 * result + (pwmMode ? 1 : 0);
-        result = 31 * result + (rangeMappingOn ? 1 : 0);
-        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (min != +0.0f ? Float.floatToIntBits(min) : 0);
-        result = 31 * result + (max != +0.0f ? Float.floatToIntBits(max) : 0);
-        result = 31 * result + (label != null ? label.hashCode() : 0);
-        result = 31 * result + (label != null ? label.hashCode() : 0);
-        result = 31 * result + (units != null ? units.hashCode() : 0);
-        return result;
+        return Objects.hash(id, pin, pwmMode, rangeMappingOn, pinType, value, min, max, label, units);
     }
 }
