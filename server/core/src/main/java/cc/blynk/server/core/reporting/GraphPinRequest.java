@@ -41,6 +41,10 @@ public class GraphPinRequest {
 
     public final int skipCount;
 
+    public long from;
+
+    public long to;
+
     //todo remove in future versions
     public GraphPinRequest(int dashId, int deviceId, String[] messageParts, int pinIndex, int valuesPerPin) {
         try {
@@ -82,6 +86,14 @@ public class GraphPinRequest {
         this.count = graphPeriod.numberOfPoints;
         this.type = graphPeriod.granularityType;
         this.skipCount = skipCount;
+    }
+
+    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
+                           GraphPeriod graphPeriod, int skipCount,
+                           AggregationFunctionType function, long from, long to) {
+        this(dashId, deviceId, dataStream, graphPeriod, skipCount, function);
+        this.from = from;
+        this.to = to;
     }
 
     public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,

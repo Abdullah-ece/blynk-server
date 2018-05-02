@@ -42,7 +42,9 @@ public enum GraphPeriod {
     N_MONTH(30, DAILY),
     N_THREE_MONTHS(3 * 30, DAILY),
     SIX_MONTHS(6 * 30, DAILY),
-    ONE_YEAR(12 * 30, DAILY);
+    ONE_YEAR(12 * 30, DAILY),
+
+    CUSTOM(-1, DAILY);
 
     public final int numberOfPoints;
     public final GraphGranularityType granularityType;
@@ -50,5 +52,20 @@ public enum GraphPeriod {
     GraphPeriod(int numberOfPoints, GraphGranularityType granularityType) {
         this.numberOfPoints = numberOfPoints;
         this.granularityType = granularityType;
+    }
+
+    public long millis() {
+        return numberOfPoints * getMillisForGranularity();
+    }
+
+    private long getMillisForGranularity() {
+        switch (granularityType) {
+            case MINUTE:
+                return 60 * 1000L;
+            case HOURLY:
+                return 60 * 60 * 1000L;
+            default:
+                return 24 * 60 * 60 * 1000L;
+        }
     }
 }

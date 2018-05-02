@@ -114,6 +114,7 @@ public class TableDescriptor {
     public static final Field<Integer> PIN = field("pin", Integer.class);
     public static final Field<Integer> PIN_TYPE = field("pin_type", Integer.class);
     public static final Field<Timestamp> CREATED = field("created", Timestamp.class);
+    public static final Field<Timestamp> TS = field("ts", Timestamp.class);
     public static final Field<Double> VALUE = field("value", Double.class);
 
     public static final TableDescriptor KNIGHT_LAUNDRY = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {

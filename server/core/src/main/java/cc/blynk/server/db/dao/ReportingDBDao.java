@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.FieldType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
+import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -44,6 +45,7 @@ import java.util.Queue;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
 /**
@@ -54,13 +56,13 @@ import static org.jooq.impl.DSL.table;
 public class ReportingDBDao {
 
     public static final String insertMinute =
-            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertHourly =
-            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertDaily =
-            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public static final String selectMinute =
@@ -107,8 +109,41 @@ public class ReportingDBDao {
         this.ds = ds;
     }
 
+    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
+        List<RawEntry> result;
+        try (Connection connection = ds.getConnection()) {
+            DSLContext create = DSL.using(connection, POSTGRES_9_4);
+
+            result = create.select(field("ts"), field("value"))
+                    .from(getTableByGranularity(graphPinRequest.type))
+                    .where(TableDescriptor.DEVICE_ID.eq(graphPinRequest.deviceId)
+                            .and(TableDescriptor.PIN.eq((int) graphPinRequest.pin))
+                            .and(TableDescriptor.PIN_TYPE.eq(graphPinRequest.pinType.ordinal()))
+                            .and(TableDescriptor.TS
+                                    .betweenSymmetric(new Timestamp(graphPinRequest.from))
+                                    .and(new Timestamp(graphPinRequest.to))))
+                    .orderBy(TableDescriptor.TS.asc())
+                    .limit(graphPinRequest.count)
+                    .fetchInto(RawEntry.class);
+
+            connection.commit();
+            return result;
+        }
+    }
+
+    private static String getTableByGranularity(GraphGranularityType graphGranularityType) {
+        switch (graphGranularityType) {
+            case DAILY:
+                return "reporting_average_daily";
+            case HOURLY:
+                return "reporting_average_hourly";
+            default:
+                return "reporting_average_minute";
+        }
+    }
+
     public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
-        ps.setTimestamp(1, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
+        ps.setTimestamp(1, new Timestamp(ts));
         ps.setInt(2, limit);
     }
 
@@ -133,8 +168,8 @@ public class ReportingDBDao {
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
-        ps.setString(5, pinType.pinTypeString);
-        ps.setTimestamp(6, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
+        ps.setInt(5, pinType.ordinal());
+        ps.setTimestamp(6, new Timestamp(ts));
         ps.setDouble(7, value);
     }
 

@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
@@ -14,6 +15,7 @@ import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.ForwardingTokenDBDao;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
+import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
@@ -158,6 +160,13 @@ public class DBManager implements Closeable {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.executeDB(() -> userDBDao.save(users));
         }
+    }
+
+    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
+        if (isDBEnabled()) {
+            return reportingDBDao.getReportingDataByTs(graphPinRequest);
+        }
+        return Collections.emptyList();
     }
 
     public void insertStat(String region, Stat stat) {

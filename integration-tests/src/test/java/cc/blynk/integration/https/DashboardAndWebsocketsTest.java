@@ -25,6 +25,8 @@ import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.server.core.reporting.average.AggregationKey;
+import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
@@ -44,11 +46,14 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static cc.blynk.integration.IntegrationBase.appSync;
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
+import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -347,30 +352,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
         httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
 
-        Device device;
         try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String responseString = consumeText(response);
-            assertNotNull(response);
-            device = JsonParser.parseDevice(responseString, 0);
-            assertEquals("My New Device", device.name);
-            assertEquals(1, device.id);
-            assertNotNull(device.token);
-            assertNotNull(device.metaFields);
-            assertEquals(2, device.metaFields.length);
-            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
-            assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
-            assertEquals(123D, numberMetaField.value, 0.1);
-            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
-            assertEquals(regularUser.email, device.activatedBy);
-            assertNotNull(device.webDashboard);
-            assertEquals(3, device.webDashboard.widgets.length);
-            assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
-            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
-            assertEquals(1, webSwitch.sources[0].dataStream.pin);
-            assertEquals(PinType.VIRTUAL, webSwitch.sources[0].dataStream.pinType);
-            assertEquals("123", webSwitch.label);
         }
 
         AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
@@ -385,11 +368,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.HOURLY));
+                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        appWebSocketClient.send("getenhanceddata 1" + b(" 432 MONTH"));
+        appWebSocketClient.send("getenhanceddata 1" + b(" 432 N_MONTH"));
 
         BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
         assertNotNull(graphDataResponse);
@@ -422,22 +405,6 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             device = JsonParser.parseDevice(responseString, 0);
             assertEquals("My New Device", device.name);
             assertEquals(1, device.id);
-            assertNotNull(device.token);
-            assertNotNull(device.metaFields);
-            assertEquals(2, device.metaFields.length);
-            NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
-            assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
-            assertEquals(123D, numberMetaField.value, 0.1);
-            assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
-            assertEquals(regularUser.email, device.activatedBy);
-            assertNotNull(device.webDashboard);
-            assertEquals(3, device.webDashboard.widgets.length);
-            assertTrue(device.webDashboard.widgets[0] instanceof WebSwitch);
-            WebSwitch webSwitch = (WebSwitch) device.webDashboard.widgets[0];
-            assertEquals(1, webSwitch.sources[0].dataStream.pin);
-            assertEquals(PinType.VIRTUAL, webSwitch.sources[0].dataStream.pinType);
-            assertEquals("123", webSwitch.label);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
@@ -463,6 +430,73 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         assertEquals(1, bb.getInt());
         assertEquals(123D, bb.getDouble(), 0.1);
         assertEquals(System.currentTimeMillis(), bb.getLong(), 5000);
+    }
+
+    @Test
+    public void getCustomWebGraphData() throws Exception {
+        //clean everything just in case
+        holder.dbManager.executeSQL("DELETE FROM reporting_average_minute");
+
+        login(regularUser.email, regularUser.pass);
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct().id;
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        Device device;
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            assertNotNull(response);
+            device = JsonParser.parseDevice(responseString, 0);
+            assertEquals("My New Device", device.name);
+            assertEquals(1, device.id);
+        }
+
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", regularUser.email);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        var now = System.currentTimeMillis();
+        var aggregationValue = new AggregationValue();
+        aggregationValue.update(1.11D);
+        Map<AggregationKey, AggregationValue> data = new HashMap<>();
+        data.put(
+                new AggregationKey("123", "appName", 1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
+                aggregationValue
+        );
+
+        aggregationValue = new AggregationValue();
+        aggregationValue.update(1.22D);
+        data.put(
+                new AggregationKey("123", "appName", 1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
+                aggregationValue
+        );
+        holder.dbManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+
+        appWebSocketClient.send("getenhanceddata 1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
+
+        BinaryMessage graphDataResponse = appWebSocketClient.getBinaryBody();
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = graphDataResponse.getBytes();
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(((now - 60_000) / MINUTE) * MINUTE, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals((now / MINUTE) * MINUTE, bb.getLong());
     }
 
     @Test
