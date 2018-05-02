@@ -136,11 +136,11 @@ public class DevicesHandler extends BaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             Response response;
             try {
-                String userComment = comment == null ? "" : comment.comment;
+                String userComment = comment == null ? null : comment.comment;
                 if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
                     response = ok();
                     Session session = sessionDao.userSession.get(new UserKey(user));
-                    String body = String.valueOf(logEventId);
+                    String body = logEventId + StringUtils.BODY_SEPARATOR_STRING + user.email;
                     if (comment != null) {
                         body = body + StringUtils.BODY_SEPARATOR + userComment;
                     }

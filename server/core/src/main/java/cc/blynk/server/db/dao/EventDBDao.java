@@ -297,7 +297,7 @@ public class EventDBDao {
 
             ps.setString(1, name);
             ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()), UTC_CALENDAR);
-            ps.setString(3, comment);
+            ps.setString(3, comment == null ? "" : comment);
             ps.setLong(4, id);
 
             result = ps.executeUpdate();

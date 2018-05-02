@@ -5,9 +5,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -21,7 +18,8 @@ import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
-import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * The Blynk Project.
@@ -48,19 +46,18 @@ public class ResolveWebEventHandler {
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         //deviceId logEventId comment
-        String[] split = split2(message.body);
+        var messageParts = split3(message.body);
 
-        int deviceId = Integer.parseInt(split[0]);
+        var deviceId = Integer.parseInt(messageParts[0]);
 
         //logEventId comment
-        String[] split2 = split2(split[1]);
-        long logEventId = Long.parseLong(split2[0]);
-        String comment = split2.length == 2 ? split2[1] : "";
+        var logEventId = Long.parseLong(messageParts[1]);
+        var comment = messageParts.length == 3 ? messageParts[2] : null;
 
-        Device device = deviceDao.getById(deviceId);
+        var device = deviceDao.getById(deviceId);
 
-        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-        User user = state.user;
+        var orgId = organizationDao.getOrganizationIdByProductId(device.productId);
+        var user = state.user;
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
             throw new NotAllowedException("You have no access to this device.", message.id);
@@ -71,8 +68,12 @@ public class ResolveWebEventHandler {
             try {
                 if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
                     response = ok(message.id);
-                    Session session = sessionDao.userSession.get(state.userKey);
-                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, message.id, split[1], deviceId);
+                    var session = sessionDao.userSession.get(state.userKey);
+                    var body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
+                    if (comment != null) {
+                        body = body + BODY_SEPARATOR_STRING + comment;
+                    }
+                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, message.id, body, deviceId);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
                     response = notAllowed(message.id);

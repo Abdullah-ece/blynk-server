@@ -264,7 +264,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         appWebSocketClient.resolveEvent(1, logEventId, "resolve comment");
         appWebSocketClient.verifyResult(ok(3));
 
-        appWebSocketClient2.verifyResult(new StringMessage(3, RESOLVE_EVENT, b("1 " + logEventId + " ") + "resolve comment"));
+        appWebSocketClient2.verifyResult(new StringMessage(3, RESOLVE_EVENT, b("1 " + logEventId + " admin@blynk.cc ") + "resolve comment"));
 
         getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
@@ -620,7 +620,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        appWebSocketClient.verifyResult(new StringMessage(1111, RESOLVE_EVENT, b("1 " + logEventId + " 123")));
+        appWebSocketClient.verifyResult(new StringMessage(1111, RESOLVE_EVENT, b("1 " + logEventId + " admin@blynk.cc 123")));
 
         getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?eventType=CRITICAL&from=0&to=" + now + "&limit=10&offset=0&isResolved=true");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
