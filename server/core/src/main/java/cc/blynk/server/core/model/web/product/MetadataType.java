@@ -9,6 +9,7 @@ public enum MetadataType {
 
     MultiText,
     Text,
+    Email,
     Number,
     Range,
     Shift,

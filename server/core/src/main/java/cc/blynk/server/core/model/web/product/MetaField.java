@@ -1,20 +1,7 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
-import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
-import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
-import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
-import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
-import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
-import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
-import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.RangeTimeMetaField;
-import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
-import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.*;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -37,6 +24,7 @@ import org.jooq.SelectSelectStep;
 
         @JsonSubTypes.Type(value = MultiTextMetaField.class, name = "MultiText"),
         @JsonSubTypes.Type(value = TextMetaField.class, name = "Text"),
+        @JsonSubTypes.Type(value = EmailMetaField.class, name = "Email"),
         @JsonSubTypes.Type(value = NumberMetaField.class, name = "Number"),
         @JsonSubTypes.Type(value = RangeTimeMetaField.class, name = "Range"),
         @JsonSubTypes.Type(value = ShiftMetaField.class, name = "Shift"),
