@@ -1,6 +1,6 @@
 // Oleg
-
 // Ihor
+@import "components/Layout/style-guide";
 
 .devices-ota-update-confirmation {
 
@@ -8,15 +8,43 @@
 
   border-radius: 5px;
 
-  padding: 32px 16px;
+  padding: 32px 20px;
+
+  transition: 0.15s;
 
   &:hover {
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
   }
 
   &-name {
-
+    max-width: 300px;
+    overflow: hidden;
   }
 
+  &-file-name {
+    font-weight: 500;
+    margin: 16px 0;
+  }
+
+  &-fields-list {
+    margin-left: 16px;
+    &-item {
+      margin: 4px 0;
+      color: @color-dark-grey-50;
+    }
+  }
+
+  &-footer {
+    margin-top: 32px;
+    &-selected-devices-count {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 34px;
+      vertical-align: middle;
+    }
+    &-confirm-btn {
+      text-align: right;
+    }
+  }
 
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Popconfirm} from 'antd';
+import {Table, Button, Popconfirm, Row, Col} from 'antd';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
 import {
@@ -50,6 +50,34 @@ class OTA extends React.Component{
           <Item label="Firmware Name" offset="medium">
             <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
           </Item>
+        </div>
+        <div className="devices-ota-update-confirmation-file-name">
+          FileName.bin
+        </div>
+        <div className="devices-ota-update-confirmation-fields-list">
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 1
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 2
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 3
+          </div>
+        </div>
+        <div className="devices-ota-update-confirmation-footer">
+          <Row>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-selected-devices-count">
+                23 Devices Selected
+              </div>
+            </Col>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn">
+                <Button type="primary">Update firmware</Button>
+              </div>
+            </Col>
+          </Row>
         </div>
       </div>
     );
