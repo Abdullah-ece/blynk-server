@@ -41,6 +41,10 @@ public class ServerProperties extends BaseProperties {
         return force80Port() ? "443" : getProperty("https.port");
     }
 
+    public String getHttpPortAsString() {
+        return force80Port() ? "80" : getProperty("http.port");
+    }
+
     public boolean force80Port() {
         return getBoolProperty("force.port.80.for.csv");
     }

@@ -26,7 +26,7 @@ public class DeviceOtaInfo {
         this.otaInitiatedBy = otaInitiatedBy;
         this.otaInitiatedAt = otaInitiatedAt;
         this.otaUpdateAt = otaUpdateAt;
-        this.otaStatus = otaStatus == null ? OTAStatus.NEVER : otaStatus;
+        this.otaStatus = otaStatus;
     }
 
 }
