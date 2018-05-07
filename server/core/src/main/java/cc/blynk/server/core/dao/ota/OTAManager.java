@@ -4,8 +4,9 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;
+import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
+import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -82,7 +83,7 @@ public class OTAManager {
         StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
             device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
-                    otaInfo.initiatedAt, System.currentTimeMillis());
+                    otaInfo.initiatedAt, System.currentTimeMillis(), OTAStatus.REQUEST_SENT);
             ctx.write(msg, ctx.voidPromise());
         }
     }
@@ -101,7 +102,7 @@ public class OTAManager {
     //todo this is ugly. but for now is ok.
     private String fetchBuildNumber(String pathToFirmware) {
         Path path = Paths.get(staticFilesFolder, pathToFirmware);
-        return FileUtils.getBuildPatternFromString(path);
+        return FileUtils.getPatternFromString(path).get("build");
     }
 
     public void stop(User user) {

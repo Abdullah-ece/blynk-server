@@ -13,6 +13,7 @@ import cc.blynk.server.api.http.dashboard.AuthCookieHandler;
 import cc.blynk.server.api.http.dashboard.DataHandler;
 import cc.blynk.server.api.http.dashboard.DevicesHandler;
 import cc.blynk.server.api.http.dashboard.ExternalAPIHandler;
+import cc.blynk.server.api.http.dashboard.OTAHandler;
 import cc.blynk.server.api.http.dashboard.OrganizationHandler;
 import cc.blynk.server.api.http.dashboard.ProductHandler;
 import cc.blynk.server.api.http.dashboard.WebLoginHandler;
@@ -113,6 +114,7 @@ public class AppAndHttpsServer extends BaseServer {
         var organizationHandler = new OrganizationHandler(holder, apiPath);
 
         var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var otaHandler = new OTAHandler(holder, apiPath);
 
         var baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -142,6 +144,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast(dataHandler)
                         .addLast(productHandler)
                         .addLast(organizationHandler)
+                        .addLast(otaHandler)
                         .addLast(noMatchHandler)
                         .remove(this);
                 if (log.isTraceEnabled()) {

@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.device;
+package cc.blynk.server.core.model.device.ota;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,13 +16,17 @@ public class DeviceOtaInfo {
 
     public final long otaUpdateAt;
 
+    public volatile OTAStatus otaStatus;
+
     @JsonCreator
     public DeviceOtaInfo(@JsonProperty("otaInitiatedBy") String otaInitiatedBy,
                          @JsonProperty("otaInitiatedAt") long otaInitiatedAt,
-                         @JsonProperty("otaUpdateAt") long otaUpdateAt) {
+                         @JsonProperty("otaUpdateAt") long otaUpdateAt,
+                         @JsonProperty("otaStatus") OTAStatus otaStatus) {
         this.otaInitiatedBy = otaInitiatedBy;
         this.otaInitiatedAt = otaInitiatedAt;
         this.otaUpdateAt = otaUpdateAt;
+        this.otaStatus = otaStatus == null ? OTAStatus.NEVER : otaStatus;
     }
 
 }

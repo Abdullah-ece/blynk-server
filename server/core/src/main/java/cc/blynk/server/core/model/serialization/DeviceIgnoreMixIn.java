@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model.serialization;
 
-import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**

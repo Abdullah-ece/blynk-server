@@ -14,10 +14,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.READ;
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * The Blynk Project.
@@ -154,33 +154,45 @@ public final class FileUtils {
         return lastModifiedFile;
     }
 
-    public static String getBuildPatternFromString(Path path) {
-        return getPatternFromString(path, "\0" + "build" + "\0");
+    public static Map<String, String> getPatternFromString(Path path) {
+        return getPatternFromString(path, "build", "@ver", "h-beat", "buff-in", "dev");
     }
 
-    private static String getPatternFromString(Path path, String pattern) {
+    private static Map<String, String> getPatternFromString(Path path, String... keys) {
         try {
             byte[] data = Files.readAllBytes(path);
-
-            int index = KMPMatch.indexOf(data, pattern.getBytes());
-
-            if (index != -1) {
-                int start = index + pattern.length();
-                int end = 0;
-                byte b = -1;
-
-                while (b != '\0') {
-                    end++;
-                    b = data[start + end];
+            Map<String, String> map = new HashMap<>();
+            for (String key : keys) {
+                String value = findValueForPattern(data, key);
+                if (value != null) {
+                    map.put(key, value);
                 }
-
-                byte[] copy = Arrays.copyOfRange(data, start, start + end);
-                return new String(copy);
             }
+            return map;
         } catch (Exception e) {
             log.error("Error getting pattern from file. Reason : {}", e.getMessage());
+            throw new RuntimeException("Unable to read build number fro firmware.");
         }
-        throw new RuntimeException("Unable to read build number fro firmware.");
+    }
+
+    private static String findValueForPattern(byte[] data, String pattern) {
+        pattern = pattern + "\0";
+        int index = KMPMatch.indexOf(data, pattern.getBytes());
+
+        if (index != -1) {
+            int start = index + pattern.length();
+            int end = 0;
+            byte b = -1;
+
+            while (b != '\0') {
+                end++;
+                b = data[start + end];
+            }
+
+            byte[] copy = Arrays.copyOfRange(data, start, start + end);
+            return new String(copy);
+        }
+        return null;
     }
 
     public static Path getPathForLocalRun(String uri) {

@@ -38,21 +38,13 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
-import static cc.blynk.integration.IntegrationBase.internal;
+import static cc.blynk.integration.IntegrationBase.*;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -393,7 +385,7 @@ public class OTATest extends BaseTest {
         String fileName = "test.bin";
         Path path = new File("src/test/resources/static/ota/" + fileName).toPath();
 
-        assertEquals("Aug 14 2017 20:31:49", FileUtils.getBuildPatternFromString(path));
+        assertEquals("Aug 14 2017 20:31:49", FileUtils.getPatternFromString(path).get("build"));
     }
 
     @Test

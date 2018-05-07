@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
+import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -207,7 +209,7 @@ public class Device implements Target {
     //for single device update device always updated when ota is initiated.
     public void updateOTAInfo(String initiatedBy) {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
+        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now, OTAStatus.STARTED);
     }
 
     @Override
