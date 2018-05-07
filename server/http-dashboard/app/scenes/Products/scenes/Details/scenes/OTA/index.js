@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ProductInfoDevicesOTAFetch} from 'data/Product/api';
+import {message} from 'antd';
 
 @connect((state) => ({
   orgId: state.Account.orgId,
   devices: state.Product.OTADevices.data,
   devicesLoading: state.Product.OTADevices.loading,
-  devicesFetchStatus: state.Product.OTADevices.status,
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(ProductInfoDevicesOTAFetch, dispatch)
 }))
@@ -30,8 +30,6 @@ class OTAScene extends React.Component {
 
     devicesLoading: PropTypes.bool,
 
-    devicesFetchStatus: PropTypes.bool,
-
     fetchDevices: PropTypes.func,
   };
 
@@ -51,16 +49,16 @@ class OTAScene extends React.Component {
     this.props.fetchDevices({
       orgId: this.props.orgId
     }).catch(() => {
-      console.log('Cannot fetch Devices for OTA update');
+      message.error('Cannot fetch devices for OTA update');
     });
   }
 
   render() {
 
-    const {devices, devicesLoading, devicesFetchStatus} = this.props;
+    const {devices, devicesLoading} = this.props;
 
     return (
-      <OTA devices={devices} devicesLoading={devicesLoading} devicesFetchStatus={devicesFetchStatus}/>
+      <OTA devices={devices} devicesLoading={devicesLoading}/>
     );
   }
 }
