@@ -89,6 +89,18 @@ export function ProductCreate(data = false) {
   };
 }
 
+export function ProductInfoDevicesOTAFetch({ orgId }) {
+  return {
+    type: 'PRODUCT_INFO_DEVICES_OTA_FETCH',
+    payload: {
+      request: {
+        method: 'GET',
+        url: API_URL.device().get({ orgId })
+      }
+    }
+  };
+}
+
 export function ProductUpdateDevices(data = false) {
   return {
     type: 'API_PRODUCT_UPDATE_DEVICES',

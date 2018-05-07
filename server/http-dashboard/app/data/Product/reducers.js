@@ -1,6 +1,11 @@
 import {prepareProductForEdit} from 'services/Products';
 
 const initialState = {
+  OTADevices: {
+    loading: false,
+    data: [],
+    status: null
+  },
   creating: {
     info: {
       invalid: true,
@@ -78,6 +83,36 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_INFO_DEVICES_OTA_FETCH":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          loading: true,
+          status: null,
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_FETCH_SUCCESS":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          loading: false,
+          data: action.payload.data,
+          status: true,
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_FAILURE":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          loading: false,
+          status: false
+        }
+      };
 
     case "PRODUCT_EDIT_METADATA_FIELDS_UPDATE":
       return {
