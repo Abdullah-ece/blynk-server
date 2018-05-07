@@ -11,7 +11,7 @@ import {
 
 import './styles.less';
 
-import {Status} from 'components/User';
+import DeviceStatus from './components/DeviceStatus';
 
 @reduxForm({
   form: 'OTA'
@@ -101,24 +101,16 @@ class OTA extends React.Component{
       filterMultiple: false,
       onFilter: (value, record) => record.status === value,
 
-      render: (text, record) => <Status status={record.status}/>
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime}/>
     }, {
       title: 'Firmware version',
-      dataIndex: 'firmware_version',
+      dataIndex: 'hardwareInfo.version',
     }];
   }
-  // rowSelection = {
-  //   onChange: this.onRowSelectionChange.bind(this)
-  // };
-  //
-  // onRowSelectionChange(selectedRowKeys) {
-  //   this.setState({
-  //     isAnyRowSelected: !!selectedRowKeys.length,
-  //     selectedRows: selectedRowKeys
-  //   });
-  // }
+  getDataSource(){
 
-
+    return this.props.devices;
+  }
   render(){
 
     const rowSelection = {
@@ -130,6 +122,7 @@ class OTA extends React.Component{
       }),
     };
     console.log(this.props);
+    const dataSource = this.getDataSource();
     const columns = this.updateColumns();
     return (
       <div className="users-profile--organization-settings--organization-users">
@@ -148,8 +141,8 @@ class OTA extends React.Component{
           </Popconfirm>
         </div>
         <Table
-
-          rowSelection={rowSelection} columns={columns} dataSource={this.props.devices}
+          rowKey={(record) => record.name}
+          rowSelection={rowSelection} columns={columns} dataSource={dataSource}
                pagination={false}/>
       </div>
     );
