@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Row, Col, Upload} from 'antd';
+import {Table, Button, Row, Col, Upload, Icon} from 'antd';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
 import {
@@ -35,7 +35,7 @@ class OTA extends React.Component{
       <div className="devices-ota-update-upload">
         <h4>Firmware Update:</h4>
         <Upload>
-          <Button type="dashed">Upload firmware</Button>
+          <Button type="dashed"><Icon type="plus" />Upload new firmware</Button>
         </Upload>
       </div>
     );
