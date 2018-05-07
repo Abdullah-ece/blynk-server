@@ -30,19 +30,6 @@ class OTA extends React.Component{
     }))
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      'selectedRows': 0,
-      'usersDeleteLoading': false,
-      'sortedInfo': {
-        order: 'ascend',
-        columnKey: 'name'
-      }
-    };
-  }
-
   uploadFirmware() {
     return (
       <div className="devices-ota-update-upload">
@@ -192,11 +179,11 @@ class OTA extends React.Component{
       dataIndex: 'status',
 
       filters: [{
-        text: 'Active',
-        value: 'Active',
+        text: 'Online',
+        value: 'ONLINE',
       }, {
-        text: 'Pending',
-        value: 'Pending',
+        text: 'Offline',
+        value: 'OFFLINE',
       }],
       filterMultiple: false,
       onFilter: (value, record) => record.status === value,
@@ -214,8 +201,8 @@ class OTA extends React.Component{
   render(){
 
     const rowSelection = {
-      onChange: (/*selectedRowKeys, selectedRows*/) => {
-        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      onChange: () => {
+
       },
       getCheckboxProps: record => ({
         name: record.name,
