@@ -1,6 +1,5 @@
 import React                              from 'react';
-
-import moment from 'moment';
+import {convertTimeStampToTime} from 'services/Time';
 
 class Idle extends React.Component {
 
@@ -13,13 +12,7 @@ class Idle extends React.Component {
     if (this.props.event.ts === 0)
       return null;
 
-    let absentTime = "Offline for ";
-
-    if(this.props.event.ts / 1000 / 60 > 1){
-      absentTime += moment.duration(this.props.event.ts / 1000, "seconds").format("d[d] h[h] m[min]");
-    } else {
-      absentTime += Math.floor(this.props.event.ts / 1000) + " seconds";
-    }
+    let absentTime = "Offline for " + convertTimeStampToTime(this.props.event.ts);
 
     return (
       <div className="devices--device-timeline--info">
