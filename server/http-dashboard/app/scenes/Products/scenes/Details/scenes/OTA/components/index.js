@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Row, Col, Upload, Icon} from 'antd';
+import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
 import {
@@ -132,10 +132,8 @@ class OTA extends React.Component{
   firmwareCompleted() {
     return (
       <div className="devices-ota-update-confirmation">
-        <div className="devices-ota-update-confirmation-name">
-          <Item label="Firmware Name" offset="medium">
-            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
-          </Item>
+        <div className="devices-ota-update-confirmation-firmware-name">
+          Firmware Update Title
         </div>
         <div className="devices-ota-update-confirmation-file-name">
           FileName.bin
@@ -154,14 +152,23 @@ class OTA extends React.Component{
         <div className="devices-ota-update-confirmation-footer">
           <Row>
             <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-selected-devices-count">
-                23 Devices Selected
+              <div className="devices-ota-update-confirmation-footer-upload-progress">
+                <div>
+                  <span className={"devices-ota-update-confirmation-footer-upload-progress-done"}>
+                  17
+                </span>
+                  &nbsp; of &nbsp;
+                  <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
+                  23
+                </span>
+                  &nbsp; devices updated
+                </div>
               </div>
+              <Progress percent={50} size="small"  strokeWidth={4}  showInfo={false}/>
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
                 <Button type="danger">Cancel</Button>
-                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} type="primary">Update firmware</Button>
               </div>
             </Col>
           </Row>
