@@ -14,7 +14,8 @@ export const TABS = {
   METADATA: 'metadata',
   DATA_STREAMS: 'datastreams',
   EVENTS: 'events',
-  DASHBOARD: 'dashboard'
+  DASHBOARD: 'dashboard',
+  OTA: 'OTA',
 };
 
 export const getNextId = (items = []) => {
