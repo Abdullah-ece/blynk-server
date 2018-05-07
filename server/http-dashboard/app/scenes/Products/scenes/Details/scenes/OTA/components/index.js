@@ -67,13 +67,13 @@ class OTA extends React.Component{
           <Row>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-selected-devices-count">
-                23 Devices Selected
+                Select devices to update firmware
               </div>
             </Col>
             <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-confirm-btn">
-                <Button type="primary">Cancel</Button>
-                <Button type="primary">Update firmware</Button>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
+                <Button type="danger">Cancel</Button>
+                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} disabled type="danger">Update firmware</Button>
               </div>
             </Col>
           </Row>
@@ -112,9 +112,9 @@ class OTA extends React.Component{
               </div>
             </Col>
             <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-confirm-btn">
-                <Button type="primary">Cancel</Button>
-                <Button type="primary">Update firmware</Button>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
+                <Button type="danger">Cancel</Button>
+                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} type="primary">Update firmware</Button>
               </div>
             </Col>
           </Row>
@@ -159,9 +159,9 @@ class OTA extends React.Component{
               </div>
             </Col>
             <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-confirm-btn">
-                <Button type="primary">Cancel</Button>
-                <Button type="primary">Update firmware</Button>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
+                <Button type="danger">Cancel</Button>
+                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} type="primary">Update firmware</Button>
               </div>
             </Col>
           </Row>

@@ -35,7 +35,9 @@
     }
 
     &-file-name {
-      font-weight: 500;
+      font-weight: normal;
+      font-size: 16px;
+      color: @color-dark-grey;
       margin: 16px 0;
     }
 
@@ -55,8 +57,45 @@
         line-height: 34px;
         vertical-align: middle;
       }
-      &-confirm-btn {
+      &-confirm-btn-group {
         text-align: right;
+        display: flex;
+        justify-content: flex-end;
+
+      }
+      &-confirm-btn {
+        font-weight: bold;
+        background-color: @color-primary;
+        border-color : @color-primary;
+        color: white;
+        margin-left: 16px;
+        &:hover {
+          color: white;
+          background-color: @color-primary-5;
+          border-color: @color-primary-5;
+        }
+        &:active {
+          background-color: @color-primary-7;
+        }
+        &:focus {
+          background-color: @color-primary;
+        }
+      }
+      &-confirm-btn[disabled] {
+        background-color: @color-primary;
+        border-color : @color-primary;
+        color: white;
+        &:hover {
+          color: white;
+          background-color: @color-primary-5;
+          border-color: @color-primary-5;
+        }
+        &:active {
+          background-color: @color-primary-7;
+        }
+        &:focus {
+          background-color: @color-primary;
+        }
       }
     }
 
