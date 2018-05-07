@@ -41,7 +41,7 @@ class OTA extends React.Component{
     );
   }
 
-  updateConfirmation() {
+  updateConfirmation(selectedUsers = false) {
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-name">
@@ -73,7 +73,7 @@ class OTA extends React.Component{
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
                 <Button type="danger">Cancel</Button>
-                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} disabled type="danger">Update firmware</Button>
+                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} disabled={!selectedUsers} type="danger">Update firmware</Button>
               </div>
             </Col>
           </Row>
@@ -83,53 +83,6 @@ class OTA extends React.Component{
   }
 
   firmwareProcessing() {
-    return (
-      <div className="devices-ota-update-confirmation">
-        <div className="devices-ota-update-confirmation-name">
-          <Item label="Firmware Name" offset="medium">
-            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
-          </Item>
-        </div>
-        <div className="devices-ota-update-confirmation-file-name">
-          FileName.bin
-        </div>
-        <div className="devices-ota-update-confirmation-fields-list">
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 1
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 2
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 3
-          </div>
-        </div>
-        <div className="devices-ota-update-confirmation-footer">
-          <Row>
-            <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-selected-devices-count">
-                23 Devices Selected
-              </div>
-            </Col>
-            <Col span={12}>
-              <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger">Cancel</Button>
-                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} type="primary">Update firmware</Button>
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </div>
-    );
-  }
-
-  firmwareCancelModalConfirmation() {
-    return (
-      null
-    );
-  }
-
-  firmwareCompleted() {
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-firmware-name">
@@ -167,6 +120,53 @@ class OTA extends React.Component{
               <Progress percent={50} size="small"  strokeWidth={4}  showInfo={false}/>
             </Col>
             <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
+                <Button type="danger">Cancel</Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+
+  firmwareCancelModalConfirmation() {
+    return (
+      null
+    );
+  }
+
+  firmwareCompleted() {
+    return (
+      <div className="devices-ota-update-confirmation">
+        <div className="devices-ota-update-confirmation-firmware-name-success">
+          Firmware Update Title update completed
+        </div>
+        <div className="devices-ota-update-confirmation-log">
+          <div className="devices-ota-update-confirmation-log-upload-start">
+            Started 1 may
+          </div>
+          <div className="devices-ota-update-confirmation-log-upload-end">
+            Completed 3 may
+          </div>
+        </div>
+        <div className="devices-ota-update-confirmation-file-name">
+          FileName.bin
+        </div>
+        <div className="devices-ota-update-confirmation-fields-list">
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 1
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 2
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 3
+          </div>
+        </div>
+        <div className="devices-ota-update-confirmation-footer">
+          <Row>
+              <Col span={24}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
                 <Button type="danger">Cancel</Button>
               </div>
@@ -223,6 +223,8 @@ class OTA extends React.Component{
         { this.uploadFirmware() }
 
         { this.updateConfirmation() }
+
+        { this.updateConfirmation(true) }
 
         { this.firmwareProcessing() }
 
