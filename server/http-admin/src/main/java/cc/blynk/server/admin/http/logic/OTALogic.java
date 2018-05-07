@@ -73,7 +73,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
             return badRequest("No device in session.");
         }
 
-        tokenValue.device.updateOTAInfo(user.email);
+        tokenValue.device.updateOTAInfo(user.email, otaFile, null);
 
         return ok();
     }

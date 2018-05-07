@@ -206,9 +206,32 @@ public class Device implements Target {
         this.updatedAt = 0;
     }
 
-    public void updateOTAInfo(String initiatedBy) {
+    public void updateOTAInfo(String initiatedBy, String pathToFirmware, String buildDate) {
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, -1, OTAStatus.STARTED);
+        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now,
+                -1L, -1L,
+                pathToFirmware, buildDate,
+                OTAStatus.STARTED);
+        this.updatedAt = now;
+    }
+
+    public void requestSent() {
+        DeviceOtaInfo prev = this.deviceOtaInfo;
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaInitiatedBy, prev.otaInitiatedAt,
+                now, -1L,
+                prev.pathToFirmware, prev.buildDate,
+                OTAStatus.REQUEST_SENT);
+        this.updatedAt = now;
+    }
+
+    public void success() {
+        DeviceOtaInfo prev = this.deviceOtaInfo;
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.otaInitiatedBy, prev.otaInitiatedAt,
+                prev.requestSentAt, now,
+                prev.pathToFirmware, prev.buildDate,
+                OTAStatus.SUCCESS);
         this.updatedAt = now;
     }
 

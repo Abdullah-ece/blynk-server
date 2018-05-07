@@ -1,7 +1,10 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.device.HardwareInfo;
+import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -35,10 +38,12 @@ public class BlynkInternalLogic {
 
     private final OTAManager otaManager;
     private final int hardwareIdleTimeout;
+    private final String serverHostUrl;
 
-    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
-        this.otaManager = otaManager;
-        this.hardwareIdleTimeout = hardwareIdleTimeout;
+    public BlynkInternalLogic(Holder holder) {
+        this.otaManager = holder.otaManager;
+        this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
+        this.serverHostUrl = holder.props.getHttpServerUrl();
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -89,13 +94,19 @@ public class BlynkInternalLogic {
                     "H_IdleStateHandler_Replaced", new IdleStateHandler(newReadTimeout, 0, 0));
         }
 
-        var dashBoard = state.dash;
         var device = state.device;
-
-        if (device != null) {
-            otaManager.initiateHardwareUpdate(ctx, state.userKey, hardwareInfo, dashBoard, device);
+        if (device != null && device.deviceOtaInfo != null) {
             device.hardwareInfo = hardwareInfo;
-            dashBoard.updatedAt = System.currentTimeMillis();
+            if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
+                StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
+                        OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware));
+                ctx.write(msg, ctx.voidPromise());
+                device.requestSent();
+            } else {
+                if (device.deviceOtaInfo.otaStatus == OTAStatus.REQUEST_SENT) {
+                    device.success();
+                }
+            }
         }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());

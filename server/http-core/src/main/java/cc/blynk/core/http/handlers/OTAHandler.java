@@ -154,7 +154,7 @@ public class OTAHandler extends UploadHandler {
 
         User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
         if (initiator != null) {
-            tokenValue.device.updateOTAInfo(initiator.email);
+            tokenValue.device.updateOTAInfo(initiator.email, pathToFirmware, null);
         }
 
         return ok(pathToFirmware);

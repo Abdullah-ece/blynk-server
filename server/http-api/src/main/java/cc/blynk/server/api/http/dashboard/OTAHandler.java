@@ -106,20 +106,26 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest("No devices for provided productId " + startOtaDTO.productId);
         }
 
+        log.info("Initiating OTA for {}. {}", user.email, startOtaDTO);
+
+        java.nio.file.Path path = Paths.get(staticFilesFolder, startOtaDTO.pathToFirmware);
+        Map<String, String> firmwareInfoDTO = FileUtils.getPatternFromString(path);
+
         for (Device device : devices) {
-            device.updateOTAInfo(user.email);
+            device.updateOTAInfo(user.email, startOtaDTO.pathToFirmware, firmwareInfoDTO.get("build"));
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
+        if (session != null) {
+            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
+                    OTAInfo.makeHardwareBody(serverHostUrl, startOtaDTO.pathToFirmware));
 
-        StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                OTAInfo.makeHardwareBody(serverHostUrl, serverHostUrl));
-
-        for (Channel channel : session.hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && channel.isWritable()) {
-                channel.writeAndFlush(msg, channel.voidPromise());
-                hardwareState.device.deviceOtaInfo.otaStatus = OTAStatus.REQUEST_SENT;
+            for (Channel channel : session.hardwareChannels) {
+                HardwareStateHolder hardwareState = getHardState(channel);
+                if (hardwareState != null && channel.isWritable()) {
+                    channel.writeAndFlush(msg, channel.voidPromise());
+                    hardwareState.device.deviceOtaInfo.otaStatus = OTAStatus.REQUEST_SENT;
+                }
             }
         }
 

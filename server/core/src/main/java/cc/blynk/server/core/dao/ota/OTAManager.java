@@ -39,8 +39,7 @@ public class OTAManager {
     private final String staticFilesFolder;
 
     public OTAManager(ServerProperties props) {
-        String port = props.getProperty("http.port", "8080");
-        this.serverHostUrl = "http://" + props.getServerHost() + (port.equals("80") ? "" : (":" + port));
+        this.serverHostUrl = props.getHttpServerUrl();
         this.staticFilesFolder = props.jarPath;
         this.otaInfos = new ConcurrentHashMap<>();
     }
@@ -83,7 +82,8 @@ public class OTAManager {
         StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
             device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
-                    otaInfo.initiatedAt, System.currentTimeMillis(), OTAStatus.REQUEST_SENT);
+                    otaInfo.initiatedAt, System.currentTimeMillis(), -1L,
+                    otaInfo.pathToFirmware, null, OTAStatus.REQUEST_SENT);
             ctx.write(msg, ctx.voidPromise());
         }
     }

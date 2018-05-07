@@ -92,4 +92,8 @@ public class HardwareInfo {
         }
     }
 
+    public boolean isFirmwareVersionChanged(String newBuildDate) {
+        return build != null && newBuildDate != null && !build.equals(newBuildDate);
+    }
+
 }
