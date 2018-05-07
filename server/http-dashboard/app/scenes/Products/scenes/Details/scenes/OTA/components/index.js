@@ -1,9 +1,21 @@
 import React from 'react';
 import {Table, Button, Popconfirm} from 'antd';
 import PropTypes from 'prop-types';
+import {reduxForm} from 'redux-form';
+import {
+  Item
+} from "components/UI";
+import {
+  Field as FormField
+} from 'components/Form';
+
+import './styles.less';
 
 import {Status} from 'components/User';
 
+@reduxForm({
+  form: 'OTA'
+})
 class OTA extends React.Component{
 
   static propTypes = {
@@ -29,6 +41,18 @@ class OTA extends React.Component{
         columnKey: 'name'
       }
     };
+  }
+
+  updateConfirmation() {
+    return (
+      <div className="devices-ota-update-confirmation">
+        <div className="devices-ota-update-confirmation-name">
+          <Item label="Firmware Name" offset="medium">
+            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
+          </Item>
+        </div>
+      </div>
+    );
   }
 
   updateColumns() {
@@ -69,7 +93,6 @@ class OTA extends React.Component{
 
   render(){
 
-
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -82,6 +105,9 @@ class OTA extends React.Component{
     const columns = this.updateColumns();
     return (
       <div className="users-profile--organization-settings--organization-users">
+
+        { this.updateConfirmation() }
+
         <div className="users-profile--organization-settings--organization-users-delete-button">
           <Popconfirm title="Are you sure you want to delete selected users?"
                       okText="Yes"
