@@ -1,5 +1,6 @@
 import React from 'react';
-import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
+import {Table, Button, Row, Col, Upload, Icon, Progress, Input} from 'antd';
+import Modal from 'components/Modal';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
 import {
@@ -12,6 +13,7 @@ import {
 import './styles.less';
 
 import DeviceStatus from './components/DeviceStatus';
+
 
 @reduxForm({
   form: 'OTA'
@@ -72,7 +74,7 @@ class OTA extends React.Component{
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger">Cancel</Button>
+                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
                 <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} disabled={!selectedUsers} type="danger">Update firmware</Button>
               </div>
             </Col>
@@ -121,7 +123,7 @@ class OTA extends React.Component{
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger">Cancel</Button>
+                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
               </div>
             </Col>
           </Row>
@@ -132,7 +134,23 @@ class OTA extends React.Component{
 
   firmwareCancelModalConfirmation() {
     return (
-      null
+      <Modal
+          title="Are you sure you want to cancel ?"
+          wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
+          visible={true}
+          onOk={() => console.log("ok")}
+          onCancel={() => console.log("cancel")}
+          closable={false}
+          iconType={"question-circle"}
+          cancelText={"Cancel"}
+          okText={"Confirm"}
+      >
+        <div>
+          If you will continue 19 devices will be not updated.
+        </div>
+        <div>Type in word CANCEL below to confirm</div>  <br/>
+        <Input placeholder={"Type CANCEL to confirm"}/>
+      </Modal>
     );
   }
 
@@ -168,7 +186,7 @@ class OTA extends React.Component{
           <Row>
               <Col span={24}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger">Cancel</Button>
+                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
               </div>
             </Col>
           </Row>
