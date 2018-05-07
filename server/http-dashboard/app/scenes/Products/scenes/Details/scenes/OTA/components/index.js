@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Popconfirm, Row, Col} from 'antd';
+import {Table, Button, Row, Col, Upload} from 'antd';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
 import {
@@ -43,6 +43,17 @@ class OTA extends React.Component{
     };
   }
 
+  uploadFirmware() {
+    return (
+      <div className="devices-ota-update-upload">
+        <h4>Firmware Update:</h4>
+        <Upload>
+          <Button type="dashed">Upload firmware</Button>
+        </Upload>
+      </div>
+    );
+  }
+
   updateConfirmation() {
     return (
       <div className="devices-ota-update-confirmation">
@@ -74,6 +85,95 @@ class OTA extends React.Component{
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn">
+                <Button type="primary">Cancel</Button>
+                <Button type="primary">Update firmware</Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+
+  firmwareProcessing() {
+    return (
+      <div className="devices-ota-update-confirmation">
+        <div className="devices-ota-update-confirmation-name">
+          <Item label="Firmware Name" offset="medium">
+            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
+          </Item>
+        </div>
+        <div className="devices-ota-update-confirmation-file-name">
+          FileName.bin
+        </div>
+        <div className="devices-ota-update-confirmation-fields-list">
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 1
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 2
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 3
+          </div>
+        </div>
+        <div className="devices-ota-update-confirmation-footer">
+          <Row>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-selected-devices-count">
+                23 Devices Selected
+              </div>
+            </Col>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn">
+                <Button type="primary">Cancel</Button>
+                <Button type="primary">Update firmware</Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+
+  firmwareCancelModalConfirmation() {
+    return (
+      null
+    );
+  }
+
+  firmwareCompleted() {
+    return (
+      <div className="devices-ota-update-confirmation">
+        <div className="devices-ota-update-confirmation-name">
+          <Item label="Firmware Name" offset="medium">
+            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
+          </Item>
+        </div>
+        <div className="devices-ota-update-confirmation-file-name">
+          FileName.bin
+        </div>
+        <div className="devices-ota-update-confirmation-fields-list">
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 1
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 2
+          </div>
+          <div className="devices-ota-update-confirmation-fields-list-item">
+            Field 3
+          </div>
+        </div>
+        <div className="devices-ota-update-confirmation-footer">
+          <Row>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-selected-devices-count">
+                23 Devices Selected
+              </div>
+            </Col>
+            <Col span={12}>
+              <div className="devices-ota-update-confirmation-footer-confirm-btn">
+                <Button type="primary">Cancel</Button>
                 <Button type="primary">Update firmware</Button>
               </div>
             </Col>
@@ -114,32 +214,28 @@ class OTA extends React.Component{
   render(){
 
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      onChange: (/*selectedRowKeys, selectedRows*/) => {
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
       getCheckboxProps: record => ({
         name: record.name,
       }),
     };
-    console.log(this.props);
     const dataSource = this.getDataSource();
     const columns = this.updateColumns();
     return (
       <div className="users-profile--organization-settings--organization-users">
 
+        { this.uploadFirmware() }
+
         { this.updateConfirmation() }
 
-        <div className="users-profile--organization-settings--organization-users-delete-button">
-          <Popconfirm title="Are you sure you want to delete selected users?"
-                      okText="Yes"
-                      cancelText="No"
-                      overlayClassName="danger">
-            <Button type="danger"
-                    // disabled={!this.state.selectedRows.length}
-                    // loading={this.state.usersDeleteLoading}
-            >Update</Button>
-          </Popconfirm>
-        </div>
+        { this.firmwareProcessing() }
+
+        { this.firmwareCompleted() }
+
+        { this.firmwareCancelModalConfirmation() }
+
         <Table
           rowKey={(record) => record.name}
           rowSelection={rowSelection} columns={columns} dataSource={dataSource}
