@@ -21,7 +21,7 @@ import {
   StorageOTADevicesSessionStart,
   StorageOTADevicesSessionStop,
 } from 'data/Storage/actions';
-import {message} from 'antd';
+// import {message} from 'antd';
 
 @connect((state) => ({
   orgId: state.Account.orgId,
@@ -178,9 +178,10 @@ class OTAScene extends React.Component {
   fetchDevices() {
     this.props.fetchDevices({
       orgId: this.props.orgId
-    }).catch(() => {
-      message.error('Cannot fetch devices for OTA update');
     });
+    //   .catch(() => {
+    //   message.error('Cannot fetch devices for OTA update');
+    // });
   }
 
   handleFilterUpdate() {
