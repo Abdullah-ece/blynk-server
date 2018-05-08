@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {FILE_UPLOAD_URL} from 'services/API';
+import {getCalendarFormatDate} from 'services/Date';
 import {getFormValues, reset} from 'redux-form';
 import {
   ProductInfoOTAFirmwareUploadUpdate,
@@ -55,6 +56,12 @@ class OTAScene extends React.Component {
         version: PropTypes.string
       }),
       deviceOtaInfo: PropTypes.shape({
+        otaInitiatedBy: PropTypes.string,
+        buildDate: PropTypes.string,
+        pathToFirmware: PropTypes.string,
+        otaInitiatedAt: PropTypes.number,
+        requestSentAt: PropTypes.number,
+        finishedAt: PropTypes.number,
         otaStatus: PropTypes.oneOf([
           OTA_STATUSES.SUCCESS,
           OTA_STATUSES.FAILURE,
@@ -272,6 +279,8 @@ class OTAScene extends React.Component {
 
     let updatingProgress = 0;
     let devicesUpdated = 0;
+    let dateStarted = null;
+    let dateFinished = null;
 
     let step = OTA_STEPS.UPLOAD_FIRMWARE;
 
@@ -295,12 +304,32 @@ class OTAScene extends React.Component {
 
       updatingProgress = Math.round(completed * 100 / devices.length);
 
+      if(completed === devices.length) {
+        step = OTA_STEPS.SUCCESS;
+
+        dateStarted = getCalendarFormatDate(devices.reduce((acc, device) => {
+          if(device && device.deviceOtaInfo && device.deviceOtaInfo.otaInitiatedAt && device.deviceOtaInfo.otaInitiatedAt > acc) {
+            return device.deviceOtaInfo.otaInitiatedAt;
+          }
+          return acc;
+        }, 0));
+
+        dateFinished = getCalendarFormatDate(devices.reduce((acc, device) => {
+          if(device && device.deviceOtaInfo && device.deviceOtaInfo.finishedAt && device.deviceOtaInfo.finishedAt > acc) {
+            return device.deviceOtaInfo.finishedAt;
+          }
+          return acc;
+        }, 0));
+      }
+
     }
 
     devices = devices.filter((device) => Number(device.productId) === Number(params.id));
 
     return (
       <OTA step={step}
+           dateStarted={dateStarted}
+           dateFinished={dateFinished}
            modalVisible={this.state.modalVisible}
            OTAUpdate={OTAUpdate}
            firmwareUpdate={firmwareUpdate}

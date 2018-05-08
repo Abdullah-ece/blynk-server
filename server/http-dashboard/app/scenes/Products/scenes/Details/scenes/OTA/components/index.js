@@ -81,6 +81,9 @@ class OTA extends React.Component {
     onModalClose: PropTypes.func,
     onModalOpen: PropTypes.func,
 
+    dateStarted: PropTypes.any,
+    dateFinished: PropTypes.any,
+
     modalVisible: PropTypes.bool,
     invalid: PropTypes.bool,
   };
@@ -270,38 +273,53 @@ class OTA extends React.Component {
   }
 
   firmwareCompleted() {
+
+    const {OTAUpdate} = this.props;
+
+    const fields = Object.keys(OTAUpdate.firmwareFields).map((key) => {
+      return {
+        key  : key,
+        value: OTAUpdate.firmwareFields[key],
+      };
+    });
+
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-firmware-name-success">
-          Firmware Update Title update completed
+          { this.props.OTAUpdate.title } update completed
         </div>
         <div className="devices-ota-update-confirmation-log">
           <div className="devices-ota-update-confirmation-log-upload-start">
-            Started 1 may
+            Started: { this.props.dateStarted }
           </div>
           <div className="devices-ota-update-confirmation-log-upload-end">
-            Completed 3 may
+            Completed: { this.props.dateFinished }
           </div>
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          FileName.bin
+          <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
+                    {this.props.OTAUpdate.selectedDevicesIds.length}
+                </span> Devices were successfully updated
         </div>
-        <div className="devices-ota-update-confirmation-fields-list">
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 1
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 2
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 3
-          </div>
+        <div className="devices-ota-update-confirmation-file-name">
+          { this.props.OTAUpdate.firmwareFileName }
         </div>
+        { fields.length ?
+          (<div className="devices-ota-update-confirmation-fields-list">
+            {fields.map((field, key) => (
+              <div className="devices-ota-update-confirmation-fields-list-item" key={key}>
+                {field.key}: {field.value}
+              </div>
+            ))}
+          </div>)
+          :
+          (null)
+        }
         <div className="devices-ota-update-confirmation-footer">
           <Row>
             <Col span={24}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
+                <Button type="danger" onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
               </div>
             </Col>
           </Row>
