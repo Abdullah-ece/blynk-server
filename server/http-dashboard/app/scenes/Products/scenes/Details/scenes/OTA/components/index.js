@@ -17,6 +17,7 @@ import Validation from "services/Validation";
 
 import DeviceStatus from './components/DeviceStatus';
 import OTAStatus from './components/OTAStatus';
+import {getCalendarFormatDate} from "services/Date";
 
 @reduxForm({
   form: 'OTA'
@@ -355,11 +356,12 @@ class OTA extends React.Component {
 
       render: (text, record) => <OTAStatus status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
     }, {
-      title    : 'OTA initiated by',
-      dataIndex: 'deviceOtaInfo.otaInitiatedBy', // just temporary random index
+      title    : 'OTA initiated',
+      dataIndex: 'deviceOtaInfo.otaInitiatedBy',
+      render: (text, record) => <div>{text} {text + record.deviceOtaInfo && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
     }, {
       title    : 'Last Updated',
-      dataIndex: 'deviceOtaInfo.finishedAt', // just temporary random index
+      dataIndex: 'deviceOtaInfo.finishedAt',
     },];
   }
 
