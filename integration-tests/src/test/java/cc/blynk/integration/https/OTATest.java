@@ -99,7 +99,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, new int[] {1}).toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, new int[] {1}, "title").toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
