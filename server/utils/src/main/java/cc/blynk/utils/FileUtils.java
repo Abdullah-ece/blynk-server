@@ -17,7 +17,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
 
 /**
  * The Blynk Project.
