@@ -119,6 +119,22 @@ export function ProductInfoDevicesOTAStart({ productId, pathToFirmware, deviceId
   };
 }
 
+export function ProductInfoDevicesOTAStop({ productId, deviceIds }) {
+  return {
+    type: 'PRODUCT_INFO_DEVICES_OTA_STOP',
+    payload: {
+      request: {
+        method: 'POST',
+        url: API_URL.ota().stop(),
+        data: {
+          productId,
+          deviceIds
+        }
+      }
+    }
+  };
+}
+
 export function ProductInfoDevicesOTAFirmwareInfoFetch({ firmwareUploadUrl }) {
 
   return {

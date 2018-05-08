@@ -18,6 +18,7 @@ const initialState = {
     },
     firmwareUpdate: {
       loading: false,
+      cancelLoading: false,
       status: null,
     }
   },
@@ -130,6 +131,30 @@ export default function Product(state = initialState, action) {
             ...state.OTADevices.firmwareUpdate,
             loading: false,
             status: true,
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_STOP":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUpdate: {
+            ...state.OTADevices.firmwareUpdate,
+            cancelLoading: true,
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_STOP_SUCCESS":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUpdate: {
+            ...state.OTADevices.firmwareUpdate,
+            cancelLoading: false,
           }
         }
       };

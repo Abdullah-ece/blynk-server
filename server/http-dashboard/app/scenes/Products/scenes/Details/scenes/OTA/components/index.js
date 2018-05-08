@@ -64,6 +64,7 @@ class OTA extends React.Component {
     firmwareUpdate: PropTypes.shape({
       status: PropTypes.any,
       loading: PropTypes.bool,
+      cancelLoading: PropTypes.bool,
     }),
     firmwareFetchInfo    : PropTypes.shape({
       loading: PropTypes.bool,
@@ -78,6 +79,7 @@ class OTA extends React.Component {
     ]),
     onFirmwareUpdateStart: PropTypes.func,
     onFirmwareUpdateCancel: PropTypes.func,
+    onFirmwareUpdateProcessCancel: PropTypes.func,
     onModalClose: PropTypes.func,
     onModalOpen: PropTypes.func,
 
@@ -241,7 +243,7 @@ class OTA extends React.Component {
   }
 
   handleCancelModalOk() {
-    this.props.onFirmwareUpdateCancel();
+    this.props.onFirmwareUpdateProcessCancel();
   }
 
   handleCancelModalCancel() {
@@ -254,6 +256,7 @@ class OTA extends React.Component {
         title="Are you sure you want to cancel ?"
         wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
         visible={this.props.modalVisible}
+        confirmLoading={this.props.firmwareUpdate.cancelLoading}
         onOk={this.handleCancelModalOk}
         onCancel={this.handleCancelModalCancel}
         closable={false}

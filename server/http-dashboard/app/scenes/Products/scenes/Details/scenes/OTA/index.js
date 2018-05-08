@@ -16,6 +16,7 @@ import {
   ProductInfoDevicesOTAFetch,
   ProductInfoDevicesOTAFirmwareInfoFetch,
   ProductInfoDevicesOTAStart,
+  ProductInfoDevicesOTAStop,
 } from 'data/Product/api';
 import {
   StorageOTADevicesSessionStart,
@@ -39,6 +40,7 @@ import {
   firmwareUploadChange: bindActionCreators(ProductInfoOTAFirmwareUploadUpdate, dispatch),
   firmwareInfoFetch: bindActionCreators(ProductInfoDevicesOTAFirmwareInfoFetch, dispatch),
   firmwareUpdateStart: bindActionCreators(ProductInfoDevicesOTAStart, dispatch),
+  firmwareUpdateStop: bindActionCreators(ProductInfoDevicesOTAStop, dispatch),
   storageOTADevicesSessionStart: bindActionCreators(StorageOTADevicesSessionStart, dispatch),
   storageOTADevicesSessionStop: bindActionCreators(StorageOTADevicesSessionStop, dispatch),
   firmwareClean: bindActionCreators(ProductInfoOTADevicesFirmwareClean, dispatch),
@@ -121,6 +123,7 @@ class OTAScene extends React.Component {
     storageOTADevicesSessionStart: PropTypes.func,
     storageOTADevicesSessionStop: PropTypes.func,
     firmwareClean: PropTypes.func,
+    firmwareUpdateStop: PropTypes.func,
   };
 
   constructor(props) {
@@ -135,6 +138,7 @@ class OTAScene extends React.Component {
     this.handleFileUploadChange = this.handleFileUploadChange.bind(this);
     this.handleUpdateFirmwareStart = this.handleUpdateFirmwareStart.bind(this);
     this.handleUpdateFirmwareCancel = this.handleUpdateFirmwareCancel.bind(this);
+    this.handleUpdateFirmwareProcessCancel = this.handleUpdateFirmwareProcessCancel.bind(this);
   }
 
   componentWillMount() {
@@ -251,11 +255,23 @@ class OTAScene extends React.Component {
   }
 
   handleUpdateFirmwareCancel() {
-    this.handleModalClose();
     this.props.resetForm('OTA');
     this.props.firmwareClean();
     this.props.storageOTADevicesSessionStop();
     this.fetchDevices();
+  }
+
+  handleUpdateFirmwareProcessCancel() {
+    this.props.firmwareUpdateStop({
+      deviceIds: this.props.OTAUpdate.selectedDevicesIds,
+      productId: this.props.OTAUpdate.productId,
+    }).then(() => {
+      this.handleModalClose();
+      this.props.resetForm('OTA');
+      this.props.firmwareClean();
+      this.props.storageOTADevicesSessionStop();
+      this.fetchDevices();
+    });
   }
 
   handleCloseSuccessUpdateFirmware() {
@@ -345,6 +361,7 @@ class OTAScene extends React.Component {
            onDeviceSelect={this.props.updateSelectedDevicesList}
            onFirmwareUpdateStart={this.handleUpdateFirmwareStart}
            onFirmwareUpdateCancel={this.handleUpdateFirmwareCancel}
+           onFirmwareUpdateProcessCancel={this.handleUpdateFirmwareProcessCancel}
            onModalClose={this.handleModalClose}
            onModalOpen={this.handleModalOpen}
       />

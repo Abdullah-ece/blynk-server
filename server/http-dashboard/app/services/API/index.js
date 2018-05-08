@@ -31,6 +31,7 @@ export const API_URL = {
   ota: () => ({
     firmwareInto: (params) => `/ota/firmwareInfo?file=${params.firmwareUploadUrl || ''}`,
     start: () => `/ota/start`,
+    stop: () => `/ota/stop`,
   }),
   widgets: () => ({
     history: (params) => {
