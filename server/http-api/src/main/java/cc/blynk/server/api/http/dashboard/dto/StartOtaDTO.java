@@ -15,6 +15,8 @@ public class StartOtaDTO {
 
     public final String pathToFirmware;
 
+    public final String firmwareOriginalFileName;
+
     public final int[] deviceIds;
 
     public final String title;
@@ -22,16 +24,19 @@ public class StartOtaDTO {
     @JsonCreator
     public StartOtaDTO(@JsonProperty("productId") int productId,
                        @JsonProperty("pathToFirmware") String pathToFirmware,
+                       @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("title") String title) {
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;
+        this.firmwareOriginalFileName = firmwareOriginalFileName;
         this.deviceIds = deviceIds;
         this.title = title;
     }
 
     public boolean isNotValid() {
-        return pathToFirmware == null || pathToFirmware.isEmpty() || isDevicesEmpty();
+        return pathToFirmware == null || firmwareOriginalFileName == null
+                || pathToFirmware.isEmpty() || isDevicesEmpty();
     }
 
     public boolean isDevicesEmpty() {

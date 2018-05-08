@@ -21,8 +21,11 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.OtaProgress;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.Channel;
@@ -109,10 +112,17 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Initiating OTA for {}. {}", user.email, startOtaDTO);
 
         java.nio.file.Path path = Paths.get(staticFilesFolder, startOtaDTO.pathToFirmware);
-        Map<String, String> firmwareInfoDTO = FileUtils.getPatternFromString(path);
+        Map<String, String> firmwareInfo = FileUtils.getPatternFromString(path);
+
+        long now = System.currentTimeMillis();
+        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        product.otaProgress = new OtaProgress(startOtaDTO.title, startOtaDTO.pathToFirmware,
+                startOtaDTO.firmwareOriginalFileName, now,
+                startOtaDTO.deviceIds, firmwareInfo);
+        product.lastModifiedTs = now;
 
         for (Device device : devices) {
-            device.updateOTAInfo(user.email, startOtaDTO.pathToFirmware, firmwareInfoDTO.get("build"));
+            device.updateOTAInfo(user.email, startOtaDTO.pathToFirmware, firmwareInfo.get("build"));
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
@@ -122,14 +132,16 @@ public class OTAHandler extends BaseHttpHandler {
 
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
-                if (hardwareState != null && channel.isWritable()) {
+                if (hardwareState != null
+                        && ArrayUtil.contains(startOtaDTO.deviceIds, hardwareState.device.id)
+                        && channel.isWritable()) {
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.deviceOtaInfo.otaStatus = OTAStatus.REQUEST_SENT;
                 }
             }
         }
 
-        return ok();
+        return ok(product.otaProgress);
     }
 
     @POST

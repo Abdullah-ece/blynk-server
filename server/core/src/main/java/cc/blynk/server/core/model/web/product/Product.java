@@ -48,6 +48,8 @@ public class Product {
 
     public WebDashboard webDashboard = new WebDashboard();
 
+    public volatile OtaProgress otaProgress;
+
     public int deviceCount;
 
     public volatile int version;
