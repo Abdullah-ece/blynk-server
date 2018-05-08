@@ -24,6 +24,14 @@ export const OTA_STATUSES = {
   FAILURE: 'FAILURE',
 };
 
+export const OTA_STATUS_VALUE = {
+  [OTA_STATUSES.STARTED]           : "Pending",
+  [OTA_STATUSES.REQUEST_SENT]      : "Pending",
+  [OTA_STATUSES.FIRMWARE_UPLOADED] : "Pending",
+  [OTA_STATUSES.SUCCESS]           : "Success",
+  [OTA_STATUSES.FAILURE]           : "Failure",
+};
+
 export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',

@@ -15,7 +15,7 @@ import {OTA_STEPS} from 'services/Products';
 import './styles.less';
 
 import DeviceStatus from './components/DeviceStatus';
-
+import OTAStatus from './components/OTAStatus';
 
 @reduxForm({
   form: 'OTA'
@@ -293,11 +293,15 @@ class OTA extends React.Component {
 
   updateColumns() {
     return [{
-      title    : 'Name',
+      title    : 'Device Name',
       dataIndex: 'name',
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
     }, {
-      title    : 'Status',
-      dataIndex: 'status',
+      title    : 'Firmware version',
+      dataIndex: 'hardwareInfo.version',
+    }, {
+      title: 'FOTA Status',
+      dataIndex: 'deviceOtaInfo.otaStatus',
 
       filters       : [{
         text : 'Online',
@@ -309,11 +313,14 @@ class OTA extends React.Component {
       filterMultiple: false,
       onFilter      : (value, record) => record.status === value,
 
-      render: (text, record) => <DeviceStatus status={record.status} disconnectTime={record.disconnectTime}/>
+      render: (text, record) => <OTAStatus status={null} disconnectTime={record.disconnectTime} />
     }, {
-      title    : 'Firmware version',
-      dataIndex: 'hardwareInfo.version',
-    }];
+      title    : 'OTA initiated by',
+      dataIndex: 'deviceOtaInfo.otaInitiatedBy', // just temporary random index
+    }, {
+      title    : 'Last Updated',
+      dataIndex: 'deviceOtaInfo.finishedAt', // just temporary random index
+    },];
   }
 
   handleDeviceSelect(selectedRowKeys) {
