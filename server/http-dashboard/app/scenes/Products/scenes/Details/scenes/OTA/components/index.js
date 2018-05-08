@@ -10,6 +10,8 @@ import {
   Field as FormField
 } from 'components/Form';
 
+import {OTA_STEPS} from 'services/Products';
+
 import './styles.less';
 
 import DeviceStatus from './components/DeviceStatus';
@@ -18,34 +20,75 @@ import DeviceStatus from './components/DeviceStatus';
 @reduxForm({
   form: 'OTA'
 })
-class OTA extends React.Component{
+class OTA extends React.Component {
 
   static propTypes = {
-    devices: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number,
-      name: PropTypes.string,
-      status: PropTypes.oneOf(['ONLINE', 'OFFLINE']), // use this for column "status" and display like a green / gray dot
+    devices           : PropTypes.arrayOf(PropTypes.shape({
+      id            : PropTypes.number,
+      name          : PropTypes.string,
+      status        : PropTypes.oneOf(['ONLINE', 'OFFLINE']), // use this for column "status" and display like a green / gray dot
       disconnectTime: PropTypes.number, // display "Was online N days ago" when user do mouseover the gray dot (idea is to display last time when device was online if it's offline right now)
-      hardwareInfo: PropTypes.shape({
+      hardwareInfo  : PropTypes.shape({
         version: PropTypes.string
       })
     })),
 
     onDeviceSelect: PropTypes.func,
+
+    fileUploadOptions : PropTypes.shape({
+      name          : PropTypes.string,
+      showUploadList: PropTypes.bool,
+      accept        : PropTypes.string,
+      onChange      : PropTypes.func,
+    }),
+    firmwareUploadInfo: PropTypes.shape({
+      uploadPercent: PropTypes.number,
+      status       : PropTypes.oneOf([-1, 0, 1, 2]),
+      link         : PropTypes.string,
+    }),
+    firmwareFetchInfo : PropTypes.shape({
+      loading: PropTypes.bool,
+      data   : PropTypes.any,
+    }),
+    selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
+    step              : PropTypes.oneOf([
+      OTA_STEPS.START_UPDATE,
+      OTA_STEPS.SUCCESS,
+      OTA_STEPS.UPDATING,
+      OTA_STEPS.UPLOAD_FIRMWARE,
+    ])
   };
 
   uploadFirmware() {
+    const {firmwareUploadInfo} = this.props;
     return (
       <div className="devices-ota-update-upload">
-        <h4>Firmware Update:</h4>
-        <Upload>
-          <Button type="dashed"><Icon type="plus" />Upload new firmware</Button>
+        <h4>Firmware update:</h4>
+        <Upload {...this.props.fileUploadOptions}>
+          <Button type="dashed"><Icon type="plus"/>Upload new firmware</Button>
         </Upload>
+        {firmwareUploadInfo.uploadPercent > 0 ? (
+          <div className="devices-ota-update-upload-progress">
+            <Progress percent={firmwareUploadInfo.uploadPercent} strokeWidth={5}/>
+          </div>
+        ) : (
+          null
+        )}
       </div>
     );
   }
 
-  updateConfirmation(selectedUsers = false) {
+  updateConfirmation() {
+
+    const {firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds} = this.props;
+
+    const fields = Object.keys(firmwareFetchInfo.data).map((key) => {
+      return {
+        key  : key,
+        value: firmwareFetchInfo.data[key],
+      };
+    });
+
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-name">
@@ -54,30 +97,38 @@ class OTA extends React.Component{
           </Item>
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          FileName.bin
+          {firmwareUploadInfo.name}
         </div>
-        <div className="devices-ota-update-confirmation-fields-list">
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 1
+        {firmwareFetchInfo.loading ? (
+          <div className="devices-ota-update-confirmation-fields-list">
+            <Icon type="loading"/>
           </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 2
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 3
-          </div>
-        </div>
+        ) : fields.length ?
+          (<div className="devices-ota-update-confirmation-fields-list">
+            {fields.map((field, key) => (
+              <div className="devices-ota-update-confirmation-fields-list-item" key={key}>
+                {field.key}: {field.value}
+              </div>
+            ))}
+          </div>)
+          :
+          (null)
+        }
         <div className="devices-ota-update-confirmation-footer">
           <Row>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-selected-devices-count">
-                Select devices to update firmware
+                { selectedDevicesIds && selectedDevicesIds.length ? `${selectedDevicesIds.length} Device${selectedDevicesIds.length === 1 ? '' : 's'} Selected` : `Select devices to update firmware` }
               </div>
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
                 <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
-                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"} disabled={!selectedUsers} type="danger">Update firmware</Button>
+                <Button className={"devices-ota-update-confirmation-footer-confirm-btn"}
+                        disabled={!selectedDevicesIds.length}
+                        type="danger">
+                  Update firmware
+                </Button>
               </div>
             </Col>
           </Row>
@@ -121,7 +172,7 @@ class OTA extends React.Component{
                   &nbsp; devices updated
                 </div>
               </div>
-              <Progress percent={50} size="small"  strokeWidth={4}  showInfo={false}/>
+              <Progress percent={50} size="small" strokeWidth={4} showInfo={false}/>
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
@@ -186,7 +237,7 @@ class OTA extends React.Component{
         </div>
         <div className="devices-ota-update-confirmation-footer">
           <Row>
-              <Col span={24}>
+            <Col span={24}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
                 <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
               </div>
@@ -199,25 +250,25 @@ class OTA extends React.Component{
 
   updateColumns() {
     return [{
-      title: 'Name',
+      title    : 'Name',
       dataIndex: 'name',
     }, {
-      title: 'Status',
+      title    : 'Status',
       dataIndex: 'status',
 
-      filters: [{
-        text: 'Online',
+      filters       : [{
+        text : 'Online',
         value: 'ONLINE',
       }, {
-        text: 'Offline',
+        text : 'Offline',
         value: 'OFFLINE',
       }],
       filterMultiple: false,
-      onFilter: (value, record) => record.status === value,
+      onFilter      : (value, record) => record.status === value,
 
-      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime}/>
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime={record.disconnectTime}/>
     }, {
-      title: 'Firmware version',
+      title    : 'Firmware version',
       dataIndex: 'hardwareInfo.version',
     }];
   }
@@ -230,7 +281,10 @@ class OTA extends React.Component{
 
     return this.props.devices;
   }
-  render(){
+
+  render() {
+
+    const {step} = this.props;
 
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
@@ -245,22 +299,22 @@ class OTA extends React.Component{
     return (
       <div className="users-profile--organization-settings--organization-users">
 
-        { this.uploadFirmware() }
+        {step === OTA_STEPS.UPLOAD_FIRMWARE ? this.uploadFirmware() : null}
 
-        { this.updateConfirmation() }
+        {this.updateConfirmation()}
 
-        { this.updateConfirmation(true) }
+        {this.updateConfirmation(true)}
 
-        { this.firmwareProcessing() }
+        {this.firmwareProcessing()}
 
-        { this.firmwareCompleted() }
+        {this.firmwareCompleted()}
 
-        { this.firmwareCancelModalConfirmation() }
+        {this.firmwareCancelModalConfirmation()}
 
         <Table
           rowKey={(record) => record.id}
           rowSelection={rowSelection} columns={columns} dataSource={dataSource}
-               pagination={false}/>
+          pagination={false}/>
       </div>
     );
   }

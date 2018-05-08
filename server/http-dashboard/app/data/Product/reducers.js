@@ -6,6 +6,16 @@ const initialState = {
     data: [],
     status: null,
     selectedDevicesIds: [],
+    firmwareUploadInfo: {
+      uploadPercent: 0,
+      status: -1, // -1 - didn't touch, 0 - uploading 1 - success 2 - failed
+      link: null,
+      name: null
+    },
+    firmwareFetchInfo: {
+      loading: false,
+      data: {}
+    }
   },
   creating: {
     info: {
@@ -53,6 +63,46 @@ export default function Product(state = initialState, action) {
         dashboardPreview: {
           ...state.dashboardPreview,
           selectedDeviceId: action.data
+        }
+      };
+
+    case "PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUploadInfo: {
+            ...state.OTADevices.firmwareUploadInfo,
+            ...action.data
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_FIRMWARE_INFO_FETCH":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareFetchInfo: {
+            ...state.OTADevices.firmwareFetchInfo,
+            loading: true,
+            data: {}
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_FIRMWARE_INFO_FETCH_SUCCESS":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareFetchInfo: {
+            ...state.OTADevices.firmwareFetchInfo,
+            loading: false,
+            data: {
+              ...action.payload.data
+            }
+          }
         }
       };
 

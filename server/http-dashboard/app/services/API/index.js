@@ -28,6 +28,9 @@ export const API_URL = {
       update: (params) => `/devices/${params.orgId}/${params.deviceId}/updateMetaField`
     })
   }),
+  ota: () => ({
+    firmwareInto: (params) => `/ota/firmwareInfo?file=${params.firmwareUploadUrl || ''}`
+  }),
   widgets: () => ({
     history: (params) => {
       return `/data/${params.deviceId}/history`;

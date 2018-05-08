@@ -9,6 +9,13 @@ import {
 
 import {List, fromJS} from 'immutable';
 
+export const OTA_STEPS = {
+  UPLOAD_FIRMWARE: 'UPLOAD_FIRMWARE',
+  START_UPDATE   : 'START_UPDATE',
+  UPDATING       : 'UPDATING',
+  SUCCESS        : 'SUCCESS'
+};
+
 export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',

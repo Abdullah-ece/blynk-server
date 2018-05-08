@@ -123,3 +123,11 @@ export function ProductInfoOTADevicesSelectedDevicesUpdate(data = false) {
     data: data
   };
 }
+
+export function ProductInfoOTAFirmwareUploadUpdate(data = {}) {
+  return {
+    type: 'PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE',
+    data: data
+  };
+}
+
