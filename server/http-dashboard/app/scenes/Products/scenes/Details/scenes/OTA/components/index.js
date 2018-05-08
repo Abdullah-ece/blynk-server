@@ -336,14 +336,6 @@ class OTA extends React.Component {
     return [{
       title    : 'Device Name',
       dataIndex: 'name',
-      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
-    }, {
-      title    : 'Firmware version',
-      dataIndex: 'hardwareInfo.version',
-    }, {
-      title: 'FOTA Status',
-      dataIndex: 'deviceOtaInfo.otaStatus',
-
       filters       : [{
         text : 'Online',
         value: 'ONLINE',
@@ -353,6 +345,14 @@ class OTA extends React.Component {
       }],
       filterMultiple: false,
       onFilter      : (value, record) => record.status === value,
+
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
+    }, {
+      title    : 'Firmware version',
+      dataIndex: 'hardwareInfo.version',
+    }, {
+      title: 'FOTA Status',
+      dataIndex: 'deviceOtaInfo.otaStatus',
 
       render: (text, record) => <OTAStatus status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
     }, {
