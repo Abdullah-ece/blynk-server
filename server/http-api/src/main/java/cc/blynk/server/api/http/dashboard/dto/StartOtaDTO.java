@@ -17,13 +17,17 @@ public class StartOtaDTO {
 
     public final int[] deviceIds;
 
+    public final String title;
+
     @JsonCreator
     public StartOtaDTO(@JsonProperty("productId") int productId,
                        @JsonProperty("pathToFirmware") String pathToFirmware,
-                       @JsonProperty("deviceIds") int[] deviceIds) {
+                       @JsonProperty("deviceIds") int[] deviceIds,
+                       @JsonProperty("title") String title) {
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;
         this.deviceIds = deviceIds;
+        this.title = title;
     }
 
     public boolean isNotValid() {
