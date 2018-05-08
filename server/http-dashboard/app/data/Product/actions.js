@@ -124,6 +124,13 @@ export function ProductInfoOTADevicesSelectedDevicesUpdate(data = false) {
   };
 }
 
+export function ProductInfoOTADevicesFirmwareClean(data = false) {
+  return {
+    type: 'PRODUCT_INFO_OTA_FIRMWARE_CLEAN',
+    data: data
+  };
+}
+
 export function ProductInfoOTAFirmwareUploadUpdate(data = {}) {
   return {
     type: 'PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE',

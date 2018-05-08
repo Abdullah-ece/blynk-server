@@ -13,6 +13,7 @@ import {
 import {OTA_STEPS} from 'services/Products';
 
 import './styles.less';
+import Validation from "services/Validation";
 
 import DeviceStatus from './components/DeviceStatus';
 import OTAStatus from './components/OTAStatus';
@@ -41,6 +42,9 @@ class OTA extends React.Component {
       productId: PropTypes.number,
       status: PropTypes.number
     }),
+
+    updatingProgress: PropTypes.number,
+    devicesUpdated: PropTypes.array,
 
     onDeviceSelect: PropTypes.func,
 
@@ -74,6 +78,8 @@ class OTA extends React.Component {
     ]),
     onFirmwareUpdateStart: PropTypes.func,
     onFirmwareUpdateCancel: PropTypes.func,
+
+    invalid: PropTypes.bool,
   };
 
   constructor(props) {
@@ -122,7 +128,7 @@ class OTA extends React.Component {
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-name">
           <Item label="Firmware Name" offset="medium">
-            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'}/>
+            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'} validate={[Validation.Rules.required]}/>
           </Item>
         </div>
         <div className="devices-ota-update-confirmation-file-name">
@@ -152,9 +158,9 @@ class OTA extends React.Component {
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
+                <Button type="danger" onClick={this.props.onFirmwareUpdateCancel}>Cancel</Button>
                 <Button className={"devices-ota-update-confirmation-footer-confirm-btn"}
-                        disabled={!selectedDevicesIds.length}
+                        disabled={!selectedDevicesIds.length || this.props.invalid}
                         onClick={this.firmwareUpdateStart}
                         loading={this.props.firmwareUpdate.loading}
                         type="danger">
@@ -204,16 +210,16 @@ class OTA extends React.Component {
               <div className="devices-ota-update-confirmation-footer-upload-progress">
                 <div>
                   <span className={"devices-ota-update-confirmation-footer-upload-progress-done"}>
-                  17
+                    {this.props.devicesUpdated.length}
                 </span>
                   &nbsp; of &nbsp;
                   <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
-                  23
+                    {this.props.OTAUpdate.selectedDevicesIds.length}
                 </span>
                   &nbsp; devices updated
                 </div>
               </div>
-              <Progress percent={50} size="small" strokeWidth={4} showInfo={false}/>
+              <Progress className="devices-ota-update-progress" percent={this.props.updatingProgress} size="small" strokeWidth={4} status="active" showInfo={false}/>
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
@@ -233,8 +239,12 @@ class OTA extends React.Component {
         title="Are you sure you want to cancel ?"
         wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
         visible={false}
-        onOk={() => console.log("ok")}
-        onCancel={() => console.log("cancel")}
+        onOk={() => {
+
+        }}
+        onCancel={() => {
+
+        }}
         closable={false}
         iconType={"question-circle"}
         cancelText={"Cancel"}
@@ -343,6 +353,7 @@ class OTA extends React.Component {
       getCheckboxProps: record => ({
         name: record.name,
       }),
+      selectedRowKeys: this.props.selectedDevicesIds,
     };
     const dataSource = this.getDataSource();
     const columns = this.updateColumns();

@@ -70,6 +70,32 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "PRODUCT_INFO_OTA_FIRMWARE_CLEAN":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          loading           : false,
+          data              : [],
+          status            : null,
+          selectedDevicesIds: [],
+          firmwareUploadInfo: {
+            uploadPercent: 0,
+            status       : -1,
+            link         : null,
+            name         : null
+          },
+          firmwareFetchInfo : {
+            loading: false,
+            data   : {}
+          },
+          firmwareUpdate    : {
+            loading: false,
+            status : null,
+          }
+        }
+      };
+
     case "PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE":
       return {
         ...state,

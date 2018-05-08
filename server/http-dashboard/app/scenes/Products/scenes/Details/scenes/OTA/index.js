@@ -7,9 +7,10 @@ import {FILE_UPLOAD_URL} from 'services/API';
 import {getFormValues} from 'redux-form';
 import {
   ProductInfoOTAFirmwareUploadUpdate,
-  ProductInfoOTADevicesSelectedDevicesUpdate
+  ProductInfoOTADevicesSelectedDevicesUpdate,
+  ProductInfoOTADevicesFirmwareClean
 } from 'data/Product/actions';
-import {OTA_STEPS} from 'services/Products';
+import {OTA_STEPS, OTA_STATUSES} from 'services/Products';
 import {
   ProductInfoDevicesOTAFetch,
   ProductInfoDevicesOTAFirmwareInfoFetch,
@@ -39,6 +40,7 @@ import {message} from 'antd';
   firmwareUpdateStart: bindActionCreators(ProductInfoDevicesOTAStart, dispatch),
   storageOTADevicesSessionStart: bindActionCreators(StorageOTADevicesSessionStart, dispatch),
   storageOTADevicesSessionStop: bindActionCreators(StorageOTADevicesSessionStop, dispatch),
+  firmwareClean: bindActionCreators(ProductInfoOTADevicesFirmwareClean, dispatch),
 }))
 class OTAScene extends React.Component {
 
@@ -50,7 +52,16 @@ class OTAScene extends React.Component {
       disconnectTime: PropTypes.number, // display "Was online N days ago" when user do mouseover the gray dot (idea is to display last time when device was online if it's offline right now)
       hardwareInfo  : PropTypes.shape({
         version: PropTypes.string
-      })
+      }),
+      deviceOtaInfo: {
+        otaStatus: PropTypes.oneOf([
+          OTA_STATUSES.SUCCESS,
+          OTA_STATUSES.FAILURE,
+          OTA_STATUSES.FIRMWARE_UPLOADED,
+          OTA_STATUSES.REQUEST_SENT,
+          OTA_STATUSES.STARTED,
+        ])
+      }
     })),
 
     OTAUpdate: PropTypes.shape({
@@ -100,6 +111,7 @@ class OTAScene extends React.Component {
     firmwareUpdateStart: PropTypes.func,
     storageOTADevicesSessionStart: PropTypes.func,
     storageOTADevicesSessionStop: PropTypes.func,
+    firmwareClean: PropTypes.func,
   };
 
   constructor(props) {
@@ -112,7 +124,6 @@ class OTAScene extends React.Component {
 
   componentWillMount() {
     if(!isNaN(Number(this.props.orgId))) {
-      console.log('mount');
       this.fetchDevices();
     }
   }
@@ -150,7 +161,6 @@ class OTAScene extends React.Component {
   };
 
   fetchDevices() {
-    console.log('Do fetch devices');
     this.props.fetchDevices({
       orgId: this.props.orgId
     }).catch(() => {
@@ -209,7 +219,6 @@ class OTAScene extends React.Component {
       productId: Number(this.props.params.id),
       deviceIds: this.props.selectedDevicesIds,
     }).then(() => {
-      this.props.updateSelectedDevicesList([]);
 
       this.props.storageOTADevicesSessionStart({
         title: this.props.formValues.firmwareName,
@@ -219,11 +228,16 @@ class OTAScene extends React.Component {
         firmwareFileName: this.props.firmwareUploadInfo.name,
         productId: Number(this.props.params.id),
       });
+
+      this.props.updateSelectedDevicesList([]);
+
     });
   }
 
   handleUpdateFirmwareCancel() {
+    this.props.firmwareClean();
     this.props.storageOTADevicesSessionStop();
+    this.fetchDevices();
   }
 
   handleCloseSuccessUpdateFirmware() {
@@ -232,7 +246,10 @@ class OTAScene extends React.Component {
 
   render() {
 
-    const {devices, devicesLoading, firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds, firmwareUpdate, OTAUpdate} = this.props;
+    let {devices, params, devicesLoading, firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds, firmwareUpdate, OTAUpdate} = this.props;
+
+    let updatingProgress = 0;
+    let devicesUpdated = 0;
 
     let step = OTA_STEPS.UPLOAD_FIRMWARE;
 
@@ -242,12 +259,30 @@ class OTAScene extends React.Component {
 
     if(this.props.OTAUpdate.status === 1) {
       step = OTA_STEPS.UPDATING;
+
+      let devices = this.props.devices.filter((device) => OTAUpdate.selectedDevicesIds.indexOf(Number(device.id)) >= 0);
+
+      devicesUpdated = devices.filter((device) => {
+        if(device && device.deviceOtaInfo && device.deviceOtaInfo.otaStatus) {
+          return [OTA_STATUSES.SUCCESS].indexOf(device.deviceOtaInfo.otaStatus) >= 0;
+        }
+        return false;
+      });
+
+      let completed = devicesUpdated.length;
+
+      updatingProgress = Math.round(completed * 100 / devices.length);
+
     }
+
+    devices = devices.filter((device) => Number(device.productId) === Number(params.id));
 
     return (
       <OTA step={step}
            OTAUpdate={OTAUpdate}
            firmwareUpdate={firmwareUpdate}
+           updatingProgress={updatingProgress}
+           devicesUpdated={devicesUpdated}
            selectedDevicesIds={selectedDevicesIds}
            devices={devices}
            devicesLoading={devicesLoading}
