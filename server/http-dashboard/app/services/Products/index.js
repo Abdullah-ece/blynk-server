@@ -16,6 +16,14 @@ export const OTA_STEPS = {
   SUCCESS        : 'SUCCESS'
 };
 
+export const OTA_STATUSES = {
+  STARTED: 'STARTED',
+  REQUEST_SENT: 'REQUEST_SENT',
+  FIRMWARE_UPLOADED: 'FIRMWARE_UPLOADED',
+  SUCCESS: 'SUCCESS',
+  FAILURE: 'FAILURE',
+};
+
 export const TABS = {
   INFO: 'info',
   METADATA: 'metadata',
