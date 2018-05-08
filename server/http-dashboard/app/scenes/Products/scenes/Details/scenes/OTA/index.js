@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from 'react';
 import OTA from './components';
 import PropTypes from 'prop-types';
@@ -17,6 +18,7 @@ import {
   ProductInfoDevicesOTAFirmwareInfoFetch,
   ProductInfoDevicesOTAStart,
   ProductInfoDevicesOTAStop,
+  ProductFetch,
 } from 'data/Product/api';
 import {
   StorageOTADevicesSessionStart,
@@ -24,7 +26,7 @@ import {
 } from 'data/Storage/actions';
 // import {message} from 'antd';
 
-@connect((state) => ({
+@connect((state, OwnProps) => ({
   orgId: state.Account.orgId,
   devices: state.Product.OTADevices.data,
   devicesLoading: state.Product.OTADevices.loading,
@@ -33,7 +35,13 @@ import {
   firmwareFetchInfo: state.Product.OTADevices.firmwareFetchInfo,
   formValues: getFormValues('OTA')(state) || {},
   firmwareUpdate: state.Product.OTADevices.firmwareUpdate,
-  OTAUpdate: state.Storage.OTAUpdate,
+  OTAUpdate: (() => {
+    const product = _.find(state.Product.products, {
+      id: Number(OwnProps.params.id)
+    });
+
+    return product && product.otaProgress || {};
+  })(),
 }), (dispatch) => ({
   fetchDevices: bindActionCreators(ProductInfoDevicesOTAFetch, dispatch),
   updateSelectedDevicesList: bindActionCreators(ProductInfoOTADevicesSelectedDevicesUpdate, dispatch),
@@ -45,6 +53,7 @@ import {
   storageOTADevicesSessionStop: bindActionCreators(StorageOTADevicesSessionStop, dispatch),
   firmwareClean: bindActionCreators(ProductInfoOTADevicesFirmwareClean, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
+  fetchProduct: bindActionCreators(ProductFetch, dispatch),
 }))
 class OTAScene extends React.Component {
 
@@ -76,10 +85,11 @@ class OTAScene extends React.Component {
 
     OTAUpdate: PropTypes.shape({
       title: PropTypes.string,
-      selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
       pathToFirmware: PropTypes.string,
-      productId: PropTypes.number,
-      status: PropTypes.number
+      firmwareOriginalFileName: PropTypes.string,
+      startedAt: PropTypes.number,
+      deviceIds: PropTypes.arrayOf(PropTypes.number),
+      firmwareInfo: PropTypes.any,
     }),
 
     updateSelectedDevicesList: PropTypes.func,
@@ -124,6 +134,7 @@ class OTAScene extends React.Component {
     storageOTADevicesSessionStop: PropTypes.func,
     firmwareClean: PropTypes.func,
     firmwareUpdateStop: PropTypes.func,
+    fetchProduct: PropTypes.func,
   };
 
   constructor(props) {
@@ -238,19 +249,14 @@ class OTAScene extends React.Component {
       pathToFirmware: this.props.firmwareUploadInfo.link,
       productId: Number(this.props.params.id),
       deviceIds: this.props.selectedDevicesIds,
+      firmwareInfo: this.props.firmwareFetchInfo.data,
+      firmwareOriginalFileName: this.props.firmwareUploadInfo.name,
     }).then(() => {
-
-      this.props.storageOTADevicesSessionStart({
-        title: this.props.formValues.firmwareName,
-        selectedDevicesIds: this.props.selectedDevicesIds,
-        pathToFirmware: this.props.firmwareUploadInfo.link,
-        firmwareFields: this.props.firmwareFetchInfo.data,
-        firmwareFileName: this.props.firmwareUploadInfo.name,
-        productId: Number(this.props.params.id),
+      this.props.fetchProduct({
+        id: this.props.params.id
+      }).then(() => {
+        this.props.updateSelectedDevicesList([]);
       });
-
-      this.props.updateSelectedDevicesList([]);
-
     });
   }
 
@@ -263,14 +269,18 @@ class OTAScene extends React.Component {
 
   handleUpdateFirmwareProcessCancel() {
     this.props.firmwareUpdateStop({
-      deviceIds: this.props.OTAUpdate.selectedDevicesIds,
-      productId: this.props.OTAUpdate.productId,
+      deviceIds: this.props.OTAUpdate.deviceIds,
+      productId: this.props.params.id,
     }).then(() => {
-      this.handleModalClose();
-      this.props.resetForm('OTA');
-      this.props.firmwareClean();
-      this.props.storageOTADevicesSessionStop();
-      this.fetchDevices();
+      this.props.fetchProduct({
+        id: this.props.params.id
+      }).then(() => {
+        this.handleModalClose();
+        this.props.resetForm('OTA');
+        this.props.firmwareClean();
+        this.props.storageOTADevicesSessionStop();
+        this.fetchDevices();
+      });
     });
   }
 
@@ -305,10 +315,10 @@ class OTAScene extends React.Component {
       step = OTA_STEPS.START_UPDATE;
     }
 
-    if(this.props.OTAUpdate.status === 1) {
+    if(this.props.OTAUpdate && this.props.OTAUpdate.deviceIds && this.props.OTAUpdate.deviceIds.length) {
       step = OTA_STEPS.UPDATING;
 
-      let devices = this.props.devices.filter((device) => OTAUpdate.selectedDevicesIds.indexOf(Number(device.id)) >= 0);
+      let devices = this.props.devices.filter((device) => OTAUpdate.deviceIds.indexOf(Number(device.id)) >= 0);
 
       devicesUpdated = devices.filter((device) => {
         if(device && device.deviceOtaInfo && device.deviceOtaInfo.otaStatus) {

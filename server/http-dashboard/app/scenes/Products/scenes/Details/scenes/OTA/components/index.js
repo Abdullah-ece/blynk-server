@@ -37,11 +37,11 @@ class OTA extends React.Component {
 
     OTAUpdate: PropTypes.shape({
       title: PropTypes.string,
-      selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
       pathToFirmware: PropTypes.string,
-      firmwareFileName: PropTypes.string,
-      productId: PropTypes.number,
-      status: PropTypes.number
+      firmwareOriginalFileName: PropTypes.string,
+      startedAt: PropTypes.number,
+      deviceIds: PropTypes.arrayOf(PropTypes.number),
+      firmwareInfo: PropTypes.any,
     }),
 
     updatingProgress: PropTypes.number,
@@ -189,10 +189,10 @@ class OTA extends React.Component {
 
     const {OTAUpdate} = this.props;
 
-    const fields = Object.keys(OTAUpdate.firmwareFields).map((key) => {
+    const fields = Object.keys(OTAUpdate.firmwareInfo).map((key) => {
       return {
         key  : key,
-        value: OTAUpdate.firmwareFields[key],
+        value: OTAUpdate.firmwareInfo[key],
       };
     });
 
@@ -202,7 +202,7 @@ class OTA extends React.Component {
           { this.props.OTAUpdate.title }
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          { this.props.OTAUpdate.firmwareFileName }
+          { this.props.OTAUpdate.firmwareOriginalFileName }
         </div>
         { fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
@@ -225,7 +225,7 @@ class OTA extends React.Component {
                 </span>
                   &nbsp; of &nbsp;
                   <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
-                    {this.props.OTAUpdate.selectedDevicesIds.length}
+                    {this.props.OTAUpdate.deviceIds.length}
                 </span>
                   &nbsp; devices updated
                 </div>
@@ -266,7 +266,7 @@ class OTA extends React.Component {
         okText={"Confirm"}
       >
         <div>
-          If you continue {Number(this.props.OTAUpdate.selectedDevicesIds.length) - Number(this.props.devicesUpdated.length)} device(s) won't be updated<br/>
+          If you continue {Number(this.props.OTAUpdate && this.props.OTAUpdate.deviceIds && this.props.OTAUpdate.deviceIds.length) - Number(this.props.devicesUpdated.length)} device(s) won't be updated<br/>
           { this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated device(s).` : null}
         </div>
         {/*<div>Type in word CANCEL below to confirm</div>*/}
@@ -280,10 +280,10 @@ class OTA extends React.Component {
 
     const {OTAUpdate} = this.props;
 
-    const fields = Object.keys(OTAUpdate.firmwareFields).map((key) => {
+    const fields = Object.keys(OTAUpdate.firmwareInfo).map((key) => {
       return {
         key  : key,
-        value: OTAUpdate.firmwareFields[key],
+        value: OTAUpdate.firmwareInfo[key],
       };
     });
 
@@ -302,11 +302,11 @@ class OTA extends React.Component {
         </div>
         <div className="devices-ota-update-confirmation-file-name">
           <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
-                    {this.props.OTAUpdate.selectedDevicesIds.length}
+                    {this.props.OTAUpdate.deviceIds.length}
                 </span> Devices were successfully updated
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          { this.props.OTAUpdate.firmwareFileName }
+          { this.props.OTAUpdate.firmwareOriginalFileName }
         </div>
         { fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
@@ -425,6 +425,7 @@ class OTA extends React.Component {
         {this.firmwareCancelModalConfirmation()}
 
         <Table
+          className="ota-table"
           loading={this.props.devicesLoading}
           rowKey={(record) => record.id}
           rowSelection={rowSelection} columns={columns} dataSource={dataSource}
