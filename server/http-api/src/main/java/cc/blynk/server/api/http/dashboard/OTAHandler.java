@@ -19,6 +19,7 @@ import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.OtaProgress;
@@ -116,13 +117,17 @@ public class OTAHandler extends BaseHttpHandler {
 
         long now = System.currentTimeMillis();
         Product product = organizationDao.getProductById(startOtaDTO.productId);
-        product.otaProgress = new OtaProgress(startOtaDTO.title, startOtaDTO.pathToFirmware,
-                startOtaDTO.firmwareOriginalFileName, now,
-                startOtaDTO.deviceIds, firmwareInfo);
-        product.lastModifiedTs = now;
+        product.setOtaProgress(new OtaProgress(startOtaDTO.title,
+                startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
+                now, -1,
+                startOtaDTO.deviceIds, firmwareInfo));
 
         for (Device device : devices) {
-            device.updateOTAInfo(user.email, startOtaDTO.pathToFirmware, firmwareInfo.get("build"));
+            DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
+                    -1L, -1L,
+                    startOtaDTO.pathToFirmware, firmwareInfo.get("build"),
+                    OTAStatus.STARTED);
+            device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
@@ -171,9 +176,12 @@ public class OTAHandler extends BaseHttpHandler {
 
         for (Device device : devices) {
             if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus == OTAStatus.STARTED) {
-                device.stop();
+                device.setDeviceOtaInfo(null);
             }
         }
+
+        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        product.setOtaProgress(null);
 
         return ok();
     }

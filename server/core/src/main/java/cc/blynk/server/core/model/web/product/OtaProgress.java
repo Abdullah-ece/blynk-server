@@ -15,6 +15,8 @@ public class OtaProgress {
 
     public final long startedAt;
 
+    public final long finishedAt;
+
     public final int[] deviceIds;
 
     public final Map<String, String> firmwareInfo;
@@ -24,12 +26,14 @@ public class OtaProgress {
                        @JsonProperty("pathToFirmware") String pathToFirmware,
                        @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
                        @JsonProperty("startedAt") long startedAt,
+                       @JsonProperty("finishedAt") long finishedAt,
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("firmwareInfo") Map<String, String> firmwareInfo) {
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
         this.startedAt = startedAt;
+        this.finishedAt = finishedAt;
         this.deviceIds = deviceIds;
         this.firmwareInfo = firmwareInfo;
     }

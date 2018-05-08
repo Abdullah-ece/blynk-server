@@ -206,6 +206,11 @@ public class Device implements Target {
         this.updatedAt = 0;
     }
 
+    public void setDeviceOtaInfo(DeviceOtaInfo deviceOtaInfo) {
+        this.deviceOtaInfo = deviceOtaInfo;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     public void updateOTAInfo(String initiatedBy, String pathToFirmware, String buildDate) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now,
@@ -233,11 +238,6 @@ public class Device implements Target {
                 prev.pathToFirmware, prev.buildDate,
                 OTAStatus.SUCCESS);
         this.updatedAt = now;
-    }
-
-    public void stop() {
-        this.deviceOtaInfo = null;
-        this.updatedAt = System.currentTimeMillis();
     }
 
     @Override

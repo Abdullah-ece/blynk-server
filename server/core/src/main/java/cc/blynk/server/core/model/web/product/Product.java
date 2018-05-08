@@ -128,6 +128,11 @@ public class Product {
         return name == null || name.isEmpty();
     }
 
+    public void setOtaProgress(OtaProgress otaProgress) {
+        this.otaProgress = otaProgress;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
