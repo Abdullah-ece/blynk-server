@@ -10,7 +10,7 @@ import {
   Field as FormField
 } from 'components/Form';
 
-import {OTA_STEPS} from 'services/Products';
+import {OTA_STATUSES, OTA_STEPS} from 'services/Products';
 
 import './styles.less';
 import Validation from "services/Validation";
@@ -337,14 +337,36 @@ class OTA extends React.Component {
       title    : 'Device Name',
       dataIndex: 'name',
       filters       : [{
-        text : 'Online',
-        value: 'ONLINE',
+        text : 'Pending',
+        value: 'PENDING',
       }, {
-        text : 'Offline',
-        value: 'OFFLINE',
+        text : 'Success',
+        value: 'SUCCESS',
+      }, {
+        text : 'Failure',
+        value: 'FAILURE',
+      }, {
+        text : 'Never Updated',
+        value: 'NEVER_UPDATED',
       }],
       filterMultiple: false,
-      onFilter      : (value, record) => record.status === value,
+      onFilter      : (value, record) => {
+        if(value === 'PENDING') {
+          return [OTA_STATUSES.STARTED, OTA_STATUSES.REQUEST_SENT, OTA_STATUSES.FIRMWARE_UPLOADED].indexOf(record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null) >= 0;
+        }
+
+        if(value === 'SUCCESS') {
+          return OTA_STATUSES.SUCCESS === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
+        }
+
+        if(value === 'FAILURE') {
+          return OTA_STATUSES.FAILURE === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
+        }
+
+        if(value === 'NEVER_UPDATED') {
+          return !record || !record.deviceOtaInfo || !record.deviceOtaInfo.otaStatus;
+        }
+      },
 
       render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
     }, {
