@@ -132,4 +132,37 @@ public class OTAHandler extends BaseHttpHandler {
         return ok();
     }
 
+    @POST
+    @Path("/stop")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Admin
+    public Response stopOTA(@ContextUser User user, StartOtaDTO startOtaDTO) {
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            return badRequest();
+        }
+
+        if (startOtaDTO == null || startOtaDTO.isDevicesEmpty()) {
+            log.error("No devices to stop OTA. {}.", startOtaDTO);
+            return badRequest("No devices to stop OTA..");
+        }
+
+        List<Device> devices = deviceDao.getAllByProductId(startOtaDTO.productId);
+        if (devices.size() == 0) {
+            log.error("No devices for provided productId {}", startOtaDTO.productId);
+            return badRequest("No devices for provided productId " + startOtaDTO.productId);
+        }
+
+        log.info("Stopping OTA for {}. {}", user.email, startOtaDTO);
+
+        for (Device device : devices) {
+            if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus == OTAStatus.STARTED) {
+                device.stop();
+            }
+        }
+
+        return ok();
+    }
 }

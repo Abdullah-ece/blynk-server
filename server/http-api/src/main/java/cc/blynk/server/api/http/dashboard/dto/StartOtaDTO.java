@@ -31,7 +31,11 @@ public class StartOtaDTO {
     }
 
     public boolean isNotValid() {
-        return pathToFirmware == null || pathToFirmware.isEmpty() || deviceIds == null || deviceIds.length == 0;
+        return pathToFirmware == null || pathToFirmware.isEmpty() || isDevicesEmpty();
+    }
+
+    public boolean isDevicesEmpty() {
+        return deviceIds == null || deviceIds.length == 0;
     }
 
     @Override

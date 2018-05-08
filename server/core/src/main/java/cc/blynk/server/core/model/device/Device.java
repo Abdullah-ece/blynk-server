@@ -235,6 +235,11 @@ public class Device implements Target {
         this.updatedAt = now;
     }
 
+    public void stop() {
+        this.deviceOtaInfo = null;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

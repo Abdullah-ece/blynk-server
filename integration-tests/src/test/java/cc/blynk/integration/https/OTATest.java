@@ -39,6 +39,7 @@ import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -166,6 +167,77 @@ public class OTATest extends APIBaseTest {
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
             assertEquals("Aug 14 2017 20:31:49", newDevice.hardwareInfo.build);
+        }
+    }
+
+    @Test
+    public void otaStop() throws Exception {
+        login(admin.email, admin.pass);
+
+        String pathToFirmware = upload("static/ota/test.bin");
+
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String firmwareInfo = consumeText(response);
+            assertNotNull(firmwareInfo);
+            assertEquals("{\"dev\":\"NodeMCU\",\"build\":\"Aug 14 2017 20:31:49\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"@ver\":\"0.4.8\"}", firmwareInfo);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, new int[] {1}, "title").toString(),
+                ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNotNull(newDevice.deviceOtaInfo);
+            assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(admin.email, newDevice.deviceOtaInfo.otaInitiatedBy);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaInitiatedAt, 5000);
+            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
+            assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
+        }
+
+        post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, new int[] {1}, "title").toString(),
+                ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNull(newDevice.deviceOtaInfo);
         }
     }
 
