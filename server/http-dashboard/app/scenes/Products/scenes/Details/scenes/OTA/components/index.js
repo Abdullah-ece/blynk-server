@@ -358,7 +358,7 @@ class OTA extends React.Component {
     }, {
       title    : 'OTA initiated',
       dataIndex: 'deviceOtaInfo.otaInitiatedBy',
-      render: (text, record) => <div>{text} {text + record.deviceOtaInfo && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
+      render: (text, record) => <div>{text} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
     }, {
       title    : 'Last Updated',
       dataIndex: 'deviceOtaInfo.finishedAt',
