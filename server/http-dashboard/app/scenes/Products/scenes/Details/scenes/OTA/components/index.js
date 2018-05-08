@@ -377,7 +377,7 @@ class OTA extends React.Component {
       title: 'FOTA Status',
       dataIndex: 'deviceOtaInfo.otaStatus',
 
-      render: (text, record) => <OTAStatus status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
+      render: (text, record) => <OTAStatus deviceOtaInfo={record && record.deviceOtaInfo} status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
     }, {
       title    : 'OTA initiated',
       dataIndex: 'deviceOtaInfo.otaInitiatedBy',

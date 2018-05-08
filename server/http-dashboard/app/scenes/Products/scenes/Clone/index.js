@@ -183,7 +183,7 @@ class Clone extends React.Component {
     // product: React.PropTypes.object,
     // Organization: React.PropTypes.object,
     router: React.PropTypes.object,
-    // route: React.PropTypes.object,
+    route: React.PropTypes.object,
     //
     // orgId: React.PropTypes.any
   };

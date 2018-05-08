@@ -144,6 +144,9 @@ class Edit extends React.Component {
     updateDevicesByProduct: PropTypes.func,
     updateMetadataFirstTimeFlag: PropTypes.func,
     fetchProducts: PropTypes.func,
+
+    router: PropTypes.any,
+    route: PropTypes.any,
   };
 
   constructor(props) {
