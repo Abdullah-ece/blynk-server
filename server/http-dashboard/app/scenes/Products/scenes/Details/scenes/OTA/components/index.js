@@ -73,6 +73,7 @@ class OTA extends React.Component {
       OTA_STEPS.UPLOAD_FIRMWARE,
     ]),
     onFirmwareUpdateStart: PropTypes.func,
+    onFirmwareUpdateCancel: PropTypes.func,
   };
 
   constructor(props) {
@@ -216,7 +217,8 @@ class OTA extends React.Component {
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
+                {/*<Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>*/}
+                <Button type="danger" onClick={this.props.onFirmwareUpdateCancel}>Cancel</Button>
               </div>
             </Col>
           </Row>

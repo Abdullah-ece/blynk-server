@@ -17,7 +17,7 @@ import {
 } from 'data/Product/api';
 import {
   StorageOTADevicesSessionStart,
-  // StorageOTADevicesSessionStop
+  StorageOTADevicesSessionStop,
 } from 'data/Storage/actions';
 import {message} from 'antd';
 
@@ -38,6 +38,7 @@ import {message} from 'antd';
   firmwareInfoFetch: bindActionCreators(ProductInfoDevicesOTAFirmwareInfoFetch, dispatch),
   firmwareUpdateStart: bindActionCreators(ProductInfoDevicesOTAStart, dispatch),
   storageOTADevicesSessionStart: bindActionCreators(StorageOTADevicesSessionStart, dispatch),
+  storageOTADevicesSessionStop: bindActionCreators(StorageOTADevicesSessionStop, dispatch),
 }))
 class OTAScene extends React.Component {
 
@@ -84,7 +85,7 @@ class OTAScene extends React.Component {
     }),
 
     formValues: PropTypes.shape({
-      title: PropTypes.any,
+      firmwareName: PropTypes.any,
     }),
 
     selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
@@ -98,6 +99,7 @@ class OTAScene extends React.Component {
     firmwareInfoFetch: PropTypes.func,
     firmwareUpdateStart: PropTypes.func,
     storageOTADevicesSessionStart: PropTypes.func,
+    storageOTADevicesSessionStop: PropTypes.func,
   };
 
   constructor(props) {
@@ -105,6 +107,7 @@ class OTAScene extends React.Component {
 
     this.handleFileUploadChange = this.handleFileUploadChange.bind(this);
     this.handleUpdateFirmwareStart = this.handleUpdateFirmwareStart.bind(this);
+    this.handleUpdateFirmwareCancel = this.handleUpdateFirmwareCancel.bind(this);
   }
 
   componentWillMount() {
@@ -201,7 +204,7 @@ class OTAScene extends React.Component {
 
   handleUpdateFirmwareStart() {
     this.props.firmwareUpdateStart({
-      title: this.props.formValues.title,
+      title: this.props.formValues.firmwareName,
       pathToFirmware: this.props.firmwareUploadInfo.link,
       productId: Number(this.props.params.id),
       deviceIds: this.props.selectedDevicesIds,
@@ -209,7 +212,7 @@ class OTAScene extends React.Component {
       this.props.updateSelectedDevicesList([]);
 
       this.props.storageOTADevicesSessionStart({
-        title: this.props.formValues.title,
+        title: this.props.formValues.firmwareName,
         selectedDevicesIds: this.props.selectedDevicesIds,
         pathToFirmware: this.props.firmwareUploadInfo.link,
         firmwareFields: this.props.firmwareFetchInfo.data,
@@ -219,8 +222,8 @@ class OTAScene extends React.Component {
     });
   }
 
-  handleCancelUpdateFirmware() {
-
+  handleUpdateFirmwareCancel() {
+    this.props.storageOTADevicesSessionStop();
   }
 
   handleCloseSuccessUpdateFirmware() {
@@ -252,7 +255,9 @@ class OTAScene extends React.Component {
            firmwareFetchInfo={firmwareFetchInfo}
            firmwareUploadInfo={firmwareUploadInfo}
            onDeviceSelect={this.props.updateSelectedDevicesList}
-           onFirmwareUpdateStart={this.handleUpdateFirmwareStart}/>
+           onFirmwareUpdateStart={this.handleUpdateFirmwareStart}
+           onFirmwareUpdateCancel={this.handleUpdateFirmwareCancel}
+      />
     );
   }
 }
