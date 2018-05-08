@@ -278,7 +278,7 @@ class OTAScene extends React.Component {
     let {devices, params, devicesLoading, firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds, firmwareUpdate, OTAUpdate} = this.props;
 
     let updatingProgress = 0;
-    let devicesUpdated = 0;
+    let devicesUpdated = [];
     let dateStarted = null;
     let dateFinished = null;
 
