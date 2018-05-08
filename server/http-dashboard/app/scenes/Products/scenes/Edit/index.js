@@ -10,7 +10,7 @@ import {
   // initialize,
   // destroy,
   // getFormValues,
-  // isDirty,
+  isDirty,
 } from 'redux-form';
 
 import {fromJS, Map} from 'immutable';
@@ -46,6 +46,8 @@ import PropTypes from 'prop-types';
     isMetadataFirstTime: state.Storage.products.metadataFirstTime,
 
     formSyncErrors:  fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
+
+    isFormDirty: isDirty(FORMS.PRODUCTS_PRODUCT_MANAGE)(state),
 
     product: (() => {
       const products = fromJS(state.Product.products);
@@ -134,6 +136,8 @@ class Edit extends React.Component {
 
     formSyncErrors: PropTypes.instanceOf(Map),
 
+    isFormDirty: PropTypes.bool,
+
     Create: PropTypes.func,
     Update: PropTypes.func,
     Delete: PropTypes.func,
@@ -151,7 +155,7 @@ class Edit extends React.Component {
       deviceForceUpdateLoading: false
     };
 
-    // this.routerWillLeave = this.routerWillLeave.bind(this);
+    this.routerWillLeave = this.routerWillLeave.bind(this);
     //
     // this.handleProductDeviceForceUpdateCancel = this.handleProductDeviceForceUpdateCancel.bind(this);
     // this.handleProductDeviceForceUpdateSubmit = this.handleProductDeviceForceUpdateSubmit.bind(this);
@@ -210,21 +214,21 @@ class Edit extends React.Component {
     //
     // });
     //
-    // this.props.router.setRouteLeaveHook(
-    //   this.props.route,
-    //   this.routerWillLeave
-    // );
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave
+    );
   }
 
   componentWillUnmount() {
     // this.props.ProductEditClearFields();
   }
 
-  // routerWillLeave(route) {
-  //   const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
-  //   if(!this.isProductSaved && this.props.isFormDirty && !regexp.test(route.pathname))
-  //     return 'Leave this page without saving your changes?';
-  // }
+  routerWillLeave(route) {
+    const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
+    if(!this.isProductSaved && this.props.isFormDirty && !regexp.test(route.pathname))
+      return 'Leave this page without saving your changes?';
+  }
 
   // getProduct() {
     // return _.find(this.props.products, {id: Number(this.props.params.id)});

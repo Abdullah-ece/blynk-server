@@ -20,7 +20,7 @@ import {
   initialize,
   // destroy,
   getFormValues,
-  // isDirty,
+  isDirty,
   // reduxForm
 } from 'redux-form';
 import {message} from 'antd';
@@ -56,7 +56,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
   return {
     formValues: fromJS(getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
     formSyncErrors: fromJS(getFormSyncErrors(FORMS.PRODUCTS_PRODUCT_MANAGE)(state) || {}),
-
+    isFormDirty: isDirty(FORMS.PRODUCTS_PRODUCT_MANAGE)(state),
     organization: fromJS(state.Organization),
 
     // organization: fromJS(state.Organization),
@@ -132,7 +132,7 @@ class Create extends React.Component {
       tab: PropTypes.string,
     }),
 
-    // isFormDirty: React.PropTypes.bool,
+    isFormDirty: React.PropTypes.bool,
     // isMetadataFirstTime: React.PropTypes.bool,
     // isProductInfoInvalid: React.PropTypes.bool,
     //
@@ -157,7 +157,7 @@ class Create extends React.Component {
     // eventsForms: React.PropTypes.array,
     // product: React.PropTypes.object,
     // Organization: React.PropTypes.object,
-    // router: React.PropTypes.object,
+    router: React.PropTypes.object,
     // route: React.PropTypes.object,
     //
     // orgId: React.PropTypes.any
@@ -166,7 +166,7 @@ class Create extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.routerWillLeave = this.routerWillLeave.bind(this);
+    this.routerWillLeave = this.routerWillLeave.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -234,10 +234,10 @@ class Create extends React.Component {
     //   widgets: []
     // });
     //
-    // this.props.router.setRouteLeaveHook(
-    //   this.props.route,
-    //   this.routerWillLeave
-    // );
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave
+    );
   }
 
   // componentWillUnmount() {
@@ -245,12 +245,12 @@ class Create extends React.Component {
     // this.props.ProductEditClearFields();
   // }
 
-  // routerWillLeave(route) {
-  //   const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
-  //
-  //   if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
-  //     return 'Leave this page without saving your changes?';
-  // }
+  routerWillLeave(route) {
+    const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
+
+    if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
+      return 'Leave this page without saving your changes?';
+  }
 
   // isMetadataFormInvalid() {
     // if (Array.isArray(this.props.product.metadata.fields)) {
