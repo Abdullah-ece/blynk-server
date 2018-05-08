@@ -13,9 +13,9 @@ class OTAStatus extends React.Component {
 
   getStatusLabel(status, text) {
     const statusLabels = {
-      [OTA_STATUSES.STARTED]           : "Firmware already updating",
-      [OTA_STATUSES.REQUEST_SENT]      : "Waiting to upload firmware",
-      [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware already uploaded. Waiting for device to start update",
+      [OTA_STATUSES.STARTED]           : "Waiting for device to become online",
+      [OTA_STATUSES.REQUEST_SENT]      : "Waiting for device to download firmware",
+      [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware already downloaded. Waiting for device to update",
     };
 
     if(statusLabels[status]){
