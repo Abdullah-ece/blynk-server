@@ -33,6 +33,15 @@ class OTA extends React.Component {
       })
     })),
 
+    OTAUpdate: PropTypes.shape({
+      title: PropTypes.string,
+      selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
+      pathToFirmware: PropTypes.string,
+      firmwareFileName: PropTypes.string,
+      productId: PropTypes.number,
+      status: PropTypes.number
+    }),
+
     onDeviceSelect: PropTypes.func,
 
     devicesLoading: PropTypes.bool,
@@ -159,25 +168,35 @@ class OTA extends React.Component {
   }
 
   firmwareProcessing() {
+
+    const {OTAUpdate} = this.props;
+
+    const fields = Object.keys(OTAUpdate.firmwareFields).map((key) => {
+      return {
+        key  : key,
+        value: OTAUpdate.firmwareFields[key],
+      };
+    });
+
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-firmware-name">
-          Firmware Update Title
+          { this.props.OTAUpdate.title }
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          FileName.bin
+          { this.props.OTAUpdate.firmwareFileName }
         </div>
-        <div className="devices-ota-update-confirmation-fields-list">
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 1
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 2
-          </div>
-          <div className="devices-ota-update-confirmation-fields-list-item">
-            Field 3
-          </div>
-        </div>
+        { fields.length ?
+          (<div className="devices-ota-update-confirmation-fields-list">
+            {fields.map((field, key) => (
+              <div className="devices-ota-update-confirmation-fields-list-item" key={key}>
+                {field.key}: {field.value}
+              </div>
+            ))}
+          </div>)
+          :
+          (null)
+        }
         <div className="devices-ota-update-confirmation-footer">
           <Row>
             <Col span={12}>

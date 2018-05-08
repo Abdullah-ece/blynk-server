@@ -57,7 +57,7 @@ class OTAScene extends React.Component {
       selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
       pathToFirmware: PropTypes.string,
       productId: PropTypes.number,
-      status: PropTypes.bool
+      status: PropTypes.number
     }),
 
     updateSelectedDevicesList: PropTypes.func,
@@ -229,7 +229,7 @@ class OTAScene extends React.Component {
 
   render() {
 
-    const {devices, devicesLoading, firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds, firmwareUpdate} = this.props;
+    const {devices, devicesLoading, firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds, firmwareUpdate, OTAUpdate} = this.props;
 
     let step = OTA_STEPS.UPLOAD_FIRMWARE;
 
@@ -237,12 +237,13 @@ class OTAScene extends React.Component {
       step = OTA_STEPS.START_UPDATE;
     }
 
-    if((firmwareUpdate.loading === false && firmwareUpdate.status === true) || (this.props.OTAUpdate.status)) {
+    if(this.props.OTAUpdate.status === 1) {
       step = OTA_STEPS.UPDATING;
     }
 
     return (
       <OTA step={step}
+           OTAUpdate={OTAUpdate}
            firmwareUpdate={firmwareUpdate}
            selectedDevicesIds={selectedDevicesIds}
            devices={devices}

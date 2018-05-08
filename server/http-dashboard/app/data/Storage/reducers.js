@@ -11,7 +11,7 @@ const initialState = {
     firmwareFields: {},
     firmwareFileName: null,
     productId: -1,
-    status: false
+    status: 0 // 0 - not started, 1 - in progress, 2 - finished
   }
 };
 
@@ -44,7 +44,7 @@ export default function Account(state = initialState, action) {
         OTAUpdate: {
           ...state.OTAUpdate,
           ...action.value,
-          status: true,
+          status: 1,
         }
       };
 
@@ -59,7 +59,7 @@ export default function Account(state = initialState, action) {
           firmwareFields: {},
           firmwareFileName: null,
           productId: -1,
-          status: false
+          status: 2
         }
       };
 
