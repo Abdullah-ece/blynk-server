@@ -101,6 +101,24 @@ export function ProductInfoDevicesOTAFetch({ orgId }) {
   };
 }
 
+export function ProductInfoDevicesOTAStart({ productId, pathToFirmware, deviceIds, title }) {
+  return {
+    type: 'PRODUCT_INFO_DEVICES_OTA_START',
+    payload: {
+      request: {
+        method: 'POST',
+        url: API_URL.ota().start(),
+        data: {
+          productId,
+          pathToFirmware,
+          deviceIds,
+          title
+        }
+      }
+    }
+  };
+}
+
 export function ProductInfoDevicesOTAFirmwareInfoFetch({ firmwareUploadUrl }) {
 
   return {

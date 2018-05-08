@@ -29,7 +29,8 @@ export const API_URL = {
     })
   }),
   ota: () => ({
-    firmwareInto: (params) => `/ota/firmwareInfo?file=${params.firmwareUploadUrl || ''}`
+    firmwareInto: (params) => `/ota/firmwareInfo?file=${params.firmwareUploadUrl || ''}`,
+    start: () => `/ota/start`,
   }),
   widgets: () => ({
     history: (params) => {

@@ -161,7 +161,7 @@ class ProductDetails extends React.Component {
               <Dashboard webDashboard={this.state.product.webDashboard}/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="OTA" key={TABS.OTA}>
-              <OTA/>
+              <OTA params={this.props.params}/>
             </Tabs.TabPane>
           </Tabs>
         </MainLayout.Content>

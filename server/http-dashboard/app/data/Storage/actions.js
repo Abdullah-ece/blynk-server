@@ -12,6 +12,19 @@ export function DeviceSmartSearchState(value=false){
   };
 }
 
+export function StorageOTADevicesSessionStart(value={}){
+  return {
+    type: 'STORAGE_OTA_DEVICES_SESSION_START',
+    value
+  };
+}
+
+export function StorageOTADevicesSessionStop(){
+  return {
+    type: 'STORAGE_OTA_DEVICES_SESSION_STOP'
+  };
+}
+
 export function LoginPageTermsAgreement(value=false){
   return {
     type: 'LoginPageTermsAgreement',

@@ -23,7 +23,7 @@ import DeviceStatus from './components/DeviceStatus';
 class OTA extends React.Component {
 
   static propTypes = {
-    devices           : PropTypes.arrayOf(PropTypes.shape({
+    devices: PropTypes.arrayOf(PropTypes.shape({
       id            : PropTypes.number,
       name          : PropTypes.string,
       status        : PropTypes.oneOf(['ONLINE', 'OFFLINE']), // use this for column "status" and display like a green / gray dot
@@ -35,29 +35,42 @@ class OTA extends React.Component {
 
     onDeviceSelect: PropTypes.func,
 
-    fileUploadOptions : PropTypes.shape({
+    devicesLoading: PropTypes.bool,
+
+    fileUploadOptions    : PropTypes.shape({
       name          : PropTypes.string,
       showUploadList: PropTypes.bool,
       accept        : PropTypes.string,
       onChange      : PropTypes.func,
     }),
-    firmwareUploadInfo: PropTypes.shape({
+    firmwareUploadInfo   : PropTypes.shape({
       uploadPercent: PropTypes.number,
       status       : PropTypes.oneOf([-1, 0, 1, 2]),
       link         : PropTypes.string,
     }),
-    firmwareFetchInfo : PropTypes.shape({
+    firmwareUpdate: PropTypes.shape({
+      status: PropTypes.any,
+      loading: PropTypes.bool,
+    }),
+    firmwareFetchInfo    : PropTypes.shape({
       loading: PropTypes.bool,
       data   : PropTypes.any,
     }),
-    selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
-    step              : PropTypes.oneOf([
+    selectedDevicesIds   : PropTypes.arrayOf(PropTypes.number),
+    step                 : PropTypes.oneOf([
       OTA_STEPS.START_UPDATE,
       OTA_STEPS.SUCCESS,
       OTA_STEPS.UPDATING,
       OTA_STEPS.UPLOAD_FIRMWARE,
-    ])
+    ]),
+    onFirmwareUpdateStart: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.firmwareUpdateStart = this.firmwareUpdateStart.bind(this);
+  }
 
   uploadFirmware() {
     const {firmwareUploadInfo} = this.props;
@@ -76,6 +89,12 @@ class OTA extends React.Component {
         )}
       </div>
     );
+  }
+
+  firmwareUpdateStart() {
+    if (typeof this.props.onFirmwareUpdateStart === 'function') {
+      this.props.onFirmwareUpdateStart();
+    }
   }
 
   updateConfirmation() {
@@ -118,7 +137,7 @@ class OTA extends React.Component {
           <Row>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-selected-devices-count">
-                { selectedDevicesIds && selectedDevicesIds.length ? `${selectedDevicesIds.length} Device${selectedDevicesIds.length === 1 ? '' : 's'} Selected` : `Select devices to update firmware` }
+                {selectedDevicesIds && selectedDevicesIds.length ? `${selectedDevicesIds.length} Device${selectedDevicesIds.length === 1 ? '' : 's'} Selected` : `Select devices to update firmware`}
               </div>
             </Col>
             <Col span={12}>
@@ -126,6 +145,8 @@ class OTA extends React.Component {
                 <Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>
                 <Button className={"devices-ota-update-confirmation-footer-confirm-btn"}
                         disabled={!selectedDevicesIds.length}
+                        onClick={this.firmwareUpdateStart}
+                        loading={this.props.firmwareUpdate.loading}
                         type="danger">
                   Update firmware
                 </Button>
@@ -188,20 +209,21 @@ class OTA extends React.Component {
   firmwareCancelModalConfirmation() {
     return (
       <Modal
-          title="Are you sure you want to cancel ?"
-          wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
-          visible={false}
-          onOk={() => console.log("ok")}
-          onCancel={() => console.log("cancel")}
-          closable={false}
-          iconType={"question-circle"}
-          cancelText={"Cancel"}
-          okText={"Confirm"}
+        title="Are you sure you want to cancel ?"
+        wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
+        visible={false}
+        onOk={() => console.log("ok")}
+        onCancel={() => console.log("cancel")}
+        closable={false}
+        iconType={"question-circle"}
+        cancelText={"Cancel"}
+        okText={"Confirm"}
       >
         <div>
           If you will continue 19 devices will be not updated.
         </div>
-        <div>Type in word CANCEL below to confirm</div>  <br/>
+        <div>Type in word CANCEL below to confirm</div>
+        <br/>
         <Input placeholder={"Type CANCEL to confirm"}/>
       </Modal>
     );
@@ -274,10 +296,10 @@ class OTA extends React.Component {
   }
 
   handleDeviceSelect(selectedRowKeys) {
-     this.props.onDeviceSelect(selectedRowKeys);
+    this.props.onDeviceSelect(selectedRowKeys);
   }
 
-  getDataSource(){
+  getDataSource() {
 
     return this.props.devices;
   }
@@ -287,7 +309,7 @@ class OTA extends React.Component {
     const {step} = this.props;
 
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
+      onChange        : (selectedRowKeys, selectedRows) => {
         this.handleDeviceSelect(selectedRowKeys, selectedRows);
       },
       getCheckboxProps: record => ({
@@ -301,17 +323,16 @@ class OTA extends React.Component {
 
         {step === OTA_STEPS.UPLOAD_FIRMWARE ? this.uploadFirmware() : null}
 
-        {this.updateConfirmation()}
+        {step === OTA_STEPS.START_UPDATE ? this.updateConfirmation() : null}
 
-        {this.updateConfirmation(true)}
+        {step === OTA_STEPS.UPDATING ? this.firmwareProcessing() : null}
 
-        {this.firmwareProcessing()}
-
-        {this.firmwareCompleted()}
+        {step === OTA_STEPS.SUCCESS ? this.firmwareCompleted() : null}
 
         {this.firmwareCancelModalConfirmation()}
 
         <Table
+          loading={this.props.devicesLoading}
           rowKey={(record) => record.id}
           rowSelection={rowSelection} columns={columns} dataSource={dataSource}
           pagination={false}/>

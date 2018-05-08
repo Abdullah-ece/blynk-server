@@ -15,6 +15,10 @@ const initialState = {
     firmwareFetchInfo: {
       loading: false,
       data: {}
+    },
+    firmwareUpdate: {
+      loading: false,
+      status: null,
     }
   },
   creating: {
@@ -74,6 +78,45 @@ export default function Product(state = initialState, action) {
           firmwareUploadInfo: {
             ...state.OTADevices.firmwareUploadInfo,
             ...action.data
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_START":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUpdate: {
+            ...state.OTADevices.firmwareUpdate,
+            loading: true,
+            status: null
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_START_SUCCESS":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUpdate: {
+            ...state.OTADevices.firmwareUpdate,
+            loading: false,
+            status: true,
+          }
+        }
+      };
+
+    case "PRODUCT_INFO_DEVICES_OTA_START_FAILURE":
+      return {
+        ...state,
+        OTADevices: {
+          ...state.OTADevices,
+          firmwareUpdate: {
+            ...state.OTADevices.firmwareUpdate,
+            loading: false,
+            status: false
           }
         }
       };
