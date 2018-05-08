@@ -1,5 +1,7 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -111,4 +113,17 @@ public class StaticFileAPITest extends APIBaseTest {
         }
     }
 
+    @Test
+    public void getIndexPageFromHttp() throws Exception {
+        BaseServer httpServer = new HardwareAndHttpAPIServer(holder).start();
+        String httpsAdminServerUrl = String.format("http://localhost:%s" + rootPath, httpPort);
+        httpsAdminServerUrl = httpsAdminServerUrl.replace("/api", "");
+
+        HttpGet index = new HttpGet(httpsAdminServerUrl + "/static/index.html");
+
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+        httpServer.close();
+    }
 }

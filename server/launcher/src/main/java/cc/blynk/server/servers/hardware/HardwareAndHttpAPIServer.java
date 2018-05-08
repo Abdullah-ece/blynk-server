@@ -1,6 +1,9 @@
 package cc.blynk.server.servers.hardware;
 
 import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileEdsWith;
+import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.AccountHandler;
@@ -16,6 +19,7 @@ import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
+import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
@@ -32,6 +36,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
@@ -142,6 +147,10 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("HttpServerCodec", new HttpServerCodec())
                                         .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
                                         .addLast("HttpObjectAggregator", new HttpObjectAggregator(maxWebLength, true))
+                                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
+                                        .addLast("HttpStaticFile",
+                                                new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                                         .addLast(externalAPIHandler)
                                         .addLast("HttpWebSocketUnificator", baseWebSocketUnificator);
                             }
