@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Row, Col, Upload, Icon, Progress, Input} from 'antd';
+import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
 import Modal from 'components/Modal';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
@@ -78,7 +78,10 @@ class OTA extends React.Component {
     ]),
     onFirmwareUpdateStart: PropTypes.func,
     onFirmwareUpdateCancel: PropTypes.func,
+    onModalClose: PropTypes.func,
+    onModalOpen: PropTypes.func,
 
+    modalVisible: PropTypes.bool,
     invalid: PropTypes.bool,
   };
 
@@ -86,6 +89,8 @@ class OTA extends React.Component {
     super(props);
 
     this.firmwareUpdateStart = this.firmwareUpdateStart.bind(this);
+    this.handleCancelModalOk = this.handleCancelModalOk.bind(this);
+    this.handleCancelModalCancel = this.handleCancelModalCancel.bind(this);
   }
 
   uploadFirmware() {
@@ -223,8 +228,7 @@ class OTA extends React.Component {
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                {/*<Button type="danger" onClick={this.firmwareCancelModalConfirmation}>Cancel</Button>*/}
-                <Button type="danger" onClick={this.props.onFirmwareUpdateCancel}>Cancel</Button>
+                <Button type="danger" onClick={this.props.onModalOpen}>Cancel</Button>
               </div>
             </Col>
           </Row>
@@ -233,29 +237,34 @@ class OTA extends React.Component {
     );
   }
 
+  handleCancelModalOk() {
+    this.props.onFirmwareUpdateCancel();
+  }
+
+  handleCancelModalCancel() {
+    this.props.onModalClose();
+  }
+
   firmwareCancelModalConfirmation() {
     return (
       <Modal
         title="Are you sure you want to cancel ?"
         wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
-        visible={false}
-        onOk={() => {
-
-        }}
-        onCancel={() => {
-
-        }}
+        visible={this.props.modalVisible}
+        onOk={this.handleCancelModalOk}
+        onCancel={this.handleCancelModalCancel}
         closable={false}
         iconType={"question-circle"}
         cancelText={"Cancel"}
         okText={"Confirm"}
       >
         <div>
-          If you will continue 19 devices will be not updated.
+          If you continue {Number(this.props.OTAUpdate.selectedDevicesIds.length) - Number(this.props.devicesUpdated.length)} device(s) won't be updated<br/>
+          { this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated device(s).` : null}
         </div>
-        <div>Type in word CANCEL below to confirm</div>
-        <br/>
-        <Input placeholder={"Type CANCEL to confirm"}/>
+        {/*<div>Type in word CANCEL below to confirm</div>*/}
+        {/*<br/>*/}
+        {/*<Input placeholder={"Type CANCEL to confirm"}/>*/}
       </Modal>
     );
   }

@@ -54,7 +54,7 @@ class OTAScene extends React.Component {
       hardwareInfo  : PropTypes.shape({
         version: PropTypes.string
       }),
-      deviceOtaInfo: {
+      deviceOtaInfo: PropTypes.shape({
         otaStatus: PropTypes.oneOf([
           OTA_STATUSES.SUCCESS,
           OTA_STATUSES.FAILURE,
@@ -62,7 +62,7 @@ class OTAScene extends React.Component {
           OTA_STATUSES.REQUEST_SENT,
           OTA_STATUSES.STARTED,
         ])
-      }
+      })
     })),
 
     OTAUpdate: PropTypes.shape({
@@ -119,6 +119,12 @@ class OTAScene extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      modalVisible: false
+    };
+
+    this.handleModalClose = this.handleModalClose.bind(this);
+    this.handleModalOpen = this.handleModalOpen.bind(this);
     this.handleFileUploadChange = this.handleFileUploadChange.bind(this);
     this.handleUpdateFirmwareStart = this.handleUpdateFirmwareStart.bind(this);
     this.handleUpdateFirmwareCancel = this.handleUpdateFirmwareCancel.bind(this);
@@ -237,6 +243,7 @@ class OTAScene extends React.Component {
   }
 
   handleUpdateFirmwareCancel() {
+    this.handleModalClose();
     this.props.resetForm('OTA');
     this.props.firmwareClean();
     this.props.storageOTADevicesSessionStop();
@@ -245,6 +252,18 @@ class OTAScene extends React.Component {
 
   handleCloseSuccessUpdateFirmware() {
 
+  }
+
+  handleModalClose() {
+    this.setState({
+      modalVisible: false
+    });
+  }
+
+  handleModalOpen() {
+    this.setState({
+      modalVisible: true
+    });
   }
 
   render() {
@@ -282,6 +301,7 @@ class OTAScene extends React.Component {
 
     return (
       <OTA step={step}
+           modalVisible={this.state.modalVisible}
            OTAUpdate={OTAUpdate}
            firmwareUpdate={firmwareUpdate}
            updatingProgress={updatingProgress}
@@ -295,6 +315,8 @@ class OTAScene extends React.Component {
            onDeviceSelect={this.props.updateSelectedDevicesList}
            onFirmwareUpdateStart={this.handleUpdateFirmwareStart}
            onFirmwareUpdateCancel={this.handleUpdateFirmwareCancel}
+           onModalClose={this.handleModalClose}
+           onModalOpen={this.handleModalOpen}
       />
     );
   }
