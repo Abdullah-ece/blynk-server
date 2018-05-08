@@ -372,6 +372,7 @@ class OTA extends React.Component {
     }, {
       title    : 'Firmware version',
       dataIndex: 'hardwareInfo.version',
+      render: (text) => <div>{text || "-"}</div>
     }, {
       title: 'FOTA Status',
       dataIndex: 'deviceOtaInfo.otaStatus',
@@ -380,10 +381,11 @@ class OTA extends React.Component {
     }, {
       title    : 'OTA initiated',
       dataIndex: 'deviceOtaInfo.otaInitiatedBy',
-      render: (text, record) => <div>{text} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
+      render: (text, record) => <div>{text || "-"} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
     }, {
       title    : 'Last Updated',
       dataIndex: 'deviceOtaInfo.finishedAt',
+      render: (text) => <div>{(text < 0 ? "-" : text) || "-"}</div>
     },];
   }
 
@@ -397,7 +399,6 @@ class OTA extends React.Component {
   }
 
   render() {
-
     const {step} = this.props;
 
     const rowSelection = {
