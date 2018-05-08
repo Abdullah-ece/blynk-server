@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ProductInfoDevicesOTAFetch} from 'data/Product/api';
+import {ProductInfoOTADevicesSelectedDevicesUpdate} from 'data/Product/actions';
 import {message} from 'antd';
 
 @connect((state) => ({
@@ -11,7 +12,8 @@ import {message} from 'antd';
   devices: state.Product.OTADevices.data,
   devicesLoading: state.Product.OTADevices.loading,
 }), (dispatch) => ({
-  fetchDevices: bindActionCreators(ProductInfoDevicesOTAFetch, dispatch)
+  fetchDevices: bindActionCreators(ProductInfoDevicesOTAFetch, dispatch),
+  updateSelectedDevicesList: bindActionCreators(ProductInfoOTADevicesSelectedDevicesUpdate, dispatch)
 }))
 class OTAScene extends React.Component {
 
@@ -25,6 +27,8 @@ class OTAScene extends React.Component {
         version: PropTypes.string
       })
     })),
+
+    updateSelectedDevicesList: PropTypes.func,
 
     orgId: PropTypes.number,
 
@@ -58,7 +62,9 @@ class OTAScene extends React.Component {
     const {devices, devicesLoading} = this.props;
 
     return (
-      <OTA devices={devices} devicesLoading={devicesLoading}/>
+      <OTA devices={devices}
+           devicesLoading={devicesLoading}
+           onDeviceSelect={this.props.updateSelectedDevicesList}/>
     );
   }
 }

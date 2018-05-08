@@ -29,7 +29,9 @@ class OTA extends React.Component{
       hardwareInfo: PropTypes.shape({
         version: PropTypes.string
       })
-    }))
+    })),
+
+    onDeviceSelect: PropTypes.func,
   };
 
   uploadFirmware() {
@@ -137,7 +139,7 @@ class OTA extends React.Component{
       <Modal
           title="Are you sure you want to cancel ?"
           wrapClassName="vertical-center-modal confirmation-modal-update-cancel"
-          visible={true}
+          visible={false}
           onOk={() => console.log("ok")}
           onCancel={() => console.log("cancel")}
           closable={false}
@@ -219,6 +221,11 @@ class OTA extends React.Component{
       dataIndex: 'hardwareInfo.version',
     }];
   }
+
+  handleDeviceSelect(selectedRowKeys) {
+     this.props.onDeviceSelect(selectedRowKeys);
+  }
+
   getDataSource(){
 
     return this.props.devices;
@@ -226,8 +233,8 @@ class OTA extends React.Component{
   render(){
 
     const rowSelection = {
-      onChange: () => {
-
+      onChange: (selectedRowKeys, selectedRows) => {
+        this.handleDeviceSelect(selectedRowKeys, selectedRows);
       },
       getCheckboxProps: record => ({
         name: record.name,
@@ -251,7 +258,7 @@ class OTA extends React.Component{
         { this.firmwareCancelModalConfirmation() }
 
         <Table
-          rowKey={(record) => record.name}
+          rowKey={(record) => record.id}
           rowSelection={rowSelection} columns={columns} dataSource={dataSource}
                pagination={false}/>
       </div>

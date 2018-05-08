@@ -19,7 +19,7 @@ class DeviceStatus extends React.Component {
         {this.props.status === "ONLINE" && (<div className={"devices-list-item-status-online"} />) ||
           (
             <Popover content={
-              this.props.disconnectTime === 0 && (<div>wasn't online yet</div>) || (<div>{"Offline for "+ convertTimeStampToTime(Date.now() - this.props.disconnectTime)}</div>) } >
+              this.props.disconnectTime === 0 && (<div>wasn't online yet</div>) || (<div>{"Offline for "+ convertTimeStampToTime(Date.now() - this.props.disconnectTime)}</div>)} >
               <div className={"devices-list-item-status-offline"} />
             </Popover>
           )}

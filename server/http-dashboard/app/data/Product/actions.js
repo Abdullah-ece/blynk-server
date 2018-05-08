@@ -116,3 +116,10 @@ export function ProductDashboardDeviceIdForPreviewChange(data = false) {
     data: data
   };
 }
+
+export function ProductInfoOTADevicesSelectedDevicesUpdate(data = false) {
+  return {
+    type: 'PRODUCT_INFO_OTA_DEVICES_SELECTED_DEVICES_UPDATE',
+    data: data
+  };
+}

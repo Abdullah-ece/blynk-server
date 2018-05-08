@@ -4,7 +4,8 @@ const initialState = {
   OTADevices: {
     loading: false,
     data: [],
-    status: null
+    status: null,
+    selectedDevicesIds: [],
   },
   creating: {
     info: {
@@ -350,6 +351,14 @@ export default function Product(state = initialState, action) {
               })
             ]
           }
+        }
+      };
+    case "PRODUCT_INFO_OTA_DEVICES_SELECTED_DEVICES_UPDATE":
+      return {
+        ...state,
+        OTADevices:{
+          ...state.OTADevices,
+          selectedDevicesIds : action.data
         }
       };
 
