@@ -332,7 +332,7 @@ class OTA extends React.Component {
       filterMultiple: false,
       onFilter      : (value, record) => record.status === value,
 
-      render: (text, record) => <OTAStatus status={null} disconnectTime={record.disconnectTime} />
+      render: (text, record) => <OTAStatus status={record.deviceOtaInfo.otaStatus} disconnectTime={record.disconnectTime} />
     }, {
       title    : 'OTA initiated by',
       dataIndex: 'deviceOtaInfo.otaInitiatedBy', // just temporary random index
