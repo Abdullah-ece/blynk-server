@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {FILE_UPLOAD_URL} from 'services/API';
-import {getFormValues} from 'redux-form';
+import {getFormValues, reset} from 'redux-form';
 import {
   ProductInfoOTAFirmwareUploadUpdate,
   ProductInfoOTADevicesSelectedDevicesUpdate,
@@ -41,6 +41,7 @@ import {message} from 'antd';
   storageOTADevicesSessionStart: bindActionCreators(StorageOTADevicesSessionStart, dispatch),
   storageOTADevicesSessionStop: bindActionCreators(StorageOTADevicesSessionStop, dispatch),
   firmwareClean: bindActionCreators(ProductInfoOTADevicesFirmwareClean, dispatch),
+  resetForm: bindActionCreators(reset, dispatch),
 }))
 class OTAScene extends React.Component {
 
@@ -105,6 +106,7 @@ class OTAScene extends React.Component {
 
     devicesLoading: PropTypes.bool,
 
+    resetForm: PropTypes.func,
     fetchDevices: PropTypes.func,
     firmwareUploadChange: PropTypes.func,
     firmwareInfoFetch: PropTypes.func,
@@ -235,6 +237,7 @@ class OTAScene extends React.Component {
   }
 
   handleUpdateFirmwareCancel() {
+    this.props.resetForm('OTA');
     this.props.firmwareClean();
     this.props.storageOTADevicesSessionStop();
     this.fetchDevices();
