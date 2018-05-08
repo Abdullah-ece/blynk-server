@@ -59,9 +59,9 @@ export default class LoginForm extends React.Component {
 
     return (
       <Checkbox onChange={onChange} checked={props.input.value} className="login-form-checkbox">
-        Agree to &nbsp;
-        <Link to="/terms-and-conditions">
-           terms and conditions
+        Accept&nbsp;
+        <Link to="/terms-and-conditions" target="_blank">
+          Terms Of Service
         </Link>
       </Checkbox>
     );
