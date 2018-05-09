@@ -983,7 +983,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1022,7 +1022,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1061,7 +1061,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 0,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1731,18 +1731,16 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        //send value before we have tile for that pin
         clientPair.hardwareClient.send("hardware vw 5 111");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 5 111"));
-
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.width = 2;
@@ -1756,7 +1754,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
         clientPair.appClient.verifyResult(ok(1));
 
@@ -1770,6 +1768,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
         clientPair.hardwareClient.send("hardware vw 5 112");
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 5 112"));
@@ -1793,6 +1792,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
+
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
+        clientPair.hardwareClient.verifyResult(produce(3, HARDWARE, b("vw 5 112")));
     }
 
     @Test

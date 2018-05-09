@@ -29,6 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
@@ -63,6 +64,7 @@ public class CommandStat {
     public int hardwareConnected;
     public int register;
     public int login;
+    public int hardwareLogin;
     public int loadProfile;
     public int appSync;
     public int sharing;
@@ -137,6 +139,9 @@ public class CommandStat {
                 break;
             case LOGIN :
                 this.login = val;
+                break;
+            case HARDWARE_LOGIN :
+                this.hardwareLogin = val;
                 break;
             case LOAD_PROFILE_GZIPPED :
                 this.loadProfile = val;
