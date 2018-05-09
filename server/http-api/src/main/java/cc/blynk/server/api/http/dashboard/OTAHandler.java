@@ -178,15 +178,15 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest("No devices to stop OTA..");
         }
 
-        List<Device> devices = deviceDao.getAllByProductId(startOtaDTO.productId);
-        if (devices.size() == 0) {
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(startOtaDTO.productId, startOtaDTO.deviceIds);
+        if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", startOtaDTO.productId);
             return badRequest("No devices for provided productId " + startOtaDTO.productId);
         }
 
         log.info("Stopping OTA for {}. {}", user.email, startOtaDTO);
 
-        for (Device device : devices) {
+        for (Device device : filteredDevices) {
             if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus == OTAStatus.STARTED) {
                 device.setDeviceOtaInfo(null);
             }
