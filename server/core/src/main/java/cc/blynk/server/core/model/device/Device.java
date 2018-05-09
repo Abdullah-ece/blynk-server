@@ -226,7 +226,7 @@ public class Device implements Target {
     public void requestSent() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaInitiatedBy, prev.otaInitiatedAt,
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 now, -1L,
                 prev.pathToFirmware, prev.buildDate,
                 OTAStatus.REQUEST_SENT);
@@ -236,7 +236,7 @@ public class Device implements Target {
     public void success() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(prev.otaInitiatedBy, prev.otaInitiatedAt,
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, now,
                 prev.pathToFirmware, prev.buildDate,
                 OTAStatus.SUCCESS);

@@ -3,8 +3,6 @@ package cc.blynk.server.core.model.web.product;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
-
 public class OtaProgress {
 
     public final String title;
@@ -19,7 +17,7 @@ public class OtaProgress {
 
     public final int[] deviceIds;
 
-    public final Map<String, String> firmwareInfo;
+    public final FirmwareInfo firmwareInfo;
 
     @JsonCreator
     public OtaProgress(@JsonProperty("title") String title,
@@ -28,7 +26,7 @@ public class OtaProgress {
                        @JsonProperty("startedAt") long startedAt,
                        @JsonProperty("finishedAt") long finishedAt,
                        @JsonProperty("deviceIds") int[] deviceIds,
-                       @JsonProperty("firmwareInfo") Map<String, String> firmwareInfo) {
+                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo) {
         this.title = title;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;

@@ -72,7 +72,7 @@ public class OTATest extends APIBaseTest {
     public void otaBasicFlow() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/test.bin");
+        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
         HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -85,11 +85,12 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"dev\":\"NodeMCU\",\"build\":\"Aug 14 2017 20:31:49\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"@ver\":\"0.4.8\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
+        newDevice.boardType = "ESP32";
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -115,10 +116,10 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
-            assertEquals(admin.email, newDevice.deviceOtaInfo.otaInitiatedBy);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaInitiatedAt, 5000);
+            assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
@@ -140,7 +141,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         newHardClient.stop();
@@ -150,7 +151,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "May  9 2018 12:36:07");
         newHardClient.verifyResult(ok(2));
         newHardClient.never(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware));
 
@@ -165,8 +166,8 @@ public class OTATest extends APIBaseTest {
             assertEquals(OTAStatus.SUCCESS, newDevice.deviceOtaInfo.otaStatus);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
-            assertEquals("Aug 14 2017 20:31:49", newDevice.hardwareInfo.build);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
+            assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
         }
     }
 
@@ -174,7 +175,7 @@ public class OTATest extends APIBaseTest {
     public void otaStop() throws Exception {
         login(admin.email, admin.pass);
 
-        String pathToFirmware = upload("static/ota/test.bin");
+        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
         HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
@@ -187,7 +188,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"dev\":\"NodeMCU\",\"build\":\"Aug 14 2017 20:31:49\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"@ver\":\"0.4.8\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
@@ -217,10 +218,10 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
             assertNotNull(newDevice.deviceOtaInfo);
             assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
-            assertEquals(admin.email, newDevice.deviceOtaInfo.otaInitiatedBy);
-            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaInitiatedAt, 5000);
+            assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
-            assertEquals("Aug 14 2017 20:31:49", newDevice.deviceOtaInfo.buildDate);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");

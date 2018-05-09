@@ -157,7 +157,7 @@ public final class FileUtils {
     }
 
     public static Map<String, String> getPatternFromString(Path path) {
-        return getPatternFromString(path, "build", "@ver", "h-beat", "buff-in", "dev");
+        return getPatternFromString(path, "build", "ver", "h-beat", "buff-in", "dev");
     }
 
     private static Map<String, String> getPatternFromString(Path path, String... keys) {
@@ -178,7 +178,7 @@ public final class FileUtils {
     }
 
     private static String findValueForPattern(byte[] data, String pattern) {
-        pattern = pattern + "\0";
+        pattern = "\0" + pattern + "\0";
         int index = KMPMatch.indexOf(data, pattern.getBytes());
 
         if (index != -1) {

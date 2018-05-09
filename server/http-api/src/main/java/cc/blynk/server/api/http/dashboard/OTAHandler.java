@@ -24,6 +24,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.OtaProgress;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -115,7 +116,7 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Initiating OTA for {}. {}", user.email, startOtaDTO);
 
         java.nio.file.Path path = Paths.get(staticFilesFolder, startOtaDTO.pathToFirmware);
-        Map<String, String> firmwareInfo = FileUtils.getPatternFromString(path);
+        FirmwareInfo firmwareInfo = new FirmwareInfo(FileUtils.getPatternFromString(path));
 
         long now = System.currentTimeMillis();
         Product product = organizationDao.getProductById(startOtaDTO.productId);
@@ -127,7 +128,7 @@ public class OTAHandler extends BaseHttpHandler {
         for (Device device : devices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L,
-                    startOtaDTO.pathToFirmware, firmwareInfo.get("build"),
+                    startOtaDTO.pathToFirmware, firmwareInfo.buildDate,
                     OTAStatus.STARTED);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
@@ -143,7 +144,7 @@ public class OTAHandler extends BaseHttpHandler {
                         && ArrayUtil.contains(startOtaDTO.deviceIds, hardwareState.device.id)
                         && channel.isWritable()) {
                     channel.writeAndFlush(msg, channel.voidPromise());
-                    hardwareState.device.deviceOtaInfo.otaStatus = OTAStatus.REQUEST_SENT;
+                    hardwareState.device.requestSent();
                 }
             }
         }

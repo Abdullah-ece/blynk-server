@@ -10,9 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DeviceOtaInfo {
 
-    public final String otaInitiatedBy;
+    public final String otaStartedBy;
 
-    public final long otaInitiatedAt;
+    public final long otaStartedAt;
 
     public final long requestSentAt;
 
@@ -25,15 +25,15 @@ public class DeviceOtaInfo {
     public volatile OTAStatus otaStatus;
 
     @JsonCreator
-    public DeviceOtaInfo(@JsonProperty("otaInitiatedBy") String otaInitiatedBy,
-                         @JsonProperty("otaInitiatedAt") long otaInitiatedAt,
+    public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaInitiatedBy,
+                         @JsonProperty("otaStartedAt") long otaInitiatedAt,
                          @JsonProperty("requestSentAt") long requestSentAt,
                          @JsonProperty("finishedAt") long finishedAt,
                          @JsonProperty("pathToFirmware") String pathToFirmware,
                          @JsonProperty("buildDate") String buildDate,
                          @JsonProperty("otaStatus") OTAStatus otaStatus) {
-        this.otaInitiatedBy = otaInitiatedBy;
-        this.otaInitiatedAt = otaInitiatedAt;
+        this.otaStartedBy = otaInitiatedBy;
+        this.otaStartedAt = otaInitiatedAt;
         this.requestSentAt = requestSentAt;
         this.finishedAt = finishedAt;
         this.pathToFirmware = pathToFirmware;
