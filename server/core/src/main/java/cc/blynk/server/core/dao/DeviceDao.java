@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
+import cc.blynk.utils.ArrayUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,6 +84,17 @@ public class DeviceDao {
         for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
             Device device = entry.getValue();
             if (device.productId == productId) {
+                result.add(device);
+            }
+        }
+        return result;
+    }
+
+    public List<Device> getByProductIdAndFilter(int productId, int[] deviceIds) {
+        List<Device> result = new ArrayList<>();
+        for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
+            Device device = entry.getValue();
+            if (device.productId == productId && ArrayUtil.contains(deviceIds, device.id)) {
                 result.add(device);
             }
         }

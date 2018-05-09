@@ -107,8 +107,9 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest("Wrong data for OTA start.");
         }
 
-        List<Device> devices = deviceDao.getAllByProductId(startOtaDTO.productId);
-        if (devices.size() == 0) {
+        //todo add tes for filter
+        List<Device> filteredDevices = deviceDao.getByProductIdAndFilter(startOtaDTO.productId, startOtaDTO.deviceIds);
+        if (filteredDevices.size() == 0) {
             log.error("No devices for provided productId {}", startOtaDTO.productId);
             return badRequest("No devices for provided productId " + startOtaDTO.productId);
         }
@@ -125,7 +126,7 @@ public class OTAHandler extends BaseHttpHandler {
                 now, -1,
                 startOtaDTO.deviceIds, firmwareInfo));
 
-        for (Device device : devices) {
+        for (Device device : filteredDevices) {
             if (device.boardType == null || !device.boardType.equals(firmwareInfo.boardType)) {
                 log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
                         device.name, device.boardType, device.id, firmwareInfo.boardType);
@@ -133,7 +134,7 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        for (Device device : devices) {
+        for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L,
                     startOtaDTO.pathToFirmware, firmwareInfo.buildDate,
