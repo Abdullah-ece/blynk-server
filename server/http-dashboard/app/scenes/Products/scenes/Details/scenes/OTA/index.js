@@ -19,6 +19,7 @@ import {
   ProductInfoDevicesOTAStart,
   ProductInfoDevicesOTAStop,
   ProductFetch,
+  ProductDeleteProgress,
 } from 'data/Product/api';
 import {
   StorageOTADevicesSessionStart,
@@ -54,6 +55,7 @@ import {
   firmwareClean: bindActionCreators(ProductInfoOTADevicesFirmwareClean, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
   fetchProduct: bindActionCreators(ProductFetch, dispatch),
+  deleteProcess: bindActionCreators(ProductDeleteProgress, dispatch),
 }))
 class OTAScene extends React.Component {
 
@@ -135,6 +137,7 @@ class OTAScene extends React.Component {
     firmwareClean: PropTypes.func,
     firmwareUpdateStop: PropTypes.func,
     fetchProduct: PropTypes.func,
+    deleteProcess: PropTypes.func,
   };
 
   constructor(props) {
@@ -150,6 +153,7 @@ class OTAScene extends React.Component {
     this.handleUpdateFirmwareStart = this.handleUpdateFirmwareStart.bind(this);
     this.handleUpdateFirmwareCancel = this.handleUpdateFirmwareCancel.bind(this);
     this.handleUpdateFirmwareProcessCancel = this.handleUpdateFirmwareProcessCancel.bind(this);
+    this.handleProductDeleteProcess = this.handleProductDeleteProcess.bind(this);
   }
 
   componentWillMount() {
@@ -197,6 +201,16 @@ class OTAScene extends React.Component {
     //   .catch(() => {
     //   message.error('Cannot fetch devices for OTA update');
     // });
+  }
+
+  handleProductDeleteProcess() {
+    this.props.deleteProcess({
+      productId: this.props.params.id,
+    }).then(() => {
+      this.props.fetchProduct({
+        id: this.props.params.id
+      });
+    });
   }
 
   handleFilterUpdate() {
@@ -372,6 +386,7 @@ class OTAScene extends React.Component {
            onFirmwareUpdateStart={this.handleUpdateFirmwareStart}
            onFirmwareUpdateCancel={this.handleUpdateFirmwareCancel}
            onFirmwareUpdateProcessCancel={this.handleUpdateFirmwareProcessCancel}
+           onProductDeleteProcess={this.handleProductDeleteProcess}
            onModalClose={this.handleModalClose}
            onModalOpen={this.handleModalOpen}
       />

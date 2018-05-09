@@ -3,6 +3,7 @@ import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
 import Modal from 'components/Modal';
 import PropTypes from 'prop-types';
 import {reduxForm} from 'redux-form';
+import {amountBasedWord} from 'services/Spelling';
 import {
   Item
 } from "components/UI";
@@ -81,6 +82,7 @@ class OTA extends React.Component {
     onFirmwareUpdateStart: PropTypes.func,
     onFirmwareUpdateCancel: PropTypes.func,
     onFirmwareUpdateProcessCancel: PropTypes.func,
+    onProductDeleteProcess: PropTypes.func,
     onModalClose: PropTypes.func,
     onModalOpen: PropTypes.func,
 
@@ -227,7 +229,7 @@ class OTA extends React.Component {
                   <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
                     {this.props.OTAUpdate.deviceIds.length}
                 </span>
-                  &nbsp; devices updated
+                  &nbsp; {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'device', 'devices')} updated
                 </div>
               </div>
               <Progress className="devices-ota-update-progress" percent={this.props.updatingProgress} size="small" strokeWidth={4} status="active" showInfo={false}/>
@@ -252,6 +254,9 @@ class OTA extends React.Component {
   }
 
   firmwareCancelModalConfirmation() {
+
+    let notUpdatedDevices = Number(this.props.OTAUpdate && this.props.OTAUpdate.deviceIds && this.props.OTAUpdate.deviceIds.length) - Number(this.props.devicesUpdated.length);
+
     return (
       <Modal
         title="Are you sure you want to cancel ?"
@@ -266,8 +271,8 @@ class OTA extends React.Component {
         okText={"Confirm"}
       >
         <div>
-          If you continue {Number(this.props.OTAUpdate && this.props.OTAUpdate.deviceIds && this.props.OTAUpdate.deviceIds.length) - Number(this.props.devicesUpdated.length)} device(s) won't be updated<br/>
-          { this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated device(s).` : null}
+          If you continue {amountBasedWord(notUpdatedDevices, 'device', 'devices')} won't be updated<br/>
+          { this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated ${amountBasedWord(this.props.devicesUpdated.length, 'device', 'devices')}.` : null}
         </div>
         {/*<div>Type in word CANCEL below to confirm</div>*/}
         {/*<br/>*/}
@@ -303,7 +308,7 @@ class OTA extends React.Component {
         <div className="devices-ota-update-confirmation-file-name">
           <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
                     {this.props.OTAUpdate.deviceIds.length}
-                </span> Devices were successfully updated
+                </span> {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'Device was', 'Devices were')} successfully updated
         </div>
         <div className="devices-ota-update-confirmation-file-name">
           { this.props.OTAUpdate.firmwareOriginalFileName }
@@ -323,7 +328,7 @@ class OTA extends React.Component {
           <Row>
             <Col span={24}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
-                <Button type="danger" onClick={this.onFirmwareUpdateCancel}>Cancel</Button>
+                <Button type="danger" onClick={this.props.onProductDeleteProcess}>Cancel</Button>
               </div>
             </Col>
           </Row>
@@ -385,7 +390,7 @@ class OTA extends React.Component {
     }, {
       title    : 'Last Updated',
       dataIndex: 'deviceOtaInfo.finishedAt',
-      render: (text) => <div>{(text < 0 ? "-" : text) || "-"}</div>
+      render: (value) => <div>{(!value || value < 0 ? "-" : getCalendarFormatDate(value)) || "-"}</div>
     },];
   }
 

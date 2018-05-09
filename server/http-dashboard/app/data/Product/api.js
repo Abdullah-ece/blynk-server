@@ -47,6 +47,22 @@ export function ProductFetch(data) {
   };
 }
 
+export function ProductDeleteProgress({productId}) {
+
+  if(!productId)
+    throw new Error('productId parameter is missed');
+
+  return {
+    type: 'API_PRODUCT_DELETE_PROGRESS',
+    payload: {
+      request: {
+        method: 'delete',
+        url: API_URL.ota().deleteProgress({ productId })
+      }
+    }
+  };
+}
+
 export function ProductUpdate(data) {
   return {
     type: 'API_PRODUCT_UPDATE',
