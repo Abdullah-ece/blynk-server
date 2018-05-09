@@ -9,6 +9,7 @@ import cc.blynk.core.http.annotation.DELETE;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
@@ -188,10 +189,10 @@ public class OTAHandler extends BaseHttpHandler {
     }
 
     @DELETE
-    @Path("/deleteProgress")
+    @Path("/deleteProgress/{productId}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Admin
-    public Response deleteProgress(@ContextUser User user, StartOtaDTO startOtaDTO) {
+    public Response deleteProgress(@ContextUser User user, @PathParam("productId") int productId) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
         if (organization == null) {
@@ -199,14 +200,14 @@ public class OTAHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        if (startOtaDTO == null || startOtaDTO.productId == -1) {
+        if (productId == -1) {
             log.error("No productId to delete OTA progress.");
             return badRequest("No productId to delete OTA progress");
         }
 
-        log.info("Deleting OTA progress for {}. {}", user.email, startOtaDTO);
+        log.info("Deleting OTA progress for {}.", user.email);
 
-        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        Product product = organizationDao.getProductById(productId);
         product.setOtaProgress(null);
 
         return ok();
