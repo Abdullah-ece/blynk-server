@@ -5,6 +5,7 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.ContextUser;
+import cc.blynk.core.http.annotation.DELETE;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
@@ -179,6 +180,31 @@ public class OTAHandler extends BaseHttpHandler {
                 device.setDeviceOtaInfo(null);
             }
         }
+
+        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        product.setOtaProgress(null);
+
+        return ok();
+    }
+
+    @DELETE
+    @Path("/deleteProgress")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Admin
+    public Response deleteProgress(@ContextUser User user, StartOtaDTO startOtaDTO) {
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
+
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            return badRequest();
+        }
+
+        if (startOtaDTO == null || startOtaDTO.productId == -1) {
+            log.error("No productId to delete OTA progress.");
+            return badRequest("No productId to delete OTA progress");
+        }
+
+        log.info("Deleting OTA progress for {}. {}", user.email, startOtaDTO);
 
         Product product = organizationDao.getProductById(startOtaDTO.productId);
         product.setOtaProgress(null);
