@@ -69,7 +69,7 @@ public class OTATest extends APIBaseTest {
     }
 
     @Test
-    public void otaBasicFlow() throws Exception {
+    public void otaBasicFlowForDeviceConnectedAfterOTAStarted() throws Exception {
         login(admin.email, admin.pass);
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
@@ -90,7 +90,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "ESP32";
+        newDevice.boardType = "NodeMCU";
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -172,6 +172,119 @@ public class OTATest extends APIBaseTest {
     }
 
     @Test
+    public void otaBasicFlowForDeviceConnectedWhenOTAStarted() throws Exception {
+        login(admin.email, admin.pass);
+
+        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String firmwareInfo = consumeText(response);
+            assertNotNull(firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = "NodeMCU";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+        }
+
+        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        newHardClient.start();
+        newHardClient.send("login " + newDevice.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+                ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware));
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNotNull(newDevice.deviceOtaInfo);
+            assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+            assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
+            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
+        }
+    }
+
+    @Test
+    public void otaFailsAsFirmwareDoesntCorrespondToDeviceBoardType() throws Exception {
+        login(admin.email, admin.pass);
+
+        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
+
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String firmwareInfo = consumeText(response);
+            assertNotNull(firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = "ESP32";//wrong board
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+        }
+
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+                ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"My New Device board type doesn't correspond to firmware board type.\"}}", consumeText(response));
+        }
+    }
+
+    @Test
     public void otaStop() throws Exception {
         login(admin.email, admin.pass);
 
@@ -193,6 +306,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
+        newDevice.boardType = "NodeMCU";
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");

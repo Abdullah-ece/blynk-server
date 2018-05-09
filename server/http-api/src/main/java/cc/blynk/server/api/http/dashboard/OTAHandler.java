@@ -126,6 +126,14 @@ public class OTAHandler extends BaseHttpHandler {
                 startOtaDTO.deviceIds, firmwareInfo));
 
         for (Device device : devices) {
+            if (device.boardType == null || !device.boardType.equals(firmwareInfo.boardType)) {
+                log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
+                        device.name, device.boardType, device.id, firmwareInfo.boardType);
+                return badRequest(device.name + " board type doesn't correspond to firmware board type.");
+            }
+        }
+
+        for (Device device : devices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L,
                     startOtaDTO.pathToFirmware, firmwareInfo.buildDate,
