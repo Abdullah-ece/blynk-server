@@ -6,12 +6,14 @@ import org.apache.logging.log4j.Logger;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -170,6 +172,9 @@ public final class FileUtils {
                     map.put(key, value);
                 }
             }
+            byte[] md5Hash = MessageDigest.getInstance("MD5").digest(data);
+            String md5StringHex = String.format("%032X", new BigInteger(1, md5Hash));
+            map.put("md5", md5StringHex);
             return map;
         } catch (Exception e) {
             log.error("Error getting pattern from file. Reason : {}", e.getMessage());

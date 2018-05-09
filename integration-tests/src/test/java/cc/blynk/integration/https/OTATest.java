@@ -85,7 +85,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
@@ -188,7 +188,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
@@ -256,7 +256,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
@@ -301,7 +301,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String firmwareInfo = consumeText(response);
             assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\"}", firmwareInfo);
+            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
         }
 
         Device newDevice = new Device();
