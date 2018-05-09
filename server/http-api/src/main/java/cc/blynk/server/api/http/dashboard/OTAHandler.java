@@ -119,13 +119,6 @@ public class OTAHandler extends BaseHttpHandler {
         java.nio.file.Path path = Paths.get(staticFilesFolder, startOtaDTO.pathToFirmware);
         FirmwareInfo firmwareInfo = new FirmwareInfo(FileUtils.getPatternFromString(path));
 
-        long now = System.currentTimeMillis();
-        Product product = organizationDao.getProductById(startOtaDTO.productId);
-        product.setOtaProgress(new OtaProgress(startOtaDTO.title,
-                startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
-                now, -1,
-                startOtaDTO.deviceIds, firmwareInfo));
-
         for (Device device : filteredDevices) {
             if (device.boardType == null || !device.boardType.equals(firmwareInfo.boardType)) {
                 log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
@@ -133,6 +126,13 @@ public class OTAHandler extends BaseHttpHandler {
                 return badRequest(device.name + " board type doesn't correspond to firmware board type.");
             }
         }
+
+        long now = System.currentTimeMillis();
+        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        product.setOtaProgress(new OtaProgress(startOtaDTO.title,
+                startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
+                now, -1,
+                startOtaDTO.deviceIds, firmwareInfo));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
