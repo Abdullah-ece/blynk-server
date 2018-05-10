@@ -20,16 +20,18 @@ export const OTA_STATUSES = {
   STARTED: 'STARTED',
   REQUEST_SENT: 'REQUEST_SENT',
   FIRMWARE_UPLOADED: 'FIRMWARE_UPLOADED',
+  FIRMWARE_REQUESTED: 'FIRMWARE_REQUESTED',
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE',
 };
 
 export const OTA_STATUS_VALUE = {
-  [OTA_STATUSES.STARTED]           : "Pending",
-  [OTA_STATUSES.REQUEST_SENT]      : "Pending",
-  [OTA_STATUSES.FIRMWARE_UPLOADED] : "Pending",
-  [OTA_STATUSES.SUCCESS]           : "Success",
-  [OTA_STATUSES.FAILURE]           : "Failure",
+  [OTA_STATUSES.STARTED]           : "Started",
+  [OTA_STATUSES.REQUEST_SENT]      : "Request sent",
+  [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware downloaded",
+  [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware requested",
+  [OTA_STATUSES.SUCCESS]           : "Updated",
+  [OTA_STATUSES.FAILURE]           : "Failed",
 };
 
 export const TABS = {

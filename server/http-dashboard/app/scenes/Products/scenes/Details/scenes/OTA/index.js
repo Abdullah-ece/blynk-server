@@ -79,6 +79,7 @@ class OTAScene extends React.Component {
           OTA_STATUSES.SUCCESS,
           OTA_STATUSES.FAILURE,
           OTA_STATUSES.FIRMWARE_UPLOADED,
+          OTA_STATUSES.FIRMWARE_REQUESTED,
           OTA_STATUSES.REQUEST_SENT,
           OTA_STATUSES.STARTED,
         ])
