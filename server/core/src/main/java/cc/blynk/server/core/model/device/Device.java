@@ -217,7 +217,7 @@ public class Device implements Target {
     public void updateOTAInfo(String initiatedBy, String pathToFirmware, String buildDate) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now,
-                -1L, -1L,
+                -1L, -1L, 1L, -1L,
                 pathToFirmware, buildDate,
                 OTAStatus.STARTED);
         this.updatedAt = now;
@@ -227,7 +227,7 @@ public class Device implements Target {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
         this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
-                now, -1L,
+                now, -1L, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
                 OTAStatus.REQUEST_SENT);
         this.updatedAt = now;
@@ -237,9 +237,29 @@ public class Device implements Target {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
-                prev.requestSentAt, now,
+                prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, now,
                 prev.pathToFirmware, prev.buildDate,
                 OTAStatus.SUCCESS);
+        this.updatedAt = now;
+    }
+
+    public void firmwareRequested() {
+        DeviceOtaInfo prev = this.deviceOtaInfo;
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, now, -1L, -1L,
+                prev.pathToFirmware, prev.buildDate,
+                OTAStatus.FIRMWARE_REQUESTED);
+        this.updatedAt = now;
+    }
+
+    public void firmwareUploaded() {
+        DeviceOtaInfo prev = this.deviceOtaInfo;
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, prev.firmwareRequestedAt, now, -1L,
+                prev.pathToFirmware, prev.buildDate,
+                OTAStatus.FIRMWARE_REQUESTED);
         this.updatedAt = now;
     }
 

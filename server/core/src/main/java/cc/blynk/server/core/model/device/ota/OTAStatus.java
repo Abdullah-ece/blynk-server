@@ -4,6 +4,7 @@ public enum OTAStatus {
 
     STARTED,
     REQUEST_SENT,
+    FIRMWARE_REQUESTED,
     FIRMWARE_UPLOADED,
     SUCCESS,
     FAILURE

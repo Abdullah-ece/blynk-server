@@ -24,11 +24,11 @@ public class OTAInfo {
     }
 
     public String makeHardwareBody(String serverHostUrl) {
-        return makeHardwareBody(serverHostUrl, pathToFirmware);
+        return makeHardwareBody(serverHostUrl, pathToFirmware, 1);
     }
 
-    public static String makeHardwareBody(String serverHostUrl, String pathToFirmware) {
-        return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware;
+    public static String makeHardwareBody(String serverHostUrl, String pathToFirmware, int deviceId) {
+        return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware + "?token=" + deviceId;
     }
 
     public boolean matches(String dashName) {

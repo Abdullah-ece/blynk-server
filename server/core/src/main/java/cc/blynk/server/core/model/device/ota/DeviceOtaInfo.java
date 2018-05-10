@@ -16,25 +16,33 @@ public class DeviceOtaInfo {
 
     public final long requestSentAt;
 
+    public final long firmwareRequestedAt;
+
+    public final long firmwareUploadedAt;
+
     public final long finishedAt;
 
     public final String pathToFirmware;
 
     public final String buildDate;
 
-    public volatile OTAStatus otaStatus;
+    public final OTAStatus otaStatus;
 
     @JsonCreator
-    public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaInitiatedBy,
-                         @JsonProperty("otaStartedAt") long otaInitiatedAt,
+    public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaStartedBy,
+                         @JsonProperty("otaStartedAt") long otaStartedAt,
                          @JsonProperty("requestSentAt") long requestSentAt,
+                         @JsonProperty("firmwareRequestedAt") long firmwareRequestedAt,
+                         @JsonProperty("firmwareUploadedAt") long firmwareUploadedAt,
                          @JsonProperty("finishedAt") long finishedAt,
                          @JsonProperty("pathToFirmware") String pathToFirmware,
                          @JsonProperty("buildDate") String buildDate,
                          @JsonProperty("otaStatus") OTAStatus otaStatus) {
-        this.otaStartedBy = otaInitiatedBy;
-        this.otaStartedAt = otaInitiatedAt;
+        this.otaStartedBy = otaStartedBy;
+        this.otaStartedAt = otaStartedAt;
         this.requestSentAt = requestSentAt;
+        this.firmwareRequestedAt = firmwareRequestedAt;
+        this.firmwareUploadedAt = firmwareUploadedAt;
         this.finishedAt = finishedAt;
         this.pathToFirmware = pathToFirmware;
         this.buildDate = buildDate;

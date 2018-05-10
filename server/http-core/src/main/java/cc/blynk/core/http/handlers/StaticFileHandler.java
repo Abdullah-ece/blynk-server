@@ -1,8 +1,12 @@
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
+import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -78,11 +82,15 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private final boolean isUnpacked;
     private final StaticFile[] staticPaths;
     private final String jarPath;
+    private final DeviceDao deviceDao;
+    private final OrganizationDao organizationDao;
 
-    public StaticFileHandler(ServerProperties props, StaticFile... staticPaths) {
+    public StaticFileHandler(Holder holder, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
-        this.isUnpacked = props.isUnpacked;
-        this.jarPath = props.jarPath;
+        this.isUnpacked = holder.props.isUnpacked;
+        this.jarPath = holder.props.jarPath;
+        this.deviceDao = holder.deviceDao;
+        this.organizationDao = holder.organizationDao;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -189,10 +197,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         Path path;
         String uri = request.uri();
-
-        if (uri.contains("?")) {
-            uri = uri.split("\\?")[0];
-        }
+        String[] uriParts = uri.split("\\?");
+        uri = uri.split("\\?")[0];
 
         //running from jar
         if (isUnpacked) {
@@ -261,6 +267,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
+        Device device = getDevice(uriParts);
+        if (device != null) {
+            Product product = organizationDao.getProductById(device.productId);
+            response.headers().set("x-MD5", product.otaProgress.firmwareInfo.md5Hash);
+        }
+
         // Write the initial line and the header.
         ctx.write(response);
 
@@ -279,11 +291,24 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             lastContentFuture = sendFileFuture;
         }
 
+        if (device != null) {
+            log.debug("Adding finish upload listener.");
+            lastContentFuture.addListener(future -> deviceDao.getById(device.id).firmwareUploaded());
+        }
+
         // Decide whether to close the connection or not.
         if (!HttpUtil.isKeepAlive(request)) {
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
+    }
+
+    private Device getDevice(String[] uriParts) {
+        if (uriParts.length == 2 && uriParts[0].endsWith(".bin") && uriParts[1].contains("token=")) {
+            int deviceId = Integer.parseInt(uriParts[1].substring(6));
+            deviceDao.getById(deviceId);
+        }
+        return null;
     }
 
     @Override

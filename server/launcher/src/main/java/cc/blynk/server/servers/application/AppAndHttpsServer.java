@@ -224,7 +224,7 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                                 .addLast("HttpUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
-                                        new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                        new StaticFileHandler(holder, new StaticFile("/static"),
                                                 new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                                 .addLast(externalAPIHandler)
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);

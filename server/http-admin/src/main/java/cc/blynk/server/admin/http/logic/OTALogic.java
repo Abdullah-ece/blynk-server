@@ -67,7 +67,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
         }
 
         String otaFile = OTA_DIR + (filename == null ? "firmware_ota.bin" : filename);
-        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, otaFile);
+        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, otaFile, 1);
         if (session.sendMessageToHardware(BLYNK_INTERNAL, 7777, body)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");

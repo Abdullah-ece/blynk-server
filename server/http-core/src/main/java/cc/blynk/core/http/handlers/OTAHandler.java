@@ -146,7 +146,7 @@ public class OTAHandler extends UploadHandler {
             return badRequest("Device wasn't connected yet.");
         }
 
-        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, pathToFirmware);
+        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, pathToFirmware, 1);
         if (session.sendMessageToHardware(dashId, BLYNK_INTERNAL, 7777, body, deviceId)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");

@@ -149,7 +149,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("HttpObjectAggregator", new HttpObjectAggregator(maxWebLength, true))
                                         .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                                         .addLast("HttpStaticFile",
-                                                new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                                new StaticFileHandler(holder, new StaticFile("/static"),
                                                         new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                                         .addLast(externalAPIHandler)
                                         .addLast("HttpWebSocketUnificator", baseWebSocketUnificator);

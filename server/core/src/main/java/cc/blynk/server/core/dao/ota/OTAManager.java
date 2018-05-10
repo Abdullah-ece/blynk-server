@@ -82,7 +82,7 @@ public class OTAManager {
         StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
             device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
-                    otaInfo.initiatedAt, System.currentTimeMillis(), -1L,
+                    otaInfo.initiatedAt, System.currentTimeMillis(), -1L, -1L, -1L,
                     otaInfo.pathToFirmware, null, OTAStatus.REQUEST_SENT);
             ctx.write(msg, ctx.voidPromise());
         }

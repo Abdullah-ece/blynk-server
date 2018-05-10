@@ -128,7 +128,7 @@ public class OTATest extends APIBaseTest {
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware));
+        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware + "?token=1"));
         newHardClient.verifyResult(ok(2));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
@@ -221,7 +221,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware));
+        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware + "?token=1"));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {

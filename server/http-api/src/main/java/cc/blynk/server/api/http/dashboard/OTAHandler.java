@@ -136,7 +136,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
-                    -1L, -1L,
+                    -1L, -1L, -1L, -1L,
                     startOtaDTO.pathToFirmware, firmwareInfo.buildDate,
                     OTAStatus.STARTED);
             device.setDeviceOtaInfo(deviceOtaInfo);
@@ -144,14 +144,14 @@ public class OTAHandler extends BaseHttpHandler {
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session != null) {
-            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                    OTAInfo.makeHardwareBody(serverHostUrl, startOtaDTO.pathToFirmware));
-
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);
                 if (hardwareState != null
                         && ArrayUtil.contains(startOtaDTO.deviceIds, hardwareState.device.id)
                         && channel.isWritable()) {
+                    StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
+                            OTAInfo.makeHardwareBody(serverHostUrl,
+                                    startOtaDTO.pathToFirmware, hardwareState.device.id));
                     channel.writeAndFlush(msg, channel.voidPromise());
                     hardwareState.device.requestSent();
                 }

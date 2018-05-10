@@ -99,7 +99,7 @@ public class BlynkInternalLogic {
             device.hardwareInfo = hardwareInfo;
             if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
                 StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                        OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware));
+                        OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware, device.id));
                 ctx.write(msg, ctx.voidPromise());
                 device.requestSent();
             } else {
