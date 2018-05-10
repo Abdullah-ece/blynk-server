@@ -26,6 +26,8 @@ public class StartOtaDTO {
 
     public final FirmwareInfo firmwareInfo;
 
+    public final int attemptsLimit;
+
     @JsonCreator
     public StartOtaDTO(@JsonProperty("productId") int productId,
                        @JsonProperty("pathToFirmware") String pathToFirmware,
@@ -33,7 +35,8 @@ public class StartOtaDTO {
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("title") String title,
                        @JsonProperty("checkBoardType") boolean checkBoardType,
-                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo) {
+                       @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo,
+                       @JsonProperty("attemptsLimit") int attemptsLimit) {
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
@@ -41,6 +44,7 @@ public class StartOtaDTO {
         this.title = title;
         this.checkBoardType = checkBoardType;
         this.firmwareInfo = firmwareInfo;
+        this.attemptsLimit = attemptsLimit;
     }
 
     public boolean isNotValid() {

@@ -28,6 +28,10 @@ public class DeviceOtaInfo {
 
     public final OTAStatus otaStatus;
 
+    public final int attempts;
+
+    public final int attemptsLimit;
+
     @JsonCreator
     public DeviceOtaInfo(@JsonProperty("otaStartedBy") String otaStartedBy,
                          @JsonProperty("otaStartedAt") long otaStartedAt,
@@ -37,7 +41,9 @@ public class DeviceOtaInfo {
                          @JsonProperty("finishedAt") long finishedAt,
                          @JsonProperty("pathToFirmware") String pathToFirmware,
                          @JsonProperty("buildDate") String buildDate,
-                         @JsonProperty("otaStatus") OTAStatus otaStatus) {
+                         @JsonProperty("otaStatus") OTAStatus otaStatus,
+                         @JsonProperty("attempts") int attempts,
+                         @JsonProperty("attemptsLimit") int attemptsLimit) {
         this.otaStartedBy = otaStartedBy;
         this.otaStartedAt = otaStartedAt;
         this.requestSentAt = requestSentAt;
@@ -47,6 +53,12 @@ public class DeviceOtaInfo {
         this.pathToFirmware = pathToFirmware;
         this.buildDate = buildDate;
         this.otaStatus = otaStatus;
+        this.attempts = attempts;
+        this.attemptsLimit = attemptsLimit;
+    }
+
+    public boolean isLimitReached() {
+        return attempts > attemptsLimit;
     }
 
 }

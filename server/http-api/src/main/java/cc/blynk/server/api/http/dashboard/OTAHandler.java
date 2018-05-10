@@ -131,13 +131,13 @@ public class OTAHandler extends BaseHttpHandler {
         product.setOtaProgress(new OtaProgress(startOtaDTO.title,
                 startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
                 now, -1,
-                startOtaDTO.deviceIds, startOtaDTO.firmwareInfo));
+                startOtaDTO.deviceIds, startOtaDTO.firmwareInfo, startOtaDTO.attemptsLimit));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L, -1L, -1L,
                     startOtaDTO.pathToFirmware, startOtaDTO.firmwareInfo.buildDate,
-                    OTAStatus.STARTED);
+                    OTAStatus.STARTED, 0, startOtaDTO.attemptsLimit);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 

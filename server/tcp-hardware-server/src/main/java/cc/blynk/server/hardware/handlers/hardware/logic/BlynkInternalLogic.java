@@ -2,7 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ota.OTAInfo;
-import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -36,12 +35,10 @@ public class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
-    private final OTAManager otaManager;
     private final int hardwareIdleTimeout;
     private final String serverHostUrl;
 
     public BlynkInternalLogic(Holder holder) {
-        this.otaManager = holder.otaManager;
         this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         this.serverHostUrl = holder.props.getHttpServerUrl();
     }
@@ -98,10 +95,17 @@ public class BlynkInternalLogic {
         if (device != null && device.deviceOtaInfo != null) {
             device.hardwareInfo = hardwareInfo;
             if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
-                StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                        OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware, device.id));
-                ctx.write(msg, ctx.voidPromise());
-                device.requestSent();
+                if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+                    if (device.isAttemptsLimitReached()) {
+                        log.warn("OTA limit reached for {} and deviceId {}.", state.user.email, device.id);
+                        device.firmwareUploadFailure();
+                    } else {
+                        StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
+                                OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware, device.id));
+                        ctx.write(msg, ctx.voidPromise());
+                        device.requestSent();
+                    }
+                }
             } else {
                 if (device.deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
                     device.success();

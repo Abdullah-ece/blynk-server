@@ -207,20 +207,12 @@ public class Device implements Target {
         this.metadataUpdatedAt = 0;
         this.metadataUpdatedBy = null;
         this.updatedAt = 0;
+        this.deviceOtaInfo = null;
     }
 
     public void setDeviceOtaInfo(DeviceOtaInfo deviceOtaInfo) {
         this.deviceOtaInfo = deviceOtaInfo;
         this.updatedAt = System.currentTimeMillis();
-    }
-
-    public void updateOTAInfo(String initiatedBy, String pathToFirmware, String buildDate) {
-        long now = System.currentTimeMillis();
-        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now,
-                -1L, -1L, 1L, -1L,
-                pathToFirmware, buildDate,
-                OTAStatus.STARTED);
-        this.updatedAt = now;
     }
 
     public void requestSent() {
@@ -229,7 +221,7 @@ public class Device implements Target {
         this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 now, -1L, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.REQUEST_SENT);
+                OTAStatus.REQUEST_SENT, prev.attempts, prev.attemptsLimit);
         this.updatedAt = now;
     }
 
@@ -239,7 +231,7 @@ public class Device implements Target {
         this.deviceOtaInfo = new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, now,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.SUCCESS);
+                OTAStatus.SUCCESS, prev.attempts, prev.attemptsLimit);
         this.updatedAt = now;
     }
 
@@ -249,7 +241,7 @@ public class Device implements Target {
         this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, now, -1L, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.FIRMWARE_REQUESTED);
+                OTAStatus.FIRMWARE_REQUESTED, prev.attempts + 1, prev.attemptsLimit);
         this.updatedAt = now;
     }
 
@@ -259,18 +251,22 @@ public class Device implements Target {
         this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, now, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.FIRMWARE_UPLOADED);
+                OTAStatus.FIRMWARE_UPLOADED, prev.attempts, prev.attemptsLimit);
         this.updatedAt = now;
     }
 
     public void firmwareUploadFailure() {
         DeviceOtaInfo prev = this.deviceOtaInfo;
         long now = System.currentTimeMillis();
-        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
+        this.deviceOtaInfo = new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.FAILURE);
+                OTAStatus.FAILURE, prev.attempts, prev.attemptsLimit);
         this.updatedAt = now;
+    }
+
+    public boolean isAttemptsLimitReached() {
+        return deviceOtaInfo != null && deviceOtaInfo.isLimitReached();
     }
 
     @Override

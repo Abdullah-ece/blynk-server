@@ -9,7 +9,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -76,8 +75,6 @@ public class Holder {
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
-
-    public final OTAManager otaManager;
 
     public final Limits limits;
     public final TextHolder textHolder;
@@ -147,8 +144,6 @@ public class Holder {
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
-        this.otaManager = new OTAManager(props);
-
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
@@ -202,8 +197,6 @@ public class Holder {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
-
-        this.otaManager = new OTAManager(props);
 
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
