@@ -30,21 +30,21 @@ class OTAStatus extends React.Component {
       [OTA_STATUSES.REQUEST_SENT]      : (
         <p>
           Waiting for device to download firmware. <br/>Request sent at:
-          ${this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.requestSentAt)}
+          {this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.requestSentAt)}
         </p>
       ),
       [OTA_STATUSES.FIRMWARE_REQUESTED]: (
         <p>
           Device started to download firmware. Waiting for device finish
           download. <br/>Download started at:
-          ${this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.firmwareRequestedAt)}
+          {this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.firmwareRequestedAt)}
         </p>
       ),
       [OTA_STATUSES.FIRMWARE_UPLOADED] : (
         <p>
           Firmware already downloaded.  Waiting for device to update. <br/>Firmware
           downloaded at:
-          ${this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.firmwareUploadedAt)}
+          {this.props.deviceOtaInfo && getCalendarFormatDate(this.props.deviceOtaInfo.firmwareUploadedAt)}
         </p>
       ),
     };
