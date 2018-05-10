@@ -2,7 +2,7 @@ import React from 'react';
 import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
 import Modal from 'components/Modal';
 import PropTypes from 'prop-types';
-import {reduxForm} from 'redux-form';
+import {reduxForm, Fields} from 'redux-form';
 import {amountBasedWord} from 'services/Spelling';
 import {
   Item
@@ -96,6 +96,7 @@ class OTA extends React.Component {
   constructor(props) {
     super(props);
 
+    this.devicesTable = this.devicesTable.bind(this);
     this.firmwareUpdateStart = this.firmwareUpdateStart.bind(this);
     this.handleCancelModalOk = this.handleCancelModalOk.bind(this);
     this.handleCancelModalCancel = this.handleCancelModalCancel.bind(this);
@@ -337,7 +338,7 @@ class OTA extends React.Component {
     );
   }
 
-  updateColumns() {
+  updateColumns(values) {
     return [{
       title    : 'Device Name',
       dataIndex: 'name',
@@ -373,11 +374,23 @@ class OTA extends React.Component {
         }
       },
 
+      sorter: (a, b) => a.name > b.name ? -1 : 1,
+      sortOrder: values.sort.columnKey === 'name' && values.sort.order,
+
       render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
     }, {
       title    : 'Firmware version',
       dataIndex: 'hardwareInfo.version',
-      render: (text) => <div>{text || "-"}</div>
+      render: (text) => <div>{text || "-"}</div>,
+      sorter: (a, b) => {
+        if(a.hardwareInfo && b.hardwareInfo) {
+          return a.hardwareInfo.version > b.hardwareInfo.version ? -1 : 1;
+        }
+
+        return -1;
+      },
+      sortOrder: values.sort.columnKey === 'hardwareInfo.version' && values.sort.order,
+
     }, {
       title: 'FOTA Status',
       dataIndex: 'deviceOtaInfo.otaStatus',
@@ -403,20 +416,46 @@ class OTA extends React.Component {
     return this.props.devices;
   }
 
+  devicesTable(props) {
+
+    const onChange = (pagination, filters, sorter) => {
+      props.sort.input.onChange(sorter);
+    };
+
+    const values = {
+      filter: props.filter.input.value,
+      sort: props.sort.input.value,
+    };
+
+    const columns = this.updateColumns(values);
+
+    return (
+      <Table
+        className="ota-table"
+        loading={this.props.devicesLoading}
+        rowKey={(record) => record.id}
+        rowSelection={props.rowSelection} columns={columns} dataSource={props.dataSource}
+        onChange={onChange}
+        pagination={false}/>
+    );
+  }
+
   render() {
     const {step} = this.props;
+
+    const dataSource = this.getDataSource();
 
     const rowSelection = {
       onChange        : (selectedRowKeys, selectedRows) => {
         this.handleDeviceSelect(selectedRowKeys, selectedRows);
       },
+
       getCheckboxProps: record => ({
         name: record.name,
       }),
+
       selectedRowKeys: this.props.selectedDevicesIds,
     };
-    const dataSource = this.getDataSource();
-    const columns = this.updateColumns();
     return (
       <div className="users-profile--organization-settings--organization-users">
 
@@ -430,12 +469,12 @@ class OTA extends React.Component {
 
         {this.firmwareCancelModalConfirmation()}
 
-        <Table
-          className="ota-table"
-          loading={this.props.devicesLoading}
-          rowKey={(record) => record.id}
-          rowSelection={rowSelection} columns={columns} dataSource={dataSource}
-          pagination={false}/>
+        <Fields names={['sort', 'filter']}
+                component={this.devicesTable}
+                dataSource={dataSource}
+                rowSelection={rowSelection}
+                rerenderOnEveryChange={true}
+        />
       </div>
     );
   }
