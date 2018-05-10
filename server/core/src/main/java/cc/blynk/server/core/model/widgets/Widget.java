@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.controls.FieldInput;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.QR;
@@ -62,10 +61,12 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -85,7 +86,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = StyledButton.class, name = "STYLED_BUTTON"),
         @JsonSubTypes.Type(value = TextInput.class, name = "TEXT_INPUT"),
         @JsonSubTypes.Type(value = NumberInput.class, name = "NUMBER_INPUT"),
-        @JsonSubTypes.Type(value = FieldInput.class, name = "FIELD_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
@@ -233,5 +233,47 @@ public abstract class Widget implements CopyObject<Widget> {
             default:
                 throw new RuntimeException("Error setting widget property.");
         }
+    }
+
+    public static boolean isNotValidProperty(String property) {
+        switch (property) {
+            case "label":
+            case "color":
+            case "isEnabled":
+            case "onLabel":
+            case "offLabel":
+            case "labels":
+            case "min":
+            case "max":
+            case "isOnPlay":
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Widget widget = (Widget) o;
+        return id == widget.id
+                && x == widget.x
+                && y == widget.y
+                && color == widget.color
+                && width == widget.width
+                && height == widget.height
+                && tabId == widget.tabId
+                && isDefaultColor == widget.isDefaultColor
+                && Objects.equals(label, widget.label);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, x, y, color, width, height, tabId, label, isDefaultColor);
     }
 }
