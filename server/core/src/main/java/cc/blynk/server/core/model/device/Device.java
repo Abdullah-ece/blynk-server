@@ -259,7 +259,17 @@ public class Device implements Target {
         this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
                 prev.requestSentAt, prev.firmwareRequestedAt, now, -1L,
                 prev.pathToFirmware, prev.buildDate,
-                OTAStatus.FIRMWARE_REQUESTED);
+                OTAStatus.FIRMWARE_UPLOADED);
+        this.updatedAt = now;
+    }
+
+    public void firmwareUploadFailure() {
+        DeviceOtaInfo prev = this.deviceOtaInfo;
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo =  new DeviceOtaInfo(prev.otaStartedBy, prev.otaStartedAt,
+                prev.requestSentAt, prev.firmwareRequestedAt, prev.firmwareUploadedAt, -1L,
+                prev.pathToFirmware, prev.buildDate,
+                OTAStatus.FAILURE);
         this.updatedAt = now;
     }
 

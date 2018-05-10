@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 
+import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
@@ -16,6 +17,7 @@ import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,7 +36,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.internal;
@@ -131,7 +136,7 @@ public class OTATest extends APIBaseTest {
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware + "?token=1"));
+        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + httpPort) + pathToFirmware + "?token=1"));
         newHardClient.verifyResult(ok(2));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
@@ -172,6 +177,122 @@ public class OTATest extends APIBaseTest {
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
             assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
         }
+    }
+
+
+    @Test
+    public void otaFullFlowForDeviceConnectedAfterOTAStarted() throws Exception {
+        login(admin.email, admin.pass);
+
+        String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
+
+        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
+
+        FirmwareInfo firmwareInfo;
+        try (CloseableHttpResponse response = httpclient.execute(req)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String firmwareInfoString = consumeText(response);
+            assertNotNull(firmwareInfoString);
+            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"bufferIn\":1024,\"heartbeatInterval\":10,\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
+        }
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = "NodeMCU";
+        newDevice.productId = createProduct();
+
+        HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
+        httpPut.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(httpPut)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId,
+                pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
+                ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNotNull(newDevice.deviceOtaInfo);
+            assertEquals(OTAStatus.STARTED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(admin.email, newDevice.deviceOtaInfo.otaStartedBy);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.otaStartedAt, 5000);
+            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
+        }
+
+        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        newHardClient.start();
+        newHardClient.send("login " + newDevice.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        String firmwareDownloadUrl = "http://localhost:" + httpPort + pathToFirmware + "?token=1";
+        newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
+        newHardClient.verifyResult(ok(2));
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNotNull(newDevice.deviceOtaInfo);
+            assertEquals(OTAStatus.REQUEST_SENT, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
+            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
+            assertEquals(-1L, newDevice.deviceOtaInfo.firmwareRequestedAt);
+            assertEquals(-1L, newDevice.deviceOtaInfo.firmwareUploadedAt);
+            assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
+        }
+
+        Path tmpFile = Files.createTempFile("123", "test");
+        try (CloseableHttpResponse response = httpclient.execute(new HttpGet(firmwareDownloadUrl))) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Header header = response.getFirstHeader(StaticFileHandler.MD5_HEADER);
+            assertNotNull(header);
+            String md5Hash = header.getValue();
+            assertEquals(md5Hash, firmwareInfo.md5Hash);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try (FileOutputStream outstream = new FileOutputStream(tmpFile.toFile())) {
+                    entity.writeTo(outstream);
+                }
+            }
+        }
+
+        getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
+        try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseString = consumeText(response);
+            newDevice = JsonParser.readAny(responseString, Device.class);
+            assertNotNull(newDevice);
+            assertNotNull(newDevice.deviceOtaInfo);
+            assertEquals(OTAStatus.FIRMWARE_UPLOADED, newDevice.deviceOtaInfo.otaStatus);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
+            assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
+            assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
+            assertEquals(-1L, newDevice.deviceOtaInfo.finishedAt);
+        }
+
     }
 
     @Test
@@ -226,7 +347,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        newHardClient.verifyResult(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware + "?token=1"));
+        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + httpPort) + pathToFirmware + "?token=1"));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {

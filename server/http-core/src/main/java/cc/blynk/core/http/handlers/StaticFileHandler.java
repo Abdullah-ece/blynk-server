@@ -72,6 +72,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 
+    public static final String MD5_HEADER = "x-MD5";
+
     private static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     private static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     private static final int HTTP_CACHE_SECONDS = 24 * 60 * 60;
@@ -270,7 +272,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Device device = getDevice(uriParts);
         if (device != null) {
             Product product = organizationDao.getProductById(device.productId);
-            response.headers().set("x-MD5", product.otaProgress.firmwareInfo.md5Hash);
+            device.firmwareRequested();
+            response.headers().set(MD5_HEADER, product.otaProgress.firmwareInfo.md5Hash);
         }
 
         // Write the initial line and the header.
@@ -292,8 +295,17 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (device != null) {
-            log.debug("Adding finish upload listener.");
-            lastContentFuture.addListener(future -> deviceDao.getById(device.id).firmwareUploaded());
+            log.debug("Adding finish upload listener for deviceId {}.", device.id);
+            lastContentFuture.addListener((future) -> {
+                    if (future.isSuccess()) {
+                        log.debug("Upload success for deviceId {}.", device.id);
+                        deviceDao.getById(device.id).firmwareUploaded();
+                    } else {
+                        log.debug("Upload failure for deviceId {}.", device.id);
+                        deviceDao.getById(device.id).firmwareUploadFailure();
+                    }
+                }
+            );
         }
 
         // Decide whether to close the connection or not.
@@ -306,7 +318,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     private Device getDevice(String[] uriParts) {
         if (uriParts.length == 2 && uriParts[0].endsWith(".bin") && uriParts[1].contains("token=")) {
             int deviceId = Integer.parseInt(uriParts[1].substring(6));
-            deviceDao.getById(deviceId);
+            return deviceDao.getById(deviceId);
         }
         return null;
     }
