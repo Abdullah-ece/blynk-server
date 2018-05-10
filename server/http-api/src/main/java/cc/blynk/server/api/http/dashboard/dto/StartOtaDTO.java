@@ -22,6 +22,8 @@ public class StartOtaDTO {
 
     public final String title;
 
+    public final boolean checkBoardType;
+
     public final FirmwareInfo firmwareInfo;
 
     @JsonCreator
@@ -30,12 +32,14 @@ public class StartOtaDTO {
                        @JsonProperty("firmwareOriginalFileName") String firmwareOriginalFileName,
                        @JsonProperty("deviceIds") int[] deviceIds,
                        @JsonProperty("title") String title,
+                       @JsonProperty("checkBoardType") boolean checkBoardType,
                        @JsonProperty("firmwareInfo") FirmwareInfo firmwareInfo) {
         this.productId = productId;
         this.pathToFirmware = pathToFirmware;
         this.firmwareOriginalFileName = firmwareOriginalFileName;
         this.deviceIds = deviceIds;
         this.title = title;
+        this.checkBoardType = checkBoardType;
         this.firmwareInfo = firmwareInfo;
     }
 
