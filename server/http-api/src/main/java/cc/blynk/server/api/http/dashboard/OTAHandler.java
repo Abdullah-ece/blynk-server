@@ -87,7 +87,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         java.nio.file.Path path = Paths.get(staticFilesFolder, pathToFirmware);
         Map<String, String> firmwareInfoDTO = FileUtils.getPatternFromString(path);
-        return ok(firmwareInfoDTO);
+        return ok(new FirmwareInfo(firmwareInfoDTO));
     }
 
     @POST
@@ -116,13 +116,10 @@ public class OTAHandler extends BaseHttpHandler {
 
         log.info("Initiating OTA for {}. {}", user.email, startOtaDTO);
 
-        java.nio.file.Path path = Paths.get(staticFilesFolder, startOtaDTO.pathToFirmware);
-        FirmwareInfo firmwareInfo = new FirmwareInfo(FileUtils.getPatternFromString(path));
-
         for (Device device : filteredDevices) {
-            if (device.boardType == null || !device.boardType.equals(firmwareInfo.boardType)) {
+            if (device.boardType == null || !device.boardType.equals(startOtaDTO.firmwareInfo.boardType)) {
                 log.error("Device {} ({}) with id {} does't correspond to firmware {}.",
-                        device.name, device.boardType, device.id, firmwareInfo.boardType);
+                        device.name, device.boardType, device.id, startOtaDTO.firmwareInfo.boardType);
                 return badRequest(device.name + " board type doesn't correspond to firmware board type.");
             }
         }
@@ -132,12 +129,12 @@ public class OTAHandler extends BaseHttpHandler {
         product.setOtaProgress(new OtaProgress(startOtaDTO.title,
                 startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
                 now, -1,
-                startOtaDTO.deviceIds, firmwareInfo));
+                startOtaDTO.deviceIds, startOtaDTO.firmwareInfo));
 
         for (Device device : filteredDevices) {
             DeviceOtaInfo deviceOtaInfo = new DeviceOtaInfo(user.email, now,
                     -1L, -1L, -1L, -1L,
-                    startOtaDTO.pathToFirmware, firmwareInfo.buildDate,
+                    startOtaDTO.pathToFirmware, startOtaDTO.firmwareInfo.buildDate,
                     OTAStatus.STARTED);
             device.setDeviceOtaInfo(deviceOtaInfo);
         }

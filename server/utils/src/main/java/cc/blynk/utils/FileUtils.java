@@ -174,7 +174,7 @@ public final class FileUtils {
             }
             byte[] md5Hash = MessageDigest.getInstance("MD5").digest(data);
             String md5StringHex = String.format("%032X", new BigInteger(1, md5Hash));
-            map.put("md5", md5StringHex);
+            map.put("MD5", md5StringHex);
             return map;
         } catch (Exception e) {
             log.error("Error getting pattern from file. Reason : {}", e.getMessage());

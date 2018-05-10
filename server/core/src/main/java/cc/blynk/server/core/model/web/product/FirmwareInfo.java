@@ -40,6 +40,6 @@ public class FirmwareInfo {
                 entires.get("build"),
                 Integer.parseInt(entires.get("buff-in")),
                 Integer.parseInt(entires.get("h-beat")),
-                entires.get("md5Hash"));
+                entires.get("MD5"));
     }
 }

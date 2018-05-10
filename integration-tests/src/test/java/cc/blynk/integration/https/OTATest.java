@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -81,11 +82,13 @@ public class OTATest extends APIBaseTest {
 
         HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
 
+        FirmwareInfo firmwareInfo;
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String firmwareInfo = consumeText(response);
-            assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
+            String firmwareInfoString = consumeText(response);
+            assertNotNull(firmwareInfoString);
+            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"bufferIn\":1024,\"heartbeatInterval\":10,\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
         Device newDevice = new Device();
@@ -101,7 +104,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -184,11 +187,13 @@ public class OTATest extends APIBaseTest {
 
         HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
 
+        FirmwareInfo firmwareInfo;
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String firmwareInfo = consumeText(response);
-            assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
+            String firmwareInfoString = consumeText(response);
+            assertNotNull(firmwareInfoString);
+            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"bufferIn\":1024,\"heartbeatInterval\":10,\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
         Device newDevice = new Device();
@@ -215,7 +220,7 @@ public class OTATest extends APIBaseTest {
         newHardClient.verifyResult(ok(2));
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -252,11 +257,13 @@ public class OTATest extends APIBaseTest {
 
         HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
 
+        FirmwareInfo firmwareInfo;
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String firmwareInfo = consumeText(response);
-            assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
+            String firmwareInfoString = consumeText(response);
+            assertNotNull(firmwareInfoString);
+            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"bufferIn\":1024,\"heartbeatInterval\":10,\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
         Device newDevice = new Device();
@@ -276,7 +283,7 @@ public class OTATest extends APIBaseTest {
 
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
                 ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -297,11 +304,13 @@ public class OTATest extends APIBaseTest {
 
         HttpGet req = new HttpGet(httpsAdminServerUrl + "/ota/firmwareInfo?file=" + pathToFirmware);
 
+        FirmwareInfo firmwareInfo;
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String firmwareInfo = consumeText(response);
-            assertNotNull(firmwareInfo);
-            assertEquals("{\"ver\":\"2.0.0\",\"dev\":\"NodeMCU\",\"build\":\"May  9 2018 12:36:07\",\"buff-in\":\"1024\",\"h-beat\":\"10\",\"md5\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfo);
+            String firmwareInfoString = consumeText(response);
+            assertNotNull(firmwareInfoString);
+            assertEquals("{\"version\":\"2.0.0\",\"boardType\":\"NodeMCU\",\"buildDate\":\"May  9 2018 12:36:07\",\"bufferIn\":1024,\"heartbeatInterval\":10,\"md5Hash\":\"DA2A7DDC95F46ED14126F5BCEF304833\"}", firmwareInfoString);
+            firmwareInfo = JsonParser.MAPPER.readValue(firmwareInfoString, FirmwareInfo.class);
         }
 
         Device newDevice = new Device();
@@ -317,7 +326,7 @@ public class OTATest extends APIBaseTest {
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
@@ -339,7 +348,7 @@ public class OTATest extends APIBaseTest {
         }
 
         post = new HttpPost(httpsAdminServerUrl + "/ota/stop");
-        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title").toString(),
+        post.setEntity(new StringEntity(new StartOtaDTO(newDevice.productId, pathToFirmware, "original name", new int[] {1}, "title", firmwareInfo).toString(),
                 ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(post)) {
