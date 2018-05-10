@@ -200,7 +200,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Path path;
         String uri = request.uri();
         String[] uriParts = uri.split("\\?");
-        uri = uri.split("\\?")[0];
+        uri = uriParts[0];
 
         //running from jar
         if (isUnpacked) {
@@ -271,9 +271,11 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         Device device = getDevice(uriParts);
         if (device != null) {
-            Product product = organizationDao.getProductById(device.productId);
             device.firmwareRequested();
-            response.headers().set(MD5_HEADER, product.otaProgress.firmwareInfo.md5Hash);
+            Product product = organizationDao.getProductById(device.productId);
+            if (product.otaProgress != null && product.otaProgress.firmwareInfo != null) {
+                response.headers().set(MD5_HEADER, product.otaProgress.firmwareInfo.md5Hash);
+            }
         }
 
         // Write the initial line and the header.
