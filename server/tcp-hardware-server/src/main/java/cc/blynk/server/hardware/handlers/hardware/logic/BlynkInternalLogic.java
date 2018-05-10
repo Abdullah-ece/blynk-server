@@ -103,7 +103,7 @@ public class BlynkInternalLogic {
                 ctx.write(msg, ctx.voidPromise());
                 device.requestSent();
             } else {
-                if (device.deviceOtaInfo.otaStatus == OTAStatus.REQUEST_SENT) {
+                if (device.deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
                     device.success();
                 }
             }
