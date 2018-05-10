@@ -9,7 +9,6 @@ class Content extends React.Component {
     children: PropTypes.any,
     style: PropTypes.object,
     className: PropTypes.string,
-    setRef: PropTypes.func,
   };
 
   render() {
@@ -20,7 +19,7 @@ class Content extends React.Component {
     });
 
     return (
-      <div className={className} style={this.props.style} ref={this.props.setRef}>
+      <div className={className} style={this.props.style}>
         {this.props.children}
       </div>
     );

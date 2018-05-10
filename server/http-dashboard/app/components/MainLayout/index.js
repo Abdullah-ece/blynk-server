@@ -10,12 +10,11 @@ class MainLayout extends React.Component {
 
   static propTypes = {
     children: PropTypes.any,
-    setRef: PropTypes.func,
   };
 
   render() {
     return (
-      <div className="main-layout" ref={this.props.setRef}>
+      <div className="main-layout">
         { this.props.children }
       </div>
     );

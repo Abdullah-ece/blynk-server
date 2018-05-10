@@ -2,7 +2,6 @@ import React        from 'react';
 import {Link}       from 'react-router';
 import {Button}     from 'antd';
 import {connect}    from 'react-redux';
-import ReactDom     from 'react-dom';
 import {
   MainList,
   MainLayout
@@ -20,38 +19,9 @@ export default class ProductsList extends React.Component {
     canCreateProducts: React.PropTypes.bool,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.handleWindowResize = this.handleWindowResize.bind(this);
-  }
-
-  componentDidMount() {
-    this.handleWindowResize();
-
-    window.addEventListener('resize', this.handleWindowResize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.handleWindowResize);
-  }
-
-  setMainLayoutContentRef = (node) => {
-    this.mainLayoutContentNode = node;
-  };
-
-  setMainLayoutRef = (node) => {
-    this.mainLayoutNode = node;
-  };
-  handleWindowResize() {
-    const mainLayoutWidth = ReactDom.findDOMNode(this.mainLayoutNode).offsetWidth;
-    const newWidth = (Math.floor(mainLayoutWidth / 200)) * 200; // Divided by width of one product card
-    this.mainLayoutContentNode.style["max-width"] = newWidth + "px";
-  }
-
   render() {
     return (
-      <MainLayout setRef={this.setMainLayoutRef}>
+      <MainLayout>
         <MainLayout.Header title="Products" options={this.props.canCreateProducts && (
           <div>
             <Link to="/products/create">
@@ -59,7 +29,7 @@ export default class ProductsList extends React.Component {
             </Link>
           </div>
         ) || null}/>
-        <MainLayout.Content setRef={this.setMainLayoutContentRef}>
+        <MainLayout.Content>
           <MainList>
             { this.props.products.map((product, key) => (
               <MainList.Item key={key}
