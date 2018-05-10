@@ -11,21 +11,13 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
  */
 public class NumberInput extends OnePinWidget {
 
-    public String defaultValue;
-
-    public String hint;
-
     public String suffix;
 
     public float step;
 
-    public int maximumFractionDigits;
-
     public boolean isLoopOn;
 
     public FontSize fontSize;
-
-    public int buttonColor;
 
     @Override
     public PinMode getModeType() {
