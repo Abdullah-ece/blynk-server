@@ -135,8 +135,9 @@ public class OTATest extends APIBaseTest {
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
+        String firmwareDownloadUrl = "http://localhost:" + httpPort + pathToFirmware + "?token=1";
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + httpPort) + pathToFirmware + "?token=1"));
+        newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
         newHardClient.verifyResult(ok(2));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
@@ -152,6 +153,21 @@ public class OTATest extends APIBaseTest {
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
+        Path tmpFile = Files.createTempFile("123", "test");
+        try (CloseableHttpResponse response = httpclient.execute(new HttpGet(firmwareDownloadUrl))) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            Header header = response.getFirstHeader(StaticFileHandler.MD5_HEADER);
+            assertNotNull(header);
+            String md5Hash = header.getValue();
+            assertEquals(md5Hash, firmwareInfo.md5Hash);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try (FileOutputStream outstream = new FileOutputStream(tmpFile.toFile())) {
+                    entity.writeTo(outstream);
+                }
+            }
+        }
+
         newHardClient.stop();
 
         newHardClient = new TestHardClient("localhost", httpPort);
@@ -161,7 +177,7 @@ public class OTATest extends APIBaseTest {
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "May  9 2018 12:36:07");
         newHardClient.verifyResult(ok(2));
-        newHardClient.never(internal(7777, b("ota http://knight-qa.blynk.cc:" + httpPort) + pathToFirmware));
+        newHardClient.never(internal(7777, "ota\0" + firmwareDownloadUrl));
 
         getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
@@ -173,6 +189,9 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice.hardwareInfo);
             assertEquals(OTAStatus.SUCCESS, newDevice.deviceOtaInfo.otaStatus);
             assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.requestSentAt, 5000);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareRequestedAt, 5000);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.firmwareUploadedAt, 5000);
+            assertEquals(System.currentTimeMillis(), newDevice.deviceOtaInfo.finishedAt, 5000);
             assertEquals(pathToFirmware, newDevice.deviceOtaInfo.pathToFirmware);
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
             assertEquals("May  9 2018 12:36:07", newDevice.hardwareInfo.build);
