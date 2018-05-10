@@ -159,7 +159,7 @@ public final class FileUtils {
     }
 
     public static Map<String, String> getPatternFromString(Path path) {
-        return getPatternFromString(path, "build", "ver", "h-beat", "buff-in", "dev");
+        return getPatternFromString(path, "build", "ver", "dev");
     }
 
     private static Map<String, String> getPatternFromString(Path path, String... keys) {
