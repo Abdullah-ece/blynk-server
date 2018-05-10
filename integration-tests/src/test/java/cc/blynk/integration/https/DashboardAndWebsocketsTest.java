@@ -74,11 +74,16 @@ import static org.mockito.Mockito.verify;
 public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     private BaseServer hardwareServer;
+    private String tempDir;
 
     @Before
     public void init() throws Exception {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
+        this.tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", regularUser.email);
+        org.apache.commons.io.FileUtils.deleteDirectory(userReportFolder.toFile());
+        Files.createDirectories(userReportFolder);
     }
 
     @After
@@ -362,11 +367,6 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.reset();
 
-        String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", regularUser.email);
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
                 ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
