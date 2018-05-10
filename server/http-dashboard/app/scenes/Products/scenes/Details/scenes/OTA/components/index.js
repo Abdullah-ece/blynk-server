@@ -146,7 +146,7 @@ class OTA extends React.Component {
           </Item>
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          {firmwareUploadInfo.name}
+          <Icon type="file" /> {firmwareUploadInfo.name}
         </div>
         {firmwareFetchInfo.loading ? (
           <div className="devices-ota-update-confirmation-fields-list">
@@ -205,7 +205,7 @@ class OTA extends React.Component {
           { this.props.OTAUpdate.title }
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          { this.props.OTAUpdate.firmwareOriginalFileName }
+          <Icon type="file" /> { this.props.OTAUpdate.firmwareOriginalFileName }
         </div>
         { fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
@@ -312,7 +312,7 @@ class OTA extends React.Component {
                 </span> {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'Device was', 'Devices were')} successfully updated
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          { this.props.OTAUpdate.firmwareOriginalFileName }
+          <Icon type="file" /> { this.props.OTAUpdate.firmwareOriginalFileName }
         </div>
         { fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
