@@ -273,7 +273,7 @@ class OTAScene extends React.Component {
       }).then(() => {
         this.props.updateSelectedDevicesList([]);
       });
-    })
+    });
   }
 
   handleUpdateFirmwareCancel() {
