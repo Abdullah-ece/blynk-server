@@ -9,24 +9,36 @@
 // element to prevent overlap because left-navigation
 // uses position: fixed
 .user-layout-left-navigation-stack {
+
+  transition: 0.2s;
+
+  height: 100%;
+
   &-fold {
+    min-width: 66px;
+    max-width: 66px;
     width: 66px;
   }
 
   &-unfold {
-    width: 222px;
+    min-width: 192px;
+    max-width: 192px;
+    width: 192px;
   }
 }
 
 .user-layout-left-navigation {
+
+  background: @color-white;
+
   position: fixed;
   display: flex;
   flex-direction: column;
   height: 100%;
   box-shadow: 1px 0 15px 0 rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  z-index: 10;
 
-  transition: 0.15s;
+  transition: 0.2s;
 
   &-company-logo {
     max-width: 100%;
@@ -99,6 +111,14 @@
 .user-layout-right-content {
   width: 100%;
   height: 100%;
+
+  &-unfold {
+    width: ~"calc(100% - 192px)";
+  }
+
+  &-fold {
+    width: ~"calc(100% - 66px)";
+  }
 }
 
 .user-layout-container {

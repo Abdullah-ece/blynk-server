@@ -125,45 +125,47 @@ class UserLayout extends React.Component {
 
     return (
       <div className="user-layout">
-        <div className={`user-layout-left-navigation-stack ${this.state.collapsed ? 'user-layout-left-navigation-stack-fold' : 'user-layout-left-navigation-stack-unfold'}`}/>
         <div
-          className={`user-layout-left-navigation ${this.state.navigationActive ? 'user-layout-left-navigation-active' : '' } ${this.state.collapsed ? 'user-layout-left-navigation-fold' : 'user-layout-left-navigation-unfold'}`}
-          onMouseOver={this.handleMouseEnter}
-          onMouseOut={this.handleMouseLeave}
-        >
-          <div className="user-layout-left-navigation-company-logo">
-            <Link to="/">
-              <img src={this.props.Organization.logoUrl} alt=""/>
-            </Link>
-          </div>
-          <div className={`user-layout-left-navigation-collapse-btn`}>
-            <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggleCollapsed}/>
-          </div>
-          <Menu
-            onClick={this.handleClick.bind(this)}
-            className={`user-layout-left-navigation-menu`}
-            mode="inline"
-            inlineCollapsed={this.state.collapsed}
-            selectedKeys={this.currentActivePage(this.state.current)}
+          className={`user-layout-left-navigation-stack ${this.state.collapsed ? 'user-layout-left-navigation-stack-fold' : 'user-layout-left-navigation-stack-unfold'}`}>
+          <div
+            className={`user-layout-left-navigation ${this.state.navigationActive ? 'user-layout-left-navigation-active' : '' } ${this.state.collapsed ? 'user-layout-left-navigation-fold' : 'user-layout-left-navigation-unfold'}`}
+            onMouseOver={this.handleMouseEnter}
+            onMouseOut={this.handleMouseLeave}
           >
-            <Menu.Item key="/devices">
-              <Icon type="hdd"/>
-              <span>Devices</span>
-            </Menu.Item>
-            <Menu.Item key="/products">
-              <Icon type="appstore-o"/>
-              <span>Products</span>
-            </Menu.Item>
-            <Menu.Item key="/organizations">
-              <Icon type="usergroup-add"/>
-              <span>Organization</span>
-            </Menu.Item>
-          </Menu>
-          <div className="user-layout-left-navigation-profile">
-            <Avatar size="large" icon="user" />
+            <div className="user-layout-left-navigation-company-logo">
+              <Link to="/">
+                <img src={this.props.Organization.logoUrl} alt=""/>
+              </Link>
+            </div>
+            <div className={`user-layout-left-navigation-collapse-btn`}>
+              <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggleCollapsed}/>
+            </div>
+            <Menu
+              onClick={this.handleClick.bind(this)}
+              className={`user-layout-left-navigation-menu`}
+              mode="inline"
+              inlineCollapsed={this.state.collapsed}
+              selectedKeys={this.currentActivePage(this.state.current)}
+            >
+              <Menu.Item key="/devices">
+                <Icon type="hdd"/>
+                <span>Devices</span>
+              </Menu.Item>
+              <Menu.Item key="/products">
+                <Icon type="appstore-o"/>
+                <span>Products</span>
+              </Menu.Item>
+              <Menu.Item key="/organizations">
+                <Icon type="usergroup-add"/>
+                <span>Organization</span>
+              </Menu.Item>
+            </Menu>
+            <div className="user-layout-left-navigation-profile">
+              <Avatar size="large" icon="user"/>
+            </div>
           </div>
         </div>
-        <div className="user-layout-right-content">
+        <div className={`user-layout-right-content ${this.state.collapsed ? 'user-layout-right-content-fold' : 'user-layout-right-content-unfold'}`}>
           {this.props.children}
         </div>
       </div>
