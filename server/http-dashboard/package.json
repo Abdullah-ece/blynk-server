@@ -30,7 +30,7 @@
   "author": "Blynk",
   "license": "MIT",
   "dependencies": {
-    "antd": "2.10.2",
+    "antd": "2.13.13",
     "axios": "0.16.1",
     "babel-plugin-add-react-displayname": "0.0.4",
     "classnames": "2.2.5",

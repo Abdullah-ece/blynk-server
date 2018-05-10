@@ -1,5 +1,82 @@
+@import "components/Layout/style-guide";
+
 .user-layout {
-  height: ~"calc(100% - 64px)";
+  height: ~"calc(100%)";
+  display: flex;
+  justify-content: flex-start;
+}
+
+.user-layout-left-navigation {
+  height: 100%;
+  box-shadow: 1px 0 15px 0 rgba(0, 0, 0, 0.1);
+  z-index: 1;
+
+  transition: 0.15s;
+
+  &-company-logo {
+    max-width: 100%;
+    height: 64px;
+    line-height: 64px;
+    img {
+      vertical-align: middle;
+      max-width: 100%;
+    }
+  }
+
+  &-fold {
+    width: 64px;
+  }
+
+  &-unfold {
+    width: 192px;
+  }
+
+  &-menu {
+    border-right: 0;
+
+    .ant-menu-item {
+      padding: 0 22px !important;
+      height: 64px;
+      i {
+        font-size: 20px !important;
+        line-height: 64px !important;
+      }
+      &:after {
+        right: 1px;
+      }
+      &:hover {
+        background: @color-dark-grey-05;
+      }
+    }
+  }
+
+  &-active {
+    .user-layout-left-navigation-collapse-btn {
+      opacity: 1;
+    }
+  }
+
+  &-collapse-btn {
+    opacity: 0;
+    transition: 0.15s;
+    height: 32px;
+    padding: 0 22px;
+
+    i {
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 32px;
+      &:hover {
+        color: @color-primary;
+      }
+    }
+  }
+
+}
+
+.user-layout-right-content {
+  width: 100%;
+  height: 100%;
 }
 
 .user-layout-container {
