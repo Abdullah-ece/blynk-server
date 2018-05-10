@@ -1,7 +1,7 @@
 import {OrganizationFetch} from "data/Organization/actions";
 import {OrganizationsFetch} from "data/Organizations/actions";
 import React from 'react';
-import {Menu, Icon, Avatar} from 'antd';
+import {Menu, Icon, Avatar, Dropdown} from 'antd';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -62,12 +62,12 @@ class UserLayout extends React.Component {
   }
 
   componentWillMount() {
-    this.props.blynkWsConnect().then(() => {
-      this.props.blynkWsLogin({
-        username: this.props.Account.credentials.username,
-        hash    : this.props.Account.credentials.password
-      });
-    });
+    // this.props.blynkWsConnect().then(() => {
+    //   this.props.blynkWsLogin({
+    //     username: this.props.Account.credentials.username,
+    //     hash    : this.props.Account.credentials.password
+    //   });
+    // });
   }
 
   componentWillReceiveProps(props) {
@@ -121,6 +121,37 @@ class UserLayout extends React.Component {
     });
   }
 
+  AccountMenu() {
+
+    const menuItemActive = [this.context.router.getCurrentLocation().pathname];
+
+    return (
+      <Menu onClick={this.handleClick.bind(this)}
+            defaultSelectedKeys={menuItemActive}>
+        <Menu.Item key="/user-profile/account-settings">
+          My Profile
+        </Menu.Item>
+        <Menu.Item key="/user-profile/organization-settings">
+          Organization Settings
+        </Menu.Item>
+        <Menu.Item key="/user-profile/users">
+          Users
+        </Menu.Item>
+        <Menu.Item key="/user-profile/branding">
+          Branding
+        </Menu.Item>
+
+        {/*<Menu.Item key="/billing">*/}
+        {/*Billing*/}
+        {/*</Menu.Item>*/}
+        <Menu.Divider className="user-layout--menu-divider"/>
+        <Menu.Item key="logout">
+          <Icon type="login"/> Log out
+        </Menu.Item>
+      </Menu>
+    );
+  }
+
   render() {
 
     return (
@@ -161,7 +192,12 @@ class UserLayout extends React.Component {
               </Menu.Item>
             </Menu>
             <div className="user-layout-left-navigation-profile">
-              <Avatar size="large" icon="user"/>
+              <Dropdown overlay={this.AccountMenu()} trigger={['click']} placement="topLeft">
+                <Avatar size="large" icon="user" className="user-layout-left-navigation-profile-button"/>
+              </Dropdown>
+              <div>
+                {!this.state.collapsed && this.props.Account.name}
+              </div>
             </div>
           </div>
         </div>
