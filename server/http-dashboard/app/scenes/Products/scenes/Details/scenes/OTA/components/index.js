@@ -342,6 +342,27 @@ class OTA extends React.Component {
     return [{
       title    : 'Device Name',
       dataIndex: 'name',
+
+      sorter: (a, b) => a.name > b.name ? -1 : 1,
+      sortOrder: values.sort.columnKey === 'name' && values.sort.order,
+
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
+    }, {
+      title    : 'Firmware version',
+      dataIndex: 'hardwareInfo.version',
+      render: (text) => <div>{text || "-"}</div>,
+      sorter: (a, b) => {
+        if(a.hardwareInfo && b.hardwareInfo) {
+          return a.hardwareInfo.version > b.hardwareInfo.version ? -1 : 1;
+        }
+
+        return -1;
+      },
+      sortOrder: values.sort.columnKey === 'hardwareInfo.version' && values.sort.order,
+
+    }, {
+      title: 'FOTA Status',
+      dataIndex: 'deviceOtaInfo.otaStatus',
       filters       : [{
         text : 'Pending',
         value: 'PENDING',
@@ -373,27 +394,6 @@ class OTA extends React.Component {
           return !record || !record.deviceOtaInfo || !record.deviceOtaInfo.otaStatus;
         }
       },
-
-      sorter: (a, b) => a.name > b.name ? -1 : 1,
-      sortOrder: values.sort.columnKey === 'name' && values.sort.order,
-
-      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
-    }, {
-      title    : 'Firmware version',
-      dataIndex: 'hardwareInfo.version',
-      render: (text) => <div>{text || "-"}</div>,
-      sorter: (a, b) => {
-        if(a.hardwareInfo && b.hardwareInfo) {
-          return a.hardwareInfo.version > b.hardwareInfo.version ? -1 : 1;
-        }
-
-        return -1;
-      },
-      sortOrder: values.sort.columnKey === 'hardwareInfo.version' && values.sort.order,
-
-    }, {
-      title: 'FOTA Status',
-      dataIndex: 'deviceOtaInfo.otaStatus',
 
       render: (text, record) => <OTAStatus deviceOtaInfo={record && record.deviceOtaInfo} status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
     }, {
