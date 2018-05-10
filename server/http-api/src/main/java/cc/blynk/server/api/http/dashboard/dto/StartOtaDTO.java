@@ -44,7 +44,7 @@ public class StartOtaDTO {
         this.title = title;
         this.checkBoardType = checkBoardType;
         this.firmwareInfo = firmwareInfo;
-        this.attemptsLimit = attemptsLimit;
+        this.attemptsLimit = attemptsLimit == 0 ? 3 : attemptsLimit;
     }
 
     public boolean isNotValid() {
