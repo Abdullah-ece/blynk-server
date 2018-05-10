@@ -119,6 +119,7 @@ class OTAScene extends React.Component {
 
     formValues: PropTypes.shape({
       firmwareName: PropTypes.any,
+      checkBoardType: PropTypes.any,
     }),
 
     selectedDevicesIds: PropTypes.arrayOf(PropTypes.number),
@@ -262,6 +263,7 @@ class OTAScene extends React.Component {
       title: this.props.formValues.firmwareName,
       pathToFirmware: this.props.firmwareUploadInfo.link,
       productId: Number(this.props.params.id),
+      checkBoardType: this.props.formValues.checkBoardType,
       deviceIds: this.props.selectedDevicesIds,
       firmwareInfo: this.props.firmwareFetchInfo.data,
       firmwareOriginalFileName: this.props.firmwareUploadInfo.name,
@@ -271,7 +273,7 @@ class OTAScene extends React.Component {
       }).then(() => {
         this.props.updateSelectedDevicesList([]);
       });
-    });
+    })
   }
 
   handleUpdateFirmwareCancel() {

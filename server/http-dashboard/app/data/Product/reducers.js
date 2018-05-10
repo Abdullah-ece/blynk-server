@@ -167,7 +167,8 @@ export default function Product(state = initialState, action) {
           firmwareUpdate: {
             ...state.OTADevices.firmwareUpdate,
             loading: false,
-            status: false
+            status: false,
+            statusMessage: action.error.response && action.error.response.data && action.error.response.data.error && action.error.response.data.error.message
           }
         }
       };

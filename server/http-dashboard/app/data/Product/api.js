@@ -117,7 +117,7 @@ export function ProductInfoDevicesOTAFetch({ orgId }) {
   };
 }
 
-export function ProductInfoDevicesOTAStart({ title, pathToFirmware, productId, deviceIds, firmwareInfo, firmwareOriginalFileName }) {
+export function ProductInfoDevicesOTAStart({ checkBoardType, title, pathToFirmware, productId, deviceIds, firmwareInfo, firmwareOriginalFileName }) {
   return {
     type: 'PRODUCT_INFO_DEVICES_OTA_START',
     payload: {
@@ -126,6 +126,7 @@ export function ProductInfoDevicesOTAStart({ title, pathToFirmware, productId, d
         url: API_URL.ota().start(),
         data: {
           title,
+          checkBoardType,
           pathToFirmware,
           productId,
           deviceIds,

@@ -1,8 +1,8 @@
 import React from 'react';
-import {Table, Button, Row, Col, Upload, Icon, Progress} from 'antd';
+import {Table, Button, Row, Col, Upload, Icon, Progress, Checkbox} from 'antd';
 import Modal from 'components/Modal';
 import PropTypes from 'prop-types';
-import {reduxForm, Fields} from 'redux-form';
+import {reduxForm, Fields, Field} from 'redux-form';
 import {amountBasedWord} from 'services/Spelling';
 import {
   Item
@@ -37,60 +37,61 @@ class OTA extends React.Component {
     })),
 
     OTAUpdate: PropTypes.shape({
-      title: PropTypes.string,
-      pathToFirmware: PropTypes.string,
+      title                   : PropTypes.string,
+      pathToFirmware          : PropTypes.string,
       firmwareOriginalFileName: PropTypes.string,
-      startedAt: PropTypes.number,
-      deviceIds: PropTypes.arrayOf(PropTypes.number),
-      firmwareInfo: PropTypes.any,
+      startedAt               : PropTypes.number,
+      deviceIds               : PropTypes.arrayOf(PropTypes.number),
+      firmwareInfo            : PropTypes.any,
     }),
 
     updatingProgress: PropTypes.number,
-    devicesUpdated: PropTypes.array,
+    devicesUpdated  : PropTypes.array,
 
     onDeviceSelect: PropTypes.func,
 
     devicesLoading: PropTypes.bool,
 
-    fileUploadOptions    : PropTypes.shape({
+    fileUploadOptions            : PropTypes.shape({
       name          : PropTypes.string,
       showUploadList: PropTypes.bool,
       accept        : PropTypes.string,
       onChange      : PropTypes.func,
     }),
-    firmwareUploadInfo   : PropTypes.shape({
+    firmwareUploadInfo           : PropTypes.shape({
       uploadPercent: PropTypes.number,
       status       : PropTypes.oneOf([-1, 0, 1, 2]),
       link         : PropTypes.string,
     }),
-    firmwareUpdate: PropTypes.shape({
-      status: PropTypes.any,
-      loading: PropTypes.bool,
+    firmwareUpdate               : PropTypes.shape({
+      status       : PropTypes.any,
+      statusMessage: PropTypes.string,
+      loading      : PropTypes.bool,
       cancelLoading: PropTypes.bool,
     }),
-    firmwareFetchInfo    : PropTypes.shape({
+    firmwareFetchInfo            : PropTypes.shape({
       loading: PropTypes.bool,
       data   : PropTypes.any,
     }),
-    selectedDevicesIds   : PropTypes.arrayOf(PropTypes.number),
-    step                 : PropTypes.oneOf([
+    selectedDevicesIds           : PropTypes.arrayOf(PropTypes.number),
+    step                         : PropTypes.oneOf([
       OTA_STEPS.START_UPDATE,
       OTA_STEPS.SUCCESS,
       OTA_STEPS.UPDATING,
       OTA_STEPS.UPLOAD_FIRMWARE,
     ]),
-    onFirmwareUpdateStart: PropTypes.func,
-    onFirmwareUpdateCancel: PropTypes.func,
+    onFirmwareUpdateStart        : PropTypes.func,
+    onFirmwareUpdateCancel       : PropTypes.func,
     onFirmwareUpdateProcessCancel: PropTypes.func,
-    onProductDeleteProcess: PropTypes.func,
-    onModalClose: PropTypes.func,
-    onModalOpen: PropTypes.func,
+    onProductDeleteProcess       : PropTypes.func,
+    onModalClose                 : PropTypes.func,
+    onModalOpen                  : PropTypes.func,
 
-    dateStarted: PropTypes.any,
+    dateStarted : PropTypes.any,
     dateFinished: PropTypes.any,
 
     modalVisible: PropTypes.bool,
-    invalid: PropTypes.bool,
+    invalid     : PropTypes.bool,
   };
 
   constructor(props) {
@@ -127,6 +128,17 @@ class OTA extends React.Component {
     }
   }
 
+  checkbox(props) {
+
+    return (
+      <Checkbox onChange={props.input.onChange}
+                checked={!!props.input.value}
+                className="devices-ota-update-confirmation-check-board-checkbox">
+        Check boardType before firmware update
+      </Checkbox>
+    );
+  }
+
   updateConfirmation() {
 
     const {firmwareUploadInfo, firmwareFetchInfo, selectedDevicesIds} = this.props;
@@ -140,13 +152,22 @@ class OTA extends React.Component {
 
     return (
       <div className="devices-ota-update-confirmation">
+        {this.props.firmwareUpdate && this.props.firmwareUpdate.statusMessage && (
+          <div className="devices-ota-update-confirmation-error">
+            <label>
+              {this.props.firmwareUpdate.statusMessage}
+            </label>
+          </div>
+        )}
         <div className="devices-ota-update-confirmation-name">
-          <Item label="Firmware Name" offset="medium">
-            <FormField name={'firmwareName'} placeholder={'Example: Blynk v1.0.0'} validate={[Validation.Rules.required]}/>
+          <Item label="Firmware Name" offset="large" displayError={false}>
+            <FormField name={'firmwareName'} placeholder={'Example: My Firmware v1.0'}
+                       validate={[Validation.Rules.required]}/>
           </Item>
         </div>
+        <Field name={'checkBoardType'} component={this.checkbox}/>
         <div className="devices-ota-update-confirmation-file-name">
-          <Icon type="file" /> {firmwareUploadInfo.name}
+          <Icon type="file"/> {firmwareUploadInfo.name}
         </div>
         {firmwareFetchInfo.loading ? (
           <div className="devices-ota-update-confirmation-fields-list">
@@ -202,12 +223,12 @@ class OTA extends React.Component {
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-firmware-name">
-          { this.props.OTAUpdate.title }
+          {this.props.OTAUpdate.title}
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          <Icon type="file" /> { this.props.OTAUpdate.firmwareOriginalFileName }
+          <Icon type="file"/> {this.props.OTAUpdate.firmwareOriginalFileName}
         </div>
-        { fields.length ?
+        {fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
             {fields.map((field, key) => (
               <div className="devices-ota-update-confirmation-fields-list-item" key={key}>
@@ -233,7 +254,8 @@ class OTA extends React.Component {
                   &nbsp; {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'device', 'devices')} updated
                 </div>
               </div>
-              <Progress className="devices-ota-update-progress" percent={this.props.updatingProgress} size="small" strokeWidth={4} status="active" showInfo={false}/>
+              <Progress className="devices-ota-update-progress" percent={this.props.updatingProgress} size="small"
+                        strokeWidth={4} status="active" showInfo={false}/>
             </Col>
             <Col span={12}>
               <div className="devices-ota-update-confirmation-footer-confirm-btn-group">
@@ -273,7 +295,7 @@ class OTA extends React.Component {
       >
         <div>
           If you continue {amountBasedWord(notUpdatedDevices, 'device', 'devices')} won't be updated<br/>
-          { this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated ${amountBasedWord(this.props.devicesUpdated.length, 'device', 'devices')}.` : null}
+          {this.props.devicesUpdated.length > 0 ? `and you won\'t revert firmware for ${this.props.devicesUpdated.length} already updated ${amountBasedWord(this.props.devicesUpdated.length, 'device', 'devices')}.` : null}
         </div>
         {/*<div>Type in word CANCEL below to confirm</div>*/}
         {/*<br/>*/}
@@ -296,25 +318,26 @@ class OTA extends React.Component {
     return (
       <div className="devices-ota-update-confirmation">
         <div className="devices-ota-update-confirmation-firmware-name-success">
-          { this.props.OTAUpdate.title } update completed
+          {this.props.OTAUpdate.title} update completed
         </div>
         <div className="devices-ota-update-confirmation-log">
           <div className="devices-ota-update-confirmation-log-upload-start">
-            Started: { this.props.dateStarted }
+            Started: {this.props.dateStarted}
           </div>
           <div className="devices-ota-update-confirmation-log-upload-end">
-            Completed: { this.props.dateFinished }
+            Completed: {this.props.dateFinished}
           </div>
         </div>
         <div className="devices-ota-update-confirmation-file-name">
           <span className={"devices-ota-update-confirmation-footer-upload-progress-left"}>
                     {this.props.OTAUpdate.deviceIds.length}
-                </span> {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'Device was', 'Devices were')} successfully updated
+                </span> {amountBasedWord(this.props.OTAUpdate.deviceIds.length, 'Device was', 'Devices were')} successfully
+          updated
         </div>
         <div className="devices-ota-update-confirmation-file-name">
-          <Icon type="file" /> { this.props.OTAUpdate.firmwareOriginalFileName }
+          <Icon type="file"/> {this.props.OTAUpdate.firmwareOriginalFileName}
         </div>
-        { fields.length ?
+        {fields.length ?
           (<div className="devices-ota-update-confirmation-fields-list">
             {fields.map((field, key) => (
               <div className="devices-ota-update-confirmation-fields-list-item" key={key}>
@@ -343,16 +366,17 @@ class OTA extends React.Component {
       title    : 'Device Name',
       dataIndex: 'name',
 
-      sorter: (a, b) => a.name > b.name ? -1 : 1,
+      sorter   : (a, b) => a.name > b.name ? -1 : 1,
       sortOrder: values.sort.columnKey === 'name' && values.sort.order,
 
-      render: (text, record) => <DeviceStatus status={record.status} disconnectTime = {record.disconnectTime} text={text}/>
+      render: (text, record) => <DeviceStatus status={record.status} disconnectTime={record.disconnectTime}
+                                              text={text}/>
     }, {
       title    : 'Firmware version',
       dataIndex: 'hardwareInfo.version',
-      render: (text) => <div>{text || "-"}</div>,
-      sorter: (a, b) => {
-        if(a.hardwareInfo && b.hardwareInfo) {
+      render   : (text) => <div>{text || "-"}</div>,
+      sorter   : (a, b) => {
+        if (a.hardwareInfo && b.hardwareInfo) {
           return a.hardwareInfo.version > b.hardwareInfo.version ? -1 : 1;
         }
 
@@ -361,8 +385,8 @@ class OTA extends React.Component {
       sortOrder: values.sort.columnKey === 'hardwareInfo.version' && values.sort.order,
 
     }, {
-      title: 'FOTA Status',
-      dataIndex: 'deviceOtaInfo.otaStatus',
+      title         : 'FOTA Status',
+      dataIndex     : 'deviceOtaInfo.otaStatus',
       filters       : [{
         text : 'Pending',
         value: 'PENDING',
@@ -378,32 +402,35 @@ class OTA extends React.Component {
       }],
       filterMultiple: false,
       onFilter      : (value, record) => {
-        if(value === 'PENDING') {
+        if (value === 'PENDING') {
           return [OTA_STATUSES.STARTED, OTA_STATUSES.REQUEST_SENT, OTA_STATUSES.FIRMWARE_UPLOADED].indexOf(record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null) >= 0;
         }
 
-        if(value === 'SUCCESS') {
+        if (value === 'SUCCESS') {
           return OTA_STATUSES.SUCCESS === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
         }
 
-        if(value === 'FAILURE') {
+        if (value === 'FAILURE') {
           return OTA_STATUSES.FAILURE === record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || false;
         }
 
-        if(value === 'NEVER_UPDATED') {
+        if (value === 'NEVER_UPDATED') {
           return !record || !record.deviceOtaInfo || !record.deviceOtaInfo.otaStatus;
         }
       },
 
-      render: (text, record) => <OTAStatus deviceOtaInfo={record && record.deviceOtaInfo} status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null} disconnectTime={record.disconnectTime} />
+      render: (text, record) => <OTAStatus deviceOtaInfo={record && record.deviceOtaInfo}
+                                           status={record && record.deviceOtaInfo && record.deviceOtaInfo.otaStatus || null}
+                                           disconnectTime={record.disconnectTime}/>
     }, {
       title    : 'OTA initiated',
       dataIndex: 'deviceOtaInfo.otaInitiatedBy',
-      render: (text, record) => <div>{text || "-"} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
+      render   : (text, record) =>
+        <div>{text || "-"} {record.deviceOtaInfo && record.deviceOtaInfo.otaInitiatedAt && getCalendarFormatDate(record.deviceOtaInfo.otaInitiatedAt)}</div>
     }, {
       title    : 'Last Updated',
       dataIndex: 'deviceOtaInfo.finishedAt',
-      render: (value) => <div>{(!value || value < 0 ? "-" : getCalendarFormatDate(value)) || "-"}</div>
+      render   : (value) => <div>{(!value || value < 0 ? "-" : getCalendarFormatDate(value)) || "-"}</div>
     },];
   }
 
@@ -424,7 +451,7 @@ class OTA extends React.Component {
 
     const values = {
       filter: props.filter.input.value,
-      sort: props.sort.input.value,
+      sort  : props.sort.input.value,
     };
 
     const columns = this.updateColumns(values);
@@ -446,7 +473,7 @@ class OTA extends React.Component {
     const dataSource = this.getDataSource();
 
     const rowSelection = {
-      onChange        : (selectedRowKeys, selectedRows) => {
+      onChange: (selectedRowKeys, selectedRows) => {
         this.handleDeviceSelect(selectedRowKeys, selectedRows);
       },
 
