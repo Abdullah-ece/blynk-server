@@ -1,7 +1,7 @@
 import {OrganizationFetch} from "data/Organization/actions";
 import {OrganizationsFetch} from "data/Organizations/actions";
 import React from 'react';
-import {Menu, Icon} from 'antd';
+import {Menu, Icon, Avatar} from 'antd';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -125,6 +125,7 @@ class UserLayout extends React.Component {
 
     return (
       <div className="user-layout">
+        <div className={`user-layout-left-navigation-stack ${this.state.collapsed ? 'user-layout-left-navigation-stack-fold' : 'user-layout-left-navigation-stack-unfold'}`}/>
         <div
           className={`user-layout-left-navigation ${this.state.navigationActive ? 'user-layout-left-navigation-active' : '' } ${this.state.collapsed ? 'user-layout-left-navigation-fold' : 'user-layout-left-navigation-unfold'}`}
           onMouseOver={this.handleMouseEnter}
@@ -158,6 +159,9 @@ class UserLayout extends React.Component {
               <span>Organization</span>
             </Menu.Item>
           </Menu>
+          <div className="user-layout-left-navigation-profile">
+            <Avatar size="large" icon="user" />
+          </div>
         </div>
         <div className="user-layout-right-content">
           {this.props.children}

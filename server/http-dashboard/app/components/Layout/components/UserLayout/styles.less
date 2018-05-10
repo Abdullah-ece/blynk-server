@@ -6,7 +6,22 @@
   justify-content: flex-start;
 }
 
+// element to prevent overlap because left-navigation
+// uses position: fixed
+.user-layout-left-navigation-stack {
+  &-fold {
+    width: 66px;
+  }
+
+  &-unfold {
+    width: 222px;
+  }
+}
+
 .user-layout-left-navigation {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   box-shadow: 1px 0 15px 0 rgba(0, 0, 0, 0.1);
   z-index: 1;
@@ -33,6 +48,8 @@
 
   &-menu {
     border-right: 0;
+
+    height: 100%;
 
     .ant-menu-item {
       padding: 0 22px !important;
@@ -70,6 +87,11 @@
         color: @color-primary;
       }
     }
+  }
+
+  &-profile {
+    align-self: center;
+    margin-bottom: 28px;
   }
 
 }
