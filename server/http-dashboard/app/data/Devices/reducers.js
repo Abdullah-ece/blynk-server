@@ -366,8 +366,10 @@ export default function Devices(state = initialState, action) {
 
       let index = _.findIndex(logEvents, (event) => event.id === action.value.logEventId);
 
+      let oldLogEvent = logEvents.splice(index, 1)[0];
+
       let logEvent = {
-        ...logEvents.splice(index, 1),
+        ...oldLogEvent,
         isResolved: true,
         resolvedAt: new Date().getTime(),
         resolvedBy: action.value.resolvedBy,
