@@ -35,6 +35,7 @@ export const COMMANDS = {
   LOG_EVENT: 64,
   DEVICE_DISCONNECTED: 71,
   TRACK_DEVICE: 73,
+  LOG_EVENT_RESOLVE: 75,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -250,6 +251,12 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.LOG_EVENT) {
 
     handlers.LogEventHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.LOG_EVENT_RESOLVE) {
+
+    handlers.LogEventResolveHandler({
       msgId: ++MSG_ID
     });
 

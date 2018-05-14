@@ -356,6 +356,33 @@ export default function Devices(state = initialState, action) {
 
       return state;
 
+    case ACTIONS.BLYNK_WS_LOG_EVENT_RESOLVE:
+
+      let logEvents = [
+        ...state.timeline.logEvents
+      ];
+
+      let totalResolved = state.timeline.totalResolved || 0;
+
+      let index = _.findIndex(logEvents, (event) => event.id === action.value.logEventId);
+
+      let logEvent = {
+        ...logEvents.splice(index, 1),
+        isResolved: true,
+        resolvedAt: new Date().getTime(),
+        resolvedBy: action.value.resolvedBy,
+        resolvedComment: action.value.resolveComment || ''
+      };
+
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          logEvents: [logEvent, ...logEvents],
+          totalResolved: totalResolved + 1,
+        }
+      };
+
     case "API_DEVICE_DASHBOARD_FETCH":
       return {
         ...state,

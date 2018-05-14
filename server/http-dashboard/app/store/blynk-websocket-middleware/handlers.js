@@ -2,6 +2,7 @@ import {
   blynkVW,
   blynkWsResponse,
   blynkWsLogEvent,
+  blynkWsLogEventResolve,
   blynkWsDeviceConnect,
   blynkWsDeviceDisconnect,
   blynkChartDataResponse,
@@ -108,6 +109,37 @@ export const Handlers = (params) => {
     store.dispatch(blynkWsLogEvent({
       deviceId,
       eventCode,
+    }));
+
+  };
+
+  const logEventResolveHandler = ({msgId}) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0];
+    const logEventId = bodyArray[1];
+    const resolvedBy = bodyArray[2];
+    const resolveComment = bodyArray[3];
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage LogEventResolve", action, {
+        command  : command,
+        msgId    : msgId,
+        bodyArray: bodyArray,
+        deviceId,
+        logEventId,
+        resolvedBy,
+        resolveComment
+      });
+
+    store.dispatch(blynkWsLogEventResolve({
+      deviceId,
+      logEventId,
+      resolvedBy,
+      resolveComment
     }));
 
   };
@@ -322,6 +354,7 @@ export const Handlers = (params) => {
     ResponseOKHandler: responseOKHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,
+    LogEventResolveHandler: logEventResolveHandler,
     DeviceConnectHandler: deviceConnectHandler,
     DeviceDisconnectHandler: deviceDisconnectHandler,
     AppSyncHandler: appSyncHandler,
