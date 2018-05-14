@@ -62,8 +62,9 @@ class OTAStatus extends React.Component {
     const statuses = {
       "Started"            : "warning",
       "Request sent"       : "warning",
-      "Firmware downloaded": "positive",
-      "Firmware requested" : "positive",
+      "Firmware requested" : "warning",
+      "Firmware downloaded": "warning",
+      "Updated"            : "positive",
       "Failure"            : "critical"
     };
 

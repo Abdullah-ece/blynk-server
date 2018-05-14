@@ -29,7 +29,7 @@ export const OTA_STATUS_VALUE = {
   [OTA_STATUSES.STARTED]           : "Started",
   [OTA_STATUSES.REQUEST_SENT]      : "Request sent",
   [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware downloaded",
-  [OTA_STATUSES.FIRMWARE_UPLOADED] : "Firmware requested",
+  [OTA_STATUSES.FIRMWARE_REQUESTED]: "Firmware requested",
   [OTA_STATUSES.SUCCESS]           : "Updated",
   [OTA_STATUSES.FAILURE]           : "Failed",
 };
