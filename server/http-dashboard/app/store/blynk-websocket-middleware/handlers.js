@@ -94,7 +94,7 @@ export const Handlers = (params) => {
     const bodyArray = body.split('\0');
 
     const deviceId = bodyArray[0];
-    const eventCode = bodyArray[1];
+    const eventCode = bodyArray[2];
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage LogEvent", action, {
@@ -128,6 +128,13 @@ export const Handlers = (params) => {
         deviceId
       });
 
+    // fire Online event because server doesn't
+    // send LIVE event Online
+    store.dispatch(blynkWsLogEvent({
+      deviceId,
+      eventCode: 'ONLINE',
+    }));
+
     store.dispatch(blynkWsDeviceConnect({
       deviceId
     }));
@@ -149,6 +156,13 @@ export const Handlers = (params) => {
         bodyArray: bodyArray,
         deviceId
       });
+
+    // fire Offline event because server doesn't
+    // send LIVE event Offline
+    store.dispatch(blynkWsLogEvent({
+      deviceId,
+      eventCode: 'OFFLINE',
+    }));
 
     store.dispatch(blynkWsDeviceDisconnect({
       deviceId
