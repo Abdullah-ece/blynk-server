@@ -3,6 +3,9 @@ const initialState = {
     metadataFirstTime: false
   },
   deviceSmartSearch: false,
+  devicesListSorting: {
+    value: false,
+  },
   loginPageTermsAgreement: false,
   OTAUpdate: {
     title: null,
@@ -60,6 +63,14 @@ export default function Account(state = initialState, action) {
           firmwareFileName: null,
           productId: -1,
           status: 2
+        }
+      };
+
+    case "STORAGE_DEVICES_SORT_CHANGE":
+      return {
+        ...state,
+        devicesListSorting:{
+          value: action.value
         }
       };
 

@@ -12,20 +12,20 @@ import {getFormValues, change} from 'redux-form';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
-  DevicesSortChange
-} from 'data/Devices/actions';
+  StorageDevicesSortChange
+} from 'data/Storage/actions';
 import {DEVICES_FILTERS} from "services/Devices/index";
 
 @connect(state => ({
   smartSearch            : state.Storage.deviceSmartSearch,
-  devicesSortValue       : state.Devices.devicesListSorting.value,
+  devicesSortValue       : state.Storage.devicesListSorting.value,
   devicesFilter          : state.Devices.devicesListFilterValue,
   devices                : state.Devices.devicesForSearch,
   products               : state.Product.products,
   devicesSearchFormValues: getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {},
 }), dispatch => ({
   changeForm       : bindActionCreators(change, dispatch),
-  devicesSortChange: bindActionCreators(DevicesSortChange, dispatch)
+  devicesSortChange: bindActionCreators(StorageDevicesSortChange, dispatch)
 }))
 class DevicesSearchScene extends React.Component {
 

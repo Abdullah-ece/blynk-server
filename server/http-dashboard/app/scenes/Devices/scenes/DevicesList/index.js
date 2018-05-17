@@ -13,7 +13,7 @@ import {getFormValues} from 'redux-form';
   devicesFilterValue     : state.Devices.devicesListFilterValue,
   smartSearch            : state.Storage.deviceSmartSearch,
   devicesSearchFormValues: getFormValues(DEVICES_SEARCH_FORM_NAME)(state) || {},
-  devicesSortValue       : state.Devices.devicesListSorting.value,
+  devicesSortValue       : state.Storage.devicesListSorting.value,
 }))
 class DevicesListScene extends React.Component {
 

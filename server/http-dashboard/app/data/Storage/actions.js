@@ -31,3 +31,9 @@ export function LoginPageTermsAgreement(value=false){
     value
   };
 }
+export function StorageDevicesSortChange(value=false){
+  return {
+    type: 'STORAGE_DEVICES_SORT_CHANGE',
+    value
+  };
+}
