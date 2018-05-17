@@ -49,7 +49,7 @@ class Timeline extends React.Component {
     let events = this.getEventsForCurrentPage() ;
      if(events.length > 2){
         events.map((event, key, events) => {
-          if (event.eventType === EVENT_TYPES.ONLINE && events[key + 1].eventType === EVENT_TYPES.OFFLINE) {
+          if (event.eventType === EVENT_TYPES.ONLINE && events[key + 1] && events[key + 1].eventType === EVENT_TYPES.OFFLINE) {
             const WAS_OFFLINE = {...this.wasOfflineEventTemplate(), ts: event.ts - events[key + 1].ts};
             events.splice(key + 1, 0, WAS_OFFLINE);
           }
