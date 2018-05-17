@@ -9,7 +9,8 @@ import {
 import {connect} from 'react-redux';
 import {
   DeviceDetailsFetch,
-  DeviceProductsFetch
+  DeviceProductsFetch,
+  DeviceFetch,
 //   DeviceMetadataUpdate,
 //   DeviceDetailsUpdate as updateDevice,
 } from 'data/Devices/api';
@@ -27,7 +28,8 @@ import {bindActionCreators} from 'redux';
   startLoading: bindActionCreators(StartLoading, dispatch),
   finishLoading: bindActionCreators(FinishLoading, dispatch),
   // updateDeviceDetails: bindActionCreators(DeviceDetailsUpdate, dispatch),
-  fetchDevice: bindActionCreators(DeviceDetailsFetch, dispatch),
+  fetchDeviceDetails: bindActionCreators(DeviceDetailsFetch, dispatch),
+  updateDevice:bindActionCreators(DeviceFetch,dispatch),
   fetchProducts: bindActionCreators(DeviceProductsFetch, dispatch)
   // DeviceMetadataUpdate: bindActionCreators(DeviceMetadataUpdate, dispatch),
   // updateDevice: bindActionCreators(updateDevice, dispatch),
@@ -42,8 +44,9 @@ class DeviceDetailsScene extends React.Component {
     orgId: PropTypes.number,
     productId: PropTypes.number,
     //
-    fetchDevice: PropTypes.func,
+    fetchDeviceDetails: PropTypes.func,
     fetchProducts: PropTypes.func,
+    updateDevice: PropTypes.func,
     // updateDeviceDetails: PropTypes.func,
     // DeviceMetadataUpdate: PropTypes.func,
     // updateDevice: PropTypes.func,
@@ -55,7 +58,7 @@ class DeviceDetailsScene extends React.Component {
 
   constructor(props) {
     super(props);
-
+    this.handleTabChange = this.handleTabChange.bind(this);
     // this.onDeviceChange = this.onDeviceChange.bind(this);
     // this.onMetadataChange = this.onMetadataChange.bind(this);
   }
@@ -81,7 +84,7 @@ class DeviceDetailsScene extends React.Component {
 
   fetchDevice(id) {
     this.props.startLoading();
-    return this.props.fetchDevice({
+    return this.props.fetchDeviceDetails({
       orgId: this.props.orgId,
     }, {
       id: id || this.props.params.id
@@ -116,7 +119,15 @@ class DeviceDetailsScene extends React.Component {
   //     message.error('Can\'t update Metadata due to an error');
   //   });
   // }
-
+  handleTabChange(tab) {
+    if (tab === "Timeline") {
+      this.props.updateDevice({
+        orgId: this.props.orgId,
+      }, {
+         id: this.props.params.id
+      });
+    }
+  }
   render() {
 
     if(!this.props.device)
@@ -126,6 +137,7 @@ class DeviceDetailsScene extends React.Component {
       <Device params={this.props.params}
               location={this.props.location}
               productId={this.props.productId}
+              onTabChange={this.handleTabChange}
       />
     );
   }

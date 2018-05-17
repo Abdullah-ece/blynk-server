@@ -17,6 +17,7 @@ class Device extends React.Component {
     params: React.PropTypes.object,
     location: React.PropTypes.object,
     productId: React.PropTypes.number,
+    onTabChange: React.PropTypes.func,
     // onChange: React.PropTypes.func,
     // updateDevice: React.PropTypes.func,
     // onDeviceChange: React.PropTypes.func,
@@ -25,7 +26,7 @@ class Device extends React.Component {
 
   constructor(props) {
     super(props);
-
+    this.handleTabChange = this.handleTabChange.bind(this);
     // this.onMetadataChange = this.onMetadataChange.bind(this);
   }
 
@@ -45,7 +46,9 @@ class Device extends React.Component {
   // handleDeviceNameChange(value) {
   //   this.onDeviceChange(this.props.device.set('name', value));
   // }
-
+  handleTabChange(newTab) {
+    this.props.onTabChange(newTab);
+  }
   render() {
 
     const TabPane = Tabs.TabPane;
@@ -55,18 +58,18 @@ class Device extends React.Component {
         <div className="devices--device-name">
           <DeviceName/>
         </div>
-        <Tabs defaultActiveKey="1" className="page-layout-tabs-navigation">
-          <TabPane tab="Dashboard" key="1">
+        <Tabs defaultActiveKey="Dashboard" className="page-layout-tabs-navigation" onChange={this.handleTabChange}>
+          <TabPane tab="Dashboard" key="Dashboard">
             <div className="devices-device-tab-inner">
               <Dashboard params={this.props.params} productId={this.props.productId}/>
             </div>
           </TabPane>
-          <TabPane tab="Timeline" key="2">
+          <TabPane tab="Timeline" key="Timeline">
             <div className="devices-device-tab-inner">
               <Timeline params={this.props.params}/>
             </div>
           </TabPane>
-          <TabPane tab="Device Info" key="3">
+          <TabPane tab="Device Info" key="Device Info">
             <div className="devices-device-tab-inner">
               <DeviceInfo params={this.props.params}/>
             </div>
