@@ -7,6 +7,7 @@ const initialState = {
     value: false,
   },
   loginPageTermsAgreement: false,
+  requestedPage: '/login',
   OTAUpdate: {
     title: null,
     selectedDevicesIds: [],
@@ -72,6 +73,12 @@ export default function Account(state = initialState, action) {
         devicesListSorting:{
           value: action.value
         }
+      };
+
+    case "STORAGE_REMEMBER_REQUESTED_PAGE":
+      return {
+        ...state,
+        requestedPage: action.value
       };
 
 

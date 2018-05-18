@@ -37,3 +37,10 @@ export function StorageDevicesSortChange(value=false){
     value
   };
 }
+
+export function StorageRememberRequestedPage(value=false){
+  return {
+    type: 'STORAGE_REMEMBER_REQUESTED_PAGE',
+    value
+  };
+}
