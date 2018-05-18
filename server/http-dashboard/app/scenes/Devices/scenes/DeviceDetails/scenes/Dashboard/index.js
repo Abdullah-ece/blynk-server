@@ -73,7 +73,7 @@ class DashboardScene extends React.Component {
 
   fetchDashboardData() {
 
-    const time = this.getTimeFilerRange();
+    const data = this.getTimeFilerRange();
 
     this.props.dashboard.widgets.filter((widget) => (
       widget.type === WIDGET_TYPES.LINEAR
@@ -81,19 +81,20 @@ class DashboardScene extends React.Component {
       this.props.fetchDeviceDashboardData({
         deviceId: this.props.params.id,
         widgetId: widget.id,
-        period: time
+        period: data.time,
+        customRange: data.customTime
       });
     });
   }
 
   getTimeFilerRange() {
     const time = this.props.timeFilter.time;
+    const customTime = this.props.timeFilter.customTime;
 
-    if(time === TIMELINE_TIME_FILTERS.CUSTOM.key) {
-      return 'HOUR'; // temp hardcode
-    } else {
-      return time;
-    }
+    return {
+      time: time,
+      customTime: customTime,
+    };
   }
 
   fetchDashboard() {

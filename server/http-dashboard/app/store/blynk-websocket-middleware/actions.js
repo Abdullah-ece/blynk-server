@@ -116,12 +116,13 @@ export const blynkWsDeviceDisconnect = ({ deviceId }) => ({
   }
 });
 
-export const blynkWsChartDataFetch = ({ deviceId, widgetId, period }) => ({
+export const blynkWsChartDataFetch = ({ deviceId, widgetId, period, customRange }) => ({
   type : ACTIONS.BLYNK_WS_CHART_DATA_FETCH,
   value: {
     deviceId,
     widgetId,
-    graphPeriod: period
+    graphPeriod: period,
+    customRange
   }
 });
 

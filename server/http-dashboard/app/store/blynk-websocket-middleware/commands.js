@@ -109,19 +109,19 @@ export const blynkWsChartDataFetch = (params) => {
   if (options.isDebugMode)
     options.debug("blynkWsChartDataFetch", action);
 
-  const {deviceId, widgetId, graphPeriod} = action.value;
+  const {deviceId, widgetId, graphPeriod, customRange} = action.value;
 
   const request = str2ab(
     blynkHeader(
       COMMANDS.CHART_DATA_FETCH, ++MSG_ID
-    ) + `${deviceId}\0${widgetId}\0${graphPeriod}`
+    ) + `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
   );
 
   store.dispatch(blynkWsRequest({
     id     : MSG_ID,
     request: {
       command: COMMANDS.CHART_DATA_FETCH,
-      value  : `${deviceId}\0${widgetId}\0${graphPeriod}`
+      value  : `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
     }
   }));
 
@@ -130,7 +130,8 @@ export const blynkWsChartDataFetch = (params) => {
     value: {
       deviceId,
       widgetId,
-      graphPeriod
+      graphPeriod,
+      customRange,
     }
   });
 
