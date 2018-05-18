@@ -113,6 +113,7 @@ public class GetWebGraphDataLogic {
             var fromTS = Long.parseLong(messageParts[3]);
             var toTS = Long.parseLong(messageParts[4]);
             graphPeriod = calcGraphPeriod(fromTS, toTS);
+            log.trace("Selected granularity fro custom range: {}", graphPeriod);
             for (var webSource : baseWebGraph.sources) {
                 requestedPinsArray[i++] = new GraphPinRequest(0, deviceId,
                         webSource.dataStream, graphPeriod, 0, webSource.sourceType, fromTS, toTS);
