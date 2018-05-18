@@ -170,6 +170,10 @@ class Create extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+
+    this.state = {
+      created: false,
+    };
     // this.onInfoValuesChange = this.onInfoValuesChange.bind(this);
     // this.onMetadataFieldChange = this.onMetadataFieldChange.bind(this);
     // this.onMetadataFieldsChange = this.onMetadataFieldsChange.bind(this);
@@ -248,7 +252,7 @@ class Create extends React.Component {
   routerWillLeave(route) {
     const regexp = /products\/edit\/[0-9]+\/(info|metadata|datastreams|events|dashboard)/g;
 
-    if(!this.isProductCreated && this.props.isFormDirty && !regexp.test(route.pathname))
+    if(!this.state.created && this.props.isFormDirty && !regexp.test(route.pathname))
       return 'Leave this page without saving your changes?';
   }
 
@@ -294,8 +298,9 @@ class Create extends React.Component {
       product: product,
       orgId: this.props.orgId
     }).then(() => {
-      // this.isProductCreated = true;
+      this.setState({created: true});
       this.context.router.push(`/products/?success=true`);
+
     }).catch((response) => {
       message.error(response && response.error && response.error.response.message || 'Cannot create product');
     });
