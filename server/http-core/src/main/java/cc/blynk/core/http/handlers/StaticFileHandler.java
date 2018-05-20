@@ -318,7 +318,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     }
 
     private Device getDevice(String[] uriParts) {
-        if (uriParts.length == 2 && uriParts[0].endsWith(".bin") && uriParts[1].contains("token=")) {
+        //todo check somehow it is OTA file?
+        if (uriParts.length == 2 && uriParts[1].contains("token=")) {
             int deviceId = Integer.parseInt(uriParts[1].substring(6));
             return deviceDao.getById(deviceId);
         }
