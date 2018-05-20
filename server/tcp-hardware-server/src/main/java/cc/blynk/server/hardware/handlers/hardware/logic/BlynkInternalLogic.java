@@ -92,23 +92,25 @@ public class BlynkInternalLogic {
         }
 
         var device = state.device;
-        if (device != null && device.deviceOtaInfo != null) {
+        if (device != null) {
             device.hardwareInfo = hardwareInfo;
-            if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
-                if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
-                    if (device.isAttemptsLimitReached()) {
-                        log.warn("OTA limit reached for {} and deviceId {}.", state.user.email, device.id);
-                        device.firmwareUploadFailure();
-                    } else {
-                        StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                                OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware, device.id));
-                        ctx.write(msg, ctx.voidPromise());
-                        device.requestSent();
+            if (device.deviceOtaInfo != null) {
+                if (hardwareInfo.isFirmwareVersionChanged(device.deviceOtaInfo.buildDate)) {
+                    if (device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+                        if (device.isAttemptsLimitReached()) {
+                            log.warn("OTA limit reached for {} and deviceId {}.", state.user.email, device.id);
+                            device.firmwareUploadFailure();
+                        } else {
+                            StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
+                                    OTAInfo.makeHardwareBody(serverHostUrl, device.deviceOtaInfo.pathToFirmware, device.id));
+                            ctx.write(msg, ctx.voidPromise());
+                            device.requestSent();
+                        }
                     }
-                }
-            } else {
-                if (device.deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
-                    device.success();
+                } else {
+                    if (device.deviceOtaInfo.otaStatus == OTAStatus.FIRMWARE_UPLOADED) {
+                        device.success();
+                    }
                 }
             }
         }
