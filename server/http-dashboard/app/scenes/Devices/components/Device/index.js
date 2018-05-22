@@ -3,6 +3,7 @@ import {Tabs} from "antd";
 import {Dashboard, /*DeviceInfo,*/ Timeline} from "./components";
 // import _ from "lodash";
 import "./styles.less";
+import {TABS} from 'services/Devices';
 // import {connect} from "react-redux";
 // import {bindActionCreators} from "redux";
 // import {DeviceUpdate} from "data/Devices/api";
@@ -58,18 +59,18 @@ class Device extends React.Component {
         <div className="devices--device-name">
           <DeviceName/>
         </div>
-        <Tabs defaultActiveKey="Dashboard" className="page-layout-tabs-navigation" onChange={this.handleTabChange}>
-          <TabPane tab="Dashboard" key="Dashboard">
+        <Tabs defaultActiveKey={this.props.params.tab && this.props.params.tab || "Dashboard"} className="page-layout-tabs-navigation" onChange={this.handleTabChange}>
+          <TabPane tab="Dashboard" key={TABS.DASHBOARD}>
             <div className="devices-device-tab-inner">
               <Dashboard params={this.props.params} productId={this.props.productId}/>
             </div>
           </TabPane>
-          <TabPane tab="Timeline" key="Timeline">
+          <TabPane tab="Timeline" key={TABS.TIMELINE}>
             <div className="devices-device-tab-inner">
               <Timeline params={this.props.params}/>
             </div>
           </TabPane>
-          <TabPane tab="Device Info" key="Device Info">
+          <TabPane tab="Device Info" key={TABS.DEVICE_INFO}>
             <div className="devices-device-tab-inner">
               <DeviceInfo params={this.props.params}/>
             </div>

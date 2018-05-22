@@ -14,6 +14,7 @@ import {
 //   DeviceMetadataUpdate,
 //   DeviceDetailsUpdate as updateDevice,
 } from 'data/Devices/api';
+import {TABS} from 'services/Devices';
 // import {DeviceDetailsUpdate} from 'data/Devices/actions';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 import {bindActionCreators} from 'redux';
@@ -35,6 +36,10 @@ import {bindActionCreators} from 'redux';
   // updateDevice: bindActionCreators(updateDevice, dispatch),
 }))
 class DeviceDetailsScene extends React.Component {
+
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
 
   static propTypes = {
     device: PropTypes.object,
@@ -120,13 +125,14 @@ class DeviceDetailsScene extends React.Component {
   //   });
   // }
   handleTabChange(tab) {
-    if (tab === "Timeline") {
+    if (tab === TABS.TIMELINE) {
       this.props.updateDevice({
         orgId: this.props.orgId,
       }, {
          id: this.props.params.id
       });
     }
+    this.context.router.push(`/devices/${this.props.params.id}/${tab}`);
   }
   render() {
 

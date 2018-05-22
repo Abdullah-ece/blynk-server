@@ -580,3 +580,9 @@ export const DEVICES_FILTERS = {
   BY_LOCATION: 'BY_LOCATION',
   BY_PRODUCT: 'BY_PRODUCT'
 };
+
+export const TABS = {
+  DASHBOARD: 'dashboard',
+  TIMELINE: 'timeline',
+  DEVICE_INFO: 'device-info',
+};
