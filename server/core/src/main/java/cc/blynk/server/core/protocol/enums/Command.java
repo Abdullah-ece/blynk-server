@@ -191,6 +191,7 @@ public final class Command {
             Map.entry(EMAIL_QR, "MailQRs"),
             Map.entry(UPDATE_FACE, "UpdateFace"),
             Map.entry(GET_PROVISION_TOKEN, "getProvisionToken"),
+            Map.entry(RESOLVE_EVENT, "resolveEvent"),
             Map.entry(DELETE_DEVICE_DATA, "deleteDeviceData"),
             Map.entry(HARDWARE_LOG_EVENT, "HardwareLogEvent"),
             Map.entry(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth"),

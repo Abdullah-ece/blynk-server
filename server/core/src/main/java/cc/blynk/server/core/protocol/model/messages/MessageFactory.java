@@ -169,6 +169,7 @@ public final class MessageFactory {
             case OUTDATED_APP_NOTIFICATION :
             case TRACK_DEVICE :
             case GET_PROVISION_TOKEN :
+            case RESOLVE_EVENT :
             case DELETE_DEVICE_DATA :
             case RESOLVE_EVENT :
                 return new StringMessage(messageId, command, body);
