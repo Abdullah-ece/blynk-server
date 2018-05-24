@@ -72,7 +72,7 @@ class ProductDeviceForceUpdate extends React.Component {
     if(!this.props.product)
       return null;
 
-    const DevicesText = getOptionByAmount(this.props.product.deviceCount, ['Device', 'Devices']);
+    const DevicesText = getOptionByAmount(this.props.product.deviceCount, ['device', 'devices']);
 
     return (
       <Modal title="Apply Changes?"
