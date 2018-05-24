@@ -303,24 +303,23 @@ export const WIDGETS_SOURCE_TYPES = {
 export const WIDGETS_CONFIGS = {
   [WIDGET_TYPES.SLIDER]: {
     minW: 3,
-    minH: 1,
-    maxH: 1,
+    minH: 2,
+    maxH: 2,
     color: `e92126`
   },
   [WIDGET_TYPES.SWITCH]: {
     minW: 2,
-    minH: 1,
-    maxH: 1,
+    minH: 2,
+    maxH: 2,
     color: `e92126`
   },
   [WIDGET_TYPES.LABEL]: {
-    minW: 2,
-    minH: 1,
-    maxH: 3,
+    minW: 1,
+    minH: 2,
   },
   [WIDGET_TYPES.LINEAR]: {
     minW: 3,
-    minH: 2
+    minH: 3
   },
   [WIDGET_TYPES.BAR]: {
     minW: 3,
@@ -454,7 +453,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     x: 0,
     y: 0,
     w: 3,
-    h: 2,
+    h: 3,
     sources: [
       {
         id: 1,
@@ -488,7 +487,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     x: 0,
     y: 0,
     w: 2,
-    h: 1,
+    h: 2,
     label: "Label",
     sources: [
       {
@@ -538,7 +537,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     x: 0,
     y: 0,
     w: 2,
-    h: 1,
+    h: 2,
     label: "Switch",
     onValue: 1,
     offValue: 0,
@@ -553,7 +552,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     x: 0,
     y: 0,
     w: 3,
-    h: 1,
+    h: 2,
     minValue: 0,
     maxValue: 100,
     textColor: 'DEFAULT',

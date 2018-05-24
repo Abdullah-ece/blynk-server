@@ -14,10 +14,10 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 class Widgets extends React.Component {
 
   static breakpoints = {
-    lg: 1200,
-    md: 996,
-    sm: 768,
-    xs: 480,
+    lg: 1,
+    md: 0,
+    sm: 0,
+    xs: 0,
     xxs: 0
   };
 

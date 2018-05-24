@@ -4,14 +4,22 @@ import {
 } from 'components';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import ReactDOM from "react-dom";
 // import {
 //   fromJS
 // } from 'immutable';
-import {Responsive, WidthProvider} from 'react-grid-layout';
+import {Responsive} from 'react-grid-layout';
+import sizeMeProvider from 'react-sizeme';
 import {WIDGETS_CONFIGS} from 'services/Widgets';
+import ResizeDetector from 'react-resize-detector';
 import Scroll from 'react-scroll';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+// const ResponsiveGridLayout = WidthProvider(Responsive);
+const ResponsiveGridLayout = sizeMeProvider()((props) => {
+  return (
+    <Responsive {...props} {...props.size}/>
+  );
+});
 
 class GridManage extends React.Component {
 
@@ -29,7 +37,14 @@ class GridManage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleLayoutChange   = this.handleLayoutChange.bind(this);
+
+    this.state = {
+      width: 0,
+      height: 0,
+    };
+
+    this.handleResize = this.handleResize.bind(this);
+    this.handleLayoutChange = this.handleLayoutChange.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -104,6 +119,21 @@ class GridManage extends React.Component {
 
   }
 
+  handleResize() {
+    let grid = ReactDOM.findDOMNode(this.gridRef);
+
+    if(this.state && this.state.gridRefFound && grid) {
+
+      if(grid && (grid.offsetWidth !== this.state.gridWidth || grid.offsetHeight !== this.state.gridHeight)) {
+        this.setState({
+          gridWidth: grid.offsetWidth,
+          gridHeight: grid.offsetHeight,
+        });
+      }
+    }
+
+  }
+
   render() {
 
     let widgets = this.props.webDashboard && this.props.webDashboard.widgets || [];
@@ -128,12 +158,79 @@ class GridManage extends React.Component {
       })
     };
 
+    const handleRef = (ref) => {
+      this.gridRef = ref;
+
+      let grid = ReactDOM.findDOMNode(this.gridRef);
+
+      if((!this.state || !this.state.gridRefFound) && grid)
+        this.setState({
+          gridRefFound: true
+        });
+
+      if(this.state && this.state.gridRefFound && grid) {
+
+        if(grid && (grid.offsetWidth !== this.state.gridWidth || grid.offsetHeight !== this.state.gridHeight)) {
+          this.setState({
+            gridWidth: grid.offsetWidth,
+            gridHeight: grid.offsetHeight,
+          });
+        }
+      }
+    };
+
+    const styles = {};
+
+    if(this.state && this.state.gridWidth && this.state.gridHeight) {
+
+      const LEFT_MARGIN = 8;
+      const TOP_MARGIN = 8;
+      const ROW_HEIGHT = 64;
+      const COLUMNS = 12;
+
+      const calcColWidth = (margin, containerWidth, size = 12) => {
+        return (containerWidth - margin * (size - 1) - margin * 2) / size;
+      };
+
+      const calcColPosition = (x, y) => {
+
+        const colWidth = calcColWidth(LEFT_MARGIN, this.state.gridWidth);
+
+        return {
+          left: Math.round((colWidth + LEFT_MARGIN) * x + LEFT_MARGIN),
+          top : Math.round((ROW_HEIGHT + LEFT_MARGIN) * y + LEFT_MARGIN),
+        };
+      };
+
+      const rows = Math.floor((this.state.gridHeight / (ROW_HEIGHT + TOP_MARGIN*2)));
+
+      const WIDTH = calcColWidth(LEFT_MARGIN, this.state.gridWidth);
+      const HEIGHT = ROW_HEIGHT;
+
+      styles.width = WIDTH;
+      styles.height = HEIGHT;
+
+      styles.left = -WIDTH;
+      styles.top = -HEIGHT;
+
+      let boxShadow = [];
+
+      for(let y = 0; y < rows; y++) {
+        for(let x = 0; x < COLUMNS; x++) {
+          let position = calcColPosition(x, y);
+          boxShadow.push(`${position.left+WIDTH}px ${position.top+HEIGHT}px 0px #fcfcfc`);
+        }
+      }
+      styles.boxShadow = boxShadow.join(',');
+    }
+
     return (
-      <div className="product-manage-dashboard-grid">
+      <div className="product-manage-dashboard-grid" ref={(ref) => handleRef(ref)}>
+        <div className="product-manage-dashboard-grid-shadow" style={styles}/>
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
           margin={[8, 8]}
-          rowHeight={96}
+          rowHeight={64}
           cols={this.cols}
           className={`widgets widgets-editable`}
           isDraggable={true}
@@ -146,6 +243,7 @@ class GridManage extends React.Component {
         >
           {this.props.widgets}
         </ResponsiveGridLayout>
+        <ResizeDetector onResize={this.handleResize} handleWidth skipOnMount/>
       </div>
     );
   }

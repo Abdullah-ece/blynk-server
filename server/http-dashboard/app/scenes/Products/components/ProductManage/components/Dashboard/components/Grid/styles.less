@@ -2,5 +2,18 @@
 
 .product-manage-dashboard-grid {
   min-height: 944px;
-  background: url('assets/cells.png') repeat @style-size-2 @style-size-2;
+  position: relative;
+}
+
+.product-manage-dashboard-grid-shadow {
+  border-radius: 5px;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 99px;
+  height: 64px;
+  background: transparent;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
