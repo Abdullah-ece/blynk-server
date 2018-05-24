@@ -155,18 +155,21 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
       role: Roles.USER.value,
+      isDefault: true,
     },
     {
       id: 2,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
+      isDefault: true,
     },
     {
       id: 3,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.LocationName,
       role: Roles.STAFF.value,
+      isDefault: true,
     },
     {
       id: 4,
@@ -174,12 +177,14 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
       role: Roles.SUPER_ADMIN.value,
+      isDefault: true,
     },
     {
       id: 5,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.ModelName,
       role: Roles.STAFF.value,
+      isDefault: true,
     },
     {
       id: 6,
@@ -187,6 +192,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
+      isDefault: true,
     }
   ];
 };
