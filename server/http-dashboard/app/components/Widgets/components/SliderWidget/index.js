@@ -347,7 +347,7 @@ class SliderWidget extends React.Component {
     }
 
     const slider = (
-      <Slider included={false} marks={{[minValue]: this.formatValue(minValue), [maxValue]: this.formatValue(maxValue)}} tipFormatter={null} ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
+      <Slider included={true} marks={{[minValue]: this.formatValue(minValue), [maxValue]: this.formatValue(maxValue)}} tipFormatter={null} ref={(ref) => this.sliderRef = ref} min={Number(minValue)} max={Number(maxValue)} step={step} value={sliderValue} onChange={this.handleChange} onAfterChange={this.handleAfterChange}/>
     );
 
     const position = params.valuePosition === WIDGETS_SLIDER_VALUE_POSITION.LEFT ? this.sliderValueLeft : this.sliderValueRight;
