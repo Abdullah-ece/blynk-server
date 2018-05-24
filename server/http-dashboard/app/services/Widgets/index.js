@@ -554,6 +554,8 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     y: 0,
     w: 3,
     h: 1,
+    minValue: 0,
+    maxValue: 100,
     textColor: 'DEFAULT',
     label: "Slider",
     sources: [
