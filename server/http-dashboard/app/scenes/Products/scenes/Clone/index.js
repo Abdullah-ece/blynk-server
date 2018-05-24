@@ -269,6 +269,7 @@ class Clone extends React.Component {
   // }
 
   routerWillLeave() {
+    if(!this.created && this.props.isFormDirty)
       return 'Leave this page without saving your changes?';
   }
 
@@ -309,7 +310,7 @@ class Clone extends React.Component {
 
   handleSubmit(product) {
     this.loading = true;
-
+    this.created = true;
     return this.props.Create({
       product: product,
       orgId: this.props.orgId
