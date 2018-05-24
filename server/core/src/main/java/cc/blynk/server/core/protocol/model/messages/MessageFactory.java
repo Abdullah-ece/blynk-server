@@ -171,7 +171,6 @@ public final class MessageFactory {
             case GET_PROVISION_TOKEN :
             case RESOLVE_EVENT :
             case DELETE_DEVICE_DATA :
-            case RESOLVE_EVENT :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
