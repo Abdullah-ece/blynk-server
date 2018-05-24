@@ -95,7 +95,7 @@ class ProductDeviceForceUpdate extends React.Component {
           <div className="product-device-force-update-title">
             { getOptionByAmount(this.props.product.deviceCount, ['There is', ['There are']])}
             {'\u00A0'}
-            <span>{ this.props.product.deviceCount }</span> {DevicesText} associated with
+            <span>{ this.props.product.deviceCount }</span> active {DevicesText} associated with
             {'\u00A0'}
             <span>{this.props.product.name}</span> product template
           </div>
