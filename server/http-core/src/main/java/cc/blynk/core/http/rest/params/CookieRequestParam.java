@@ -2,7 +2,7 @@ package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.utils.CookieUtil;
+import cc.blynk.server.core.session.CookieUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.cookie.Cookie;
 

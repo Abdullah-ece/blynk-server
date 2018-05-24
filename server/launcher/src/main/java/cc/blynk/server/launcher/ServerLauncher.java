@@ -200,7 +200,7 @@ public final class ServerLauncher {
                 Device device = new Device("My Device " + i, "Particle Photon", "auth_123",
                         product.id, ConnectionType.WI_FI);
                 device.hardwareInfo = new HardwareInfo("0.5.0", "Particle Photon", "atm33",
-                        "WI-FI", "0.0.0", null, 1);
+                        "WI-FI", "0.0.0", null, 1, -1);
                 holder.deviceDao.create(mainOrg.id, device);
                 for (EventType eventType : EventType.values()) {
                     try {

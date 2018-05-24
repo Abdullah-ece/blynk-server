@@ -2,7 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.utils.CookieUtil;
+import cc.blynk.server.core.session.CookieUtil;
 import io.netty.channel.EventLoop;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;

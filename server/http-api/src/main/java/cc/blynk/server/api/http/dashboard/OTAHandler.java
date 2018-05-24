@@ -186,8 +186,8 @@ public class OTAHandler extends BaseHttpHandler {
         log.info("Stopping OTA for {}. {}", user.email, startOtaDTO);
 
         for (Device device : filteredDevices) {
-            if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus != OTAStatus.SUCCESS &&
-                    device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
+            if (device.deviceOtaInfo != null && device.deviceOtaInfo.otaStatus != OTAStatus.SUCCESS
+                    && device.deviceOtaInfo.otaStatus != OTAStatus.FAILURE) {
                 device.setDeviceOtaInfo(null);
             }
         }

@@ -115,11 +115,11 @@ public class Session {
         return targetChannels;
     }
 
-    private Set<Channel> filter(int bodySize, int activeDashId, int deviceId) {
+    private Set<Channel> filter(int bodySize, int deviceId) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.isSameDashAndDeviceId(activeDashId, deviceId)) {
+            if (hardwareState != null && hardwareState.isSameDevice(deviceId)) {
                 if (hardwareState.device.fitsBufferSize(bodySize)) {
                     targetChannels.add(channel);
                 } else {
@@ -140,9 +140,9 @@ public class Session {
         return targetChannels;
     }
 
-    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int deviceId) {
+    public boolean sendMessageToHardware(short cmd, int msgId, String body, int deviceId) {
         return hardwareChannels.size() == 0
-                || sendMessageToHardware(filter(body.length(), activeDashId, deviceId), cmd, msgId, body);
+                || sendMessageToHardware(filter(body.length(), deviceId), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {

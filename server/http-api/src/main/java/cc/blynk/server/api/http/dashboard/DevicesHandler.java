@@ -13,6 +13,7 @@ import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.core.http.utils.AdminHttpUtil;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.CommentDTO;
 import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
@@ -56,7 +57,6 @@ import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
-import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
  * The Blynk Project.
@@ -241,7 +241,7 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 List<DeviceDTO> result = joinEventsCountSinceLastView(devices, user.email);
-                response = ok(sort(result, orderFields, order));
+                response = ok(AdminHttpUtil.sort(result, orderFields, order));
             } catch (Exception e) {
                 log.error("Error getting counters for devices.", e);
                 response = serverError("Error getting counters for devices.");
