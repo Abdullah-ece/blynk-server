@@ -108,7 +108,8 @@ export const Metadata = {
     DATE: 'Date',
     CONTACT: 'Contact',
     DEVICE_REFERENCE: 'DeviceReference',
-    LIST: 'List'
+    LIST: 'List',
+    EMAIL: 'Email',
   }
 };
 
@@ -159,7 +160,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
     },
     {
       id: 2,
-      type: Metadata.Fields.TEXT,
+      type: Metadata.Fields.EMAIL,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
       isDefault: true,
