@@ -9,11 +9,11 @@
         sudo ntpd -gq
         sudo service ntp start
 
-        sudo apt-add-repository ppa:webupd8team/java
+        sudo add-apt-repository ppa:linuxuprising/java
         sudo apt-get update
-        sudo apt-get install oracle-java9-installer
+        sudo apt-get install oracle-java10-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.36.1/server-0.36.1.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.36.3/server-0.36.3.jar"
         
 
 server.properties

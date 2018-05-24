@@ -97,7 +97,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.2/Blynk_Release_v0.5.2.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.1/server-0.36.1.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.3/server-0.36.3.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -137,7 +137,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.2/Blynk_Release_v0.5.2.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.1/server-0.36.1.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.3/server-0.36.3.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -189,6 +189,19 @@ public class AppMailTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("email to@to.com subj body");
         verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("subj"), eq("body"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+    }
+
+    @Test
+    public void testPlaceholderForDeivceNameWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email to@to.com SUBJ_{DEVICE_NAME} BODY_{DEVICE_NAME}");
+        verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("SUBJ_My Device"), eq("BODY_My Device"));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 

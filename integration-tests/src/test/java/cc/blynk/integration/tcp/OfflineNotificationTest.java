@@ -127,7 +127,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
     @Test
     public void testTurnOffNotifications() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true);
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(1));
@@ -143,6 +143,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         assertEquals(settings.isShared, dashBoard.isShared);
         assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
         assertEquals(settings.theme, dashBoard.theme);
+        assertEquals(settings.widgetBackgroundOn, dashBoard.widgetBackgroundOn);
 
         clientPair.hardwareClient.stop();
 
@@ -165,7 +166,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         assertEquals(1, devices[1].id);
 
-        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
+        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false, false);
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(5));
 
@@ -176,6 +177,20 @@ public class OfflineNotificationTest extends IntegrationBase {
         hardClient2.stop();
 
         clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
+    }
+
+    @Test
+    public void testTurnOffNotificationsAndNoDevices() throws Exception{
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
+
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.stop();
+        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
+
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(2));
     }
 
     @Test

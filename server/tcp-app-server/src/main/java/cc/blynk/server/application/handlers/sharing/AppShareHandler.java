@@ -5,7 +5,6 @@ import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
@@ -20,7 +19,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
@@ -41,7 +39,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
     private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
-    private final DeleteEnhancedGraphDataLogic deleteEnhancedGraphDataLogic;
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
@@ -49,8 +46,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.deleteEnhancedGraphDataLogic =
-                new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.state = state;
         this.stats = holder.stats;
     }
@@ -73,9 +68,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 enhancedGraphDataLogic.messageReceived(ctx, state, msg);
-                break;
-            case DELETE_ENHANCED_GRAPH_DATA :
-                deleteEnhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);

@@ -7,6 +7,9 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.utils.properties.ServerProperties;
+
+import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -267,6 +270,20 @@ public class Device implements Target {
 
     public boolean isAttemptsLimitReached() {
         return deviceOtaInfo != null && deviceOtaInfo.isLimitReached();
+    }
+
+    public boolean fitsBufferSize(int bodySize) {
+        if (hardwareInfo == null) {
+            return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
+        }
+        return bodySize + 5 <= hardwareInfo.buffIn;
+    }
+
+    public String updateWithPlaceholder(String body) {
+        if (name != null && !name.isEmpty()) {
+            return body.replace(ServerProperties.DEVICE_NAME, name);
+        }
+        return body;
     }
 
     @Override

@@ -88,6 +88,8 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
+    public volatile boolean widgetBackgroundOn;
+
     public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
@@ -196,12 +198,6 @@ public class DashBoard {
     public void deactivate() {
         isActive = false;
         updatedAt = System.currentTimeMillis();
-    }
-
-    public Widget findWidgetByPin(int deviceId, String[] splitted) {
-        PinType type = PinType.getPinType(splitted[0].charAt(0));
-        byte pin = Byte.parseByte(splitted[1]);
-        return findWidgetByPin(deviceId, pin, type);
     }
 
     public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
@@ -525,6 +521,7 @@ public class DashBoard {
         this.keepScreenOn = settings.keepScreenOn;
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
+        this.widgetBackgroundOn = settings.widgetBackgroundOn;
         this.updatedAt = System.currentTimeMillis();
     }
 
@@ -535,6 +532,7 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.isNotificationsOff = updatedDashboard.isNotificationsOff;
+        this.widgetBackgroundOn = updatedDashboard.widgetBackgroundOn;
 
         Notification newNotification = updatedDashboard.getNotificationWidget();
         if (newNotification != null) {
@@ -556,6 +554,7 @@ public class DashBoard {
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
         this.isNotificationsOff = parent.isNotificationsOff;
+        this.widgetBackgroundOn = parent.widgetBackgroundOn;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;

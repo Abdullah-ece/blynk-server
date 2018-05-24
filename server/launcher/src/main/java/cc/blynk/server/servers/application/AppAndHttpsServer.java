@@ -122,7 +122,7 @@ public class AppAndHttpsServer extends BaseServer {
                 var req = (FullHttpRequest) msg;
                 var uri = req.uri();
 
-                log.debug("In https and websocket unificator handler.");
+                log.trace("In https and websocket unificator handler.");
                 if (uri.startsWith(WEBSOCKET_PATH)) {
                     initWebSocketPipeline(ctx, WEBSOCKET_PATH);
                 } else if (uri.equals(WEBSOCKET_WEB_PATH)) {

@@ -85,7 +85,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                 var req = (FullHttpRequest) msg;
                 var uri = req.uri();
 
-                log.debug("In http and websocket unificator handler.");
+                log.trace("In http and websocket unificator handler.");
                 if (uri.startsWith(WEBSOCKET_PATH)) {
                     initWebSocketPipeline(ctx, WEBSOCKET_PATH);
                 } else {

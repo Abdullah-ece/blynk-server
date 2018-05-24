@@ -56,10 +56,17 @@ public class ActivateDashboardLogic {
                             ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                         }
                     }
-                } else if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
-                    log.debug("No device in session.");
-                    if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
-                        ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
+                } else {
+                    if (device.fitsBufferSize(pmBody.length())) {
+                        if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
+                            log.debug("No device in session.");
+                            if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
+                                ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
+                            }
+                        }
+                    } else {
+                        ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
+                        log.warn("PM message is to large for {}, size : {}", user.email, pmBody.length());
                     }
                 }
             }
@@ -67,10 +74,13 @@ public class ActivateDashboardLogic {
             ctx.write(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            if (!dash.isNotificationsOff) {
+            if (dash.isNotificationsOff) {
+                ctx.write(ok(message.id), ctx.voidPromise());
+            } else {
                 ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
         }
+        ctx.flush();
 
         for (var appChannel : session.appChannels) {
             //send activate for shared apps

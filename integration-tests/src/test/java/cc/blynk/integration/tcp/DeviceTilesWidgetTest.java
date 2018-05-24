@@ -610,7 +610,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         clientPair.appClient.verifyResult(appSync(1111, b("1-0 vw 5 101")));
@@ -685,7 +685,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
@@ -1766,7 +1766,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
@@ -1789,7 +1789,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
 
@@ -1848,7 +1848,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
@@ -1871,7 +1871,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
     }
@@ -1924,10 +1924,56 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 6 111")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 6 112")));
+    }
+
+    @Test
+    public void updateViaHttpAPIWorksForDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getDevices 1");
+        Device[] devices = clientPair.appClient.getDevices(3);
+        Device device = devices[0];
+        assertNotNull(device);
+        assertNotNull(device.token);
+
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+
+        String httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        Future<Response> f = httpclient
+                .prepareGet(httpsServerUrl + device.token + "/update/v5?value=111")
+                .execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        clientPair.appClient.verifyResult(hardware(111, "1-0 vw 5 111"));
+
     }
 }

@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ContentTypeUtil;
+import cc.blynk.core.http.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
