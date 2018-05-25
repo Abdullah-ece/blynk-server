@@ -1,12 +1,8 @@
 import React from 'react';
 
-import {Button, Form, Checkbox} from 'antd';
+import {Button, Form} from 'antd';
 
-import {Link} from 'react-router';
-
-import {connect} from 'react-redux';
-
-import {reduxForm, Field, formValueSelector} from 'redux-form';
+import {reduxForm} from 'redux-form';
 
 import {Field as FormField} from 'components/Form';
 
@@ -18,14 +14,6 @@ import './styles.less';
 @reduxForm({
   form: 'Login'
 })
-@connect((state) => {
-  const selector = formValueSelector('Login');
-  return {
-    conditionsAgreement: selector(state, 'conditionsAgreement'),
-  };
-}, () => {
-  return {};
-})
 export default class LoginForm extends React.Component {
 
   static propTypes = {
@@ -36,31 +24,13 @@ export default class LoginForm extends React.Component {
     error: React.PropTypes.string,
     loading: React.PropTypes.bool,
     router: React.PropTypes.object,
-    conditionsAgreement: React.PropTypes.any,
     LoginPageTermsAgreement: React.PropTypes.func,
   };
-  constructor(props) {
-    super(props);
-    this.checkboxRender = this.checkboxRender.bind(this);
-  }
+
   forgotPassHandler() {
     this.props.router.push('/forgot-pass');
   }
 
-  checkboxRender(props) {
-    const onChange = (value) => {
-      props.input.onChange(value);
-    };
-
-    return (
-      <Checkbox onChange={onChange} checked={props.input.value || false} className="login-form-checkbox">
-        Accept&nbsp;
-        <Link to="/terms-and-conditions" target="_blank">
-          Terms Of Service
-        </Link>
-      </Checkbox>
-    );
-  }
   render() {
 
     const {invalid, pristine, handleSubmit, error, submitting} = this.props;
@@ -93,13 +63,12 @@ export default class LoginForm extends React.Component {
                  validate={[
                    Validation.Rules.required
                  ]}/>
-      <Field name="conditionsAgreement" component={this.checkboxRender}/>
       <FormItem>
         <Button type="primary"
                 size="default"
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
-                disabled={invalid || pristine || submitting || !this.props.conditionsAgreement}>
+                disabled={invalid || pristine || submitting}>
           Log in
         </Button>
 
