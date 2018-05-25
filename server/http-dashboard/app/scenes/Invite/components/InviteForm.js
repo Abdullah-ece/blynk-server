@@ -1,7 +1,8 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
-import {Button, Form} from 'antd';
-
+import {reduxForm, formValueSelector, Field} from 'redux-form';
+import {connect} from 'react-redux';
+import {Button, Form, Checkbox} from 'antd';
+import {Link} from 'react-router';
 import {Field as FormField} from 'components/Form';
 import Validation from 'services/Validation';
 
@@ -17,6 +18,14 @@ const validate = values => {
   form: 'InviteCreatePasswordForm',
   validate
 })
+@connect((state) => {
+  const selector = formValueSelector('InviteCreatePasswordForm');
+  return {
+    conditionsAgreement: selector(state, 'conditionsAgreement'),
+  };
+}, () => {
+  return {};
+})
 export default class InviteForm extends React.Component {
 
   static propTypes = {
@@ -24,10 +33,21 @@ export default class InviteForm extends React.Component {
     pristine: React.PropTypes.bool,
     submitting: React.PropTypes.bool,
     handleSubmit: React.PropTypes.func,
+    conditionsAgreement: React.PropTypes.any,
     error: React.PropTypes.string,
     loading: React.PropTypes.bool,
   };
+  checkboxRender(props) {
 
+    return (
+      <Checkbox onChange={props.input.onChange} checked={props.input.value || false} className="login-form-checkbox">
+        Accept&nbsp;
+        <Link to="/terms-and-conditions" target="_blank">
+          Terms Of Service
+        </Link>
+      </Checkbox>
+    );
+  }
   render() {
     const {invalid, pristine, error, submitting, handleSubmit} = this.props;
 
@@ -55,13 +75,13 @@ export default class InviteForm extends React.Component {
                      Validation.Rules.required
                    ]}/>
       </div>
-
+      <Field name="conditionsAgreement" component={this.checkboxRender}/>
       <FormItem>
         <Button type="primary"
                 size="default"
                 loading={submitting || this.props.loading}
                 htmlType="submit" className="login-form-button"
-                disabled={invalid || pristine || submitting}>
+                disabled={invalid || pristine || submitting || !this.props.conditionsAgreement}>
           Save
         </Button>
 
