@@ -25,12 +25,6 @@ export function StorageOTADevicesSessionStop(){
   };
 }
 
-export function LoginPageTermsAgreement(value=false){
-  return {
-    type: 'LoginPageTermsAgreement',
-    value
-  };
-}
 export function StorageDevicesSortChange(value=false){
   return {
     type: 'STORAGE_DEVICES_SORT_CHANGE',

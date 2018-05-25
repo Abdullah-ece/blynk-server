@@ -6,7 +6,6 @@ const initialState = {
   devicesListSorting: {
     value: false,
   },
-  loginPageTermsAgreement: false,
   requestedPage: '/login',
   OTAUpdate: {
     title: null,
@@ -34,12 +33,6 @@ export default function Account(state = initialState, action) {
       return {
         ...state,
         deviceSmartSearch: action.value
-      };
-
-    case 'LoginPageTermsAgreement':
-      return {
-        ...state,
-        loginPageTermsAgreement: action.value
       };
 
     case "STORAGE_OTA_DEVICES_SESSION_START":

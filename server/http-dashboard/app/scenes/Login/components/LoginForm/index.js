@@ -6,15 +6,11 @@ import {Link} from 'react-router';
 
 import {connect} from 'react-redux';
 
-import {bindActionCreators} from 'redux';
-
 import {reduxForm, Field, formValueSelector} from 'redux-form';
 
 import {Field as FormField} from 'components/Form';
 
 import Validation from 'services/Validation';
-
-import {LoginPageTermsAgreement} from 'data/Storage/actions';
 
 import './styles.less';
 
@@ -27,9 +23,9 @@ import './styles.less';
   return {
     conditionsAgreement: selector(state, 'conditionsAgreement'),
   };
-}, (dispatch) => ({
-  LoginPageTermsAgreement: bindActionCreators(LoginPageTermsAgreement, dispatch),
-}))
+}, () => {
+  return {};
+})
 export default class LoginForm extends React.Component {
 
   static propTypes = {
@@ -53,12 +49,11 @@ export default class LoginForm extends React.Component {
 
   checkboxRender(props) {
     const onChange = (value) => {
-      this.props.LoginPageTermsAgreement(value.target.checked);
       props.input.onChange(value);
     };
 
     return (
-      <Checkbox onChange={onChange} checked={props.input.value} className="login-form-checkbox">
+      <Checkbox onChange={onChange} checked={props.input.value || false} className="login-form-checkbox">
         Accept&nbsp;
         <Link to="/terms-and-conditions" target="_blank">
           Terms Of Service

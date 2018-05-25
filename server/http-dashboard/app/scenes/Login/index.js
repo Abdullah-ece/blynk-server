@@ -13,10 +13,8 @@ import * as AccountAPI from 'data/Account/actions';
 
 import {encryptUserPassword} from 'services/Crypto';
 
-@connect((state) => {
-  return {
-    termsAgreement: state.Storage.loginPageTermsAgreement,
-  };
+@connect(() => {
+  return {};
 }, (dispatch) => {
   return {
     AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
@@ -36,7 +34,6 @@ export default class Login extends React.Component {
     AccountFetch: React.PropTypes.func,
     AccountSaveCredentials: React.PropTypes.func,
     isRecentlyRegistered: React.PropTypes.bool,
-    termsAgreement: React.PropTypes.any,
   };
 
   constructor() {
@@ -78,8 +75,7 @@ export default class Login extends React.Component {
 
     return (<LoginForm onSubmit={this.handleSubmit.bind(this)}
                        router={this.context.router}
-                       loading={this.state.loading}
-                       initialValues={{conditionsAgreement:this.props.termsAgreement}}/>);
+                       loading={this.state.loading}/>);
   }
 
 }
