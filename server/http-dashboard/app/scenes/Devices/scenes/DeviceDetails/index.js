@@ -77,6 +77,13 @@ class DeviceDetailsScene extends React.Component {
     if (nextProps.params.id !== this.props.params.id) {
       this.fetchDevice(nextProps.params.id);
     }
+    if (this.context.router.params.tab === TABS.TIMELINE) {
+      this.props.updateDevice({
+        orgId: this.props.orgId,
+      }, {
+        id: this.props.params.id
+      });
+    }
   }
 
   // componentWillUnmount() {

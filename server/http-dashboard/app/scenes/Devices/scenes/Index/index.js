@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import {DEVICES_SORT} from 'services/Devices';
 import PropTypes from 'prop-types';
 import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
+import {TABS} from 'services/Devices';
 
 @connect((state) => ({
   productsCount: state.Product.products && state.Product.products.length,
@@ -60,7 +61,8 @@ class Devices extends React.Component {
 
   redirectToDeviceId(deviceId) {
     this.props.blynkWsSetTrackDeviceId(deviceId);
-    this.context.router.push('/devices/' + deviceId);
+    const tab = this.context.router.params.tab || TABS.DASHBOARD;
+    this.context.router.push('/devices/' + deviceId + "/" + tab);
   }
 
   redirectToFirstDeviceIfIdParameterMissed() {
