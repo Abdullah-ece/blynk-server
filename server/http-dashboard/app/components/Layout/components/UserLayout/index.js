@@ -188,7 +188,7 @@ class UserLayout extends React.Component {
               </Menu.Item>
               <Menu.Item key="/organizations">
                 <Icon type="usergroup-add"/>
-                <span>Organization</span>
+                <span>Organizations</span>
               </Menu.Item>
             </Menu>
             <div className="user-layout-left-navigation-profile">
