@@ -151,10 +151,12 @@ class LabelWidget extends React.Component {
     // Choose color set from all color sets based on label value. If label value not fit to any of color sets then
     // select the first color set if value is lower then min value, select the last if value is higher then max, or select default
     if(this.props.data.colorsSet && labelValue !== null && labelValue !== undefined) {
-      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= labelValue && obj.max >= labelValue)))[0] ||
-        labelValue < this.props.data.colorsSet[0].min ? this.props.data.colorsSet[0] :
-        labelValue > this.props.data.colorsSet[this.props.data.colorsSet.length-1].max ? this.props.data.colorsSet[this.props.data.colorsSet.length-1] :
-          {backgroundColor:"ffffff",textColor:"000000"};
+      currentColorSet = (this.props.data.colorsSet.filter(( obj )=>(obj.min <= Number(labelValue) && obj.max >= Number(labelValue))))[0] || null;
+      if(currentColorSet === null) {
+        currentColorSet = labelValue < this.props.data.colorsSet[0].min ? this.props.data.colorsSet[0] :
+          labelValue > this.props.data.colorsSet[this.props.data.colorsSet.length-1].max ? this.props.data.colorsSet[this.props.data.colorsSet.length-1] :
+            {backgroundColor:"ffffff",textColor:"000000"};
+      }
     } else {
       currentColorSet = {backgroundColor:"ffffff",textColor:"000000"};
     }
