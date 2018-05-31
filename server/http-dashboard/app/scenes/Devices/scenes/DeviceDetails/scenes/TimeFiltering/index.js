@@ -58,10 +58,10 @@ class TimeFilteringScene extends React.Component {
       key: TIMELINE_TIME_FILTERS.MONTH.key,
       value: TIMELINE_TIME_FILTERS.MONTH.value,
     },
-    // {
-    //   key: TIMELINE_TIME_FILTERS['3MONTHS'].key,
-    //   value: TIMELINE_TIME_FILTERS['3MONTHS'].value,
-    // },
+    {
+      key: TIMELINE_TIME_FILTERS['3MONTHS'].key,
+      value: TIMELINE_TIME_FILTERS['3MONTHS'].value,
+    },
     {
       key: TIMELINE_TIME_FILTERS.CUSTOM.key,
       value: TIMELINE_TIME_FILTERS.CUSTOM.value,
