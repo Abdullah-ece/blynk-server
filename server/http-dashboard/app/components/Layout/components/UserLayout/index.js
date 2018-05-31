@@ -99,7 +99,7 @@ class UserLayout extends React.Component {
   currentActivePage(state) {
     const splitedPath = state.split('/');
 
-    if ('products' === splitedPath[1])
+    if ('products' === splitedPath[1] || 'product' === splitedPath[1] )
       return ['/products'];
 
     if ('devices' === splitedPath[1])
