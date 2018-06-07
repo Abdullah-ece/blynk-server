@@ -31,25 +31,25 @@ class SwitchField extends BaseField {
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Option A</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Option B</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>String</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>Option A</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>Option B</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+            <MetadataFormField style={{width: '33.3%'}} className={`metadata-name-field-${this.props.field.get('id')}`}
                                onFocus={this.onFocus} onBlur={this.onBlur}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                validate={[
                                  Validation.Rules.required, Validation.Rules.metafieldName,
                                ]}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '33.3%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.from`} type="text" placeholder="Option A"
                                validate={[
                                  Validation.Rules.required
                                ]}/>
 
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '33.3%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.to`} type="text" placeholder="Option B"
                                validate={[
                                  Validation.Rules.required
