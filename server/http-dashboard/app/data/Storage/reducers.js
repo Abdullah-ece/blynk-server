@@ -4,7 +4,7 @@ const initialState = {
   },
   deviceSmartSearch: false,
   devicesListSorting: {
-    value: false,
+    value: "REQUIRE_ATTENTION",
   },
   requestedPage: '/login',
   OTAUpdate: {
