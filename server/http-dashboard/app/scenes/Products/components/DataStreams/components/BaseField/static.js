@@ -106,16 +106,16 @@ class BaseField extends React.Component {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <div className="product-metadata-static-field" style={{width: '200%'}}>
+            <div className="product-metadata-static-field" style={{width: '40%'}}>
               {this.props.label}
             </div>
-            <div className="product-metadata-static-field">
+            <div className="product-metadata-static-field" style={{width: '20%'}}>
               {this.props.units || '--'}
             </div>
-            <div className="product-metadata-static-field">
+            <div className="product-metadata-static-field" style={{width: '20%'}}>
               {this.props.min !== undefined ? this.props.min : '--'}
             </div>
-            <div className="product-metadata-static-field">
+            <div className="product-metadata-static-field" style={{width: '20%'}}>
               { this.props.max !== undefined ? this.props.max : '--' }
             </div>
           </Input.Group>
