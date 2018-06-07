@@ -33,11 +33,11 @@ class ShiftField extends BaseField {
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.get(`id`)}`}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
-                               style={{width: '200%'}} validate={[
+                               style={{width: '50%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.from`} type="text" timeFormat="HH:mm" placeholder="06:00"/>
-            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.to`} type="text" timeFormat="HH:mm" placeholder="07:00"/>
+            <MetadataFormTime style={{width: '25%'}} name={`metaFields.${this.props.metaFieldKey}.from`} type="text" timeFormat="HH:mm" placeholder="06:00"/>
+            <MetadataFormTime style={{width: '25%'}} name={`metaFields.${this.props.metaFieldKey}.to`} type="text" timeFormat="HH:mm" placeholder="07:00"/>
           </Input.Group>
         </FormItem.Content>
       </FormItem>
