@@ -41,14 +41,14 @@ class CoordinatesField extends BaseField {
             <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                onFocus={this.onFocus} onBlur={this.onBlur}
-                               style={{width: '200%'}} validate={[
+                               style={{width: '50%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '25%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.lat`} type="text" placeholder="Latitude" validate={[
               Validation.Rules.latitude
             ]}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '25%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.lon`} type="text" placeholder="Longitude" validate={[
               Validation.Rules.longitude
             ]}/>
