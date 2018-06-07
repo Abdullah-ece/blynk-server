@@ -3,7 +3,7 @@ import {DeviceInfo} from 'scenes/Devices/components/Device/components';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
-import {DeviceMetadataUpdate, DeviceDetailsFetch} from 'data/Devices/api';
+import {DeviceMetadataUpdate, DeviceDetailsFetch, DevicesFetch} from 'data/Devices/api';
 import {ProductsFetch} from 'data/Product/api';
 
 @connect((state) => ({
@@ -13,6 +13,7 @@ import {ProductsFetch} from 'data/Product/api';
 }), (dispatch) => ({
   updateDeviceMetadata: bindActionCreators(DeviceMetadataUpdate, dispatch),
   fetchDevice: bindActionCreators(DeviceDetailsFetch, dispatch),
+  fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   fetchProducts: bindActionCreators(ProductsFetch, dispatch),
 }))
 class DeviceInfoScene extends React.Component {
@@ -24,6 +25,7 @@ class DeviceInfoScene extends React.Component {
     orgId: PropTypes.number,
 
     fetchDevice: PropTypes.func,
+    fetchDevices: PropTypes.func,
     fetchProducts: PropTypes.func,
     updateDeviceMetadata: PropTypes.func,
   };
@@ -47,6 +49,10 @@ class DeviceInfoScene extends React.Component {
         orgId: this.props.orgId,
       }, {
         id: this.props.device.id
+      });
+
+      this.props.fetchDevices({
+        orgId: this.props.orgId,
       });
     });
   }
