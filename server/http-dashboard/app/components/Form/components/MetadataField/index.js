@@ -39,7 +39,7 @@ export default class Field extends React.Component {
                  help={help}
                  style={style}
                  className={className}>
-        <Input maxLength={this.props.maxLength || false} {...input} type={type} placeholder={placeholder} disabled={disabled}
+        <Input maxLength={this.props.maxLength || undefined} {...input} type={type} placeholder={placeholder} disabled={disabled}
                prefix={icon ? <Icon type={icon} className="form--field-icon"/> : null}/>
       </Form.Item>
     );

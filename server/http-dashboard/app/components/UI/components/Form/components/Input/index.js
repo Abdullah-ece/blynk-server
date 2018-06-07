@@ -29,7 +29,6 @@ export default class Input extends React.Component {
                  type={type}
                  placeholder={placeholder}
                  prefix={this.prefix(icon)}
-                 suffix={this.props.suffix}
       />
     );
   }
