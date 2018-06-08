@@ -185,7 +185,6 @@ class OTAScene extends React.Component {
     name: 'file',
     action: FILE_UPLOAD_URL,
     showUploadList: false,
-    accept: 'application/octet-stream',
     onChange: this.handleFileUploadChange.bind(this)
   };
 
