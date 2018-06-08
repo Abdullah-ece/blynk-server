@@ -5,8 +5,11 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
+import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -71,25 +74,25 @@ public class GetWebGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var deviceId = Integer.parseInt(messageParts[0]);
-        var widgetId = Long.parseLong(messageParts[1]);
-        var graphPeriod = GraphPeriod.valueOf(messageParts[2]);
+        int deviceId = Integer.parseInt(messageParts[0]);
+        long widgetId = Long.parseLong(messageParts[1]);
+        GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
 
         //todo check user has access
-        var device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getById(deviceId);
         if (device == null) {
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             log.debug("Device with passed id {} not found.", deviceId);
             return;
         }
 
-        var widget = device.webDashboard.getWidgetById(widgetId);
+        Widget widget = device.webDashboard.getWidgetById(widgetId);
 
         if (!(widget instanceof BaseWebGraph)) {
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
@@ -97,7 +100,7 @@ public class GetWebGraphDataLogic {
             return;
         }
 
-        var baseWebGraph = (BaseWebGraph) widget;
+        BaseWebGraph baseWebGraph = (BaseWebGraph) widget;
 
         int numberOfStreams = baseWebGraph.sources.length;
         if (numberOfStreams == 0) {
@@ -106,7 +109,7 @@ public class GetWebGraphDataLogic {
             return;
         }
 
-        var requestedPinsArray = new GraphPinRequest[numberOfStreams];
+        GraphPinRequest[] requestedPinsArray = new GraphPinRequest[numberOfStreams];
 
         int i = 0;
         if (graphPeriod == CUSTOM) {
@@ -114,13 +117,13 @@ public class GetWebGraphDataLogic {
             var toTS = Long.parseLong(messageParts[4]);
             graphPeriod = calcGraphPeriod(fromTS, toTS);
             log.trace("Selected granularity fro custom range: {}", graphPeriod);
-            for (var webSource : baseWebGraph.sources) {
+            for (WebSource webSource : baseWebGraph.sources) {
                 requestedPinsArray[i++] = new GraphPinRequest(0, deviceId,
                         webSource.dataStream, graphPeriod, 0, webSource.sourceType, fromTS, toTS);
             }
             readGraphDataFromDB(ctx.channel(), state.user, requestedPinsArray, message.id);
         } else {
-            for (var webSource : baseWebGraph.sources) {
+            for (WebSource webSource : baseWebGraph.sources) {
                 requestedPinsArray[i++] = new GraphPinRequest(0, deviceId,
                         webSource.dataStream, graphPeriod, 0, webSource.sourceType);
             }

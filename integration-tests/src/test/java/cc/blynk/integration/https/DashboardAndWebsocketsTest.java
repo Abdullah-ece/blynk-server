@@ -369,8 +369,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
                 ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", regularUser.email,
+                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
+
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+        FileUtils.write(pinReportingDataPath2, 1.33D, 3333333);
 
         appWebSocketClient.send("getenhanceddata 1" + b(" 432 N_MONTH"));
 
@@ -385,6 +389,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
+        assertEquals(1, bb.getInt());
+        assertEquals(1.33D, bb.getDouble(), 0.1);
+        assertEquals(3333333, bb.getLong());
+
     }
 
     @Test
@@ -701,6 +709,11 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         webLineGraph.sources = new WebSource[] {
                 new WebSource("Temperature", "#334455",
                         false, AVG, new DataStream((byte) 3, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10),
+                new WebSource("Temperature", "#334455",
+                        false, AVG, new DataStream((byte) 4, PinType.VIRTUAL),
                         null,
                         null,
                         null, SortOrder.ASC, 10)
