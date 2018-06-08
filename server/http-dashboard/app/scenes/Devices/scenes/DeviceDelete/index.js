@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import {DeviceDeleteComponent} from 'scenes/Devices/components';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {DeviceDelete as handleDeviceDelete} from 'data/Devices/api';
+import {DeviceDelete as handleDeviceDelete, DevicesFetch} from 'data/Devices/api';
 
 @connect((state) => ({
   organization: state.Organization
 }), (dispatch) => ({
+  fetchDevices: bindActionCreators(DevicesFetch, dispatch),
   handleDeviceDelete: bindActionCreators(handleDeviceDelete, dispatch),
 }))
 class DeviceDelete extends Component {
@@ -18,7 +19,9 @@ class DeviceDelete extends Component {
   static propTypes = {
     deviceId: React.PropTypes.number,
     organization: React.PropTypes.object,
+    fetchDevices: React.PropTypes.func,
     handleDeviceDelete: React.PropTypes.func,
+
   };
 
   constructor(props) {
@@ -28,8 +31,10 @@ class DeviceDelete extends Component {
   }
 
   handleDelete(deviceId, orgId) {
-    this.props.handleDeviceDelete(deviceId,orgId);
-    this.context.router.push('/devices');
+    this.props.handleDeviceDelete(deviceId,orgId).then(() =>{
+      this.props.fetchDevices({orgId: this.props.organization.id});
+      this.context.router.push('/devices');
+    });
   }
 
   render() {
