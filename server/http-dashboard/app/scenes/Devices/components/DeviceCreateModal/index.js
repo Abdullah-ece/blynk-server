@@ -30,12 +30,14 @@ class DeviceCreateModal extends React.Component {
 
     handleSubmit : PropTypes.func,
     onClose      : PropTypes.func,
+    change       : PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
     this.handleClose = this.handleClose.bind(this);
+    this.handleProductSelect = this.handleProductSelect.bind(this);
   }
 
   SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
@@ -43,6 +45,19 @@ class DeviceCreateModal extends React.Component {
   handleClose() {
     if(typeof this.props.onClose === 'function')
       this.props.onClose();
+  }
+
+  handleProductSelect(productId) {
+    if(productId !== this.SETUP_PRODUCT_KEY) {
+
+      const currentProduct = this.props.products.filter((product)=>{
+        return Number(product.id) === Number(productId);
+      })[0];
+
+      this.props.change('name', currentProduct.metaFields.filter((field)=>{
+       return field.name === "Device Name";
+      })[0].value);
+    }
   }
 
   render() {
@@ -113,15 +128,7 @@ class DeviceCreateModal extends React.Component {
         <div className="device-create-modal">
           <Row>
             <Col span={24}>
-              <Item label="Device Name" offset="large">
-                <Input name="name" placeholder="New Device" validate={[Validation.Rules.required]}/>
-              </Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Item label="Assign to Organization"
-                    offset={this.props.formValues && this.props.formValues.orgId ? 'large' : 'none'}>
+              <Item label="Organization" offset="large">
                 <MetadataSelect displayError={false} name="orgId" values={organizations}
                                 placeholder="Choose organization"
                                 validate={[Validation.Rules.required]}/>
@@ -131,9 +138,9 @@ class DeviceCreateModal extends React.Component {
           {this.props.formValues && this.props.formValues.orgId && (
             <Row>
               <Col span={24}>
-                <Item label="Product Template" offset={isAdvancedOptionShouldBeDisplayed ? 'large' : 'none'}>
+                <Item label="Product Template" offset="large">
                   { products.length && (
-                  <MetadataSelect displayError={false} name="productId" values={products} placeholder="Choose product"
+                   <MetadataSelect onSelect={this.handleProductSelect} displayError={false} name="productId" values={products} placeholder="Choose product"
                                   validate={[Validation.Rules.required]}/>
 
                   ) || (
@@ -143,6 +150,13 @@ class DeviceCreateModal extends React.Component {
               </Col>
             </Row>)
           }
+          <Row>
+            <Col span={24}>
+              <Item label="Device Name" offset={isAdvancedOptionShouldBeDisplayed ? 'large' : 'none'}>
+                <Input name="name" placeholder="New Device" validate={[Validation.Rules.required]}/>
+              </Item>
+            </Col>
+          </Row>
           {isAdvancedOptionShouldBeDisplayed && (
             <Row>
               <Col span={10}>

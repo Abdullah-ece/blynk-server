@@ -89,6 +89,7 @@ export default class SelectField extends React.Component {
       values,
       disabled = false,
       style,
+      onSelect,
       placeholder,
       input,
       meta: {
@@ -122,6 +123,7 @@ export default class SelectField extends React.Component {
           dropdownClassName={dropdownClassName}
           dropdownStyle={dropdownStyle}
           showSearch
+          onSelect={onSelect}
           style={{width: '100%'}}
           onChange={input.onChange}
           placeholder={placeholder}
