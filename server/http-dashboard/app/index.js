@@ -7,7 +7,11 @@ import Perf from 'react-addons-perf';
 import './utils';
 // import wdu from 'why-did-you-update';
 
-import './canvasjs';
+import CanvasJS from 'canvasjs';
+
+(() => {
+  window.CanvasJS = CanvasJS;
+})();
 
 (() => {
   if (process.env.NODE_ENV !== 'production') {

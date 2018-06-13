@@ -275,6 +275,7 @@ export const BAR_CHART_PARAMS = {
 
 export const WIDGETS_CHART_TYPES = {
   'LINE': 'LINE',
+  'AREA': 'AREA',
   'DOTS': 'DOTS',
 };
 
@@ -284,8 +285,8 @@ export const WIDGETS_CHART_TYPES_LIST = [
     value: 'Line'
   },
   {
-    key: WIDGETS_CHART_TYPES.DOTS,
-    value: 'Dots'
+    key: WIDGETS_CHART_TYPES.AREA,
+    value: 'Area'
   }
 ];
 
@@ -318,11 +319,11 @@ export const WIDGETS_CONFIGS = {
     minH: 2,
   },
   [WIDGET_TYPES.LINEAR]: {
-    minW: 3,
+    minW: 5,
     minH: 3
   },
   [WIDGET_TYPES.BAR]: {
-    minW: 3,
+    minW: 5,
     minH: 2,
     source: {
       'sourceType' : BAR_CHART_PARAMS.DATA_TYPE.defaultKey,
@@ -395,7 +396,7 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
   [WIDGET_TYPES.LINEAR]: {
     label: 'Source Label',
     sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
-    color: '007dc4',
+    color: 'e92126',
     graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
     connectMissingPointsEnabled: false,
     dataStream: {}
@@ -403,14 +404,14 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
   [WIDGET_TYPES.LABEL]: {
     label: 'Source Label',
     sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
-    color: '007dc4',
+    color: 'e92126',
     graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
     connectMissingPointsEnabled: false,
   },
   [WIDGET_TYPES.SLIDER]: {
     label: 'Source Label',
     sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
-    color: '007dc4'
+    color: 'e92126'
   }
 };
 
@@ -452,7 +453,7 @@ export const WIDGETS_PREDEFINED_OPTIONS = {
     label: 'Chart',
     x: 0,
     y: 0,
-    w: 3,
+    w: 5,
     h: 3,
     sources: [
       {

@@ -21,7 +21,7 @@ class LinearWidget extends React.Component {
       PropTypes.object,
     ]),
 
-    value: PropTypes.array,
+    values: PropTypes.array,
 
     parentElementProps: PropTypes.shape({
       id         : PropTypes.string,
@@ -54,8 +54,8 @@ class LinearWidget extends React.Component {
   }
 
   dataDefaultOptions = {
-    type: 'line',
-    markerType: 'none',
+    type: 'area',
+    fillOpacity: 0.1,
     lineThickness: 1,
   };
 
@@ -222,15 +222,15 @@ class LinearWidget extends React.Component {
 
   }
 
-  generateData(source) {
+  generateData(source, index) {
 
     if(!source.dataStream || isNaN(Number(source.dataStream.pin)))
       return null;
 
-    const dataPoints = this.props.value.map((item) => {
+    const dataPoints = this.props.values[index].value.map((item) => {
 
       return {
-        x: moment(Number(item.x)).toDate(),
+        x: moment(Number(Math.ceil(item.x/1000)*1000)).toDate(),
         y: item.y
       };
     });
@@ -247,7 +247,7 @@ class LinearWidget extends React.Component {
 
   renderRealDataChart() {
 
-    if (!this.props.data.sources || !this.props.data.sources.length || (!this.props.value && !this.props.loading) || (!this.props.value.length && !this.props.loading) || this.props.loading === undefined)
+    if (!this.props.data.sources || !this.props.data.sources.length || (!this.props.values && !this.props.loading) || (!this.props.values.length && !this.props.loading) || this.props.loading === undefined)
       return (<div className="bar-chart-widget-no-data">No Data</div>);
 
     if (this.props.loading)
@@ -259,13 +259,42 @@ class LinearWidget extends React.Component {
       this.getMinMaxXFromLegendsList(dataSources)
     );
 
-    dataSources = dataSources.map(dataSource => ({
-      ...dataSource,
-      markerSize: 5,
-      xValueFormatString: formats.hoverFormat,
-      yValueFormatString: '###,###,###,###'
+    dataSources = dataSources.map((dataSource) => {
 
-    }));
+      if(dataSource.dataPoints.length === 0)
+        return false;
+
+      return ({
+        ...dataSource,
+        markerSize: 0,
+        xValueFormatString: formats.hoverFormat,
+        yValueFormatString: '###,###,###,###'
+      });
+    }).filter((item) => {
+      return item !== false;
+    }).map((dataSource, index) => {
+      let secondary = {};
+
+      if(index % 2 !== 0)
+        secondary = {axisYType: 'secondary'};
+
+      return {
+        ...dataSource,
+        ...secondary,
+        axisYIndex: index % 2 === 0 ? Math.ceil(index / 2) : Math.floor(index / 2),
+      };
+    });
+
+    const axisY = [];
+    const axisY2 = [];
+
+    for(let i = 0; i < Math.ceil(dataSources.length / 2); i++) {
+      axisY.push(Chart.axisYDefaultOptions);
+    }
+
+    for(let i = 0; i < Math.floor(dataSources.length / 2); i++) {
+      axisY2.push(Chart.axisYDefaultOptions);
+    }
 
     const config = {
       axisX: {
@@ -274,6 +303,8 @@ class LinearWidget extends React.Component {
         labelAngle: 0,
         valueFormatString: formats.tickFormat,
       },
+      axisY: axisY,
+      axisY2: axisY2,
       toolTip: this.defaultToolTip,
       data: dataSources
     };

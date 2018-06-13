@@ -4,12 +4,28 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import './styles.less';
 
+const axisYDefaultOptions = {
+  gridColor: 'rgba(0,0,0,0)',
+  gridDashType: 'none',
+  labelFontFamily: 'PF DinDisplay Pro',
+  labelFontWeight: 300,
+  labelFontColor: 'rgba(33, 34, 39, 0.75)',
+  labelFontSize: 12,
+  includeZero: false,
+  tickLength: 2,
+  tickColor: '#fff',
+  // margin: 0,
+  lineColor: 'rgba(33, 34, 39, 0.25)',
+  lineThickness: 1,
+};
+
 class Chart extends React.Component {
 
   static propTypes = {
     config: PropTypes.shape({
       data: PropTypes.array,
-      axisY: PropTypes.object,
+      axisY: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+      axisY2: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
       axisX: PropTypes.object,
       legend: PropTypes.object,
     }),
@@ -86,21 +102,6 @@ class Chart extends React.Component {
     markerMargin: 8,
   };
 
-  axisYDefaultOptions = {
-    gridColor: 'rgba(0,0,0,0)',
-    gridDashType: 'none',
-    labelFontFamily: 'PF DinDisplay Pro',
-    labelFontWeight: 300,
-    labelFontColor: 'rgba(33, 34, 39, 0.75)',
-    labelFontSize: 12,
-    includeZero: false,
-    tickLength: 2,
-    tickColor: '#fff',
-    margin: 0,
-    lineColor: 'rgba(33, 34, 39, 0.25)',
-    lineThickness: 1,
-  };
-
   axisXDefaultOptions = {
     gridColor: 'rgba(33, 34, 39, 0.05)',
     gridThickness: 1,
@@ -116,14 +117,9 @@ class Chart extends React.Component {
 
   chartDefaultOptions = {
     animationEnabled: false,
-    axisY:{
-      includeZero: false,
-      ...this.axisYDefaultOptions
-    },
     axisX: {
       ...this.axisXDefaultOptions,
     },
-    data: [],
     legend: {
       ...this.legendDefaultOptions,
     }
@@ -138,5 +134,7 @@ class Chart extends React.Component {
   }
 
 }
+
+Chart.axisYDefaultOptions = axisYDefaultOptions;
 
 export default Chart;

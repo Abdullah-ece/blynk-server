@@ -297,9 +297,9 @@ export default function Devices(state = initialState, action) {
 
       const availableTimeFilters = [
         TIMELINE_TIME_FILTERS.ONE_HOUR.key,
-        TIMELINE_TIME_FILTERS.DAY.key,
-        TIMELINE_TIME_FILTERS.WEEK.key,
-        TIMELINE_TIME_FILTERS.MONTH.key,
+        TIMELINE_TIME_FILTERS.N_DAY.key,
+        TIMELINE_TIME_FILTERS.N_WEEK.key,
+        TIMELINE_TIME_FILTERS.N_MONTH.key,
       ];
 
       if (!state.timelineControls || !state.timelineControls.time || !state.timelineControls.type) {
@@ -399,50 +399,62 @@ export default function Devices(state = initialState, action) {
 
       let isLive = action.value.graphPeriod === 'LIVE'; // @todo use LIVE from service as CONSTANT
 
-      let pin = -1;
+      let pins = [];
 
-      try {
-        let widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
+      let widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
 
-        pin = widget.sources[0].dataStream.pin;
+      pins = widget.sources.reduce((pins, source) => {
+        let pin = Number(source && source.dataStream && source.dataStream.pin);
 
-      } catch (e) {
-        /* eslint-disable */
-        console.error("Cannot take pin from widget", e);
-        /* eslint-enable */
-      }
+        pins.push({
+          pin   : isNaN(pin) ? -1 : pin
+        });
 
-      if (pin === -1) {
-        // return state if pin not found
-        return state;
-      }
+        return pins;
 
-      if (isLive) {
-        let deviceDashboardChartLiveData = {};
+      }, pins);
 
-        deviceDashboardChartLiveData[pin] = {
-          loading: true,
-          data   : []
-        };
+      return pins.reduce((state, data) => {
 
-        return {
-          ...state,
-          deviceDashboardChartLiveData: deviceDashboardChartLiveData
-        };
-      } else {
-        let deviceDashboardChartData = {};
+        let pin = data.pin;
 
-        deviceDashboardChartData[action.value.widgetId] = {
-          pin    : pin,
-          loading: true,
-          data   : []
-        };
+        if (pin === -1) {
+          // return state if pin not found
+          return state;
+        }
 
-        return {
-          ...state,
-          deviceDashboardChartData: deviceDashboardChartData
-        };
-      }
+        if (isLive) {
+
+          return {
+            ...state,
+            deviceDashboardChartLiveData: {
+              ...state.deviceDashboardChartLiveData,
+              [pin]: {
+                loading: true,
+                data   : []
+              }
+            }
+          };
+
+        } else {
+
+          return {
+            ...state,
+            deviceDashboardChartData: {
+              ...state.deviceDashboardChartData,
+              [action.value.widgetId]: {
+                ...(state.deviceDashboardChartData[action.value.widgetId] || {}),
+                [pin]: {
+                  loading: true,
+                  data   : []
+                }
+              }
+            }
+          };
+        }
+
+
+      }, state);
 
     case ACTIONS.BLYNK_WS_CHART_DATA_RESPONSE:
 
@@ -452,54 +464,64 @@ export default function Devices(state = initialState, action) {
 
       isLive = action.value.graphPeriod === 'LIVE';
 
-      pin = -1;
+      pins = [];
 
-      try {
-        let widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
+      widget = _.find(state.deviceDashboard.widgets, (widget) => Number(widget.id) === Number(action.value.widgetId));
 
-        pin = widget.sources[0].dataStream.pin;
+      pins = widget.sources.reduce((pins, source, index) => {
+        let pin = source && source.dataStream && source.dataStream.pin;
 
-      } catch (e) {
-        /* eslint-disable */
-        console.error("Cannot take pin from widget", e);
-        /* eslint-enable */
-      }
+        pins.push({
+          pin   : pin,
+          points: action.value.points[index] || []
+        });
 
-      if (pin === -1) {
-        // return state if pin not specified
-        return state;
-      }
+        return pins;
 
-      if (isLive) {
+      }, pins);
 
-        let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
+      return pins.reduce((state, data) => {
 
-        deviceDashboardChartLiveData[pin] = {
-          loading: false,
-          data   : action.value.points
-        };
+        let pin = data.pin;
+        let points = data.points;
 
-        return {
-          ...state,
-          deviceDashboardChartLiveData: deviceDashboardChartLiveData
-        };
+        if (pin === -1) {
+          // return state if pin not specified
+          return state;
+        }
 
-      } else {
+        if (isLive) {
 
-        let deviceDashboardChartData = {...state.deviceDashboardChartData};
+          let deviceDashboardChartLiveData = {...state.deviceDashboardChartLiveData};
 
-        deviceDashboardChartData[action.value.widgetId] = {
-          pin    : pin,
-          loading: false,
-          data   : action.value.points
-        };
+          deviceDashboardChartLiveData[pin] = {
+            loading: false,
+            data   : points
+          };
 
-        return {
-          ...state,
-          deviceDashboardChartData: deviceDashboardChartData
-        };
+          return {
+            ...state,
+            deviceDashboardChartLiveData: deviceDashboardChartLiveData
+          };
 
-      }
+        } else {
+
+          let deviceDashboardChartData = {...state.deviceDashboardChartData};
+
+          deviceDashboardChartData[action.value.widgetId][pin] = {
+            pin    : pin,
+            loading: false,
+            data   : points
+          };
+
+          return {
+            ...state,
+            deviceDashboardChartData: deviceDashboardChartData
+          };
+
+        }
+
+      }, state);
 
     case "API_DEVICE_DASHBOARD_FETCH_SUCCESS":
 

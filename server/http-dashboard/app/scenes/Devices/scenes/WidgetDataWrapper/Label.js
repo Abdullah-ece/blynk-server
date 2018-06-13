@@ -4,13 +4,13 @@ import {connect} from 'react-redux';
 
 @connect((state, ownProps) => {
 
-  if(ownProps.fetchData === false)
+  if(ownProps.fetchData === false || !ownProps.pins.length || isNaN(Number(ownProps.pins[0])))
     return {
       value  : null,
       loading: false
     };
 
-  const pin = state.Devices.deviceDashboardLiveData[ownProps.pin];
+  const pin = state.Devices.deviceDashboardLiveData[ownProps.pins[0]];
 
   // if (ownProps.isLive)
     return {

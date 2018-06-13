@@ -74,10 +74,20 @@ class WidgetStatic extends React.Component {
       style      : this.props.style,
     };
 
-    let pin = null;
+    let pins = [];
 
-    if(widget && widget.sources && widget.sources[0] && widget.sources[0].dataStream && !isNaN(Number(widget.sources[0].dataStream.pin))) {
-      pin = widget.sources[0].dataStream.pin;
+    if(widget && Array.isArray(widget.sources)) {
+      pins = widget.sources.map((source) => {
+
+        let pin = -1;
+
+        if(source && source.dataStream && typeof source.dataStream.pin !== undefined) {
+          pin = source.dataStream.pin;
+        }
+
+        return pin;
+
+      }).filter((pin) => pin >= 0);
     }
 
     const dataWrapperAttributes = {
@@ -85,7 +95,7 @@ class WidgetStatic extends React.Component {
       isLive   : this.props.isLive,
       deviceId : this.props.deviceId,
       widgetId : widget.id,
-      pin      : pin,
+      pins     : pins,
       fetchData: this.props.fetchData
     };
 

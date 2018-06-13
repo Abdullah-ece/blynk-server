@@ -432,7 +432,13 @@ export const TIMELINE_TIME_FILTERS = {
     'time': 6 * 60 * 60 * 1000,
     'get': () => moment().subtract(6, 'hour').valueOf()
   },
-  'DAY': {
+  'N_DAY': {
+    'key'  : 'N_DAY',
+    'value': '1 day',
+    'time' : 24 * 60 * 60 * 1000,
+    'get'  : () => moment().subtract(1, 'day').valueOf()
+  },
+  'DAY'  : {
     'key': 'DAY',
     'value': '1 day',
     'time': 24 * 60 * 60 * 1000,
@@ -444,14 +450,32 @@ export const TIMELINE_TIME_FILTERS = {
     'time': 7 * 24 * 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'week').valueOf()
   },
+  'N_WEEK': {
+    'key': 'N_WEEK',
+    'value': '1 week',
+    'time': 7 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'week').valueOf()
+  },
   'MONTH': {
     'key': 'MONTH',
     'value': '1 month',
     'time': 30 * 24 * 60 * 60 * 1000,
     'get': () => moment().subtract(1, 'month').valueOf()
   },
+  'N_MONTH': {
+    'key': 'N_MONTH',
+    'value': '1 month',
+    'time': 30 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(1, 'month').valueOf()
+  },
   '3MONTHS': {
     'key': '3MONTHS',
+    'value': '3 months',
+    'time': 3 * 30 * 24 * 60 * 60 * 1000,
+    'get': () => moment().subtract(3, 'month').valueOf()
+  },
+  'N_THREE_MONTHS': {
+    'key': 'N_THREE_MONTHS',
     'value': '3 months',
     'time': 3 * 30 * 24 * 60 * 60 * 1000,
     'get': () => moment().subtract(3, 'month').valueOf()

@@ -2,10 +2,9 @@ import React from 'react';
 import {Index, NoDevices} from './../../components';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {DEVICES_SORT} from 'services/Devices';
+import {DEVICES_SORT,TABS} from 'services/Devices';
 import PropTypes from 'prop-types';
 import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
-import {TABS} from 'services/Devices';
 
 @connect((state) => ({
   productsCount: state.Product.products && state.Product.products.length,

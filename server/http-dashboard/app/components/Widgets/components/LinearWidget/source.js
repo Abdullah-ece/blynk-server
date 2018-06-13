@@ -2,13 +2,14 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import ColorPicker from 'components/ColorPicker';
 import {Item, ItemsGroup} from "components/UI";
-import {Button, Radio, Icon, Row, Col, Select as AntdSelect} from 'antd';
+import {Button, Radio, Input, Icon, Row, Col, Select as AntdSelect, Switch} from 'antd';
 import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
 import {Map, List} from 'immutable';
+import _ from 'lodash';
 import {
   WIDGETS_SOURCE_TYPES_LIST,
   WIDGETS_CHART_TYPES_LIST,
@@ -31,6 +32,8 @@ class Source extends React.Component {
     source: PropTypes.instanceOf(Map),
     dataStreams: PropTypes.instanceOf(List),
 
+    isAbleToDelete: PropTypes.bool,
+
     onCopy: PropTypes.func,
     onDelete: PropTypes.func,
     changeForm: PropTypes.func,
@@ -42,15 +45,27 @@ class Source extends React.Component {
     this.handleCopy = this.handleCopy.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.labelComponent = this.labelComponent.bind(this);
+    this.colorPickerComponent = this.colorPickerComponent.bind(this);
     this.dataStreamSelectComponent = this.dataStreamSelectComponent.bind(this);
   }
+
+  colorPalette = [
+    '#000',
+    '#fff',
+    '#58595d',
+    '#24c48e',
+    '#04c0f8',
+    '#d3435c',
+    '#ea7d26',
+    '#e92126',
+  ];
 
   getIconForChartByType(type) {
     if (type === WIDGETS_CHART_TYPES.LINE)
       return 'line-chart';
 
-    if (type === WIDGETS_CHART_TYPES.DOTS)
-      return 'dot-chart';
+    if (type === WIDGETS_CHART_TYPES.AREA)
+      return 'area-chart';
 
     // dot-chart bar-chart
 
@@ -80,7 +95,7 @@ class Source extends React.Component {
 
   colorPickerComponent({input}) {
     return (
-      <ColorPicker title="primary color" color={input.value}
+      <ColorPicker colors={this.colorPalette} title="primary color" color={input.value} style={{marginTop: '-1px'}}
                    onChange={input.onChange}/>
     );
   }
@@ -196,14 +211,12 @@ class Source extends React.Component {
 
     // #849
 
-    // const getLabelForChartTypeItem = () => {
-    //
-    //   const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
-    //
-    //   if (!name) return `Please, select chart type`;
-    //
-    //   return `Chart Type: ${name.value}`;
-    // };
+    const getLabelForChartTypeItem = () => {
+
+      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
+
+      return `Chart Type: ${name && name.value || 'None'}`;
+    };
 
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
@@ -211,9 +224,11 @@ class Source extends React.Component {
           <Field name={`sources.${this.props.index}.label`} component={this.labelComponent}/>
 
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
-            <Button size="small" icon="delete" onClick={this.handleDelete}/>
+            { this.props.isAbleToDelete && (
+              <Button size="small" icon="delete" onClick={this.handleDelete}/>
+            )}
             {/*<Button size="small" icon="copy" onClick={this.handleCopy}/>*/} { /* uncomment when start to support multiple sources*/}
-            <Button size="small" icon="bars" disabled={true}/>
+            {/*<Button size="small" icon="bars" disabled={true}/>*/}
           </div>
         </div>
         <div className="modal-window-widget-settings-config-column-sources-source-type-select">
@@ -246,14 +261,12 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
           <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
             <Row>
-              {/*#849 Temporary hide this element*/}
-
-              {/*<Col span={6}>*/}
-                {/*<Item label={getLabelForChartTypeItem()} offset="medium">*/}
-                  {/*<Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}*/}
-                         {/*getIconForChartByType={this.getIconForChartByType}/>*/}
-                {/*</Item>*/}
-              {/*</Col>*/}
+              <Col span={8}>
+                <Item label={getLabelForChartTypeItem()} offset="medium">
+                  <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}
+                         getIconForChartByType={this.getIconForChartByType}/>
+                </Item>
+              </Col>
               <Col span={12}>
                 <Item label="Color" offset="medium">
                   <Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}
@@ -264,6 +277,27 @@ class Source extends React.Component {
             </Row>
           </div>
         </div>
+
+        <Item label="Display separate Y axis" offset="medium">
+          <Switch/> Enabled
+        </Item>
+
+        <Item label="Autoscale" offset="small">
+          <Switch/> Enabled
+        </Item>
+
+        <Row>
+          <Col span={6}>
+            <Item label="Min">
+              <Input placeholder={0}/>
+            </Item>
+          </Col>
+          <Col span={6} offset={2}>
+            <Item label="Max">
+              <Input placeholder={100}/>
+            </Item>
+          </Col>
+        </Row>
 
       </div>
     );

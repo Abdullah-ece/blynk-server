@@ -11,33 +11,61 @@ import {connect} from 'react-redux';
     };
 
   if (ownProps.isLive) {
-    const pin = state.Devices.deviceDashboardChartLiveData[ownProps.pin];
 
-    if (!pin)
-      return {
-        value  : [],
-        loading: true
-      };
+    let values = [];
+
+    const pinsData = ownProps.pins.map((pin) => {
+      return state.Devices.deviceDashboardChartLiveData[pin];
+    });
+
+    pinsData.forEach((pinValue) => {
+      if(!pinValue) {
+        values.push({
+          value: [],
+          loading: true,
+        });
+      } else {
+        values.push({
+          value: pinValue.data,
+          loading: pinValue.loading
+        });
+      }
+
+    });
 
     return {
-      value  : pin.data,
-      loading: pin.loading
+      values : values,
+      loading: values.some((value) => value.loading)
     };
   }
 
 
   if (!ownProps.isLive) {
-    const widget = state.Devices.deviceDashboardChartData[ownProps.widgetId];
 
-    if(!widget)
-      return {
-        value  : [],
-        loading: true
-      };
+    let values = [];
+
+    const pinsData = ownProps.pins.map((pin) => {
+      return state.Devices.deviceDashboardChartData[ownProps.widgetId] && state.Devices.deviceDashboardChartData[ownProps.widgetId][pin] || '';
+    });
+
+    pinsData.forEach((pinValue) => {
+      if(!pinValue) {
+        values.push({
+          value: [],
+          loading: true,
+        });
+      } else {
+        values.push({
+          value: pinValue.data,
+          loading: pinValue.loading
+        });
+      }
+
+    });
 
     return {
-      value: widget.data,
-      loading: widget.loading
+      values: values,
+      loading: values.some((value) => value.loading)
     };
   }
 
@@ -47,17 +75,17 @@ class LineChartWidgetDataWrapper extends React.Component {
   static propTypes = {
     children: PropTypes.element,
 
-    value: PropTypes.array,
+    values: PropTypes.array,
 
     loading: PropTypes.bool,
   };
 
   render() {
 
-    const {value, loading} = this.props;
+    const {values, loading} = this.props;
 
     return (
-      React.cloneElement(this.props.children, {value: value, loading: loading})
+      React.cloneElement(this.props.children, {values: values, loading: loading})
     );
   }
 

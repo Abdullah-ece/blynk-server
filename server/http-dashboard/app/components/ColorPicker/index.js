@@ -9,6 +9,7 @@ import './styles.less';
 class BrandingColorPicker extends React.Component {
 
   static propTypes = {
+    style: PropTypes.object,
     title: PropTypes.string,
     color: PropTypes.any,
     onChange: PropTypes.func,
@@ -44,8 +45,14 @@ class BrandingColorPicker extends React.Component {
   }
 
   render() {
+
+    let {style} = this.props;
+
+    if(!style)
+      style = {};
+
     return (
-      <div className="branding-color-picker">
+      <div className="branding-color-picker" style={style}>
         { this.state.displayColorPicker &&
         <div className="branding-color-picker-color-preview-overlay" onClick={this.hideColorPicker}/> }
         <div className="color-picker">

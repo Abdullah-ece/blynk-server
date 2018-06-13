@@ -4,9 +4,11 @@ import {
 } from 'components';
 import Source from './source';
 import {
+  WIDGET_TYPES,
   WIDGETS_PREDEFINED_SOURCE_OPTIONS
 } from 'services/Widgets';
 import _ from 'lodash';
+import {Button} from 'antd';
 import {Preview} from './components';
 import {reduxForm, Field, getFormValues, change, reset, destroy, initialize} from 'redux-form';
 import {connect} from 'react-redux';
@@ -119,10 +121,10 @@ class LinearWidgetSettings extends React.Component {
 
     const id = _.random(1, 999999999);
 
-    const sources = this.props.formValues.get('sources').push(fromJS({
-      ...WIDGETS_PREDEFINED_SOURCE_OPTIONS,
-      id: id
-    }));
+    const sources = this.props.formValues.get('sources').push({
+      ...WIDGETS_PREDEFINED_SOURCE_OPTIONS[WIDGET_TYPES.LINEAR],
+      id: id,
+    });
 
     this.props.changeForm(this.props.form, 'sources', sources.toJS());
   }
@@ -168,7 +170,7 @@ class LinearWidgetSettings extends React.Component {
               <Field name="label" component={this.labelNameComponent}/>
 
               <div className="modal-window-widget-settings-config-add-source">
-                {/*<Button type="dashed" onClick={this.handleAddSource}>Add source</Button>*/}
+                <Button type="dashed" onClick={this.handleAddSource}>Add source</Button>
               </div>
 
             </div>
@@ -180,6 +182,7 @@ class LinearWidgetSettings extends React.Component {
                         index={key}
                         source={source} key={key}
                         onChange={this.handleSourceChange}
+                        isAbleToDelete={this.props.formValues.get('sources').size > 1}
                         onDelete={this.handleSourceDelete}
                         onCopy={this.handleSourceCopy}
                 />

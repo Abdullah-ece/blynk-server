@@ -10,6 +10,7 @@ export default class SelectField extends React.Component {
     dropdownStyle: React.PropTypes.any,
     displayError: React.PropTypes.any,
     values: React.PropTypes.any,
+    onSelect: React.PropTypes.any,
     defaultValue: React.PropTypes.any,
     disabled: React.PropTypes.any,
     style: React.PropTypes.any,

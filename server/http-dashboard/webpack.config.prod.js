@@ -29,9 +29,6 @@ export default {
     publicPath: '/static/',
     filename: '[name].[chunkhash].js'
   },
-  externals: {
-    'canvasjs': 'CanvasJS',
-  },
   recordsPath: path.join(__dirname, 'records.json'),
   plugins: [
     // Hash the files using MD5 so that their names change when the content changes.

@@ -276,7 +276,7 @@ export const Handlers = (params) => {
 
     const DEVICE_ID_OFFSET = 3;
     const POINTS_COUNT_OFFSET = DEVICE_ID_OFFSET + 4;
-    const POINTS_DATA_OFFSET = POINTS_COUNT_OFFSET + 4;
+    // const POINTS_DATA_OFFSET = POINTS_COUNT_OFFSET + 4;
 
     const POINT_DATA_VALUE_BYTES = 8;
     const POINT_DATA_TIMESTAMP_BYTES = 8;
@@ -292,35 +292,56 @@ export const Handlers = (params) => {
     let deviceId = dataView.getUint32(DEVICE_ID_OFFSET);
     let widgetId = previousAction.value.widgetId;
     let graphPeriod = previousAction.value.graphPeriod;
-    let pointsCount = dataView.getUint32(POINTS_COUNT_OFFSET); // deviceId = 4 bytes // pointsCount = 60 dots
 
-    let pointData = new DataView(dataView.buffer, POINTS_DATA_OFFSET);
+    let maxLength = dataView.byteLength - POINTS_COUNT_OFFSET;
 
     const points = [];
 
-    for(let i = 0; i < pointsCount; i++) {
-      let point = pointData.getFloat64(POINT_DATA_VALUE_OFFSET(i));
-      let timestamp = getTimestampLong(pointData, i);
+    let chartData = new DataView(dataView.buffer, POINTS_COUNT_OFFSET);
 
-      points.push({
-        x: Number(timestamp),
-        y: Number(point),
-        date: new Date(timestamp).toString()
-      });
+    let bytes = 0;
+
+    let streamIndex = 0;
+
+    while(bytes < maxLength) {
+
+      let pointsCount = chartData.getUint32(bytes); // deviceId = 4 bytes // pointsCount = 60 dots
+
+      points.push([]);
+
+      bytes += 4;
+
+      let pointData = new DataView(chartData.buffer, bytes + chartData.byteOffset);
+
+      for(let i = 0; i < pointsCount; i++) {
+        let point = pointData.getFloat64(POINT_DATA_VALUE_OFFSET(i));
+        let timestamp = getTimestampLong(pointData, i);
+
+        bytes += 16;
+
+        points[streamIndex].push({
+          x: Number(timestamp),
+          y: Number(point),
+          date: new Date(timestamp).toString()
+        });
+      }
+
+      streamIndex++;
+
     }
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage ChartData", action, {
         command     : command,
         msgId       : msgId,
-        bodyArray: `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+        bodyArray: `${deviceId} ${points} ${JSON.stringify(points)}`
       });
 
     store.dispatch(blynkWsResponse({
       id      : msgId,
       response: {
         command: command,
-        body   : `${deviceId} ${pointsCount} ${JSON.stringify(points)}`
+        body   : `${deviceId} ${points} ${JSON.stringify(points)}`
       }
     }));
 
