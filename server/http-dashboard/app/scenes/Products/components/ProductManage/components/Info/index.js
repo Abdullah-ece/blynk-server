@@ -70,8 +70,8 @@ class Info extends React.Component {
             </FormItem.TitleGroup>
             <FormItem.Content>
               <Input.Group compact>
-                <Select name="boardType" values={this.hardware}/>
-                <Select name="connectionType" values={this.connectionTypes}/>
+                <Select style={{width: '50%'}} name="boardType" values={this.hardware}/>
+                <Select style={{width: '50%'}} name="connectionType" values={this.connectionTypes}/>
               </Input.Group>
             </FormItem.Content>
           </FormItem>
