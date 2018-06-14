@@ -279,6 +279,11 @@ export const WIDGETS_CHART_TYPES = {
   'DOTS': 'DOTS',
 };
 
+export const CANVASJS_CHART_TYPES = {
+  [WIDGETS_CHART_TYPES.LINE]: 'line',
+  [WIDGETS_CHART_TYPES.AREA]: 'area',
+};
+
 export const WIDGETS_CHART_TYPES_LIST = [
   {
     key: WIDGETS_CHART_TYPES.LINE,

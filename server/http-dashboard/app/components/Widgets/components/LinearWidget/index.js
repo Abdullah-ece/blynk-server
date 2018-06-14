@@ -9,6 +9,7 @@ import {Map} from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
 import {Unit} from 'services/Products';
+import {CANVASJS_CHART_TYPES} from 'services/Widgets';
 
 import Dotdotdot from 'react-dotdotdot';
 
@@ -237,8 +238,12 @@ class LinearWidget extends React.Component {
 
     let dataSource = {
       ...this.dataDefaultOptions,
+      ...(source.graphType && CANVASJS_CHART_TYPES[source.graphType] ? {type: CANVASJS_CHART_TYPES[source.graphType]} : {type: 'line'}),
       color: `#${source.color}` || null,
       name: source.label || null,
+      yAxisMin: source.min,
+      yAxisMax: source.max,
+      yAxisAutoscale: source.autoscale !== false,
       dataPoints: dataPoints || [],
     };
 
@@ -259,6 +264,9 @@ class LinearWidget extends React.Component {
       this.getMinMaxXFromLegendsList(dataSources)
     );
 
+    const axisY = [];
+    const axisY2 = [];
+
     dataSources = dataSources.map((dataSource) => {
 
       if(dataSource.dataPoints.length === 0)
@@ -275,8 +283,21 @@ class LinearWidget extends React.Component {
     }).map((dataSource, index) => {
       let secondary = {};
 
-      if(index % 2 !== 0)
+      let yAxis = {
+        ...Chart.axisYDefaultOptions,
+      };
+
+      if(!dataSource.yAxisAutoscale) {
+        yAxis.minimum = dataSource.yAxisMin;
+        yAxis.maximum = dataSource.yAxisMax;
+      }
+
+      if(index % 2 !== 0) {
         secondary = {axisYType: 'secondary'};
+        axisY2.push(yAxis);
+      } else {
+        axisY.push(yAxis);
+      }
 
       return {
         ...dataSource,
@@ -284,17 +305,6 @@ class LinearWidget extends React.Component {
         axisYIndex: index % 2 === 0 ? Math.ceil(index / 2) : Math.floor(index / 2),
       };
     });
-
-    const axisY = [];
-    const axisY2 = [];
-
-    for(let i = 0; i < Math.ceil(dataSources.length / 2); i++) {
-      axisY.push(Chart.axisYDefaultOptions);
-    }
-
-    for(let i = 0; i < Math.floor(dataSources.length / 2); i++) {
-      axisY2.push(Chart.axisYDefaultOptions);
-    }
 
     const config = {
       axisX: {
