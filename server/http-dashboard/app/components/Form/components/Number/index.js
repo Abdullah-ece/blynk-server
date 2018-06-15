@@ -1,18 +1,20 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
 import {Form, InputNumber, Icon} from 'antd';
+import PropTypes from 'prop-types';
 
 import {Field as FormField} from 'redux-form';
 
 export default class Number extends React.Component {
 
   static propTypes = {
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    style: PropTypes.object,
   };
 
-  titledField({title, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  titledField({style, title, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
     return (
-      <Form.Item validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
+      <Form.Item style={style || {}} validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
                  className="form-field"
                  help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
         <FormItem>
@@ -28,9 +30,9 @@ export default class Number extends React.Component {
     );
   }
 
-  simpleField({displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  simpleField({style, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
     return (
-      <Form.Item validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
+      <Form.Item style={style || {}} validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
                  className="form-field"
                  help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
         <InputNumber {...input} rows={rows} type={type} placeholder={placeholder}

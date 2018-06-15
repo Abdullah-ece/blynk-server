@@ -29,11 +29,11 @@ class TimeField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+            <MetadataFormField style={{width: '50%'}} className={`metadata-name-field-${this.props.field.get('id')}`}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormTime name={`metaFields.${this.props.metaFieldKey}.time`} type="text" timeFormat="HH:mm" placeholder="Choose Time"
+            <MetadataFormTime style={{width: '50%'}} name={`metaFields.${this.props.metaFieldKey}.time`} type="text" timeFormat="HH:mm" placeholder="Choose Time"
                               timestampPicker={true}/>
           </Input.Group>
         </FormItem.Content>

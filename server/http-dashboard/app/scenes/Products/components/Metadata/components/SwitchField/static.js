@@ -31,19 +31,19 @@ class SwitchField extends BaseField.Static {
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>String</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Option A</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Option B</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>String</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>Option A</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>Option B</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content input>
           <Input.Group compact>
-            <FieldStub style={{width: '50%'}}>
+            <FieldStub style={{width: '33.3%'}}>
               {this.props.name}
             </FieldStub>
-            <FieldStub style={{width: '50%'}}>
+            <FieldStub style={{width: '33.3%'}}>
               {this.props.from}
             </FieldStub>
-            <FieldStub style={{width: '50%'}}>
+            <FieldStub style={{width: '33.3%'}}>
               {this.props.to}
             </FieldStub>
           </Input.Group>

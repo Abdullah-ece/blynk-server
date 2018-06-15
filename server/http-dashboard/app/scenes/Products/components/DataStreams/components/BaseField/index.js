@@ -155,22 +155,22 @@ class BaseField extends React.Component {
           <Input.Group compact>
             <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur} validateOnBlur={true}
                                name={`${this.props.name}.label`} type="text" placeholder="Field Name"
-                               style={{width: '200%'}} className={`datastream-name-field-${this.props.field.get('id')}`}
+                               style={{width: '40%'}} className={`datastream-name-field-${this.props.field.get('id')}`}
                                validate={[
               Validation.Rules.metafieldName,
               Validation.Rules.required
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormSelect style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`${this.props.name}.units`} type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}
                                 validate={[Validation.Rules.required]}/>
 
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`${this.props.name}.min`} type="text" placeholder="Min" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`${this.props.name}.max`} type="text" placeholder="Max" validate={[
               Validation.Rules.number
             ]}/>

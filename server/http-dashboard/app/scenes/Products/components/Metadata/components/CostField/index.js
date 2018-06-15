@@ -115,32 +115,32 @@ class CostField extends BaseField {
     return (
       <FormItem offset={false}>
         <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>Cost of</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>CCY</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Price</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Per</FormItem.Title>
-          <FormItem.Title style={{width: '25%'}}>Unit</FormItem.Title>
+          <FormItem.Title style={{width: '33.3%'}}>Cost of</FormItem.Title>
+          <FormItem.Title style={{width: '16.6%'}}>CCY</FormItem.Title>
+          <FormItem.Title style={{width: '16.6%'}}>Price</FormItem.Title>
+          <FormItem.Title style={{width: '16.6%'}}>Per</FormItem.Title>
+          <FormItem.Title style={{width: '16.6%'}}>Unit</FormItem.Title>
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
             <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
                                onFocus={this.onFocus} onBlur={this.onBlur}
-                               style={{width: '200%'}} validate={[
+                               style={{width: '33.3%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormSelect style={{width: '16.6%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`metaFields.${this.props.metaFieldKey}.currency`} type="text" placeholder="Choose" values={this.Currency}/>
 
-            <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormNumber style={{width: '16.6%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`metaFields.${this.props.metaFieldKey}.price`} type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormNumber onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormNumber style={{width: '16.6%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`metaFields.${this.props.metaFieldKey}.perValue`} type="text" placeholder="--" validate={[
               Validation.Rules.number
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormSelect style={{width: '16.6%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`metaFields.${this.props.metaFieldKey}.units`} type="text" placeholder="--"
                                 dropdownClassName="product-metadata-item-unit-dropdown"
                                 values={this.Unit}/>

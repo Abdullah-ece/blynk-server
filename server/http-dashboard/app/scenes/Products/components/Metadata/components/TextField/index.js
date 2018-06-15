@@ -36,12 +36,12 @@ class TextField extends BaseField {
         </FormItem.TitleGroup>
         <FormItem.Content>
           <Input.Group compact>
-            <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
+            <MetadataFormField style={{width: '50%'}} className={`metadata-name-field-${this.props.field.get('id')}`}
                                onFocus={this.onFocus} onBlur={this.onBlur}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '50%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.value`} type="text" placeholder="Default value(optional)"/>
           </Input.Group>
         </FormItem.Content>

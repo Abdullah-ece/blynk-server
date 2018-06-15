@@ -101,13 +101,13 @@ class UnitField extends BaseField {
             <MetadataFormField className={`metadata-name-field-${this.props.field.get('id')}`}
                                onFocus={this.onFocus} onBlur={this.onBlur}
                                validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name"
-                               style={{width: '200%'}} validate={[
+                               style={{width: '50%'}} validate={[
               Validation.Rules.required, Validation.Rules.metafieldName,
             ]}/>
-            <MetadataFormSelect onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormSelect style={{width: '25%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                 name={`metaFields.${this.props.metaFieldKey}.units`} type="text" placeholder="Choose"
                                 dropdownClassName="product-metadata-item-unit-dropdown" values={this.Unit}/>
-            <MetadataFormField onFocus={this.onFocus} onBlur={this.onBlur}
+            <MetadataFormField style={{width: '25%'}} onFocus={this.onFocus} onBlur={this.onBlur}
                                name={`metaFields.${this.props.metaFieldKey}.value`} type="text" placeholder="Default val..." validate={[
               Validation.Rules.number
             ]}/>
