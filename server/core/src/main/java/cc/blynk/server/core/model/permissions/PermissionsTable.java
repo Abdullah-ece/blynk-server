@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.permissions;
 
-public class PermissionsTable {
+public final class PermissionsTable {
 
     public static final int PRODUCT_VIEW =   0b1;
     public static final int PRODUCT_EDIT =   0b10;
@@ -22,12 +22,11 @@ public class PermissionsTable {
     public static final int ORG_EDIT =       0b10_000_000_000_000;
     public static final int ORG_DELETE =     0b100_000_000_000_000;
 
-    public static boolean canDeleteDevice(int permissions) {
-        return (permissions & DEVICES_DELETE) == DEVICES_DELETE;
+    private PermissionsTable() {
     }
 
-    public static void main(String[] args) {
-        System.out.print(PRODUCT_VIEW ^ PRODUCT_EDIT ^ PRODUCT_DELETE);
+    public static boolean canDeleteDevice(int permissions) {
+        return (permissions & DEVICES_DELETE) == DEVICES_DELETE;
     }
 
 }

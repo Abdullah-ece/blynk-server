@@ -182,7 +182,7 @@ public final class ServerLauncher {
                             false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
                             null,
                             null,
-                            null, SortOrder.ASC, 10)
+                            null, SortOrder.ASC, 10, false, null, false)
             };
 
             product.webDashboard = new WebDashboard(new Widget[] {
