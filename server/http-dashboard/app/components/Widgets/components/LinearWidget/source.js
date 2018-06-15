@@ -32,9 +32,12 @@ class Source extends React.Component {
     source: PropTypes.instanceOf(Map),
     dataStreams: PropTypes.instanceOf(List),
 
+    dataStream: PropTypes.instanceOf(Map),
+
     isAbleToDelete: PropTypes.bool,
 
     onCopy: PropTypes.func,
+    onChange: PropTypes.func,
     onDelete: PropTypes.func,
     changeForm: PropTypes.func,
   };
@@ -49,6 +52,25 @@ class Source extends React.Component {
     this.dataStreamSelectComponent = this.dataStreamSelectComponent.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+
+    if( (!prevProps.dataStream && this.props.dataStream) || (prevProps.dataStream.get('id') !== this.props.dataStream.get('id')) ) {
+
+      const source = this.props.source
+        .set('min', this.props.dataStream.get('min'))
+        .set('max', this.props.dataStream.get('max'))
+        .toJS();
+
+      this.props.changeForm(
+        this.props.form,
+        `sources.${this.props.index}`,
+        source
+      );
+
+    }
+
+  }
+
   colorPalette = [
     '#000',
     '#fff',
@@ -59,6 +81,24 @@ class Source extends React.Component {
     '#ea7d26',
     '#e92126',
   ];
+
+  minMaxComponent({input, placeholder}) {
+    return (
+      <Input placeholder={placeholder} value={input.value} onChange={input.onChange}/>
+    );
+  }
+
+  switchComponent(props) {
+    return (
+      <div>
+        <Switch size="small" onChange={props.input.onChange} checked={Boolean(props.input.value)}/>
+        <span className="switch-label font-size-medium">
+          { props.label }
+        </span>
+      </div>
+
+    );
+  }
 
   getIconForChartByType(type) {
     if (type === WIDGETS_CHART_TYPES.LINE)
@@ -279,25 +319,29 @@ class Source extends React.Component {
         </div>
 
         <Item label="Display separate Y axis" offset="medium">
-          <Switch/> Enabled
+          <Field name={`sources.${this.props.index}.enableYAxis`} component={this.switchComponent} label={this.props.source.get('enableYAxis') ? 'Enabled' : 'Disabled'}/>
         </Item>
 
         <Item label="Autoscale" offset="small">
-          <Switch/> Enabled
+          <Field name={`sources.${this.props.index}.autoscale`} component={this.switchComponent} label={this.props.source.get('autoscale') ? 'Enabled' : 'Disabled'}/>
         </Item>
 
-        <Row>
-          <Col span={6}>
-            <Item label="Min">
-              <Input placeholder={0}/>
-            </Item>
-          </Col>
-          <Col span={6} offset={2}>
-            <Item label="Max">
-              <Input placeholder={100}/>
-            </Item>
-          </Col>
-        </Row>
+        { !this.props.source.get('autoscale') && (
+
+          <Row>
+            <Col span={6}>
+              <Item label="Min">
+                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.min`} placeholder={isNaN(Number(this.props.dataStream.get('min'))) ? '0' : this.props.dataStream.get('min')}/>
+              </Item>
+            </Col>
+            <Col span={6} offset={2}>
+              <Item label="Max">
+                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.max`} placeholder={isNaN(Number(this.props.dataStream.get('max'))) ? '100' : this.props.dataStream.get('max')}/>
+              </Item>
+            </Col>
+          </Row>
+
+        ) || null }
 
       </div>
     );

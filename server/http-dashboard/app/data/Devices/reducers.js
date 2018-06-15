@@ -55,6 +55,53 @@ import {ACTIONS} from 'store/blynk-websocket-middleware/actions';
 //
 // };
 
+// const addAdditionalFieldsForTesting = (webDashboard = { widgets: [] }) => {
+//
+//   console.log('webdash', webDashboard);
+//
+//   const sourcesSettings = [
+//     [
+//       {
+//         min: -200,
+//         max: 200,
+//         autoscale: false,
+//         graphType: 'AREA',
+//         enableYAxis: false
+//       },
+//       {
+//         min: 20,
+//         max: 100,
+//         autoscale: false,
+//         graphType: 'LINE',
+//         enableYAxis: true,
+//       }
+//     ],
+//     [
+//       {
+//         min: -3000,
+//         max: 8000,
+//         autoscale: false,
+//         graphType: 'LINE',
+//         enableYAxis: true
+//       }
+//     ]
+//   ];
+//
+//   return {
+//     widgets: webDashboard.widgets.map((widget, wIndex) => ({
+//       ...widget,
+//       sources: widget.sources.map((source, sIndex) => ({
+//         ...source,
+//         ...sourcesSettings[wIndex][sIndex],
+//         // min: 0,
+//         // max: 100,
+//         // autoscale: false,
+//       }))
+//     }))
+//   };
+//
+// };
+//
 const cutDeviceNameMetaFieldFromMetaFields = (device) => {
   if (!device.metaFields) {
     return device;
@@ -568,6 +615,7 @@ export default function Devices(state = initialState, action) {
         deviceDashboardChartData    : {},
         deviceDashboardChartLiveData: {},
         deviceDashboardData         : deviceDashboardData,
+        // deviceDashboard             : addAdditionalFieldsForTesting(dashboard),
         deviceDashboard             : dashboard,
         deviceDashboardLoading      : false
       };

@@ -180,6 +180,7 @@ class LinearWidgetSettings extends React.Component {
                 <Source form={this.props.form}
                         dataStreams={dataStreams}
                         index={key}
+                        dataStream={this.props.formValues.getIn(['sources', key, 'dataStream'])}
                         source={source} key={key}
                         onChange={this.handleSourceChange}
                         isAbleToDelete={this.props.formValues.get('sources').size > 1}
