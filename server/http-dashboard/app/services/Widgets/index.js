@@ -402,7 +402,7 @@ export const WIDGETS_PREDEFINED_SOURCE_OPTIONS = {
     label: 'Source Label',
     sourceType: WIDGETS_SOURCE_TYPES.RAW_DATA,
     color: 'e92126',
-    graphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
+    lineGraphType: WIDGETS_CHART_TYPES.LINE, //LINE, FILLED_LINE, BAR, BINARY
     connectMissingPointsEnabled: false,
     dataStream: {}
   },

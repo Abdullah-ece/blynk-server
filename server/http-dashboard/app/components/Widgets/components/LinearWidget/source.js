@@ -52,25 +52,6 @@ class Source extends React.Component {
     this.dataStreamSelectComponent = this.dataStreamSelectComponent.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-
-    if( (!prevProps.dataStream && this.props.dataStream) || (prevProps.dataStream.get('id') !== this.props.dataStream.get('id')) ) {
-
-      const source = this.props.source
-        .set('min', this.props.dataStream.get('min'))
-        .set('max', this.props.dataStream.get('max'))
-        .toJS();
-
-      this.props.changeForm(
-        this.props.form,
-        `sources.${this.props.index}`,
-        source
-      );
-
-    }
-
-  }
-
   colorPalette = [
     '#000',
     '#fff',
@@ -253,7 +234,7 @@ class Source extends React.Component {
 
     const getLabelForChartTypeItem = () => {
 
-      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('graphType')));
+      const name = _.find(WIDGETS_CHART_TYPES_LIST, ((item) => item.key === this.props.source.get('lineGraphType')));
 
       return `Chart Type: ${name && name.value || 'None'}`;
     };
@@ -303,7 +284,7 @@ class Source extends React.Component {
             <Row>
               <Col span={8}>
                 <Item label={getLabelForChartTypeItem()} offset="medium">
-                  <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.graphType`}
+                  <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.lineGraphType`}
                          getIconForChartByType={this.getIconForChartByType}/>
                 </Item>
               </Col>
@@ -331,12 +312,12 @@ class Source extends React.Component {
           <Row>
             <Col span={6}>
               <Item label="Min">
-                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.min`} placeholder={isNaN(Number(this.props.dataStream.get('min'))) ? '0' : this.props.dataStream.get('min')}/>
+                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.dataStream.min`} placeholder={isNaN(Number(this.props.dataStream.get('min'))) ? '0' : this.props.dataStream.get('min')}/>
               </Item>
             </Col>
             <Col span={6} offset={2}>
               <Item label="Max">
-                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.max`} placeholder={isNaN(Number(this.props.dataStream.get('max'))) ? '100' : this.props.dataStream.get('max')}/>
+                <Field component={this.minMaxComponent} name={`sources.${this.props.index}.dataStream.max`} placeholder={isNaN(Number(this.props.dataStream.get('max'))) ? '100' : this.props.dataStream.get('max')}/>
               </Item>
             </Col>
           </Row>

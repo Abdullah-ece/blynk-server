@@ -238,11 +238,11 @@ class LinearWidget extends React.Component {
 
     let dataSource = {
       ...this.dataDefaultOptions,
-      ...(source.graphType && CANVASJS_CHART_TYPES[source.graphType] ? {type: CANVASJS_CHART_TYPES[source.graphType]} : {type: 'line'}),
+      ...(source.lineGraphType && CANVASJS_CHART_TYPES[source.lineGraphType] ? {type: CANVASJS_CHART_TYPES[source.lineGraphType]} : {type: 'line'}),
       color: `#${source.color}` || null,
       name: source.label || null,
-      yAxisMin: source.min,
-      yAxisMax: source.max,
+      yAxisMin: source.dataStream.min,
+      yAxisMax: source.dataStream.max,
       yAxisAutoscale: source.autoscale !== false,
       dataPoints: dataPoints || [],
       enableYAxis: source.enableYAxis === true,
@@ -303,7 +303,7 @@ class LinearWidget extends React.Component {
         };
       }
 
-      if(!dataSource.yAxisAutoscale) {
+      if(!dataSource.yAxisAutoscale && !isNaN(Number(dataSource.yAxisMin)) && !isNaN(Number(dataSource.yAxisMax)) && Number(dataSource.yAxisMin) < Number(dataSource.yAxisMax)) {
         yAxis.minimum = dataSource.yAxisMin;
         yAxis.maximum = dataSource.yAxisMax;
       }
