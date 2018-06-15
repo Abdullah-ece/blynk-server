@@ -245,6 +245,7 @@ class LinearWidget extends React.Component {
       yAxisMax: source.max,
       yAxisAutoscale: source.autoscale !== false,
       dataPoints: dataPoints || [],
+      enableYAxis: source.enableYAxis === true,
     };
 
     return dataSource;
@@ -266,6 +267,14 @@ class LinearWidget extends React.Component {
 
     const axisY = [];
     const axisY2 = [];
+    const hiddenAxisYOptions = {
+      title: '',
+      tickLength: 0,
+      lineThickness:0,
+      margin:0,
+      valueFormatString: '\u0020', //space to hide values on Axis
+      // valueFormatString: '', //space to hide values on Axis
+    };
 
     dataSources = dataSources.map((dataSource) => {
 
@@ -286,6 +295,13 @@ class LinearWidget extends React.Component {
       let yAxis = {
         ...Chart.axisYDefaultOptions,
       };
+
+      if(!dataSource.enableYAxis) {
+        yAxis = {
+          ...yAxis,
+          ...hiddenAxisYOptions,
+        };
+      }
 
       if(!dataSource.yAxisAutoscale) {
         yAxis.minimum = dataSource.yAxisMin;
