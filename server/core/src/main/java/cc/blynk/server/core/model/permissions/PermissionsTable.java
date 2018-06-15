@@ -26,4 +26,8 @@ public class PermissionsTable {
         return (permissions & DEVICES_DELETE) == DEVICES_DELETE;
     }
 
+    public static void main(String[] args) {
+        System.out.print(PRODUCT_VIEW ^ PRODUCT_EDIT ^ PRODUCT_DELETE);
+    }
+
 }

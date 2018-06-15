@@ -36,6 +36,12 @@ public class WebSource {
 
     public final int limit;
 
+    public final boolean autoscale;
+
+    public final LineGraphType lineGraphType;
+
+    public final boolean enableYAxis;
+
     @JsonCreator
     public WebSource(@JsonProperty("label") String label,
                      @JsonProperty("color") String color,
@@ -46,7 +52,10 @@ public class WebSource {
                      @JsonProperty("groupByFields") SelectedColumn[] groupByFields,
                      @JsonProperty("sortByFields") SelectedColumn[] sortByFields,
                      @JsonProperty("sortOrder") SortOrder sortOrder,
-                     @JsonProperty("limit") int limit) {
+                     @JsonProperty("limit") int limit,
+                     @JsonProperty("autoscale") boolean autoscale,
+                     @JsonProperty("lineGraphType") LineGraphType lineGraphType,
+                     @JsonProperty("enableYAxis") boolean enableYAxis) {
 
         this.label = label;
         this.color = color;
@@ -58,6 +67,9 @@ public class WebSource {
         this.sortByFields = sortByFields;
         this.sortOrder = sortOrder;
         this.limit = limit;
+        this.autoscale = autoscale;
+        this.lineGraphType = lineGraphType;
+        this.enableYAxis = enableYAxis;
     }
 
     @Override
@@ -65,12 +77,14 @@ public class WebSource {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof WebSource)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         WebSource webSource = (WebSource) o;
         return connectMissingPointsEnabled == webSource.connectMissingPointsEnabled
                 && limit == webSource.limit
+                && autoscale == webSource.autoscale
+                && enableYAxis == webSource.enableYAxis
                 && Objects.equals(label, webSource.label)
                 && Objects.equals(color, webSource.color)
                 && sourceType == webSource.sourceType
@@ -78,13 +92,14 @@ public class WebSource {
                 && Arrays.equals(selectedColumns, webSource.selectedColumns)
                 && Arrays.equals(groupByFields, webSource.groupByFields)
                 && Arrays.equals(sortByFields, webSource.sortByFields)
-                && sortOrder == webSource.sortOrder;
+                && sortOrder == webSource.sortOrder
+                && lineGraphType == webSource.lineGraphType;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(label, color, connectMissingPointsEnabled,
                 sourceType, dataStream, selectedColumns,
-                groupByFields, sortByFields, sortOrder, limit);
+                groupByFields, sortByFields, sortOrder, limit, autoscale, lineGraphType, enableYAxis);
     }
 }
