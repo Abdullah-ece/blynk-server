@@ -185,7 +185,7 @@ class GridManage extends React.Component {
 
       const LEFT_MARGIN = 8;
       const TOP_MARGIN = 8;
-      const ROW_HEIGHT = 64;
+      const ROW_HEIGHT = 96;
       const COLUMNS = 12;
 
       const calcColWidth = (margin, containerWidth, size = 12) => {
@@ -230,7 +230,7 @@ class GridManage extends React.Component {
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
           margin={[8, 8]}
-          rowHeight={64}
+          rowHeight={96}
           cols={this.cols}
           className={`widgets widgets-editable`}
           isDraggable={true}

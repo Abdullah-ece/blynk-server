@@ -50,7 +50,7 @@ class GridStatic extends React.Component {
         <ResponsiveGridLayout
           breakpoints={Widgets.breakpoints}
           margin={[8, 8]}
-          rowHeight={64}
+          rowHeight={96}
           cols={this.cols}
           className={`widgets`}
           isDraggable={false}
