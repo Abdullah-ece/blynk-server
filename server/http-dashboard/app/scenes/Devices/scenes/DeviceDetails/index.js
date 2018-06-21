@@ -14,7 +14,7 @@ import {
 //   DeviceMetadataUpdate,
 //   DeviceDetailsUpdate as updateDevice,
 } from 'data/Devices/api';
-import {TABS} from 'services/Devices';
+import {TABS, TAB_URLS} from 'services/Devices';
 // import {DeviceDetailsUpdate} from 'data/Devices/actions';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 import {bindActionCreators} from 'redux';
@@ -139,7 +139,7 @@ class DeviceDetailsScene extends React.Component {
          id: this.props.params.id
       });
     }
-    this.context.router.push(`/devices/${this.props.params.id}/${tab}`);
+    this.context.router.push(`/devices/${this.props.params.id}/${TAB_URLS[tab]}`);
   }
   render() {
 

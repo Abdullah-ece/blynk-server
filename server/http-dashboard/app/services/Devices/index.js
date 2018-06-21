@@ -610,3 +610,9 @@ export const TABS = {
   TIMELINE: 'timeline',
   DEVICE_INFO: 'device-info',
 };
+
+export const TAB_URLS = {
+  [TABS.DASHBOARD]   : "dashboard",
+  [TABS.TIMELINE]    : "timeline",
+  [TABS.DEVICE_INFO] : "info",
+};
