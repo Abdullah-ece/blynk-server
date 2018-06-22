@@ -6,7 +6,7 @@ import {Item, Input} from 'components/UI';
 import {MetadataSelect} from 'components/Form';
 import Validation from 'services/Validation';
 import {reduxForm} from 'redux-form';
-import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
+import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES, SETUP_PRODUCT_KEY} from 'services/Devices';
 import './styles.less';
 import PropTypes from 'prop-types';
 
@@ -28,9 +28,10 @@ class DeviceCreateModal extends React.Component {
     organizations: PropTypes.array,
     products     : PropTypes.array,
 
-    handleSubmit : PropTypes.func,
-    onClose      : PropTypes.func,
-    change       : PropTypes.func,
+    handleSubmit    : PropTypes.func,
+    onClose         : PropTypes.func,
+    change          : PropTypes.func,
+    onProductSelect : PropTypes.func,
   };
 
   constructor(props) {
@@ -40,7 +41,6 @@ class DeviceCreateModal extends React.Component {
     this.handleProductSelect = this.handleProductSelect.bind(this);
   }
 
-  SETUP_PRODUCT_KEY = 'SETUP_NEW_PRODUCT';
 
   handleClose() {
     if(typeof this.props.onClose === 'function')
@@ -48,16 +48,7 @@ class DeviceCreateModal extends React.Component {
   }
 
   handleProductSelect(productId) {
-    if(productId !== this.SETUP_PRODUCT_KEY) {
-
-      const currentProduct = this.props.products.filter((product)=>{
-        return Number(product.id) === Number(productId);
-      })[0];
-
-      this.props.change('name', currentProduct.metaFields.filter((field)=>{
-       return field.name === "Device Name";
-      })[0].value);
-    }
+    this.props.onProductSelect(productId);
   }
 
   render() {
@@ -103,12 +94,12 @@ class DeviceCreateModal extends React.Component {
 
     if (this.props.formValues && this.props.organization.parentId === -1 && Number(this.props.organization.id) === Number(this.props.formValues.orgId)) {
       products.unshift({
-        key  : this.SETUP_PRODUCT_KEY,
+        key  : SETUP_PRODUCT_KEY,
         value: 'New product'
       });
     }
 
-    const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === this.SETUP_PRODUCT_KEY;
+    const isAdvancedOptionShouldBeDisplayed = this.props.formValues && this.props.formValues.productId === SETUP_PRODUCT_KEY;
 
     return (
       <Modal title="New Device"

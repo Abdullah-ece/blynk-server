@@ -4,7 +4,7 @@ import {
   DeviceCreateModal
 } from 'scenes/Devices/components';
 
-import {STATUS} from 'services/Devices';
+import {STATUS, SETUP_PRODUCT_KEY} from 'services/Devices';
 
 import {
   DeviceAvailableOrganizationsFetch,
@@ -78,6 +78,7 @@ class DeviceCreateModalScene extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleProductSelect = this.handleProductSelect.bind(this);
   }
 
   state = {
@@ -195,7 +196,35 @@ class DeviceCreateModalScene extends React.Component {
 
     });
   }
+  handleProductSelect(productId) {
 
+    const getProductDefaultName = (product) => {
+      return product.metaFields.filter((field) => {
+        return field.name === "Device Name";
+      })[0].value;
+    };
+
+    const getProductById = (products, productId) => {
+      return products.filter((product)=>{
+        return Number(product.id) === Number(productId);
+      })[0];
+    };
+
+    if(productId !== SETUP_PRODUCT_KEY) {
+
+      const currentProduct = getProductById(this.props.products, this.props.formValues.productId);
+
+      const nextProduct = getProductById(this.props.products, productId);
+
+      if(this.props.formValues.name && this.props.formValues.productId) {
+        if(currentProduct && getProductDefaultName(currentProduct) === this.props.formValues.name) {
+          this.props.change("DeviceCreate", 'name', getProductDefaultName(nextProduct));
+        }
+      } else {
+        this.props.change("DeviceCreate", 'name', getProductDefaultName(nextProduct));
+      }
+    }
+  }
   render() {
 
     const {
@@ -223,6 +252,7 @@ class DeviceCreateModalScene extends React.Component {
         onClose={this.handleClose}
         handleSubmit={this.handleSubmit}
         initialValues={initialValues}
+        onProductSelect={this.handleProductSelect}
       />
     );
   }

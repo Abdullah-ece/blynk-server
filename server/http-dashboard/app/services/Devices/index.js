@@ -616,3 +616,5 @@ export const TAB_URLS = {
   [TABS.TIMELINE]    : "timeline",
   [TABS.DEVICE_INFO] : "info",
 };
+
+export const SETUP_PRODUCT_KEY = "SETUP_NEW_PRODUCT";
