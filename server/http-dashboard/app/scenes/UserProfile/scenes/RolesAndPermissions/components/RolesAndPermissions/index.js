@@ -44,7 +44,6 @@ class RolesAndPermissions extends React.Component {
 
     this.renderList = this.renderList.bind(this);
     this.handleAddRole = this.handleAddRole.bind(this);
-    this.handleSortStart = this.handleSortStart.bind(this);
   }
 
   componentDidUpdate(prevProps) {
