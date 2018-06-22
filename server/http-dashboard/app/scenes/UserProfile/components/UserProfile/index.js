@@ -9,6 +9,7 @@ import MyAccount from './components/AccountSettings';
 import OrganizationSettings from './components/OrganizationSettings';
 import Users from './components/Users';
 import Branding from './components/Branding';
+import {RolesAndPermissions} from 'scenes/UserProfile/scenes';
 
 class UserProfile extends Component {
 
@@ -76,6 +77,10 @@ class UserProfile extends Component {
                           onOrganizationSave={this.props.onOrganizationSave}
                           onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}
                           onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>
+              </Tabs.TabPane>
+
+              <Tabs.TabPane tab={<span>{TABS.ROLES_AND_PERMISSIONS.value}</span>} key={TABS.ROLES_AND_PERMISSIONS.key}>
+                <RolesAndPermissions />
               </Tabs.TabPane>
             </Tabs>
           </MainLayout.Content>

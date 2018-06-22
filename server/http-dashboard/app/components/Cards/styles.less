@@ -1,0 +1,67 @@
+@import "components/Layout/style-guide";
+
+@dnd-cursor: row-resize;
+
+@card-min-height: 110px;
+
+.cards-list {
+
+  margin: @style-size-3-1 0;
+
+  &--item {
+    position: relative;
+    padding: @style-size-4 @style-size-4-1 @style-size-4 @style-size-3;
+
+    border-radius: 5px;
+    transition: 0.3s;
+    transition-property: box-shadow;
+
+    min-height: @card-min-height;
+
+    &-drag-active {
+      cursor: @dnd-cursor !important;
+      pointer-events: auto !important;
+      background: @color-white;
+      opacity: 1;
+      transition-property: box-shadow;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.20);
+      z-index: 20;
+      border-radius: 5px;
+      .cards-list--item--tools {
+        opacity: 1;
+      }
+    }
+
+    &--tools {
+      transition: 0.5s;
+      transition-property: opacity;
+      opacity: 0;
+      display: flex;
+      position: absolute;
+      right: @style-size-3;
+      top: @style-size-1;
+      flex-direction: column;
+      > button, > i {
+        height: 24px;
+        line-height: 24px;
+        margin: @style-size-1 0;
+      }
+
+      &--move {
+        cursor: @dnd-cursor !important;
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.10);
+      .cards-list--item--tools {
+        opacity: 1;
+      }
+    }
+
+    &.active {
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.10);
+    }
+  }
+
+}

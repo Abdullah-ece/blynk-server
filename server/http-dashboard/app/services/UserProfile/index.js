@@ -17,6 +17,10 @@ export const TABS = {
     key:'branding',
     value:'Branding',
   },
+  ROLES_AND_PERMISSIONS: {
+    key:'roles-and-permissions',
+    value:'Roles & Permissions',
+  }
 };
 
 export const getTabValueByKey = (tabValue) => {

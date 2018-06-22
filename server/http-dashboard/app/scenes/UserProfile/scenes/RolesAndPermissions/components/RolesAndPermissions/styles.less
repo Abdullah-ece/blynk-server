@@ -1,0 +1,83 @@
+@import "components/Layout/style-guide";
+@import "scenes/Products/components/Metadata/styles";
+
+.user-profile--roles-and-permissions {
+
+  padding: @style-size-3-1 @style-size-3-1;
+
+  &--add-button {
+
+  }
+
+  &--roles-list {
+
+  }
+
+  &--roles-list--role {
+    &--title {
+      font-size: 18px;
+      line-height: 18px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      input {
+        font-size: 18px;
+        border: 0;
+        border-bottom: 1px dashed rgba(32, 34, 39, 0.25);
+      }
+    }
+    &--tools {
+      .product-metadata-item-tools;
+
+      button {
+        height: 32px;
+      }
+
+      i {
+        font-size: 16px;
+        line-height: 18px;
+      }
+
+    }
+    &:hover {
+      .user-profile--roles-and-permissions--roles-list--role--tools {
+        opacity: 1;
+      }
+    }
+  }
+
+  &--roles-list--role--table {
+
+    //&-column-title-clickable {
+    //  cursor: pointer;
+    //}
+
+    //&-name-clickable {
+    //  cursor: pointer;
+    //}
+
+    .ant-table-small .ant-table-body > table {
+      padding: 0;
+      td:nth-child(1) {
+        width: 200px;
+      }
+
+      td:nth-child(2) {
+        width: 100px;
+      }
+
+      td:nth-child(3) {
+        width: 100px;
+      }
+
+    }
+    .ant-table-small .ant-table-tbody {
+      & > tr > td {
+        height: 48px;
+      }
+    }
+    .ant-table-small th span {
+      font-weight: 500;
+      color: @color-dark-grey-75;
+    }
+  }
+}
