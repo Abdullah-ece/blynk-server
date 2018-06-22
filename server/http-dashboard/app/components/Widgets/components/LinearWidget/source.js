@@ -279,7 +279,7 @@ class Source extends React.Component {
           </ItemsGroup>
         </div>
 
-        <div className="modal-window-widget-settings-config-column-sources-source-chart-type">
+        <div className="modal-window-widget-settings-config-column-sources-source-chart-type" style={{ marginBottom: 0}}>
           <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
             <Row>
               <Col span={8}>
@@ -299,12 +299,12 @@ class Source extends React.Component {
           </div>
         </div>
 
-        <Item label="Display separate Y axis" offset="medium">
-          <Field name={`sources.${this.props.index}.enableYAxis`} component={this.switchComponent} label={this.props.source.get('enableYAxis') ? 'Enabled' : 'Disabled'}/>
+        <Item label="" offset="small">
+          <Field name={`sources.${this.props.index}.enableYAxis`} component={this.switchComponent} label={this.props.source.get('enableYAxis') ? 'Show Y-axis' : 'Show Y-axis'}/>
         </Item>
 
-        <Item label="Autoscale" offset="small">
-          <Field name={`sources.${this.props.index}.autoscale`} component={this.switchComponent} label={this.props.source.get('autoscale') ? 'Enabled' : 'Disabled'}/>
+        <Item label="" offset="small">
+          <Field name={`sources.${this.props.index}.autoscale`} component={this.switchComponent} label={this.props.source.get('autoscale') ? 'Autoscale' : 'Autoscale'}/>
         </Item>
 
         { !this.props.source.get('autoscale') && (
