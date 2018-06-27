@@ -3,7 +3,7 @@ import {Tabs} from "antd";
 import {Dashboard, /*DeviceInfo,*/ Timeline} from "./components";
 // import _ from "lodash";
 import "./styles.less";
-import {TABS} from 'services/Devices';
+import {TABS, TAB_URLS} from 'services/Devices';
 // import {connect} from "react-redux";
 // import {bindActionCreators} from "redux";
 // import {DeviceUpdate} from "data/Devices/api";
@@ -54,12 +54,16 @@ class Device extends React.Component {
 
     const TabPane = Tabs.TabPane;
 
+    const activeTab = (this.props.params.tab && this.props.params.tab) ? Object.keys(TAB_URLS).filter((url)=>{
+      return TAB_URLS[url] === this.props.params.tab;
+    })[0] : "Dashboard";
+
     return (
       <div className="devices--device">
         <div className="devices--device-name">
           <DeviceName/>
         </div>
-        <Tabs defaultActiveKey={this.props.params.tab && this.props.params.tab || "Dashboard"} className="page-layout-tabs-navigation" onChange={this.handleTabChange}>
+        <Tabs defaultActiveKey={activeTab} className="page-layout-tabs-navigation" onChange={this.handleTabChange}>
           <TabPane tab="Dashboard" key={TABS.DASHBOARD}>
             <div className="devices-device-tab-inner">
               <Dashboard params={this.props.params} productId={this.props.productId}/>
