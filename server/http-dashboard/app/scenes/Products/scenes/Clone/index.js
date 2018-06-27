@@ -269,7 +269,7 @@ class Clone extends React.Component {
   // }
 
   routerWillLeave() {
-    if(!this.created && this.props.isFormDirty)
+    if(!this.created)
       return 'Leave this page without saving your changes?';
   }
 
