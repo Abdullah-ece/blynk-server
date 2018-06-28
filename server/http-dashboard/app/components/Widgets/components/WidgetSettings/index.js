@@ -36,7 +36,7 @@ class WidgetSettings extends React.Component {
                </Button>,
              ]}>
         <Row type="flex">
-          <Col span={12} className="modal-window-widget-settings-config-column">
+          <Col span={12} className="modal-window-widget-settings-config-column" id="widgetSettingsConfigColumn">
             {this.props.config}
           </Col>
           <Col span={12} className="modal-window-widget-settings-preview-column">

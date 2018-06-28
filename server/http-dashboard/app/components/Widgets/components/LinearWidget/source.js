@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import PropTypes from 'prop-types';
 import Validation from 'services/Validation';
+import Scroll from 'react-scroll';
 import {Map, List} from 'immutable';
 import _ from 'lodash';
 import {
@@ -241,6 +242,7 @@ class Source extends React.Component {
 
     return (
       <div className="modal-window-widget-settings-config-column-sources-source">
+        <Scroll.Element name={`source-${this.props.source.get('id')}`}>
         <div className="modal-window-widget-settings-config-column-sources-source-header">
           <Field name={`sources.${this.props.index}.label`} component={this.labelComponent}/>
 
@@ -323,6 +325,7 @@ class Source extends React.Component {
           </Row>
 
         ) || null }
+        </Scroll.Element>
 
       </div>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   SimpleContentEditable
 } from 'components';
+import Scroll from "react-scroll";
 import Source from './source';
 import {
   WIDGET_TYPES,
@@ -81,6 +82,36 @@ class LinearWidgetSettings extends React.Component {
     if (!_.isEqual(nextProps.initialValues, this.props.initialValues)) {
       this.props.initializeForm(nextProps.form, nextProps.initialValues);
       this.props.resetForm(nextProps.form, nextProps.initialValues);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+
+
+    if(prevProps && prevProps.formValues && prevProps.formValues.get('sources')) {
+      let newId = null;
+
+      const lastIds = prevProps.formValues.get('sources').map((source) => {
+        return Number(source.get('id'));
+      });
+
+      this.props.formValues.get('sources').forEach((source) => {
+        if(lastIds.indexOf(Number(source.get('id'))) === -1) {
+          newId = source.get('id');
+        }
+      });
+
+      if(newId) {
+
+        setTimeout(() => {
+          Scroll.scroller.scrollTo(`source-${newId}`, {
+            duration: 1000,
+            offset: -32,
+            smooth: "easeInOutQuint",
+            containerId: "widgetSettingsConfigColumn",
+          });
+        }, 1);
+      }
     }
   }
 
@@ -177,16 +208,17 @@ class LinearWidgetSettings extends React.Component {
             <div className="modal-window-widget-settings-config-column-sources">
 
               {this.props.formValues.has('sources') && this.props.formValues.get('sources').map((source, key) => (
-                <Source form={this.props.form}
-                        dataStreams={dataStreams}
-                        index={key}
-                        dataStream={this.props.formValues.getIn(['sources', key, 'dataStream'])}
-                        source={source} key={key}
-                        onChange={this.handleSourceChange}
-                        isAbleToDelete={this.props.formValues.get('sources').size > 1}
-                        onDelete={this.handleSourceDelete}
-                        onCopy={this.handleSourceCopy}
-                />
+                  <Source form={this.props.form}
+                          dataStreams={dataStreams}
+                          index={key}
+                          dataStream={this.props.formValues.getIn(['sources', key, 'dataStream'])}
+                          source={source} key={key}
+                          onChange={this.handleSourceChange}
+                          isAbleToDelete={this.props.formValues.get('sources').size > 1}
+                          onDelete={this.handleSourceDelete}
+                          onCopy={this.handleSourceCopy}
+                  />
+
               ))}
 
             </div>
