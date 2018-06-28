@@ -294,12 +294,15 @@ class LinearWidget extends React.Component {
 
       let yAxis = {
         ...Chart.axisYDefaultOptions,
+        lineColor: dataSource.color,
+        tickColor: dataSource.color,
+        labelFontColor: dataSource.color,
       };
 
       if(!dataSource.enableYAxis) {
         yAxis = {
           ...yAxis,
-          ...hiddenAxisYOptions,
+          ...hiddenAxisYOptions
         };
       }
 
