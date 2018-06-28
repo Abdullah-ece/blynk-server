@@ -463,7 +463,7 @@ public class DashboardModelAPITest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         WebLineGraph webGraph = new WebLineGraph();
@@ -478,7 +478,7 @@ public class DashboardModelAPITest extends APIBaseTest {
                         new SelectedColumn[] {columnFrom("Load Weight")},
                         new SelectedColumn[] {metaDataFrom("Shift 1"), metaDataFrom("Shift 2"), metaDataFrom("Shift 3")},
                         new SelectedColumn[] {columnFrom("Load Weight")},
-                        SortOrder.ASC, 10)
+                        SortOrder.ASC, 10, false, null, false)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

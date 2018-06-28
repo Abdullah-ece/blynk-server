@@ -67,7 +67,7 @@ public class OTAHandler extends BaseHttpHandler {
         this.sessionDao = holder.sessionDao;
         this.staticFilesFolder = holder.props.jarPath;
         String httpPort = holder.props.getHttpPortAsString();
-        this.serverHostUrl = "http://" + holder.props.getServerHost() + (httpPort.equals("80") ? "" : (":" + httpPort));
+        this.serverHostUrl = "http://" + holder.props.host + (httpPort.equals("80") ? "" : (":" + httpPort));
     }
 
     @GET

@@ -12,11 +12,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.internal.TokenUser;
+import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.StringUtils;
@@ -70,7 +71,7 @@ public class WebLoginHandler extends BaseHttpHandler {
         this.emailBody = FileLoaderUtil.readResetPassMailBody();
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokensPool = holder.tokensPool;
-        this.productName = holder.props.getProductName();
+        this.productName = holder.props.productName;
     }
 
     private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
@@ -123,8 +124,14 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Empty token or password field.");
         }
 
-        User user = tokensPool.getUser(token);
+        TokenUser tokenUser = tokensPool.getUser(token);
 
+        if (tokenUser == null) {
+            log.error("Invalid reset token.");
+            return badRequest("Your invitation expired or was used already. Please request new one.");
+        }
+
+        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
         if (user == null) {
             log.error("User not found.");
             return badRequest("Your invitation expired or was used already. Please request new one.");
@@ -156,8 +163,14 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Empty token or password field.");
         }
 
-        User user = tokensPool.getUser(token);
+        TokenUser tokenUser = tokensPool.getUser(token);
 
+        if (tokenUser == null) {
+            log.error("Invalid reset token.");
+            return badRequest("Your invitation expired or was used already. Please request new one.");
+        }
+
+        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
         if (user == null) {
             log.error("User not found.");
             return badRequest("Token does not exist.");
@@ -215,7 +228,7 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Organization for that user is no longer exist.");
         }
 
-        tokensPool.addToken(token, user);
+        tokensPool.addToken(token, new TokenUser(user.email, user.appName));
 
         blockingIOProcessor.execute(() -> {
             Response response;

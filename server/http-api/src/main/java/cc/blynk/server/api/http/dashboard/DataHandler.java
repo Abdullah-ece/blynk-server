@@ -18,7 +18,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
@@ -43,14 +43,14 @@ public class DataHandler extends BaseHttpHandler {
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
 
     public DataHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     @GET
@@ -73,7 +73,7 @@ public class DataHandler extends BaseHttpHandler {
         TableDescriptor descriptor = TableDescriptor.getTableByPin(pin, pinType);
 
         blockingIOProcessor.executeDB(() -> {
-            dbManager.reportingDBDao.insertDataPoint(new TableDataMapper(
+            reportingDBManager.reportingDBDao.insertDataPoint(new TableDataMapper(
                     descriptor, deviceId, pin, pinType, LocalDateTime.now(), value));
             ctx.writeAndFlush(ok(), ctx.voidPromise());
         });
@@ -101,7 +101,7 @@ public class DataHandler extends BaseHttpHandler {
             try {
                 DataResponseDTO response = new DataResponseDTO(dataQueryRequestGroup.dataQueryRequests.length);
                 for (DataQueryRequestDTO dataQueryRequest : dataQueryRequestGroup.dataQueryRequests) {
-                    Object data = dbManager.getRawData(dataQueryRequest);
+                    Object data = reportingDBManager.getRawData(dataQueryRequest);
                     response.add(data);
                 }
                 ctx.writeAndFlush(ok(response.data()), ctx.voidPromise());

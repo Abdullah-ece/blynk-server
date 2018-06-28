@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandler;
@@ -40,7 +40,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
     private final String pushNotificationBody;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
@@ -48,7 +48,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
         this.pushNotificationBody = holder.textHolder.pushNotificationBody;
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -99,7 +99,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
 
         //do insert anyway, as device was disconnected even it was relogged quickly
-        dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
+        reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
 
         if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
             return;
@@ -146,7 +146,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         @Override
         public void run() {
             if (submittedTime > device.connectTime) {
-                dbManager.insertSystemEvent(device.id, EventType.OFFLINE);
+                reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
             } else {
                 log.debug("Hardware was logged. Delayed task skipped. Device id {}, token {}.",
                         device.id, device.token);

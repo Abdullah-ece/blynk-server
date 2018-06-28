@@ -22,7 +22,6 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.HttpSession;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -34,6 +33,8 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.internal.TokenUser;
+import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -82,7 +83,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         this.organizationDao = holder.organizationDao;
         this.fileManager = holder.fileManager;
         this.dbManager = holder.dbManager;
-        this.productName = holder.props.getProductName();
+        this.productName = holder.props.productName;
 
         this.inviteTemplate = FileLoaderUtil.readInviteMailBody();
         //in one week token will expire
@@ -389,7 +390,8 @@ public class OrganizationHandler extends BaseHttpHandler {
             return forbidden();
         }
 
-        User invitedUser = userDao.invite(userInvite, orgId, BLYNK);
+        String appName = BLYNK;
+        User invitedUser = userDao.invite(userInvite, orgId, appName);
 
         if (invitedUser == null) {
             log.error("User {} already exists.", userInvite.email);
@@ -406,7 +408,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         blockingIOProcessor.execute(() -> {
             Response response;
             try {
-                tokensPool.addToken(token, invitedUser);
+                tokensPool.addToken(token,  new TokenUser(userInvite.email, appName));
                 String message = inviteTemplate
                         .replace(StringUtils.ORGANIZATION, org.name)
                         .replace(StringUtils.PRODUCT_NAME, productName)

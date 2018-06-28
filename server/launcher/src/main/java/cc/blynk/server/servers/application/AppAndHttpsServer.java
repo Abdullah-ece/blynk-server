@@ -20,10 +20,6 @@ import cc.blynk.server.api.http.dashboard.ProductHandler;
 import cc.blynk.server.api.http.dashboard.WebLoginHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordHttpLogic;
-import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
-import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
@@ -95,8 +91,6 @@ public class AppAndHttpsServer extends BaseServer {
         var stats = holder.stats;
 
         //http API handlers
-        var resetPasswordLogic = new ResetPasswordHttpLogic(holder);
-        var httpAPILogic = new HttpAPILogic(holder);
         var noMatchHandler = new NoMatchHandler();
         var webSocketHandler = new WebSocketHandler(stats);
         var webSocketWrapperEncoder = new WebSocketWrapperEncoder();
@@ -232,8 +226,8 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                                 .addLast("HttpUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
-                                        new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz")))
+                                        new StaticFileHandler(holder, new StaticFile("/static"),
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
                                 .addLast(externalAPIHandler)
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }

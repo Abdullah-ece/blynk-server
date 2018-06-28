@@ -29,15 +29,15 @@ import static org.junit.Assert.assertNotNull;
 public class RawDataDBTest {
 
     private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-    private static DBManager dbManager;
+    private static ReportingDBManager reportingDBManager;
     private static BlockingIOProcessor blockingIOProcessor;
     private static User user;
 
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
-        assertNotNull(dbManager.getConnection());
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        assertNotNull(reportingDBManager.getConnection());
         user = new User();
         user.email = "test@test.com";
         user.appName = AppNameUtil.BLYNK;
@@ -45,28 +45,28 @@ public class RawDataDBTest {
 
     @AfterClass
     public static void close() {
-        dbManager.close();
+        reportingDBManager.close();
     }
 
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        dbManager.executeSQL("DELETE FROM blynk_default");
+        reportingDBManager.executeSQL("DELETE FROM blynk_default");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testSelectSingleRawData() throws Exception {
+    public void testSelectSingleRawData() {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
         rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "123");
 
         //invoking directly dao to avoid separate thread execution
-        dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
+        reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
                 PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 10, 0, System.currentTimeMillis());
         List<RawEntry> result = (List<RawEntry>)
-                dbManager.reportingDBDao.getRawData(dataQueryRequest);
+                reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         RawEntry entry = result.get(0);
         assertEquals(System.currentTimeMillis(), entry.getKey(), 5000);
@@ -75,19 +75,19 @@ public class RawDataDBTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testSelectFewRawData() throws Exception {
+    public void testSelectFewRawData() {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
         rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "123");
         rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "124");
         rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "125.25");
 
         //invoking directly dao to avoid separate thread execution
-        dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
+        reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
         DataQueryRequestDTO dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
                 PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 10, 0, System.currentTimeMillis());
         List<RawEntry> result = (List<RawEntry>)
-                dbManager.reportingDBDao.getRawData(dataQueryRequest);
+                reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -109,7 +109,7 @@ public class RawDataDBTest {
         //test limit
         dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
                 PinType.VIRTUAL, (byte) 3, null, null, null, null, 0, 1, 0, System.currentTimeMillis());
-        result = (List<RawEntry>) dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        result = (List<RawEntry>) reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         assertEquals(1, result.size());
 
@@ -121,7 +121,7 @@ public class RawDataDBTest {
         //test offset
         dataQueryRequest = new DataQueryRequestDTO(RAW_DATA, 2,
                 PinType.VIRTUAL, (byte) 3, null, null, null, null, 2, 10, 0, System.currentTimeMillis());
-        result = (List<RawEntry>) dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        result = (List<RawEntry>) reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(result);
         assertEquals(1, result.size());
 

@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
@@ -39,7 +39,7 @@ public class HardwareLogEventLogic {
 
     private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
     private final GCMWrapper gcmWrapper;
     private final MailWrapper mailWrapper;
     private final String deviceUrl;
@@ -49,7 +49,7 @@ public class HardwareLogEventLogic {
     public HardwareLogEventLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
         this.gcmWrapper = holder.gcmWrapper;
         this.mailWrapper = holder.mailWrapper;
         this.deviceUrl = holder.props.getDeviceUrl();
@@ -92,7 +92,7 @@ public class HardwareLogEventLogic {
         blockingIOProcessor.executeDB(() -> {
             try {
                 long now = System.currentTimeMillis();
-                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);
+                reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);
                 device.dataReceivedAt = now;
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             } catch (Exception e) {

@@ -32,6 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -101,6 +102,11 @@ public class ReportingDBDao {
                     + " get_history_pin_data, total) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
+    private static final String insertRawData =
+            "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, "
+                    + "stringValue, doubleValue) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
     private final HikariDataSource ds;
@@ -129,6 +135,51 @@ public class ReportingDBDao {
             connection.commit();
             return result;
         }
+    }
+
+    public void insertRawData(Map<AggregationKey, Object> rawData) {
+        long start = System.currentTimeMillis();
+
+        log.info("Storing raw reporting...");
+        int counter = 0;
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
+
+            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry<AggregationKey, Object> entry = iter.next();
+
+                final AggregationKey key = entry.getKey();
+                final Object value = entry.getValue();
+
+                ps.setString(1, key.getEmail());
+                ps.setInt(2, key.getDashId());
+                ps.setInt(3, key.getDeviceId());
+                ps.setByte(4, key.getPin());
+                ps.setString(5, key.getPinType().pinTypeString);
+                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
+
+                if (value instanceof String) {
+                    ps.setString(7, (String) value);
+                    ps.setNull(8, Types.DOUBLE);
+                } else {
+                    ps.setNull(7, Types.VARCHAR);
+                    ps.setDouble(8, (Double) value);
+                }
+
+                ps.addBatch();
+                counter++;
+                iter.remove();
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting raw reporting data in DB.", e);
+        }
+
+        log.info("Storing raw reporting finished. Time {}. Records saved {}",
+                System.currentTimeMillis() - start, counter);
     }
 
     private static String getTableByGranularity(GraphGranularityType graphGranularityType) {

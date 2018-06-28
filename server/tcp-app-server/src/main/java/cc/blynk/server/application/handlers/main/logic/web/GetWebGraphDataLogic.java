@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.web;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -15,8 +15,8 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.session.WebAppStateHolder;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.RawEntry;
+import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -62,15 +62,15 @@ public class GetWebGraphDataLogic {
     private static final Logger log = LogManager.getLogger(GetWebGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDao reportingDao;
+    private final ReportingDBDao reportingDBDao;
+    private final ReportingStorageDao reportingStorageDao;
     private final DeviceDao deviceDao;
-    private final DBManager dbManager;
 
     public GetWebGraphDataLogic(Holder holder) {
-        this.reportingDao = holder.reportingDao;
+        this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
+        this.reportingStorageDao = holder.reportingDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.deviceDao = holder.deviceDao;
-        this.dbManager = holder.dbManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -149,7 +149,7 @@ public class GetWebGraphDataLogic {
                 ByteUtils.writeInt(out, requestedPins[0].deviceId);
 
                 for (var graphPinRequest : requestedPins) {
-                    var rawEntriesList = dbManager.getReportingDataByTs(graphPinRequest);
+                    var rawEntriesList = reportingDBDao.getReportingDataByTs(graphPinRequest);
                     var bytesOfRawEntries = convert(rawEntriesList);
                     out.write(bytesOfRawEntries);
                 }
@@ -176,7 +176,7 @@ public class GetWebGraphDataLogic {
     private void readGraphDataFromDisk(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] allPinsData = reportingDao.getReportingData(user, requestedPins);
+                byte[][] allPinsData = reportingStorageDao.getReportingData(user, requestedPins);
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream(8096);
                 ByteUtils.writeInt(out, requestedPins[0].deviceId);

@@ -16,7 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -25,34 +30,34 @@ import static org.junit.Assert.*;
  */
 public class EventLogDBTest {
 
-    private static DBManager dbManager;
+    private static ReportingDBManager reportingDBManager;
     private static BlockingIOProcessor blockingIOProcessor;
 
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
-        assertNotNull(dbManager.getConnection());
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        assertNotNull(reportingDBManager.getConnection());
     }
 
     @AfterClass
     public static void close() {
-        dbManager.close();
+        reportingDBManager.close();
     }
 
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        dbManager.executeSQL("DELETE FROM reporting_events");
-        dbManager.executeSQL("DELETE FROM reporting_events_last_seen");
+        reportingDBManager.executeSQL("DELETE FROM reporting_events");
+        reportingDBManager.executeSQL("DELETE FROM reporting_events_last_seen");
     }
 
     @Test
     public void upsertLastSeen() throws Exception {
-        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
 
         long ts = 0;
-        try (Connection connection = dbManager.getConnection();
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_events_last_seen")) {
 
@@ -66,8 +71,8 @@ public class EventLogDBTest {
             connection.commit();
         }
 
-        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
-        try (Connection connection = dbManager.getConnection();
+        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_events_last_seen")) {
 
@@ -89,15 +94,15 @@ public class EventLogDBTest {
         String eventCode = "something";
         LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
 
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        try (Connection connection = dbManager.getConnection();
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_events")) {
 
 
             while (rs.next()) {
-                logEvent = dbManager.eventDBDao.readEvent(rs);
+                logEvent = reportingDBManager.eventDBDao.readEvent(rs);
                 assertEquals(1, logEvent.deviceId);
                 assertEquals(EventType.INFORMATION, logEvent.eventType);
                 assertEquals(now, logEvent.ts);
@@ -117,10 +122,10 @@ public class EventLogDBTest {
 
         for (int i = 0; i < 100; i++) {
             LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-            dbManager.eventDBDao.insert(logEvent);
+            reportingDBManager.eventDBDao.insert(logEvent);
         }
 
-        try (Connection connection = dbManager.getConnection();
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select count(*) from reporting_events")) {
 
@@ -136,18 +141,18 @@ public class EventLogDBTest {
         String eventCode = "something";
 
         LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
+        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
     }
 
     @Test
     public void insertSingleSystemEvent() throws Exception {
-        dbManager.eventDBDao.insertSystemEvent(1, EventType.ONLINE);
+        reportingDBManager.eventDBDao.insertSystemEvent(1, EventType.ONLINE);
 
-        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, EventType.ONLINE, 0, System.currentTimeMillis(), 0, 1);
+        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.ONLINE, 0, System.currentTimeMillis(), 0, 1);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertEquals(EventType.ONLINE, logEvents.get(0).eventType);
@@ -159,16 +164,16 @@ public class EventLogDBTest {
         String eventCode = "something";
 
         LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
+        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertFalse(logEvents.get(0).isResolved);
 
-        dbManager.eventDBDao.resolveEvent(logEvents.get(0).id, "Pupkin Vasya", "My Comment");
+        reportingDBManager.eventDBDao.resolveEvent(logEvents.get(0).id, "Pupkin Vasya", "My Comment");
 
-        logEvents = dbManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
+        logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now, now, 0, 1);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
         assertTrue(logEvents.get(0).isResolved);
@@ -182,13 +187,13 @@ public class EventLogDBTest {
         String eventCode = "something";
 
         LogEvent logEvent = new LogEvent(1, 1, EventType.INFORMATION, now, eventCode.hashCode(), null, true, "Pupkin Vasya", 0, null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, now, now, 0, 1, true);
+        List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, now, now, 0, 1, true);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
 
-        logEvents = dbManager.eventDBDao.getEvents(1, now, now, 0, 1, false);
+        logEvents = reportingDBManager.eventDBDao.getEvents(1, now, now, 0, 1, false);
         assertNotNull(logEvents);
         assertEquals(0, logEvents.size());
     }
@@ -201,11 +206,11 @@ public class EventLogDBTest {
 
         for (int i = 0; i < 100; i++) {
             LogEvent logEvent = new LogEvent(1, EventType.INFORMATION, now++, eventCode.hashCode(), null);
-            dbManager.eventDBDao.insert(logEvent);
+            reportingDBManager.eventDBDao.insert(logEvent);
         }
 
         for (int i = 0; i < 10; i += 10) {
-            List<LogEvent> logEvents = dbManager.eventDBDao.getEvents(1, EventType.INFORMATION, now - 100, now, i * 10, 10);
+            List<LogEvent> logEvents = reportingDBManager.eventDBDao.getEvents(1, EventType.INFORMATION, now - 100, now, i * 10, 10);
             assertNotNull(logEvents);
             assertEquals(10, logEvents.size());
             for (LogEvent logEvent : logEvents) {
@@ -227,13 +232,13 @@ public class EventLogDBTest {
         LogEvent logEvent;
 
         logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
         logEvent = new LogEvent(1, EventType.INFORMATION, now + 1, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
         logEvent = new LogEvent(2, EventType.INFORMATION, now + 2, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        Map<LogEventCountKey, Integer> lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(2, lastViewEvents.size());
 
         Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
@@ -250,30 +255,30 @@ public class EventLogDBTest {
         LogEvent logEvent;
 
         logEvent = new LogEvent(1, EventType.INFORMATION, now, eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        Map<LogEventCountKey, Integer> lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        Map<LogEventCountKey, Integer> lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(1, lastViewEvents.size());
 
         Integer lastView = lastViewEvents.get(new LogEventCountKey(1, EventType.INFORMATION, false));
         assertEquals(1, lastView.intValue());
 
-        dbManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
+        reportingDBManager.eventDBDao.upsertLastSeen(1, "test@blynk.cc");
 
-        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(1, lastViewEvents.size());
 
-        dbManager.eventDBDao.upsertLastSeen(1, "pupkin@blynk.cc");
+        reportingDBManager.eventDBDao.upsertLastSeen(1, "pupkin@blynk.cc");
 
         //0 because last view is later than event itself
-        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(0, lastViewEvents.size());
 
         //new event comes after "last view", so expecting it
         logEvent = new LogEvent(1, EventType.INFORMATION, System.currentTimeMillis(), eventCode.hashCode(), null);
-        dbManager.eventDBDao.insert(logEvent);
+        reportingDBManager.eventDBDao.insert(logEvent);
 
-        lastViewEvents = dbManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
+        lastViewEvents = reportingDBManager.eventDBDao.getEventsSinceLastView("pupkin@blynk.cc");
         assertEquals(1, lastViewEvents.size());
     }
 

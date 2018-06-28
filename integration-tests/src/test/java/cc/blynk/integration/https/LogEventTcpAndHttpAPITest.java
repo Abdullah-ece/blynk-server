@@ -79,7 +79,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM reporting_events");
+        holder.reportingDBManager.executeSQL("DELETE FROM reporting_events");
 
         this.httpClient = HttpClients.custom()
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))

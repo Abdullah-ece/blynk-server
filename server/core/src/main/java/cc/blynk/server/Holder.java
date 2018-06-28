@@ -1,18 +1,15 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.SlackWrapper;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
@@ -136,15 +133,10 @@ public class Holder {
         this.deviceDao = new DeviceDao(userDao.users);
         this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
-        this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
-
-        if (serverProperties.renameOldReportingFiles()) {
-            reportingDao.renameOldReportingFiles();
-        }
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -167,7 +159,6 @@ public class Holder {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
-        this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
         this.textHolder = new TextHolder(gcmProperties);
 
         this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
@@ -204,12 +195,10 @@ public class Holder {
         this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
 
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, serverProperties.host);
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
 
         this.deviceDao = new DeviceDao(userDao.users);
         this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
-        this.tokenManager = new TokenManager(userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
@@ -237,7 +226,6 @@ public class Holder {
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
-        this.tokensPool = new TokensPool(3 * 24 * 60 * 60 * 1000);
 
         this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
                 props.getProperty("http.port"),

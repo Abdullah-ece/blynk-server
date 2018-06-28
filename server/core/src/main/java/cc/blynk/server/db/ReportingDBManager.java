@@ -1,11 +1,17 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.server.db.dao.EventDBDao;
+import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
+import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.DBProperties;
 import com.zaxxer.hikari.HikariConfig;
@@ -17,7 +23,10 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
 
@@ -32,6 +41,7 @@ public class ReportingDBManager implements Closeable {
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
+    public EventDBDao eventDBDao;
     private final boolean cleanOldReporting;
 
     public ReportingDBDao reportingDBDao;
@@ -69,6 +79,7 @@ public class ReportingDBManager implements Closeable {
 
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
+        this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cleanOldReporting = dbProperties.cleanReporting();
 
         log.info("Connected to reporting database successfully.");
@@ -100,15 +111,42 @@ public class ReportingDBManager implements Closeable {
         }
     }
 
-    public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
-        if (isDBEnabled() && rawData.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
-        }
-    }
-
     public void cleanOldReportingRecords(Instant now) {
         if (isDBEnabled() && cleanOldReporting) {
             blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
+        }
+    }
+
+    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
+        if (isDBEnabled()) {
+            return reportingDBDao.getReportingDataByTs(graphPinRequest);
+        }
+        return Collections.emptyList();
+    }
+
+    public void insertBatchDataPoints(Queue<TableDataMapper> rawDataBatch) {
+        if (isDBEnabled() && rawDataBatch.size() > 0) {
+            blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
+        }
+    }
+
+    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
+        if (isDBEnabled()) {
+            return reportingDBDao.getRawData(dataQueryRequest);
+        }
+        return Collections.emptyList();
+    }
+
+    public void insertSystemEvent(int deviceId, EventType eventType) {
+        if (isDBEnabled()) {
+            blockingIOProcessor.executeDB(() -> eventDBDao.insertSystemEvent(deviceId, eventType));
+        }
+    }
+
+    public void insertEvent(int deviceId, EventType eventType, long ts,
+                            int eventHashcode, String description) throws Exception {
+        if (isDBEnabled()) {
+            eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description, false);
         }
     }
 

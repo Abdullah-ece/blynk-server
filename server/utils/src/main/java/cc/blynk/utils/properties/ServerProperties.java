@@ -22,8 +22,6 @@ public class ServerProperties extends BaseProperties {
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
 
-    private static final String STATIC_FILES_FOLDER = "static";
-
     //this is reusable properties so we want to fetch them only once
     public final boolean isUnpacked;
     public final String vendorEmail;
@@ -118,10 +116,6 @@ public class ServerProperties extends BaseProperties {
 
     public boolean getAllowStoreIp() {
         return getBoolProperty("allow.store.ip");
-    }
-
-    public boolean renameOldReportingFiles() {
-        return getBoolProperty("rename.old.reporting.files");
     }
 
     public boolean isRawDBEnabled() {

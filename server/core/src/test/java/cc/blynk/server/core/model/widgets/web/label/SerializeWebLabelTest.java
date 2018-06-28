@@ -26,7 +26,7 @@ public class SerializeWebLabelTest {
                 false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
                 null,
                 null,
-                null, SortOrder.ASC, 10)};
+                null, SortOrder.ASC, 10, false, null, false)};
         webLabel.dataType = DataType.Number;
         webLabel.decimalFormat = "#.#";
         webLabel.valueSuffix = "Loads";

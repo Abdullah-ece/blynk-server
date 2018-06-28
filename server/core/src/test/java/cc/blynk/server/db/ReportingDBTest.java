@@ -34,27 +34,27 @@ import static org.junit.Assert.assertNotNull;
 public class ReportingDBTest {
 
     private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-    private static DBManager dbManager;
+    private static ReportingDBManager reportingDBManager;
     private static BlockingIOProcessor blockingIOProcessor;
 
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
-        assertNotNull(dbManager.getConnection());
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        assertNotNull(reportingDBManager.getConnection());
     }
 
     @AfterClass
     public static void close() {
-        dbManager.close();
+        reportingDBManager.close();
     }
 
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        dbManager.executeSQL("DELETE FROM reporting_average_minute");
-        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
-        dbManager.executeSQL("DELETE FROM reporting_average_daily");
+        reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
+        reportingDBManager.executeSQL("DELETE FROM reporting_average_hourly");
+        reportingDBManager.executeSQL("DELETE FROM reporting_average_daily");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ReportingDBTest {
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
         GraphPinRequest graphPinRequest = new GraphPinRequest(0, 0, dataStream, GraphPeriod.N_DAY,
                 0, AggregationFunctionType.AVG, 0L, 1L);
-        List<RawEntry> rawEntries = dbManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
+        List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);
         assertEquals(0, rawEntries.size());
     }
@@ -81,12 +81,12 @@ public class ReportingDBTest {
                 new AggregationKey("123", "appName", 1, 1, PinType.VIRTUAL, (byte) 1, System.currentTimeMillis() / MINUTE),
                 aggregationValue
         );
-        dbManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+        reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
         DataStream dataStream = new DataStream((byte) 1, VIRTUAL);
         GraphPinRequest graphPinRequest = new GraphPinRequest(1, 1, dataStream, GraphPeriod.TWELVE_HOURS,
                 0, AggregationFunctionType.AVG, System.currentTimeMillis() - 61000, System.currentTimeMillis());
-        List<RawEntry> rawEntries = dbManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
+        List<RawEntry> rawEntries = reportingDBManager.reportingDBDao.getReportingDataByTs(graphPinRequest);
         assertNotNull(rawEntries);
         assertEquals(1, rawEntries.size());
         assertEquals(System.currentTimeMillis(), rawEntries.get(0).getKey(), 5000);

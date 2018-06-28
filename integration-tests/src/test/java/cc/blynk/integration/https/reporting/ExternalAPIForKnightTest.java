@@ -2,7 +2,7 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class ExternalAPIForKnightTest extends APIBaseTest {
 
     private String httpsServerUrl;
-    private DBManager dbManager;
+    private ReportingDBManager reportingDBManager;
 
     @Before
     public void init() throws Exception {
@@ -49,8 +49,8 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         httpsServerUrl = String.format("https://localhost:%s/external/api/", httpsPort);
 
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
-        this.dbManager = holder.dbManager;
+        holder.reportingDBManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     @After
@@ -85,7 +85,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        try (Connection connection = dbManager.getConnection()) {
+        try (Connection connection = reportingDBManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             Result<Record> result = create.select().from(KNIGHT_LAUNDRY.tableName).fetch();
@@ -142,7 +142,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
             }
         }
 
-        try (Connection connection = dbManager.getConnection()) {
+        try (Connection connection = reportingDBManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
             int result = create.selectCount().from(KNIGHT_LAUNDRY.tableName).fetchOne(0, int.class);
             assertEquals(1290 * 8, result);

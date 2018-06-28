@@ -35,7 +35,7 @@ import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.Event;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
 import cc.blynk.utils.ArrayUtil;
@@ -70,14 +70,14 @@ public class DevicesHandler extends BaseHttpHandler {
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
 
     public DevicesHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     @PUT
@@ -137,7 +137,7 @@ public class DevicesHandler extends BaseHttpHandler {
             Response response;
             try {
                 String userComment = comment == null ? null : comment.comment;
-                if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
+                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
                     response = ok();
                     Session session = sessionDao.userSession.get(new UserKey(user));
                     String body = logEventId + StringUtils.BODY_SEPARATOR_STRING + user.email;
@@ -260,7 +260,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
     private List<DeviceDTO> joinEventsCountSinceLastView(Collection<Device> devices, String email) throws Exception {
         List<DeviceDTO> result = new ArrayList<>(devices.size());
-        Map<LogEventCountKey, Integer> counters = dbManager.eventDBDao.getEventsSinceLastView(email);
+        Map<LogEventCountKey, Integer> counters = reportingDBManager.eventDBDao.getEventsSinceLastView(email);
         for (Device device : devices) {
             Product product = organizationDao.getProductByIdOrNull(device.productId);
             result.add(new DeviceDTO(device, product, counters));
@@ -339,26 +339,29 @@ public class DevicesHandler extends BaseHttpHandler {
                 List<LogEvent> eventList;
                 //todo introduce some query builder? jOOQ?
                 if (eventType == null && isResolved == null) {
-                    eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
+                    eventList = reportingDBManager.eventDBDao.getEvents(deviceId, from, to, offset, limit);
                 } else {
                     if (eventType == null) {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, from, to, offset, limit, isResolved);
+                        eventList = reportingDBManager.eventDBDao.getEvents(
+                                deviceId, from, to, offset, limit, isResolved);
                     } else if (isResolved == null) {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit);
+                        eventList = reportingDBManager.eventDBDao.getEvents(
+                                deviceId, eventType, from, to, offset, limit);
                     } else {
-                        eventList = dbManager.eventDBDao.getEvents(deviceId, eventType, from, to, offset, limit,
+                        eventList = reportingDBManager.eventDBDao.getEvents(
+                                deviceId, eventType, from, to, offset, limit,
                                 isResolved);
                     }
                 }
 
-                dbManager.eventDBDao.upsertLastSeen(deviceId, user.email);
+                reportingDBManager.eventDBDao.upsertLastSeen(deviceId, user.email);
 
                 if (product != null) {
                     joinLogEventName(product, eventList);
                 }
 
                 Map<LogEventCountKey, Integer> totalCounters =
-                        dbManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
+                        reportingDBManager.eventDBDao.getEventsTotalCounters(from, to, deviceId);
 
                 response = ok(new HashMap<String, Object>() {
                     {

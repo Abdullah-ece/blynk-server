@@ -49,13 +49,11 @@ public class Device implements Target {
 
     public volatile long connectTime;
 
-    public volatile long firstConnectTime;
-
-    public volatile long dataReceivedAt;
-
     public volatile String lastLoggedIP;
 
     public volatile long dataReceivedAt;
+
+    public volatile long firstConnectTime;
 
     public volatile long metadataUpdatedAt;
 

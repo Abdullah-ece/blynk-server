@@ -63,6 +63,11 @@ public abstract class WebWidget extends Widget {
     }
 
     @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return false;
+    }
+
+    @Override
     public void erase() {
     }
 

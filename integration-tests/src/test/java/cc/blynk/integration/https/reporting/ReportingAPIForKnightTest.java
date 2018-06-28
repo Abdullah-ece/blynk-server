@@ -2,12 +2,13 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.web.SelectedColumn;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -61,19 +62,19 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class ReportingAPIForKnightTest extends APIBaseTest {
 
-    private DBManager dbManager;
+    private ReportingDBManager reportingDBManager;
 
     @BeforeClass
     public static void prepareData() throws Exception {
         staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class),
-                mock(GCMWrapper.class), mock(SMSWrapper.class), "db-test.properties");
-        staticHolder.dbManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
+                mock(GCMWrapper.class), mock(SMSWrapper.class), mock(SlackWrapper.class), "db-test.properties");
+        staticHolder.reportingDBManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
 
         URL url = ExternalAPIForKnightTest.class.getResource("/2017_ISSA_Sample_IOT_Data.csv");
         Path resPath = Paths.get(url.toURI());
         List<String> lines = Files.readAllLines(resPath);
 
-        try (Connection connection = staticHolder.dbManager.getConnection()) {
+        try (Connection connection = staticHolder.reportingDBManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             BatchBindStep batchBindStep = create.batch(
@@ -106,7 +107,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     @Before
     public void init() throws Exception {
         super.init();
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
     }
 
     @After
@@ -115,7 +116,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
-    public void tableDescriptorSerializationTest() throws Exception {
+    public void tableDescriptorSerializationTest() {
         DataStream dataStream = new DataStream(0, (byte) 100, false, false, PinType.VIRTUAL, null, 0, 255, null, null);
         String s = JsonParser.toJson(dataStream);
         assertNotNull(s);
@@ -126,7 +127,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
     @Test
     public void testCreateShiftQueryWithSubQuery() throws Exception {
-        try (Connection connection = dbManager.getConnection()) {
+        try (Connection connection = reportingDBManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             Map<String, Object> result = create.select(
@@ -148,7 +149,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
     @Test
     public void testCreateShiftQueryWithStartTimeGrouping() throws Exception {
-        try (Connection connection = dbManager.getConnection()) {
+        try (Connection connection = reportingDBManager.getConnection()) {
             DSLContext create = DSL.using(connection, POSTGRES_9_4);
 
             Field<Integer> groupByField = extractEpochFrom(field("start_time"));
@@ -201,7 +202,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
-        Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        Object resultObj = reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);
 
         Map result = (Map) resultObj;
@@ -241,7 +242,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
-        Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        Object resultObj = reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);
 
         Map map = (Map) resultObj;
@@ -285,7 +286,7 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
 
         System.out.println(JsonParser.init().writerWithDefaultPrettyPrinter().writeValueAsString(dataQueryRequest));
 
-        Object resultObj = dbManager.reportingDBDao.getRawData(dataQueryRequest);
+        Object resultObj = reportingDBManager.reportingDBDao.getRawData(dataQueryRequest);
         assertNotNull(resultObj);
 
         Map map = (Map) resultObj;

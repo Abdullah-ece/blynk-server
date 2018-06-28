@@ -65,7 +65,7 @@ public class DataAPITest extends APIBaseTest {
 
         this.clientPair = IntegrationBase.initAppAndHardPair();
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM " + TableDescriptor.BLYNK_DEFAULT_INSTANCE.tableName);
+        holder.reportingDBManager.executeSQL("DELETE FROM " + TableDescriptor.BLYNK_DEFAULT_INSTANCE.tableName);
     }
 
     @After
@@ -122,7 +122,7 @@ public class DataAPITest extends APIBaseTest {
         rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 1, "124");
 
         //invoking directly dao to avoid separate thread execution
-        holder.dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
         DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
         HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
@@ -177,7 +177,7 @@ public class DataAPITest extends APIBaseTest {
         rawDataProcessor.collect(1, PinType.VIRTUAL, (byte) 2, "124");
 
         //invoking directly dao to avoid separate thread execution
-        holder.dbManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
+        holder.reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
 
         DataQueryRequestGroupDTO dataQueryRequestGroup = new DataQueryRequestGroupDTO(new DataQueryRequestDTO[] {
                 new DataQueryRequestDTO(RAW_DATA, PinType.VIRTUAL, (byte) 1,
@@ -301,7 +301,8 @@ public class DataAPITest extends APIBaseTest {
         webLabel.width = 20;
         webLabel.sources = new WebSource[] {
                 new WebSource("some Label", "#334455", false,
-                        RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL), null, null, null, SortOrder.ASC, 10)
+                        RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
+                        null, null, null, SortOrder.ASC, 10, false, null, false)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {

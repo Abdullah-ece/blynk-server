@@ -19,13 +19,13 @@ import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
+import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -150,7 +150,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                                         .addLast("HttpStaticFile",
                                                 new StaticFileHandler(holder, new StaticFile("/static"),
-                                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
+                                                        new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
                                         .addLast(externalAPIHandler)
                                         .addLast("HttpWebSocketUnificator", baseWebSocketUnificator);
                             }

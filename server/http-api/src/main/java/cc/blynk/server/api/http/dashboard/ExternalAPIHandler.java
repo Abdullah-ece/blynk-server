@@ -18,7 +18,7 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -42,6 +42,7 @@ import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -93,7 +94,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final DBManager dbManager;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingStorageDao;
+    private final ReportingDBManager reportingDBManager;
     private final EventorProcessor eventorProcessor;
     private final DeviceDao deviceDao;
 
@@ -104,7 +106,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         this.dbManager = holder.dbManager;
         this.mailWrapper = holder.mailWrapper;
         this.gcmWrapper = holder.gcmWrapper;
-        this.reportingDao = holder.reportingDao;
+        this.reportingStorageDao = holder.reportingDao;
+        this.reportingDBManager = holder.reportingDBManager;
         this.eventorProcessor = holder.eventorProcessor;
         this.deviceDao = holder.deviceDao;
     }
@@ -145,7 +148,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         blockingIOProcessor.executeDB(() -> {
             try {
                 long now = System.currentTimeMillis();
-                dbManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
+                reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
                 device.dataReceivedAt = now;
                 ctx.writeAndFlush(ok(), ctx.voidPromise());
             } catch (Exception e) {
@@ -339,7 +342,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(
+            java.nio.file.Path path = reportingStorageDao.csvGenerator.createCSV(
                     user, dashId, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
@@ -515,7 +518,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                             tableDescriptor,
                             deviceId, pin, pinType, LocalDateTime.now(),
                             pinValues);
-                    dbManager.reportingDBDao.insertDataPoint(tableDataMapper);
+                    reportingDBManager.reportingDBDao.insertDataPoint(tableDataMapper);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
                     log.error("Error insert knight record.", e);
@@ -532,7 +535,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
 
-        reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
+        reportingStorageDao.process(user, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
         dash.update(deviceId, pin, pinType, pinValue, now);
 
@@ -601,7 +604,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                                 pinValue);
                     }
 
-                    dbManager.reportingDBDao.insertDataPoint(tableDataMappers);
+                    reportingDBManager.reportingDBDao.insertDataPoint(tableDataMappers);
                     ctx.writeAndFlush(ok());
                 } catch (Exception e) {
                     log.error("Error insert knight record.", e);
@@ -652,7 +655,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
         for (PinData pinData : pinsData) {
-            reportingDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
+            reportingStorageDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

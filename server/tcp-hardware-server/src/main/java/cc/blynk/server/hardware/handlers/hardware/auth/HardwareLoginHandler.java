@@ -12,6 +12,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.utils.ArrayUtil;
@@ -57,12 +58,14 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private final Holder holder;
     private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
     private final boolean allowStoreIp;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
+        this.reportingDBManager = holder.reportingDBManager;
         this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
@@ -82,7 +85,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
-        dbManager.insertSystemEvent(device.id, EventType.ONLINE);
+        reportingDBManager.insertSystemEvent(device.id, EventType.ONLINE);
 
         channel.flush();
 

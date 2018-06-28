@@ -9,7 +9,7 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.WebAppStateHolder;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,14 +33,14 @@ public class ResolveWebEventHandler {
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
     private final SessionDao sessionDao;
 
     public ResolveWebEventHandler(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+        this.reportingDBManager = holder.reportingDBManager;
         this.sessionDao = holder.sessionDao;
     }
 
@@ -66,7 +66,7 @@ public class ResolveWebEventHandler {
         blockingIOProcessor.executeDB(() -> {
             ResponseMessage response;
             try {
-                if (dbManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
+                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
                     response = ok(message.id);
                     var session = sessionDao.userSession.get(state.userKey);
                     var body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;

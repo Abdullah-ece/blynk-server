@@ -3,24 +3,13 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.CloneProjectDBDao;
-import cc.blynk.server.db.dao.EventDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.ForwardingTokenDBDao;
 import cc.blynk.server.db.dao.InvitationTokensDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
-import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.RedeemDBDao;
-import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
-import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.InvitationToken;
 import cc.blynk.server.db.model.Purchase;
@@ -35,14 +24,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
-import java.util.Map;
-import java.util.Queue;
 
 /**
  * The Blynk Project.
@@ -56,11 +41,8 @@ public class DBManager implements Closeable {
 
     private final BlockingIOProcessor blockingIOProcessor;
 
-    private final boolean cleanOldReporting;
     public InvitationTokensDBDao invitationTokensDBDao;
     public UserDBDao userDBDao;
-    public EventDBDao eventDBDao;
-    public ReportingDBDao reportingDBDao;
     RedeemDBDao redeemDBDao;
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
@@ -102,7 +84,6 @@ public class DBManager implements Closeable {
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.invitationTokensDBDao = new InvitationTokensDBDao(hikariDataSource);
-        this.eventDBDao = new EventDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.forwardingTokenDBDao = new ForwardingTokenDBDao(hikariDataSource);
 
@@ -146,44 +127,6 @@ public class DBManager implements Closeable {
     public void saveUsers(ArrayList<User> users) {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.executeDB(() -> userDBDao.save(users));
-        }
-    }
-
-    public List<RawEntry> getReportingDataByTs(GraphPinRequest graphPinRequest) throws Exception {
-        if (isDBEnabled()) {
-            return reportingDBDao.getReportingDataByTs(graphPinRequest);
-        }
-        return Collections.emptyList();
-    }
-
-    public void insertStat(String region, Stat stat) {
-        if (isDBEnabled()) {
-            reportingDBDao.insertStat(region, stat);
-        }
-    }
-
-    public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
-        if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphGranularityType));
-        }
-    }
-
-    public void insertBatchDataPoints(Queue<TableDataMapper> rawDataBatch) {
-        if (isDBEnabled() && rawDataBatch.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertDataPoint(rawDataBatch));
-        }
-    }
-
-    public Object getRawData(DataQueryRequestDTO dataQueryRequest) {
-        if (isDBEnabled()) {
-            return reportingDBDao.getRawData(dataQueryRequest);
-        }
-        return Collections.emptyList();
-    }
-
-    public void cleanOldReportingRecords(Instant now) {
-        if (isDBEnabled() && cleanOldReporting) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
     }
 
@@ -232,19 +175,6 @@ public class DBManager implements Closeable {
     public void insertInvitation(InvitationToken invitationToken) throws Exception {
         if (isDBEnabled()) {
             invitationTokensDBDao.insert(invitationToken);
-        }
-    }
-
-    public void insertSystemEvent(int deviceId, EventType eventType) {
-        if (isDBEnabled()) {
-            blockingIOProcessor.executeDB(() -> eventDBDao.insertSystemEvent(deviceId, eventType));
-        }
-    }
-
-    public void insertEvent(int deviceId, EventType eventType, long ts,
-                            int eventHashcode, String description) throws Exception {
-        if (isDBEnabled()) {
-            eventDBDao.insert(deviceId, eventType, ts, eventHashcode, description, false);
         }
     }
 

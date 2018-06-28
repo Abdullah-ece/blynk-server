@@ -61,7 +61,7 @@ public abstract class APIBaseTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
         this.httpsAdminServer = new AppAndHttpsServer(holder).start();

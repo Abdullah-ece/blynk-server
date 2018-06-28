@@ -4,7 +4,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -368,9 +368,9 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.reset();
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -443,7 +443,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
     @Test
     public void getCustomWebGraphData() throws Exception {
         //clean everything just in case
-        holder.dbManager.executeSQL("DELETE FROM reporting_average_minute");
+        holder.reportingDBManager.executeSQL("DELETE FROM reporting_average_minute");
 
         login(regularUser.email, regularUser.pass);
         Device newDevice = new Device();
@@ -490,7 +490,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                 new AggregationKey("123", "appName", 1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
                 aggregationValue
         );
-        holder.dbManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
+        holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);
 
         appWebSocketClient.send("getenhanceddata 1" + b(" 432 CUSTOM " + (now - 120_000) + " " + now));
 
@@ -581,7 +581,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         WebLabel webLabel = new WebLabel();
@@ -596,7 +596,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         WebLabel webLabelNew = new WebLabel();
@@ -611,7 +611,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 3, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         product.webDashboard.widgets = new Widget[] {
@@ -686,7 +686,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 1, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         WebLabel webLabel = new WebLabel();
@@ -701,7 +701,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         WebLineGraph webLineGraph = new WebLineGraph();
@@ -711,12 +711,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
                         false, AVG, new DataStream((byte) 3, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10),
+                        null, SortOrder.ASC, 10, false, null, false),
                 new WebSource("Temperature", "#334455",
                         false, AVG, new DataStream((byte) 4, PinType.VIRTUAL),
                         null,
                         null,
-                        null, SortOrder.ASC, 10)
+                        null, SortOrder.ASC, 10, false, null, false)
         };
 
         product.webDashboard = new WebDashboard(new Widget[] {
