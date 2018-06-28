@@ -55,6 +55,22 @@ public final class FileLoaderUtil {
         return readFileAsString("template_id_mail.html");
     }
 
+    public static String readResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email.html");
+    }
+
+    public static String readNewServerUpTemplateAsString() {
+        return readFileAsString("static/reset/new-server-up.html");
+    }
+
+    public static String readAppResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email-app.html");
+    }
+
+    public static String readResetPassLandingTemplateAsString() {
+        return readFileAsString("static/reset/enterNewPassword.html");
+    }
+
     public static String readLogEventMailBody() {
         return readFileAsString("event_log_email.html");
     }

@@ -43,11 +43,14 @@ class RegularTokenManager {
 
         //assign new token
         device.token = newToken;
+        TokenValue tokenValue = isTemporary
+                ? new TemporaryTokenValue(user, dash, device)
+                : new TokenValue(user, dash, device);
+        cache.put(newToken, tokenValue);
+
         //device activated when new token is assigned
         device.activatedAt = System.currentTimeMillis();
         device.activatedBy = user.email;
-
-        cache.put(newToken, new TokenValue(user, dash, device, isTemporary));
 
         user.lastModifiedTs = System.currentTimeMillis();
 

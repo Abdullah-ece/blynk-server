@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.CookieUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -98,5 +99,14 @@ public class SessionDao {
             allChannels.addAll(session.hardwareChannels);
         });
         allChannels.close().awaitUninterruptibly();
+    }
+
+    public void closeAppChannelsByUser(UserKey userKey) {
+        Session session = userSession.get(userKey);
+        if (session != null) {
+            for (Channel appChannel : session.appChannels) {
+                appChannel.close();
+            }
+        }
     }
 }

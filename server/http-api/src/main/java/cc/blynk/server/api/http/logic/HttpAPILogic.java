@@ -3,6 +3,7 @@ package cc.blynk.server.api.http.logic;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.TokenBaseHttpHandler;
 import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.EnumQueryParam;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Metric;
 import cc.blynk.core.http.annotation.POST;
@@ -17,7 +18,7 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -52,6 +53,8 @@ import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.AbstractMap;
+
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
@@ -81,7 +84,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final EventorProcessor eventorProcessor;
     private final DeviceDao deviceDao;
 
@@ -99,7 +102,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         this.eventorProcessor = holder.eventorProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;
-        this.host = holder.props.getServerHost();
+        this.host = holder.props.host;
         this.httpsPort = holder.props.getHttpsPortAsString();
         this.deviceDao = holder.deviceDao;
     }
@@ -319,9 +322,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     public Response updateWidgetProperty(String token,
                                          String pinString,
-                                         String property,
-                                         String... values) {
-        if (values.length == 0) {
+                                         WidgetProperty property,
+                                         String value) {
+        if (value == null) {
             log.debug("No properties for update provided.");
             return badRequest("No properties for update provided.");
         }
@@ -352,19 +355,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Wrong pin format.");
         }
 
-        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
-        if (widgetProperty == null) {
-            log.debug("Property not exists. Property : {}", property);
-            return badRequest("Property not exists.");
-        }
-
         //for now supporting only virtual pins
         Widget widget = null;
         for (Widget dashWidget : dash.widgets) {
             if (dashWidget.isSame(deviceId, pin, pinType)) {
                 try {
                     //todo for now supporting only single property
-                    dashWidget.setProperty(widgetProperty, values[0]);
+                    dashWidget.setProperty(property, value);
                 } catch (Exception e) {
                     log.debug("Error setting widget property. Reason : {}", e.getMessage());
                     return badRequest("Error setting widget property.");
@@ -380,7 +377,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
-                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
+                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + value);
         return ok();
     }
 
@@ -392,33 +389,15 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response updateWidgetPinDataViaGet(@PathParam("token") String token,
                                               @PathParam("pin") String pinString,
                                               @QueryParam("value") String[] pinValues,
-                                              @QueryParam("label") String labelValue,
-                                              @QueryParam("labels") String labelsValue,
-                                              @QueryParam("color") String colorValue,
-                                              @QueryParam("onLabel") String onLabelValue,
-                                              @QueryParam("offLabel") String offLabelValue,
-                                              @QueryParam("isOnPlay") String isOnPlay) {
+                                              @EnumQueryParam(WidgetProperty.class)
+                                                          AbstractMap.SimpleImmutableEntry<WidgetProperty, String>
+                                                          widgetProperty) {
 
         if (pinValues != null) {
             return updateWidgetPinData(token, pinString, pinValues);
         }
-        if (labelValue != null) {
-            return updateWidgetProperty(token, pinString, "label", labelValue);
-        }
-        if (labelsValue != null) {
-            return updateWidgetProperty(token, pinString, "labels", labelsValue);
-        }
-        if (colorValue != null) {
-            return updateWidgetProperty(token, pinString, "color", colorValue);
-        }
-        if (onLabelValue != null) {
-            return updateWidgetProperty(token, pinString, "onLabel", onLabelValue);
-        }
-        if (offLabelValue != null) {
-            return updateWidgetProperty(token, pinString, "offLabel", offLabelValue);
-        }
-        if (isOnPlay != null) {
-            return updateWidgetProperty(token, pinString, "isOnPlay", isOnPlay);
+        if (widgetProperty != null) {
+            return updateWidgetProperty(token, pinString, widgetProperty.getKey(), widgetProperty.getValue());
         }
 
         return badRequest("Wrong request format.");
@@ -480,6 +459,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
 
         dash.update(deviceId, pin, pinType, pinValue, now);
+        tokenValue.device.dataReceivedAt = now;
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 

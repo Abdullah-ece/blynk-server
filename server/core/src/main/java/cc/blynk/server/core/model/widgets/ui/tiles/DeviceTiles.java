@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -30,7 +31,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWidget {
+public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWidget, DeviceCleaner {
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
@@ -54,15 +55,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
             }
         }
         tiles = list.toArray(new Tile[0]);
-    }
-
-    public TileTemplate findTemplateByDeviceId(int deviceId) {
-        for (TileTemplate tileTemplate : templates) {
-            if (ArrayUtil.contains(tileTemplate.deviceIds, deviceId)) {
-                return tileTemplate;
-            }
-        }
-        return null;
     }
 
     public void recreateTilesIfNecessary(TileTemplate newTileTemplate, TileTemplate existingTileTemplate) {
@@ -167,11 +159,12 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         for (Tile tile : tiles) {
-            if (tile.deviceId == targetId && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
+            if ((targetId == ANY_TARGET || tile.deviceId == targetId)
+                    && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
-                String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
+                String body = prependDashIdAndDeviceId(dashId, tile.deviceId, hardBody);
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
@@ -229,6 +222,12 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
         }
     }
 
+    public void eraseTiles() {
+        for (Tile tile : tiles) {
+            tile.erase();
+        }
+    }
+
     public int addTimers(TimerWorker timerWorker, UserKey userKey, int dashId) {
         int counter = 0;
         for (TileTemplate template : templates) {
@@ -249,5 +248,38 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        for (Tile tile : tiles) {
+            if (tile.deviceId == deviceId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int getTileIndexByDeviceId(Tile[] tiles, int deviceId) {
+        for (int i = 0; i < tiles.length; i++) {
+            if (tiles[i].deviceId == deviceId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void deleteDevice(int deviceId) {
+        Tile[] localTiles = this.tiles;
+        int index = getTileIndexByDeviceId(localTiles, deviceId);
+        if (index != -1) {
+            this.tiles = localTiles.length == 1 ? EMPTY_DEVICE_TILES : ArrayUtil.remove(localTiles, index, Tile.class);
+        }
+
+        for (TileTemplate tileTemplate : this.templates) {
+            tileTemplate.deviceIds = deleteDeviceFromArray(tileTemplate.deviceIds, deviceId);
+        }
+
     }
 }

@@ -32,7 +32,6 @@ If you need more information, please follow these links:
 - [App and sketch changes for Local Server](#app-and-sketch-changes)
 - [Advanced local server setup](#advanced-local-server-setup)
 - [Administration UI](#administration-ui)
-- [Dashboard UI](https://github.com/blynkkk/blynk-server#dashboard-ui)
 - [HTTP/S RESTful API](#https-restful)
 - [Enabling sms on local server](#enabling-sms-on-local-server)
 - [Enabling raw data storage](#enabling-raw-data-storage)
@@ -44,7 +43,6 @@ If you need more information, please follow these links:
 - [Blynk Protocol](#blynk-protocol)
 
 # GETTING STARTED
-
 
 ## Blynk server
 Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding 
@@ -75,7 +73,7 @@ For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.36.3.jar -dataFolder /path
+        java -jar server-0.38.3.jar -dataFolder /path
         
 That's it! 
 
@@ -118,11 +116,11 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.36.3/server-0.36.3-java8.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.38.3/server-0.38.3-java8.jar"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.36.3-java8.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.38.3-java8.jar -dataFolder /home/pi/Blynk
         
 That's it! 
 
@@ -144,7 +142,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.36.3.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.38.3.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -152,7 +150,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.36.3.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.38.3.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -164,7 +162,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.36.3.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.38.3.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -181,7 +179,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.36.3.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.38.3.jar   
         
 + Kill the old process
 
@@ -280,7 +278,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.36.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.38.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -417,29 +415,6 @@ administration page available from any other computer. Please restrict access to
         chrome://flags/#allow-insecure-localhost
 
 - You should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
- 
-## Dashboard UI
-
-Blynk server provides dashboard. It **should be** *(in progress)* accessible by this URL:
-
-        https://your_ip:9443/dashboard
-
-In order to work on dashboard UI install the following:
-- [node](https://nodejs.org/en/download/)
-- [yarn](https://yarnpkg.com/lang/en/docs/install/)
-- [webpack](https://webpack.js.org/guides/installation/)
-
-For the first time and every time new library is added run:
-
-    yarn istall
-    
-In order to start development server run the following:
-
-    webpack-dev-server
-      
-Open the following url in your browser(port may vary, check your console):
-
-    http://localhost:8080/index.html
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
@@ -484,15 +459,18 @@ Enable raw data in ```server.properties``` :
 
 #### 3. Download Blynk DB script
 
-        https://github.com/blynkkk/knight/blob/master/server/core/src/main/resources/create_schema.sql
+        wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
+        wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/reporting_schema.sql
 
-#### 4. Move create_schema.sql to temp folder (to avoid permission problems)
+#### 4. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
+        mv reporting_schema.sql /tmp
         
 Result:  
 
         /tmp/create_schema.sql
+        /tmp/reporting_schema.sql
         
 Copy it to clipboard from your console.
 
@@ -501,9 +479,10 @@ Copy it to clipboard from your console.
         sudo su - postgres
         psql
 
-#### 6. Create Blynk DB, test user and tables
+#### 6. Create Blynk DB and Reporting DB, test user and tables
 
         \i /tmp/create_schema.sql
+        \i /tmp/reporting_schema.sql
         
 ```/tmp/create_schema.sql``` - is path from step 4.
         

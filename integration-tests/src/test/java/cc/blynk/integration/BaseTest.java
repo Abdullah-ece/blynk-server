@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -78,6 +79,8 @@ public abstract class BaseTest {
     public GCMWrapper gcmWrapper;
     @Mock
     public SMSWrapper smsWrapper;
+    @Mock
+    public SlackWrapper slackWrapper;
 
 
     public static Holder staticHolder;
@@ -131,7 +134,10 @@ public abstract class BaseTest {
         tcpAppPort = httpsPort;
         tcpHardPort = httpPort;
 
-        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), "no-db.properties");
+        staticHolder = new Holder(properties, mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                "no-db.properties");
     }
 
     public static ResponseMessage ok(int msgId) {
@@ -144,7 +150,9 @@ public abstract class BaseTest {
             properties.setProperty("data.folder", getDataFolder());
         }
 
-        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
+        this.holder = new Holder(properties,
+                twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
     }
 
     @After

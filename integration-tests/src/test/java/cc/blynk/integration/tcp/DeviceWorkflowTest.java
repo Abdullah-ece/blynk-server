@@ -3,13 +3,19 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -268,7 +274,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         tag.deviceIds = new int[] {1};
 
         clientPair.appClient.createTag(1, tag);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.createWidget(1, "{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(2));
@@ -492,7 +498,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -501,13 +507,13 @@ public class DeviceWorkflowTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -515,7 +521,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
 
         clientPair.appClient.send("deleteDevice 1\0" + "1");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         assertFalse(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
@@ -524,6 +530,67 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertTrue(Files.notExists(pinReportingDataPath11));
         assertTrue(Files.notExists(pinReportingDataPath12));
         assertTrue(Files.notExists(pinReportingDataPath13));
+    }
+
+    @Test
+    public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
+        clientPair.appClient.createDevice(1, new Device(1, "My Device", "ESP8266"));
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 11111;
+        valueDisplay.x = 1;
+        valueDisplay.y = 2;
+        valueDisplay.height = 1;
+        valueDisplay.width = 1;
+        valueDisplay.deviceId = 1;
+        valueDisplay.pin = 1;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        clientPair.appClient.createWidget(1, valueDisplay);
+        clientPair.appClient.verifyResult(ok(2));
+
+        Terminal terminal = new Terminal();
+        terminal.id = 11112;
+        terminal.x = 1;
+        terminal.y = 2;
+        terminal.height = 1;
+        terminal.width = 1;
+        terminal.deviceId = 1;
+        terminal.pin = 3;
+        terminal.pinType = PinType.VIRTUAL;
+        clientPair.appClient.createWidget(1, terminal);
+        clientPair.appClient.verifyResult(ok(3));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+
+        hardClient2.send("hardware vw 1 123");
+        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 1 123"));
+
+        hardClient2.send("hardware vw 2 124");
+        clientPair.appClient.verifyResult(hardware(3, "1-1 vw 2 124"));
+
+        hardClient2.send("hardware vw 3 125");
+        clientPair.appClient.verifyResult(hardware(4, "1-1 vw 3 125"));
+
+        hardClient2.send("hardware vw 3 126");
+        clientPair.appClient.verifyResult(hardware(5, "1-1 vw 3 126"));
+
+        clientPair.appClient.send("deleteDevice 1\0" + "1");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.neverAfter(500, appSync(1111, "1-1 vw 1 123"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 2 124"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 3 125"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 3 126"));
     }
 
     @Test
@@ -541,12 +608,14 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertNotNull(dash);
         assertEquals(1, dash.devices.length);
 
+        assertTrue(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
+
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.getDash(4);
@@ -560,14 +629,165 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.getDash(2);
         assertNotNull(dash);
         assertEquals(2, dash.devices.length);
+
+        assertFalse(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
+        assertFalse(holder.tokenManager.clearTemporaryTokens());
     }
 
+    @Test
+    public void testCorrectRemovalForTags() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        Tag tag1 = new Tag(100_001, "tag1");
+        Tag tag2 = new Tag(100_002, "tag2", new int[] {0});
+        Tag tag3 = new Tag(100_003, "tag3", new int[] {1});
+        Tag tag4 = new Tag(100_004, "tag4", new int[] {0, 1});
+
+        clientPair.appClient.createTag(1, tag1);
+        clientPair.appClient.createTag(1, tag2);
+        clientPair.appClient.createTag(1, tag3);
+        clientPair.appClient.createTag(1, tag4);
+        clientPair.appClient.verifyResult(createTag(2, tag1));
+        clientPair.appClient.verifyResult(createTag(3, tag2));
+        clientPair.appClient.verifyResult(createTag(4, tag3));
+        clientPair.appClient.verifyResult(createTag(5, tag4));
+
+        clientPair.appClient.deleteDevice(1, 1);
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.send("getTags 1");
+        Tag[] tags = clientPair.appClient.getTags(7);
+        assertNotNull(tags);
+
+        assertEquals(100_001, tags[0].id);
+        assertEquals(0, tags[0].deviceIds.length);
+
+        assertEquals(100_002, tags[1].id);
+        assertEquals(1, tags[1].deviceIds.length);
+        assertEquals(0, tags[1].deviceIds[0]);
+
+        assertEquals(100_003, tags[2].id);
+        assertEquals(0, tags[2].deviceIds.length);
+
+        assertEquals(100_004, tags[3].id);
+        assertEquals(1, tags[3].deviceIds.length);
+        assertEquals(0, tags[3].deviceIds[0]);
+    }
+
+    @Test
+    public void testCorrectRemovalForDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(2));
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(3));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21322;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(4));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(5));
+
+        clientPair.appClient.send("addEnergy " + "100000" + "\0" + "1370-3990-1414-55681");
+        clientPair.appClient.verifyResult(ok(6));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21323;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(7));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(8));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21324;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(9));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(10));
+
+        clientPair.appClient.deleteDevice(1, 1);
+        clientPair.appClient.verifyResult(ok(11));
+
+        clientPair.appClient.getWidget(1, 21321);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(12);
+        assertNotNull(deviceTiles);
+        assertEquals(21321, deviceTiles.id);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds.length);
+
+        clientPair.appClient.getWidget(1, 21322);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(13);
+        assertNotNull(deviceTiles);
+        assertEquals(21322, deviceTiles.id);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds[0]);
+
+        clientPair.appClient.getWidget(1, 21323);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(14);
+        assertNotNull(deviceTiles);
+        assertEquals(21323, deviceTiles.id);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds.length);
+
+        clientPair.appClient.getWidget(1, 21324);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(15);
+        assertNotNull(deviceTiles);
+        assertEquals(21324, deviceTiles.id);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds[0]);
+    }
 
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);

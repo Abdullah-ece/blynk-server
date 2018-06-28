@@ -14,7 +14,7 @@ public class TileTemplateReportSource extends ReportSource {
 
     public final int templateId;
 
-    public final int[] deviceIds;
+    public volatile int[] deviceIds;
 
     @JsonCreator
     public TileTemplateReportSource(@JsonProperty("dataStreams") ReportDataStream[] reportDataStream,
@@ -23,5 +23,20 @@ public class TileTemplateReportSource extends ReportSource {
         super(reportDataStream);
         this.templateId = templateId;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
+    }
+
+    @Override
+    public boolean isValid() {
+        return deviceIds.length > 0 && super.isValid();
+    }
+
+    @Override
+    public int[] getDeviceIds() {
+        return deviceIds;
+    }
+
+    @Override
+    public void deleteDevice(int deviceId) {
+        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
     }
 }

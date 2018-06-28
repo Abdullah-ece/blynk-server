@@ -4,10 +4,11 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -21,14 +22,16 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -49,6 +52,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTH
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -57,6 +61,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -92,6 +97,36 @@ public class MainWorkflowTest extends IntegrationBase {
         this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
+    }
+
+    @Test
+    public void testResetEmail() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.verifyResult(ok(1));
+
+        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.verifyResult(notAllowed(2));
+
+        String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
+        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains("http://127.0.0.1/restore?token=" + token), any(QrHolder.class));
+
+        appClient.send("resetPass verify 123");
+        appClient.verifyResult(notAllowed(3));
+
+        appClient.send("resetPass verify " + token);
+        appClient.verifyResult(ok(4));
+
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.verifyResult(ok(5));
+
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
+
+        appClient.login("dima@mail.ua", "2");
+        appClient.verifyResult(ok(7));
     }
 
     @Test
@@ -528,19 +563,6 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
-    public void testProfileMetadata() throws Exception {
-        clientPair.appClient.send("saveMetadata {\"lat\":123.123,\"lon\":124.124}");
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getMetadata");
-        String token = clientPair.appClient.getBody();
-        assertNotNull(token);
-        assertEquals("{\"lat\":123.123,\"lon\":124.124}", token);
-    }
-
-    @Test
     public void testApplicationPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         clientPair.appClient.verifyResult(ok(1));
@@ -630,13 +652,13 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -1439,13 +1461,22 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void newUserReceivesGrettingEmail() throws Exception {
+    public void newUserReceivesGrettingEmailAndNoIPLogged() throws Exception {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
         appClient1.register("test@blynk.cc", "a", "Blynk");
         appClient1.verifyResult(ok(1));
 
+        User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
+
         verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+
+        appClient1.login("test@blynk.cc", "a");
+        appClient1.verifyResult(ok(2));
+
+        user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
     }
 }

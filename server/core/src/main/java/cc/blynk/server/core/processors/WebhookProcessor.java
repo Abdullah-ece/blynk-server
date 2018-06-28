@@ -97,6 +97,15 @@ public class WebhookProcessor extends NotificationBase {
             //https://github.com/blynkkk/blynk-server/issues/1001
             log.debug("Error during webhook initialization.", nfe);
             return;
+        } catch (IllegalArgumentException iae) {
+            String error = iae.getMessage();
+            if (error != null && error.contains("missing scheme")) {
+                //this is known possible error due to malformed input
+                log.debug("Error during webhook initialization.", iae);
+                return;
+            } else {
+                throw iae;
+            }
         }
 
         if (webHook.headers != null) {
@@ -143,7 +152,7 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.error("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
+                    log.debug("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
                     if (log.isDebugEnabled()) {
                         log.debug("Reason {}", response.getResponseBody());
                     }
@@ -155,7 +164,7 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public void onThrowable(Throwable t) {
                 webHook.failureCounter++;
-                log.error("Error sending webhook for {}.", email);
+                log.debug("Error sending webhook for {}.", email);
                 if (log.isDebugEnabled()) {
                     log.debug("Reason {}", t.getMessage());
                 }

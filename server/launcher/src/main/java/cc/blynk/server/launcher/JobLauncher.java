@@ -11,12 +11,14 @@ import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.utils.BlynkTPFactory;
 import cc.blynk.utils.structure.LRUCache;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -33,14 +35,14 @@ final class JobLauncher {
     }
 
     public static void start(Holder holder, BaseServer[] servers) {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("DataSaver"));
 
         long startDelay;
 
         var reportingWorker = new ReportingWorker(
                 holder.reportingDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
-                holder.dbManager
+                holder.reportingDBManager
         );
 
         //to start at the beggining of an minute
@@ -62,10 +64,11 @@ final class JobLauncher {
 
         if (holder.sslContextHolder.runRenewalWorker()) {
             scheduler.scheduleAtFixedRate(
-                    new CertificateRenewalWorker(holder.sslContextHolder.acmeClient, 21), 1, 1, TimeUnit.DAYS
+                    new CertificateRenewalWorker(holder.sslContextHolder, 21), 1, 1, TimeUnit.DAYS
             );
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
+        scheduler.scheduleAtFixedRate(holder.tokenManager::clearTemporaryTokens, 7, 1, DAYS);
 
         //running once every 3 day
         var reportingDataDiskCleaner =
@@ -81,7 +84,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        var ses = Executors.newScheduledThreadPool(1);
+        var ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

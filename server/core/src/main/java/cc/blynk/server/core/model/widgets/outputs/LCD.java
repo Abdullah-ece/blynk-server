@@ -65,7 +65,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         if (dataStreams == null) {
             return;
         }
@@ -121,6 +121,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     @Override
     public PinStorageValue getPinStorageValue() {
         return new MultiPinStorageValue(MultiPinStorageValueType.LCD);
+    }
+
+    @Override
+    public boolean isMultiValueWidget() {
+        return true;
     }
 
     @Override

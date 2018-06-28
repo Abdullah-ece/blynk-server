@@ -1,7 +1,5 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.utils.IPUtils;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,11 +31,6 @@ public abstract class BaseProperties extends Properties {
             initProperties(Paths.get(propertiesFileName));
         }
         putAll(cmdProperties);
-    }
-
-    BaseProperties(String propertiesFileName) {
-        this.jarPath = getJarPath();
-        initProperties(propertiesFileName);
     }
 
     private static String getJarPath() {
@@ -112,26 +105,12 @@ public abstract class BaseProperties extends Properties {
         return Integer.parseInt(prop);
     }
 
-    public boolean isRawDBEnabled() {
-        return getBoolProperty("enable.raw.db.data.store");
-    }
-
     public boolean getBoolProperty(String propertyName) {
         return Boolean.parseBoolean(getProperty(propertyName));
     }
 
     public long getLongProperty(String propertyName) {
         return Long.parseLong(getProperty(propertyName));
-    }
-
-    public String getServerHost() {
-        var host = getProperty("server.host");
-        if (host == null || host.isEmpty()) {
-            var netInterface = getProperty("net.interface", "eth");
-            return IPUtils.resolveHostIP(netInterface);
-        } else {
-            return host;
-        }
     }
 
     public String getAdminRootPath() {

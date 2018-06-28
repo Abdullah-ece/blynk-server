@@ -4,7 +4,7 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -33,7 +33,6 @@ import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -101,7 +100,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -139,10 +138,10 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
         DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -160,13 +159,13 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
 
         for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
             long now = System.currentTimeMillis();
@@ -220,7 +219,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
@@ -230,8 +229,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
         DataStream dataStream2 = new DataStream((byte) 89, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
@@ -284,12 +283,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -298,7 +297,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -350,12 +349,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -364,7 +363,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -416,12 +415,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -430,7 +429,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -482,12 +481,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -496,7 +495,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -548,12 +547,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -562,7 +561,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -621,17 +620,17 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
@@ -640,7 +639,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -674,7 +673,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -683,7 +682,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -706,7 +705,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
 
         for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
@@ -717,7 +716,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -752,7 +751,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -763,8 +762,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
@@ -800,7 +799,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -810,7 +809,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, null);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -838,7 +837,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -905,7 +904,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -934,7 +933,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -985,7 +984,6 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore("enable when live will have more than 1 page")
     public void testGetLIVEGraphDataForEnhancedGraphWithPaging() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -1000,7 +998,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1013,7 +1011,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
@@ -1032,7 +1030,7 @@ public class HistoryGraphTest extends IntegrationBase {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1 vw 88 60"))));
+        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
@@ -1045,39 +1043,6 @@ public class HistoryGraphTest extends IntegrationBase {
         assertEquals(1, bb.getInt());
         assertEquals(60, bb.getInt());
         for (int i = 1; i <= 60; i++) {
-            assertEquals(i, bb.getDouble(), 0.1);
-            assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
-        }
-
-        clientPair.appClient.reset();
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
-        graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(1, bb.getInt());
-        assertEquals(111D, bb.getDouble(), 0.1);
-        assertEquals(System.currentTimeMillis(), bb.getLong(), 5000);
-
-        for (int i = 300; i < 420; i++) {
-            clientPair.hardwareClient.send("hardware vw 88 " + i);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(5000)).channelRead(any(), eq(new HardwareMessage(181, b("1 vw 88 419"))));
-        clientPair.appClient.reset();
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
-        graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(60, bb.getInt());
-        for (int i = 300; i < 360; i++) {
             assertEquals(i, bb.getDouble(), 0.1);
             assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
         }
@@ -1094,7 +1059,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                     Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1110,7 +1075,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1143,7 +1108,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1159,7 +1124,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1194,7 +1159,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1210,7 +1175,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1233,7 +1198,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1249,7 +1214,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1269,7 +1234,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1303,7 +1268,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -1316,7 +1281,7 @@ public class HistoryGraphTest extends IntegrationBase {
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
-        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
@@ -1362,7 +1327,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1376,12 +1341,12 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        filename = ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1461,12 +1426,12 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        filename = ReportingStorageDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1537,20 +1502,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1581,9 +1546,9 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1602,20 +1567,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1653,8 +1618,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1679,20 +1644,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1731,9 +1696,9 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1752,36 +1717,36 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
 
         Path pinReportingDataPath30 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
 
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
 
         Path pinReportingDataPath21 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
 
         Path pinReportingDataPath31 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath40 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
 
         Path pinReportingDataPath41 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
 
         //3 files for device 0
@@ -1825,14 +1790,14 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
@@ -1852,7 +1817,6 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //check truncate is correct
         ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 30 * 24 * 60);
-        bb.flip();
 
         for (int i = 1; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
@@ -1860,11 +1824,28 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         bb = FileUtils.read(pinReportingDataPath3, 30 * 24 * 60 + 1);
-        bb.flip();
         for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
             assertEquals(i, bb.getLong());
         }
+    }
+
+    @Test
+    public void deleteOldExportFiles() throws Exception {
+        Path csvDir = Paths.get(FileUtils.CSV_DIR);
+        if (Files.notExists(csvDir)) {
+            Files.createDirectories(csvDir);
+        }
+
+        //this file has corresponding history graph
+        Path csvFile = Paths.get(csvDir.toString(), "123.csv.gz");
+
+        FileUtils.write(csvFile, 1.11D, 1);
+        assertTrue(Files.exists(csvFile));
+
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao, 0, 0);
+        truncateWorker.run();
+        assertTrue(Files.notExists(csvFile));
     }
 
     @Test
@@ -1879,7 +1860,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 7 * 24 * 60; i++) {
@@ -1894,7 +1875,6 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //check no truncate
         ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 7 * 24 * 60);
-        bb.flip();
 
         for (int i = 0; i < 7 * 24 * 60; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);

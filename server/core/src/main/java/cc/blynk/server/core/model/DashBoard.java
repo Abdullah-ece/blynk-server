@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -26,10 +27,11 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -141,45 +143,50 @@ public class DashBoard {
         pinStorageValue.update(value);
     }
 
+    //multi value widgets has always priority over single value widgets.
+    //for example, we have 2 widgets on the same pin, one it terminal, another is value display.
+    //so for that pin we have to return multivalue storage
     private PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
-        var widget = getWidgetForStorageKey(key);
-        if (widget == null) {
-            return new SinglePinStorageValue();
-        }
-        return widget.getPinStorageValue();
-    }
-
-    private Widget getWidgetForStorageKey(PinStorageKey key) {
-        for (var widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                var onePinWidget = (OnePinWidget) widget;
-                //pim matches and widget assigned to device selector
-                if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
-                    var deviceSelector = getDeviceSelector(onePinWidget.deviceId);
-                    if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
-                        return widget;
+        if (!(key instanceof PinPropertyStorageKey)) {
+            for (Widget widget : widgets) {
+                if (widget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) widget;
+                    //pim matches and widget assigned to device selector
+                    if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
+                        DeviceSelector deviceSelector = getDeviceSelector(onePinWidget.deviceId);
+                        if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
+                            if (widget.isMultiValueWidget()) {
+                                return widget.getPinStorageValue();
+                            }
+                        }
                     }
-                }
-            } else if (widget instanceof MultiPinWidget) {
-                var multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
-                    var deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
-                    if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
-                        return widget;
+                } else if (widget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                    if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
+                        DeviceSelector deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
+                        if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
+                            if (widget.isMultiValueWidget()) {
+                                return widget.getPinStorageValue();
+                            }
+                        }
                     }
-                }
-            } else if (widget instanceof DeviceTiles) {
-                var deviceTiles = (DeviceTiles) widget;
-                for (var template : deviceTiles.templates) {
-                    if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
-                        for (var tileWidget : template.widgets) {
-                            if (tileWidget instanceof OnePinWidget) {
-                                if (key.isSamePin((OnePinWidget) tileWidget)) {
-                                    return tileWidget;
-                                }
-                            } else if (tileWidget instanceof MultiPinWidget) {
-                                if (key.isSamePin((MultiPinWidget) tileWidget)) {
-                                    return tileWidget;
+                } else if (widget instanceof DeviceTiles) {
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    for (TileTemplate template : deviceTiles.templates) {
+                        if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
+                            for (Widget tileWidget : template.widgets) {
+                                if (tileWidget instanceof OnePinWidget) {
+                                    if (key.isSamePin((OnePinWidget) tileWidget)) {
+                                        if (tileWidget.isMultiValueWidget()) {
+                                            return tileWidget.getPinStorageValue();
+                                        }
+                                    }
+                                } else if (tileWidget instanceof MultiPinWidget) {
+                                    if (key.isSamePin((MultiPinWidget) tileWidget)) {
+                                        if (tileWidget.isMultiValueWidget()) {
+                                            return tileWidget.getPinStorageValue();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -187,7 +194,8 @@ public class DashBoard {
                 }
             }
         }
-        return null;
+
+        return new SinglePinStorageValue();
     }
 
     public void activate() {
@@ -274,23 +282,8 @@ public class DashBoard {
 
     private boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                OnePinWidget onePinWidget = (OnePinWidget) widget;
-                if (onePinWidget.deviceId == deviceId) {
-                    return true;
-                }
-            }
-            if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.deviceId == deviceId) {
-                    return true;
-                }
-            }
-            if (widget instanceof DeviceSelector) {
-                DeviceSelector deviceSelector = (DeviceSelector) widget;
-                if (ArrayUtil.contains(deviceSelector.deviceIds, deviceId)) {
-                    return true;
-                }
+            if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
+                return true;
             }
         }
         return false;
@@ -377,6 +370,10 @@ public class DashBoard {
         return getWidgetByType(Mail.class);
     }
 
+    public ReportingWidget getReportingWidget() {
+        return getWidgetByType(ReportingWidget.class);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getWidgetByType(Class<T> clazz) {
         for (Widget widget : widgets) {
@@ -418,6 +415,32 @@ public class DashBoard {
         }
     }
 
+    public void eraseValuesForDevice(int deviceId) {
+        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+        for (Widget widget : widgets) {
+            if (widget.isAssignedToDevice(deviceId)) {
+                if (widget instanceof DeviceTiles) {
+                    //deviceTiles has a bit different removal logic, so we remove manually here
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    deviceTiles.eraseTiles();
+                } else {
+                    widget.erase();
+                }
+            }
+        }
+    }
+
+    public void deleteDeviceFromObjects(int deviceId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceCleaner) {
+                ((DeviceCleaner) widget).deleteDevice(deviceId);
+            }
+        }
+        for (Tag tag : tags) {
+            tag.deleteDevice(deviceId);
+        }
+    }
+
     public void addTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceTiles) {
@@ -432,83 +455,106 @@ public class DashBoard {
     }
 
     public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
-        cleanPinStorageInternalWihtoutUpdatedAt(widget, removePropertiesToo);
+        cleanPinStorageInternalWithoutUpdatedAt(widget, removePropertiesToo);
         this.updatedAt = System.currentTimeMillis();
     }
 
     private void cleanPinStorage(Widget[] widgets) {
         for (Widget widget : widgets) {
-            cleanPinStorageInternalWihtoutUpdatedAt(widget, false);
+            cleanPinStorageInternalWithoutUpdatedAt(widget, false);
         }
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public void cleanPinStorageInternalWihtoutUpdatedAt(Widget widget, boolean removePropertiesToo) {
+    public void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
-            if (onePinWidget.pinType != null) {
-                pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
-                if (removePropertiesToo) {
-                    cleanPropertyStorageForTarget(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin);
-                }
-            }
+            cleanPinStorage(onePinWidget, -1, removeProperties);
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            if (multiPinWidget.dataStreams != null) {
-                for (DataStream dataStream : multiPinWidget.dataStreams) {
-                    if (dataStream != null && dataStream.pinType != null) {
-                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId,
-                                dataStream.pinType, dataStream.pin));
-                        if (removePropertiesToo) {
-                            cleanPropertyStorageForTarget(multiPinWidget.deviceId, dataStream.pinType, dataStream.pin);
-                        }
-                    }
-                }
-            }
+            cleanPinStorage(multiPinWidget, -1, removeProperties);
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
-            for (Tile tile : deviceTiles.tiles) {
-                if (tile.isValidDataStream()) {
-                    DataStream dataStream = tile.dataStream;
-                    pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
-                    if (removePropertiesToo) {
-                        cleanPropertyStorageForTarget(tile.deviceId, dataStream.pinType, dataStream.pin);
+            cleanPinStorage(deviceTiles, removeProperties);
+        }
+    }
+
+    private void cleanPinStorage(DeviceTiles deviceTiles, boolean removeProperties) {
+        for (Tile tile : deviceTiles.tiles) {
+            if (tile != null && tile.isValidDataStream()) {
+                DataStream dataStream = tile.dataStream;
+                pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        pinsStorage.remove(new PinPropertyStorageKey(tile.deviceId,
+                                dataStream.pinType, dataStream.pin, widgetProperty));
+                    }
+                }
+            }
+        }
+        for (TileTemplate tileTemplate : deviceTiles.templates) {
+            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
+        }
+    }
+
+    public void cleanPinStorageForTileTemplate(TileTemplate tileTemplate, boolean removeProperties) {
+        for (int deviceId : tileTemplate.deviceIds) {
+            for (Widget widget : tileTemplate.widgets) {
+                if (widget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) widget;
+                    cleanPinStorage(onePinWidget, deviceId, removeProperties);
+                } else if (widget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                    cleanPinStorage(multiPinWidget, deviceId, removeProperties);
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorage(MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+        if (multiPinWidget.dataStreams != null) {
+            for (DataStream dataStream : multiPinWidget.dataStreams) {
+                if (dataStream != null && dataStream.isValid()) {
+                    removePinStorageValue(targetId == -1 ? multiPinWidget.deviceId : targetId,
+                            dataStream.pinType, dataStream.pin, removeProperties);
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorage(OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
+        if (onePinWidget.isValid()) {
+            removePinStorageValue(targetId == -1 ? onePinWidget.deviceId : targetId,
+                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
+        }
+    }
+
+    private void removePinStorageValue(int widgetDeviceId, PinType pinType, byte pin, boolean removeProperties) {
+        Target target = getTarget(widgetDeviceId);
+        if (target != null) {
+            for (int deviceId : target.getAssignedDeviceIds()) {
+                pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
                     }
                 }
             }
         }
     }
 
-    private void cleanPropertyStorageForTarget(int widgetDeviceId, PinType pinType, byte pin) {
-        Target target = getTarget(widgetDeviceId);
-        if (target != null) {
-            for (int deviceId : target.getDeviceIds()) {
-                for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
-                }
-            }
-        }
-    }
-
-    public void sendSyncs(Channel appChannel, int targetId) {
-        sendSyncs(appChannel, id, targetId, widgets, pinsStorage);
-    }
-
-    private static void sendSyncs(Channel appChannel, int dashId, int targetId,
-                                 Widget[] widgets, Map<PinStorageKey, PinStorageValue> pinsStorage) {
+    public void sendAppSyncs(Channel appChannel, int targetId, boolean useNewFormat) {
         for (Widget widget : widgets) {
             if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, dashId, targetId);
+                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId, useNewFormat);
             }
         }
 
         for (Map.Entry<PinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                for (String value : entry.getValue().values()) {
-                    StringMessage byteBuf = key.toStringMessage(dashId, value);
-                    appChannel.write(byteBuf, appChannel.voidPromise());
-                }
+                PinStorageValue pinStorageValue = entry.getValue();
+                pinStorageValue.sendAppSync(appChannel, id, key, useNewFormat);
             }
         }
     }
@@ -571,6 +617,11 @@ public class DashBoard {
             Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
 
             Widget copyWidget = newWidget.copy();
+
+            //for now erasing only for this types, not sure about DeviceTiles
+            if (copyWidget instanceof OnePinWidget || copyWidget instanceof MultiPinWidget) {
+                copyWidget.erase();
+            }
 
             if (oldWidget != null) {
                 copyWidget.updateValue(oldWidget);

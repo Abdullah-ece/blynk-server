@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
-import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.SegmentedControl;
@@ -84,7 +83,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        property = "type")
+        property = "type",
+        defaultImpl = Button.class)
 @JsonSubTypes({
 
         //web widgets
@@ -103,7 +103,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
         @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
-        @JsonSubTypes.Type(value = OneAxisJoystick.class, name = "ONE_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = TwoAxisJoystick.class, name = "TWO_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
         @JsonSubTypes.Type(value = Step.class, name = "STEP"),
@@ -191,6 +190,8 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract void erase();
 
+    public abstract boolean isAssignedToDevice(int deviceId);
+
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
@@ -236,6 +237,10 @@ public abstract class Widget implements CopyObject<Widget> {
         return new SinglePinStorageValue();
     }
 
+    public boolean isMultiValueWidget() {
+        return false;
+    }
+
     public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABEL :
@@ -246,7 +251,7 @@ public abstract class Widget implements CopyObject<Widget> {
                 this.isDefaultColor = false;
                 break;
             default:
-                throw new RuntimeException("Error setting widget property.");
+                throw new RuntimeException("Property is not supported for this widget.");
         }
     }
 

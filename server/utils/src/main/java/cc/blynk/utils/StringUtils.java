@@ -30,6 +30,7 @@ public final class StringUtils {
     public static final Pattern PIN_PATTERN_8 =  Pattern.compile("/pin[8]/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_9 =  Pattern.compile("/pin[9]/", Pattern.LITERAL);
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
+    private static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
     public static final String WEBSOCKET_PATH = "/websocket";
@@ -44,7 +45,7 @@ public final class StringUtils {
      */
     private static final int START_INDEX = 3;
 
-    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyz";
+    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
@@ -132,12 +133,38 @@ public final class StringUtils {
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 
+    public static String randomPassword(int len) {
+        return randomString(IN_DATA, len);
+    }
+
     public static String randomString(int len) {
+        //using only lowercase chars for app id.
+        String dataForId = IN_DATA.substring(0, 26);
+        return randomString(dataForId, len);
+    }
+
+    private static String randomString(String inData, int len) {
         StringBuilder sb = new StringBuilder(len);
-        int inDataLen = IN_DATA.length();
+        int inDataLength = inData.length();
         for (int i = 0; i < len; i++) {
-            sb.append(IN_DATA.charAt(SECURE_RANDOM.nextInt(inDataLen)));
+            sb.append(inData.charAt(SECURE_RANDOM.nextInt(inDataLength)));
         }
         return sb.toString();
+    }
+
+    public static String removeUnsupportedChars(String name) {
+        return NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
+    }
+
+    public static String truncate(String name, int size) {
+        return name.length() <= size ? name : name.substring(0, size);
+    }
+
+    public static String escapeCSV(String name) {
+        name = name.replace("\"", "\"\"");
+        if (name.contains(",") || name.contains(";") || name.contains("\"")) {
+            return "\"" + name + "\"";
+        }
+        return name;
     }
 }

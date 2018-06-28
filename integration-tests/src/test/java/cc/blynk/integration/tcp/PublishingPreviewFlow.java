@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.outputs.Gauge;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
+import static cc.blynk.utils.properties.Placeholders.DYNAMIC_SECTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -65,7 +67,8 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
 
         assertNotNull(holder.dbManager.getConnection());
 
@@ -101,7 +104,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("getProjectByToken " + qrHolders[0].token);
         DashBoard dashBoard = clientPair.appClient.getDash(3);
@@ -127,7 +130,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         FlashedToken flashedToken = holder.dbManager.selectFlashedToken(qrHolders[0].token);
         assertNotNull(flashedToken);
@@ -252,7 +255,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -274,9 +277,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(5));
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(4);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -352,7 +361,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -388,9 +397,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(10));
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(5);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -487,6 +502,122 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
+    public void testChildProjectDoesntGetParentValues() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.createDash(dashBoard);
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device0);
+        device0 = clientPair.appClient.getDevice(2);
+        clientPair.appClient.verifyResult(createDevice(2, device0));
+
+        Device device2 = new Device(2, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device2);
+        device2 = clientPair.appClient.getDevice(3);
+        clientPair.appClient.verifyResult(createDevice(3, device2));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = clientPair.appClient.getApp(4);
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        //creating manually widget for child project
+        clientPair.appClient.createWidget(10, deviceTiles);
+        clientPair.appClient.verifyResult(ok(5));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {2}, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.createWidget(1, "{\"id\":155, \"value\":\"data\", \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.verifyResult(ok(7));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.register("test@blynk.cc", "a", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(2));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = appClient2.getProfile(3);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
+        Gauge gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNull(gauge);
+
+        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.verifyResult(ok(8));
+
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.getProfile(2);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNotNull(gauge);
+        assertNull(gauge.value);
+
+        //one more time, to check another branch
+        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.verifyResult(ok(9));
+
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.getProfile(2);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNotNull(gauge);
+        assertNull(gauge.value);
+    }
+
+    @Test
     public void testFaceEditForRestrictiveFields() throws Exception {
         Profile profile = JsonParser.parseProfileFromString(readTestUserProfile());
 
@@ -521,7 +652,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -550,8 +681,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(7));
 
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(4);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -588,7 +726,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
@@ -638,7 +776,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 

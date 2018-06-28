@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.utils.properties.ServerProperties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +48,10 @@ public class Device implements Target {
     public volatile long disconnectTime;
 
     public volatile long connectTime;
+
+    public volatile long firstConnectTime;
+
+    public volatile long dataReceivedAt;
 
     public volatile String lastLoggedIP;
 
@@ -200,6 +203,8 @@ public class Device implements Target {
         this.token = null;
         this.disconnectTime = 0;
         this.connectTime = 0;
+        this.firstConnectTime = 0;
+        this.dataReceivedAt = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
@@ -276,13 +281,6 @@ public class Device implements Target {
             return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
         }
         return bodySize + 5 <= hardwareInfo.buffIn;
-    }
-
-    public String updateWithPlaceholder(String body) {
-        if (name != null && !name.isEmpty()) {
-            return body.replace(ServerProperties.DEVICE_NAME, name);
-        }
-        return body;
     }
 
     @Override

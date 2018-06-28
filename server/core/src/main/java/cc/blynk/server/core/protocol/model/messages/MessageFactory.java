@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
@@ -21,6 +22,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
@@ -30,6 +32,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
@@ -37,6 +40,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -65,6 +69,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -77,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
@@ -107,6 +113,8 @@ public final class MessageFactory {
                 return new GetServerMessage(messageId, body);
             case HARDWARE_LOG_EVENT :
                 return new HardwareLogEventMessage(messageId, body);
+            case RESET_PASSWORD :
+                return new ResetPasswordMessage(messageId, body);
             case APP_CONNECTED :
             case PING :
             case LOGOUT :
@@ -171,6 +179,10 @@ public final class MessageFactory {
             case GET_PROVISION_TOKEN :
             case RESOLVE_EVENT :
             case DELETE_DEVICE_DATA :
+            case CREATE_REPORT :
+            case UPDATE_REPORT :
+            case DELETE_REPORT :
+            case EXPORT_REPORT :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);

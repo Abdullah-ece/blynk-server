@@ -59,6 +59,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final DBManager dbManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
+    private final boolean allowStoreIp;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
@@ -66,6 +67,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.blockingIOProcessor = holder.blockingIOProcessor;
         boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
         this.listenPort = isForce80ForRedirect ? "80" : String.valueOf(listenPort);
+        this.allowStoreIp = holder.props.getAllowStoreIp();
     }
 
     private void completeLogin(Channel channel, Session session, User user,
@@ -89,7 +91,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.sendToWeb(HARDWARE_CONNECTED, msgId, responseBody);
         log.trace("Connected device id {}, dash id {}", device.id, dash.id);
         device.connected();
-        device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        if (device.firstConnectTime == 0) {
+            device.firstConnectTime = device.connectTime;
+        }
+        if (allowStoreIp) {
+            device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        }
 
         log.info("{} hardware joined.", user.email);
     }
@@ -115,7 +122,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
 
-        if (tokenValue.isTemporary) {
+        if (tokenValue.isTemporary()) {
             holder.tokenManager.updateRegularCache(token, tokenValue);
             dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
             dash.updatedAt = System.currentTimeMillis();
@@ -163,7 +170,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private void sendRedirectResponse(ChannelHandlerContext ctx, String token, String server, int msgId) {
         MessageBase response;
-        if (server == null || server.equals(holder.host)) {
+        if (server == null || server.equals(holder.props.host)) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             response = invalidToken(msgId);
         } else {

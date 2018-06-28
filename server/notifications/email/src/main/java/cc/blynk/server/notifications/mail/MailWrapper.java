@@ -2,6 +2,7 @@ package cc.blynk.server.notifications.mail;
 
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.Placeholders;
 
 /**
  * The Blynk Project.
@@ -12,15 +13,27 @@ public class MailWrapper {
 
     private final MailClient client;
     private final String emailBody;
+    private final String reportBody;
 
     public MailWrapper(MailProperties mailProperties, String productName) {
-        var host = mailProperties.getProperty("mail.smtp.host");
+        String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties, productName);
         } else {
             client = new GMailClient(mailProperties);
         }
         this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
+        this.reportBody = FileLoaderUtil.readFileAsString("static/report-email.html");
+    }
+
+    public void sendReportEmail(String to,
+                                String subj,
+                                String downloadUrl,
+                                String dynamicSection) throws Exception  {
+        String body = reportBody
+                .replace(Placeholders.DOWNLOAD_URL, downloadUrl)
+                .replace(Placeholders.DYNAMIC_SECTION, dynamicSection);
+        sendHtml(to, subj, body);
     }
 
     public void sendWelcomeEmailForNewUser(String to) throws Exception {

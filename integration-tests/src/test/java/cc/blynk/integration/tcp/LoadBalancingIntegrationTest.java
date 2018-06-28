@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
+
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -56,14 +58,16 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
         appServer1 = new AppAndHttpsServer(holder).start();
 
-        properties2 = new ServerProperties("server2.properties");
+        properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");
@@ -128,10 +132,17 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         workflowForUser(appClient2, username2, pass, appName);
         profileSaverWorker2.run();
-        //waiting for DB update
-        sleep(500);
 
-        assertEquals("localhost2", holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK));
+        long tries = 0;
+        String host;
+        //waiting for channel to be closed.
+        //but only limited amount if time
+        while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
+            sleep(10);
+            tries++;
+        }
+
+        assertEquals("localhost2", host);
     }
 
     @Test

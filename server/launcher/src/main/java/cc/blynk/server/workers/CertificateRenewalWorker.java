@@ -1,13 +1,15 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
+import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.shredzone.acme4j.util.CertificateUtils;
 
 import java.io.FileInputStream;
 import java.security.cert.X509Certificate;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -20,11 +22,11 @@ public class CertificateRenewalWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(CertificateRenewalWorker.class);
 
-    private final AcmeClient acmeClient;
+    private final SslContextHolder sslContextHolder;
     private final int renewBeforeDays;
 
-    public CertificateRenewalWorker(AcmeClient acmeClient, int renewBeforeDays) {
-        this.acmeClient = acmeClient;
+    public CertificateRenewalWorker(SslContextHolder sslContextHolder, int renewBeforeDays) {
+        this.sslContextHolder = sslContextHolder;
         this.renewBeforeDays = renewBeforeDays;
     }
 
@@ -41,14 +43,15 @@ public class CertificateRenewalWorker implements Runnable {
                         expirationDate, getDateDiff(expirationDate));
 
                 //certificate will expire in 1 week
-                Date oneWeekAheadDate = getNowDatePlusDays(renewBeforeDays);
-                if (expirationDate.before(oneWeekAheadDate)) {
+                LocalDate nowPlusRenewPeriod = LocalDate.now().plusDays(renewBeforeDays);
+                Date aheadDate = Date.from(nowPlusRenewPeriod.atStartOfDay(DateTimeUtils.UTC).toInstant());
+                if (expirationDate.before(aheadDate)) {
                     log.warn("Trying to renew...");
-                    acmeClient.requestCertificate();
+                    sslContextHolder.regenerate();
                     log.info("Success! The certificate for your domain has been renewed!");
                 }
             } else {
-                acmeClient.requestCertificate();
+                sslContextHolder.regenerate();
                 log.info("Success! The certificate for your domain has been renewed!");
             }
         } catch (Exception e) {
@@ -61,9 +64,4 @@ public class CertificateRenewalWorker implements Runnable {
         return TimeUnit.MILLISECONDS.toDays(date2.getTime() - now);
     }
 
-    private static Date getNowDatePlusDays(int days) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, days);
-        return cal.getTime();
-    }
 }

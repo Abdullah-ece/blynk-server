@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -42,9 +41,9 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class ReportingDao implements Closeable {
+public class ReportingStorageDao implements Closeable {
 
-    private static final Logger log = LogManager.getLogger(ReportingDao.class);
+    private static final Logger log = LogManager.getLogger(ReportingStorageDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
     private final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
@@ -58,8 +57,8 @@ public class ReportingDao implements Closeable {
     private static final Function<Path, Boolean> NO_FILTER = s -> true;
 
     //for test only
-    public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
-                        boolean isEnabled) {
+    public ReportingStorageDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
+                               boolean isEnabled) {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -68,7 +67,7 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public ReportingDao(String reportingFolder, boolean isEnabled) {
+    public ReportingStorageDao(String reportingFolder, boolean isEnabled) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -82,7 +81,7 @@ public class ReportingDao implements Closeable {
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
+                FileUtils.getUserStorageDir(user.email, user.appName),
                 generateFilename(dashId, deviceId, pinType, pin, type)
         );
         if (Files.exists(userDataFile)) {
@@ -124,7 +123,6 @@ public class ReportingDao implements Closeable {
                                           AggregationFunctionType functionType,
                                           ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
-            ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();
@@ -166,7 +164,7 @@ public class ReportingDao implements Closeable {
     }
 
     private Path getUserReportingFolderPath(User user) {
-        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
+        return Paths.get(dataFolder, FileUtils.getUserStorageDir(user.email, user.appName));
     }
 
     public int delete(User user) {
@@ -214,10 +212,6 @@ public class ReportingDao implements Closeable {
     }
 
     private static String generateFilenamePrefix(int dashId, int deviceId) {
-        //todo this is back compatibility code. should be removed in future versions.
-        if (deviceId == 0) {
-            return "history_" + dashId + "_";
-        }
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_";
     }
 
@@ -259,12 +253,14 @@ public class ReportingDao implements Closeable {
         Path userReportingPath = getUserReportingFolderPath(user);
 
         int count = 0;
-        String fileNamePrefix = generateFilenamePrefix(dashId, deviceId);
-        try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
-            for (Path reportingFile : userReportingFolder) {
-                if (reportingFile.getFileName().toString().startsWith(fileNamePrefix)) {
-                    FileUtils.deleteQuietly(reportingFile);
-                    count++;
+        if (Files.exists(userReportingPath)) {
+            String fileNamePrefix = generateFilenamePrefix(dashId, deviceId);
+            try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
+                for (Path reportingFile : userReportingFolder) {
+                    if (reportingFile.getFileName().toString().startsWith(fileNamePrefix)) {
+                        FileUtils.deleteQuietly(reportingFile);
+                        count++;
+                    }
                 }
             }
         }
@@ -332,6 +328,45 @@ public class ReportingDao implements Closeable {
         }
 
         return values;
+    }
+
+    public void renameOldReportingFiles() {
+        long now = System.currentTimeMillis();
+        log.info("Renaming of old reporting files started...");
+        Path reportingPath = Paths.get(dataFolder);
+        if (Files.notExists(reportingPath)) {
+            return;
+        }
+        try {
+            try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingPath, "*")) {
+                for (Path userReportingDirectory : reportingFolder) {
+                    if (Files.isDirectory(userReportingDirectory)) {
+                        int filesCounter = 0;
+                        try (DirectoryStream<Path> userReportingDirectoryStream =
+                                     Files.newDirectoryStream(userReportingDirectory, "*")) {
+                            for (Path userReportingFile : userReportingDirectoryStream) {
+                                String oldFileName = userReportingFile.getFileName().toString();
+                                if (!oldFileName.contains("-")) {
+                                    int fromIndex = "history_".length();
+                                    int end = oldFileName.indexOf("_", fromIndex);
+                                    String newFileName = oldFileName.substring(0, end) + "-0"
+                                            + oldFileName.substring(end);
+                                    log.debug("Renaming {} -> {}", oldFileName, newFileName);
+                                    Files.move(userReportingFile, userReportingFile.resolveSibling(newFileName));
+                                    filesCounter++;
+                                }
+                            }
+                        }
+                        if (filesCounter > 0) {
+                            log.debug("Renamed {} files for {}", filesCounter, userReportingDirectory.getFileName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error renaming old reporting files.", e);
+        }
+        log.info("Renaming of old reporting files finished after {} ms.", System.currentTimeMillis() - now);
     }
 
     @Override

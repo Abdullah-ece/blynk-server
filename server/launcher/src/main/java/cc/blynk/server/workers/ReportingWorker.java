@@ -1,10 +1,10 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
+import static cc.blynk.server.core.dao.ReportingStorageDao.generateFilename;
 
 /**
  * Worker that runs once a minute. During run - stores all aggregated reporting data
@@ -33,14 +33,15 @@ public class ReportingWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingWorker.class);
 
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final String reportingPath;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
 
-    public ReportingWorker(ReportingDao reportingDao, String reportingPath, DBManager dbManager) {
+    public ReportingWorker(ReportingStorageDao reportingDao,
+                           String reportingPath, ReportingDBManager reportingDBManager) {
         this.reportingDao = reportingDao;
         this.reportingPath = reportingPath;
-        this.dbManager = dbManager;
+        this.reportingDBManager = reportingDBManager;
     }
 
     @Override
@@ -53,13 +54,13 @@ public class ReportingWorker implements Runnable {
             Map<AggregationKey, AggregationValue> removedKeysDay =
                     process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
 
-            dbManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
-            dbManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
-            dbManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
+            reportingDBManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
+            reportingDBManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
+            reportingDBManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
 
-            dbManager.insertBatchDataPoints(reportingDao.rawDataProcessor.rawStorage);
+            reportingDBManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
 
-            dbManager.cleanOldReportingRecords(Instant.now());
+            reportingDBManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {
             log.error("Error during reporting job.", e);
         }
@@ -93,7 +94,7 @@ public class ReportingWorker implements Runnable {
 
                 try {
                     Path userReportFolder = Paths.get(reportingPath,
-                            FileUtils.getUserReportingDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
+                            FileUtils.getUserStorageDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
                     if (Files.notExists(userReportFolder)) {
                         Files.createDirectories(userReportFolder);
                     }
