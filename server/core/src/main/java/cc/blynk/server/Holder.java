@@ -5,7 +5,7 @@ import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -63,7 +63,7 @@ public class Holder {
 
     public final TokenManager tokenManager;
 
-    public final ReportingStorageDao reportingDao;
+    public final ReportingDiskDao reportingDiskDao;
 
     public final DBManager dbManager;
     public final ReportingDBManager reportingDBManager;
@@ -135,7 +135,7 @@ public class Holder {
 
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingStorageDao(reportingFolder,
+        this.reportingDiskDao = new ReportingDiskDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
@@ -165,7 +165,7 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -201,7 +201,7 @@ public class Holder {
 
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingStorageDao(reportingFolder,
+        this.reportingDiskDao = new ReportingDiskDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
@@ -231,7 +231,7 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
@@ -250,7 +250,7 @@ public class Holder {
 
         transportTypeHolder.close();
 
-        reportingDao.close();
+        reportingDiskDao.close();
 
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();

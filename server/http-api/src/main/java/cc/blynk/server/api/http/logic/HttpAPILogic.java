@@ -18,7 +18,7 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -84,7 +84,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final EventorProcessor eventorProcessor;
     private final DeviceDao deviceDao;
 
@@ -98,7 +98,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.mailWrapper = holder.mailWrapper;
         this.gcmWrapper = holder.gcmWrapper;
-        this.reportingDao = holder.reportingDao;
+        this.reportingDao = holder.reportingDiskDao;
         this.eventorProcessor = holder.eventorProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;
