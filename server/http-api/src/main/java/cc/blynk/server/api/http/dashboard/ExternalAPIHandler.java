@@ -18,7 +18,7 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -94,7 +94,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private final DBManager dbManager;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
-    private final ReportingStorageDao reportingStorageDao;
+    private final ReportingDiskDao reportingDiskDao;
     private final ReportingDBManager reportingDBManager;
     private final EventorProcessor eventorProcessor;
     private final DeviceDao deviceDao;
@@ -106,7 +106,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         this.dbManager = holder.dbManager;
         this.mailWrapper = holder.mailWrapper;
         this.gcmWrapper = holder.gcmWrapper;
-        this.reportingStorageDao = holder.reportingDao;
+        this.reportingDiskDao = holder.reportingDiskDao;
         this.reportingDBManager = holder.reportingDBManager;
         this.eventorProcessor = holder.eventorProcessor;
         this.deviceDao = holder.deviceDao;
@@ -342,7 +342,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = reportingStorageDao.csvGenerator.createCSV(
+            java.nio.file.Path path = reportingDiskDao.csvGenerator.createCSV(
                     user, dashId, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
@@ -535,7 +535,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
 
-        reportingStorageDao.process(user, dash, device, pin, pinType, pinValue, now);
+        reportingDiskDao.process(user, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
         dash.update(deviceId, pin, pinType, pinValue, now);
 
@@ -655,7 +655,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Device device = deviceDao.getById(deviceId);
         for (PinData pinData : pinsData) {
-            reportingStorageDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDiskDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.web;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -63,12 +63,12 @@ public class GetWebGraphDataLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDBDao reportingDBDao;
-    private final ReportingStorageDao reportingStorageDao;
+    private final ReportingDiskDao reportingDiskDao;
     private final DeviceDao deviceDao;
 
     public GetWebGraphDataLogic(Holder holder) {
         this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
-        this.reportingStorageDao = holder.reportingDao;
+        this.reportingDiskDao = holder.reportingDiskDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.deviceDao = holder.deviceDao;
     }
@@ -176,7 +176,7 @@ public class GetWebGraphDataLogic {
     private void readGraphDataFromDisk(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] allPinsData = reportingStorageDao.getReportingData(user, requestedPins);
+                byte[][] allPinsData = reportingDiskDao.getReportingData(user, requestedPins);
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream(8096);
                 ByteUtils.writeInt(out, requestedPins[0].deviceId);
