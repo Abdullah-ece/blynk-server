@@ -2,7 +2,7 @@ import React from 'react';
 import {MetadataSelect as Select} from 'components/Form';
 import ColorPicker from 'components/ColorPicker';
 import {Item, ItemsGroup} from "components/UI";
-import {Button, Radio, Input, Icon, Row, Col, Select as AntdSelect, Switch} from 'antd';
+import {Button, Radio, Input, Icon, Row, Col, Select as AntdSelect, Switch, Popconfirm} from 'antd';
 import {Field, change} from 'redux-form';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -125,7 +125,7 @@ class Source extends React.Component {
   handleDelete() {
 
     if(this.props.onDelete)
-      this.props.onDelete(this.props.source.get('id'));
+      this.props.onDelete(this.props.index);
   }
 
   handleCopy() {
@@ -248,7 +248,14 @@ class Source extends React.Component {
 
           <div className="modal-window-widget-settings-config-column-sources-source-header-tools">
             { this.props.isAbleToDelete && (
-              <Button size="small" icon="delete" onClick={this.handleDelete}/>
+              <Popconfirm title="Are you sure you want to delete this source?"
+                          okText="Yes"
+                          cancelText="No"
+                          onConfirm={this.handleDelete}
+                          overlayClassName="danger">
+                <Button size="small" icon="delete"/>
+              </Popconfirm>
+
             )}
             {/*<Button size="small" icon="copy" onClick={this.handleCopy}/>*/} { /* uncomment when start to support multiple sources*/}
             {/*<Button size="small" icon="bars" disabled={true}/>*/}

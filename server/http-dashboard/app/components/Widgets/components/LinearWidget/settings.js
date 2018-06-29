@@ -130,8 +130,8 @@ class LinearWidgetSettings extends React.Component {
     this.props.changeForm(this.props.form, 'sources', sources.toJS());
   }
 
-  handleSourceDelete(id) {
-    const sources = this.props.formValues.get('sources').update(sources => sources.filter((source) => Number(source.get('id')) !== Number(id)));
+  handleSourceDelete(deleteIndex) {
+    const sources = this.props.formValues.get('sources').update(sources => sources.filter((source, index) => Number(index) !== Number(deleteIndex)));
 
     this.props.changeForm(this.props.form, 'sources', sources.toJS());
   }
