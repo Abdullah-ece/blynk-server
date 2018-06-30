@@ -40,8 +40,6 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
-
 /**
  * Just a holder for all necessary objects for server instance creation.
  *
@@ -102,8 +100,7 @@ public class Holder {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
-        String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder, serverProperties.host);
+        this.fileManager = new FileManager(serverProperties.getDataFolder(), serverProperties.host);
         this.sessionDao = new SessionDao();
 
 
@@ -134,8 +131,7 @@ public class Holder {
         this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
         this.stats = new GlobalStats();
-        final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDiskDao = new ReportingDiskDao(reportingFolder,
+        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
@@ -181,8 +177,7 @@ public class Holder {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
-        String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder, serverProperties.host);
+        this.fileManager = new FileManager(serverProperties.getDataFolder(), serverProperties.host);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         this.blockingIOProcessor = new BlockingIOProcessor(
@@ -200,8 +195,7 @@ public class Holder {
         this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
 
         this.stats = new GlobalStats();
-        final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDiskDao = new ReportingDiskDao(reportingFolder,
+        this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
