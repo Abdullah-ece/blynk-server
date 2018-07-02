@@ -89,6 +89,9 @@ class Source extends React.Component {
     if (type === WIDGETS_CHART_TYPES.AREA)
       return 'area-chart';
 
+    if (type === WIDGETS_CHART_TYPES.COLUMN)
+      return 'bar-chart';
+
     // dot-chart bar-chart
 
   }
@@ -291,13 +294,13 @@ class Source extends React.Component {
         <div className="modal-window-widget-settings-config-column-sources-source-chart-type" style={{ marginBottom: 0}}>
           <div className="modal-window-widget-settings-config-column-sources-source-chart-type-select">
             <Row>
-              <Col span={8}>
+              <Col span={10}>
                 <Item label={getLabelForChartTypeItem()} offset="medium">
                   <Field component={this.chartTypeSelectComponent} name={`sources.${this.props.index}.lineGraphType`}
                          getIconForChartByType={this.getIconForChartByType}/>
                 </Item>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 <Item label="Color" offset="medium">
                   <Field component={this.colorPickerComponent} name={`sources.${this.props.index}.color`}
                          getIconForChartByType={this.getIconForChartByType}/>

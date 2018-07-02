@@ -9,7 +9,10 @@ import {Map} from 'immutable';
 import moment from 'moment';
 import Canvasjs from 'canvasjs';
 import {Unit} from 'services/Products';
-import {CANVASJS_CHART_TYPES} from 'services/Widgets';
+import {
+  CANVASJS_CHART_TYPES,
+  WIDGETS_CHART_TYPES,
+} from 'services/Widgets';
 
 import Dotdotdot from 'react-dotdotdot';
 
@@ -138,7 +141,7 @@ class LinearWidget extends React.Component {
           x: getFormattedValue(entry.dataSeries.xValueFormatString, entry.dataPoint.x),
           y: getFormattedValue(entry.dataSeries.yValueFormatString, entry.dataPoint.y),
           name: entry.dataSeries.name,
-          color: entry.dataSeries.lineColor,
+          color: entry.dataSeries.options && entry.dataSeries.options.color,
         });
       });
 
@@ -248,6 +251,13 @@ class LinearWidget extends React.Component {
       enableYAxis: source.enableYAxis === true,
     };
 
+    if(WIDGETS_CHART_TYPES.COLUMN === source.lineGraphType) {
+      dataSource = {
+        ...dataSource,
+        fillOpacity: 1,
+      };
+    }
+
     return dataSource;
   }
 
@@ -259,7 +269,15 @@ class LinearWidget extends React.Component {
     if (this.props.loading)
       return (<Icon type="loading"/>);
 
-    let dataSources = this.props.data.sources.map(this.generateData).filter((source) => source !== null);
+    const columnChartFirst = (a, b) => {
+      if(a.lineGraphType && b.lineGraphType) {
+        return a.lineGraphType === WIDGETS_CHART_TYPES.COLUMN ? -1 : 1;
+      }
+
+      return -1;
+    };
+
+    let dataSources = [...this.props.data.sources].map(this.generateData).sort(columnChartFirst).filter((source) => source !== null);
 
     let formats = this.getTimeFormatForRange(
       this.getMinMaxXFromLegendsList(dataSources)

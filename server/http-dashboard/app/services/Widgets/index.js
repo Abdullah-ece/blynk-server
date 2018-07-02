@@ -277,11 +277,13 @@ export const WIDGETS_CHART_TYPES = {
   'LINE': 'LINE',
   'AREA': 'AREA',
   'DOTS': 'DOTS',
+  'COLUMN': 'COLUMN',
 };
 
 export const CANVASJS_CHART_TYPES = {
   [WIDGETS_CHART_TYPES.LINE]: 'line',
   [WIDGETS_CHART_TYPES.AREA]: 'area',
+  [WIDGETS_CHART_TYPES.COLUMN]: 'column',
 };
 
 export const WIDGETS_CHART_TYPES_LIST = [
@@ -292,7 +294,11 @@ export const WIDGETS_CHART_TYPES_LIST = [
   {
     key: WIDGETS_CHART_TYPES.AREA,
     value: 'Area'
-  }
+  },
+  {
+    key: WIDGETS_CHART_TYPES.COLUMN,
+    value: 'Column'
+  },
 ];
 
 export const WIDGETS_SOURCE_TYPES = {
