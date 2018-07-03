@@ -26,6 +26,11 @@
             <artifactId>tcp-app-server</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cc.blynk.server.api</groupId>
+            <artifactId>http-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 </project>

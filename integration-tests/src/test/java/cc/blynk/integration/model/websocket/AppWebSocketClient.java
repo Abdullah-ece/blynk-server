@@ -18,6 +18,7 @@ package cc.blynk.integration.model.websocket;
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -142,8 +143,20 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("getAccount");
     }
 
-    public User parseAccount() throws Exception {
-        return JsonParser.parseUserFromString(getBody(1));
+    public void createDevice(int orgId, Device device) {
+        send("webCreateDevice " + orgId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void getDevices(int orgId) {
+        send("webGetDevices " + orgId);
+    }
+
+    public Device parseDevice(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseDevice(getBody(expectedMessageOrder), 0);
+    }
+
+    public Device[] parseDevices(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
     }
 
     public User parseAccount(int expectedMessageOrder) throws Exception {

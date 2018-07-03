@@ -71,7 +71,9 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
@@ -248,6 +250,10 @@ public final class CommandParserUtil {
                 return WEB_GET_ACCOUNT;
             case "updateaccount" :
                 return WEB_UPDATE_ACCOUNT;
+            case "webcreatedevice" :
+                return WEB_CREATE_DEVICE;
+            case "webgetdevices" :
+                return WEB_GET_DEVICES;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

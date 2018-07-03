@@ -50,7 +50,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
     public void getOwnProfileWorks() throws Exception {
         AppWebSocketClient appWebSocketClient = loggedDefaultClient(regularUser);
         appWebSocketClient.getAccount();
-        User user = appWebSocketClient.parseAccount();
+        User user = appWebSocketClient.parseAccount(1);
         assertNotNull(user);
         assertEquals("user@blynk.cc", user.email);
         assertEquals("user@blynk.cc", user.name);
@@ -60,7 +60,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
     public void getOwnProfileReturnOnlySpecificFields() throws Exception {
         AppWebSocketClient appWebSocketClient = loggedDefaultClient(admin);
         appWebSocketClient.getAccount();
-        User user = appWebSocketClient.parseAccount();
+        User user = appWebSocketClient.parseAccount(1);
         assertNotNull(user);
         assertEquals("admin@blynk.cc", user.email);
         assertEquals("admin@blynk.cc", user.name);

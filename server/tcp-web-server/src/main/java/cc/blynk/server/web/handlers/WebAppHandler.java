@@ -12,6 +12,8 @@ import cc.blynk.server.web.handlers.logic.ResolveWebEventLogic;
 import cc.blynk.server.web.handlers.logic.TrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
+import cc.blynk.server.web.handlers.logic.WebCreateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.WebGetDevicesLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -20,7 +22,9 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
@@ -35,6 +39,8 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebAppHardwareLogic webAppHardwareLogic;
     private final GetWebGraphDataLogic getWebGraphDataLogic;
     private final ResolveWebEventLogic resolveWebEventLogic;
+    private final WebCreateDeviceLogic webCreateDeviceLogic;
+    private final WebGetDevicesLogic webGetDevicesLogic;
 
     private final GlobalStats stats;
 
@@ -43,6 +49,8 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
         this.getWebGraphDataLogic = new GetWebGraphDataLogic(holder);
         this.resolveWebEventLogic = new ResolveWebEventLogic(holder);
+        this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
+        this.webGetDevicesLogic = new WebGetDevicesLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -72,6 +80,12 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
+                break;
+            case WEB_CREATE_DEVICE :
+                webCreateDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_DEVICES :
+                webGetDevicesLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

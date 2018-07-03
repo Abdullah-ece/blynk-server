@@ -1,25 +1,31 @@
 package cc.blynk.server.web.handlers.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.web.session.WebAppStateHolder;
+import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
-import static cc.blynk.utils.StringUtils.split3;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -32,58 +38,64 @@ public class WebCreateDeviceLogic {
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDBManager reportingDBManager;
-    private final SessionDao sessionDao;
+    private final TokenManager tokenManager;
 
     public WebCreateDeviceLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.reportingDBManager = holder.reportingDBManager;
-        this.sessionDao = holder.sessionDao;
+        this.tokenManager = holder.tokenManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        //deviceId logEventId comment
-        var messageParts = split3(message.body);
+        String[] split = split2(message.body);
 
-        var deviceId = Integer.parseInt(messageParts[0]);
+        int orgId = Integer.parseInt(split[0]);
 
-        //logEventId comment
-        var logEventId = Long.parseLong(messageParts[1]);
-        var comment = messageParts.length == 3 ? messageParts[2] : null;
+        //todo refactor when permissions ready
+        User user = state.user;
+        organizationDao.hasAccess(user, orgId);
 
-        var device = deviceDao.getById(deviceId);
+        Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
-        var orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-        var user = state.user;
-        if (!user.hasAccess(orgId)) {
-            log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
-            throw new NotAllowedException("You have no access to this device.", message.id);
+        if (newDevice == null || newDevice.productId < 1) {
+            log.error("No data or productId is wrong. {}", newDevice);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
         }
 
-        blockingIOProcessor.executeDB(() -> {
-            ResponseMessage response;
-            try {
-                if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
-                    response = ok(message.id);
-                    var session = sessionDao.userSession.get(state.userKey);
-                    var body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
-                    if (comment != null) {
-                        body = body + BODY_SEPARATOR_STRING + comment;
-                    }
-                    session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, message.id, body, deviceId);
-                } else {
-                    log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
-                    response = notAllowed(message.id);
-                }
-            } catch (Exception e) {
-                log.error("Error marking event as resolved.", e);
-                response = serverError(message.id);
-            }
-            ctx.writeAndFlush(response, ctx.voidPromise());
-        });
+        //default dash for all devices...
+        final int dashId = 0;
+        DashBoard dash = user.profile.getDashById(dashId);
 
+        if (dash == null) {
+            log.error("Dash with id = {} not exists.", dashId);
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            return;
+        }
+
+        Organization org = organizationDao.getOrgByIdOrThrow(orgId);
+        Product product = org.getProduct(newDevice.productId);
+        if (product == null) {
+            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
+            ctx.writeAndFlush(productNotExists(message.id), ctx.voidPromise());
+            return;
+        }
+
+        newDevice.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
+        newDevice.webDashboard = product.webDashboard.copy();
+
+        deviceDao.create(orgId, newDevice);
+        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
+
+        final String newToken = TokenGeneratorUtil.generateNewToken();
+        tokenManager.assignToken(user, dash, newDevice, newToken);
+
+        user.lastModifiedTs = System.currentTimeMillis();
+
+        if (ctx.channel().isWritable()) {
+            String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
+            ctx.writeAndFlush(makeASCIIStringMessage(WEB_CREATE_DEVICE, message.id, deviceString), ctx.voidPromise());
+        }
     }
+
 }

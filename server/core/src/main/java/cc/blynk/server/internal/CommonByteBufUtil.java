@@ -20,6 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.PRODUCT_NOT_EXISTS;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
@@ -70,6 +71,10 @@ public final class CommonByteBufUtil {
 
     public static ResponseMessage illegalCommand(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND);
+    }
+
+    public static ResponseMessage productNotExists(int msgId) {
+        return makeResponse(msgId, PRODUCT_NOT_EXISTS);
     }
 
     public static ResponseMessage invalidToken(int msgId) {

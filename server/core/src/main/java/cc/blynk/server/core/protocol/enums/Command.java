@@ -138,6 +138,7 @@ public final class Command {
     public static final short WEB_GET_ACCOUNT = 100;
     public static final short WEB_UPDATE_ACCOUNT = 101;
     public static final short WEB_CREATE_DEVICE = 102;
+    public static final short WEB_GET_DEVICES = 103;
 
     private Command() {
     }
@@ -233,7 +234,8 @@ public final class Command {
             Map.entry(WEB_HOOKS, "WebHooks"),
             Map.entry(WEB_GET_ACCOUNT, "WebGetAccount"),
             Map.entry(WEB_UPDATE_ACCOUNT, "WebUpdateAccount"),
-            Map.entry(WEB_CREATE_DEVICE, "WebCreateDevice")
+            Map.entry(WEB_CREATE_DEVICE, "WebCreateDevice"),
+            Map.entry(WEB_GET_DEVICES, "WebGetDevices")
     );
 
     public static String getNameByValue(short val) {

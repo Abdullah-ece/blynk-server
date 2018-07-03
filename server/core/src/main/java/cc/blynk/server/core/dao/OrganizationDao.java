@@ -184,9 +184,7 @@ public class OrganizationDao {
             //user is admin of parent org, so he can perform admin action on child org
             List<Organization> childOrgs = getOrgsByParentId(user.orgId);
             Organization org = getOrgById(childOrgs, orgId);
-            if (org != null) {
-                return true;
-            }
+            return org != null;
         }
         return false;
     }
