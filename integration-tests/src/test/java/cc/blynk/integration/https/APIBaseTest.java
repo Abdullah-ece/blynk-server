@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.utils.AppNameUtil.BLYNK;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -154,6 +156,19 @@ public abstract class APIBaseTest extends BaseTest {
         public boolean verify(String s, SSLSession sslSession) {
             return true;
         }
+    }
+
+    public static AppWebSocketClient loggedDefaultClient(User user) throws Exception {
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.login(user);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+        return appWebSocketClient;
+    }
+
+    public static AppWebSocketClient defaultClient() throws Exception {
+        return new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
     }
 
 }

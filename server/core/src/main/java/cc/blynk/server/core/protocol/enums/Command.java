@@ -135,6 +135,9 @@ public final class Command {
     public static final short HTTP_CLONE = 93;
     public static final short HTTP_TOTAL = 94;
 
+    public static final short GET_ACCOUNT = 100;
+    public static final short UPDATE_ACCOUNT = 101;
+
     private Command() {
     }
 
@@ -226,7 +229,9 @@ public final class Command {
             Map.entry(HTTP_TOTAL, "HttpTotal"),
             Map.entry(WEB_SOCKETS, "WebSockets"),
             Map.entry(EVENTOR, "Eventor"),
-            Map.entry(WEB_HOOKS, "WebHooks")
+            Map.entry(WEB_HOOKS, "WebHooks"),
+            Map.entry(GET_ACCOUNT, "GetAccount"),
+            Map.entry(UPDATE_ACCOUNT, "UpdateAccount")
     );
 
     public static String getNameByValue(short val) {

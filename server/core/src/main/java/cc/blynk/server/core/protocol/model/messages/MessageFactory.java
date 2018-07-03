@@ -41,6 +41,7 @@ import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -77,6 +78,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
@@ -183,6 +185,8 @@ public final class MessageFactory {
             case UPDATE_REPORT :
             case DELETE_REPORT :
             case EXPORT_REPORT :
+            case GET_ACCOUNT :
+            case UPDATE_ACCOUNT :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);

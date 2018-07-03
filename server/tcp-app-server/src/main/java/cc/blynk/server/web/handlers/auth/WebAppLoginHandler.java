@@ -1,13 +1,15 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.web.handlers.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.WebAppHandler;
+import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
+import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.web.handlers.WebAppHandler;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
@@ -64,7 +66,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
         String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
@@ -139,7 +141,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 

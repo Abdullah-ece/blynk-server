@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.web;
+package cc.blynk.server.web.handlers.logic;
 
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.WebAppStateHolder;

@@ -18,7 +18,9 @@ package cc.blynk.integration.model.websocket;
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
@@ -39,13 +41,18 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 public final class AppWebSocketClient extends BaseTestAppClient {
 
@@ -135,8 +142,36 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
     }
 
+    public void updateAccount(User user) {
+        send("updateAccount " + user.toString());
+    }
+
+    public void getAccount() {
+        send("getAccount");
+    }
+
+    public User parseAccount() throws Exception {
+        return JsonParser.parseUserFromString(getBody(1));
+    }
+
+    public User parseAccount(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseUserFromString(getBody(expectedMessageOrder));
+    }
+
     public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
+    }
+
+    public String getBody(int expectedMessageOrder) throws Exception {
+        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
+        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
+        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
+        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
+        if (messageBase instanceof StringMessage) {
+            return ((StringMessage) messageBase).body;
+        }
+
+        throw new RuntimeException("Unexpected message");
     }
 
     public void reset() {
