@@ -2,7 +2,7 @@ package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.common.handlers.PingHandler;
+import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -71,7 +71,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 resolveWebEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
-                PingHandler.messageReceived(ctx, msg.id);
+                PingLogic.messageReceived(ctx, msg.id);
                 break;
         }
     }
