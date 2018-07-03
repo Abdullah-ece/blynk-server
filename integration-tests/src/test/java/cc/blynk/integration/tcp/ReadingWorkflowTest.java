@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
@@ -17,6 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -35,8 +38,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 @Ignore
-//todo ignore
-public class ReadingWorkflowTest extends IntegrationBase {
+public class ReadingWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

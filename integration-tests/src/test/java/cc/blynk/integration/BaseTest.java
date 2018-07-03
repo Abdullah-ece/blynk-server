@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.SlackWrapper;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Mockito.mock;
 
@@ -174,7 +176,7 @@ public abstract class BaseTest {
     }
 
     public static String getRelativeDataFolder(String path) {
-        URL resource = IntegrationBase.class.getResource(path);
+        URL resource = BaseTest.class.getResource(path);
         URI uri = null;
         try {
             uri = resource.toURI();
@@ -234,6 +236,20 @@ public abstract class BaseTest {
         }
     }
 
+    public static ClientPair initAppAndHardPair() throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
+    }
 
+    public static ClientPair initAppAndHardPair(int energy) throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
+    }
+
+    public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
+    }
+
+    public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
+    }
 }
 

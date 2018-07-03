@@ -4,9 +4,11 @@ import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,29 +33,43 @@ public class Device implements Target {
 
     public volatile String boardType;
 
+    @JsonView(View.Private.class)
     public volatile String token;
 
     public volatile String vendor;
 
     public volatile ConnectionType connectionType;
 
+    @JsonView(View.Private.class)
     public volatile Status status = Status.OFFLINE;
 
+    @JsonView(View.Private.class)
     public final long createdAt;
 
     public volatile long activatedAt;
 
     public volatile String activatedBy;
 
+    @JsonView(View.Private.class)
     public volatile long disconnectTime;
 
+    @JsonView(View.Private.class)
     public volatile long connectTime;
 
-    public volatile String lastLoggedIP;
+    @JsonView(View.Private.class)
+    public volatile long firstConnectTime;
 
+    @JsonView(View.Private.class)
     public volatile long dataReceivedAt;
 
-    public volatile long firstConnectTime;
+    @JsonView(View.Private.class)
+    public volatile String lastLoggedIP;
+
+    @JsonView(View.Private.class)
+    public volatile HardwareInfo hardwareInfo;
+
+    @JsonView(View.Private.class)
+    public volatile DeviceOtaInfo deviceOtaInfo;
 
     public volatile long metadataUpdatedAt;
 
@@ -62,10 +78,6 @@ public class Device implements Target {
     public volatile String metadataUpdatedBy;
 
     public volatile MetaField[] metaFields = EMPTY_META_FIELDS;
-
-    public volatile HardwareInfo hardwareInfo;
-
-    public volatile DeviceOtaInfo deviceOtaInfo;
 
     public volatile String iconName;
 
