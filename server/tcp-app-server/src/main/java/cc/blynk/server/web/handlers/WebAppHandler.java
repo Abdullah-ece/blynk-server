@@ -15,13 +15,13 @@ import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
  * The Blynk Project.
@@ -52,10 +52,10 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         this.stats.incrementAppStat();
         switch (msg.command) {
-            case GET_ACCOUNT :
+            case WEB_GET_ACCOUNT:
                 GetAccountLogic.messageReceived(ctx, state, msg);
                 break;
-            case UPDATE_ACCOUNT :
+            case WEB_UPDATE_ACCOUNT:
                 UpdateAccountLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE :

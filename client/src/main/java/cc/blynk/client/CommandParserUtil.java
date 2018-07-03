@@ -28,7 +28,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -63,7 +62,6 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
@@ -73,6 +71,8 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
  * The Blynk Project.
@@ -245,9 +245,9 @@ public final class CommandParserUtil {
             case "resetpass" :
                 return RESET_PASSWORD;
             case "getaccount" :
-                return GET_ACCOUNT;
+                return WEB_GET_ACCOUNT;
             case "updateaccount" :
-                return UPDATE_ACCOUNT;
+                return WEB_UPDATE_ACCOUNT;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

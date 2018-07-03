@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
@@ -42,7 +42,7 @@ public final class UpdateAccountLogic {
         user.setName(updatedUser.name);
         if (ctx.channel().isWritable()) {
             String userString = JsonParser.toJsonWeb(user);
-            ctx.writeAndFlush(makeUTF8StringMessage(UPDATE_ACCOUNT, message.id, userString), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(WEB_UPDATE_ACCOUNT, message.id, userString), ctx.voidPromise());
         }
     }
 

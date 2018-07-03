@@ -5,7 +5,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -23,7 +23,7 @@ public final class GetAccountLogic {
     public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         if (ctx.channel().isWritable()) {
             String userString = JsonParser.toJsonWeb(state.user);
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_ACCOUNT, message.id, userString), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(WEB_GET_ACCOUNT, message.id, userString), ctx.voidPromise());
         }
     }
 
