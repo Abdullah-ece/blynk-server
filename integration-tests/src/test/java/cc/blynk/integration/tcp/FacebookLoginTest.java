@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.hardwareConnected;
-import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static cc.blynk.integration.TestUtil.saveProfile;

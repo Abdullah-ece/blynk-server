@@ -22,7 +22,6 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
-import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

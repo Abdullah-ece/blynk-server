@@ -15,7 +15,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
-import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

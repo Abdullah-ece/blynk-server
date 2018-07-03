@@ -57,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
-import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;

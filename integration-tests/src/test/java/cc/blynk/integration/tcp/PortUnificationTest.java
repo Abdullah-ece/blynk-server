@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
-import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertNotNull;
 
 /**

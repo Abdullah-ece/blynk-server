@@ -21,7 +21,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
-import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 
 /**

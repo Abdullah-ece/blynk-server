@@ -21,7 +21,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.UUID;
 
 import static cc.blynk.integration.TestUtil.notAllowed;
-import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

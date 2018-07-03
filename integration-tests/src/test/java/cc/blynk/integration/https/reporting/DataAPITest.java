@@ -1,6 +1,6 @@
 package cc.blynk.integration.https.reporting;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.dashboard.dto.DataDTO;
@@ -63,7 +63,7 @@ public class DataAPITest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
-        this.clientPair = IntegrationBase.initAppAndHardPair();
+        this.clientPair = BaseTest.initAppAndHardPair();
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM " + TableDescriptor.BLYNK_DEFAULT_INSTANCE.tableName);
     }

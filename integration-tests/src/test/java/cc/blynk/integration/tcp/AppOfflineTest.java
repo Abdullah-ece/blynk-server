@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.internal;
-import static cc.blynk.integration.TestUtil.ok;
 
 /**
  * The Blynk Project.

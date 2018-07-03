@@ -1,6 +1,6 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -46,7 +46,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -77,7 +77,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
-        this.clientPair = IntegrationBase.initAppAndHardPair();
+        this.clientPair = BaseTest.initAppAndHardPair();
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM reporting_events");
 

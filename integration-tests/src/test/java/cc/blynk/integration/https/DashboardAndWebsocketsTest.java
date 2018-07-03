@@ -49,8 +49,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.integration.IntegrationBase.appSync;
-import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.integration.TestUtil.appSync;
+import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;

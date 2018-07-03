@@ -53,7 +53,6 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
-import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;

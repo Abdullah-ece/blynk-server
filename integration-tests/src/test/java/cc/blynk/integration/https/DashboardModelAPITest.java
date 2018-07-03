@@ -1,6 +1,6 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
@@ -64,7 +64,7 @@ public class DashboardModelAPITest extends APIBaseTest {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
-        this.clientPair = IntegrationBase.initAppAndHardPair();
+        this.clientPair = BaseTest.initAppAndHardPair();
     }
 
     @After
