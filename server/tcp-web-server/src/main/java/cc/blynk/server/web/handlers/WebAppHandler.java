@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.core.session.WebAppStateHolder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
@@ -13,6 +12,7 @@ import cc.blynk.server.web.handlers.logic.ResolveWebEventHandler;
 import cc.blynk.server.web.handlers.logic.TrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
+import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;

@@ -2,7 +2,7 @@ package cc.blynk.server.web.handlers.logic;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.session.WebAppStateHolder;
+import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
