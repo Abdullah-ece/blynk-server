@@ -1,8 +1,8 @@
 package cc.blynk.server.internal;
 
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.Channel;
 
 /**

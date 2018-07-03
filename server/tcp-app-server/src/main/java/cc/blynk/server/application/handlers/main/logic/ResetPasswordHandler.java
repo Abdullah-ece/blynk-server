@@ -5,7 +5,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.internal.TokenUser;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -30,8 +29,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 @ChannelHandler.Sharable
-public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPasswordMessage>
-        implements DefaultReregisterHandler {
+public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPasswordMessage> {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordHandler.class);
 

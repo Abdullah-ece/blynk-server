@@ -130,7 +130,13 @@ public class FileManager {
 
     public boolean delete(String email, String appName) {
         Path file = generateFileName(email, appName);
-        return FileUtils.move(file, this.deletedDataDir);
+        try {
+            FileUtils.move(file, this.deletedDataDir);
+        } catch (IOException e) {
+            log.debug("Failed to move file. {}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public void override(Organization org) throws IOException {

@@ -7,7 +7,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -28,8 +27,7 @@ import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.han
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
-        implements DefaultReregisterHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 

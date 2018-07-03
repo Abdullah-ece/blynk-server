@@ -1,8 +1,5 @@
 package cc.blynk.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -36,22 +33,12 @@ import static java.nio.file.StandardOpenOption.READ;
  */
 public final class FileUtils {
 
-    private final static Logger log = LogManager.getLogger(FileUtils.class);
-
     private static final String BLYNK_FOLDER = "blynk";
     public static final String CSV_DIR = Paths.get(
             System.getProperty("java.io.tmpdir"), BLYNK_FOLDER)
             .toString();
 
     private FileUtils() {
-    }
-
-    static {
-        try {
-            Files.createDirectories(Paths.get(CSV_DIR));
-        } catch (IOException ioe) {
-            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
-        }
     }
 
     private static final String[] POSSIBLE_LOCAL_PATHS = new String[] {
@@ -76,20 +63,13 @@ public final class FileUtils {
         try {
             Files.deleteIfExists(path);
         } catch (Exception ignored) {
-            log.trace("Error during '{}' folder removal.", path);
             //ignore
         }
     }
 
-    public static boolean move(Path source, Path target) {
-        try {
-            Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
-            Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            log.debug("Failed to move file. {}", e.getMessage());
-            return false;
-        }
-        return true;
+    public static void move(Path source, Path target) throws IOException {
+        Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
+        Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
@@ -270,7 +250,6 @@ public final class FileUtils {
             map.put("MD5", md5StringHex);
             return map;
         } catch (Exception e) {
-            log.error("Error getting pattern from file. Reason : {}", e.getMessage());
             throw new RuntimeException("Unable to read build number fro firmware.");
         }
     }

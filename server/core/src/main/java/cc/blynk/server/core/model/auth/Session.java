@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
