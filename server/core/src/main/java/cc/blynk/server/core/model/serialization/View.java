@@ -16,4 +16,6 @@ public class View {
 
     public static class HttpAPIField {}
 
+    public static class WebUser {}
+
 }

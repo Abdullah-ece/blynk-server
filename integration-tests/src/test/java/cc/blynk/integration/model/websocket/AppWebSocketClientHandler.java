@@ -59,15 +59,15 @@ public class AppWebSocketClientHandler extends SimpleChannelInboundHandler<Objec
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
 
-    public AppWebSocketClientHandler(WebSocketClientHandshaker handshaker) {
+    AppWebSocketClientHandler(WebSocketClientHandshaker handshaker) {
         this.handshaker = handshaker;
     }
 
-    public ChannelFuture handshakeFuture() {
+    ChannelFuture handshakeFuture() {
         return handshakeFuture;
     }
 
-    public void startHandshake(Channel channel) {
+    void startHandshake(Channel channel) {
         handshaker.handshake(channel);
         handshakeFuture = channel.newPromise();
     }

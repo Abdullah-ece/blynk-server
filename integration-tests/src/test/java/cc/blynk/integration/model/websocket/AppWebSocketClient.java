@@ -20,7 +20,6 @@ import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
@@ -41,24 +40,17 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 public final class AppWebSocketClient extends BaseTestAppClient {
 
     private final SslContext sslCtx;
     private final AppWebSocketClientHandler appHandler;
-    public int msgId = 0;
 
     public AppWebSocketClient(String host, int port, String path) throws Exception {
         super(host, port, new Random(), new ServerProperties(Collections.emptyMap()));
@@ -84,9 +76,9 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel> () {
+        return new ChannelInitializer<> () {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ChannelPipeline p = ch.pipeline();
                 p.addLast(
                         sslCtx.newHandler(ch.alloc(), host, port),
@@ -162,20 +154,4 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
     }
 
-    public String getBody(int expectedMessageOrder) throws Exception {
-        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
-        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
-        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
-        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
-        if (messageBase instanceof StringMessage) {
-            return ((StringMessage) messageBase).body;
-        }
-
-        throw new RuntimeException("Unexpected message");
-    }
-
-    public void reset() {
-        Mockito.reset(responseMock);
-        msgId = 0;
-    }
 }

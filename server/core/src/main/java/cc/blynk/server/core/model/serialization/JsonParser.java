@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.serialization;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
-import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
@@ -78,7 +77,7 @@ public final class JsonParser {
     private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
     private static final ObjectWriter userWebWriter = init()
             .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
-            .writerWithView(Views.WebUser.class);
+            .writerWithView(View.WebUser.class);
     private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);

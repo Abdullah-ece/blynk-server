@@ -3,9 +3,9 @@ package cc.blynk.server.core.model.auth;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
-import cc.blynk.server.core.model.Views;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.utils.AppNameUtil;
@@ -21,28 +21,28 @@ public class User {
 
     private static final int INITIAL_ENERGY_AMOUNT = Integer.parseInt(System.getProperty("initial.energy", "2000"));
 
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public volatile String name;
 
     public volatile String pass;
 
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public Role role;
 
     //key fields
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public String email;
 
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public String appName;
 
     public String region;
     public String ip;
 
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public int orgId;
 
-    @JsonView(Views.WebUser.class)
+    @JsonView(View.WebUser.class)
     public UserStatus status;
 
     //used mostly to understand if user profile was changed,

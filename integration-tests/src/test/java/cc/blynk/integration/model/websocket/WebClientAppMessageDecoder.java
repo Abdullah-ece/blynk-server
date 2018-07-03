@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +34,7 @@ public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
     private final GlobalStats stats;
     private final QuotaLimitChecker limitChecker;
 
-    public WebClientAppMessageDecoder(GlobalStats globalStats, Limits limits) {
+    WebClientAppMessageDecoder(GlobalStats globalStats, Limits limits) {
         this.stats = globalStats;
         this.limitChecker = new QuotaLimitChecker(limits.userQuotaLimit);
     }
@@ -84,14 +83,10 @@ public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof WebSocketHandshakeException) {
             log.debug("Web Socket Handshake Exception.", cause);
         }
-    }
-
-    public InstanceLoadMeter getQuotaMeter() {
-        return limitChecker.quotaMeter;
     }
 
 }

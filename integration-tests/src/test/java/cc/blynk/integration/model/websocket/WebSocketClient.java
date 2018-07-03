@@ -47,7 +47,7 @@ import java.util.Random;
 public final class WebSocketClient extends BaseClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-    final SslContext sslCtx;
+    private final SslContext sslCtx;
     private final WebSocketClientHandler handler;
     public int msgId = 0;
 
@@ -80,9 +80,9 @@ public final class WebSocketClient extends BaseClient {
 
     @Override
     protected ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel> () {
+        return new ChannelInitializer<> () {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ChannelPipeline p = ch.pipeline();
                 if (sslCtx != null) {
                     p.addLast(sslCtx.newHandler(ch.alloc(), host, port));

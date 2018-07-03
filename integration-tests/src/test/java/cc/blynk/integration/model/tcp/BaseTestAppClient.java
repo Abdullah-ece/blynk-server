@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 public abstract class BaseTestAppClient extends AppClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-    int msgId = 0;
+    protected int msgId = 0;
 
     public BaseTestAppClient(String host, int port, Random msgIdGenerator, ServerProperties properties) {
         super(host, port, msgIdGenerator, properties);
