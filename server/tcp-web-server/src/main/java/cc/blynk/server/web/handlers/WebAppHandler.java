@@ -8,7 +8,7 @@ import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.GetAccountLogic;
 import cc.blynk.server.web.handlers.logic.GetWebGraphDataLogic;
-import cc.blynk.server.web.handlers.logic.ResolveWebEventHandler;
+import cc.blynk.server.web.handlers.logic.ResolveWebEventLogic;
 import cc.blynk.server.web.handlers.logic.TrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
@@ -34,7 +34,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
     private final GetWebGraphDataLogic getWebGraphDataLogic;
-    private final ResolveWebEventHandler resolveWebEventHandler;
+    private final ResolveWebEventLogic resolveWebEventLogic;
 
     private final GlobalStats stats;
 
@@ -42,7 +42,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         super(StringMessage.class);
         this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
         this.getWebGraphDataLogic = new GetWebGraphDataLogic(holder);
-        this.resolveWebEventHandler = new ResolveWebEventHandler(holder);
+        this.resolveWebEventLogic = new ResolveWebEventLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -68,7 +68,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case RESOLVE_EVENT :
-                resolveWebEventHandler.messageReceived(ctx, state, msg);
+                resolveWebEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingHandler.messageReceived(ctx, msg.id);
