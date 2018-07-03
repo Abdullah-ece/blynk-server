@@ -3,11 +3,11 @@ package cc.blynk.server.web.handlers.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.Version;
+import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.server.web.handlers.WebAppHandler;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import cc.blynk.utils.AppNameUtil;
@@ -41,8 +41,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  *
  */
 @ChannelHandler.Sharable
-public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler {
+public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(WebAppLoginHandler.class);
 
@@ -123,7 +122,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering websocket app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, messageId, version));
         } else {
             completeLogin(channel, session, user, messageId, version);

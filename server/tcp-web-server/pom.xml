@@ -20,5 +20,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- todo temp solution, think about common classes -->
+        <dependency>
+            <groupId>cc.blynk.server.application</groupId>
+            <artifactId>tcp-app-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

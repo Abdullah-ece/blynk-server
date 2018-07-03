@@ -121,7 +121,13 @@ public class FileManager {
 
     public boolean deleteOrg(int orgId) {
         Path file = generateOrgFileName(orgId);
-        return FileUtils.move(file, this.deletedDataDir);
+        try {
+            FileUtils.move(file, this.deletedDataDir);
+        } catch (IOException e) {
+            log.debug("Failed to move file. {}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public boolean delete(UserKey userKey) {

@@ -13,7 +13,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.ArrayUtil;
