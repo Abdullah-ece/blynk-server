@@ -15,12 +15,10 @@ import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.DefaultChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
@@ -51,17 +49,11 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         this.holder = holder;
     }
 
-    private static void cleanPipeline(ChannelPipeline pipeline) {
-        try {
-            //common handlers for websockets and app pipeline
-            pipeline.remove(WebAppLoginHandler.class);
-            pipeline.remove(UserNotLoggedHandler.class);
-            pipeline.remove(GetServerHandler.class);
-        } catch (NoSuchElementException e) {
-            //this case possible when few login commands come at same time to different threads
-            //just do nothing and ignore.
-            //https://github.com/blynkkk/blynk-server/issues/224
-        }
+    private static void cleanPipeline(DefaultChannelPipeline pipeline) {
+        //common handlers for websockets and app pipeline
+        pipeline.removeIfExists(WebAppLoginHandler.class);
+        pipeline.removeIfExists(UserNotLoggedHandler.class);
+        pipeline.removeIfExists(GetServerHandler.class);
     }
 
     @Override
@@ -111,7 +103,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
-        ChannelPipeline pipeline = ctx.pipeline();
+        DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
         WebAppStateHolder appStateHolder = new WebAppStateHolder(user);
