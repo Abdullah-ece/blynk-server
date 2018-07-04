@@ -13,6 +13,7 @@ import cc.blynk.server.web.handlers.logic.TrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebCreateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.WebGetDeviceLogic;
 import cc.blynk.server.web.handlers.logic.WebGetDevicesLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,6 +25,7 @@ import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
@@ -41,6 +43,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final ResolveWebEventLogic resolveWebEventLogic;
     private final WebCreateDeviceLogic webCreateDeviceLogic;
     private final WebGetDevicesLogic webGetDevicesLogic;
+    private final WebGetDeviceLogic webGetDeviceLogic;
 
     private final GlobalStats stats;
 
@@ -51,6 +54,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.resolveWebEventLogic = new ResolveWebEventLogic(holder);
         this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
         this.webGetDevicesLogic = new WebGetDevicesLogic(holder);
+        this.webGetDeviceLogic = new WebGetDeviceLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -86,6 +90,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_GET_DEVICES :
                 webGetDevicesLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_DEVICE :
+                webGetDeviceLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

@@ -23,7 +23,8 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -53,7 +54,11 @@ public class WebCreateDeviceLogic {
 
         //todo refactor when permissions ready
         User user = state.user;
-        organizationDao.hasAccess(user, orgId);
+        if (!organizationDao.hasAccess(user, orgId)) {
+            log.error("User {} not allowed to access orgId {}", user.email, orgId);
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            return;
+        }
 
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
@@ -94,7 +99,7 @@ public class WebCreateDeviceLogic {
 
         if (ctx.channel().isWritable()) {
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
-            ctx.writeAndFlush(makeASCIIStringMessage(WEB_CREATE_DEVICE, message.id, deviceString), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(WEB_CREATE_DEVICE, message.id, deviceString), ctx.voidPromise());
         }
     }
 

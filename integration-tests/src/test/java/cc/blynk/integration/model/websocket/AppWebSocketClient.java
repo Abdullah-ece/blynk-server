@@ -147,6 +147,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webCreateDevice " + orgId + BODY_SEPARATOR + device.toString());
     }
 
+    public void getDevice(int orgId) {
+        send("webGetDevice " + orgId);
+    }
+
     public void getDevices(int orgId) {
         send("webGetDevices " + orgId);
     }
