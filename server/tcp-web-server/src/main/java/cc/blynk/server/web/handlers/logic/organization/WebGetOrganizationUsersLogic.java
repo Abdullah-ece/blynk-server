@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic;
+package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;

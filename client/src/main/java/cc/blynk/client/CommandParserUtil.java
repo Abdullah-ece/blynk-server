@@ -71,10 +71,15 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
@@ -257,6 +262,16 @@ public final class CommandParserUtil {
                 return WEB_GET_DEVICES;
             case "webgetdevice" :
                 return WEB_GET_DEVICE;
+            case "webgetorg" :
+                return WEB_GET_ORG;
+            case "webgetorgs" :
+                return WEB_GET_ORGS;
+            case "webgetorgusers" :
+                return WEB_GET_ORG_USERS;
+            case "webgetorglocations" :
+                return WEB_GET_ORG_LOCATIONS;
+            case "webcaninviteuser" :
+                return WEB_CAN_INVITE_USER;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -140,6 +140,11 @@ public final class Command {
     public static final short WEB_CREATE_DEVICE = 102;
     public static final short WEB_GET_DEVICES = 103;
     public static final short WEB_GET_DEVICE = 104;
+    public static final short WEB_GET_ORG = 105;
+    public static final short WEB_GET_ORGS = 106;
+    public static final short WEB_GET_ORG_USERS = 107;
+    public static final short WEB_GET_ORG_LOCATIONS = 108;
+    public static final short WEB_CAN_INVITE_USER = 109;
 
 
     private Command() {
@@ -238,7 +243,12 @@ public final class Command {
             Map.entry(WEB_UPDATE_ACCOUNT, "WebUpdateAccount"),
             Map.entry(WEB_CREATE_DEVICE, "WebCreateDevice"),
             Map.entry(WEB_GET_DEVICES, "WebGetDevices"),
-            Map.entry(WEB_GET_DEVICE, "WebGetDevice")
+            Map.entry(WEB_GET_DEVICE, "WebGetDevice"),
+            Map.entry(WEB_GET_ORG, "WebGetOrg"),
+            Map.entry(WEB_GET_ORGS, "WebGetOrgs"),
+            Map.entry(WEB_GET_ORG_USERS, "WebGetOrgUsers"),
+            Map.entry(WEB_GET_ORG_LOCATIONS, "WebGetOrgLocations"),
+            Map.entry(WEB_CAN_INVITE_USER, "WebCanInviteUser")
     );
 
     public static String getNameByValue(short val) {

@@ -20,6 +20,7 @@ import cc.blynk.server.Limits;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
@@ -153,6 +154,34 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getDevices(int orgId) {
         send("webGetDevices " + orgId);
+    }
+
+    public void getOrganization(int orgId) {
+        send("webGetOrg " + orgId);
+    }
+
+    public void getUserOrganizations() {
+        send("webGetOrgs");
+    }
+
+    public void getOrgUsers(int orgId) {
+        send("webGetOrgUsers " + orgId);
+    }
+
+    public void getOrgLocations(int orgId) {
+        send("webGetOrgLocations " + orgId);
+    }
+
+    public User[] parseUsers(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), User[].class);
+    }
+
+    public Organization parseOrganization(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseOrganization(getBody(expectedMessageOrder));
+    }
+
+    public Organization[] parseOrganizations(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Organization[].class);
     }
 
     public Device parseDevice(int expectedMessageOrder) throws Exception {

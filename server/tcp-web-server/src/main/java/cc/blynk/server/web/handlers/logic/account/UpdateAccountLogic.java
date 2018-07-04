@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic;
+package cc.blynk.server.web.handlers.logic.account;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;

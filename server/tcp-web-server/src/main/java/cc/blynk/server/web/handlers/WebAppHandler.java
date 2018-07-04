@@ -6,15 +6,20 @@ import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.web.handlers.logic.GetAccountLogic;
+import cc.blynk.server.web.handlers.logic.CanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.GetWebGraphDataLogic;
 import cc.blynk.server.web.handlers.logic.ResolveWebEventLogic;
-import cc.blynk.server.web.handlers.logic.TrackDeviceLogic;
-import cc.blynk.server.web.handlers.logic.UpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
-import cc.blynk.server.web.handlers.logic.WebCreateDeviceLogic;
-import cc.blynk.server.web.handlers.logic.WebGetDeviceLogic;
-import cc.blynk.server.web.handlers.logic.WebGetDevicesLogic;
+import cc.blynk.server.web.handlers.logic.account.GetAccountLogic;
+import cc.blynk.server.web.handlers.logic.account.UpdateAccountLogic;
+import cc.blynk.server.web.handlers.logic.device.TrackDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -23,10 +28,15 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 
 /**
@@ -44,6 +54,11 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebCreateDeviceLogic webCreateDeviceLogic;
     private final WebGetDevicesLogic webGetDevicesLogic;
     private final WebGetDeviceLogic webGetDeviceLogic;
+    private final WebGetOrganizationLogic webGetOrganizationLogic;
+    private final WebGetOrganizationsLogic webGetOrganizationsLogic;
+    private final WebGetOrganizationUsersLogic webGetOrganizationUsersLogic;
+    private final WebGetOrganizationLocationsLogic webGetOrganizationLocationsLogic;
+    private final CanInviteUserLogic canInviteUserLogic;
 
     private final GlobalStats stats;
 
@@ -55,6 +70,11 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
         this.webGetDevicesLogic = new WebGetDevicesLogic(holder);
         this.webGetDeviceLogic = new WebGetDeviceLogic(holder);
+        this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
+        this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
+        this.webGetOrganizationUsersLogic = new WebGetOrganizationUsersLogic(holder);
+        this.webGetOrganizationLocationsLogic = new WebGetOrganizationLocationsLogic(holder);
+        this.canInviteUserLogic = new CanInviteUserLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -93,6 +113,21 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_GET_DEVICE :
                 webGetDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ORG :
+                webGetOrganizationLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ORGS :
+                webGetOrganizationsLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ORG_USERS :
+                webGetOrganizationUsersLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_ORG_LOCATIONS :
+                webGetOrganizationLocationsLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_CAN_INVITE_USER :
+                canInviteUserLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

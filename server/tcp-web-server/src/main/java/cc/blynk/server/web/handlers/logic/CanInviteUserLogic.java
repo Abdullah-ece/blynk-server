@@ -1,12 +1,16 @@
-package cc.blynk.server.web.handlers.logic.account;
+package cc.blynk.server.web.handlers.logic;
 
-import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  *
@@ -15,15 +19,23 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 3/7/2018.
  *
  */
-public final class GetAccountLogic {
+public final class CanInviteUserLogic {
 
-    private GetAccountLogic() {
+    private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
+
+    private final UserDao userDao;
+
+    public CanInviteUserLogic(Holder holder) {
+        this.userDao = holder.userDao;
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        if (ctx.channel().isWritable()) {
-            String userString = JsonParser.toJsonWeb(state.user);
-            ctx.writeAndFlush(makeUTF8StringMessage(WEB_GET_ACCOUNT, message.id, userString), ctx.voidPromise());
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        String userEMailToInvite = message.body;
+        if (userDao.contains(userEMailToInvite, state.userKey.appName)) {
+            log.debug("User {}-{} already exists in system.", userEMailToInvite, state.userKey.appName);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+        } else {
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         }
     }
 
