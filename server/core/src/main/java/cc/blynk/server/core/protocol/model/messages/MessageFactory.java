@@ -12,11 +12,11 @@ import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLoginMessag
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOG_EVENT;
 
 /**
  * The Blynk Project.
