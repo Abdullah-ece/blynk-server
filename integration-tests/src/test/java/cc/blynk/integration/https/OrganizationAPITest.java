@@ -57,6 +57,8 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static java.time.LocalTime.ofSecondOfDay;
 import static org.junit.Assert.assertArrayEquals;
@@ -226,15 +228,15 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
+        verify(holder.mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -306,16 +308,16 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         String body = bodyArgumentCapture.getValue();
 
         String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
-        reset(mailWrapper);
+        verify(holder.mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
+        reset(holder.mailWrapper);
 
-        HttpGet inviteGet = new HttpGet("https://localhost:" + httpsPort + "/dashboard" + "/invite?token=" + token);
+        HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
@@ -377,13 +379,13 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
-        verify(mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(email), eq("Invitation to My Org dashboard."), bodyArgumentCapture.capture());
         body = bodyArgumentCapture.getValue();
 
         token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
         assertEquals(32, token.length());
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
+        verify(holder.mailWrapper).sendHtml(eq(email), eq("Invitation to My Org dashboard."), contains("/dashboard" + "/invite?token="));
 
     }
 

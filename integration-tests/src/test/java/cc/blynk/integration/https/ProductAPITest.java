@@ -38,6 +38,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Currency;
 import java.util.Date;
 
+import static cc.blynk.integration.TestUtil.consumeText;
 import static java.time.LocalTime.ofSecondOfDay;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;

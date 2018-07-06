@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
@@ -46,7 +47,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
     public void init() throws Exception {
         super.init();
 
-        httpsServerUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);

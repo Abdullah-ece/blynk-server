@@ -26,6 +26,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
+import static cc.blynk.integration.TestUtil.consumeText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -95,7 +97,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void adminLoginFlowSupport()  throws Exception {
-        HttpGet loadLoginPageRequest = new HttpGet("https://localhost:" + httpsPort + "/dashboard");
+        HttpGet loadLoginPageRequest = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard");
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String loginPage = consumeText(response);
@@ -105,7 +107,7 @@ public class LoginAPITest extends APIBaseTest {
 
         login(admin.email, admin.pass);
 
-        HttpGet loadAdminPage = new HttpGet("https://localhost:" + httpsPort + "/dashboard");
+        HttpGet loadAdminPage = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard");
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String adminPage = consumeText(response);
@@ -217,7 +219,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void testMakeRootPathRequest() throws Exception {
-        HttpGet request = new HttpGet("https://localhost:" + httpsPort);
+        HttpGet request = new HttpGet("https://localhost:" + properties.getHttpsPort());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -235,7 +237,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void getStaticFile() throws Exception {
-        HttpGet request = new HttpGet("https://localhost:" + httpsPort + "/static/index.html");
+        HttpGet request = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/static/index.html");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -244,7 +246,7 @@ public class LoginAPITest extends APIBaseTest {
 
     @Test
     public void testGetFavIconHttp() throws Exception {
-        HttpGet request = new HttpGet("https://localhost:" + httpsPort + "/favicon.ico");
+        HttpGet request = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/favicon.ico");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

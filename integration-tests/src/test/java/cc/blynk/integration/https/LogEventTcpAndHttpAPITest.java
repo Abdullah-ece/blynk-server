@@ -47,6 +47,10 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -98,7 +102,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testBasicLogEventFlow() throws Exception {
         String token = createProductAndDevice();
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -134,14 +138,14 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testLogEventIsForwardedToWebapp() throws Exception {
         String token = createProductAndDevice();
 
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(admin);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -156,7 +160,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testLogEventIsResolvedFromWebapp() throws Exception {
         String token = createProductAndDevice();
 
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
@@ -185,7 +189,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             logEventId = logEvents[0].id;
         }
 
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(admin);
         appWebSocketClient.verifyResult(ok(1));
@@ -218,7 +222,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testLogEventIsResolvedFromWebappAndForwardedToAnotherWebapp() throws Exception {
         String token = createProductAndDevice();
 
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
@@ -247,14 +251,14 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             logEventId = logEvents[0].id;
         }
 
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(admin);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
 
-        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient2 = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient2.start();
         appWebSocketClient2.login(admin);
         appWebSocketClient2.verifyResult(ok(1));
@@ -291,14 +295,14 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testLogEventIsForwardedToWebappFromExternalAPI() throws Exception {
         String token = createProductAndDevice();
 
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(admin);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
 
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
@@ -312,7 +316,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testLogEventViaHttpApi() throws Exception {
         String token = createProductAndDevice();
 
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
@@ -346,7 +350,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
     public void testSystemLogEventViaHttpApi() throws Exception {
         String token = createProductAndDevice();
 
-        String externalApiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=ONLINE");
         try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
@@ -508,8 +512,8 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertEquals("MyNewDescription", logEvents[0].description);
         }
 
-        verify(mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
-        verify(mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("dmitriy@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq("owner@blynk.cc"), eq("My New Device: Temp is super high"), contains("Temp is super high"));
     }
 
     @Test
@@ -607,7 +611,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertTrue(logEventId > 1);
         }
 
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(admin);
         appWebSocketClient.verifyResult(ok(1));

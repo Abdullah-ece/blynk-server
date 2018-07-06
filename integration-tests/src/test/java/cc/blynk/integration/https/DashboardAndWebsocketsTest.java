@@ -51,6 +51,8 @@ import java.util.Map;
 
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
@@ -133,7 +135,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
 
-        TestHardClient testHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient testHardClient = new TestHardClient("localhost", properties.getHttpPort());
         testHardClient.start();
         testHardClient.login(device.token);
         testHardClient.verifyResult(ok(1));
@@ -198,7 +200,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(device.id);
 
-        String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String apiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet putValueViaGet = new HttpGet(apiUrl + device.token + "/update/v10?value=1");
 
@@ -273,7 +275,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.track(1);
         appWebSocketClient.verifyResult(ok(2));
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort(), properties);
         appClient.start();
         appClient.login(regularUser.email, regularUser.pass, true);
         appClient.verifyResult(ok(1));
@@ -414,7 +416,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, device.id);
         }
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + device.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -546,7 +548,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(1);
 
-        String apiUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        String apiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet putValueViaGet = new HttpGet(apiUrl + token + "/update/v2?value=666");
         try (CloseableHttpResponse response = httpclient.execute(putValueViaGet)) {

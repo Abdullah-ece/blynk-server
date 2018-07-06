@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.InputStream;
 
+import static cc.blynk.integration.TestUtil.consumeText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +36,7 @@ public class UploadAPITest extends APIBaseTest {
 
         String pathToImage = upload("logo.png");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToImage);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -48,7 +49,7 @@ public class UploadAPITest extends APIBaseTest {
 
         String pathToImage = upload("logo with space in name.png");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort  + pathToImage);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort()  + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

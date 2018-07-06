@@ -29,6 +29,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
 import static cc.blynk.integration.TestUtil.createHolderWithIOMock;
 import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.GET;
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.PUT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;

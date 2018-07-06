@@ -2,7 +2,6 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -11,10 +10,6 @@ import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -36,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
@@ -52,7 +48,6 @@ import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.DSL.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -62,12 +57,12 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class ReportingAPIForKnightTest extends APIBaseTest {
 
+    private static Holder staticHolder;
     private ReportingDBManager reportingDBManager;
 
     @BeforeClass
     public static void prepareData() throws Exception {
-        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class),
-                mock(GCMWrapper.class), mock(SMSWrapper.class), mock(SlackWrapper.class), "db-test.properties");
+        staticHolder = createDefaultHolder(properties, "db-test.properties");
         staticHolder.reportingDBManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
 
         URL url = ExternalAPIForKnightTest.class.getResource("/2017_ISSA_Sample_IOT_Data.csv");

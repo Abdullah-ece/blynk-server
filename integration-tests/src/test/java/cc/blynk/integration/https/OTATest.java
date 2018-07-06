@@ -42,7 +42,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.internal;
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -80,7 +82,7 @@ public class OTATest extends APIBaseTest {
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -130,12 +132,12 @@ public class OTATest extends APIBaseTest {
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String firmwareDownloadUrl = "http://localhost:" + httpPort + pathToFirmware + "?token=1";
+        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=1";
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
         newHardClient.verifyResult(ok(2));
@@ -170,7 +172,7 @@ public class OTATest extends APIBaseTest {
 
         newHardClient.stop();
 
-        newHardClient = new TestHardClient("localhost", httpPort);
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -205,7 +207,7 @@ public class OTATest extends APIBaseTest {
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -255,13 +257,13 @@ public class OTATest extends APIBaseTest {
             assertEquals("May  9 2018 12:36:07", newDevice.deviceOtaInfo.buildDate);
         }
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        String firmwareDownloadUrl = "http://localhost:" + httpPort + pathToFirmware + "?token=1";
+        String firmwareDownloadUrl = "http://localhost:" + properties.getHttpPort() + pathToFirmware + "?token=1";
         newHardClient.verifyResult(internal(7777, "ota\0" + firmwareDownloadUrl));
         newHardClient.verifyResult(ok(2));
 
@@ -320,7 +322,7 @@ public class OTATest extends APIBaseTest {
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -351,7 +353,7 @@ public class OTATest extends APIBaseTest {
             assertNotNull(newDevice);
         }
 
-        TestHardClient newHardClient = new TestHardClient("localhost", httpPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.send("login " + newDevice.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -366,7 +368,7 @@ public class OTATest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + httpPort) + pathToFirmware + "?token=1"));
+        newHardClient.verifyResult(internal(7777, b("ota http://localhost:" + properties.getHttpPort()) + pathToFirmware + "?token=1"));
 
         HttpGet getDevices = new HttpGet(httpsAdminServerUrl + "/devices/1/1");
         try (CloseableHttpResponse response = httpclient.execute(getDevices)) {
@@ -390,7 +392,7 @@ public class OTATest extends APIBaseTest {
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -437,7 +439,7 @@ public class OTATest extends APIBaseTest {
 
         String pathToFirmware = upload("static/ota/blnkinf2.0.0.bin");
 
-        HttpGet index = new HttpGet("https://localhost:" + httpsPort + pathToFirmware);
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToFirmware);
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }

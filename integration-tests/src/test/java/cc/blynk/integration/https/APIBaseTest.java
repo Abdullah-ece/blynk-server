@@ -2,7 +2,6 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
@@ -33,6 +32,10 @@ import javax.net.ssl.SSLSession;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
@@ -63,12 +66,12 @@ public abstract class APIBaseTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        this.holder = createDefaultHolder(properties, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
         this.httpsAdminServer = new AppAndHttpsServer(holder).start();
 
-        httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, httpsPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, properties.getHttpsPort());
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 
@@ -168,7 +171,7 @@ public abstract class APIBaseTest extends BaseTest {
     }
 
     public static AppWebSocketClient defaultClient() throws Exception {
-        return new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        return new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
     }
 
 }

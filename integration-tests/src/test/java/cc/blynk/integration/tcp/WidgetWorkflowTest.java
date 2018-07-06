@@ -19,6 +19,7 @@ import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;

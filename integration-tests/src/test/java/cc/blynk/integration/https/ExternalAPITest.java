@@ -20,6 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
+import static cc.blynk.integration.TestUtil.consumeText;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -37,7 +39,7 @@ public class ExternalAPITest extends APIBaseTest {
     public void init() throws Exception {
         super.init();
 
-        httpsServerUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         //clean everything just in case
         holder.dbManager.executeSQL("DELETE FROM reporting_events");

@@ -39,7 +39,7 @@ public class ExternalAPIForKnightScopeTechTest extends APIBaseTest {
     public void init() throws Exception {
         super.init();
 
-        httpsServerUrl = String.format("https://localhost:%s/external/api/", httpsPort);
+        httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         //clean everything just in case
         holder.dbManager.executeSQL("DELETE FROM " + KNIGHT_SCOPETECH.tableName);

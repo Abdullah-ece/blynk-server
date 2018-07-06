@@ -14,6 +14,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.net.ssl.SSLContext;
 
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
+import static cc.blynk.integration.TestUtil.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +31,7 @@ public class StaticFileAPITest extends APIBaseTest {
 
     @Test
     public void getRootUrl() throws Exception {
-        String url = String.format("https://localhost:%s", httpsPort);
+        String url = String.format("https://localhost:%s", properties.getHttpsPort());
 
         HttpGet index = new HttpGet(url);
 
@@ -116,7 +119,7 @@ public class StaticFileAPITest extends APIBaseTest {
     @Test
     public void getIndexPageFromHttp() throws Exception {
         BaseServer httpServer = new HardwareAndHttpAPIServer(holder).start();
-        String httpsAdminServerUrl = String.format("http://localhost:%s" + rootPath, httpPort);
+        String httpsAdminServerUrl = String.format("http://localhost:%s" + rootPath, properties.getHttpPort());
         httpsAdminServerUrl = httpsAdminServerUrl.replace("/api", "");
 
         HttpGet index = new HttpGet(httpsAdminServerUrl + "/static/index.html");
