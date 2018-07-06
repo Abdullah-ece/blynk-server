@@ -2,13 +2,14 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ota.OTAInfo;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
@@ -30,17 +31,34 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class BlynkInternalLogic {
+public final class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
     private final int hardwareIdleTimeout;
+    private static BlynkInternalLogic instance;
     private final String serverHostUrl;
+
+    private BlynkInternalLogic(Holder holder) {
+        this(holder.otaManager, holder.limits.hardwareIdleTimeout);
+    }
+
+    //for tests only
+    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
+        this.otaManager = otaManager;
+        this.hardwareIdleTimeout = hardwareIdleTimeout;
+    }
 
     public BlynkInternalLogic(Holder holder) {
         this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         this.serverHostUrl = holder.props.getHttpServerUrl();
+    }
+
+    public static BlynkInternalLogic getInstance(Holder holder) {
+        if (instance == null) {
+            instance = new BlynkInternalLogic(holder);
+        }
+        return instance;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {

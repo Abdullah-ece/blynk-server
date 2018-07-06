@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
@@ -20,12 +19,8 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -35,13 +30,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -62,25 +58,13 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceWorkflowTest extends BaseTest {
+public class DeviceWorkflowTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
     @Test
@@ -98,7 +82,7 @@ public class DeviceWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -106,7 +90,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -138,7 +122,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -152,7 +136,7 @@ public class DeviceWorkflowTest extends BaseTest {
         hardClient2.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -164,7 +148,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -172,7 +156,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -190,13 +174,13 @@ public class DeviceWorkflowTest extends BaseTest {
 
     @Test
     public void testSendDeviceSpecificPMMessage() throws Exception {
-        clientPair.appClient.createWidget(1, "{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
+        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
@@ -216,13 +200,13 @@ public class DeviceWorkflowTest extends BaseTest {
 
     @Test
     public void testSendPMOnActivateForMultiDevices() throws Exception {
-        clientPair.appClient.createWidget(1, "{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33}");
+        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33}");
         clientPair.appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
@@ -261,7 +245,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -283,13 +267,13 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.createTag(1, tag);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
 
-        clientPair.appClient.createWidget(1, "{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
+        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(2));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(3);
+        Device device = clientPair.appClient.parseDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(3, device));
@@ -318,13 +302,13 @@ public class DeviceWorkflowTest extends BaseTest {
 
     @Test
     public void testActivateAndGetSyncForMultiDevices() throws Exception {
-        clientPair.appClient.createWidget(1, "{\"orgId\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
+        clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -356,7 +340,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -371,7 +355,7 @@ public class DeviceWorkflowTest extends BaseTest {
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(3);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -384,7 +368,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("getDevices 1");
 
-        devices = clientPair.appClient.getDevices();
+        devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -398,7 +382,7 @@ public class DeviceWorkflowTest extends BaseTest {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -408,7 +392,7 @@ public class DeviceWorkflowTest extends BaseTest {
         device0.status = Status.OFFLINE;
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices(2);
+        devices = clientPair.appClient.parseDevices(2);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -421,7 +405,7 @@ public class DeviceWorkflowTest extends BaseTest {
     public void testCorrectConnectTime() throws Exception {
         long now = System.currentTimeMillis();
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(now, devices[0].connectTime, 10000);
@@ -433,7 +417,7 @@ public class DeviceWorkflowTest extends BaseTest {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -450,7 +434,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices();
+        devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -464,7 +448,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -495,7 +479,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device)));
@@ -508,18 +492,18 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -542,7 +526,7 @@ public class DeviceWorkflowTest extends BaseTest {
     @Test
     public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
         clientPair.appClient.createDevice(1, new Device(1, "My Device", "ESP8266"));
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -605,13 +589,13 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.send("getProvisionToken 1\0" + device1.toString());
-        device1 = clientPair.appClient.getDevice(1);
+        device1 = clientPair.appClient.parseDevice(1);
         assertNotNull(device1);
         assertEquals(1, device1.id);
         assertEquals(32, device1.token.length());
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dash = clientPair.appClient.getDash(2);
+        DashBoard dash = clientPair.appClient.parseDash(2);
         assertNotNull(dash);
         assertEquals(1, dash.devices.length);
 
@@ -625,7 +609,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        dash = clientPair.appClient.getDash(4);
+        dash = clientPair.appClient.parseDash(4);
         assertNotNull(dash);
         assertEquals(2, dash.devices.length);
 
@@ -639,7 +623,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        dash = clientPair.appClient.getDash(2);
+        dash = clientPair.appClient.parseDash(2);
         assertNotNull(dash);
         assertEquals(2, dash.devices.length);
 
@@ -652,7 +636,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -675,7 +659,7 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("getTags 1");
-        Tag[] tags = clientPair.appClient.getTags(7);
+        Tag[] tags = clientPair.appClient.parseTags(7);
         assertNotNull(tags);
 
         assertEquals(100_001, tags[0].id);
@@ -698,7 +682,7 @@ public class DeviceWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

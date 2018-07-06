@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -15,11 +14,6 @@ import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -46,31 +40,12 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetPropertyTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-        this.clientPair = initAppAndHardPair("user_profile_json.txt");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
+public class SetPropertyTest extends StaticServerBase {
 
     @Test
     public void testSetWidgetProperty() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -82,7 +57,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -102,7 +77,7 @@ public class SetPropertyTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(slider);
@@ -145,7 +120,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -168,7 +143,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -189,7 +164,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -202,7 +177,7 @@ public class SetPropertyTest extends BaseTest {
     @Test
     public void testSetWrongWidgetProperty() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.label, "Some Text");
@@ -211,7 +186,7 @@ public class SetPropertyTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(2);
+        profile = clientPair.appClient.parseProfile(2);
         widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
 
         assertEquals(widget.label, "Some Text");
@@ -220,7 +195,7 @@ public class SetPropertyTest extends BaseTest {
     @Test
     public void testSetWrongWidgetProperty2() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
@@ -229,7 +204,7 @@ public class SetPropertyTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(2);
+        profile = clientPair.appClient.parseProfile(2);
         widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
 
         assertEquals(widget.x, 1);
@@ -238,7 +213,7 @@ public class SetPropertyTest extends BaseTest {
     @Test
     public void testSetWrongWidgetProperty3() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
@@ -255,7 +230,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(600084223, widget.color);
@@ -272,7 +247,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
@@ -291,7 +266,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
@@ -330,7 +305,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -367,7 +342,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -388,7 +363,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         assertEquals(0, profile.dashBoards[0].pinsStorage.size());
     }
 
@@ -403,7 +378,7 @@ public class SetPropertyTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -419,7 +394,7 @@ public class SetPropertyTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Widget widget = profile.dashBoards[0].getWidgetById(4);
         assertEquals(600084223, widget.color);

@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.Profile;
@@ -9,13 +8,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import io.netty.channel.ChannelFuture;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -23,11 +17,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static org.junit.Assert.assertEquals;
@@ -46,30 +40,18 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationsLogicTest extends BaseTest {
+public class NotificationsLogicTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
     @Test
     public void addPushTokenWrongInput()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -79,7 +61,7 @@ public class NotificationsLogicTest extends BaseTest {
         appClient.login("test@test.com", "1", "Android", "RC13");
         appClient.verifyResult(ok(2));
 
-        appClient.createDash("{\"orgId\":1, \"createdAt\":1, \"name\":\"test board\"}");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
         appClient.verifyResult(ok(3));
 
         appClient.send("addPushToken 1\0uid\0token");
@@ -92,7 +74,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -109,7 +91,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -123,7 +105,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(4);
+        profile = clientPair.appClient.parseProfile(4);
 
         notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -136,11 +118,11 @@ public class NotificationsLogicTest extends BaseTest {
 
     @Test
     public void addPushTokenWorksForIos() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
+        appClient.login(getUserName(), "1", "iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -149,7 +131,7 @@ public class NotificationsLogicTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile();
+        Profile profile = appClient.parseProfile(1);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -182,12 +164,9 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.login(token);
+        newHardClient.login(clientPair.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.stop();
@@ -206,7 +185,7 @@ public class NotificationsLogicTest extends BaseTest {
         Device device1 = new Device(1, "Name", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -237,7 +216,7 @@ public class NotificationsLogicTest extends BaseTest {
         channelFuture.await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -258,7 +237,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
         clientPair.appClient.send("logout");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(3)));
@@ -278,7 +257,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
         clientPair.appClient.send("logout");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(3)));
@@ -298,7 +277,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, timeout(500)).send(any(), any(), eq("uid"));
+        verify(holder.gcmWrapper, timeout(500)).send(any(), any(), eq("uid"));
     }
 
     @Test
@@ -318,11 +297,11 @@ public class NotificationsLogicTest extends BaseTest {
 
         clientPair.hardwareClient.stop().await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
@@ -337,7 +316,7 @@ public class NotificationsLogicTest extends BaseTest {
         hardClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid"));
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid"));
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -356,9 +335,9 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -370,7 +349,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token2", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -389,9 +368,9 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -403,7 +382,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
     }
 
     @Test
@@ -420,9 +399,9 @@ public class NotificationsLogicTest extends BaseTest {
 
         String token = clientPair.appClient.getBody();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        appClient.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         appClient.send("addPushToken 1\0uid2\0token2");
         appClient.verifyResult(ok(2));
@@ -433,12 +412,10 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
     }
 
     @Test
-    @Ignore
-    //todo fix
     public void testHardwareDeviceWentOfflineAndPushDelayedWorks() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getNotificationWidget();
@@ -454,7 +431,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
         assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
 
@@ -485,7 +462,7 @@ public class NotificationsLogicTest extends BaseTest {
         newHardClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
     }
 
     @Test
@@ -493,20 +470,20 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.deleteWidget(1, 9);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.createWidget(1, "{\"orgId\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
+        clientPair.appClient.createWidget(1, "{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         clientPair.appClient.verifyResult(ok(3));
 
-        clientPair.appClient.updateWidget(1, "{\"orgId\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
+        clientPair.appClient.updateWidget(1, "{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.send("push 123");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token1", Priority.high, "123", 1).toJson();
@@ -519,7 +496,7 @@ public class NotificationsLogicTest extends BaseTest {
         channelFuture.await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -531,7 +508,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.send("push Yo!");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1).toJson();
@@ -543,7 +520,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.send("push Yo {DEVICE_NAME}!");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo My Device!", 1).toJson();
@@ -552,10 +529,10 @@ public class NotificationsLogicTest extends BaseTest {
 
     @Test
     public void testOfflineMessageIsSentToBothApps()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
+        appClient.login(getUserName(), "1", "iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteWidget(1, 9);

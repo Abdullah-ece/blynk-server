@@ -51,9 +51,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.MERGED_CSV;
@@ -109,20 +110,20 @@ public class ReportingTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
 
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -146,20 +147,20 @@ public class ReportingTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
 
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -183,22 +184,22 @@ public class ReportingTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -435,7 +436,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = clientPair.appClient.getDash(5);
+        DashBoard dashBoard = clientPair.appClient.parseDash(5);
         assertNotNull(dashBoard);
         reportingWidget = dashBoard.getReportingWidget();
         assertNotNull(reportingWidget);
@@ -459,11 +460,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDailyReportWithSinglePointIsTriggered() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
@@ -502,7 +503,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -513,7 +514,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
@@ -538,11 +539,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDailyReportWith24PointsCorrectlyFetched() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.HOURLY));
         long pointNow = System.currentTimeMillis();
         long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
@@ -585,7 +586,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -596,7 +597,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("\n");
@@ -609,16 +610,16 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
@@ -656,7 +657,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -667,7 +668,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -690,16 +691,16 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
@@ -737,7 +738,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -748,7 +749,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -779,16 +780,16 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
@@ -826,7 +827,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -837,7 +838,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -868,21 +869,21 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -922,7 +923,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -933,7 +934,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -968,15 +969,15 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
         long pointNow = System.currentTimeMillis();
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -1016,7 +1017,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1027,7 +1028,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1054,21 +1055,21 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -1108,7 +1109,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1119,7 +1120,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1154,21 +1155,21 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -1208,7 +1209,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1219,7 +1220,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1247,21 +1248,21 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -1301,7 +1302,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1312,7 +1313,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1340,21 +1341,21 @@ public class ReportingTest extends BaseTest {
         clientPair.appClient.createDevice(1, device1);
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
@@ -1394,7 +1395,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1405,7 +1406,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1430,11 +1431,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDailyReportWithSinglePointIsTriggeredAndExpired() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
@@ -1469,10 +1470,10 @@ public class ReportingTest extends BaseTest {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2500);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1482,7 +1483,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(1, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
@@ -1502,11 +1503,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testOneTimeReportIsTriggered() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
@@ -1553,7 +1554,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1565,7 +1566,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1581,11 +1582,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testOneTimeReportWithWrongSources() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
@@ -1637,7 +1638,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1649,7 +1650,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1665,11 +1666,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testMultipleReceiversFroOneTimeReport() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
@@ -1716,7 +1717,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1728,7 +1729,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1744,11 +1745,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testExportIsLimited() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
@@ -1801,11 +1802,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testOneTimeReportIsTriggeredWithAnotherFormat() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
@@ -1852,7 +1853,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1864,7 +1865,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1955,11 +1956,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testOneTimeReportIsTriggeredAndNoData2() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath10, 1.11D, 111111);
 
@@ -2106,11 +2107,11 @@ public class ReportingTest extends BaseTest {
     @Test
     public void testDailyReportWithSinglePointIsTriggeredAndOneRecordIsFiltered() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
@@ -2146,10 +2147,10 @@ public class ReportingTest extends BaseTest {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -2159,7 +2160,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");

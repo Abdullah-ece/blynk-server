@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -15,12 +15,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -30,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -53,11 +48,14 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceSelectorWorkflowTest extends BaseTest {
+public class DeviceSelectorWorkflowTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
+
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
+    }
 
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);
@@ -65,21 +63,6 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         assertEquals(expected.boardType, real.boardType);
         assertNotNull(real.token);
         assertEquals(expected.status, real.status);
-    }
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test
@@ -90,7 +73,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -103,7 +86,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -151,7 +134,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -170,7 +153,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -187,9 +170,9 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
 
 
         //login with shared app
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + sharedToken + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("hardware 1-200000 vw 88 1");
@@ -241,7 +224,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -254,7 +237,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(5);
+        Device[] devices = clientPair.appClient.parseDevices(5);
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -264,14 +247,14 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        final Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
@@ -325,7 +308,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -340,7 +323,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -371,7 +354,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -384,7 +367,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -417,7 +400,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -433,7 +416,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -486,7 +469,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -502,7 +485,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -555,7 +538,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -583,7 +566,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -598,7 +581,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -638,7 +621,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -688,7 +671,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -738,7 +721,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

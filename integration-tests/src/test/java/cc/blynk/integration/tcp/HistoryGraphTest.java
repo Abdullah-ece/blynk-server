@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
@@ -23,21 +23,18 @@ import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ReportingUtil;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +45,6 @@ import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
@@ -73,37 +69,25 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HistoryGraphTest extends BaseTest {
+public class HistoryGraphTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static String blynkTempDir;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @BeforeClass
+    public static void initTempFolder() {
+        blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
     @Test
     public void testGetGraphDataFor1Pin() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
@@ -127,9 +111,9 @@ public class HistoryGraphTest extends BaseTest {
 
     @Test
     public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.18.0");
+        appClient.login(getUserName(), "1", "Android", "2.18.0");
         appClient.verifyResult(ok(1));
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -157,18 +141,18 @@ public class HistoryGraphTest extends BaseTest {
         appClient.verifyResult(ok(1));
         appClient.reset();
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
 
         for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
@@ -200,7 +184,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -217,12 +201,12 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -264,7 +248,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -281,17 +265,17 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
@@ -330,7 +314,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -347,17 +331,17 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
@@ -396,7 +380,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -413,17 +397,17 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
@@ -462,7 +446,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -479,17 +463,17 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
@@ -528,7 +512,7 @@ public class HistoryGraphTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -545,17 +529,17 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
@@ -595,13 +579,13 @@ public class HistoryGraphTest extends BaseTest {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createDevice(1, device2);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
@@ -618,22 +602,22 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
@@ -671,12 +655,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetGraphDataForEnhancedGraphWithEmptyDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
@@ -703,12 +687,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
 
         for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
@@ -749,12 +733,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetGraphDataForEnhancedGraphFor2Streams() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
@@ -797,12 +781,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetGraphDataForEnhancedGraphWithWrongDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
@@ -830,7 +814,7 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetLIVEGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -895,7 +879,7 @@ public class HistoryGraphTest extends BaseTest {
     public void testNoLiveDataWhenNoGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -924,7 +908,7 @@ public class HistoryGraphTest extends BaseTest {
     public void testNoLiveDataWhenNoGraph2() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -991,7 +975,7 @@ public class HistoryGraphTest extends BaseTest {
     public void testGetLIVEGraphDataForEnhancedGraphWithPaging() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1057,12 +1041,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testPagingWorksForGetEnhancedHistoryDataPartialData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
@@ -1106,12 +1090,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testPagingWorksForGetEnhancedHistoryDataFullData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
@@ -1157,12 +1141,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testPagingWorksForGetEnhancedHistoryDataFullDataAndSecondPage() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
@@ -1196,12 +1180,12 @@ public class HistoryGraphTest extends BaseTest {
     public void testPagingWorksForGetEnhancedHistoryDataWhenNoData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
@@ -1254,6 +1238,24 @@ public class HistoryGraphTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
+    private static String getFileNameByMask(String pattern) {
+        File dir = new File(blynkTempDir);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
+        return latest(files).getName();
+    }
+
+    private static File latest(File[] files) {
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+        for (File file : files) {
+            if (file.lastModified() > lastMod) {
+                choice = file;
+                lastMod = file.lastModified();
+            }
+        }
+        return choice;
+    }
+
     @Test
     public void testExportDataFromHistoryGraph() throws Exception {
         clientPair.appClient.send("export 1");
@@ -1269,7 +1271,7 @@ public class HistoryGraphTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA)));
 
         //generate fake reporting data
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
@@ -1277,13 +1279,13 @@ public class HistoryGraphTest extends BaseTest {
         FileUtils.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_a7_"));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_a7_"));
     }
 
     @Test
     public void testGeneratedCSVIsCorrect() throws Exception {
         //generate fake reporting data
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
@@ -1293,8 +1295,8 @@ public class HistoryGraphTest extends BaseTest {
         clientPair.appClient.send("export 1 14");
         clientPair.appClient.verifyResult(ok(1));
 
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_0_a7_");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
+        String csvFileName = getFileNameByMask(getUserName() + "_1_0_a7_");
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
@@ -1309,168 +1311,6 @@ public class HistoryGraphTest extends BaseTest {
             assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
             assertEquals(2, Long.parseLong(lineSplit[1]));
             assertEquals(0, Long.parseLong(lineSplit[2]));
-        }
-    }
-
-    @Test
-    public void testGeneratedCSVIsCorrectForMultiDevicesAndEnhancedGraph() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
-        device1.status = Status.OFFLINE;
-
-        clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
-        clientPair.appClient.verifyResult(ok(3));
-
-        clientPair.appClient.reset();
-
-        //generate fake reporting data
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
-        Files.createDirectories(userReportDirectory);
-
-        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
-        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
-        FileUtils.write(userReportFile, 1.1, 1L);
-        FileUtils.write(userReportFile, 2.2, 2L);
-
-        filename = ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
-        userReportFile = Paths.get(userReportDirectory.toString(), filename);
-        FileUtils.write(userReportFile, 11.1, 11L);
-        FileUtils.write(userReportFile, 12.2, 12L);
-
-        clientPair.appClient.send("export 1 432");
-        clientPair.appClient.verifyResult(ok(1));
-
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_d8_");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
-
-        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
-             InputStream gzipStream = new GZIPInputStream(fileStream);
-             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
-
-            //first device
-            String[] lineSplit = buffered.readLine().split(",");
-            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(1, Long.parseLong(lineSplit[1]));
-            assertEquals(0, Long.parseLong(lineSplit[2]));
-
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(2, Long.parseLong(lineSplit[1]));
-            assertEquals(0, Long.parseLong(lineSplit[2]));
-
-            //second device
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(11, Long.parseLong(lineSplit[1]));
-            assertEquals(1, Long.parseLong(lineSplit[2]));
-
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(12, Long.parseLong(lineSplit[1]));
-            assertEquals(1, Long.parseLong(lineSplit[2]));
-        }
-    }
-
-    @Test
-    public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
-        device1.status = Status.OFFLINE;
-
-        clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-
-        clientPair.appClient.updateWidget(1, "{\n" +
-                "                    \"type\":\"LOGGER\",\n" +
-                "                    \"id\":14,\n" +
-                "                    \"x\":0,\n" +
-                "                    \"y\":6,\n" +
-                "                    \"color\":0,\n" +
-                "                    \"width\":8,\n" +
-                "                    \"height\":3,\n" +
-                "                    \"tabId\":0,\n" +
-                "                    \"deviceId\":200000,\n" +
-                "                    \"pins\":\n" +
-                "                        [\n" +
-                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
-                "                        ],\n" +
-                "                    \"period\":\"THREE_MONTHS\",\n" +
-                "                    \"showLegends\":true\n" +
-                "                }");
-
-        clientPair.appClient.reset();
-
-        //generate fake reporting data
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
-        Files.createDirectories(userReportDirectory);
-
-        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
-        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
-        FileUtils.write(userReportFile, 1.1, 1L);
-        FileUtils.write(userReportFile, 2.2, 2L);
-
-        filename = ReportingDiskDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
-        userReportFile = Paths.get(userReportDirectory.toString(), filename);
-        FileUtils.write(userReportFile, 11.1, 11L);
-        FileUtils.write(userReportFile, 12.2, 12L);
-
-        clientPair.appClient.send("export 1 14");
-        clientPair.appClient.verifyResult(ok(1));
-
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_a7_");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
-
-        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
-             InputStream gzipStream = new GZIPInputStream(fileStream);
-             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
-
-            //first device
-            String[] lineSplit = buffered.readLine().split(",");
-            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(1, Long.parseLong(lineSplit[1]));
-            assertEquals(0, Long.parseLong(lineSplit[2]));
-
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(2, Long.parseLong(lineSplit[1]));
-            assertEquals(0, Long.parseLong(lineSplit[2]));
-
-            //second device
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(11, Long.parseLong(lineSplit[1]));
-            assertEquals(1, Long.parseLong(lineSplit[2]));
-
-            lineSplit = buffered.readLine().split(",");
-            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
-            assertEquals(12, Long.parseLong(lineSplit[1]));
-            assertEquals(1, Long.parseLong(lineSplit[2]));
         }
     }
 
@@ -1480,7 +1320,7 @@ public class HistoryGraphTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -1499,26 +1339,26 @@ public class HistoryGraphTest extends BaseTest {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         //those are not
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
@@ -1564,26 +1404,26 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         //those are not
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
@@ -1641,26 +1481,26 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
@@ -1683,7 +1523,7 @@ public class HistoryGraphTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -1714,42 +1554,42 @@ public class HistoryGraphTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
 
-        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
 
-        Path pinReportingDataPath30 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath30 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
 
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
 
-        Path pinReportingDataPath21 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath21 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
 
-        Path pinReportingDataPath31 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath31 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
 
         //those are not
-        Path pinReportingDataPath40 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath40 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
 
-        Path pinReportingDataPath41 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath41 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
 
@@ -1787,20 +1627,20 @@ public class HistoryGraphTest extends BaseTest {
         ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1);
 
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
 
         //write max amount of data for 1 week + 1 point
@@ -1857,13 +1697,13 @@ public class HistoryGraphTest extends BaseTest {
         ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
         //this file has corresponding history graph
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         //write max amount of data for 1 week + 1 point
@@ -1893,7 +1733,7 @@ public class HistoryGraphTest extends BaseTest {
         ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
 
         truncateWorker.run();
 
@@ -1908,7 +1748,7 @@ public class HistoryGraphTest extends BaseTest {
         ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
 
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
@@ -1916,5 +1756,167 @@ public class HistoryGraphTest extends BaseTest {
         truncateWorker.run();
 
         assertTrue(Files.notExists(userReportFolder));
+    }
+
+    @Test
+    public void testGeneratedCSVIsCorrectForMultiDevicesAndEnhancedGraph() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.reset();
+
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
+        Files.createDirectories(userReportDirectory);
+
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 11.1, 11L);
+        FileUtils.write(userReportFile, 12.2, 12L);
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(ok(1));
+
+        String csvFileName = getFileNameByMask(getUserName() + "_1_200000_d8_");
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains(csvFileName));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            //first device
+            String[] lineSplit = buffered.readLine().split(",");
+            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(1, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(2, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            //second device
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(11, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(12, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+        }
+    }
+
+    @Test
+    public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.updateWidget(1, "{\n" +
+                "                    \"type\":\"LOGGER\",\n" +
+                "                    \"id\":14,\n" +
+                "                    \"x\":0,\n" +
+                "                    \"y\":6,\n" +
+                "                    \"color\":0,\n" +
+                "                    \"width\":8,\n" +
+                "                    \"height\":3,\n" +
+                "                    \"tabId\":0,\n" +
+                "                    \"deviceId\":200000,\n" +
+                "                    \"pins\":\n" +
+                "                        [\n" +
+                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
+                "                        ],\n" +
+                "                    \"period\":\"THREE_MONTHS\",\n" +
+                "                    \"showLegends\":true\n" +
+                "                }");
+
+        clientPair.appClient.reset();
+
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
+        Files.createDirectories(userReportDirectory);
+
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 11.1, 11L);
+        FileUtils.write(userReportFile, 12.2, 12L);
+
+        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.verifyResult(ok(1));
+
+        String csvFileName = getFileNameByMask(getUserName() + "_1_200000_a7_");
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains(csvFileName));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            //first device
+            String[] lineSplit = buffered.readLine().split(",");
+            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(1, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(2, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            //second device
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(11, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(12, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+        }
     }
 }

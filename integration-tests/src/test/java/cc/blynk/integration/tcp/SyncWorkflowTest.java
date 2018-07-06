@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.Profile;
@@ -14,11 +13,6 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -53,27 +47,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SyncWorkflowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
-
+public class SyncWorkflowTest extends StaticServerBase {
 
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {
@@ -352,7 +326,7 @@ public class SyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -363,7 +337,7 @@ public class SyncWorkflowTest extends BaseTest {
 
     @Test
     public void testSyncForTimer() throws Exception {
-        User user = holder.userDao.users.get(new UserKey("dima@mail.ua", "Blynk"));
+        User user = holder.userDao.users.get(new UserKey(getUserName(), "Blynk"));
         Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = "100500";
@@ -400,7 +374,7 @@ public class SyncWorkflowTest extends BaseTest {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -527,12 +501,12 @@ public class SyncWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(device.token);
@@ -559,12 +533,12 @@ public class SyncWorkflowTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(device.token);

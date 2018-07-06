@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
@@ -11,16 +11,11 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.deviceOffline;
@@ -35,25 +30,18 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OfflineNotificationTest extends BaseTest {
+public class OfflineNotificationTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair("user_profile_json_empty_dash.txt");
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @Override
+    protected String changeProfileTo() {
+        return "user_profile_json_empty_dash.txt";
     }
 
     @Test
@@ -62,14 +50,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -101,14 +89,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -137,7 +125,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(settings.name, dashBoard.name);
@@ -157,14 +145,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice(3);
+        Device device = clientPair.appClient.parseDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(3, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(4);
+        Device[] devices = clientPair.appClient.parseDevices(4);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -205,7 +193,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.createDevice(1, device2);
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -220,7 +208,7 @@ public class OfflineNotificationTest extends BaseTest {
         hardClient2.verifyResult(ok(2));
 
         //just waiting 2.5 secs so server trigger idle event
-        sleep(2500);
+        TestUtil.sleep(2500);
 
         clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
     }
@@ -233,7 +221,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.createDevice(1, device2);
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -247,13 +235,13 @@ public class OfflineNotificationTest extends BaseTest {
 
         holder.sessionDao.close();
 
-        TestAppClient testAppClient = new TestAppClient("localhost", tcpAppPort);
+        TestAppClient testAppClient = new TestAppClient(properties);
         testAppClient.start();
-        testAppClient.login(DEFAULT_TEST_USER, "1");
+        testAppClient.login(getUserName(), "1");
         testAppClient.verifyResult(ok(1));
 
         testAppClient.send("getDevices 1");
-        devices = testAppClient.getDevices(2);
+        devices = testAppClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
         assertEquals(1, devices[1].id);

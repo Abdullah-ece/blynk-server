@@ -2,6 +2,7 @@ package cc.blynk.integration.http;
 
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.HttpEntity;
@@ -59,7 +60,7 @@ public class UploadAPITest extends BaseTest {
     public void uploadFileToServer() throws Exception {
         String pathToImage = upload("static/ota/test.bin");
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + pathToImage);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -70,7 +71,7 @@ public class UploadAPITest extends BaseTest {
     private String upload(String filename) throws Exception {
         InputStream logoStream = UploadAPITest.class.getResourceAsStream("/" + filename);
 
-        HttpPost post = new HttpPost("http://localhost:" + httpPort + "/upload");
+        HttpPost post = new HttpPost("http://localhost:" + properties.getHttpPort() + "/upload");
         ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, filename);
         StringBody stringBody1 = new StringBody("Message 1", ContentType.MULTIPART_FORM_DATA);
 
@@ -85,7 +86,7 @@ public class UploadAPITest extends BaseTest {
         String staticPath;
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            staticPath = consumeText(response);
+            staticPath = TestUtil.consumeText(response);
 
             assertNotNull(staticPath);
             assertTrue(staticPath.startsWith("/static"));

@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -25,15 +25,10 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.QrHolder;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -45,7 +40,6 @@ import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appIsOutdated;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -78,7 +72,6 @@ import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -90,40 +83,22 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainWorkflowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
+public class MainWorkflowTest extends StaticServerBase {
 
     @Test
     public void testResetEmail() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        String userName = getUserName();
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password restoration for your Blynk account."), contains("http://127.0.0.1/restore?token=" + token), any(QrHolder.class));
+        verify(holder.mailWrapper).sendWithAttachment(eq(userName), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
@@ -131,19 +106,19 @@ public class MainWorkflowTest extends BaseTest {
         appClient.send("resetPass verify " + token);
         appClient.verifyResult(ok(4));
 
-        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", userName));
         appClient.verifyResult(ok(5));
 
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(userName, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
 
-        appClient.login("dima@mail.ua", "2");
+        appClient.login(userName, "2");
         appClient.verifyResult(ok(7));
     }
 
     @Test
     public void registrationAllowedOnlyOncePerConnection() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -157,31 +132,17 @@ public class MainWorkflowTest extends BaseTest {
     }
 
     @Test
-    public void registrationLimitCheck() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
-            appClient.start();
-            appClient.register("test" + i + "@test.com", "1");
-            appClient.verifyResult(ok(1));
-            appClient.stop();
-        }
-
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
-        appClient.start();
-        appClient.register("test" + 11 + "@test.com", "1");
-        appClient.verifyResult(notAllowed(1));
-    }
-
-    @Test
     public void createBasicProfile() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        String username = incrementAndGetUserName();
+
+        appClient.register(username, "1");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "RC13");
+        appClient.login(username, "1", "Android", "RC13");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"orgId\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -193,7 +154,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile();
+        Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
@@ -204,7 +165,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = appClient.getProfile();
+        profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text 2\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
 
@@ -214,7 +175,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = appClient.getProfile();
+        profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
 
@@ -230,21 +191,23 @@ public class MainWorkflowTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = appClient.getProfile();
+        profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"orgId\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
     }
 
     @Test
     public void testNoEmptyPMCommands() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        String username = incrementAndGetUserName();
+
+        appClient.register(username, "1");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "RC13");
+        appClient.login(username, "1", "Android", "RC13");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -258,7 +221,7 @@ public class MainWorkflowTest extends BaseTest {
         device.name = "123";
         device.boardType = "ESP32";
         appClient.createDevice(1, device);
-        device = appClient.getDevice(5);
+        device = appClient.parseDevice(5);
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -267,7 +230,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.activate(1);
         appClient.verifyResult(new ResponseMessage(6, DEVICE_NOT_IN_NETWORK));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
 
         hardClient.login(device.token);
@@ -282,7 +245,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void doNotAllowUsersWithQuestionMark() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -292,7 +255,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void createDashWithDevices() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -315,7 +278,7 @@ public class MainWorkflowTest extends BaseTest {
 
         appClient.send("getDevices 1");
 
-        Device[] devices = appClient.getDevices(4);
+        Device[] devices = appClient.parseDevices(4);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(0, devices[0].id);
@@ -324,20 +287,15 @@ public class MainWorkflowTest extends BaseTest {
     }
 
     @Test
-    public void testConnectAppAndHardware() throws Exception {
-        // we just test that app and hardware can actually connect
-    }
-
-    @Test
     public void testRegisterWithAnotherApp() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.register("test@test.com", "1", "MyApp");
+        appClient.register(getUserName(), "1", "MyApp");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "1.13.3", "MyApp");
+        appClient.login(getUserName(), "1", "Android", "1.13.3", "MyApp");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"orgId\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -349,7 +307,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile();
+        Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
@@ -357,32 +315,29 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testDoubleLogin() throws Exception {
-        clientPair.hardwareClient.login(DEFAULT_TEST_USER + " 1");
+        clientPair.hardwareClient.login(getUserName() + " 1");
         clientPair.hardwareClient.verifyResult(new ResponseMessage(1, USER_ALREADY_REGISTERED));
     }
 
     @Test
     public void testDoubleLogin2() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient newHardwareClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardwareClient.start();
-        newHardwareClient.login(token);
-        newHardwareClient.login(token);
+        newHardwareClient.login(clientPair.token);
+        newHardwareClient.login(clientPair.token);
         newHardwareClient.verifyResult(ok(1));
         newHardwareClient.verifyResult(new ResponseMessage(2, USER_ALREADY_REGISTERED));
     }
 
     @Test
-    public void sendCommandBeforeLogin() throws Exception {
-        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+    public void sendCommandBeforeLogin() {
+        TestHardClient newHardwareClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardwareClient.start();
         newHardwareClient.send("hardware vw 1 1");
 
         long tries = 0;
         while(!newHardwareClient.isClosed() && tries < 10) {
-            sleep(100);
+            TestUtil.sleep(100);
             tries++;
         }
         assertTrue(newHardwareClient.isClosed());
@@ -397,7 +352,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(hardware(2, "1-0 vw 67 100")));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 67, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -414,7 +369,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.hardwareClient.verifyResult(hardware(2, "aw 24 100"));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 24, PinType.DIGITAL);
         assertNotNull(widget);
@@ -430,7 +385,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testNoEnergyDrainForBusinessApps() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -474,7 +429,7 @@ public class MainWorkflowTest extends BaseTest {
     @Test
     public void testAddAndRemoveTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -494,7 +449,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.deleteWidget(1, 100);
@@ -505,7 +460,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         assertEquals(17, profile.dashBoards[0].widgets.length);
         assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
     }
@@ -513,7 +468,7 @@ public class MainWorkflowTest extends BaseTest {
     @Test
     public void testAddAndUpdateTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -533,7 +488,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.updateWidget(1, "{\"orgId\":100, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
@@ -544,7 +499,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         assertEquals(18, profile.dashBoards[0].widgets.length);
         assertNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
         assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL));
@@ -620,13 +575,13 @@ public class MainWorkflowTest extends BaseTest {
         DashBoard responseDash;
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.getProfile(7);
+        responseProfile = clientPair.appClient.parseProfile(7);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", responseProfile.toString());
 
         clientPair.appClient.send("loadProfileGzipped 10");
-        responseDash = clientPair.appClient.getDash(8);
+        responseDash = clientPair.appClient.parseDash(8);
         responseDash.updatedAt = 0;
         responseDash.createdAt = 0;
         assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}", responseDash.toString());
@@ -638,7 +593,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK));
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.getProfile(11);
+        responseProfile = clientPair.appClient.parseProfile(11);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false}]}";
@@ -649,7 +604,7 @@ public class MainWorkflowTest extends BaseTest {
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false}]}";
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.getProfile(13);
+        responseProfile = clientPair.appClient.parseProfile(13);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals(expectedProfile, responseProfile.toString());
@@ -657,19 +612,20 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        String username = getUserName();
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", username);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -734,14 +690,14 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(2));
 
         //todo on delete also close existing connections?
-        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(token);
         newHardClient.verifyResult(new ResponseMessage(1, INVALID_TOKEN));
 
-        TestAppClient newAppClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient newAppClient = new TestAppClient(properties);
         newAppClient.start();
-        newAppClient.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+        newAppClient.send("shareLogin " + getUserName() + " " + sharedToken + " Android 24");
 
         newAppClient.verifyResult(notAllowed(1));
     }
@@ -751,7 +707,7 @@ public class MainWorkflowTest extends BaseTest {
         Profile expectedProfile = JsonParser.parseProfileFromString(readTestUserProfile());
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         profile.dashBoards[0].updatedAt = 0;
 
@@ -769,7 +725,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(settings.name, dashBoard.name);
@@ -846,7 +802,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testActive2AndDeactivate1() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
@@ -904,8 +860,6 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testTweetNotWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("tweet");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
@@ -929,8 +883,6 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testSmsWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("sms");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
@@ -943,7 +895,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("sms yo");
-        verify(smsWrapper, timeout(500)).send(eq("3809683423423"), eq("yo"));
+        verify(holder.smsWrapper, timeout(500)).send(eq("3809683423423"), eq("yo"));
         clientPair.hardwareClient.verifyResult(ok(3));
 
         clientPair.hardwareClient.send("sms yo");
@@ -952,16 +904,12 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testTweetWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("tweet yo");
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"), any());
+        verify(holder.twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"), any());
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT)));
     }
-
-
 
     @Test
     public void testPlayerUpdateWorksAsExpected() throws Exception {
@@ -975,7 +923,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertTrue(player.isOnPlay);
@@ -985,7 +933,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertFalse(player.isOnPlay);
@@ -1003,7 +951,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1017,7 +965,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1030,7 +978,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1043,7 +991,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1056,7 +1004,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
@@ -1069,7 +1017,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1082,7 +1030,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
@@ -1104,7 +1052,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1118,7 +1066,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1131,7 +1079,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = (clientPair.appClient.getProfile());
+        profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1144,7 +1092,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = (clientPair.appClient.getProfile());
+        profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1157,7 +1105,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = (clientPair.appClient.getProfile());
+        profile = (clientPair.appClient.parseProfile(1));
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
@@ -1170,7 +1118,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1183,7 +1131,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
@@ -1214,13 +1162,13 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testClosedConnectionWhenNotLogged() throws Exception {
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.getToken(1);
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
-        appClient2.login("dima@mail.ua", "1", "Android", "1RC7");
+        appClient2.login(getUserName(), "1", "Android", "1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
@@ -1232,7 +1180,7 @@ public class MainWorkflowTest extends BaseTest {
         assertEquals(32, newToken.length());
         assertTrue(clientPair.hardwareClient.isClosed());
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(newToken);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1249,7 +1197,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.send("hardware 1 " + body);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1269,7 +1217,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1293,7 +1241,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
-        TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", properties.getHttpPort());
         nonActiveDashHardClient.start();
         nonActiveDashHardClient.login(token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
@@ -1328,7 +1276,7 @@ public class MainWorkflowTest extends BaseTest {
         //within 1 second sending more messages than default limit 100.
         for (int i = 0; i < 200; i++) {
             clientPair.hardwareClient.send("hardware " + body);
-            sleep(5);
+            TestUtil.sleep(5);
         }
 
         ArgumentCaptor<ResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(ResponseMessage.class);
@@ -1348,7 +1296,7 @@ public class MainWorkflowTest extends BaseTest {
         //check no more accepted
         for (int i = 0; i < 10; i++) {
             clientPair.hardwareClient.send("hardware " + body);
-            sleep(9);
+            TestUtil.sleep(9);
         }
 
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
@@ -1374,7 +1322,7 @@ public class MainWorkflowTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 2");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(1, devices[0].id);
@@ -1391,7 +1339,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "aw 18 1032")));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
         assertNotNull(widget);
         assertEquals("1032", ((Button) widget).value);
@@ -1409,7 +1357,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "vw 37 10")));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(3);
 
         int counter = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
@@ -1421,8 +1369,9 @@ public class MainWorkflowTest extends BaseTest {
         assertEquals(2, counter);
 
         clientPair.hardwareClient.send("hardware vw 37 11");
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 37 11"));
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(5);
+        profile = clientPair.appClient.parseProfile(5);
         counter = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
             if (widget.isSame(0, (byte) 37, PinType.VIRTUAL)) {
@@ -1442,7 +1391,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "dw 18 1")));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
         assertNotNull(widget);
         assertEquals("1", ((Button) widget).value);
@@ -1450,9 +1399,9 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.1");
+        appClient.login(getUserName(), "1", "Android", "1.1.1");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1462,9 +1411,9 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.2");
+        appClient.login(getUserName(), "1", "Android", "1.1.2");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1474,7 +1423,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void newUserReceivesGrettingEmailAndNoIPLogged() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
 
         appClient1.register("test@blynk.cc", "a", "Blynk");
@@ -1483,7 +1432,7 @@ public class MainWorkflowTest extends BaseTest {
         User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
         assertNull(user.lastLoggedIP);
 
-        verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+        verify(holder.mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
 
         appClient1.login("test@blynk.cc", "a");
         appClient1.verifyResult(ok(2));

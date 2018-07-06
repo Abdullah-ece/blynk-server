@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
@@ -9,11 +8,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -36,24 +31,18 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BridgeWorkflowTest extends BaseTest {
+public class BridgeWorkflowTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-        this.clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @Override
+    public String changeProfileTo() {
+        return "user_profile_json_3_dashes.txt";
     }
 
     @Test
@@ -128,7 +117,7 @@ public class BridgeWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -373,7 +362,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
     @Test
     public void bridgeOnlyWorksWithinOneAccount() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -392,7 +381,7 @@ public class BridgeWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         appClient.createDevice(1, device1);
-        Device device = appClient.getDevice();
+        Device device = appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         appClient.verifyResult(createDevice(1, device));
@@ -414,7 +403,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         Device device = new Device(1, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -444,7 +433,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         Device device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
@@ -460,7 +449,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();

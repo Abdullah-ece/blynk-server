@@ -64,8 +64,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
         this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
         this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
-        this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
-        this.info = new BlynkInternalLogic(holder);
+        this.propertyLogic = SetWidgetPropertyLogic.getInstance(holder);
+        this.info = BlynkInternalLogic.getInstance(holder);
 
         this.state = stateHolder;
     }

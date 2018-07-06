@@ -22,9 +22,19 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.mockito.ArgumentCaptor;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -56,7 +66,6 @@ import static org.mockito.Mockito.verify;
 
 public final class TestUtil {
 
-    public static final String DEFAULT_TEST_USER = "dima@mail.ua";
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
 
     private TestUtil() {
@@ -93,19 +102,16 @@ public final class TestUtil {
 
 
     public static String readTestUserProfile(String fileName) throws Exception{
-        if (fileName == null) {
-            fileName = "user_profile_json.txt";
-        }
         InputStream is = TestUtil.class.getResourceAsStream("/json_test/" + fileName);
         Profile profile = parseProfile(is);
         return profile.toString();
     }
 
     public static String readTestUserProfile() throws Exception {
-        return readTestUserProfile(null);
+        return readTestUserProfile("user_profile_json.txt");
     }
 
-    protected static StringMessage getGetTokenMessage(List<Object> arguments) {
+    private static StringMessage getGetTokenMessage(List<Object> arguments) {
         for (Object obj : arguments) {
             if (((MessageBase)obj).command == GET_TOKEN) {
                 return (StringMessage) obj;
@@ -283,4 +289,58 @@ public final class TestUtil {
         return new ClientPair(appClient, hardClient, token);
     }
 
+    public static String getDataFolder() {
+        try {
+            return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable create temp dir.", e);
+        }
+    }
+
+    public static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            //we can ignore it
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<String> consumeJsonPinValues(String response) {
+        return JsonParser.readAny(response, List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
+        return JsonParser.readAny(consumeText(response), List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String consumeText(CloseableHttpResponse response) throws IOException {
+        return EntityUtils.toString(response.getEntity());
+    }
+
+    public static SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+        X509TrustManager tm = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+
+            }
+
+            @Override
+            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new TrustManager[]{ tm }, null);
+
+        return context;
+    }
 }
