@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetPropertyTest extends StaticServerBase {
+public class SetPropertyTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetWidgetProperty() throws Exception {

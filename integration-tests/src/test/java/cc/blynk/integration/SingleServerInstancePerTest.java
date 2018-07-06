@@ -2,12 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -19,13 +13,13 @@ import org.junit.BeforeClass;
 
 import java.util.Collections;
 
-import static org.mockito.Mockito.mock;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static org.mockito.Mockito.reset;
 
 /**
  * use when you need only 1 server instance per test class and not per test method
  */
-public abstract class StaticServerBase extends CounterBase {
+public abstract class SingleServerInstancePerTest extends CounterBase {
 
     protected static ServerProperties properties;
     protected static BaseServer appServer;
@@ -37,15 +31,7 @@ public abstract class StaticServerBase extends CounterBase {
     public static void init() throws Exception {
         properties = new ServerProperties(Collections.emptyMap());
         properties.setProperty("data.folder", TestUtil.getDataFolder());
-        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(
-                    properties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                    properties.getIntProperty("notifications.queue.limit", 2000)
-            );
-        holder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                blockingIOProcessor,
-                "no-db.properties");
+        holder = createDefaultHolder(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
     }

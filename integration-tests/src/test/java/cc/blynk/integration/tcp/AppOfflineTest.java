@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.internal;
 
 /**
@@ -31,8 +32,7 @@ public class AppOfflineTest extends BaseTest {
     @Before
     public void init() throws Exception {
         properties.setProperty("app.socket.idle.timeout", "1");
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+        Holder holder = createDefaultHolder(properties, "no-db.properties");
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 

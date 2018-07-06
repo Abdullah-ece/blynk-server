@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -83,7 +83,21 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainWorkflowTest extends StaticServerBase {
+public class MainWorkflowTest extends SingleServerInstancePerTest {
+
+    @Test
+    public void testCloneForLocalServerWithNoDB() throws Exception  {
+        assertFalse(holder.dbManager.isDBEnabled());
+
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getProjectByCloneCode " + token);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
+    }
 
     @Test
     public void testResetEmail() throws Exception {

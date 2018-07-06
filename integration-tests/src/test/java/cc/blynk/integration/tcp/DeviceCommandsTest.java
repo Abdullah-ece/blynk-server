@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceCommandsTest extends StaticServerBase {
+public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddNewDevice() throws Exception {

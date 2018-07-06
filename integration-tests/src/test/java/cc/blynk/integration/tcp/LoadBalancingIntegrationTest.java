@@ -27,6 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.connectRedirect;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.getServer;
 import static cc.blynk.integration.TestUtil.illegalCommand;
@@ -64,16 +65,14 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        holder = createDefaultHolder(properties, "db-test.properties");;
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
         appServer1 = new AppAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        this.holder2 = createDefaultHolder(properties2, "db-test.properties");;
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");
