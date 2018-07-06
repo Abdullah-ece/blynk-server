@@ -2,8 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ota.OTAInfo;
-import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -36,20 +34,10 @@ public final class BlynkInternalLogic {
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
     private final int hardwareIdleTimeout;
-    private static BlynkInternalLogic instance;
     private final String serverHostUrl;
+    private static BlynkInternalLogic instance;
 
     private BlynkInternalLogic(Holder holder) {
-        this(holder.otaManager, holder.limits.hardwareIdleTimeout);
-    }
-
-    //for tests only
-    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
-        this.otaManager = otaManager;
-        this.hardwareIdleTimeout = hardwareIdleTimeout;
-    }
-
-    public BlynkInternalLogic(Holder holder) {
         this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         this.serverHostUrl = holder.props.getHttpServerUrl();
     }
