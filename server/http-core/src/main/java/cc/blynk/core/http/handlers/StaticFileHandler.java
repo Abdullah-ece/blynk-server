@@ -272,7 +272,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         Device device = getDevice(uriParts);
         if (device != null) {
             device.firmwareRequested();
-            Product product = organizationDao.getProductById(device.productId);
+            Product product = organizationDao.getProductByIdOrThrow(device.productId);
             if (product.otaProgress != null && product.otaProgress.firmwareInfo != null) {
                 response.headers().set(MD5_HEADER, product.otaProgress.firmwareInfo.md5Hash);
             }

@@ -76,7 +76,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Product product = organizationDao.getProductById(productId);
+        Product product = organizationDao.getProductByIdOrThrow(productId);
 
         if (product == null) {
             log.error("Cannot find product with id {} for org {}", productId, organization.name);

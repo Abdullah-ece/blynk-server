@@ -388,6 +388,15 @@ public final class TestUtil {
 
     private static final int DEFAULT_TEST_HTTPS_PORT = 10443;
 
+    public static AppWebSocketClient loggedDefaultClient(String username, String pass) throws Exception {
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.login(username, pass);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+        return appWebSocketClient;
+    }
+
     public static AppWebSocketClient loggedDefaultClient(User user) throws Exception {
         AppWebSocketClient appWebSocketClient = defaultClient();
         appWebSocketClient.start();

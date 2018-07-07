@@ -68,7 +68,7 @@ public class HardwareLogEventLogic {
 
         var device = state.device;
 
-        var product = organizationDao.getProductByIdOrNull(device.productId);
+        var product = organizationDao.getProductById(device.productId);
         if (product == null) {
             log.error("Product with id {} not exists.", device.productId);
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());

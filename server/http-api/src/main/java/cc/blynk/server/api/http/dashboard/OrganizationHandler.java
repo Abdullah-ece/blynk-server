@@ -279,7 +279,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         for (int productId : selectedProducts) {
             if (organizationDao.hasNoProductWithParent(orgId, productId)) {
                 log.debug("Cloning product for org {} and parentProductId {}.", orgName, productId);
-                Product parentProduct = organizationDao.getProductById(productId);
+                Product parentProduct = organizationDao.getProductByIdOrThrow(productId);
                 Product newProduct = new Product(parentProduct);
                 newProduct.parentId = parentProduct.id;
                 organizationDao.createProduct(orgId, newProduct);

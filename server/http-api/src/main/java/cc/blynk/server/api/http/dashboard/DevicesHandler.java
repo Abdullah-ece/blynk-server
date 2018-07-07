@@ -253,7 +253,7 @@ public class DevicesHandler extends BaseHttpHandler {
     }
 
     private DeviceDTO joinProductAndOrgInfo(Device device) {
-        Product product = organizationDao.getProductByIdOrNull(device.productId);
+        Product product = organizationDao.getProductById(device.productId);
         String orgName = organizationDao.getOrganizationNameByProductId(device.productId);
         return new DeviceDTO(device, product, orgName);
     }
@@ -262,7 +262,7 @@ public class DevicesHandler extends BaseHttpHandler {
         List<DeviceDTO> result = new ArrayList<>(devices.size());
         Map<LogEventCountKey, Integer> counters = reportingDBManager.eventDBDao.getEventsSinceLastView(email);
         for (Device device : devices) {
-            Product product = organizationDao.getProductByIdOrNull(device.productId);
+            Product product = organizationDao.getProductById(device.productId);
             result.add(new DeviceDTO(device, product, counters));
         }
         return result;
@@ -331,7 +331,7 @@ public class DevicesHandler extends BaseHttpHandler {
         User user = getUser(ctx);
         organizationDao.verifyUserAccessToDevice(user, device);
 
-        Product product = organizationDao.getProductByIdOrNull(device.productId);
+        Product product = organizationDao.getProductById(device.productId);
 
         blockingIOProcessor.executeDB(() -> {
             Response response;

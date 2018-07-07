@@ -64,7 +64,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
 
-                Product product = organizationDao.getProductByIdOrNull(device.productId);
+                Product product = organizationDao.getProductById(device.productId);
                 int ignorePeriod = product == null ? 0 : product.getIgnorePeriod();
                 if (ignorePeriod > 0) {
                     ctx.executor().schedule(

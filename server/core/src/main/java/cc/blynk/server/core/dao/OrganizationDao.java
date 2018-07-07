@@ -120,7 +120,7 @@ public class OrganizationDao {
         Map<Integer, Integer> result = new HashMap<>(productIdCount);
         for (Map.Entry<Integer, Integer> entries : productIdCount.entrySet()) {
             Integer childProductId = entries.getKey();
-            Product childProduct = getProductByIdOrNull(childProductId);
+            Product childProduct = getProductById(childProductId);
             if (childProduct != null) {
                 Integer parentCounter = result.getOrDefault(childProduct.parentId, 0);
                 result.put(childProduct.parentId, parentCounter + entries.getValue());
@@ -282,8 +282,8 @@ public class OrganizationDao {
         return null;
     }
 
-    public Product getProductById(int productId) {
-        Product product = getProductByIdOrNull(productId);
+    public Product getProductByIdOrThrow(int productId) {
+        Product product = getProductById(productId);
         if (product == null) {
             log.error("Product with passed id {} not exists.", productId);
             throw new ProductNotFoundException("Product with passed id " + productId + " not found.");
@@ -296,7 +296,7 @@ public class OrganizationDao {
         return product == null;
     }
 
-    public Product getProductByIdOrNull(int productId) {
+    public Product getProductById(int productId) {
         for (Organization org : organizations.values()) {
             for (Product product : org.products) {
                 if (product.id == productId) {

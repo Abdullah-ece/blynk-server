@@ -127,7 +127,7 @@ public class OTAHandler extends BaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        Product product = organizationDao.getProductByIdOrThrow(startOtaDTO.productId);
         product.setOtaProgress(new OtaProgress(startOtaDTO.title,
                 startOtaDTO.pathToFirmware, startOtaDTO.firmwareOriginalFileName,
                 now, -1,
@@ -192,7 +192,7 @@ public class OTAHandler extends BaseHttpHandler {
             }
         }
 
-        Product product = organizationDao.getProductById(startOtaDTO.productId);
+        Product product = organizationDao.getProductByIdOrThrow(startOtaDTO.productId);
         product.setOtaProgress(null);
 
         return ok();
@@ -217,7 +217,7 @@ public class OTAHandler extends BaseHttpHandler {
 
         log.info("Deleting OTA progress for {}.", user.email);
 
-        Product product = organizationDao.getProductById(productId);
+        Product product = organizationDao.getProductByIdOrThrow(productId);
         product.setOtaProgress(null);
 
         return ok();

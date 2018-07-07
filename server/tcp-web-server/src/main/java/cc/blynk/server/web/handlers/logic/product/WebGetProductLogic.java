@@ -36,7 +36,7 @@ public class WebGetProductLogic {
         User user = state.user;
         //todo for now taking product only from user organization
         int orgId = user.orgId;
-        Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
+        Organization organization = organizationDao.getOrgById(orgId);
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);

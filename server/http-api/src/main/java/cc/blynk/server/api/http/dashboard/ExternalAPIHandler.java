@@ -128,7 +128,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return (badRequest("Event code is not provided."));
         }
 
-        var product = organizationDao.getProductByIdOrNull(device.productId);
+        var product = organizationDao.getProductById(device.productId);
         if (product == null) {
             log.error("Product with id {} not exists.", device.productId);
             return (badRequest("Product not exists for device."));
