@@ -14,7 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
@@ -65,7 +64,7 @@ public class WebGetDeviceLogic {
         if (ctx.channel().isWritable()) {
             String devicesString = new DeviceDTO(device, product, org.name).toString();
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(WEB_GET_DEVICE, message.id, devicesString), ctx.voidPromise());
+                    makeUTF8StringMessage(message.command, message.id, devicesString), ctx.voidPromise());
         }
     }
 

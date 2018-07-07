@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.organization;
+package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -11,39 +11,40 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 13.04.18.
+ * Created on 07.06.18.
  */
-public class WebGetOrganizationsLogic {
+public class WebGetProductsLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationsLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetProductsLogic.class);
 
     private final OrganizationDao organizationDao;
 
-    public WebGetOrganizationsLogic(Holder holder) {
+    public WebGetProductsLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         User user = state.user;
-        List<Organization> orgs = organizationDao.getAll(user)
-                .stream()
-                .filter(org -> org.id != user.orgId && org.parentId == user.orgId)
-                .collect(Collectors.toList());
+        Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
-        organizationDao.calcDeviceCount(orgs);
+        if (organization == null) {
+            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            return;
+        }
+
+        organizationDao.calcDeviceCount(organization);
 
         if (ctx.channel().isWritable()) {
-            String orgString = JsonParser.toJson(orgs);
-            ctx.writeAndFlush(
-                    makeUTF8StringMessage(message.command, message.id, orgString), ctx.voidPromise());
+            String productString = JsonParser.toJson(organization.products);
+            StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
+            ctx.writeAndFlush(response, ctx.voidPromise());
         }
     }
 

@@ -73,6 +73,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -80,7 +81,10 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 
 /**
  * The Blynk Project.
@@ -272,6 +276,14 @@ public final class CommandParserUtil {
                 return WEB_GET_ORG_LOCATIONS;
             case "webcaninviteuser" :
                 return WEB_CAN_INVITE_USER;
+            case "webupdateorg" :
+                return WEB_UPDATE_ORG;
+            case "webcreateproduct" :
+                return WEB_CREATE_PRODUCT;
+            case "webgetproduct" :
+                return WEB_GET_PRODUCT;
+            case "createproducts" :
+                return WEB_GET_PRODUCTS;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

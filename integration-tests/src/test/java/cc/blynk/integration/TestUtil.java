@@ -4,12 +4,14 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -29,7 +31,12 @@ import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.mockito.ArgumentCaptor;
 
@@ -66,6 +73,7 @@ import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -376,5 +384,28 @@ public final class TestUtil {
                         serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 1),
                         serverProperties.getIntProperty("notifications.queue.limit", 100)
                 ), dbFileName);
+    }
+
+    private static final int DEFAULT_TEST_HTTPS_PORT = 10443;
+
+    public static AppWebSocketClient loggedDefaultClient(User user) throws Exception {
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.login(user);
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.reset();
+        return appWebSocketClient;
+    }
+
+    public static AppWebSocketClient defaultClient() throws Exception {
+        return new AppWebSocketClient("localhost", DEFAULT_TEST_HTTPS_PORT, WEBSOCKET_WEB_PATH);
+    }
+
+    public static CloseableHttpClient getDefaultHttpsClient() throws Exception {
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
+        return HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
     }
 }

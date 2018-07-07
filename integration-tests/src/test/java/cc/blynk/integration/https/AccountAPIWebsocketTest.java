@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
@@ -24,7 +25,7 @@ import static org.junit.Assert.assertTrue;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AccountWebSocketApiTest extends APIBaseTest {
+public class AccountAPIWebsocketTest extends APIBaseTest {
 
     @Before
     public void init() throws Exception {
@@ -38,7 +39,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
 
     @Test
     public void getOwnProfileNotAuthorized() throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.getAccount();
         while (!appWebSocketClient.isClosed()) {
@@ -49,7 +50,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
 
     @Test
     public void getOwnProfileWorks() throws Exception {
-        AppWebSocketClient appWebSocketClient = loggedDefaultClient(regularUser);
+        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(regularUser);
         appWebSocketClient.getAccount();
         User user = appWebSocketClient.parseAccount(1);
         assertNotNull(user);
@@ -59,7 +60,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
 
     @Test
     public void getOwnProfileReturnOnlySpecificFields() throws Exception {
-        AppWebSocketClient appWebSocketClient = loggedDefaultClient(admin);
+        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(admin);
         appWebSocketClient.getAccount();
         User user = appWebSocketClient.parseAccount(1);
         assertNotNull(user);
@@ -74,7 +75,7 @@ public class AccountWebSocketApiTest extends APIBaseTest {
 
     @Test
     public void updateOwnProfileWorks() throws Exception {
-        AppWebSocketClient appWebSocketClient = loggedDefaultClient(admin);
+        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(admin);
         admin.name = "123@123.com";
         appWebSocketClient.updateAccount(admin);
         appWebSocketClient.getAccount();

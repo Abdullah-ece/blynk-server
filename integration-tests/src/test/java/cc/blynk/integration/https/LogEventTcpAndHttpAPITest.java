@@ -28,18 +28,14 @@ import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMes
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +44,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeText;
-import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
@@ -85,10 +81,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM reporting_events");
 
-        this.httpClient = HttpClients.custom()
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier()))
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
+        this.httpClient = getDefaultHttpsClient();
     }
 
     @After
@@ -1011,7 +1004,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNull(device.warningSinceLastView);
         }
 
-        CloseableHttpClient newHttpClient = newHttpClient();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         login(newHttpClient,  httpsAdminServerUrl, regularAdmin.email, regularAdmin.pass);
 

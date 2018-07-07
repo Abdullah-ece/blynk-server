@@ -11,7 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 
@@ -56,7 +55,7 @@ public class WebGetOrganizationLogic {
         if (ctx.channel().isWritable()) {
             String orgString = new OrganizationDTO(organization, parentOrgName).toString();
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(WEB_GET_ORG, message.id, orgString), ctx.voidPromise());
+                    makeUTF8StringMessage(message.command, message.id, orgString), ctx.voidPromise());
         }
     }
 

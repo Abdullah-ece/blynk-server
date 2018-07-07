@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
@@ -134,6 +135,14 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
+    }
+
+    public void getProduct(int productId) {
+        send("webGetProduct " + productId);
+    }
+
+    public Product parseProduct(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseProduct(getBody(expectedMessageOrder));
     }
 
     public void updateAccount(User user) {

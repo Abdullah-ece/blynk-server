@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -130,7 +131,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals("123", webSwitch.label);
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -194,7 +195,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals("123", webSwitch.label);
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -213,12 +214,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @Test
     public void webSocketDoesNotRetrieveCommandForItself() throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
 
-        AppWebSocketClient appWebSocketClient2 = defaultClient();
+        AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
@@ -232,12 +233,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @Test
     public void trackCommandWorks() throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
 
-        AppWebSocketClient appWebSocketClient2 = defaultClient();
+        AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
@@ -268,7 +269,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, device.id);
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -292,14 +293,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @Test
     public void senderShouldNotGetCommandHeSent() throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(0);
         appWebSocketClient.verifyResult(ok(2));
 
-        AppWebSocketClient appWebSocketClient2 = defaultClient();
+        AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
@@ -313,12 +314,12 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @Test
     public void trackCommandWorks2() throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
 
-        AppWebSocketClient appWebSocketClient2 = defaultClient();
+        AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
         appWebSocketClient2.start();
         appWebSocketClient2.login(regularUser);
         appWebSocketClient2.verifyResult(ok(1));
@@ -362,7 +363,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -421,7 +422,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         newHardClient.send("login " + device.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -464,7 +465,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(1, device.id);
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
@@ -542,7 +543,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(2, device.id);
         }
 
-        AppWebSocketClient appWebSocketClient = defaultClient();
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));

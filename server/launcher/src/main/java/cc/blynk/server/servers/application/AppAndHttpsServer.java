@@ -158,15 +158,16 @@ public class AppAndHttpsServer extends BaseServer {
                 var pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("AChannelState", appChannelStateHandler)
-                        .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
-                        .addLast("WSWebSocketServerProtocolHandler",
+                pipeline.addFirst("WebChannelState", appChannelStateHandler)
+                        .addFirst("WebReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
+                        .addLast("WebWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
-                        .addLast("WSMessageDecoder", new WebAppMessageDecoder(stats, holder.limits))
-                        .addLast("WSMessageEncoder", webAppMessageEncoder)
-                        .addLast("AGetServer", getServerHandler)
-                        .addLast("ALogin", webAppLoginHandler)
-                        .addLast("ANotLogged", userNotLoggedHandler);
+                        .addLast("WebMessageDecoder", new WebAppMessageDecoder(stats, holder.limits))
+                        .addLast("WebMessageEncoder", webAppMessageEncoder)
+                        .addLast("WebGetServer", getServerHandler)
+                        .addLast("WebRegister", registerHandler)
+                        .addLast("WebLogin", webAppLoginHandler)
+                        .addLast("WebNotLogged", userNotLoggedHandler);
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);

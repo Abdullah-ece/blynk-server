@@ -18,6 +18,7 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
+import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -114,7 +115,9 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest("Product with this name already exists.");
         }
 
-        product.checkEvents();
+        if (!product.isValidEvents()) {
+            throw new WebException("Events with this event codes are not allowed.");
+        }
 
         product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
 

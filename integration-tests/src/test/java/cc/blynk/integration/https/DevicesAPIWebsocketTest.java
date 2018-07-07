@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -28,11 +29,11 @@ import static org.junit.Assert.assertNotNull;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DevicesWebSocketAPITest extends APIBaseTest {
+public class DevicesAPIWebsocketTest extends APIBaseTest {
 
     @Test
     public void createDevice() throws Exception {
-        AppWebSocketClient appWebSocketClient = loggedDefaultClient(regularUser);
+        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(regularUser);
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";

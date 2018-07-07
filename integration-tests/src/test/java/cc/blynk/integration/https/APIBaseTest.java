@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
@@ -13,31 +12,22 @@ import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
-import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
-import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
-import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -73,14 +63,8 @@ public abstract class APIBaseTest extends BaseTest {
 
         httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, properties.getHttpsPort());
 
-        SSLContext sslcontext = initUnsecuredSSLContext();
-
         // Allow TLSv1 protocol only
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
-        this.httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
+        this.httpclient = getDefaultHttpsClient();
 
         String name = "admin@blynk.cc";
         String pass = "admin";
@@ -144,34 +128,6 @@ public abstract class APIBaseTest extends BaseTest {
             assertEquals(email, user.name);
             assertNull(user.pass);
         }
-    }
-
-    public CloseableHttpClient newHttpClient() throws Exception {
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
-        return HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
-    }
-
-    public static class MyHostVerifier implements HostnameVerifier {
-        @Override
-        public boolean verify(String s, SSLSession sslSession) {
-            return true;
-        }
-    }
-
-    public static AppWebSocketClient loggedDefaultClient(User user) throws Exception {
-        AppWebSocketClient appWebSocketClient = defaultClient();
-        appWebSocketClient.start();
-        appWebSocketClient.login(user);
-        appWebSocketClient.verifyResult(ok(1));
-        appWebSocketClient.reset();
-        return appWebSocketClient;
-    }
-
-    public static AppWebSocketClient defaultClient() throws Exception {
-        return new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
     }
 
 }

@@ -20,7 +20,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -99,7 +98,7 @@ public class WebCreateDeviceLogic {
 
         if (ctx.channel().isWritable()) {
             String deviceString = new DeviceDTO(newDevice, product, org.name).toString();
-            ctx.writeAndFlush(makeUTF8StringMessage(WEB_CREATE_DEVICE, message.id, deviceString), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, deviceString), ctx.voidPromise());
         }
     }
 

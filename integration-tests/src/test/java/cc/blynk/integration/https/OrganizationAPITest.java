@@ -33,19 +33,15 @@ import cc.blynk.server.core.model.widgets.web.WebBarGraph;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +54,7 @@ import java.util.Date;
 import java.util.List;
 
 import static cc.blynk.integration.TestUtil.consumeText;
-import static cc.blynk.integration.TestUtil.initUnsecuredSSLContext;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static java.time.LocalTime.ofSecondOfDay;
 import static org.junit.Assert.assertArrayEquals;
@@ -239,11 +235,7 @@ public class OrganizationAPITest extends APIBaseTest {
         HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
-        CloseableHttpClient newHttpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -320,11 +312,7 @@ public class OrganizationAPITest extends APIBaseTest {
         HttpGet inviteGet = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/dashboard" + "/invite?token=" + token);
 
         //we don't need cookie from initial login here
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(initUnsecuredSSLContext(), new MyHostVerifier());
-        CloseableHttpClient newHttpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                .build();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         try (CloseableHttpResponse response = newHttpClient.execute(inviteGet)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -533,7 +521,7 @@ public class OrganizationAPITest extends APIBaseTest {
         newadmin.status = UserStatus.Active;
         holder.userDao.add(newadmin);
 
-        CloseableHttpClient newHttpClient = newHttpClient();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         login(newHttpClient, httpsAdminServerUrl, newadmin.email, newadmin.pass);
 
@@ -577,7 +565,7 @@ public class OrganizationAPITest extends APIBaseTest {
         newadmin.status = UserStatus.Active;
         holder.userDao.add(newadmin);
 
-        CloseableHttpClient newHttpClient = newHttpClient();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         login(newHttpClient, httpsAdminServerUrl, newadmin.email, newadmin.pass);
 
@@ -1329,7 +1317,7 @@ public class OrganizationAPITest extends APIBaseTest {
     public void regularAdminCantDeleteOtherOrganization() throws Exception {
         createOrganization();
 
-        CloseableHttpClient newHttpClient = newHttpClient();
+        CloseableHttpClient newHttpClient = getDefaultHttpsClient();
 
         login(newHttpClient,  httpsAdminServerUrl, regularAdmin.email, regularAdmin.pass);
 

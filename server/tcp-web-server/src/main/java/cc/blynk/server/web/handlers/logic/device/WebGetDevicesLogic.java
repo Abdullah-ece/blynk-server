@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.utils.StringUtils.split2;
@@ -50,7 +49,7 @@ public class WebGetDevicesLogic {
         if (ctx.channel().isWritable()) {
             String devicesString = JsonParser.toJson(devices);
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(WEB_GET_DEVICES, message.id, devicesString), ctx.voidPromise());
+                    makeUTF8StringMessage(message.command, message.id, devicesString), ctx.voidPromise());
         }
     }
 

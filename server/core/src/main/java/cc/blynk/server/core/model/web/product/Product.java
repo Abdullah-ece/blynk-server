@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
-import cc.blynk.server.core.model.exceptions.WebException;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
@@ -86,15 +85,13 @@ public class Product {
         this.version++;
     }
 
-    public void checkEvents() {
+    public boolean isValidEvents() {
         Set<Integer> set = new HashSet<>();
         for (Event event : events) {
             String eventCode = event.eventCode;
             set.add(eventCode == null ? 0 : event.eventCode.hashCode());
         }
-        if (set.size() != events.length) {
-            throw new WebException("Events with this event codes are not allowed.");
-        }
+        return set.size() == events.length;
     }
 
     public Event findEventByType(EventType eventType) {

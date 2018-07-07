@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 
@@ -58,7 +57,7 @@ public class WebGetOrganizationLocationsLogic {
 
         if (ctx.channel().isWritable()) {
             String usersString = JsonParser.toJson(existingLocations);
-            ctx.writeAndFlush(makeUTF8StringMessage(WEB_GET_ORG_LOCATIONS, message.id, usersString),
+            ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, usersString),
                     ctx.voidPromise());
         }
     }
