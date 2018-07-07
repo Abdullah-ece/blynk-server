@@ -23,6 +23,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
+import cc.blynk.server.web.handlers.logic.product.WebUpdateProductLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -44,6 +45,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 
 /**
  * The Blynk Project.
@@ -68,6 +70,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebCreateProductLogic webCreateProductLogic;
     private final WebGetProductLogic webGetProductLogic;
     private final WebGetProductsLogic webGetProductsLogic;
+    private final WebUpdateProductLogic webUpdateProductLogic;
 
     private final GlobalStats stats;
 
@@ -87,6 +90,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
         this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
+        this.webUpdateProductLogic = new WebUpdateProductLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -149,6 +153,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_GET_PRODUCTS :
                 webGetProductsLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_UPDATE_PRODUCT :
+                webUpdateProductLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

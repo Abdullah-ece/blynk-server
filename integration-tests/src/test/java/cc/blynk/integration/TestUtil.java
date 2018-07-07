@@ -105,7 +105,12 @@ public final class TestUtil {
             return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 
-        throw new RuntimeException("Unexpected message");
+        try {
+            throw new RuntimeException("Unexpected message");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected message");
+        }
     }
 
     public static Profile parseProfile(InputStream reader) throws Exception {

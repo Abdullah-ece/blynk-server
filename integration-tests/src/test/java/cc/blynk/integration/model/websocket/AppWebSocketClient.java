@@ -17,6 +17,7 @@ package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
+import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -135,6 +136,14 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void resolveEvent(int deviceId, long logEventId, String comment) {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
+    }
+
+    public void createProduct(int orgId, Product product) {
+        send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
+    }
+
+    public void updateProduct(int orgId, Product product) {
+        send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
     }
 
     public void getProduct(int productId) {

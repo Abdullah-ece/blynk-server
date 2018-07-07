@@ -26,7 +26,7 @@ public class WebAppMessageEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        log.debug("In webapp socket encoder {}", msg);
+        log.trace("In webapp socket encoder {}", msg);
         if (msg instanceof MessageBase) {
             MessageBase message = (MessageBase) msg;
             ByteBuf out = ByteBufAllocator.DEFAULT.buffer();

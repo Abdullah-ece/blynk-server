@@ -147,8 +147,9 @@ public final class Command {
     public static final short WEB_CAN_INVITE_USER = 109;
     public static final short WEB_UPDATE_ORG = 110;
     public static final short WEB_CREATE_PRODUCT = 111;
-    public static final short WEB_GET_PRODUCT = 112;
-    public static final short WEB_GET_PRODUCTS = 113;
+    public static final short WEB_UPDATE_PRODUCT = 112;
+    public static final short WEB_GET_PRODUCT = 113;
+    public static final short WEB_GET_PRODUCTS = 114;
 
 
     private Command() {

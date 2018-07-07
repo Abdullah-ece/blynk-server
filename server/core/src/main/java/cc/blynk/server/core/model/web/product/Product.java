@@ -71,6 +71,7 @@ public class Product {
         this.webDashboard = product.webDashboard.copy();
     }
 
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
     public void update(Product updatedProduct) {
         this.name = updatedProduct.name;
         this.boardType = updatedProduct.boardType;

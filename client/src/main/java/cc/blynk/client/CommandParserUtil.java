@@ -85,6 +85,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 
 /**
  * The Blynk Project.
@@ -282,8 +283,10 @@ public final class CommandParserUtil {
                 return WEB_CREATE_PRODUCT;
             case "webgetproduct" :
                 return WEB_GET_PRODUCT;
-            case "createproducts" :
+            case "webgetproducts" :
                 return WEB_GET_PRODUCTS;
+            case "webupdateproduct" :
+                return WEB_UPDATE_PRODUCT;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

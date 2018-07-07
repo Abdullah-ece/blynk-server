@@ -2,8 +2,10 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
@@ -12,6 +14,8 @@ import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
@@ -23,14 +27,16 @@ import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebCreateProductLogic {
+public class WebUpdateProductLogic {
 
-    private static final Logger log = LogManager.getLogger(WebCreateProductLogic.class);
+    private static final Logger log = LogManager.getLogger(WebUpdateProductLogic.class);
 
     private final OrganizationDao organizationDao;
+    private final DeviceDao deviceDao;
 
-    public WebCreateProductLogic(Holder holder) {
+    public WebUpdateProductLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -72,17 +78,24 @@ public class WebCreateProductLogic {
             return;
         }
 
-        if (!product.isValidEvents()) {
-            log.error("Events are not valid for the product {} for {}.", product.name, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, product.id);
+
+        if (!existingProduct.webDashboard.equals(product.webDashboard)) {
+            log.debug("Dashboard was changed. Updating all devices for {}.", user.email);
+            List<Device> devices = deviceDao.getAllByProductId(product.id);
+            long now = System.currentTimeMillis();
+            for (Device device : devices) {
+                device.webDashboard.update(product.webDashboard);
+                device.updatedAt = now;
+            }
+            log.debug("{} devices updated with new dashboard.", devices.size());
         }
 
-        product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
-        log.debug("Product {} successfully created for {}.", product, user.email);
+        existingProduct.update(product);
+        log.debug("Product {} successfully updated for {}.", product, user.email);
 
         if (ctx.channel().isWritable()) {
-            String productString = product.toString();
+            String productString = existingProduct.toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }
