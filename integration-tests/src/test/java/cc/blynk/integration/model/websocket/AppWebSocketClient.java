@@ -146,12 +146,24 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
     }
 
+    public void getProducts() {
+        send("webGetProducts");
+    }
+
     public void getProduct(int productId) {
         send("webGetProduct " + productId);
     }
 
     public Product parseProduct(int expectedMessageOrder) throws Exception {
         return JsonParser.parseProduct(getBody(expectedMessageOrder));
+    }
+
+    public Product[] parseProducts(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Product[].class);
+    }
+
+    public void deleteProduct(int productId) {
+        send("webDeleteProduct " + productId);
     }
 
     public void updateAccount(User user) {

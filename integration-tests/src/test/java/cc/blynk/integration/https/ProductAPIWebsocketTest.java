@@ -1,14 +1,10 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.SingleServerInstancePerTestWithDB;
+import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -26,8 +22,6 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
-import cc.blynk.utils.SHA256Util;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -38,7 +32,7 @@ import java.util.Date;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
+import static cc.blynk.integration.TestUtil.ok;
 import static java.time.LocalTime.ofSecondOfDay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -50,23 +44,7 @@ import static org.junit.Assert.assertNotNull;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDB {
-
-    private static User admin;
-
-    @BeforeClass
-    public static void intiOrg() {
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true));
-
-        String name = "admin@blynk.cc";
-        String pass = "admin";
-        admin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
-        admin.profile.dashBoards = new DashBoard[] {
-                new DashBoard()
-        };
-        admin.status = UserStatus.Active;
-        holder.userDao.add(admin);
-    }
+public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
     public void getNonExistingProduct() throws Exception {
@@ -272,6 +250,124 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDB {
         assertEquals(2, fromApi.webDashboard.widgets[0].y);
         assertEquals(10, fromApi.webDashboard.widgets[0].height);
         assertEquals(20, fromApi.webDashboard.widgets[0].width);
+    }
+
+    @Test
+    public void create2ProductsWithSameName() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "create2ProductsWithSameName";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        client.createProduct(1, product);
+        Product fromApi = client.parseProduct(1);
+        assertNotNull(fromApi);
+        assertEquals(product.name, fromApi.name);
+
+        Product product2 = new Product();
+        product2.name = "create2ProductsWithSameName";
+        product2.description = "Description";
+        product2.boardType = "ESP8266";
+        product2.connectionType = ConnectionType.WI_FI;
+        product2.logoUrl = "/static/logo.png";
+
+        client.createProduct(1, product);
+        client.verifyResult(illegalCommandBody(2));
+    }
+
+    @Test
+    public void createAndUpdateProduct() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createAndUpdateProduct";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        client.createProduct(1, product);
+        Product fromApi = client.parseProduct(1);
+        assertNotNull(fromApi);
+        assertEquals(product.name, fromApi.name);
+        assertEquals(product.description, fromApi.description);
+        assertEquals(product.boardType, fromApi.boardType);
+        assertEquals(product.connectionType, fromApi.connectionType);
+        assertEquals(0, fromApi.version);
+
+        product.id = fromApi.id;
+        product.name = "Updated Name";
+        product.description = "Description2";
+
+        client.updateProduct(1, product);
+        fromApi = client.parseProduct(2);
+        assertNotNull(fromApi);
+        assertEquals(product.name, fromApi.name);
+        assertEquals(product.description, fromApi.description);
+        assertEquals("Updated Name", fromApi.name);
+        assertEquals("Description2", fromApi.description);
+    }
+
+    @Test
+    public void getEmptyListOfProducts() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getProducts();
+        Product[] fromApi = client.parseProducts(1);
+        assertNotNull(fromApi);
+        assertEquals(0, fromApi.length);
+    }
+
+    @Test
+    public void getListOfProducts() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "getListOfProducts";
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        client.getProducts();
+        Product[] fromApiProducts = client.parseProducts(2);
+        assertNotNull(fromApiProducts);
+        assertEquals(1, fromApiProducts.length);
+
+        Product product2 = new Product();
+        product2.name = "getListOfProducts2";
+
+        client.createProduct(1, product2);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+
+        client.getProducts();
+        fromApiProducts = client.parseProducts(4);
+        assertNotNull(fromApiProducts);
+        assertEquals(2, fromApiProducts.length);
+    }
+
+    @Test
+    public void createProductAndDelete() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductAndDelete";
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        client.getProducts();
+        Product[] fromApiProducts = client.parseProducts(2);
+        assertNotNull(fromApiProducts);
+        assertEquals(1, fromApiProducts.length);
+
+        client.deleteProduct(fromApiProduct.id);
+        client.verifyResult(ok(3));
     }
 
 }

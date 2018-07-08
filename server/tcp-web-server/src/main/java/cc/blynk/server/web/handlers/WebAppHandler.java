@@ -21,6 +21,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
+import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateProductLogic;
@@ -35,6 +36,7 @@ import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -71,6 +73,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebGetProductLogic webGetProductLogic;
     private final WebGetProductsLogic webGetProductsLogic;
     private final WebUpdateProductLogic webUpdateProductLogic;
+    private final WebDeleteProductLogic webDeleteProductLogic;
 
     private final GlobalStats stats;
 
@@ -91,6 +94,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
         this.webUpdateProductLogic = new WebUpdateProductLogic(holder);
+        this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -156,6 +160,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_UPDATE_PRODUCT :
                 webUpdateProductLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_DELETE_PRODUCT :
+                webDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

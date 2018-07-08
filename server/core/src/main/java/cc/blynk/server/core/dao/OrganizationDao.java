@@ -61,6 +61,13 @@ public class OrganizationDao {
         return organization;
     }
 
+    //only for tests
+    public Organization createWithPresetId(Organization organization) {
+        checkNameExists(-1, organization.name);
+        organizations.putIfAbsent(organization.id, organization);
+        return organization;
+    }
+
     public void checkNameExists(int orgId, String name) {
         for (Organization org : organizations.values()) {
             if (org.id != orgId && name.equalsIgnoreCase(org.name)) {
