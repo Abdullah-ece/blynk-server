@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
@@ -227,7 +228,7 @@ public final class ServerLauncher {
             };
 
             for (int i = 0; i < 20; i++) {
-                Device device = new Device("My Device " + i, "Particle Photon", "auth_123",
+                Device device = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
                         product.id, ConnectionType.WI_FI);
                 device.hardwareInfo = new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
                         "WI-FI", "0.0.0", null, 1, -1);

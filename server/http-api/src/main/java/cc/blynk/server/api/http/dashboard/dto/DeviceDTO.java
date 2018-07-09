@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.dashboard.dto;
 
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
@@ -31,7 +32,7 @@ public class DeviceDTO {
 
     public final String name;
 
-    public final String boardType;
+    public final BoardType boardType;
 
     public final String token;
 
@@ -77,7 +78,7 @@ public class DeviceDTO {
     public DeviceDTO(@JsonProperty("id") int id,
                      @JsonProperty("productId") int productId,
                      @JsonProperty("name") String name,
-                     @JsonProperty("boardType") String boardType,
+                     @JsonProperty("boardType") BoardType boardType,
                      @JsonProperty("token") String token,
                      @JsonProperty("connectionType") ConnectionType connectionType,
                      @JsonProperty("status") Status status,

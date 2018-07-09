@@ -5,6 +5,7 @@ import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
@@ -100,7 +101,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "NodeMCU";
+        newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -225,7 +226,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "NodeMCU";
+        newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -340,7 +341,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "NodeMCU";
+        newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -410,7 +411,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "ESP32";//wrong board
+        newDevice.boardType = BoardType.ESP32_Dev_Board;//wrong board
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
@@ -457,7 +458,7 @@ public class OTATest extends APIBaseTest {
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.boardType = "NodeMCU";
+        newDevice.boardType = BoardType.NodeMCU;
         newDevice.productId = createProduct();
 
         HttpPut httpPut = new HttpPut(httpsAdminServerUrl + "/devices/1");
