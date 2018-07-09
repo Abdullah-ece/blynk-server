@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ota.OTAInfo;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -33,23 +34,11 @@ public final class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
-    private final int hardwareIdleTimeout;
-    private final String serverHostUrl;
-    private static BlynkInternalLogic instance;
-
-    private BlynkInternalLogic(Holder holder) {
-        this.hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
-        this.serverHostUrl = holder.props.getHttpServerUrl();
+    private BlynkInternalLogic() {
     }
 
-    public static BlynkInternalLogic getInstance(Holder holder) {
-        if (instance == null) {
-            instance = new BlynkInternalLogic(holder);
-        }
-        return instance;
-    }
-
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       HardwareStateHolder state, StringMessage message) {
         var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length == 0 || messageParts[0].length() == 0) {
@@ -67,7 +56,7 @@ public final class BlynkInternalLogic {
             case 'd' : //dev
             case 'c' : //cpu
             case 't' : //tmpl
-                parseHardwareInfo(ctx, messageParts, state, message.id);
+                parseHardwareInfo(holder, ctx, messageParts, state, message.id);
                 break;
             case 'r' : //rtc
                 sendRTC(ctx, state, message.id);
@@ -79,21 +68,23 @@ public final class BlynkInternalLogic {
 
     }
 
-    private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
-        var dashBoard = state.dash;
-        var rtc = dashBoard.getWidgetByType(RTC.class);
+    private static void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
+        DashBoard dashBoard = state.dash;
+        RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
                     ctx.voidPromise());
         }
     }
 
-    private void parseHardwareInfo(ChannelHandlerContext ctx, String[] messageParts,
-                                   HardwareStateHolder state, int msgId) {
-        var hardwareInfo = new HardwareInfo(messageParts);
-        var newHardwareInterval = hardwareInfo.heartbeatInterval;
+    private static void parseHardwareInfo(Holder holder, ChannelHandlerContext ctx,
+                                          String[] messageParts,
+                                          HardwareStateHolder state, int msgId) {
+        HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
+        int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
+        int hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
             var newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
@@ -113,7 +104,7 @@ public final class BlynkInternalLogic {
                             device.firmwareUploadFailure();
                         } else {
                             StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777,
-                                    OTAInfo.makeHardwareBody(serverHostUrl,
+                                    OTAInfo.makeHardwareBody(holder.props.getHttpServerUrl(),
                                             device.deviceOtaInfo.pathToFirmware, device.id));
                             ctx.write(msg, ctx.voidPromise());
                             device.requestSent();

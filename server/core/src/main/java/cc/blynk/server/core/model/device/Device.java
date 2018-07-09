@@ -31,7 +31,7 @@ public class Device implements Target {
 
     public volatile String name;
 
-    public volatile String boardType;
+    public volatile BoardType boardType;
 
     @JsonView(View.Private.class)
     public volatile String token;
@@ -86,15 +86,14 @@ public class Device implements Target {
     public volatile WebDashboard webDashboard = new WebDashboard();
 
     public boolean isNotValid() {
-        return boardType == null || boardType.isEmpty() || boardType.length() > 50
-                || (name != null && name.length() > 50);
+        return boardType == null || (name != null && name.length() > 50);
     }
 
     public Device() {
         this.createdAt = System.currentTimeMillis();
     }
 
-    public Device(String name, String boardType, String token, int productId, ConnectionType connectionType) {
+    public Device(String name, BoardType boardType, String token, int productId, ConnectionType connectionType) {
         this();
         this.name = name;
         this.boardType = boardType;
@@ -103,7 +102,7 @@ public class Device implements Target {
         this.connectionType = connectionType;
     }
 
-    public Device(int id, String name, String boardType) {
+    public Device(int id, String name, BoardType boardType) {
         this();
         this.id = id;
         this.name = name;

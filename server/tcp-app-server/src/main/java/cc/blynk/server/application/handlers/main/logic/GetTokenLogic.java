@@ -1,9 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -19,19 +18,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
  * Created on 2/1/2015.
  *
  */
-public class GetTokenLogic {
+public final class GetTokenLogic {
 
-    private final TokenManager tokenManager;
-    private final DeviceDao deviceDao;
-
-    public GetTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.deviceDao = holder.deviceDao;
+    private GetTokenLogic() {
     }
 
     //todo this old and outdated handle just for back compatibility
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var dashBoardIdString = message.body;
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
+        String dashBoardIdString = message.body;
 
         String[] parts;
         if (dashBoardIdString.contains(StringUtils.BODY_SEPARATOR_STRING)) {
@@ -53,11 +48,11 @@ public class GetTokenLogic {
         //if token not exists. generate new one
         if (token == null) {
             //todo back compatibility code. remove in future
-            device = new Device(deviceId, "ESP8266", "ESP8266");
+            device = new Device(deviceId, "ESP8266", BoardType.ESP8266);
             dash.devices = new Device[] {device};
 
             token = TokenGeneratorUtil.generateNewToken();
-            tokenManager.assignToken(user, dash, device, token);
+            holder.tokenManager.assignToken(user, dash, device, token);
         }
 
         if (ctx.channel().isWritable()) {
