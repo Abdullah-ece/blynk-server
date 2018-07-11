@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -254,7 +253,7 @@ public class FileManager {
         return Stream.empty();
     }
 
-    public void makeProfileChanges(User user) {
+    private void makeProfileChanges(User user) {
         if (user.email == null) {
             user.email = user.name;
         }
@@ -264,10 +263,6 @@ public class FileManager {
                 for (Device device : dashBoard.devices) {
                     device.status = Status.OFFLINE;
                 }
-            }
-
-            for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorageInternalWithoutUpdatedAt(widget, false);
             }
         }
     }
