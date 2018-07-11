@@ -1,8 +1,9 @@
-package cc.blynk.server.web.handlers.logic.organization;
+package cc.blynk.server.web.handlers.logic.organization.users;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -18,13 +19,13 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 3/7/2018.
  *
  */
-public final class CanInviteUserLogic {
+public final class WebCanInviteUserLogic {
 
     private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
 
     private final UserDao userDao;
 
-    public CanInviteUserLogic(Holder holder) {
+    public WebCanInviteUserLogic(Holder holder) {
         this.userDao = holder.userDao;
     }
 

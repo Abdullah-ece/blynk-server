@@ -28,7 +28,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
@@ -183,7 +183,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{orgId}/users/update")
     @Admin
     public Response updateUserInfo(@Context ChannelHandlerContext ctx,
-                                   @PathParam("orgId") int orgId, UserInvite user) {
+                                   @PathParam("orgId") int orgId, UserInviteDTO user) {
         if (user.isNotValid()) {
             log.error("Bad data for account update.");
             return badRequest("Bad data for account update.");
@@ -365,7 +365,7 @@ public class OrganizationHandler extends BaseHttpHandler {
     @Path("/{orgId}/invite")
     @Staff
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx,
-                                    @PathParam("orgId") int orgId, UserInvite userInvite) {
+                                    @PathParam("orgId") int orgId, UserInviteDTO userInvite) {
         if (orgId == 0 || userInvite.isNotValid()) {
             log.error("Invalid invitation. Probably {} email has not valid format.", userInvite.email);
             return badRequest("Invalid invitation.");

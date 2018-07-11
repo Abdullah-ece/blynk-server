@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -36,7 +37,9 @@ import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static java.time.LocalTime.ofSecondOfDay;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -478,4 +481,129 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(123, numberMetaField.value, 0.1);
     }
 
+    @Test
+    public void testUpdateMetaDataFieldInChildDevices() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
+        };
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        client.createDevice(1, newDevice);
+        newDevice = client.parseDevice(2);
+        assertNotNull(newDevice);
+
+        fromApiProduct.metaFields[0] = new TextMetaField(1,
+                "Me updated test metafield", Role.USER, false, "Default Device");
+
+        client.updateDevicesMeta(1, fromApiProduct);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+        assertEquals(1, fromApiProduct.metaFields.length);
+
+        client.getDevice(1, newDevice.id);
+        Device device = client.parseDevice(4);
+        assertNotNull(newDevice);
+        assertEquals("My New Device", device.name);
+        assertEquals(1, device.id);
+        assertNotNull(device.metaFields);
+        assertEquals(1, device.metaFields.length);
+        TextMetaField textMetaField = (TextMetaField) device.metaFields[0];
+        assertEquals(1, textMetaField.id);
+        assertEquals("Me updated test metafield", textMetaField.name);
+        assertEquals(Role.USER, textMetaField.role);
+        assertEquals("Default Device", textMetaField.value);
+    }
+
+    @Test
+    public void testUpdateContactMetaDataFieldInChildDevices() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                        "Dmitriy", true, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                        "+38063673333",  false, "My street", false, "Ukraine", false,
+                        "Kyiv", false, "Ukraine", false, "03322", false, false)
+        };
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        client.createDevice(1, newDevice);
+        newDevice = client.parseDevice(2);
+        assertNotNull(newDevice);
+        assertEquals("My New Device", newDevice.name);
+        assertEquals(1, newDevice.id);
+        assertNotNull(newDevice.metaFields);
+        assertEquals(1, newDevice.metaFields.length);
+        ContactMetaField contactMetaField = (ContactMetaField) newDevice.metaFields[0];
+        assertEquals(1, contactMetaField.id);
+        assertEquals("Farm of Smith", contactMetaField.name);
+        assertEquals(Role.ADMIN, contactMetaField.role);
+        assertTrue(contactMetaField.isFirstNameEnabled);
+        assertFalse(contactMetaField.isLastNameEnabled);
+
+        fromApiProduct.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                "Dmitriy", true, "Dumanskiy", true, "dmitriy@blynk.cc", false,
+                "+38063673333",  false, "My street", false, "Ukraine", false,
+                "Kyiv", false, "Ukraine", false, "03322", false, false);
+
+        client.updateDevicesMeta(1, fromApiProduct);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+        assertEquals(1, fromApiProduct.metaFields.length);
+
+        client.getDevice(1, newDevice.id);
+        Device device = client.parseDevice(4);
+        assertNotNull(newDevice);
+        assertNotNull(device.metaFields);
+        assertEquals(1, device.metaFields.length);
+        contactMetaField = (ContactMetaField) device.metaFields[0];
+        assertTrue(contactMetaField.isFirstNameEnabled);
+        assertTrue(contactMetaField.isLastNameEnabled);
+    }
+
+    @Test
+    @Ignore
+    //todo
+    public void createProductAndDeleteRegularUserCantDelete() throws Exception {
+
+    }
+
+    @Test
+    @Ignore
+    //todo
+    public void canDeleteProductRequest() throws Exception {
+
+    }
+
+    @Test
+    @Ignore
+    //todo
+    public void checkProductCannotBeCreatedForSubOrg() throws Exception {
+
+    }
 }

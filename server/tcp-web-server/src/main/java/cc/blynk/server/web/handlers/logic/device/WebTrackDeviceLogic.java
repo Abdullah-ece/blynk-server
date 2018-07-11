@@ -15,11 +15,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class TrackDeviceLogic {
+public final class WebTrackDeviceLogic {
 
-    private static final Logger log = LogManager.getLogger(TrackDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(WebTrackDeviceLogic.class);
 
-    private TrackDeviceLogic() {
+    private WebTrackDeviceLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {

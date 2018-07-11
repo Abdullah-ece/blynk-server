@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.utils.AppNameUtil;
@@ -324,7 +324,7 @@ public class UserDao {
         add(newUser);
     }
 
-    public User invite(UserInvite invite, int orgId, String appName) {
+    public User invite(UserInviteDTO invite, int orgId, String appName) {
         UserKey userKey = new UserKey(invite.email, appName);
         User existingUser = users.get(userKey);
 

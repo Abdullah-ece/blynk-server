@@ -89,6 +89,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 
 /**
  * The Blynk Project.
@@ -296,6 +297,8 @@ public final class CommandParserUtil {
                 return WEB_DELETE_PRODUCT;
             case "webupdatedevicesmeta" :
                 return WEB_UPDATE_DEVICES_META_IN_PRODUCT;
+            case "webupdateuserinfo" :
+                return WEB_UPDATE_USER_INFO;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

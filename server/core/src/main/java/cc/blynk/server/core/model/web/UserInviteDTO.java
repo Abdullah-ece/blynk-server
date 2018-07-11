@@ -1,24 +1,26 @@
 package cc.blynk.server.core.model.web;
 
 import cc.blynk.utils.validators.BlynkEmailValidator;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 06.04.17.
  */
-public class UserInvite {
+public class UserInviteDTO {
 
     public String email;
 
-    public String name;
+    public final String name;
 
-    public Role role;
+    public final Role role;
 
-    public UserInvite() {
-    }
-
-    public UserInvite(String email, String name,  Role role) {
+    @JsonCreator
+    public UserInviteDTO(@JsonProperty("email") String email,
+                         @JsonProperty("name") String name,
+                         @JsonProperty("role") Role role) {
         this.email = email;
         this.name = name;
         this.role = role;

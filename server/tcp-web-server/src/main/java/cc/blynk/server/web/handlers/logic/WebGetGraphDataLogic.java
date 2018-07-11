@@ -57,16 +57,16 @@ import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
  * Created on 2/1/2015.
  *
  */
-public class GetWebGraphDataLogic {
+public class WebGetGraphDataLogic {
 
-    private static final Logger log = LogManager.getLogger(GetWebGraphDataLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDBDao reportingDBDao;
     private final ReportingDiskDao reportingDiskDao;
     private final DeviceDao deviceDao;
 
-    public GetWebGraphDataLogic(Holder holder) {
+    public WebGetGraphDataLogic(Holder holder) {
         this.reportingDBDao = holder.reportingDBManager.reportingDBDao;
         this.reportingDiskDao = holder.reportingDiskDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;

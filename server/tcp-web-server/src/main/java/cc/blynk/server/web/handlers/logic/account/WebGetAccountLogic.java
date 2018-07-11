@@ -15,9 +15,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 3/7/2018.
  *
  */
-public final class GetAccountLogic {
+public final class WebGetAccountLogic {
 
-    private GetAccountLogic() {
+    private WebGetAccountLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {

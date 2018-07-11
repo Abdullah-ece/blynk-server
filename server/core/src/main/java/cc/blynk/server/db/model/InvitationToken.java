@@ -1,7 +1,7 @@
 package cc.blynk.server.db.model;
 
 import cc.blynk.server.core.model.web.Role;
-import cc.blynk.server.core.model.web.UserInvite;
+import cc.blynk.server.core.model.web.UserInviteDTO;
 
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class InvitationToken {
 
     public final Date activatedTs;
 
-    public InvitationToken(String token, UserInvite invite) {
+    public InvitationToken(String token, UserInviteDTO invite) {
         this.token = token;
         this.email = invite.email;
         this.name = invite.name;

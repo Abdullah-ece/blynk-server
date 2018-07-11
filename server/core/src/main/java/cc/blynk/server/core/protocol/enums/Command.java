@@ -153,6 +153,7 @@ public final class Command {
     public static final short WEB_GET_PRODUCT = 115;
     public static final short WEB_GET_PRODUCTS = 116;
     public static final short WEB_UPDATE_DEVICES_META_IN_PRODUCT = 117;
+    public static final short WEB_UPDATE_USER_INFO = 118;
 
     //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
@@ -264,7 +265,8 @@ public final class Command {
             Map.entry(WEB_GET_PRODUCT, "WebGetProduct"),
             Map.entry(WEB_GET_PRODUCTS, "WebGetProducts"),
             Map.entry(WEB_UPDATE_DEVICES_META_IN_PRODUCT, "WebUpdateDevicesMeta"),
-            Map.entry(WEB_UPDATE_DEVICE, "WebUpdateDevice")
+            Map.entry(WEB_UPDATE_DEVICE, "WebUpdateDevice"),
+            Map.entry(WEB_UPDATE_USER_INFO, "WebUpdateUserInfo")
     );
 
     public static String getNameByValue(short val) {

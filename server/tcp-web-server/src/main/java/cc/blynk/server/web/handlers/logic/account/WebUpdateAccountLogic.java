@@ -21,11 +21,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 3/7/2018.
  *
  */
-public final class UpdateAccountLogic {
+public final class WebUpdateAccountLogic {
 
-    private static final Logger log = LogManager.getLogger(UpdateAccountLogic.class);
+    private static final Logger log = LogManager.getLogger(WebUpdateAccountLogic.class);
 
-    private UpdateAccountLogic() {
+    private WebUpdateAccountLogic() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {

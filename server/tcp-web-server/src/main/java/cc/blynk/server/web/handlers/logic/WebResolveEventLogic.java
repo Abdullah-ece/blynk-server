@@ -26,9 +26,9 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class ResolveWebEventLogic {
+public class WebResolveEventLogic {
 
-    private static final Logger log = LogManager.getLogger(ResolveWebEventLogic.class);
+    private static final Logger log = LogManager.getLogger(WebResolveEventLogic.class);
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
@@ -36,7 +36,7 @@ public class ResolveWebEventLogic {
     private final ReportingDBManager reportingDBManager;
     private final SessionDao sessionDao;
 
-    public ResolveWebEventLogic(Holder holder) {
+    public WebResolveEventLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
