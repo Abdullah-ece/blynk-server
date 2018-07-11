@@ -139,6 +139,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
     }
 
+    public void canDeleteProduct(int productId) {
+        send("webCanDeleteProduct " + productId);
+    }
+
     public void createProduct(int orgId, Product product) {
         send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
     }
@@ -216,7 +220,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public Organization parseOrganization(int expectedMessageOrder) throws Exception {
-        return JsonParser.parseOrganization(getBody(expectedMessageOrder));
+        return JsonParser.parseOrganization(getBody(expectedMessageOrder), 1);
     }
 
     public Organization[] parseOrganizations(int expectedMessageOrder) throws Exception {

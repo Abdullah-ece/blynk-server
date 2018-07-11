@@ -157,6 +157,7 @@ public final class Command {
     public static final short WEB_DELETE_USER = 119;
     public static final short WEB_CREATE_ORG = 120;
     public static final short WEB_DELETE_ORG = 122;
+    public static final short WEB_CAN_DELETE_PRODUCT = 123;
 
     //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
@@ -263,7 +264,6 @@ public final class Command {
             Map.entry(WEB_GET_ORG_USERS, "WebGetOrgUsers"),
             Map.entry(WEB_GET_ORG_LOCATIONS, "WebGetOrgLocations"),
             Map.entry(WEB_CAN_INVITE_USER, "WebCanInviteUser"),
-            Map.entry(WEB_UPDATE_ORG, "WebUpdateOrg"),
             Map.entry(WEB_CREATE_PRODUCT, "WebCreateProduct"),
             Map.entry(WEB_GET_PRODUCT, "WebGetProduct"),
             Map.entry(WEB_GET_PRODUCTS, "WebGetProducts"),
@@ -272,7 +272,9 @@ public final class Command {
             Map.entry(WEB_UPDATE_USER_INFO, "WebUpdateUserInfo"),
             Map.entry(WEB_DELETE_USER, "WebDeleteUser"),
             Map.entry(WEB_CREATE_ORG, "WebCreateOrg"),
-            Map.entry(WEB_DELETE_ORG, "WebDeleteOrg")
+            Map.entry(WEB_UPDATE_ORG, "WebUpdateOrg"),
+            Map.entry(WEB_DELETE_ORG, "WebDeleteOrg"),
+            Map.entry(WEB_CAN_DELETE_PRODUCT, "WebCanDeleteProduct")
     );
 
     public static String getNameByValue(short val) {

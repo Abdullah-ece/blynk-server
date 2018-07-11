@@ -124,7 +124,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertEquals("Blynk Inc.", fromApi.name);
@@ -140,7 +140,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertEquals("Blynk Inc.", fromApi.name);
@@ -206,7 +206,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -282,7 +282,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -353,7 +353,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(3, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -389,7 +389,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -439,7 +439,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
@@ -458,7 +458,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
@@ -491,7 +491,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
@@ -548,7 +548,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
@@ -607,7 +607,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            organization = JsonParser.parseOrganization(consumeText(response));
+            organization = JsonParser.parseOrganization(consumeText(response), 1);
         }
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/organization/2");
@@ -696,7 +696,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -734,7 +734,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(3, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -816,7 +816,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -848,7 +848,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(updateOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -945,7 +945,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -993,7 +993,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(updateOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -1048,7 +1048,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -1113,7 +1113,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -1132,7 +1132,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(3, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -1288,7 +1288,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(1, fromApi.id);
             assertEquals(organization.name, fromApi.name);

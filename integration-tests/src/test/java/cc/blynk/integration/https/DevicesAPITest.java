@@ -110,7 +110,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(orgId, fromApi.id);
             assertEquals(1, fromApi.parentId);
@@ -181,7 +181,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(createOrgReq)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(orgId, fromApi.id);
             assertEquals(1, fromApi.parentId);

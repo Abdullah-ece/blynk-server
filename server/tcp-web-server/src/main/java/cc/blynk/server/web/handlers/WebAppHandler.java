@@ -26,6 +26,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogi
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebUpdateUserInfoLogic;
+import cc.blynk.server.web.handlers.logic.product.WebCanDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
@@ -40,6 +41,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ORG;
@@ -95,6 +97,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebCreateOrganizationLogic webCreateOrganizationLogic;
     private final WebUpdateOrganizationLogic webUpdateOrganizationLogic;
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
+    private final WebCanDeleteProductLogic webCanDeleteProductLogic;
 
     private final GlobalStats stats;
 
@@ -123,6 +126,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webCreateOrganizationLogic = new WebCreateOrganizationLogic(holder);
         this.webUpdateOrganizationLogic = new WebUpdateOrganizationLogic(holder);
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
+        this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -212,6 +216,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_DELETE_ORG :
                 webDeleteOrganizationLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_CAN_DELETE_PRODUCT :
+                webCanDeleteProductLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

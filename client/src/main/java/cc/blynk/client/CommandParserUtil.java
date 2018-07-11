@@ -71,6 +71,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_DELETE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ORG;
@@ -308,6 +309,8 @@ public final class CommandParserUtil {
                 return WEB_CREATE_ORG;
             case "webdeleteorg" :
                 return WEB_DELETE_ORG;
+            case "webcandeleteproduct" :
+                return WEB_CAN_DELETE_PRODUCT;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

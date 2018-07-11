@@ -594,10 +594,32 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    @Ignore
-    //todo
     public void canDeleteProductRequest() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        client.canDeleteProduct(fromApiProduct.id);
+        client.verifyResult(ok(2));
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        client.createDevice(1, newDevice);
+        newDevice = client.parseDevice(3);
+        assertNotNull(newDevice);
+
+        client.canDeleteProduct(fromApiProduct.id);
+        client.verifyResult(notAllowed(4));
     }
 
     @Test

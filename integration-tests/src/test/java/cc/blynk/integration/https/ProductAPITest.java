@@ -955,7 +955,7 @@ public class ProductAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(req)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            Organization fromApi = JsonParser.parseOrganization(consumeText(response));
+            Organization fromApi = JsonParser.parseOrganization(consumeText(response), 1);
             assertNotNull(fromApi);
             assertEquals(2, fromApi.id);
             assertEquals(organization.name, fromApi.name);
