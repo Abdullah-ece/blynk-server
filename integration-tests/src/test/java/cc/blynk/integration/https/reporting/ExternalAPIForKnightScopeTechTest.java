@@ -11,7 +11,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,11 +43,6 @@ public class ExternalAPIForKnightScopeTechTest extends APIBaseTest {
         //clean everything just in case
         holder.dbManager.executeSQL("DELETE FROM " + KNIGHT_SCOPETECH.tableName);
         this.dbManager = holder.dbManager;
-    }
-
-    @After
-    public void shutdown() {
-        super.shutdown();
     }
 
     @Test

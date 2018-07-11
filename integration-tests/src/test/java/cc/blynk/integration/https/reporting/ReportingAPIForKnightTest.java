@@ -14,7 +14,6 @@ import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -95,19 +94,10 @@ public class ReportingAPIForKnightTest extends APIBaseTest {
         }
     }
 
-    @Test
-    public void batchWorkTest() {
-    }
-
     @Before
     public void init() throws Exception {
         super.init();
         this.reportingDBManager = holder.reportingDBManager;
-    }
-
-    @After
-    public void shutdown() {
-        super.shutdown();
     }
 
     @Test

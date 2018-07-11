@@ -61,7 +61,6 @@ public class DataAPITest extends APIBaseTest {
 
     @Before
     public void init() throws Exception {
-        super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
         this.clientPair = BaseTest.initAppAndHardPair();
@@ -71,7 +70,6 @@ public class DataAPITest extends APIBaseTest {
 
     @After
     public void shutdown() {
-        super.shutdown();
         this.hardwareServer.close();
         this.clientPair.stop();
     }

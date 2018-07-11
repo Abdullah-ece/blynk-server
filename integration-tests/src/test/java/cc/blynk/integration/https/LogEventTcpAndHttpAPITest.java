@@ -87,7 +87,6 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
     @After
     public void shutdown() {
-        super.shutdown();
         this.hardwareServer.close();
         this.clientPair.stop();
     }

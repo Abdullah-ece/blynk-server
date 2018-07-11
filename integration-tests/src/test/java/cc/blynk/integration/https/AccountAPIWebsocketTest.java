@@ -7,8 +7,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Role;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,16 +25,6 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AccountAPIWebsocketTest extends APIBaseTest {
-
-    @Before
-    public void init() throws Exception {
-        super.init();
-    }
-
-    @After
-    public void shutdown() {
-        super.shutdown();
-    }
 
     @Test
     public void getOwnProfileNotAuthorized() throws Exception {

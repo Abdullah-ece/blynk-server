@@ -91,8 +91,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
     @After
     public void shutdown() {
-        this.hardwareServer.close();
         super.shutdown();
+        this.hardwareServer.close();
     }
 
     @Test

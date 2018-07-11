@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.APIBaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -12,7 +11,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,7 +31,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalAPITest extends APIBaseTest {
 
-    private ClientPair clientPair;
     private String httpsServerUrl;
 
     @Before
@@ -45,12 +42,6 @@ public class ExternalAPITest extends APIBaseTest {
         //clean everything just in case
         holder.dbManager.executeSQL("DELETE FROM reporting_events");
     }
-
-    @After
-    public void shutdown() {
-        super.shutdown();
-    }
-
 
     @Test
     public void testGetWithFakeToken() throws Exception {

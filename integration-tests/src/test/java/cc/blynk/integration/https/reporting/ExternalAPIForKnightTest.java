@@ -11,7 +11,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,11 +51,6 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM " + KNIGHT_LAUNDRY.tableName);
         this.reportingDBManager = holder.reportingDBManager;
-    }
-
-    @After
-    public void shutdown() {
-        super.shutdown();
     }
 
     @Test
