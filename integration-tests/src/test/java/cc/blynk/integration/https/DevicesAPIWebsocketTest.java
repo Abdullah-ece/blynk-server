@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;

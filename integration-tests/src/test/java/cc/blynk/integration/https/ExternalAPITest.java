@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;

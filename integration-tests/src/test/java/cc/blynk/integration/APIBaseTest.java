@@ -1,6 +1,5 @@
-package cc.blynk.integration.https;
+package cc.blynk.integration;
 
-import cc.blynk.integration.BaseTest;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;

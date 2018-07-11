@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;

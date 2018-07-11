@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 
+import cc.blynk.integration.APIBaseTest;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

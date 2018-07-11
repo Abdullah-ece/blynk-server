@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.api.http.dashboard.dto.EmailDTO;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;

@@ -1,6 +1,6 @@
 package cc.blynk.integration.https.reporting;
 
-import cc.blynk.integration.https.APIBaseTest;
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;

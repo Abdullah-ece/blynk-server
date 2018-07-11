@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 
 import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;

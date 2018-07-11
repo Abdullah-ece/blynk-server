@@ -1,7 +1,7 @@
 package cc.blynk.integration.https.reporting;
 
+import cc.blynk.integration.APIBaseTest;
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.https.APIBaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.dashboard.dto.DataDTO;
 import cc.blynk.server.api.http.dashboard.dto.DataQueryRequestGroupDTO;
