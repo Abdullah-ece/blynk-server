@@ -138,19 +138,21 @@ public final class Command {
     public static final short WEB_GET_ACCOUNT = 100;
     public static final short WEB_UPDATE_ACCOUNT = 101;
     public static final short WEB_CREATE_DEVICE = 102;
-    public static final short WEB_GET_DEVICES = 103;
-    public static final short WEB_GET_DEVICE = 104;
-    public static final short WEB_GET_ORG = 105;
-    public static final short WEB_GET_ORGS = 106;
-    public static final short WEB_GET_ORG_USERS = 107;
-    public static final short WEB_GET_ORG_LOCATIONS = 108;
-    public static final short WEB_CAN_INVITE_USER = 109;
-    public static final short WEB_UPDATE_ORG = 110;
-    public static final short WEB_CREATE_PRODUCT = 111;
-    public static final short WEB_UPDATE_PRODUCT = 112;
-    public static final short WEB_DELETE_PRODUCT = 113;
-    public static final short WEB_GET_PRODUCT = 114;
-    public static final short WEB_GET_PRODUCTS = 115;
+    public static final short WEB_UPDATE_DEVICE = 103;
+    public static final short WEB_GET_DEVICES = 104;
+    public static final short WEB_GET_DEVICE = 105;
+    public static final short WEB_GET_ORG = 106;
+    public static final short WEB_GET_ORGS = 107;
+    public static final short WEB_GET_ORG_USERS = 108;
+    public static final short WEB_GET_ORG_LOCATIONS = 109;
+    public static final short WEB_CAN_INVITE_USER = 110;
+    public static final short WEB_UPDATE_ORG = 111;
+    public static final short WEB_CREATE_PRODUCT = 112;
+    public static final short WEB_UPDATE_PRODUCT = 113;
+    public static final short WEB_DELETE_PRODUCT = 114;
+    public static final short WEB_GET_PRODUCT = 115;
+    public static final short WEB_GET_PRODUCTS = 116;
+    public static final short WEB_UPDATE_DEVICES_META_IN_PRODUCT = 117;
 
     //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
@@ -260,7 +262,9 @@ public final class Command {
             Map.entry(WEB_UPDATE_ORG, "WebUpdateOrg"),
             Map.entry(WEB_CREATE_PRODUCT, "WebCreateProduct"),
             Map.entry(WEB_GET_PRODUCT, "WebGetProduct"),
-            Map.entry(WEB_GET_PRODUCTS, "WebGetProducts")
+            Map.entry(WEB_GET_PRODUCTS, "WebGetProducts"),
+            Map.entry(WEB_UPDATE_DEVICES_META_IN_PRODUCT, "WebUpdateDevicesMeta"),
+            Map.entry(WEB_UPDATE_DEVICE, "WebUpdateDevice")
     );
 
     public static String getNameByValue(short val) {

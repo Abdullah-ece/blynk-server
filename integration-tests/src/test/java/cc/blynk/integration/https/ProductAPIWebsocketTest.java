@@ -400,6 +400,82 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(notAllowed(3));
     }
 
+    @Test
+    public void testAddMetaDataFieldInChildDevices() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
+        Product product = new Product();
+        product.name = "My new product";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
+        };
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        client.createDevice(1, newDevice);
+        newDevice = client.parseDevice(2);
+        assertNotNull(newDevice);
+        assertEquals("My New Device", newDevice.name);
+        assertEquals(1, newDevice.id);
+        assertNotNull(newDevice.metaFields);
+        assertEquals(1, newDevice.metaFields.length);
+        TextMetaField textMetaField = (TextMetaField) newDevice.metaFields[0];
+        assertEquals(1, textMetaField.id);
+        assertEquals("My test metafield", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("Default Device", textMetaField.value);
+
+        newDevice.metaFields[0] = new TextMetaField(textMetaField.id,
+                textMetaField.name, textMetaField.role, false, "My updated value");
+
+        client.updateDevice(1, newDevice);
+        newDevice = client.parseDevice(3);
+        assertNotNull(newDevice);
+        assertEquals("My New Device", newDevice.name);
+        assertEquals(1, newDevice.id);
+        assertNotNull(newDevice.metaFields);
+        assertEquals(1, newDevice.metaFields.length);
+        textMetaField = (TextMetaField) newDevice.metaFields[0];
+        assertEquals(1, textMetaField.id);
+        assertEquals("My test metafield", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("My updated value", textMetaField.value);
+
+        fromApiProduct.metaFields = new MetaField[] {
+                product.metaFields[0],
+                new NumberMetaField(2, "New metafield", Role.ADMIN, false, 123)
+        };
+
+        client.updateDevicesMeta(1, fromApiProduct);
+        fromApiProduct = client.parseProduct(4);
+        assertEquals(2, fromApiProduct.metaFields.length);
+
+        client.getDevice(1, newDevice.id);
+        newDevice = client.parseDevice(5);
+        assertEquals("My New Device", newDevice.name);
+        assertEquals(1, newDevice.id);
+        assertNotNull(newDevice.metaFields);
+        assertEquals(2, newDevice.metaFields.length);
+        textMetaField = (TextMetaField) newDevice.metaFields[0];
+        assertEquals(1, textMetaField.id);
+        assertEquals("My test metafield", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("My updated value", textMetaField.value);
+
+        NumberMetaField numberMetaField = (NumberMetaField) newDevice.metaFields[1];
+        assertEquals(2, numberMetaField.id);
+        assertEquals("New metafield", numberMetaField.name);
+        assertEquals(Role.ADMIN, numberMetaField.role);
+        assertEquals(123, numberMetaField.value, 0.1);
+    }
 
 }

@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 public final class AppWebSocketClient extends BaseTestAppClient {
 
@@ -146,6 +147,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
     }
 
+    public void updateDevicesMeta(int orgId, Product product) {
+        send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product).toString());
+    }
+
     public void getProducts() {
         send("webGetProducts");
     }
@@ -178,8 +183,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webCreateDevice " + orgId + BODY_SEPARATOR + device.toString());
     }
 
-    public void getDevice(int orgId) {
-        send("webGetDevice " + orgId);
+    public void updateDevice(int orgId, Device device) {
+        send("webUpdateDevice " + orgId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void getDevice(int orgId, int deviceId) {
+        send("webGetDevice " + orgId + BODY_SEPARATOR_STRING + deviceId);
     }
 
     public void getDevices(int orgId) {

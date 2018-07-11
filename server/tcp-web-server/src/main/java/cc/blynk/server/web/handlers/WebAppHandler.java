@@ -15,6 +15,7 @@ import cc.blynk.server.web.handlers.logic.device.TrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
+import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.organization.CanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
@@ -24,6 +25,7 @@ import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebGetProductsLogic;
+import cc.blynk.server.web.handlers.logic.product.WebUpdateDevicesMetaInProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebUpdateProductLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -47,6 +49,8 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 
 /**
@@ -74,6 +78,8 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebGetProductsLogic webGetProductsLogic;
     private final WebUpdateProductLogic webUpdateProductLogic;
     private final WebDeleteProductLogic webDeleteProductLogic;
+    private final WebUpdateDeviceLogic webUpdateDeviceLogic;
+    private final WebUpdateDevicesMetaInProductLogic webUpdateDevicesMetaInProductLogic;
 
     private final GlobalStats stats;
 
@@ -95,6 +101,8 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
         this.webUpdateProductLogic = new WebUpdateProductLogic(holder);
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
+        this.webUpdateDeviceLogic = new WebUpdateDeviceLogic(holder);
+        this.webUpdateDevicesMetaInProductLogic = new WebUpdateDevicesMetaInProductLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -127,6 +135,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_CREATE_DEVICE :
                 webCreateDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_UPDATE_DEVICE :
+                webUpdateDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES :
                 webGetDevicesLogic.messageReceived(ctx, state, msg);
@@ -163,6 +174,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_DELETE_PRODUCT :
                 webDeleteProductLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_UPDATE_DEVICES_META_IN_PRODUCT :
+                webUpdateDevicesMetaInProductLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
