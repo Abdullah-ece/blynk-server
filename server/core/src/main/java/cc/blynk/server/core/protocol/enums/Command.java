@@ -152,6 +152,8 @@ public final class Command {
     public static final short WEB_GET_PRODUCT = 114;
     public static final short WEB_GET_PRODUCTS = 115;
 
+    //right now we have less than 100 commands
+    public static final int LAST_COMMAND_INDEX = 100;
 
     private Command() {
     }

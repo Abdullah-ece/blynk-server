@@ -228,7 +228,8 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpUrlMapper", urlReWriterHandler)
                                 .addLast("HttpStaticFile",
                                         new StaticFileHandler(holder, new StaticFile("/static"),
-                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz"),
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".zip")))
                                 .addLast(externalAPIHandler)
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
