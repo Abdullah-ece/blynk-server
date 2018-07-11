@@ -80,14 +80,15 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void deleteProduct(int productId) {
+    public boolean deleteProduct(int productId) {
         for (int i = 0; i < products.length; i++) {
             if (products[i].id == productId) {
                 products = remove(products, i, Product.class);
                 lastModifiedTs = System.currentTimeMillis();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public Product getProduct(int id)  {

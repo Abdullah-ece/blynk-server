@@ -59,7 +59,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
         newOrg.id = OrganizationDao.DEFAULT_ORGANIZATION_ID;
         holder.organizationDao.createWithPresetId(newOrg);
 
-        this.clientPair = initClientPair();
+        this.clientPair = initAppAndHardPair();
         reset(holder.mailWrapper);
         reset(holder.twitterWrapper);
         reset(holder.gcmWrapper);
@@ -72,6 +72,5 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
                 properties.getHttpsPort(), properties.getHttpPort(),
                 getUserName(), "1", changeProfileTo(), properties, 10000);
     }
-
 
 }

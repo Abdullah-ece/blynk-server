@@ -4,6 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -32,6 +33,7 @@ import java.util.Date;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
+import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static java.time.LocalTime.ofSecondOfDay;
 import static org.junit.Assert.assertEquals;
@@ -368,6 +370,36 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         client.deleteProduct(fromApiProduct.id);
         client.verifyResult(ok(3));
+
+        client.getProducts();
+        fromApiProducts = client.parseProducts(4);
+        assertNotNull(fromApiProducts);
+        assertEquals(0, fromApiProducts.length);
     }
+
+    @Test
+    public void cantDeleteProductWithDevices() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductAndDelete";
+
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = 1;
+
+        client.createDevice(1, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        client.deleteProduct(fromApiProduct.id);
+        client.verifyResult(notAllowed(3));
+    }
+
+
 
 }

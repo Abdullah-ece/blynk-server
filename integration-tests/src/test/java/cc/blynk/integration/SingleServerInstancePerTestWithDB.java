@@ -52,7 +52,7 @@ public abstract class SingleServerInstancePerTestWithDB extends CounterBase {
 
     @Before
     public void resetBeforeTest() throws Exception {
-        this.clientPair = initClientPair();
+        this.clientPair = initAppAndHardPair();
         reset(holder.mailWrapper);
         reset(holder.twitterWrapper);
         reset(holder.gcmWrapper);
@@ -70,8 +70,5 @@ public abstract class SingleServerInstancePerTestWithDB extends CounterBase {
         return "user_profile_json.txt";
     }
 
-    protected ClientPair initClientPair() throws Exception {
-        return initAppAndHardPair();
-    }
 
 }
