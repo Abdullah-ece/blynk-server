@@ -73,8 +73,11 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CAN_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_CREATE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
@@ -299,6 +302,12 @@ public final class CommandParserUtil {
                 return WEB_UPDATE_DEVICES_META_IN_PRODUCT;
             case "webupdateuserinfo" :
                 return WEB_UPDATE_USER_INFO;
+            case "webdeleteuser" :
+                return WEB_DELETE_USER;
+            case "webcreateorg" :
+                return WEB_CREATE_ORG;
+            case "webdeleteorg" :
+                return WEB_DELETE_ORG;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -130,6 +130,10 @@ public class Organization {
         return parentId != SUPER_ORG_PARENT_ID;
     }
 
+    public boolean isEmptyName() {
+        return name == null || name.isEmpty();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

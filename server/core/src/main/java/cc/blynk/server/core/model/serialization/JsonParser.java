@@ -282,8 +282,8 @@ public final class JsonParser {
         return productReader.readValue(product);
     }
 
-    public static Organization parseOrganization(String org) throws IOException {
-        return organizationReader.readValue(org);
+    public static Organization parseOrganization(String json, int msgId) {
+        return parse(organizationReader, json, "Error parsing organization.", msgId);
     }
 
     public static DashBoard parseDashboard(String json, int msgId) {

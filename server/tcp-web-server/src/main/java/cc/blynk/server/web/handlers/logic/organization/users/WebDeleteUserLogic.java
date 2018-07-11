@@ -1,0 +1,94 @@
+package cc.blynk.server.web.handlers.logic.organization.users;
+
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.db.DBManager;
+import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.server.web.session.WebAppStateHolder;
+import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2;
+
+/**
+ *
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 3/7/2018.
+ *
+ */
+public final class WebDeleteUserLogic {
+
+    private static final Logger log = LogManager.getLogger(WebGetOrganizationUsersLogic.class);
+
+    private final UserDao userDao;
+    private final FileManager fileManager;
+    private final DBManager dbManager;
+    private final SessionDao sessionDao;
+
+    public WebDeleteUserLogic(Holder holder) {
+        this.userDao = holder.userDao;
+        this.fileManager = holder.fileManager;
+        this.dbManager = holder.dbManager;
+        this.sessionDao = holder.sessionDao;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        String[] split = split2(message.body);
+
+        User user = state.user;
+        if (split.length < 2) {
+            log.debug("Wrong delete user info request {} for {}.", message.body, user.email);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        if (!user.isAdmin()) {
+            log.error("Non admin {} tries to remove users.", user.email);
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            return;
+        }
+
+        int orgId = Integer.parseInt(split[0]);
+        String[] emailsToDelete = JsonParser.readAny(split[1], String[].class);
+
+        if (emailsToDelete == null || emailsToDelete.length == 0) {
+            log.error("Bad data for user delete for {}.", user.email);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        String appName = user.appName;
+        for (String email : emailsToDelete) {
+            UserKey userToDeleteKey = new UserKey(email, appName);
+            User userToDelete = userDao.getByName(userToDeleteKey);
+            if (userToDelete != null) {
+                if (userToDelete.isSuperAdmin()) {
+                    log.error("{} tries to remove super admin.", user.email);
+                    ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                    return;
+                }
+                if (userToDelete.orgId == orgId) {
+                    log.info("Deleting {} user for {}.", email, user.email);
+                    userDao.delete(userToDeleteKey);
+                    fileManager.delete(userToDeleteKey);
+                    dbManager.deleteUser(userToDeleteKey);
+                    sessionDao.deleteUser(userToDeleteKey);
+                }
+            }
+        }
+
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+}
