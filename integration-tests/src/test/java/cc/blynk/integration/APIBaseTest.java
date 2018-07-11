@@ -1,5 +1,7 @@
 package cc.blynk.integration;
 
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
@@ -9,6 +11,7 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.properties.ServerProperties;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,8 +24,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
@@ -37,12 +42,16 @@ import static org.junit.Assert.assertTrue;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.04.17.
  */
-public abstract class APIBaseTest extends BaseTest {
+public abstract class APIBaseTest extends CounterBase {
 
     protected static String rootPath;
+    protected static ServerProperties properties;
+    protected static int tcpHardPort;
+    protected static String httpsAdminServerUrl;
+
+    protected Holder holder;
     protected CloseableHttpClient httpclient;
     protected BaseServer httpsAdminServer;
-    protected String httpsAdminServerUrl;
 
     protected User admin;
     protected User regularAdmin;
@@ -51,16 +60,18 @@ public abstract class APIBaseTest extends BaseTest {
     @BeforeClass
     public static void initRootPath() {
         rootPath = "/api";
+        properties = new ServerProperties(Collections.emptyMap());
+        tcpHardPort = properties.getHttpPort();
+        httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, properties.getHttpsPort());
     }
 
     @Before
     public void init() throws Exception {
+        properties.setProperty("data.folder", getDataFolder());
         this.holder = createDefaultHolder(properties, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
         this.httpsAdminServer = new AppAndHttpsServer(holder).start();
-
-        httpsAdminServerUrl = String.format("https://localhost:%s" + rootPath, properties.getHttpsPort());
 
         // Allow TLSv1 protocol only
         this.httpclient = getDefaultHttpsClient();
@@ -96,8 +107,10 @@ public abstract class APIBaseTest extends BaseTest {
     }
 
     @After
-    public void shutdown() {
+    public void shutdown() throws Exception {
         httpsAdminServer.close();
+        holder.close();
+        httpclient.close();
     }
 
     @Override
@@ -128,5 +141,10 @@ public abstract class APIBaseTest extends BaseTest {
             assertNull(user.pass);
         }
     }
+
+    public static ClientPair initAppAndHardPair() throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), getUserName(), "1", "user_profile_json.txt", properties, 10000);
+    }
+
 
 }

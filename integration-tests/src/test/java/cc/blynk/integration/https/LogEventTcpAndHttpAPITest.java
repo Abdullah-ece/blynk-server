@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.APIBaseTest;
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
@@ -71,24 +70,25 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
     private BaseServer hardwareServer;
     private ClientPair clientPair;
-    private CloseableHttpClient httpClient;
+    private CloseableHttpClient httpsClient;
 
     @Before
     public void init() throws Exception {
         super.init();
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
 
-        this.clientPair = BaseTest.initAppAndHardPair();
+        this.clientPair = initAppAndHardPair();
         //clean everything just in case
         holder.reportingDBManager.executeSQL("DELETE FROM reporting_events");
 
-        this.httpClient = getDefaultHttpsClient();
+        this.httpsClient = getDefaultHttpsClient();
     }
 
     @After
-    public void shutdown() {
+    public void shutdownHardwareServer() throws Exception {
         this.hardwareServer.close();
         this.clientPair.stop();
+        this.httpsClient.close();
     }
 
     @Test
@@ -156,7 +156,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
-        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+        try (CloseableHttpResponse response = httpsClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
@@ -218,7 +218,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
-        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+        try (CloseableHttpResponse response = httpsClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
@@ -298,7 +298,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
-        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+        try (CloseableHttpResponse response = httpsClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
@@ -312,7 +312,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=temp_is_high");
-        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+        try (CloseableHttpResponse response = httpsClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
@@ -346,7 +346,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         String externalApiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
         HttpGet insertEvent = new HttpGet(externalApiUrl + token + "/logEvent?code=ONLINE");
-        try (CloseableHttpResponse response = httpClient.execute(insertEvent)) {
+        try (CloseableHttpResponse response = httpsClient.execute(insertEvent)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
