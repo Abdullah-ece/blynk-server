@@ -46,7 +46,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
     @Before
     public void createOrg() {
         Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
-        newOrg = holder.organizationDao.createWithPresetId(OrganizationDao.DEFAULT_ORGANIZATION_ID, newOrg);
+        holder.organizationDao.createWithPresetId(OrganizationDao.DEFAULT_ORGANIZATION_ID, newOrg);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {

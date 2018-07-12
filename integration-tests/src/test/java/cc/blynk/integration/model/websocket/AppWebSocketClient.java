@@ -224,7 +224,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public Organization parseOrganization(int expectedMessageOrder) throws Exception {
-        return JsonParser.parseOrganization(getBody(expectedMessageOrder), 1);
+        return JsonParser.parseOrganization(getBody(expectedMessageOrder), 0);
     }
 
     public Organization[] parseOrganizations(int expectedMessageOrder) throws Exception {

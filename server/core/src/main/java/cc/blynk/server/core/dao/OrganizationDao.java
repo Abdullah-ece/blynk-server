@@ -39,7 +39,7 @@ public class OrganizationDao {
         this.fileManager = fileManager;
         this.organizations = fileManager.deserializeOrganizations();
 
-        int largestOrgSequenceNumber = 0;
+        int largestOrgSequenceNumber = DEFAULT_ORGANIZATION_ID;
         int largestProductSequenceNumber = 0;
         for (Organization organization : organizations.values()) {
             largestOrgSequenceNumber = Math.max(largestOrgSequenceNumber, organization.id);

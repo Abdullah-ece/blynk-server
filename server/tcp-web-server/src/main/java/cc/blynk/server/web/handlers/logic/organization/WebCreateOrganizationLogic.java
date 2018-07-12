@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
@@ -58,20 +59,29 @@ public class WebCreateOrganizationLogic {
         }
 
         newOrganization = organizationDao.create(newOrganization);
-        createProductsFromParentOrg(newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
+        boolean isCreated = createProductsFromParentOrg(
+                newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
 
-        if (ctx.channel().isWritable()) {
-            String orgString = newOrganization.toString();
-            ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, orgString),
-                    ctx.voidPromise());
+        if (isCreated) {
+            if (ctx.channel().isWritable()) {
+                String orgString = newOrganization.toString();
+                ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, orgString),
+                        ctx.voidPromise());
+            }
+        } else {
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         }
     }
 
-    private void createProductsFromParentOrg(int orgId, String orgName, int[] selectedProducts) {
+    private boolean createProductsFromParentOrg(int orgId, String orgName, int[] selectedProducts) {
         for (int productId : selectedProducts) {
             if (organizationDao.hasNoProductWithParent(orgId, productId)) {
-                log.debug("Cloning product for org {} and parentProductId {}.", orgName, productId);
-                Product parentProduct = organizationDao.getProductByIdOrThrow(productId);
+                log.debug("Cloning product for org {} (id={}) and parentProductId {}.", orgName, orgId, productId);
+                Product parentProduct = organizationDao.getProductById(productId);
+                if (parentProduct == null) {
+                    log.error("Product with id {} not found.", productId);
+                    return false;
+                }
                 Product newProduct = new Product(parentProduct);
                 newProduct.parentId = parentProduct.id;
                 organizationDao.createProduct(orgId, newProduct);
@@ -79,6 +89,7 @@ public class WebCreateOrganizationLogic {
                 log.debug("Already has product for org {} with product parent id {}.", orgName, productId);
             }
         }
+        return true;
     }
 
     private boolean isEmpty(Organization newOrganization) {
