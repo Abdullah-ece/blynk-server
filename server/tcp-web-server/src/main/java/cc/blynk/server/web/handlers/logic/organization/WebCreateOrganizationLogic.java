@@ -61,7 +61,7 @@ public class WebCreateOrganizationLogic {
         createProductsFromParentOrg(newOrganization.id, newOrganization.name, newOrganization.selectedProducts);
 
         if (ctx.channel().isWritable()) {
-            String orgString = JsonParser.toJson(newOrganization);
+            String orgString = newOrganization.toString();
             ctx.writeAndFlush(makeUTF8StringMessage(message.command, message.id, orgString),
                     ctx.voidPromise());
         }

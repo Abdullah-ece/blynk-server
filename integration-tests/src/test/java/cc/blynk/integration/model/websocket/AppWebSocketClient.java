@@ -139,20 +139,24 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("resolveEvent " + deviceId + "\0" + logEventId + "\0" + comment);
     }
 
+    public void createOrganization(Organization organization) {
+        send("webCreateOrg " + organization);
+    }
+
     public void canDeleteProduct(int productId) {
         send("webCanDeleteProduct " + productId);
     }
 
     public void createProduct(int orgId, Product product) {
-        send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
+        send("webCreateProduct " + new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void updateProduct(int orgId, Product product) {
-        send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product).toString());
+        send("webUpdateProduct " + new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void updateDevicesMeta(int orgId, Product product) {
-        send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product).toString());
+        send("webUpdateDevicesMeta " + new ProductAndOrgIdDTO(orgId, product));
     }
 
     public void getProducts() {
@@ -176,7 +180,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void updateAccount(User user) {
-        send("updateAccount " + user.toString());
+        send("updateAccount " + user);
     }
 
     public void getAccount() {
@@ -184,11 +188,11 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     public void createDevice(int orgId, Device device) {
-        send("webCreateDevice " + orgId + BODY_SEPARATOR + device.toString());
+        send("webCreateDevice " + orgId + BODY_SEPARATOR + device);
     }
 
     public void updateDevice(int orgId, Device device) {
-        send("webUpdateDevice " + orgId + BODY_SEPARATOR + device.toString());
+        send("webUpdateDevice " + orgId + BODY_SEPARATOR + device);
     }
 
     public void getDevice(int orgId, int deviceId) {
