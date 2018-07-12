@@ -393,7 +393,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(1, newDevice);
         Device createdDevice = client.parseDevice(2);
@@ -422,13 +422,12 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(1, newDevice);
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
-        assertEquals(1, newDevice.id);
         assertNotNull(newDevice.metaFields);
         assertEquals(1, newDevice.metaFields.length);
         TextMetaField textMetaField = (TextMetaField) newDevice.metaFields[0];
@@ -444,7 +443,6 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice = client.parseDevice(3);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
-        assertEquals(1, newDevice.id);
         assertNotNull(newDevice.metaFields);
         assertEquals(1, newDevice.metaFields.length);
         textMetaField = (TextMetaField) newDevice.metaFields[0];
@@ -465,7 +463,6 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getDevice(1, newDevice.id);
         newDevice = client.parseDevice(5);
         assertEquals("My New Device", newDevice.name);
-        assertEquals(1, newDevice.id);
         assertNotNull(newDevice.metaFields);
         assertEquals(2, newDevice.metaFields.length);
         textMetaField = (TextMetaField) newDevice.metaFields[0];
@@ -500,7 +497,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(1, newDevice);
         newDevice = client.parseDevice(2);
@@ -518,7 +515,6 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device device = client.parseDevice(4);
         assertNotNull(newDevice);
         assertEquals("My New Device", device.name);
-        assertEquals(1, device.id);
         assertNotNull(device.metaFields);
         assertEquals(1, device.metaFields.length);
         TextMetaField textMetaField = (TextMetaField) device.metaFields[0];
@@ -550,13 +546,12 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(1, newDevice);
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
-        assertEquals(1, newDevice.id);
         assertNotNull(newDevice.metaFields);
         assertEquals(1, newDevice.metaFields.length);
         ContactMetaField contactMetaField = (ContactMetaField) newDevice.metaFields[0];
@@ -612,7 +607,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
-        newDevice.productId = 1;
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(1, newDevice);
         newDevice = client.parseDevice(3);

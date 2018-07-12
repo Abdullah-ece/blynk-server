@@ -1,26 +1,20 @@
 package cc.blynk.integration.https;
 
-import cc.blynk.integration.APIBaseTest;
-import cc.blynk.integration.TestUtil;
+import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,18 +24,18 @@ import static org.junit.Assert.assertNotNull;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DevicesAPIWebsocketTest extends APIBaseTest {
+public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
     public void createDevice() throws Exception {
-        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(regularUser);
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
         newDevice.productId = createProduct();
 
-        appWebSocketClient.createDevice(1, newDevice);
-        Device createdDevice = appWebSocketClient.parseDevice(1);
+        client.createDevice(1, newDevice);
+        Device createdDevice = client.parseDevice(1);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
         assertEquals(1, createdDevice.id);
@@ -52,11 +46,11 @@ public class DevicesAPIWebsocketTest extends APIBaseTest {
         assertEquals(Role.STAFF, numberMetaField.role);
         assertEquals(123D, numberMetaField.value, 0.1);
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
-        assertEquals(regularUser.email, createdDevice.activatedBy);
+        assertEquals(getUserName(), createdDevice.activatedBy);
 
         newDevice.name = "My New Device2";
-        appWebSocketClient.createDevice(1, newDevice);
-        createdDevice = appWebSocketClient.parseDevice(2);
+        client.createDevice(1, newDevice);
+        createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device2", createdDevice.name);
         assertEquals(2, createdDevice.id);
@@ -67,18 +61,36 @@ public class DevicesAPIWebsocketTest extends APIBaseTest {
         assertEquals(Role.STAFF, numberMetaField.role);
         assertEquals(123D, numberMetaField.value, 0.1);
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
-        assertEquals(regularUser.email, createdDevice.activatedBy);
+        assertEquals(getUserName(), createdDevice.activatedBy);
 
-        appWebSocketClient.getDevices(1);
-        Device[] devices = appWebSocketClient.parseDevices(3);
+        client.getDevices(1);
+        Device[] devices = client.parseDevices(3);
         assertNotNull(devices);
-        assertEquals(3, devices.length);
-        System.out.println(JsonParser.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(devices));
+        assertEquals(2, devices.length);
     }
 
-    //todo change with websocket API
-    private int createProduct() throws Exception {
-        login(regularUser.email, regularUser.pass);
+    @Test
+    public void createDeviceForAnotherOrganization() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        int productId = createProduct();
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        organization.selectedProducts = new int[]{productId};
+
+        client.createOrganization(organization);
+        Organization fromApi = client.parseOrganization(1);
+        assertNotNull(fromApi);
+        assertEquals(1, fromApi.parentId);
+        assertEquals(organization.name, fromApi.name);
+        assertEquals(organization.tzName, fromApi.tzName);
+        assertNotNull(fromApi.products);
+        assertEquals(1, fromApi.products.length);
+        assertEquals(productId, fromApi.products[0].id);
+    }
+
+    private static int createProduct() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Product product = new Product();
         product.name = "My product";
@@ -91,16 +103,11 @@ public class DevicesAPIWebsocketTest extends APIBaseTest {
                 new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
         };
 
-        HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
-        req.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(req)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            Product fromApi = JsonParser.parseProduct(consumeText(response));
-            assertNotNull(fromApi);
-            assertEquals(1, fromApi.id);
-            return fromApi.id;
-        }
+        client.createProduct(1, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+        client.stop();
+        return fromApiProduct.id;
     }
 
 }

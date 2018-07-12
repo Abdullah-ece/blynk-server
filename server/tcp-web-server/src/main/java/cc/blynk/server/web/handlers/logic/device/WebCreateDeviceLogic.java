@@ -61,8 +61,14 @@ public class WebCreateDeviceLogic {
 
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
-        if (newDevice == null || newDevice.productId < 1) {
-            log.error("No data or productId is wrong. {}", newDevice);
+        if (newDevice == null) {
+            log.error("Create device for {} request is empty.", user.email);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        if (newDevice.productId < 1) {
+            log.error("Create device for {} has wrong product id. {}", user.email, newDevice);
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }

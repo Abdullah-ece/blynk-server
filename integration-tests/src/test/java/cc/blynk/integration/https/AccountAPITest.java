@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.APIBaseTest;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -66,7 +65,8 @@ public class AccountAPITest extends APIBaseTest {
             assertNull(user.pass);
             assertEquals(Role.SUPER_ADMIN, user.role);
             assertEquals(UserStatus.Active, user.status);
-            assertEquals(new Profile(), user.profile);
+            assertNotNull(user.profile);
+            assertEquals(1, user.profile.dashBoards.length);
         }
     }
 
