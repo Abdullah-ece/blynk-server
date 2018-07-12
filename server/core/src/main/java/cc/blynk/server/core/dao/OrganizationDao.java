@@ -62,9 +62,13 @@ public class OrganizationDao {
     }
 
     //only for tests
-    public Organization createWithPresetId(Organization organization) {
+    public Organization createWithPresetId(int newOrgId, Organization organization) {
         checkNameExists(-1, organization.name);
-        organizations.putIfAbsent(organization.id, organization);
+        organization.id = newOrgId;
+        if (organizations.get(newOrgId) != null) {
+            throw new RuntimeException("Error creating org with predefiend id.");
+        }
+        organizations.putIfAbsent(newOrgId, organization);
         return organization;
     }
 

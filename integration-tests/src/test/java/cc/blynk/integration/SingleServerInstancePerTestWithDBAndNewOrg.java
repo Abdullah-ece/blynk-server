@@ -1,10 +1,8 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.ServerProperties;
@@ -17,18 +15,11 @@ import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.reset;
 
 /**
  * use when you need only 1 server instance per test class and not per test method
  */
 public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleServerInstancePerTestWithDB {
-
-    protected static ServerProperties properties;
-    protected static BaseServer appServer;
-    protected static BaseServer hardwareServer;
-    protected static Holder holder;
-    protected ClientPair clientPair;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -48,23 +39,14 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
     }
 
     @After
-    public void closeClients() {
-        this.clientPair.stop();
+    public void deleteOrg() {
         holder.organizationDao.delete(OrganizationDao.DEFAULT_ORGANIZATION_ID);
     }
 
     @Before
-    public void resetBeforeTest() throws Exception {
+    public void createOrg() {
         Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
-        newOrg.id = OrganizationDao.DEFAULT_ORGANIZATION_ID;
-        holder.organizationDao.createWithPresetId(newOrg);
-
-        this.clientPair = initAppAndHardPair();
-        reset(holder.mailWrapper);
-        reset(holder.twitterWrapper);
-        reset(holder.gcmWrapper);
-        reset(holder.smsWrapper);
-        reset(holder.slackWrapper);
+        newOrg = holder.organizationDao.createWithPresetId(OrganizationDao.DEFAULT_ORGANIZATION_ID, newOrg);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
