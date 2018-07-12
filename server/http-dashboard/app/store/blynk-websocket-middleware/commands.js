@@ -38,6 +38,11 @@ export const COMMANDS = {
   LOG_EVENT_RESOLVE: 75,
 };
 
+export const API_COMMANDS = {
+  GET_ACCOUNT: 100,
+  GET_DEVICES: 104,
+};
+
 const blynkHeader = (msg_type, msg_id) => {
   return String.fromCharCode(
     msg_type,
@@ -61,6 +66,50 @@ export const blynkWsConnect = (params) => {
     options.debug("BlynkWsConnect");
 
   return store.dispatch(websocketConnect());
+};
+
+export const blynkWsApiCall = (params) => {
+  const {store, action, options} = params;
+
+  if (options.isDebugMode)
+    options.debug("blynkWsApiCall", action);
+
+  const value = str2ab(
+    blynkHeader(
+      action.ws.request.command, ++MSG_ID
+    ) + action.ws.request.query.join('\0')
+  );
+
+  store.dispatch(blynkWsRequest({
+    id     : MSG_ID,
+    request: {
+      command: action.ws.request.command,
+      value  : action.ws.request.query.join('\0')
+    }
+  }));
+
+  let promiseResolve;
+
+  let promise = new Promise((resolve) => {
+    promiseResolve = resolve;
+
+    messages.push({
+      msgId         : MSG_ID,
+      value         : {
+        query: action.ws.request.query,
+        body : action.ws.request.body,
+      },
+      promise       : promise,
+      promiseResolve: promiseResolve,
+      previousAction: action,
+    });
+
+  });
+
+  store.dispatch(websocketSend(value));
+
+  return promise;
+
 };
 
 export const blynkWsLogin = (params) => {
@@ -226,21 +275,36 @@ export const blynkWsMessage = (params) => {
 
   let previousAction = null;
 
-  messages.forEach((message) => {
-    if(Number(message.msgId) === Number(msgId) && typeof message.promiseResolve === 'function') {
-      message.promiseResolve();
+  let message = null;
+
+  messages.forEach((msg) => {
+    if(Number(msg.msgId) === Number(msgId)) {
+      message = msg;
     }
 
-    if(Number(message.msgId) === Number(msgId) && previousAction === null) {
-      previousAction = message;
+    if(Number(msg.msgId) === Number(msgId) && previousAction === null) {
+      previousAction = msg;
     }
   });
 
+  const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
+
   if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.OK) {
 
+    if(message && typeof message.promiseResolve === 'function')
+      message.promiseResolve();
+
     handlers.ResponseOKHandler({
-      responseCode: responseCode,
+      responseCode  : responseCode,
       previousAction: previousAction
+    });
+
+  } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
+
+    handlers.ApiCallHandler({
+      msgId: ++MSG_ID,
+      previousAction: previousAction.previousAction,
+      promiseResolve: message.promiseResolve,
     });
 
   } else if (command === COMMANDS.HARDWARE) {

@@ -202,6 +202,30 @@ export const Handlers = (params) => {
 
   };
 
+  const apiCallHandler = ({ msgId, previousAction, promiseResolve }) => {
+
+    const body = decodeBody(dataView);
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage ApiCall", action, {
+        command     : command,
+        msgId       : msgId,
+        body: body
+      });
+
+    store.dispatch({
+      type: `${previousAction.type}_SUCCESS`,
+      payload: {
+        data: JSON.parse(body)
+      },
+      meta: {
+        previousAction: previousAction
+      }
+    });
+
+    promiseResolve(JSON.parse(body));
+
+  };
 
   const appSyncHandler = ({ msgId }) => {
 
@@ -373,6 +397,7 @@ export const Handlers = (params) => {
 
   return {
     ResponseOKHandler: responseOKHandler,
+    ApiCallHandler: apiCallHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,
     LogEventResolveHandler: logEventResolveHandler,

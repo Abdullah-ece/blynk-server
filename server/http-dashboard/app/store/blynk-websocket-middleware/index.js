@@ -6,7 +6,9 @@ import {
   blynkWsMessage,
   blynkWsHardware,
   blynkWsTrackDevice,
-  blynkWsChartDataFetch
+  blynkWsChartDataFetch,
+  blynkWsApiCall,
+  API_COMMANDS,
 } from './commands';
 
 export const createBlynkWsMiddleware = (options = {}) => {
@@ -29,11 +31,20 @@ export const createBlynkWsMiddleware = (options = {}) => {
     const execCommand = (command, ...params) => {
 
       if(connectionReadyPromise) {
-        connectionReadyPromise.then(() => {
-          command.apply(this, params);
+
+        return new Promise((resolve) => {
+          connectionReadyPromise.then(() => {
+            let response = command.apply(this, params);
+
+            if(response && response.then) {
+              response.then((data) => {
+                resolve(data);
+              });
+            }
+          });
         });
       } else {
-        command.apply(this, params);
+        return command.apply(this, params);
       }
 
     };
@@ -74,6 +85,26 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
     if (action && action.type === blynkWsActions.BLYNK_WS_TRACK_DEVICE_ID) {
       execCommand(blynkWsTrackDevice, params);
+    }
+
+    // api commands
+
+    if (action && action.ws && action.ws.request) {
+
+      const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
+
+      if(action.ws.request && !action.ws.request.command) {
+        throw new Error('Command for WS API call is not specified');
+      }
+
+      if(action.ws.request.command && API_COMMANDS_CODES_ARRAY.indexOf(action.ws.request.command) === -1 ) {
+        throw new Error(`Command "${action.ws.request.command}" for WS API call is not listed in API COMMANDS`);
+      }
+
+      next(action);
+
+      return execCommand(blynkWsApiCall, params);
+
     }
 
     return next(action);
