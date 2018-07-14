@@ -73,6 +73,14 @@ public final class FileLoaderUtil {
         return readFileAsString("static/reset/enterNewPassword.html");
     }
 
+    public static String readRegisterEmailTemplate() {
+        return readFileAsString("static/register-email.html");
+    }
+
+    public static String readReportEmailTemplate() {
+        return readFileAsString("static/report-email.html");
+    }
+
     public static String readLogEventMailBody() {
         return readFileAsString("event_log_email.html");
     }
@@ -83,7 +91,7 @@ public final class FileLoaderUtil {
      *
      * @param fileName - name of properties file, for example "twitter4j.properties"
      */
-    public static String readFileAsString(String fileName) {
+    private static String readFileAsString(String fileName) {
         if (!fileName.startsWith("/")) {
             fileName = "/" + fileName;
         }

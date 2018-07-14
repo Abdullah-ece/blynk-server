@@ -59,6 +59,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
     private final LimitChecker registrationLimitChecker;
+    private final String emailBody;
     private final OrganizationDao organizationDao;
     private final Set<String> allowedUsers;
 
@@ -70,6 +71,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
+        this.emailBody = holder.textHolder.registerEmailTemplate;
 
         var allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
         if (allowedUsersArray != null && allowedUsersArray.length > 0
@@ -131,7 +133,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         if (AppNameUtil.BLYNK.equals(appName)) {
             blockingIOProcessor.execute(() -> {
                 try {
-                    mailWrapper.sendWelcomeEmailForNewUser(email);
+                    mailWrapper.sendHtml(email, "Get started with Blynk", emailBody);
                 } catch (Exception e) {
                     log.warn("Error sending greeting email for {}.", email);
                 }
