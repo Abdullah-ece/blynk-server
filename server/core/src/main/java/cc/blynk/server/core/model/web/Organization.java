@@ -49,10 +49,6 @@ public class Organization {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs) {
-        this(name, tzName, logoUrl, canCreateOrgs, SUPER_ORG_PARENT_ID);
-    }
-
     public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs, int parentId) {
         this();
         this.name = name;

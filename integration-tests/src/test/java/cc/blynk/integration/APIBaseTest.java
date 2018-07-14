@@ -31,6 +31,7 @@ import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
+import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,7 +104,8 @@ public abstract class APIBaseTest extends CounterBase {
         regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
-        holder.organizationDao.create(new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true));
+        holder.organizationDao.create(new Organization("Blynk Inc.",
+                "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID));
     }
 
     @After

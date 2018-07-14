@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -11,6 +12,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -56,6 +59,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
     private final LimitChecker registrationLimitChecker;
+    private final OrganizationDao organizationDao;
     private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
@@ -64,6 +68,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         this.timerWorker = holder.timerWorker;
         this.mailWrapper = holder.mailWrapper;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.organizationDao = holder.organizationDao;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
 
         var allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
@@ -116,7 +121,9 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        User newUser = userDao.add(email, pass, appName);
+        Organization superOrg = organizationDao.getSuperOrg();
+        int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
+        User newUser = userDao.add(email, pass, appName, orgId, Role.USER);
 
         log.info("Registered {}.", email);
 

@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -99,7 +100,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         int productId = createProduct();
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
         organization.selectedProducts = new int[]{productId};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
@@ -170,7 +171,7 @@ public class DevicesAPITest extends APIBaseTest {
 
         int productId = createProduct();
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
         organization.selectedProducts = new int[]{productId};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");

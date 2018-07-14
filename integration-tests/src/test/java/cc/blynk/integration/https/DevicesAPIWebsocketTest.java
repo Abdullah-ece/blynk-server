@@ -36,7 +36,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
         };
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -45,7 +45,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.productId = fromApiProduct.id;
 
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
@@ -60,7 +60,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(getUserName(), createdDevice.activatedBy);
 
         newDevice.name = "My New Device2";
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device2", createdDevice.name);
@@ -74,7 +74,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
         assertEquals(getUserName(), createdDevice.activatedBy);
 
-        client.getDevices(1);
+        client.getDevices(orgId);
         Device[] devices = client.parseDevices(4);
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -87,11 +87,11 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false);
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);

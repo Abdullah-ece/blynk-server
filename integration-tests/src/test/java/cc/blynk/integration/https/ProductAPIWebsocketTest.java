@@ -68,7 +68,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
 
@@ -88,7 +88,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         client.verifyResult(illegalCommandBody(1));
     }
 
@@ -102,7 +102,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -113,7 +113,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         product.id = 1;
         product.name = "";
-        client.updateProduct(1, product);
+        client.updateProduct(orgId, product);
         client.verifyResult(illegalCommandBody(2));
     }
 
@@ -151,7 +151,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -209,7 +209,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 webLabel
         });
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -243,7 +243,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 webLabel
         });
 
-        client.updateProduct(1, product);
+        client.updateProduct(orgId, product);
         fromApi = client.parseProduct(2);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -268,7 +268,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -280,7 +280,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         client.verifyResult(illegalCommandBody(2));
     }
 
@@ -295,7 +295,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApi = client.parseProduct(1);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -308,7 +308,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "Updated Name";
         product.description = "Description2";
 
-        client.updateProduct(1, product);
+        client.updateProduct(orgId, product);
         fromApi = client.parseProduct(2);
         assertNotNull(fromApi);
         assertEquals(product.name, fromApi.name);
@@ -333,7 +333,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "getListOfProducts";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -345,7 +345,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product2 = new Product();
         product2.name = "getListOfProducts2";
 
-        client.createProduct(1, product2);
+        client.createProduct(orgId, product2);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
 
@@ -362,7 +362,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "createProductAndDelete";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -387,7 +387,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "createProductAndDelete";
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -395,7 +395,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
 
@@ -416,7 +416,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
         };
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -424,7 +424,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
@@ -439,7 +439,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.metaFields[0] = new TextMetaField(textMetaField.id,
                 textMetaField.name, textMetaField.role, false, "My updated value");
 
-        client.updateDevice(1, newDevice);
+        client.updateDevice(orgId, newDevice);
         newDevice = client.parseDevice(3);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
@@ -456,11 +456,11 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new NumberMetaField(2, "New metafield", Role.ADMIN, false, 123)
         };
 
-        client.updateDevicesMeta(1, fromApiProduct);
+        client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(4);
         assertEquals(2, fromApiProduct.metaFields.length);
 
-        client.getDevice(1, newDevice.id);
+        client.getDevice(orgId, newDevice.id);
         newDevice = client.parseDevice(5);
         assertEquals("My New Device", newDevice.name);
         assertNotNull(newDevice.metaFields);
@@ -491,7 +491,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
         };
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -499,19 +499,19 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
 
         fromApiProduct.metaFields[0] = new TextMetaField(1,
                 "Me updated test metafield", Role.USER, false, "Default Device");
 
-        client.updateDevicesMeta(1, fromApiProduct);
+        client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
         assertEquals(1, fromApiProduct.metaFields.length);
 
-        client.getDevice(1, newDevice.id);
+        client.getDevice(orgId, newDevice.id);
         Device device = client.parseDevice(4);
         assertNotNull(newDevice);
         assertEquals("My New Device", device.name);
@@ -540,7 +540,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         "Kyiv", false, "Ukraine", false, "03322", false, false)
         };
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -548,7 +548,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
         assertEquals("My New Device", newDevice.name);
@@ -566,12 +566,12 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 "+38063673333",  false, "My street", false, "Ukraine", false,
                 "Kyiv", false, "Ukraine", false, "03322", false, false);
 
-        client.updateDevicesMeta(1, fromApiProduct);
+        client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
         assertEquals(1, fromApiProduct.metaFields.length);
 
-        client.getDevice(1, newDevice.id);
+        client.getDevice(orgId, newDevice.id);
         Device device = client.parseDevice(4);
         assertNotNull(newDevice);
         assertNotNull(device.metaFields);
@@ -598,7 +598,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
 
-        client.createProduct(1, product);
+        client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
@@ -609,7 +609,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
-        client.createDevice(1, newDevice);
+        client.createDevice(orgId, newDevice);
         newDevice = client.parseDevice(3);
         assertNotNull(newDevice);
 

@@ -39,7 +39,7 @@ public class OrganizationDao {
         this.fileManager = fileManager;
         this.organizations = fileManager.deserializeOrganizations();
 
-        int largestOrgSequenceNumber = DEFAULT_ORGANIZATION_ID;
+        int largestOrgSequenceNumber = 0;
         int largestProductSequenceNumber = 0;
         for (Organization organization : organizations.values()) {
             largestOrgSequenceNumber = Math.max(largestOrgSequenceNumber, organization.id);
@@ -54,21 +54,22 @@ public class OrganizationDao {
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
 
+    /**
+     * Super org is initially created organization
+     */
+    public Organization getSuperOrg() {
+        for (Organization org : organizations.values()) {
+            if (org.parentId == Organization.SUPER_ORG_PARENT_ID) {
+                return org;
+            }
+        }
+        return null;
+    }
+
     public Organization create(Organization organization) {
         checkNameExists(-1, organization.name);
         organization.id = orgSequence.incrementAndGet();
         organizations.putIfAbsent(organization.id, organization);
-        return organization;
-    }
-
-    //only for tests
-    public Organization createWithPresetId(int newOrgId, Organization organization) {
-        checkNameExists(-1, organization.name);
-        organization.id = newOrgId;
-        if (organizations.get(newOrgId) != null) {
-            throw new RuntimeException("Error creating org with predefiend id.");
-        }
-        organizations.putIfAbsent(newOrgId, organization);
         return organization;
     }
 

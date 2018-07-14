@@ -1,9 +1,7 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -52,6 +50,7 @@ import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 
@@ -165,27 +164,8 @@ public final class ServerLauncher {
                 pass = StringUtils.randomPassword(24);
             }
 
-            System.out.println("Your Admin url is " + url);
-            System.out.println("Your Admin login email is " + email);
-            System.out.println("Your Admin password is " + pass);
-
-            String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppNameUtil.BLYNK, Role.SUPER_ADMIN);
-
-            String vendorEmail = props.vendorEmail;
-            if (vendorEmail != null) {
-                String subj = "Your private Blynk server for " + props.productName + " is up!";
-                String body = buildServerUpEmailBody(url, email, pass);
-                holder.blockingIOProcessor.messagingExecutor.execute(() -> {
-                    try {
-                        holder.mailWrapper.sendHtml(vendorEmail, subj, body);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-
-            Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
+            Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev",
+                    "/static/logo.png", true, SUPER_ORG_PARENT_ID);
             Organization mainOrg = holder.organizationDao.create(superOrg);
             mainOrg.isActive = true;
             holder.organizationDao.create(
@@ -222,10 +202,25 @@ public final class ServerLauncher {
 
             holder.organizationDao.createProduct(mainOrg.id, product);
 
-            User user = holder.userDao.getByName(email, BLYNK);
-            user.profile.dashBoards = new DashBoard[] {
-                    new DashBoard()
-            };
+            System.out.println("Your Admin url is " + url);
+            System.out.println("Your Admin login email is " + email);
+            System.out.println("Your Admin password is " + pass);
+
+            String hash = SHA256Util.makeHash(pass, email);
+            holder.userDao.add(email, hash, AppNameUtil.BLYNK, superOrg.id, Role.SUPER_ADMIN);
+
+            String vendorEmail = props.vendorEmail;
+            if (vendorEmail != null) {
+                String subj = "Your private Blynk server for " + props.productName + " is up!";
+                String body = buildServerUpEmailBody(url, email, pass);
+                holder.blockingIOProcessor.messagingExecutor.execute(() -> {
+                    try {
+                        holder.mailWrapper.sendHtml(vendorEmail, subj, body);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
 
             for (int i = 0; i < 20; i++) {
                 Device device = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
@@ -243,17 +238,17 @@ public final class ServerLauncher {
                     }
                 }
             }
-        }
 
-        //todo
-        //for local testing. will be removed in future.
-        //always adding 20 users to initial organization
-        String name = "user{i}@blynk.cc";
-        pass = "123";
-        for (int i = 0; i < 20; i++) {
-            email = name.replace("{i}", "" + i);
-            String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, BLYNK, Role.STAFF);
+            //todo
+            //for local testing. will be removed in future.
+            //always adding 20 users to initial organization
+            String name = "user{i}@blynk.cc";
+            pass = "123";
+            for (int i = 0; i < 20; i++) {
+                email = name.replace("{i}", "" + i);
+                hash = SHA256Util.makeHash(pass, email);
+                holder.userDao.add(email, hash, BLYNK, superOrg.id, Role.STAFF);
+            }
         }
     }
 

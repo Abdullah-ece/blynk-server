@@ -1,7 +1,6 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -14,12 +13,15 @@ import org.junit.BeforeClass;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static org.junit.Assert.assertNotNull;
 
 /**
  * use when you need only 1 server instance per test class and not per test method
  */
 public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleServerInstancePerTestWithDB {
+
+    protected int orgId;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -40,13 +42,16 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
 
     @After
     public void deleteOrg() {
-        holder.organizationDao.delete(OrganizationDao.DEFAULT_ORGANIZATION_ID);
+        holder.organizationDao.delete(orgId);
     }
 
     @Before
-    public void createOrg() {
-        Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true);
-        holder.organizationDao.createWithPresetId(OrganizationDao.DEFAULT_ORGANIZATION_ID, newOrg);
+    public void initClients() throws Exception {
+        Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev",
+                "/static/logo.png", true, SUPER_ORG_PARENT_ID);
+        newOrg = holder.organizationDao.create(newOrg);
+        orgId = newOrg.id;
+        this.clientPair = initAppAndHardPair();
     }
 
     public ClientPair initAppAndHardPair() throws Exception {

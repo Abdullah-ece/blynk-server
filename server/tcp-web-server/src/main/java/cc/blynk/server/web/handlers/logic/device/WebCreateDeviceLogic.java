@@ -54,7 +54,7 @@ public class WebCreateDeviceLogic {
         //todo refactor when permissions ready
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
+            log.error("User {} (orgId={}) not allowed to access orgId {}", user.email, user.orgId, orgId);
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             return;
         }

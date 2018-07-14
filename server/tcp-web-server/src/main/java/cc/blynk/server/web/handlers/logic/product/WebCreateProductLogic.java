@@ -79,8 +79,8 @@ public class WebCreateProductLogic {
         }
 
         product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
-        log.debug("Product for {} (orgId={}) successfully created. {}.",
-                user.email, productAndOrgIdDTO.orgId, product);
+        log.debug("Product for {} (orgId={}) successfully created. OrgId - {}, {}.",
+                user.email, user.orgId, productAndOrgIdDTO.orgId, product);
 
         if (ctx.channel().isWritable()) {
             String productString = product.toString();

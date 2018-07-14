@@ -51,8 +51,12 @@ public abstract class SingleServerInstancePerTestWithDB extends CounterBase {
     }
 
     @Before
-    public void resetBeforeTest() throws Exception {
+    public void initClients() throws Exception {
         this.clientPair = initAppAndHardPair();
+    }
+
+    @Before
+    public void resetMocks() {
         reset(holder.mailWrapper);
         reset(holder.twitterWrapper);
         reset(holder.gcmWrapper);

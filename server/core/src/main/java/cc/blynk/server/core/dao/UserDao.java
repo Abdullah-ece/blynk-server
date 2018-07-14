@@ -317,11 +317,13 @@ public class UserDao {
         return newUser;
     }
 
-    public void add(String email, String pass, String appName, Role role) {
+    public User add(String email, String pass, String appName, int orgId, Role role) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, host, false, role);
+        newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);
+        return newUser;
     }
 
     public User invite(UserInviteDTO invite, int orgId, String appName) {
