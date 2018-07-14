@@ -20,6 +20,7 @@ public final class Placeholders {
     public static final String TEMPLATE_NAME = "{template_name}";
     public static final String TEMPLATE_ID = "{template_id}";
     public static final String PROJECT_NAME = "{project_name}";
+    public final static String ORGANIZATION = "{organization}";
 
     private Placeholders() {
     }

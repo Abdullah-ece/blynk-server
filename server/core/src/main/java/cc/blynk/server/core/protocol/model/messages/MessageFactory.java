@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLo
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLoginMessage;
+import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -19,6 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 
 /**
  * The Blynk Project.
@@ -36,6 +38,8 @@ public final class MessageFactory {
                 return new RegisterMessage(messageId, body);
             case LOGIN :
                 return new LoginMessage(messageId, body);
+            case WEB_LOGIN_VIA_INVITE :
+                return new WebLoginViaInviteMessage(messageId, body);
             case HARDWARE_LOGIN :
                 return new HardwareLoginMessage(messageId, body);
             case SHARE_LOGIN :

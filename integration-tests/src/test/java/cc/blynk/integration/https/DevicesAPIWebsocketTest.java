@@ -97,12 +97,18 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.createOrganization(organization);
         Organization fromApi = client.parseOrganization(2);
         assertNotNull(fromApi);
-        assertEquals(1, fromApi.parentId);
+        assertEquals(orgId, fromApi.parentId);
         assertEquals(organization.name, fromApi.name);
         assertEquals(organization.tzName, fromApi.tzName);
         assertNotNull(fromApi.products);
         assertEquals(1, fromApi.products.length);
         assertEquals(fromApiProduct.id + 1, fromApi.products[0].id);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+
     }
 
 }

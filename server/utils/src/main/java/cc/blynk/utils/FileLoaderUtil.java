@@ -19,8 +19,6 @@ import java.util.List;
 public final class FileLoaderUtil {
 
     public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
-    public static final String INVITE_MAIL_BODY = "invite_template.html";
-    public static final String RESET_PASS_MAIL_BODY = "reset_pass_template.html";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -32,7 +30,7 @@ public final class FileLoaderUtil {
     }
 
     public static String readInviteMailBody() {
-        return readFileAsString(INVITE_MAIL_BODY);
+        return readFileAsString("invite_template.html");
     }
 
     public static String readTokenMailBody() {
@@ -40,7 +38,7 @@ public final class FileLoaderUtil {
     }
 
     public static String readResetPassMailBody() {
-        return readFileAsString(RESET_PASS_MAIL_BODY);
+        return readFileAsString("reset_pass_template.html");
     }
 
     public static String readDynamicMailBody() {

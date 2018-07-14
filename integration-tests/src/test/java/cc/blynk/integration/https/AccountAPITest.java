@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -26,6 +27,8 @@ import static org.junit.Assert.assertNull;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Deprecated
+@Ignore
 public class AccountAPITest extends APIBaseTest {
 
     @Test

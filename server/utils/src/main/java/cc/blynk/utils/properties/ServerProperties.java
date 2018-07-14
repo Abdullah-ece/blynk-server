@@ -142,6 +142,10 @@ public class ServerProperties extends BaseProperties {
         return getProperty("admin.email", "admin@blynk.cc");
     }
 
+    public String getInviteUrl() {
+        return "https://" + getServerHost() + "/dashboard/invite?token=";
+    }
+
     public String getHttpServerUrl() {
         String httpPort = getHttpPortAsString();
        return "http://" + getServerHost() + (httpPort.equals("80") ? "" : (":" + httpPort));

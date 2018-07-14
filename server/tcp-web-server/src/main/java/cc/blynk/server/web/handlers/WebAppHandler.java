@@ -25,6 +25,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
+import cc.blynk.server.web.handlers.logic.organization.users.WebInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebUpdateUserInfoLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCanDeleteProductLogic;
 import cc.blynk.server.web.handlers.logic.product.WebCreateProductLogic;
@@ -58,6 +59,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
@@ -98,6 +100,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebUpdateOrganizationLogic webUpdateOrganizationLogic;
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
+    private final WebInviteUserLogic webInviteUserLogic;
 
     private final GlobalStats stats;
 
@@ -127,6 +130,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webUpdateOrganizationLogic = new WebUpdateOrganizationLogic(holder);
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
+        this.webInviteUserLogic = new WebInviteUserLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -219,6 +223,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_CAN_DELETE_PRODUCT :
                 webCanDeleteProductLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_INVITE_USER :
+                webInviteUserLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

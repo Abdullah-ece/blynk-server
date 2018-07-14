@@ -22,6 +22,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -165,6 +167,14 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getProduct(int productId) {
         send("webGetProduct " + productId);
+    }
+
+    public void inviteUser(int orgId, String email, String name, Role role) {
+        send("webInviteUser " + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, role));
+    }
+
+    public void loginViaInvite(String token, String passHash) {
+        send("webLoginViaInvite " + token + BODY_SEPARATOR_STRING + passHash);
     }
 
     public Product parseProduct(int expectedMessageOrder) throws Exception {

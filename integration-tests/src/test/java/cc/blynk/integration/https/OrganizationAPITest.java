@@ -218,7 +218,7 @@ public class OrganizationAPITest extends APIBaseTest {
         Role role = Role.ADMIN;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
-        String data = JsonParser.MAPPER.writeValueAsString(new UserInviteDTO(email, name, role));
+        String data = new UserInviteDTO(email, name, role).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -294,7 +294,7 @@ public class OrganizationAPITest extends APIBaseTest {
         Role role = Role.ADMIN;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
-        String data = JsonParser.MAPPER.writeValueAsString(new UserInviteDTO(email, name, role));
+        String data = new UserInviteDTO(email, name, role).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -361,7 +361,7 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/3/invite");
-        data = JsonParser.MAPPER.writeValueAsString(new UserInviteDTO(email, name, role));
+        data = new UserInviteDTO(email, name, role).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -1409,7 +1409,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = JsonParser.MAPPER.writeValueAsString(new UserInviteDTO("user@blynk.cc", "123", Role.ADMIN));
+        String body = new UserInviteDTO("user@blynk.cc", "123", Role.ADMIN).toString();
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 
@@ -1437,7 +1437,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = JsonParser.MAPPER.writeValueAsString(new UserInviteDTO("userzzz@blynk.cc", "123", Role.ADMIN));
+        String body = new UserInviteDTO("userzzz@blynk.cc", "123", Role.ADMIN).toString();
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 

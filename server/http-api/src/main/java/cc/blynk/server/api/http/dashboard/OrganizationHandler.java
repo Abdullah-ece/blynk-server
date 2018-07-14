@@ -38,9 +38,9 @@ import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -410,8 +410,8 @@ public class OrganizationHandler extends BaseHttpHandler {
             try {
                 tokensPool.addToken(token,  new TokenUser(userInvite.email, appName));
                 String message = inviteTemplate
-                        .replace(StringUtils.ORGANIZATION, org.name)
-                        .replace(StringUtils.PRODUCT_NAME, productName)
+                        .replace(Placeholders.ORGANIZATION, org.name)
+                        .replace(Placeholders.PRODUCT_NAME, productName)
                         .replace("{host}", this.host)
                         .replace("{link}", inviteURL + token + "&email="
                                 + URLEncoder.encode(userInvite.email, "UTF-8"));

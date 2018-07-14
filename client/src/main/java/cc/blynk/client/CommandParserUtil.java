@@ -88,6 +88,8 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
@@ -311,6 +313,10 @@ public final class CommandParserUtil {
                 return WEB_DELETE_ORG;
             case "webcandeleteproduct" :
                 return WEB_CAN_DELETE_PRODUCT;
+            case "webinviteuser" :
+                return WEB_INVITE_USER;
+            case "webloginviainvite" :
+                return WEB_LOGIN_VIA_INVITE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

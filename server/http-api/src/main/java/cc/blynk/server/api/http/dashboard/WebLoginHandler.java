@@ -20,9 +20,9 @@ import cc.blynk.server.internal.TokenUser;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -234,8 +234,8 @@ public class WebLoginHandler extends BaseHttpHandler {
             Response response;
             try {
                 String body = emailBody
-                        .replace(StringUtils.ORGANIZATION, org.name)
-                        .replace(StringUtils.PRODUCT_NAME, productName)
+                        .replace(Placeholders.ORGANIZATION, org.name)
+                        .replace(Placeholders.PRODUCT_NAME, productName)
                         .replace("{host}", host)
                         .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
                 String subject = "Reset your " + org.name + " Dashboard password";

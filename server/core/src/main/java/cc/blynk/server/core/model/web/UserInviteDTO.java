@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,5 +30,10 @@ public class UserInviteDTO {
     public boolean isNotValid() {
         return email == null || email.isEmpty() || role == null
                 || role == Role.SUPER_ADMIN || BlynkEmailValidator.isNotValidEmail(email);
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }
