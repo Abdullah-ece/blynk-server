@@ -100,6 +100,7 @@ public class GetProjectByClonedTokenLogic {
         newDash.id = max(user.profile.dashBoards) + 1;
         newDash.isPreview = false;
         newDash.parentId = -1;
+        newDash.isShared = false;
 
         if (user.profile.dashBoards.length >= dashMaxLimit) {
             log.debug("Dashboards limit reached.");
@@ -138,7 +139,7 @@ public class GetProjectByClonedTokenLogic {
 
         newDash.addTimers(timerWorker, new UserKey(user));
 
-        byte[] data = ByteUtils.compress(dashString);
+        byte[] data = ByteUtils.compress(newDash.toString());
         return makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, msgId, data);
     }
 
