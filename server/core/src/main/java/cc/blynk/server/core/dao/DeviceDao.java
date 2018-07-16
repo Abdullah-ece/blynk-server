@@ -57,6 +57,10 @@ public class DeviceDao {
     }
 
     public Device getById(int deviceId) {
+        return devices.get(new DeviceKey(0, 0, deviceId));
+    }
+
+    public Device getByIdOrThrow(int deviceId) {
         Device device = devices.get(new DeviceKey(0, 0, deviceId));
         if (device == null) {
             log.error("Device with id {} not found.", deviceId);

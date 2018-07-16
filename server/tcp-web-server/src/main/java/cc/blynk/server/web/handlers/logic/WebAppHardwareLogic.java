@@ -51,7 +51,7 @@ public class WebAppHardwareLogic {
         //here we have "200000"
         int deviceId = Integer.parseInt(split[0]);
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         if (device == null) {
             log.debug("Device with passed id {} not found.", deviceId);
             return;

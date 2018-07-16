@@ -301,10 +301,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             lastContentFuture.addListener((future) -> {
                     if (future.isSuccess()) {
                         log.debug("Upload success for deviceId {}.", device.id);
-                        deviceDao.getById(device.id).firmwareUploaded();
+                        deviceDao.getByIdOrThrow(device.id).firmwareUploaded();
                     } else {
                         log.debug("Upload failure for deviceId {}.", device.id);
-                        deviceDao.getById(device.id).firmwareUploadFailure();
+                        deviceDao.getByIdOrThrow(device.id).firmwareUploadFailure();
                     }
                 }
             );
@@ -321,7 +321,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         //todo check somehow it is OTA file?
         if (uriParts.length == 2 && uriParts[1].contains("token=")) {
             int deviceId = Integer.parseInt(uriParts[1].substring(6));
-            return deviceDao.getById(deviceId);
+            return deviceDao.getByIdOrThrow(deviceId);
         }
         return null;
     }

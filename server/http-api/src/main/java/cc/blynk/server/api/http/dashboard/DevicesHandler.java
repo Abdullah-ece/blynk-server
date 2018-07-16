@@ -130,7 +130,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                     @PathParam("logEventId") long logEventId,
                                     CommentDTO comment) {
         User user = getUser(ctx);
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
         blockingIOProcessor.executeDB(() -> {
@@ -192,7 +192,7 @@ public class DevicesHandler extends BaseHttpHandler {
             throw new ProductNotFoundException("Product with passed id " + newDevice.productId + " not found.");
         }
 
-        Device existingDevice = deviceDao.getById(newDevice.id);
+        Device existingDevice = deviceDao.getByIdOrThrow(newDevice.id);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         existingDevice.updateFromWeb(newDevice);
@@ -207,7 +207,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                           @PathParam("deviceId") int deviceId,
                                           MetaField updatedMetaField) {
 
-        Device existingDevice = deviceDao.getById(deviceId);
+        Device existingDevice = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         int fieldIndex = existingDevice.findMetaFieldIndex(updatedMetaField.id);
@@ -273,7 +273,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response getDeviceById(@ContextUser User user,
                                   @PathParam("orgId") int orgId,
                                   @PathParam("deviceId") int deviceId) {
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         if (!organizationDao.hasAccess(user, orgId)) {
             throw new ForbiddenWebException("User has no rights for this device.");
         }
@@ -287,7 +287,7 @@ public class DevicesHandler extends BaseHttpHandler {
     public Response delete(@ContextUser User user,
                            @PathParam("orgId") int userOrgId,
                            @PathParam("deviceId") int deviceId) {
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
         deviceDao.delete(deviceId);
@@ -327,7 +327,7 @@ public class DevicesHandler extends BaseHttpHandler {
                                       @QueryParam("offset") int offset,
                                       @QueryParam("limit") int limit) {
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         User user = getUser(ctx);
         organizationDao.verifyUserAccessToDevice(user, device);
 

@@ -67,18 +67,21 @@ public class OrganizationDao {
     }
 
     public Organization create(Organization organization) {
-        checkNameExists(-1, organization.name);
+        if (checkNameExists(-1, organization.name)) {
+            throw new ForbiddenWebException("Organization with this name already exists.");
+        }
         organization.id = orgSequence.incrementAndGet();
         organizations.putIfAbsent(organization.id, organization);
         return organization;
     }
 
-    public void checkNameExists(int orgId, String name) {
+    public boolean checkNameExists(int orgId, String name) {
         for (Organization org : organizations.values()) {
             if (org.id != orgId && name.equalsIgnoreCase(org.name)) {
-                throw new ForbiddenWebException("Organization with this name already exists.");
+                return true;
             }
         }
+        return false;
     }
 
     public Product getProduct(int orgId, int productId) {

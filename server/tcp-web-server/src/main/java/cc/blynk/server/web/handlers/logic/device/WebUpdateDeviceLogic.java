@@ -85,7 +85,7 @@ public class WebUpdateDeviceLogic {
             return;
         }
 
-        Device existingDevice = deviceDao.getById(newDevice.id);
+        Device existingDevice = deviceDao.getByIdOrThrow(newDevice.id);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         existingDevice.updateFromWeb(newDevice);

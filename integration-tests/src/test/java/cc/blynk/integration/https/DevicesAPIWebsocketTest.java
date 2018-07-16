@@ -3,12 +3,14 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -52,7 +54,6 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device createdDevice = client.parseDevice(2);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
-        assertEquals(1, createdDevice.id);
         assertNotNull(createdDevice.metaFields);
         assertEquals(2, createdDevice.metaFields.length);
         NumberMetaField numberMetaField = (NumberMetaField) createdDevice.metaFields[0];
@@ -67,7 +68,6 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device2", createdDevice.name);
-        assertEquals(2, createdDevice.id);
         assertNotNull(createdDevice.metaFields);
         assertEquals(2, createdDevice.metaFields.length);
         numberMetaField = (NumberMetaField) createdDevice.metaFields[0];
@@ -115,7 +115,6 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
-        assertEquals(1, createdDevice.id);
         assertNotNull(createdDevice.metaFields);
         assertEquals(0, createdDevice.metaFields.length);
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
@@ -142,7 +141,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("My Org ffff", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
@@ -163,7 +162,6 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Device createdDevice = client.parseDevice(3);
         assertNotNull(createdDevice);
         assertEquals("My New Device", createdDevice.name);
-        assertEquals(1, createdDevice.id);
         assertNotNull(createdDevice.metaFields);
         assertEquals(0, createdDevice.metaFields.length);
         assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
@@ -201,7 +199,6 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.createDevice(orgId, newDevice);
         Device device = client.parseDevice(2);
         assertEquals("My New Device", device.name);
-        assertEquals(1, device.id);
         assertNotNull(device.metaFields);
         assertEquals(2, device.metaFields.length);
 
@@ -239,4 +236,59 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(0, devices.length);
     }
 
+    @Test
+    public void getDeviceByIdNotFound() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getDevice(orgId, 1111);
+        client.verifyResult(illegalCommand(1));
+    }
+
+    @Test
+    public void checkDeviceOrgName() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.logoUrl = "/logoUrl";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        String responseString = client.getBody(2);
+        TestDevice device = JsonParser.MAPPER.readValue(responseString, TestDevice.class);
+        assertNotNull(device);
+        assertEquals("My New Device", device.name);
+        assertEquals("Blynk Inc.", device.orgName);
+        assertEquals("My product", device.productName);
+        assertEquals("/logoUrl", device.productLogoUrl);
+    }
+
+    @Test
+    @Ignore
+    //todo finish
+    public void getDevicesWithSortingByMultiFields2() throws Exception {
+
+    }
+
+    @Test
+    @Ignore
+    //todo finish
+    public void getDevicesWithSorting() throws Exception {
+
+    }
+    public static class TestDevice extends Device {
+
+        String orgName;
+
+        String productName;
+
+        String productLogoUrl;
+
+    }
 }

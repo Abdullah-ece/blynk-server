@@ -85,7 +85,7 @@ public class WebGetGraphDataLogic {
         GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
 
         //todo check user has access
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         if (device == null) {
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             log.debug("Device with passed id {} not found.", deviceId);

@@ -455,7 +455,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
 
         dash.update(deviceId, pin, pinType, pinValue, now);
@@ -517,7 +517,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Wrong pin format.");
         }
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         for (PinData pinData : pinsData) {
             reportingDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
         }

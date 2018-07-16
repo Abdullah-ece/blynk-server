@@ -55,7 +55,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
     }
 
     private void processWebDashState(ChannelHandlerContext ctx, int deviceId, String body, int msgId) {
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         if (device == null) {
             return;
         }

@@ -54,7 +54,7 @@ public class WebResolveEventLogic {
         var logEventId = Long.parseLong(messageParts[1]);
         var comment = messageParts.length == 3 ? messageParts[2] : null;
 
-        var device = deviceDao.getById(deviceId);
+        var device = deviceDao.getByIdOrThrow(deviceId);
 
         var orgId = organizationDao.getOrganizationIdByProductId(device.productId);
         var user = state.user;

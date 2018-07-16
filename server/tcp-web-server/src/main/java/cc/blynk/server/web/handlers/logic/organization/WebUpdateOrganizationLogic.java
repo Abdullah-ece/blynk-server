@@ -57,7 +57,11 @@ public class WebUpdateOrganizationLogic {
             return;
         }
 
-        organizationDao.checkNameExists(newOrganization.id, newOrganization.name);
+        if (organizationDao.checkNameExists(newOrganization.id, newOrganization.name)) {
+            log.error("Organization {} with this name already exists for {}", newOrganization, user.email);
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            return;
+        }
 
         existingOrganization.update(newOrganization);
 

@@ -62,7 +62,7 @@ public class DataHandler extends BaseHttpHandler {
                                       @QueryParam("value") String value,
                                       @QueryParam("ts") Long inTs) {
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
         PinType pinType = PinType.getPinType(dataStream.charAt(0));
@@ -93,7 +93,7 @@ public class DataHandler extends BaseHttpHandler {
             return badRequest("No data stream provided for request.");
         }
 
-        Device device = deviceDao.getById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
         dataQueryRequestGroup.setDeviceId(deviceId);
 

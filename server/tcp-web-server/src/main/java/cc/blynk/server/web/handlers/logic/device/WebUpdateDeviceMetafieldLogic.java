@@ -49,7 +49,7 @@ public class WebUpdateDeviceMetafieldLogic {
 
         int deviceId = Integer.parseInt(split[0]);
 
-        Device existingDevice = deviceDao.getById(deviceId);
+        Device existingDevice = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, existingDevice);
 
         if (existingDevice == null) {

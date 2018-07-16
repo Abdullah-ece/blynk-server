@@ -14,6 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
@@ -52,6 +53,12 @@ public class WebGetDeviceLogic {
         }
 
         Device device = deviceDao.getById(deviceId);
+        if (device == null) {
+            log.error("Device {} not found for {}.", deviceId, user.email);
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            return;
+        }
+
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         //todo show only devices for specific org?
         //Product product = org.getProduct(device.productId);
