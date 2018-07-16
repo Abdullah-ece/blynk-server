@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
@@ -30,7 +31,6 @@ import org.jooq.SelectSelectStep;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
 
@@ -103,4 +103,8 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
+    }
 }

@@ -24,6 +24,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -227,6 +228,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getOrgLocations(int orgId) {
         send("webGetOrgLocations " + orgId);
+    }
+
+    public void updateDeviceMetafield(int deviceId, MetaField metaField) {
+        send("webUpdateDeviceMetafield " + deviceId + BODY_SEPARATOR_STRING + metaField);
     }
 
     public User[] parseUsers(int expectedMessageOrder) throws Exception {

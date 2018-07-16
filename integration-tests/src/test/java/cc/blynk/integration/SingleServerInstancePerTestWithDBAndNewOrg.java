@@ -2,8 +2,11 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,6 +55,11 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
         newOrg = holder.organizationDao.create(newOrg);
         orgId = newOrg.id;
         this.clientPair = initAppAndHardPair();
+
+        String superAdmin = "super@blynk.cc";
+        String pass = "1";
+        String hash = SHA256Util.makeHash(pass, superAdmin);
+        holder.userDao.add(superAdmin, hash, AppNameUtil.BLYNK, orgId, Role.SUPER_ADMIN);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {

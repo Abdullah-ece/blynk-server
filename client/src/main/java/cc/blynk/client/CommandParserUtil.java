@@ -93,6 +93,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
@@ -317,6 +318,8 @@ public final class CommandParserUtil {
                 return WEB_INVITE_USER;
             case "webloginviainvite" :
                 return WEB_LOGIN_VIA_INVITE;
+            case "webupdatedevicemetafield" :
+                return WEB_UPDATE_DEVICE_METAFIELD;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

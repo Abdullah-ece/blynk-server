@@ -13,7 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
+import static cc.blynk.integration.TestUtil.ok;
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -82,7 +85,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
     @Test
     public void createDeviceForAnotherOrganization() throws Exception {
-        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
         Product product = new Product();
         product.name = "My product";
@@ -106,9 +109,134 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
+        newDevice.productId = fromApi.products[0].id;
+
+        client.createDevice(fromApi.id, newDevice);
+        Device createdDevice = client.parseDevice(3);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertEquals(1, createdDevice.id);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(0, createdDevice.metaFields.length);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals("super@blynk.cc", createdDevice.activatedBy);
+
+        client.getDevices(fromApi.id);
+        Device[] devices = client.parseDevices(4);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        client.getDevice(fromApi.id, devices[0].id);
+        Device device = client.parseDevice(5);
+        assertNotNull(device);
+    }
+
+    @Test
+    public void createDeviceForAnotherOrganizationAndIsVisibleForParentOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        Organization fromApi = client.parseOrganization(2);
+        assertNotNull(fromApi);
+        assertEquals(orgId, fromApi.parentId);
+        assertEquals(organization.name, fromApi.name);
+        assertEquals(organization.tzName, fromApi.tzName);
+        assertNotNull(fromApi.products);
+        assertEquals(1, fromApi.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApi.products[0].id);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApi.products[0].id;
+
+        client.createDevice(fromApi.id, newDevice);
+        Device createdDevice = client.parseDevice(3);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertEquals(1, createdDevice.id);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(0, createdDevice.metaFields.length);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals("super@blynk.cc", createdDevice.activatedBy);
+
+        client.getDevices(orgId);
+        Device[] devices = client.parseDevices(4);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        client.getDevice(orgId, devices[0].id);
+        Device device = client.parseDevice(5);
+        assertNotNull(device);
+    }
+
+    @Test
+    public void createDeviceAndUpdateMetafield() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
+        assertEquals("My New Device", device.name);
+        assertEquals(1, device.id);
+        assertNotNull(device.metaFields);
+        assertEquals(2, device.metaFields.length);
 
+        NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
+        assertEquals(1, numberMetaField.id);
+        assertEquals("Jopa", numberMetaField.name);
+        assertEquals(Role.STAFF, numberMetaField.role);
+        assertEquals(123D, numberMetaField.value, 0.1);
+        assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
+        assertEquals(getUserName(), device.activatedBy);
+        assertEquals(0, device.metadataUpdatedAt);
+        assertNull(device.metadataUpdatedBy);
+
+        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, 123D);
+        client.updateDeviceMetafield(device.id, updatedMetaField);
+        client.verifyResult(ok(3));
+
+        client.getDevice(orgId, device.id);
+        device = client.parseDevice(4);
+        assertNotNull(device);
+        assertEquals(System.currentTimeMillis(), device.metadataUpdatedAt, 5000);
+        assertEquals(getUserName(), device.metadataUpdatedBy);
+
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, 123D);
+        client.updateDeviceMetafield(device.id, updatedMetaField2);
+        client.verifyResult(illegalCommand(5));
+    }
+
+    @Test
+    public void getAllDevices() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getDevices(orgId);
+        Device[] devices = client.parseDevices(1);
+        assertNotNull(devices);
+        assertEquals(0, devices.length);
     }
 
 }

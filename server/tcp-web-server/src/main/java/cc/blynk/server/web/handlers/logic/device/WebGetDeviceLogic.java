@@ -53,7 +53,9 @@ public class WebGetDeviceLogic {
 
         Device device = deviceDao.getById(deviceId);
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        Product product = org.getProduct(device.productId);
+        //todo show only devices for specific org?
+        //Product product = org.getProduct(device.productId);
+        Product product = organizationDao.getProductById(device.productId);
 
         if (product == null) {
             log.error("Product with passed id {} not exists for org {}.", device.productId, orgId);

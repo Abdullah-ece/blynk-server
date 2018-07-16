@@ -16,6 +16,7 @@ import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
@@ -63,6 +64,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICES_META_IN_PRODUCT;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
@@ -101,6 +103,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
     private final WebInviteUserLogic webInviteUserLogic;
+    private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
 
     private final GlobalStats stats;
 
@@ -131,6 +134,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
+        this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -226,6 +230,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_INVITE_USER :
                 webInviteUserLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case WEB_UPDATE_DEVICE_METAFIELD :
+                webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }
