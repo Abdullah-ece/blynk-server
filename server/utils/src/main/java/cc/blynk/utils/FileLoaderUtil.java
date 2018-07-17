@@ -37,8 +37,8 @@ public final class FileLoaderUtil {
         return readFileAsString(TOKEN_MAIL_BODY);
     }
 
-    public static String readResetPassMailBody() {
-        return readFileAsString("reset_pass_template.html");
+    public static String readWebResetPassMailBody() {
+        return readFileAsString("web_reset_pass_template.html");
     }
 
     public static String readDynamicMailBody() {

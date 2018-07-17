@@ -11,6 +11,7 @@ import static cc.blynk.utils.FileLoaderUtil.readResetPassLandingTemplateAsString
 import static cc.blynk.utils.FileLoaderUtil.readStaticMailBody;
 import static cc.blynk.utils.FileLoaderUtil.readTemplateIdMailBody;
 import static cc.blynk.utils.FileLoaderUtil.readTokenMailBody;
+import static cc.blynk.utils.FileLoaderUtil.readWebResetPassMailBody;
 
 /**
  * The Blynk Project.
@@ -25,6 +26,7 @@ public class TextHolder {
     public final String templateIdMailBody;
     public final String pushNotificationBody;
     public final String resetPassLandingTemplate;
+    public final String webResetEmailTemplate;
     public final String appResetEmailTemplate;
     public final String appResetEmailConfirmationTemplate;
     public final String registerEmailTemplate;
@@ -37,6 +39,7 @@ public class TextHolder {
         this.templateIdMailBody = readTemplateIdMailBody();
         this.pushNotificationBody = gcmProperties.getNotificationBody();
         this.resetPassLandingTemplate = readResetPassLandingTemplateAsString();
+        this.webResetEmailTemplate = readWebResetPassMailBody();
         this.appResetEmailTemplate = readAppResetEmailTemplateAsString();
         this.appResetEmailConfirmationTemplate = readAppResetEmailConfirmationTemplateAsString();
         this.registerEmailTemplate = readRegisterEmailTemplate();

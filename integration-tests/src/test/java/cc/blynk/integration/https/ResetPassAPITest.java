@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -38,6 +39,8 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
+@Deprecated
 public class ResetPassAPITest extends APIBaseTest {
 
     @Test

@@ -172,6 +172,7 @@ public class User {
 
     public void resetPass(String hash) {
         this.pass = hash;
+        this.status = UserStatus.Active;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 

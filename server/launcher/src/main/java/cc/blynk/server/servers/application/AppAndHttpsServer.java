@@ -41,6 +41,7 @@ import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.web.handlers.auth.WebAppLoginHandler;
 import cc.blynk.server.web.handlers.auth.WebAppLoginViaInviteHandler;
+import cc.blynk.server.web.handlers.auth.WebAppResetPasswordHandler;
 import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -99,6 +100,7 @@ public class AppAndHttpsServer extends BaseServer {
         var webAppMessageEncoder = new WebAppMessageEncoder();
         var webAppLoginHandler = new WebAppLoginHandler(holder);
         var webAppLoginViaInviteHandler = new WebAppLoginViaInviteHandler(holder);
+        var webAppResetPasswordHandler = new WebAppResetPasswordHandler(holder);
 
         var externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
         var urlReWriterHandler = new UrlReWriterHandler(
@@ -168,6 +170,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast("WebMessageEncoder", webAppMessageEncoder)
                         .addLast("WebGetServer", getServerHandler)
                         .addLast("WebRegister", registerHandler)
+                        .addLast("WebResetPassword", webAppResetPasswordHandler)
                         .addLast("WebAppLoginViaInvite", webAppLoginViaInviteHandler)
                         .addLast("WebLogin", webAppLoginHandler)
                         .addLast("WebNotLogged", userNotLoggedHandler);
