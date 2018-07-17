@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URLEncoder;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.json;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -77,7 +78,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "start" :
                 if (messageParts.length < 3) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 sendResetEMail(ctx, messageParts[1], messageParts[2], message.id);
@@ -152,7 +153,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
 
         if (user == null) {
             log.debug("User does not exists.");
-            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "User does not exists."), ctx.voidPromise());
             return;
         }
 

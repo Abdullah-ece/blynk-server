@@ -20,6 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_JSON;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 
 /**
@@ -52,6 +53,8 @@ public final class MessageFactory {
                 return new HardwareLogEventMessage(messageId, body);
             case RESET_PASSWORD :
                 return new ResetPasswordMessage(messageId, body);
+            case WEB_JSON :
+                return new WebJsonMessage(messageId, body);
             default:
                 if (commandId < Command.LAST_COMMAND_INDEX) {
                     return new StringMessage(messageId, commandId, body);

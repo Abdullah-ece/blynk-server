@@ -82,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
@@ -320,6 +321,8 @@ public final class CommandParserUtil {
                 return WEB_LOGIN_VIA_INVITE;
             case "webupdatedevicemetafield" :
                 return WEB_UPDATE_DEVICE_METAFIELD;
+            case "webgetdevicetimeline" :
+                return WEB_GET_DEVICE_TIMELINE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

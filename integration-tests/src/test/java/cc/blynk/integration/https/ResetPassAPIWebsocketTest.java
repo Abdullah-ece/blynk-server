@@ -15,9 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
-import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.contains;
@@ -38,7 +38,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         AppWebSocketClient client = defaultClient();
         client.start();
         client.send("resetPass start");
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "Wrong income message format."));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         AppWebSocketClient client = defaultClient();
         client.start();
         client.send("resetPass start xxx@gmail.com Blynk");
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "User does not exists."));
     }
 
     @Test

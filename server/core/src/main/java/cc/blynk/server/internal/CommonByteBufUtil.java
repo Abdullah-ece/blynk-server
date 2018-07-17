@@ -3,6 +3,7 @@ package cc.blynk.server.internal;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 
 import java.nio.charset.StandardCharsets;
 
@@ -71,6 +72,10 @@ public final class CommonByteBufUtil {
 
     public static ResponseMessage illegalCommand(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND);
+    }
+
+    public static WebJsonMessage json(int msgId, String message) {
+        return new WebJsonMessage(msgId, message);
     }
 
     public static ResponseMessage productNotExists(int msgId) {

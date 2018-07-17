@@ -22,6 +22,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -209,6 +210,10 @@ public final class TestUtil {
 
     public static StringMessage setProperty(int msgId, String body) {
         return new StringMessage(msgId, SET_WIDGET_PROPERTY, b(body));
+    }
+
+    public static MessageBase webJson(int msgId, String message) {
+        return new WebJsonMessage(msgId, WebJsonMessage.toJson(message));
     }
 
     public static StringMessage createDevice(int msgId, String body) {

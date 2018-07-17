@@ -17,6 +17,7 @@ import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
+import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
@@ -54,6 +55,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_DELETE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
@@ -104,6 +106,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
     private final WebInviteUserLogic webInviteUserLogic;
     private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
+    private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
 
     private final GlobalStats stats;
 
@@ -135,6 +138,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
         this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
+        this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -233,6 +237,9 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
                 webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_DEVICE_TIMELINE :
+                webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

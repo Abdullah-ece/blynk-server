@@ -34,6 +34,7 @@ public final class Response {
     public static final int FACEBOOK_USER_LOGIN_WITH_PASS = 22;
 
     public static final int PRODUCT_NOT_EXISTS = 31;
+    public static final int WEB_JSON_RESPONSE = 32;
 
     //all this code just to make logging more user-friendly
     private final static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);

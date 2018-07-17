@@ -135,6 +135,7 @@ public final class Command {
     public static final short HTTP_CLONE = 93;
     public static final short HTTP_TOTAL = 94;
 
+    public static final short WEB_JSON = 99;
     public static final short WEB_GET_ACCOUNT = 100;
     public static final short WEB_UPDATE_ACCOUNT = 101;
     public static final short WEB_CREATE_DEVICE = 102;
@@ -161,6 +162,7 @@ public final class Command {
     public static final short WEB_INVITE_USER = 124;
     public static final short WEB_LOGIN_VIA_INVITE = 125;
     public static final short WEB_UPDATE_DEVICE_METAFIELD = 126;
+    public static final short WEB_GET_DEVICE_TIMELINE = 127;
 
     //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
@@ -280,7 +282,8 @@ public final class Command {
             Map.entry(WEB_CAN_DELETE_PRODUCT, "WebCanDeleteProduct"),
             Map.entry(WEB_INVITE_USER, "WebInviteUser"),
             Map.entry(WEB_LOGIN_VIA_INVITE, "WebLoginViaInvite"),
-            Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield")
+            Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
+            Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline")
     );
 
     public static String getNameByValue(short val) {
