@@ -8,7 +8,6 @@ import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebGetGraphDataLogic;
-import cc.blynk.server.web.handlers.logic.WebResolveEventLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
 import cc.blynk.server.web.handlers.logic.account.WebUpdateAccountLogic;
 import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
@@ -18,6 +17,7 @@ import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
+import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
@@ -82,7 +82,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;
     private final WebGetGraphDataLogic getWebGraphDataLogic;
-    private final WebResolveEventLogic resolveWebEventLogic;
+    private final WebResolveLogEventLogic webResolveLogEventLogic;
     private final WebCreateDeviceLogic webCreateDeviceLogic;
     private final WebGetDevicesLogic webGetDevicesLogic;
     private final WebGetDeviceLogic webGetDeviceLogic;
@@ -114,7 +114,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
         super(StringMessage.class);
         this.webAppHardwareLogic = new WebAppHardwareLogic(holder);
         this.getWebGraphDataLogic = new WebGetGraphDataLogic(holder);
-        this.resolveWebEventLogic = new WebResolveEventLogic(holder);
+        this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
         this.webGetDevicesLogic = new WebGetDevicesLogic(holder);
         this.webGetDeviceLogic = new WebGetDeviceLogic(holder);
@@ -164,7 +164,7 @@ public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 getWebGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case RESOLVE_EVENT :
-                resolveWebEventLogic.messageReceived(ctx, state, msg);
+                webResolveLogEventLogic.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

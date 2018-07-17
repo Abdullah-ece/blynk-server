@@ -1,10 +1,13 @@
-package cc.blynk.server.web.handlers.logic;
+package cc.blynk.server.web.handlers.logic.device.timeline;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -15,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
+import static cc.blynk.server.internal.CommonByteBufUtil.json;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -26,9 +30,9 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebResolveEventLogic {
+public class WebResolveLogEventLogic {
 
-    private static final Logger log = LogManager.getLogger(WebResolveEventLogic.class);
+    private static final Logger log = LogManager.getLogger(WebResolveLogEventLogic.class);
 
     private final DeviceDao deviceDao;
     private final OrganizationDao organizationDao;
@@ -36,7 +40,7 @@ public class WebResolveEventLogic {
     private final ReportingDBManager reportingDBManager;
     private final SessionDao sessionDao;
 
-    public WebResolveEventLogic(Holder holder) {
+    public WebResolveLogEventLogic(Holder holder) {
         this.deviceDao = holder.deviceDao;
         this.organizationDao = holder.organizationDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
@@ -46,18 +50,23 @@ public class WebResolveEventLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         //deviceId logEventId comment
-        var messageParts = split3(message.body);
+        String[] messageParts = split3(message.body);
 
-        var deviceId = Integer.parseInt(messageParts[0]);
+        int deviceId = Integer.parseInt(messageParts[0]);
 
         //logEventId comment
-        var logEventId = Long.parseLong(messageParts[1]);
-        var comment = messageParts.length == 3 ? messageParts[2] : null;
+        long logEventId = Long.parseLong(messageParts[1]);
+        String comment = messageParts.length == 3 ? messageParts[2] : null;
 
-        var device = deviceDao.getByIdOrThrow(deviceId);
+        User user = state.user;
+        Device device = deviceDao.getById(deviceId);
+        if (device == null) {
+            log.error("Device {} not found for {}.", deviceId, user.email);
+            ctx.writeAndFlush(json(message.id, "Requested device not found."), ctx.voidPromise());
+            return;
+        }
 
-        var orgId = organizationDao.getOrganizationIdByProductId(device.productId);
-        var user = state.user;
+        int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
             throw new NotAllowedException("You have no access to this device.", message.id);
@@ -68,8 +77,8 @@ public class WebResolveEventLogic {
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
                     response = ok(message.id);
-                    var session = sessionDao.userSession.get(state.userKey);
-                    var body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
+                    Session session = sessionDao.userSession.get(state.userKey);
+                    String body = messageParts[1] + BODY_SEPARATOR_STRING + user.email;
                     if (comment != null) {
                         body = body + BODY_SEPARATOR_STRING + comment;
                     }
