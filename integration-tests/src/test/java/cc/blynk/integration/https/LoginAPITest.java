@@ -19,7 +19,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,7 +26,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -251,69 +249,6 @@ public class LoginAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-    }
-
-    @Test
-    @Ignore
-    //todo fix
-    public void testAssignNewToken() throws Exception {
-        login(admin.email, admin.pass);
-
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=123");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpPut put = new HttpPut(httpsAdminServerUrl+ "/123/pin/v10");
-        put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(put)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpGet get = new HttpGet(httpsAdminServerUrl.replaceAll("/dashboard", "") + "123/pin/v10");
-
-        try (CloseableHttpResponse response = httpclient.execute(get)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
-            assertEquals(1, values.size());
-            assertEquals("100", values.get(0));
-        }
-
-        request = new HttpGet(httpsAdminServerUrl.replaceAll("/dashboard", "") + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=124");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
-        }
-    }
-
-    @Test
-    @Ignore
-    //todo fix
-    public void testForceAssignNewToken() throws Exception {
-        login(admin.email, admin.pass);
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/force?email=dmitriy@blynk.cc&app=Blynk&dashId=79780619&deviceId=0&new=123");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpPut put = new HttpPut(httpsAdminServerUrl.replaceAll("/dashboard", "") + "/123/pin/v10");
-        put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(put)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
-
-        HttpGet get = new HttpGet(httpsAdminServerUrl.replaceAll("/dashboard", "") + "/123/pin/v10");
-
-        try (CloseableHttpResponse response = httpclient.execute(get)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
-            assertEquals(1, values.size());
-            assertEquals("100", values.get(0));
         }
     }
 
