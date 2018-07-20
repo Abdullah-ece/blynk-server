@@ -19,8 +19,8 @@ export const Time = {
     moment(time).set({second:0}).format('HH:mm')
   ),
 
-  toTimestamp: (time) => (
-    Math.round((moment().hours(time.split(':')[0]).minutes(time.split(':')[1]).valueOf()) )
-  )
+  toTimestamp: (time) => {
+    return Math.round((moment().set({second:0,millisecond:0}).hours(time.split(':')[0]).minutes(time.split(':')[1]).valueOf()));
+  }
 
 };
