@@ -63,7 +63,7 @@ public class WebGetDeviceTimelineLogic {
             return;
         }
 
-        organizationDao.verifyUserAccessToDevice(user, device);
+       // organizationDao.verifyUserAccessToDevice(user, device);
         Product product = organizationDao.getProductById(device.productId);
 
         blockingIOProcessor.executeDB(() -> {

@@ -1,5 +1,6 @@
 package cc.blynk.server.web.handlers.logic.device.timeline;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.EventType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,5 +33,10 @@ public class TimelineDTO {
         this.to = to;
         this.offset = offset;
         this.limit = limit;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

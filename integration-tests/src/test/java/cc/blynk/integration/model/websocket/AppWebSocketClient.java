@@ -24,10 +24,13 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
+import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
+import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -230,8 +233,20 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetOrgLocations " + orgId);
     }
 
+    public void getTimeline(int orgId, int deviceId,
+                            EventType eventType, Boolean isResolved,
+                            long form, long to,
+                            int offset, int limit) {
+        send("webgetdevicetimeline " +
+                new TimelineDTO(orgId, deviceId, eventType, isResolved, form, to, offset, limit).toString());
+    }
+
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {
         send("webUpdateDeviceMetafield " + deviceId + BODY_SEPARATOR_STRING + metaField);
+    }
+
+    public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }
 
     public User[] parseUsers(int expectedMessageOrder) throws Exception {
