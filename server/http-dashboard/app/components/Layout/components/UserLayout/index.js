@@ -189,10 +189,12 @@ class UserLayout extends React.Component {
                 <Icon type="appstore-o"/>
                 <span>Products</span>
               </Menu.Item>
-              <Menu.Item key="/organizations">
-                <Icon type="usergroup-add"/>
-                <span>Organizations</span>
-              </Menu.Item>
+              {this.props.Organization && this.props.Organization.canCreateOrgs && (
+                <Menu.Item key="/organizations">
+                  <Icon type="usergroup-add"/>
+                  <span>Organizations</span>
+                </Menu.Item>
+              )}
             </Menu>
             <div className="user-layout-left-navigation-profile">
               <Dropdown overlay={this.AccountMenu()} trigger={['click']} placement="topLeft">
