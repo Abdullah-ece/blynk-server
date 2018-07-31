@@ -65,6 +65,8 @@
          https://github.com/blynkkk/blynk-server/issues/751 -->
         <Logger name="io.netty" level="INFO" additivity="false" />
 
+        <Logger name="org.jooq" level="DEBUG" additivity="false" />
+
         <Root>
             <AppenderRef ref="userLog"/>
         </Root>
