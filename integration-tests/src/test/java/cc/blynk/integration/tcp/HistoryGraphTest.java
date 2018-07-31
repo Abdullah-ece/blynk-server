@@ -13,13 +13,20 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.DeviceReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -28,6 +35,7 @@ import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ReportingUtil;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +60,8 @@ import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -80,35 +90,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
-    @Test
-    public void testGetGraphDataFor1Pin() throws Exception {
-        String tempDir = holder.props.getProperty("data.folder");
-
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
-
-        clientPair.appClient.send("getgraphdata 1 d 8 24 h");
-
-        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(1111111, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(2222222, bb.getLong());
+    @Before
+    public void cleanStorage() {
+        holder.reportingDiskDao.averageAggregator.getMinute().clear();
+        holder.reportingDiskDao.averageAggregator.getHourly().clear();
+        holder.reportingDiskDao.averageAggregator.getDaily().clear();
+        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
     }
 
     @Test
@@ -120,7 +107,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -175,13 +162,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testDeleteGraphCommandWorks() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8 del");
-
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-    }
-
-    @Test
     public void testGetGraphDataForTagAndForEnhancedGraph1StreamWithoutData() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
@@ -213,7 +193,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -282,7 +262,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -348,7 +328,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -414,7 +394,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -480,7 +460,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -546,7 +526,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -624,7 +604,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -668,7 +648,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -701,7 +681,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -746,7 +726,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -794,7 +774,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -813,6 +793,369 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 89 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice2() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        //no live
+        enhancedHistoryGraph.selectedPeriods = new GraphPeriod[] {
+                ONE_HOUR, SIX_HOURS
+        };
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTilesWith2Pins() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 89, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+        clientPair.hardwareClient.send("hardware vw 89 112");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 112"))));
+
+
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(2, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        DeviceSelector deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200000;
+        deviceSelector.x = 0;
+        deviceSelector.y = 0;
+        deviceSelector.width = 1;
+        deviceSelector.height = 1;
+        deviceSelector.deviceIds = new int[] {0, 1};
+
+        clientPair.appClient.createWidget(1, deviceSelector);
+        clientPair.appClient.verifyResult(ok(2));
+
+        Superchart superchart = new Superchart();
+        superchart.id = 432;
+        superchart.width = 8;
+        superchart.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, (int) deviceSelector.id,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, superchart);
+        clientPair.appClient.verifyResult(ok(3));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new DeviceReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting2() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new TileTemplateReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        0,
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting3() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new TileTemplateReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
+                                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                        0,
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 89 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
     public void testGetLIVEGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -822,7 +1165,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -889,7 +1232,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -918,7 +1261,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -983,7 +1326,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1060,7 +1403,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1109,7 +1452,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1160,7 +1503,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1199,7 +1542,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1219,7 +1562,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeleteWorksForEnhancedGraph() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1269,7 +1612,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("export 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(3)));
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA)));
 
         //generate fake reporting data
@@ -1280,7 +1623,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_a7_"));
     }
 
@@ -1294,7 +1637,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_0_a7_");
@@ -1332,7 +1675,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("export 1-200000 14");
+        clientPair.appClient.send("export 1-200000 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1385,7 +1728,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1458,7 +1801,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {1};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1535,7 +1878,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1774,7 +2117,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1851,26 +2194,19 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.updateWidget(1, "{\n" +
-                "                    \"type\":\"LOGGER\",\n" +
-                "                    \"id\":14,\n" +
-                "                    \"x\":0,\n" +
-                "                    \"y\":6,\n" +
-                "                    \"color\":0,\n" +
-                "                    \"width\":8,\n" +
-                "                    \"height\":3,\n" +
-                "                    \"tabId\":0,\n" +
-                "                    \"deviceId\":200000,\n" +
-                "                    \"pins\":\n" +
-                "                        [\n" +
-                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
-                "                        ],\n" +
-                "                    \"period\":\"THREE_MONTHS\",\n" +
-                "                    \"showLegends\":true\n" +
-                "                }");
+        Superchart superchart = new Superchart();
+        superchart.id = 191600;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((byte) 7, PinType.ANALOG);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0,
+                200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+        };
+
+        clientPair.appClient.updateWidget(1, superchart);
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
 
@@ -1888,7 +2224,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_200000_a7_");

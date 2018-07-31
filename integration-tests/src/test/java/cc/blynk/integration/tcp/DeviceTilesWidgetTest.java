@@ -16,11 +16,11 @@ import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tab;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
@@ -54,6 +54,7 @@ import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -735,6 +736,221 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void doNotPerformReadCommandWhenNoReadingWidgetInsideTileTemplate() throws Exception {
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient2.start();
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+
+        clientPair.appClient.reset();
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", BoardType.ESP8266, null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 1234;
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = 77;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.frequency = 0;
+        valueDisplay.deviceId = -1;
+
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", BoardType.ESP8266, null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.updateTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, device1.id);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        sleep(1200);
+
+        hardClient2.never(produce(READING_MSG_ID, HARDWARE, b("vr 77")));
+        clientPair.hardwareClient.never(produce(READING_MSG_ID, HARDWARE, b("vr 77")));
+    }
+
+    @Test
+    public void deviceRemovalDoesntEraseAllTiles() throws Exception {
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient2.start();
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+
+        clientPair.appClient.reset();
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        DataStream dataStream = new DataStream((byte) 66, PinType.VIRTUAL);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 1234;
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = 77;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.frequency = 0;
+        valueDisplay.deviceId = -1;
+
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.updateTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, device1.id);
+        clientPair.appClient.verifyResult(ok(1));
+
+        hardClient2.send("hardware vw 66 444");
+        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 66 444"));
+
+        clientPair.hardwareClient.send("hardware vw 66 555");
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 66 555"));
+
+        clientPair.appClient.deleteDevice(1, 1);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 66 555"));
+    }
+
+    @Test
+    public void addingNewDeviceToTheTilesPreservesTileValue() throws Exception {
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient2.start();
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+
+        clientPair.appClient.reset();
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        DataStream dataStream = new DataStream((byte) 66, PinType.VIRTUAL);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 1234;
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = 77;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.frequency = 0;
+        valueDisplay.deviceId = -1;
+
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.updateTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.send("hardware vw 66 444");
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 66 444"));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 66 444"));
+
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0, 1}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.updateTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 66 444"));
+    }
+
+    @Test
     public void createTemplateWithTiles() throws Exception {
         long widgetId = 21321;
 
@@ -940,7 +1156,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void getEnhancedHistoryGraphWorksForTiles() throws Exception {
+    public void getSuperchartGraphWorksForTiles() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -955,20 +1171,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -979,7 +1195,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void getEnhancedHistoryGraphWorksForTiles2() throws Exception {
+    public void getSuperchartGraphWorksForTiles2() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -994,20 +1210,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1018,7 +1234,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void exportEnhancedHistoryGraphWorksForTiles() throws Exception {
+    public void exportSuperchartGraphWorksForTiles() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -1033,20 +1249,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 0,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1088,7 +1304,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "4600")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "5800")));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "name", "name", "iconName", BoardType.ESP8266, null,
@@ -1101,19 +1317,19 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "4400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "5600")));
 
         clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
         clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "4200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "5400")));
 
         clientPair.appClient.deleteWidget(1, 101);
         clientPair.appClient.verifyResult(ok(8));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "4400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "5600")));
 
         clientPair.appClient.deleteWidget(1, 21321);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));

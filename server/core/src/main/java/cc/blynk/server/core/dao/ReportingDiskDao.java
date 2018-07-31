@@ -5,8 +5,10 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -47,7 +49,7 @@ public class ReportingDiskDao implements Closeable {
     private static final Logger log = LogManager.getLogger(ReportingDiskDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
-    private final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
+    public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
     public final CSVGenerator csvGenerator;
 
@@ -308,11 +310,20 @@ public class ReportingDiskDao implements Closeable {
             return;
         }
 
-        BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
-        averageAggregator.collect(key, ts, doubleVal);
-        if (device.webDashboard.needRawDataForGraph(pin, pinType)
-                || dash.needRawDataForGraph(deviceId, pin, pinType)) {
-            rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+        //store history data only for the pins assigned to the superchart
+        Widget widgetWithLogPins = dash.getWidgetWithLoggedPin(deviceId, pin, pinType);
+        if (widgetWithLogPins != null) {
+            BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
+            averageAggregator.collect(key, ts, doubleVal);
+            if (device.webDashboard.needRawDataForGraph(pin, pinType)) {
+                rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+            } else {
+                if (widgetWithLogPins instanceof Superchart) {
+                    if (((Superchart) widgetWithLogPins).hasLivePeriodsSelected()) {
+                        rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+                    }
+                }
+            }
         }
     }
 

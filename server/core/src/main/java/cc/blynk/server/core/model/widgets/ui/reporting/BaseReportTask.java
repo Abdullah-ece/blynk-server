@@ -4,7 +4,6 @@ import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -65,11 +64,8 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private static String deviceAndPinFileName(String deviceName, int deviceId, ReportDataStream reportDataStream) {
-        return deviceAndPinFileName(deviceName, deviceId, reportDataStream.pinType, reportDataStream.pin);
-    }
-
-    private static String deviceAndPinFileName(String deviceName, int deviceId, PinType pinType, byte pin) {
-        return deviceName + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv";
+        String pinLabel = reportDataStream.formatForFileName();
+        return deviceName + "_" + deviceId + "_" + pinLabel + ".csv";
     }
 
     private static String deviceFileName(String deviceName, int deviceId) {
@@ -166,14 +162,13 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private boolean generateReport(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
-        //todo for now supporting only some types of output format
         switch (report.reportOutput) {
-            case EXCEL_TAB_PER_DEVICE:
             case MERGED_CSV:
                 return merged(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE:
                 return filePerDevice(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE_PER_PIN:
+            case EXCEL_TAB_PER_DEVICE:
             default:
                 return filePerDevicePerPin(output, dash, fetchCount, startFrom);
         }
@@ -197,7 +192,7 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    String pin = reportDataStream.formatPin();
+                                    String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
                                             onePinData, pin, deviceName, startFrom, report.makeFormatter());
                                 }
@@ -229,7 +224,7 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    String pin = reportDataStream.formatPin();
+                                    String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
                                             onePinData, pin, startFrom, report.makeFormatter());
                                 }

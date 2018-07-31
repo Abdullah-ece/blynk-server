@@ -32,11 +32,22 @@ public class ReportDataStream {
         this.isSelected = isSelected;
     }
 
+    public boolean isSame(byte pin, PinType pinType) {
+        return this.pin == pin && this.pinType == pinType;
+    }
+
     public boolean isValid() {
         return DataStream.isValid(pin, pinType);
     }
 
-    public String formatPin() {
+    public String formatForFileName() {
+        if (label == null || label.isEmpty()) {
+            return pinType.pinTypeString + pin;
+        }
+        return StringUtils.truncate(label.replaceAll("[^a-zA-Z0-9]", ""), 16);
+    }
+
+    public String formatAndEscapePin() {
         if (label == null || label.isEmpty()) {
             return pinType.pinTypeString + pin;
         }

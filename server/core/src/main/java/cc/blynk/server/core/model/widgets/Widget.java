@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
+import cc.blynk.server.core.model.widgets.controls.LinkButton;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
@@ -34,7 +35,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
@@ -42,7 +42,7 @@ import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Map;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.VerticalLevelDisplay;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.sensors.Accelerometer;
 import cc.blynk.server.core.model.widgets.sensors.Barometer;
 import cc.blynk.server.core.model.widgets.sensors.GPSStreaming;
@@ -53,10 +53,10 @@ import cc.blynk.server.core.model.widgets.sensors.Light;
 import cc.blynk.server.core.model.widgets.sensors.Proximity;
 import cc.blynk.server.core.model.widgets.sensors.Temperature;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
+import cc.blynk.server.core.model.widgets.ui.image.Image;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -96,6 +96,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
         @JsonSubTypes.Type(value = StyledButton.class, name = "STYLED_BUTTON"),
+        @JsonSubTypes.Type(value = LinkButton.class, name = "LINK_BUTTON"),
         @JsonSubTypes.Type(value = TextInput.class, name = "TEXT_INPUT"),
         @JsonSubTypes.Type(value = NumberInput.class, name = "NUMBER_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
@@ -119,8 +120,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
-        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
-        @JsonSubTypes.Type(value = EnhancedHistoryGraph.class, name = "ENHANCED_GRAPH"),
+        @JsonSubTypes.Type(value = Superchart.class, name = "ENHANCED_GRAPH"),
 
         //sensors
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),

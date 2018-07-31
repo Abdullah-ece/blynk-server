@@ -1,7 +1,9 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.ButtonStyle;
 import cc.blynk.server.core.model.widgets.controls.Edge;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
@@ -57,6 +59,15 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
         return -1;
     }
 
+    public boolean hasPin(byte pin, PinType pinType, int deviceId) {
+        for (ReportSource reportSource : reportSources) {
+            if (reportSource.isSame(pin, pinType, deviceId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void deleteDevice(int deviceId) {
         for (Report report : reports) {
@@ -71,5 +82,17 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
     @Override
     public int getPrice() {
         return Report.getPrice() * reports.length;
+    }
+
+    @Override
+    public void erase() {
+        this.reports = EMPTY_REPORTS;
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof ReportingWidget) {
+            this.reports = ((ReportingWidget) oldWidget).reports;
+        }
     }
 }

@@ -204,7 +204,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         //running from jar
         if (isUnpacked) {
-            log.debug("Is unpacked.");
+            log.trace("Is unpacked.");
             if (staticFile instanceof StaticFileEdsWith) {
                 StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
                 path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
@@ -216,7 +216,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             path = FileUtils.getPathForLocalRun(uri);
         }
 
-        log.debug("Getting file from path {}", path);
+        log.trace("Getting file from path {}", path);
 
         if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);

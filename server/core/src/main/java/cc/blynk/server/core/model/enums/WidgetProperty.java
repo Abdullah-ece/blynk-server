@@ -21,7 +21,12 @@ public enum WidgetProperty {
     IS_ON_PLAY("isOnPlay"),
     URL("url"),
     STEP("step"),
-    FRACTION("maximumFractionDigits");
+    VALUE_FORMATTING("valueFormatting"),
+    SUFFIX("suffix"),
+    FRACTION("maximumFractionDigits"),
+    OPACITY("opacity"),
+    SCALE("scale"),
+    ROTATION("rotation");
 
     public final String label;
 
@@ -59,6 +64,10 @@ public enum WidgetProperty {
                 return URL;
             case "step" :
                 return STEP;
+            case "valueFormatting" :
+                return VALUE_FORMATTING;
+            case "suffix" :
+                return SUFFIX;
             case "maximumFractionDigits" :
                 return FRACTION;
             default:

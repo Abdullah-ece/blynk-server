@@ -26,7 +26,8 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -233,10 +234,58 @@ public class DashBoard {
         return null;
     }
 
-    public boolean needRawDataForGraph(int deviceId, byte pin, PinType pinType) {
+    public Widget getWidgetWithLoggedPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
-            if (widget instanceof EnhancedHistoryGraph) {
-                if (((EnhancedHistoryGraph) widget).hasPin(deviceId, pin, pinType)) {
+            if (widget instanceof Superchart) {
+                Superchart graph = (Superchart) widget;
+                if (isWithinGraph(graph, pin, pinType, deviceId)) {
+                    return graph;
+                }
+            }
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                    for (Widget tilesWidget : tileTemplate.widgets) {
+                        if (tilesWidget instanceof Superchart) {
+                            Superchart graph = (Superchart) tilesWidget;
+                            if (isWithinGraph(graph, pin, pinType, deviceId, tileTemplate.deviceIds)) {
+                                return graph;
+                            }
+                        }
+                    }
+                }
+            }
+            if (widget instanceof ReportingWidget) {
+                ReportingWidget reportingWidget = (ReportingWidget) widget;
+                if (reportingWidget.hasPin(pin, pinType, deviceId)) {
+                    return reportingWidget;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isWithinGraph(Superchart graph,
+                                  byte pin, PinType pinType, int deviceId, int... deviceIds) {
+        for (GraphDataStream graphDataStream : graph.dataStreams) {
+            if (graphDataStream != null && graphDataStream.dataStream != null
+                    && graphDataStream.dataStream.isSame(pin, pinType)) {
+
+                int graphTargetId = graphDataStream.targetId;
+
+                //this is the case when datastream assigned directly to the device
+                if (deviceId == graphTargetId) {
+                    return true;
+                }
+
+                //this is the case when graph is within deviceTiles
+                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
+                    return true;
+                }
+
+                //this is the case when graph is within device selector or tags
+                Target target = getTarget(graphTargetId);
+                if (target != null && ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId)) {
                     return true;
                 }
             }
@@ -423,11 +472,8 @@ public class DashBoard {
         pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
-                if (widget instanceof DeviceTiles) {
-                    //deviceTiles has a bit different removal logic, so we remove manually here
-                    DeviceTiles deviceTiles = (DeviceTiles) widget;
-                    deviceTiles.eraseTiles();
-                } else {
+                //deviceTiles has a bit different removal logic, so we skip it here
+                if (!(widget instanceof DeviceTiles)) {
                     widget.erase();
                 }
             }
@@ -470,17 +516,15 @@ public class DashBoard {
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
-        if (widget instanceof OnePinWidget) {
-            OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(onePinWidget, -1, removeProperties);
-        } else if (widget instanceof MultiPinWidget) {
-            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(multiPinWidget, -1, removeProperties);
-        } else if (widget instanceof DeviceTiles) {
-            DeviceTiles deviceTiles = (DeviceTiles) widget;
-            cleanPinStorage(deviceTiles, removeProperties);
+    private static Tag[] copyTags(Tag[] tagsToCopy) {
+        if (tagsToCopy.length == 0) {
+            return tagsToCopy;
         }
+        Tag[] copy = new Tag[tagsToCopy.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = tagsToCopy[i].copy();
+        }
+        return copy;
     }
 
     private void cleanPinStorage(DeviceTiles deviceTiles, boolean removeProperties) {
@@ -623,7 +667,9 @@ public class DashBoard {
             Widget copyWidget = newWidget.copy();
 
             //for now erasing only for this types, not sure about DeviceTiles
-            if (copyWidget instanceof OnePinWidget || copyWidget instanceof MultiPinWidget) {
+            if (copyWidget instanceof OnePinWidget
+                    || copyWidget instanceof MultiPinWidget
+                    || copyWidget instanceof ReportingWidget) {
                 copyWidget.erase();
             }
 
@@ -636,15 +682,17 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    private Tag[] copyTags(Tag[] tagsToCopy) {
-        if (tagsToCopy.length == 0) {
-            return tagsToCopy;
+    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            cleanPinStorage(onePinWidget, -1, removeProperties);
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            cleanPinStorage(multiPinWidget, -1, removeProperties);
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            cleanPinStorage(deviceTiles, removeProperties);
         }
-        Tag[] copy = new Tag[tagsToCopy.length];
-        for (int i = 0; i < copy.length; i++) {
-            copy[i] = tagsToCopy[i].copy();
-        }
-        return copy;
     }
 
     //removes devices that has no widgets assigned to
