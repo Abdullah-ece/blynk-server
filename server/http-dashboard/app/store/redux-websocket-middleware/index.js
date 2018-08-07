@@ -69,7 +69,7 @@ const onSocketError = (params) => {
 
     store.dispatch(_websocketError());
 
-    params.resolve();
+    params.reject();
 
   };
 };
@@ -126,10 +126,11 @@ export const createWsMiddleware = (options = {}) => {
 
     if(action && action.type === WS_ACTIONS.WEBSOCKET_CONNECT || action.type === WS_ACTIONS.WEBSOCKET_CLOSE) {
       next(action);
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         socket = wsConnect({
           ...params,
           resolve: resolve,
+          reject: reject,
         });
       });
     }

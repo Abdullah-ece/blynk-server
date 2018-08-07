@@ -42,6 +42,18 @@ export default function Login(state = { isLoggedIn: false }, action) {
         isLoggedIn: true
       };
 
+    case "API_WS_LOGIN_SUCCESS":
+      return {
+        ...state,
+        isWsLoggedIn: true,
+      };
+
+    case "API_WS_LOGOUT":
+      return {
+        ...state,
+        isWsLoggedIn: false,
+      };
+
     default:
       return state;
   }

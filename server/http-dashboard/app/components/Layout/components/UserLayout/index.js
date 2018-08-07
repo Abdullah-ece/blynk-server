@@ -62,12 +62,12 @@ class UserLayout extends React.Component {
   }
 
   componentWillMount() {
-    this.props.blynkWsConnect().then(() => {
-      this.props.blynkWsLogin({
-        username: this.props.Account.credentials.username,
-        hash    : this.props.Account.credentials.password
-      });
-    });
+    // this.props.blynkWsConnect().then(() => {
+    //   this.props.blynkWsLogin({
+    //     username: this.props.Account.credentials.username,
+    //     hash    : this.props.Account.credentials.password
+    //   });
+    // });
   }
 
   componentWillReceiveProps(props) {

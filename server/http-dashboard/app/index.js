@@ -31,6 +31,7 @@ import LoginLayout from './components/LoginLayout';
 import TermsAndConditions from './components/TermsAndConditions';
 
 /* scenes */
+import Connection from './scenes/Connection';
 import Login from './scenes/Login';
 import Book from './scenes/Book';
 import Devices from './scenes/Devices';
@@ -48,7 +49,10 @@ import {Provider} from 'react-redux';
 import Store from './store';
 
 /* services */
-import {RouteGuestOnly, RouteAuthorizedOnly} from './services/Login';
+import {
+  RouteGuestOnly,
+  // RouteAuthorizedOnly
+} from './services/Login';
 import {
   Products as ProductsPreloader,
   Organization as OrganizationPreloader,
@@ -93,45 +97,47 @@ Store().then((store) => {
             <Route path="/book/chart" component={Book.Chart}/>
             <Route path="/book/canvasjs" component={Book.Canvasjs}/>
           </Route>
-          <Route component={Layout}>
-            <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
-              <Route path="/user-profile" component={UserProfile} />
-              <Route path="/user-profile/:tab" component={UserProfile} />
-              <Route onEnter={DevicesPreloader(store)}>
-                <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
-                <Route path="/devices/create" components={Devices}/>
-                <Route path="/devices/:id" components={Devices}/>
-                <Route path="/devices/:id/:tab" components={Devices}/>
-                <Route path="/devices/:id/create" components={Devices}/>
+          <Route component={Connection}>
+            <Route component={Layout}>
+              <Route component={UserLayout} /*onEnter={RouteAuthorizedOnly(store)}*/>
+                <Route path="/user-profile" component={UserProfile}/>
+                <Route path="/user-profile/:tab" component={UserProfile}/>
+                <Route onEnter={DevicesPreloader(store)}>
+                  <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
+                  <Route path="/devices/create" components={Devices}/>
+                  <Route path="/devices/:id" components={Devices}/>
+                  <Route path="/devices/:id/:tab" components={Devices}/>
+                  <Route path="/devices/:id/create" components={Devices}/>
+                </Route>
+                <Route path="/organizations" component={Organizations.Index}/>
+                <Route path="/organizations/create" component={Organizations.Create}/>
+                <Route path="/organizations/create/:tab" component={Organizations.Create}/>
+                <Route path="/organizations/edit/:id" component={Organizations.Edit}/>
+                <Route path="/organizations/edit/:id/:tab" component={Organizations.Edit}/>
+                <Route path="/organizations/:id" component={Organizations.Details}/>
+                <Route path="/organizations/:id/:tab" component={Organizations.Details}/>
+                <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
+                <Route path="/products/create" component={ProductCreate} onEnter={OrganizationPreloader(store)}/>
+                <Route path="/products/create/:tab" component={ProductCreate}/>
+                <Route path="/products/edit/:id" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
+                <Route path="/products/edit/:id/:tab" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
+                <Route path="/products/clone/:id" component={ProductClone} onEnter={ProductsPreloader(store)}/>
+                <Route path="/products/clone/:id/:tab" component={ProductClone} onEnter={ProductsPreloader(store)}/>
+                <Route path="/product/:id" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
+                <Route path="/product/:id/:tab" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
               </Route>
-              <Route path="/organizations" component={Organizations.Index}/>
-              <Route path="/organizations/create" component={Organizations.Create}/>
-              <Route path="/organizations/create/:tab" component={Organizations.Create}/>
-              <Route path="/organizations/edit/:id" component={Organizations.Edit}/>
-              <Route path="/organizations/edit/:id/:tab" component={Organizations.Edit}/>
-              <Route path="/organizations/:id" component={Organizations.Details}/>
-              <Route path="/organizations/:id/:tab" component={Organizations.Details}/>
-              <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
-              <Route path="/products/create" component={ProductCreate} onEnter={OrganizationPreloader(store)}/>
-              <Route path="/products/create/:tab" component={ProductCreate}/>
-              <Route path="/products/edit/:id" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
-              <Route path="/products/edit/:id/:tab" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
-              <Route path="/products/clone/:id" component={ProductClone} onEnter={ProductsPreloader(store)}/>
-              <Route path="/products/clone/:id/:tab" component={ProductClone} onEnter={ProductsPreloader(store)}/>
-              <Route path="/product/:id" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
-              <Route path="/product/:id/:tab" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
-            </Route>
-            <Route path="/logout" component={Logout}/>
-            <Route component={LoginLayout}>
-              <Route path="/login" component={Login} onEnter={RouteGuestOnly(store)}/>
-              <Route path="/forgot-pass" component={ForgotPass} onEnter={RouteGuestOnly(store)}/>
-              <Route path="/resetpass" component={ResetPass}/>
-              <Route path="/invite" component={Invite}/>
+              <Route path="/logout" component={Logout}/>
+              <Route component={LoginLayout}>
+                <Route path="/login" component={Login} onEnter={RouteGuestOnly(store)}/>
+                <Route path="/forgot-pass" component={ForgotPass} /*onEnter={RouteGuestOnly(store)}*//>
+                <Route path="/resetpass" component={ResetPass}/>
+                <Route path="/invite" component={Invite}/>
+              </Route>
             </Route>
           </Route>
           <Route path="/terms-and-conditions" component={TermsAndConditions}/>
           <Route component={StyleGuide} path="/style-guide"/>
-          <Redirect from="*" to="/login"/>
+          <Redirect from="*" to="/devices"/>
         </Router>
       </LocaleProvider>
     </Provider>,

@@ -273,17 +273,11 @@ export const blynkWsMessage = (params) => {
     msgId   : msgId
   });
 
-  let previousAction = null;
-
   let message = null;
 
   messages.forEach((msg) => {
-    if(Number(msg.msgId) === Number(msgId)) {
+    if(Number(msg.msgId) === Number(msgId) && message === null) {
       message = msg;
-    }
-
-    if(Number(msg.msgId) === Number(msgId) && previousAction === null) {
-      previousAction = msg;
     }
   });
 
@@ -296,14 +290,14 @@ export const blynkWsMessage = (params) => {
 
     handlers.ResponseOKHandler({
       responseCode  : responseCode,
-      previousAction: previousAction
+      previousAction: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
     });
 
   } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
 
     handlers.ApiCallHandler({
       msgId: ++MSG_ID,
-      previousAction: previousAction.previousAction,
+      previousAction: message.previousAction,
       promiseResolve: message.promiseResolve,
     });
 
@@ -347,14 +341,14 @@ export const blynkWsMessage = (params) => {
 
     handlers.ChartDataHandler({
       msgId: ++MSG_ID,
-      previousAction,
+      message,
     });
 
   } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
 
     handlers.NoDataHandler({
       msgId: ++MSG_ID,
-      previousAction,
+      message,
     });
 
   } else {

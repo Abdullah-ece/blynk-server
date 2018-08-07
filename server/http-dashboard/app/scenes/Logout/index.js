@@ -31,6 +31,18 @@ export default class Logout extends React.Component {
     });
   }
 
+  componentWillMount() {
+    this.props.Logout().catch(() => {
+      this.context.router.push('/login');
+    }).then(() => {
+      this.context.router.push('/login');
+    });
+  }
+
+  componentDidUpdate() {
+    this.context.router.push('/login');
+  }
+
   render() {
     return <div/>;
   }

@@ -38,7 +38,7 @@ const persisStoreConfig = {
      - Storage - Created specially to store data on localStorage
      - Name - description
      */
-    'Login',
+    // 'Login',
     'Account',
     'Storage'
   ]

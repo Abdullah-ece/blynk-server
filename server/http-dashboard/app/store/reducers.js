@@ -16,6 +16,7 @@ import Product from '../data/Product/reducers';
 import Storage from '../data/Storage/reducers';
 import PageLoading from '../data/PageLoading/reducers';
 import Devices from '../data/Devices/reducers';
+import Connection from '../data/Connection/reducers';
 // import Widgets from '../data/Widgets/reducers';
 import UserProfile from '../data/UserProfile/reducers';
 
@@ -47,6 +48,7 @@ const reducers = {
   Devices: Devices,
   Organizations,
   UserProfile,
+  Connection,
 };
 
 export default combineReducers(reducers);

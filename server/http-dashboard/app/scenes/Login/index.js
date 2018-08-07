@@ -46,6 +46,8 @@ export default class Login extends React.Component {
 
   handleSubmit(values) {
 
+    // password - 84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=
+
     const password = encryptUserPassword(values.email, values.password);
 
     this.setState({
