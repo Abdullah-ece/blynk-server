@@ -39,8 +39,33 @@ export const COMMANDS = {
 };
 
 export const API_COMMANDS = {
-  GET_ACCOUNT: 100,
-  GET_DEVICES: 104,
+  GET_ACCOUNT                   : 100,
+  UPDATE_ACCOUNT                : 101,
+  CREATE_DEVICE                 : 102,
+  UPDATE_DEVICE                 : 103,
+  GET_DEVICES                   : 104,
+  GET_DEVICE                    : 105,
+  GET_ORG                       : 106,
+  GET_ORGS                      : 107,
+  GET_ORG_USERS                 : 108,
+  GET_ORG_LOCATIONS             : 109,
+  CAN_INVITE_USER               : 110,
+  UPDATE_ORG                    : 111,
+  CREATE_PRODUCT                : 112,
+  UPDATE_PRODUCT                : 113,
+  DELETE_PRODUCT                : 114,
+  GET_PRODUCT                   : 115,
+  GET_PRODUCTS                  : 116,
+  UPDATE_DEVICES_META_IN_PRODUCT: 117,
+  UPDATE_USER_INFO              : 118,
+  DELETE_USER                   : 119,
+  CREATE_ORG                    : 120,
+  DELETE_ORG                    : 122,
+  CAN_DELETE_PRODUCT            : 123,
+  INVITE_USER                   : 124,
+  LOGIN_VIA_INVITE              : 125,
+  UPDATE_DEVICE_METAFIELD       : 126,
+  GET_DEVICE_TIMELINE           : 127,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -77,14 +102,14 @@ export const blynkWsApiCall = (params) => {
   const value = str2ab(
     blynkHeader(
       action.ws.request.command, ++MSG_ID
-    ) + action.ws.request.query.join('\0')
+    ) + (action.ws.request.query || []).join('\0')
   );
 
   store.dispatch(blynkWsRequest({
     id     : MSG_ID,
     request: {
       command: action.ws.request.command,
-      value  : action.ws.request.query.join('\0')
+      value  : (action.ws.request.query || []).join('\0')
     }
   }));
 
@@ -93,18 +118,18 @@ export const blynkWsApiCall = (params) => {
   let promise = new Promise((resolve) => {
     promiseResolve = resolve;
 
-    messages.push({
-      msgId         : MSG_ID,
-      value         : {
-        query: action.ws.request.query,
-        body : action.ws.request.body,
-      },
-      promise       : promise,
-      promiseResolve: promiseResolve,
-      previousAction: action,
-    });
-
+  messages.push({
+    msgId         : MSG_ID,
+    value         : {
+      query: action.ws.request.query,
+      body : action.ws.request.body,
+    },
+    promise       : promise,
+    promiseResolve: promiseResolve,
+    previousAction: action,
   });
+
+});
 
   store.dispatch(websocketSend(value));
 
@@ -138,7 +163,7 @@ export const blynkWsLogin = (params) => {
   let promiseResolve;
   let promise = new Promise((resolve) => {
     promiseResolve = resolve;
-  });
+});
 
   messages.push({
     msgId: MSG_ID,
@@ -277,9 +302,9 @@ export const blynkWsMessage = (params) => {
 
   messages.forEach((msg) => {
     if(Number(msg.msgId) === Number(msgId) && message === null) {
-      message = msg;
-    }
-  });
+    message = msg;
+  }
+});
 
   const API_COMMANDS_CODES_ARRAY = Object.keys(API_COMMANDS).map((key) => API_COMMANDS[key]);
 
