@@ -1,12 +1,13 @@
 import {API_URL} from "services/API";
 
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+
 export function ProductsPreloadFetch() {
   return {
     type: 'API_PRODUCTS_PRELOAD_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/product`
+        command: API_COMMANDS.GET_PRODUCTS
       }
     }
   };
@@ -14,11 +15,10 @@ export function ProductsPreloadFetch() {
 
 export function ProductsFetch() {
   return {
-    type: 'API_PRODUCTS_FETCH',
-    payload: {
+    type: 'API_PRODUCTS_PRELOAD_FETCH',
+    ws: {
       request: {
-        method: 'get',
-        url: `/product`
+        command: API_COMMANDS.GET_PRODUCTS
       }
     }
   };
