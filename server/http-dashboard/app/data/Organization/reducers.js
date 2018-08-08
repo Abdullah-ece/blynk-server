@@ -12,6 +12,19 @@ const initialState = {
 export default function Account(state = initialState, action) {
   switch (action.type) {
 
+    case "API_PRELOAD_ORGANIZATION_FETCH":
+      return {
+        ...state,
+        organizationPreloadLoading: true
+      };
+
+    case "API_PRELOAD_ORGANIZATION_FETCH_SUCCESS":
+      return {
+        ...state,
+        ...action.payload.data,
+        organizationPreloadLoading: false
+      };
+
     case "API_ORGANIZATION":
       return {
         ...state,

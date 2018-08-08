@@ -31,6 +31,7 @@ import LoginLayout from './components/LoginLayout';
 import TermsAndConditions from './components/TermsAndConditions';
 
 /* scenes */
+import ProductPreload from './scenes/Products/scenes/Preload';
 import Connection from './scenes/Connection';
 import Login from './scenes/Login';
 import Book from './scenes/Book';
