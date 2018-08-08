@@ -251,11 +251,13 @@ export const DeviceMetadataUpdate = (params, metadata) => {
   return {
     type: 'API_DEVICE_METADATA_UPDATE',
 
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: API_URL.device().metadata().update(params),
-        data: metadata
+        command: API_COMMANDS.UPDATE_DEVICE_METAFIELD,
+        query: [
+          params.deviceId,
+          JSON.stringify(metadata)
+        ]
       }
     }
   };
