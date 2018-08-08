@@ -1,10 +1,11 @@
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+
 export function OrganizationsFetch() {
   return {
     type: 'API_ORGANIZATIONS_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/organization`
+        command: API_COMMANDS.GET_ORGS,
       }
     }
   };
