@@ -30,10 +30,12 @@ export function ProductFetch(data) {
 
   return {
     type: 'API_PRODUCT_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/product/${data.id}`
+        command: API_COMMANDS.GET_PRODUCT,
+        query: [
+          data.id,
+        ],
       }
     }
   };
