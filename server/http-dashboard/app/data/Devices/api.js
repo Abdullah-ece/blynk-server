@@ -155,11 +155,10 @@ export const DeviceDetailsFetch = (params, data) => {
 
   return {
     type: 'API_DEVICE_DETAILS_FETCH',
-
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/devices/${params.orgId}/${data.id}`
+        command: API_COMMANDS.GET_DEVICE,
+        query: [params.orgId,data.id]
       }
     }
   };
@@ -216,11 +215,10 @@ export const DeviceDashboardFetch = ({orgId, deviceId }) => {
 
   return {
     type: 'API_DEVICE_DASHBOARD_FETCH',
-
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: API_URL.device().get({ orgId, deviceId })
+        command: API_COMMANDS.GET_DEVICE,
+        query  : [orgId, deviceId],
       }
     }
   };
