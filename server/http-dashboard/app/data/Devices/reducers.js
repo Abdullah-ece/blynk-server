@@ -626,6 +626,19 @@ export default function Devices(state = initialState, action) {
         deviceDashboardLoading: false
       };
 
+    case "API_PRELOAD_DEVICES_FETCH":
+      return {
+        ...state,
+        devicesPreloadLoading: true
+      };
+
+    case "API_PRELOAD_DEVICES_FETCH_SUCCESS":
+      return {
+        ...state,
+        devices: action.payload.data.map((device) => getFieldsForDevicesList(device)),
+        devicesPreloadLoading: false
+      };
+
     case "API_DEVICES_FETCH":
       return {
         ...state,

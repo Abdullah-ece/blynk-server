@@ -53,11 +53,11 @@ import {
   RouteGuestOnly,
   // RouteAuthorizedOnly
 } from './services/Login';
-import {
-  Products as ProductsPreloader,
-  Organization as OrganizationPreloader,
-  Devices as DevicesPreloader
-} from './services/Preloaders';
+// import {
+//   Products as ProductsPreloader,
+//   Organization as OrganizationPreloader,
+//   Devices as DevicesPreloader
+// } from './services/Preloaders';
 
 /* vendor */
 import {LocaleProvider} from 'antd';

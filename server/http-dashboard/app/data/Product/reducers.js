@@ -335,6 +335,19 @@ export default function Product(state = initialState, action) {
         }
       };
 
+    case "API_PRODUCTS_PRELOAD_FETCH":
+      return {
+        ...state,
+        productsPreloadLoading: true,
+      };
+
+    case "API_PRODUCTS_PRELOAD_FETCH_SUCCESS":
+      return {
+        ...state,
+        products: action.payload.data,
+        productsPreloadLoading: false,
+      };
+
     case "API_PRODUCTS_FETCH_SUCCESS":
       return {
         ...state,

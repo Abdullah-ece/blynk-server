@@ -1,5 +1,17 @@
 import {API_URL} from "services/API";
 
+export function ProductsPreloadFetch() {
+  return {
+    type: 'API_PRODUCTS_PRELOAD_FETCH',
+    payload: {
+      request: {
+        method: 'get',
+        url: `/product`
+      }
+    }
+  };
+}
+
 export function ProductsFetch() {
   return {
     type: 'API_PRODUCTS_FETCH',
