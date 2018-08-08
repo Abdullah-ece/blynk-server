@@ -92,11 +92,12 @@ export function ProductDelete(id) {
 export function ProductCreate(data = false) {
   return {
     type: 'API_PRODUCT_CREATE',
-    payload: {
+    ws: {
       request: {
-        method: 'put',
-        url: '/product',
-        data: data
+        command: API_COMMANDS.CREATE_PRODUCT,
+        query: [
+          JSON.stringify(data)
+        ],
       }
     }
   };
