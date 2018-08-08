@@ -78,10 +78,12 @@ export function ProductDelete(id) {
 
   return {
     type: 'API_PRODUCT_DELETE',
-    payload: {
+    ws: {
       request: {
-        method: 'delete',
-        url: `/product/${id}`
+        command: API_COMMANDS.DELETE_PRODUCT,
+        query: [
+          id,
+        ],
       }
     }
   };
