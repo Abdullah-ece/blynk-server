@@ -367,14 +367,14 @@ export const blynkWsMessage = (params) => {
 
     handlers.ChartDataHandler({
       msgId: ++MSG_ID,
-      message,
+      previousAction: message,
     });
 
   } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
 
     handlers.NoDataHandler({
       msgId: ++MSG_ID,
-      message,
+      previousAction: message,
     });
 
   } else {
