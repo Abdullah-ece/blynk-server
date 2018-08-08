@@ -122,11 +122,13 @@ export function OrganizationUsersDelete(id, data) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_USERS_DELETE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/organization/${id}/users/delete`,
-        data: data
+        command: API_COMMANDS.DELETE_USER,
+        query: [
+          id,
+          JSON.stringify(data),
+        ],
       }
     }
   };
