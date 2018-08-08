@@ -120,13 +120,13 @@ export function OrganizationsDelete(data) {
 export function OrganizationsCanInvite(data) {
   return {
     type: 'API_ORGANIZATIONS_CAN_INVITE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/organization/${data.id}/canInviteUser`,
-        data: {
-          email: data.email
-        }
+        command: API_COMMANDS.CAN_INVITE_USER,
+        query: [
+          data.id,
+          data.email
+        ],
       }
     }
   };
