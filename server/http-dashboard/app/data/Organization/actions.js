@@ -48,10 +48,12 @@ export function OrganizationUsersFetch(data) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_USERS',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/organization/${data.id}/users`
+        command: API_COMMANDS.GET_ORG_USERS,
+        query: [
+          data.id,
+        ],
       }
     }
   };
