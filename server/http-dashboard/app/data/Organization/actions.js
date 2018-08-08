@@ -105,11 +105,13 @@ export function OrganizationUpdateUser(id, data) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_UPDATE_USER',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/organization/${id}/users/update`,
-        data: data
+        command: API_COMMANDS.UPDATE_USER_INFO,
+        query: [
+          id,
+          JSON.stringify(data),
+        ],
       }
     }
   };
