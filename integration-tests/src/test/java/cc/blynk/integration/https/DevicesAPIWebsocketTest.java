@@ -84,6 +84,35 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createAndDeleteDevice() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+
+        client.deleteDevice(orgId, createdDevice.id);
+        client.verifyResult(ok(3));
+    }
+
+    @Test
     public void createDeviceForAnotherOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
