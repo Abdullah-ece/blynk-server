@@ -67,6 +67,7 @@ export const API_COMMANDS = {
   UPDATE_DEVICE_METAFIELD       : 126,
   GET_DEVICE_TIMELINE           : 127,
   LOG_EVENT_RESOLVE             : 75,
+  DELETE_DEVICE                 : 128,
 };
 
 const blynkHeader = (msg_type, msg_id) => {

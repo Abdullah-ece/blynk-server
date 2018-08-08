@@ -84,10 +84,13 @@ export const DeviceDelete = (deviceId, orgId) => {
 
   return {
     type: 'API_DEVICE_DELETE',
-    payload: {
+    ws: {
       request: {
-        method: 'delete',
-        url: `/devices/${orgId}/${deviceId}`
+        command: API_COMMANDS.DELETE_DEVICE,
+        query: [
+          orgId,
+          deviceId,
+        ],
       }
     }
   };
