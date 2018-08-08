@@ -30,7 +30,7 @@ public class WebGetOrganizationLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int orgId = Integer.parseInt(message.body);
+        int orgId = "".equals(message.body) ? state.user.orgId : Integer.parseInt(message.body);
 
         //todo refactor when permissions ready
         Organization organization = organizationDao.getOrgByIdOrThrow(orgId);
