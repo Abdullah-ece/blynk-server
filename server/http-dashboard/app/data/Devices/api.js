@@ -63,23 +63,6 @@ export const DeviceFetch = (params, data) => {
   };
 };
 
-export const DeviceUpdate = (data, device) => {
-
-  if (!data.orgId)
-    throw new Error('orgId parameter is missed');
-
-  return {
-    type: 'API_DEVICE_UPDATE',
-    payload: {
-      request: {
-        method: 'post',
-        url: `/devices/${data.orgId}`,
-        data: device
-      }
-    }
-  };
-};
-
 export const DeviceCreate = (data, device) => {
 
   if (!data.orgId)
