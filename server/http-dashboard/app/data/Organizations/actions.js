@@ -14,11 +14,12 @@ export function OrganizationsFetch() {
 export function OrganizationsCreate(data) {
   return {
     type: 'API_ORGANIZATIONS_CREATE',
-    payload: {
+    ws: {
       request: {
-        method: 'put',
-        url: `/organization`,
-        data: data
+        command: API_COMMANDS.CREATE_ORG,
+        query: [
+          JSON.stringify(data)
+        ],
       }
     }
   };
