@@ -1,12 +1,12 @@
 import {transformJsonToFormUrlEncoded} from 'services/Form';
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
 export function Account() {
   return {
     type: 'API_ACCOUNT',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: '/account'
+        command: API_COMMANDS.GET_ACCOUNT
       }
     }
   };

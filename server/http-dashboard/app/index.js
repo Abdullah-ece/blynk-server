@@ -54,11 +54,6 @@ import {
   RouteGuestOnly,
   // RouteAuthorizedOnly
 } from './services/Login';
-// import {
-//   Products as ProductsPreloader,
-//   Organization as OrganizationPreloader,
-//   Devices as DevicesPreloader
-// } from './services/Preloaders';
 
 /* vendor */
 import {LocaleProvider} from 'antd';
@@ -102,14 +97,12 @@ Store().then((store) => {
             <Route component={Layout}>
               <Route component={UserLayout} /*onEnter={RouteAuthorizedOnly(store)}*/>
                 <Route path="/user-profile" component={UserProfile}/>
-                <Route path="/user-profile/:tab" component={UserProfile}/>
-                <Route onEnter={DevicesPreloader(store)}>
-                  <Route path="/devices" components={Devices} onEnter={DevicesPreloader(store)}/>
-                  <Route path="/devices/create" components={Devices}/>
-                  <Route path="/devices/:id" components={Devices}/>
-                  <Route path="/devices/:id/:tab" components={Devices}/>
-                  <Route path="/devices/:id/create" components={Devices}/>
-                </Route>
+                <Route path="/user-profile/:tab" component={UserProfile}/>>
+                <Route path="/devices" components={Devices}/>
+                <Route path="/devices/create" components={Devices}/>
+                <Route path="/devices/:id" components={Devices}/>
+                <Route path="/devices/:id/:tab" components={Devices}/>
+                <Route path="/devices/:id/create" components={Devices}/>
                 <Route path="/organizations" component={Organizations.Index}/>
                 <Route path="/organizations/create" component={Organizations.Create}/>
                 <Route path="/organizations/create/:tab" component={Organizations.Create}/>
@@ -117,15 +110,17 @@ Store().then((store) => {
                 <Route path="/organizations/edit/:id/:tab" component={Organizations.Edit}/>
                 <Route path="/organizations/:id" component={Organizations.Details}/>
                 <Route path="/organizations/:id/:tab" component={Organizations.Details}/>
-                <Route path="/products" component={ProductsIndex} onEnter={ProductsPreloader(store)}/>
-                <Route path="/products/create" component={ProductCreate} onEnter={OrganizationPreloader(store)}/>
-                <Route path="/products/create/:tab" component={ProductCreate}/>
-                <Route path="/products/edit/:id" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
-                <Route path="/products/edit/:id/:tab" component={ProductEdit} onEnter={ProductsPreloader(store)}/>
-                <Route path="/products/clone/:id" component={ProductClone} onEnter={ProductsPreloader(store)}/>
-                <Route path="/products/clone/:id/:tab" component={ProductClone} onEnter={ProductsPreloader(store)}/>
-                <Route path="/product/:id" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
-                <Route path="/product/:id/:tab" component={ProductDetails} onEnter={ProductsPreloader(store)}/>
+                <Route component={ProductPreload}>
+                  <Route path="/products" component={ProductsIndex} />
+                  <Route path="/products/create" component={ProductCreate} />
+                  <Route path="/products/create/:tab" component={ProductCreate}/>
+                  <Route path="/products/edit/:id" component={ProductEdit} />
+                  <Route path="/products/edit/:id/:tab" component={ProductEdit} />
+                  <Route path="/products/clone/:id" component={ProductClone} />
+                  <Route path="/products/clone/:id/:tab" component={ProductClone} />
+                  <Route path="/product/:id" component={ProductDetails} />
+                  <Route path="/product/:id/:tab" component={ProductDetails} />
+                </Route>
               </Route>
               <Route path="/logout" component={Logout}/>
               <Route component={LoginLayout}>

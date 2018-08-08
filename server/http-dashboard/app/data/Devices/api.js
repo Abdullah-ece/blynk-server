@@ -1,5 +1,23 @@
 import {API_URL} from "services/API/index";
 
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+
+export const PreloadDevicesFetch = (data) => {
+
+  if (!data.orgId)
+    throw new Error('orgId parameter is missed');
+
+  return {
+    type: 'API_PRELOAD_DEVICES_FETCH',
+    ws: {
+      request: {
+        command: API_COMMANDS.GET_DEVICES,
+        query: [data.orgId]
+      }
+    }
+  };
+};
+
 export const DevicesFetch = (data) => {
 
   if (!data.orgId)
@@ -7,10 +25,10 @@ export const DevicesFetch = (data) => {
 
   return {
     type: 'API_DEVICES_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/devices/${data.orgId}`
+        command: API_COMMANDS.GET_DEVICES,
+        query: [data.orgId]
       }
     }
   };

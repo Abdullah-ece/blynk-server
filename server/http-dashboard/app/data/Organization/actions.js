@@ -1,12 +1,28 @@
+import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
+
+export function OrganizationPreloadFetch(data = {}) {
+  if (!data.id)
+    throw Error('Organization id is not specified');
+  return {
+    type: 'API_PRELOAD_ORGANIZATION_FETCH',
+    ws: {
+      request: {
+        command: API_COMMANDS.GET_ORG,
+        query: [data.id]
+      }
+    }
+  };
+}
+
 export function OrganizationFetch(data = {}) {
   if (!data.id)
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/organization/${data.id}`
+        command: API_COMMANDS.GET_ORG,
+        query: [data.id]
       }
     }
   };
