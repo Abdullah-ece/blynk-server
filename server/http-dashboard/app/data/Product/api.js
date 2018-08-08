@@ -182,10 +182,12 @@ export function ProductUpdateDevices(data = false) {
 export function CanDeleteProduct(data = {}) {
   return {
     type: 'API_PRODUCT_CAN_DELETE_PRODUCT',
-    payload: {
+    ws: {
       request: {
-        method: 'GET',
-        url: `/product/canDeleteProduct/${data.id}`
+        command: API_COMMANDS.CAN_DELETE_PRODUCT,
+        query: [
+          data.id
+        ]
       }
     }
   };
