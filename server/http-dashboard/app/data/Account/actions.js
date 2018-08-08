@@ -40,11 +40,12 @@ export function AccountResetPassword(data) {
 export function AccountSave(data) {
   return {
     type: 'API_ACCOUNT_SAVE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: '/account',
-        data: data
+        command: API_COMMANDS.UPDATE_ACCOUNT,
+        query: [
+          JSON.stringify(data)
+        ],
       }
     }
   };
