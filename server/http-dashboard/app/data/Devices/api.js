@@ -88,11 +88,10 @@ export const DeviceCreate = (data, device) => {
 
   return {
     type: 'API_DEVICE_CREATE',
-    payload: {
+    ws: {
       request: {
-        method: 'put',
-        url: `/devices/${data.orgId}`,
-        data: device
+        command: API_COMMANDS.CREATE_DEVICE,
+        query: [data.orgId, JSON.stringify(device)],
       }
     }
   };

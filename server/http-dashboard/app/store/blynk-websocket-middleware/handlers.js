@@ -223,7 +223,14 @@ export const Handlers = (params) => {
       }
     });
 
-    promiseResolve(JSON.parse(body));
+    promiseResolve({
+      payload: {
+        data: JSON.parse(body)
+      },
+      meta: {
+        previousAction: previousAction
+      }
+    });
 
   };
 
