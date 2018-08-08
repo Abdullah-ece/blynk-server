@@ -171,11 +171,13 @@ export const DeviceDetailsUpdate = (params, data) => {
 
   return {
     type: 'API_DEVICE_DETAILS_UPDATE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: API_URL.device().update(params),
-        data: data
+        command: API_COMMANDS.UPDATE_DEVICE,
+        query: [
+          params.orgId,
+          JSON.stringify(data)
+        ],
       }
     }
   };
