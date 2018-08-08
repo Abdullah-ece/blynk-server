@@ -66,6 +66,7 @@ export const API_COMMANDS = {
   LOGIN_VIA_INVITE              : 125,
   UPDATE_DEVICE_METAFIELD       : 126,
   GET_DEVICE_TIMELINE           : 127,
+  LOG_EVENT_RESOLVE             : 75,
 };
 
 const blynkHeader = (msg_type, msg_id) => {

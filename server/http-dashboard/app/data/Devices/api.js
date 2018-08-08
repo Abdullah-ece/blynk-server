@@ -135,13 +135,14 @@ export const TimelineResolve = (params) => {
 
   return {
     type: 'API_TIMELINE_RESOLVE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/devices/${params.orgId}/${params.deviceId}/resolveEvent/${params.eventId}`,
-        data: {
-          comment: params.comment
-        }
+        command: API_COMMANDS.LOG_EVENT_RESOLVE,
+        query: [
+          params.deviceId,
+          params.eventId,
+          params.comment,
+        ],
       }
     }
   };
