@@ -54,10 +54,10 @@ export const DeviceFetch = (params, data) => {
   return {
     type: 'API_DEVICE_FETCH',
 
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/devices/${params.orgId}/${data.id}`
+        command: API_COMMANDS.GET_DEVICE,
+        query: [params.orgId, data.id],
       }
     }
   };
