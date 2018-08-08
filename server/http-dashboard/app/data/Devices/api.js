@@ -113,11 +113,12 @@ export const TimelineFetch = (params = {}) => {
 
   return {
     type: 'API_TIMELINE_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: `/devices/${params.orgId}/${params.deviceId}/timeline`,
-        params: params
+        command: API_COMMANDS.GET_DEVICE_TIMELINE,
+        query: [
+          JSON.stringify(params)
+        ],
       }
     }
   };

@@ -704,9 +704,15 @@ export default function Devices(state = initialState, action) {
       return state;
 
     case "API_TIMELINE_FETCH_SUCCESS":
+      let response = action.payload.data;
       return {
         ...state,
-        timeline: action.payload.data
+        timeline: {
+          totalWarning: response.totalWarning,
+          totalResolved: response.totalResolved,
+          totalCritical: response.totalCritical,
+          logEvents: response.eventList,
+        }
       };
 
     case "DEVICE_TIMELINE_CONTROLS_UPDATE":
