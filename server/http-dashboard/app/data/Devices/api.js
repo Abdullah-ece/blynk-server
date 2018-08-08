@@ -38,10 +38,9 @@ export const DeviceProductsFetch = () => {
 
   return {
     type: 'API_DEVICE_PRODUCTS_FETCH',
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: API_URL.products()
+        command: API_COMMANDS.GET_PRODUCTS
       }
     }
   };
