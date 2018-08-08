@@ -12,9 +12,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -40,7 +40,7 @@ public final class WebUpdateUserInfoLogic {
         User user = state.user;
         if (split.length < 2) {
             log.debug("Wrong update user info request {} for {}.", message.body, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong update user info request."), ctx.voidPromise());
             return;
         }
 
@@ -49,7 +49,7 @@ public final class WebUpdateUserInfoLogic {
 
         if (userInviteDTO == null || userInviteDTO.isNotValid()) {
             log.error("Bad data for user info update for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Bad data for user info update."), ctx.voidPromise());
             return;
         }
 
@@ -57,7 +57,7 @@ public final class WebUpdateUserInfoLogic {
         if (!user.isSuperAdmin()) {
             if (orgId != user.orgId) {
                 log.warn("User {} tries to access organization he has no access.", user.email);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
                 return;
             }
         }

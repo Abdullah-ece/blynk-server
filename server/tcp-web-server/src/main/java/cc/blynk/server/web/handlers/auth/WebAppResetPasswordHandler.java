@@ -22,11 +22,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.json;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 
 /**
@@ -86,7 +84,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "verify" :
                 if (messageParts.length < 2) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 verifyToken(ctx, messageParts[1], message.id);
@@ -94,7 +92,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             case "reset" :
                 if (messageParts.length < 3) {
                     log.debug("Wrong income message format.");
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
                     return;
                 }
                 reset(ctx, messageParts[1], messageParts[2], message.id);
@@ -105,14 +103,14 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private void reset(ChannelHandlerContext ctx, String token, String passHash, int msgId) {
         TokenUser tokenUser = tokensPool.getUser(token);
         if (tokenUser == null) {
-            log.warn("Invalid token for reset pass {}", token);
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            log.warn("Invalid token for reset password {}", token);
+            ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
             String email = tokenUser.email;
             User user = userDao.getByName(email, tokenUser.appName);
             if (user == null) {
                 log.warn("User is not exists anymore. {}", tokenUser);
-                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
+                ctx.writeAndFlush(json(msgId, "User is not exists anymore."), ctx.voidPromise());
                 return;
             }
             user.resetPass(passHash);
@@ -133,8 +131,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     private void verifyToken(ChannelHandlerContext ctx, String token, int msgId) {
         TokenUser tokenUser = tokensPool.getUser(token);
         if (tokenUser == null) {
-            log.warn("Invalid token for reset pass {}", token);
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            log.warn("Invalid token for reset pass {}.", token);
+            ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
             ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
         }
@@ -145,7 +143,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
 
         if (BlynkEmailValidator.isNotValidEmail(trimmedEmail)) {
             log.debug("Wrong income email for reset pass.");
-            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Wrong income email for reset pass."), ctx.voidPromise());
             return;
         }
 
@@ -160,14 +158,14 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         if (tokensPool.hasToken(trimmedEmail, appName)) {
             tokensPool.cleanupOldTokens();
             log.warn("Reset code was already generated.");
-            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Reset code was already generated."), ctx.voidPromise());
             return;
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
         if (org == null) {
             log.info("Organization with orgId {} not found.", user.orgId);
-            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Organization not found."), ctx.voidPromise());
             return;
         }
 

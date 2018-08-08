@@ -14,10 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -48,14 +47,14 @@ public class WebGetDeviceLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 
         Device device = deviceDao.getById(deviceId);
         if (device == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
             return;
         }
 
@@ -66,7 +65,7 @@ public class WebGetDeviceLogic {
 
         if (product == null) {
             log.error("Product with passed id {} not exists for org {}.", device.productId, orgId);
-            ctx.writeAndFlush(productNotExists(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Product with passed id doesn't exist."), ctx.voidPromise());
             return;
         }
 

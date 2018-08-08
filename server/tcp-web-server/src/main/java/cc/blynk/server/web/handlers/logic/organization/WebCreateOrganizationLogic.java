@@ -12,11 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -39,7 +36,7 @@ public class WebCreateOrganizationLogic {
         User user = state.user;
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization is empty."), ctx.voidPromise());
             return;
         }
 
@@ -48,13 +45,13 @@ public class WebCreateOrganizationLogic {
         Organization parentOrg = organizationDao.getOrgById(user.orgId);
         if (parentOrg == null) {
             log.error("Organization for {} not found.", user.email);
-            ctx.writeAndFlush(serverError(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization not found."), ctx.voidPromise());
             return;
         }
 
         if (!parentOrg.canCreateOrgs) {
             log.debug("Organization of {} cannot have sub organizations.", user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization cannot have sub organizations."), ctx.voidPromise());
             return;
         }
 
@@ -69,7 +66,7 @@ public class WebCreateOrganizationLogic {
                         ctx.voidPromise());
             }
         } else {
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Error creating new organization."), ctx.voidPromise());
         }
     }
 

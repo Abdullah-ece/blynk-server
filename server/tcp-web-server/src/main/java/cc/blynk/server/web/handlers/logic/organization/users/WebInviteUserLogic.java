@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.TokenUser;
 import cc.blynk.server.internal.TokensPool;
@@ -23,11 +23,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -70,7 +67,7 @@ public final class WebInviteUserLogic {
 
         if (orgId == 0 || userInvite == null || userInvite.isNotValid()) {
             log.error("Invalid invitation {}.", userInvite);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Invalid invitation."), ctx.voidPromise());
             return;
         }
 
@@ -78,14 +75,15 @@ public final class WebInviteUserLogic {
 
         if (org == null) {
             log.error("Requested organization for invite not exists {} for {}.", userInvite, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Requested organization for invite doesn't exist."), ctx.voidPromise());
             return;
         }
 
         if (!organizationDao.hasAccess(user, orgId)) {
             log.warn("{} (orgId = {}) tries to send invite to another organization with id = {}.",
                     user.email, user.orgId, orgId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "You are not allowed to send invite to another organization."),
+                    ctx.voidPromise());
             return;
         }
 
@@ -94,7 +92,7 @@ public final class WebInviteUserLogic {
 
         if (invitedUser == null) {
             log.error("User {}-{} already exists.", userInvite.email, appName);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User already exists."), ctx.voidPromise());
             return;
         }
 
@@ -102,7 +100,7 @@ public final class WebInviteUserLogic {
         log.info("Trying to send invitation email to {}.", userInvite.email);
 
         blockingIOProcessor.execute(() -> {
-            ResponseMessage response;
+            MessageBase response;
             try {
                 tokensPool.addToken(token,  new TokenUser(userInvite.email, appName));
                 String body = inviteTemplate
@@ -115,7 +113,7 @@ public final class WebInviteUserLogic {
                 response = ok(message.id);
             } catch (Exception e) {
                 log.error("Error generating invitation email.", e);
-                response = serverError(message.id);
+                response = json(message.id, "Error generating invitation email.");
             }
             ctx.writeAndFlush(response);
         });

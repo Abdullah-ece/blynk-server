@@ -14,10 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -40,26 +39,26 @@ public class WebUpdateOrganizationLogic {
         User user = state.user;
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization is empty."), ctx.voidPromise());
             return;
         }
 
         Organization existingOrganization = organizationDao.getOrgById(newOrganization.id);
         if (existingOrganization == null) {
             log.error("Organization {} for {} not found.", newOrganization.id, user.email);
-            ctx.writeAndFlush(serverError(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization not found."), ctx.voidPromise());
             return;
         }
 
         if (!organizationDao.hasAccess(user, newOrganization.id)) {
             log.error("User {} tries to update organization he has no access.", user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 
         if (organizationDao.checkNameExists(newOrganization.id, newOrganization.name)) {
             log.error("Organization {} with this name already exists for {}", newOrganization, user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization with this name already exists."), ctx.voidPromise());
             return;
         }
 

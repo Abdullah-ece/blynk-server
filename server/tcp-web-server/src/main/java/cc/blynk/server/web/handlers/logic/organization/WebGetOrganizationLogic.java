@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -39,7 +39,7 @@ public class WebGetOrganizationLogic {
         if (!user.isSuperAdmin()) {
             if (orgId != user.orgId) {
                 log.error("User {} tries to access organization he has no access.", user.email);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
                 return;
             }
         }

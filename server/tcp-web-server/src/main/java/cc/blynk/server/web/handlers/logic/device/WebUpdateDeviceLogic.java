@@ -16,11 +16,10 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.server.internal.WebByteBufUtil.productNotExists;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -49,7 +48,7 @@ public class WebUpdateDeviceLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 
@@ -57,7 +56,7 @@ public class WebUpdateDeviceLogic {
 
         if (newDevice == null || newDevice.productId < 1) {
             log.error("No data or productId is wrong. {}", newDevice);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Empty body."), ctx.voidPromise());
             return;
         }
 
@@ -67,13 +66,13 @@ public class WebUpdateDeviceLogic {
 
         if (dash == null) {
             log.error("Dash with id = {} not exists.", dashId);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }
 
         if (newDevice.id == 0) {
-            log.error("Cannot find device with orgId 0.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            log.error("Cannot find device with id 0.");
+            ctx.writeAndFlush(json(message.id, "Cannot find device with id 0."), ctx.voidPromise());
             return;
         }
 

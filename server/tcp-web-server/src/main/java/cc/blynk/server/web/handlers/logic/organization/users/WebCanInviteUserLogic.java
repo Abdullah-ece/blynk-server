@@ -9,8 +9,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  *
@@ -33,7 +33,7 @@ public final class WebCanInviteUserLogic {
         String userEMailToInvite = message.body;
         if (userDao.contains(userEMailToInvite, state.userKey.appName)) {
             log.debug("User {}-{} already exists in system.", userEMailToInvite, state.userKey.appName);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User already exists in the system."), ctx.voidPromise());
         } else {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         }

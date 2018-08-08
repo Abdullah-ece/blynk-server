@@ -11,9 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -39,7 +38,8 @@ public class WebDeleteProductLogic {
 
         if (deviceDao.productHasDevices(productId)) {
             log.error("{} not allowed to remove product {} with devices.", user.email, productId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "You are not allowed to remove product with devices."),
+                    ctx.voidPromise());
             return;
         }
 
@@ -51,7 +51,7 @@ public class WebDeleteProductLogic {
             log.debug("Product {} successfully deleted for {}", productId, user.email);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Error removing product."), ctx.voidPromise());
         }
     }
 

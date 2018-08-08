@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 
 /**
  * The Blynk Project.
@@ -41,7 +41,7 @@ public class WebGetOrganizationLocationsLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} tries to access organization he has no access.");
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 

@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Collection;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -41,7 +41,7 @@ public class WebGetDevicesLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
             return;
         }
 

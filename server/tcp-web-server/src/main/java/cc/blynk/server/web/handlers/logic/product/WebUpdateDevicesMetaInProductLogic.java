@@ -18,8 +18,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -44,7 +44,7 @@ public class WebUpdateDevicesMetaInProductLogic {
         User user = state.user;
         if (productAndOrgIdDTO == null) {
             log.error("Wrong create product command for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong create product command."), ctx.voidPromise());
             return;
         }
 
@@ -52,7 +52,7 @@ public class WebUpdateDevicesMetaInProductLogic {
 
         if (updatedProduct == null || updatedProduct.notValid()) {
             log.error("Product is empty or has no name {} for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
             return;
         }
 
@@ -60,7 +60,7 @@ public class WebUpdateDevicesMetaInProductLogic {
 
         if (updatedProduct.notValid()) {
             log.error("Product {} is not valid for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Product is not valid."), ctx.voidPromise());
             return;
         }
 

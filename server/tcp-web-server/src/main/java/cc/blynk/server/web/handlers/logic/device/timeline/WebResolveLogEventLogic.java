@@ -8,8 +8,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.web.session.WebAppStateHolder;
@@ -18,10 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
-import static cc.blynk.server.internal.CommonByteBufUtil.json;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -69,11 +66,12 @@ public class WebResolveLogEventLogic {
         int orgId = organizationDao.getOrganizationIdByProductId(device.productId);
         if (!user.hasAccess(orgId)) {
             log.error("User {} tries to access device {} he has no access.", user.email, deviceId);
-            throw new NotAllowedException("You have no access to this device.", message.id);
+            ctx.writeAndFlush(json(message.id, "User tries to access device he has no access."), ctx.voidPromise());
+            return;
         }
 
         blockingIOProcessor.executeDB(() -> {
-            ResponseMessage response;
+            MessageBase response;
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {
                     response = ok(message.id);
@@ -85,11 +83,11 @@ public class WebResolveLogEventLogic {
                     session.sendToSelectedDeviceOnWeb(ctx.channel(), RESOLVE_EVENT, message.id, body, deviceId);
                 } else {
                     log.warn("Event with id {} for user {} not resolved.", logEventId, user.email);
-                    response = notAllowed(message.id);
+                    response = json(message.id, "Event for user not resolved.");
                 }
             } catch (Exception e) {
                 log.error("Error marking event as resolved.", e);
-                response = serverError(message.id);
+                response = json(message.id, "Error marking event as resolved.");
             }
             ctx.writeAndFlush(response, ctx.voidPromise());
         });

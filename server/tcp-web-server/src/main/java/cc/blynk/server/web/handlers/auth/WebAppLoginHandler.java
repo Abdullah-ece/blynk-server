@@ -21,11 +21,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAuthenticated;
-import static cc.blynk.server.internal.CommonByteBufUtil.notRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -63,7 +60,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
             return;
         }
 
@@ -84,19 +81,19 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notRegistered(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "User not registered."), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(facebookUserLoginWithPass(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "Facebook user tries to login with pass. {}"), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(notAuthenticated(msgId), ctx.voidPromise());
+            ctx.writeAndFlush(json(msgId, "User credentials are wrong."), ctx.voidPromise());
             return;
         }
 

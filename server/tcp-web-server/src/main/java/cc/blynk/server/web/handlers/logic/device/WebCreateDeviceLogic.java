@@ -20,11 +20,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.productNotExists;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -55,21 +52,21 @@ public class WebCreateDeviceLogic {
         User user = state.user;
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} (orgId={}) not allowed to access orgId {}", user.email, user.orgId, orgId);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User not allowed to access this organization."), ctx.voidPromise());
             return;
         }
 
         Device newDevice = JsonParser.parseDevice(split[1], message.id);
 
         if (newDevice == null) {
-            log.error("Create device for {} request is empty.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            log.error("Create device command is empty for {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Create device command is empty."), ctx.voidPromise());
             return;
         }
 
         if (newDevice.productId < 1) {
             log.error("Create device for {} has wrong product id. {}", user.email, newDevice);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Command has wrong product id."), ctx.voidPromise());
             return;
         }
 
@@ -79,7 +76,7 @@ public class WebCreateDeviceLogic {
 
         if (dash == null) {
             log.error("Dash with id = {} not exists.", dashId);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }
 
@@ -87,7 +84,7 @@ public class WebCreateDeviceLogic {
         Product product = org.getProduct(newDevice.productId);
         if (product == null) {
             log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
-            ctx.writeAndFlush(productNotExists(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Product with passed id not exists."), ctx.voidPromise());
             return;
         }
 

@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.webJson;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -224,7 +224,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, 123D);
         client.updateDeviceMetafield(device.id, updatedMetaField2);
-        client.verifyResult(illegalCommand(5));
+        client.verifyResult(webJson(5, "Couldn't find metafield with passed id."));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     public void getDeviceByIdNotFound() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getDevice(orgId, 1111);
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "Device not found."));
     }
 
     @Test

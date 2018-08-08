@@ -17,10 +17,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -45,7 +43,7 @@ public class WebUpdateProductLogic {
         User user = state.user;
         if (productAndOrgIdDTO == null) {
             log.error("Wrong create product command for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong create product command."), ctx.voidPromise());
             return;
         }
 
@@ -53,7 +51,7 @@ public class WebUpdateProductLogic {
 
         if (product == null || product.notValid()) {
             log.error("Product is empty or has no name {} for {}.", product, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
             return;
         }
 
@@ -61,20 +59,20 @@ public class WebUpdateProductLogic {
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Cannot find organization."), ctx.voidPromise());
             return;
         }
 
         if (organization.isSubOrg()) {
             log.error("User {} can't create products for sub organizations.", user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User can't create products for sub organizations."), ctx.voidPromise());
             return;
         }
 
         if (!organization.isValidProductName(product)) {
             log.error("Organization {} already has product with name {} for {}.",
                     organization.name, product.name, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Organization already has product with this name."), ctx.voidPromise());
             return;
         }
 

@@ -6,8 +6,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -26,7 +26,7 @@ public class WebCanDeleteProductLogic {
         int productId = Integer.parseInt(message.body);
 
         if (deviceDao.productHasDevices(productId)) {
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "You can't delete product with devices."), ctx.voidPromise());
         } else {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         }

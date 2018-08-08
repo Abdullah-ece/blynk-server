@@ -15,9 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
-import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.webJson;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.contains;
@@ -37,7 +37,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     public void sendInvitationForNonExistingOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.inviteUser(1000, "dmitriy@blynk.cc", "Dmitriy", Role.STAFF);
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "Requested organization for invite doesn't exist."));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     public void userSendInvitationToExistingUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.inviteUser(orgId, getUserName(), "Dmitriy", Role.STAFF);
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "User already exists."));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         appWebSocketClient = defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.loginViaInvite(token, passHash);
-        appWebSocketClient.verifyResult(illegalCommand(1));
+        appWebSocketClient.verifyResult(webJson(1, "Invitation expired or was used already."));
 
         newHttpClient.close();
     }

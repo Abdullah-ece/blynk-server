@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.web.BaseWebGraph;
 import cc.blynk.server.core.model.widgets.web.WebSource;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -47,8 +46,7 @@ import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.TWO_D
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
 
 /**
@@ -77,7 +75,9 @@ public class WebGetGraphDataLogic {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
-            throw new IllegalCommandException("Wrong income message format.");
+            log.error("Wrong income message format for {}.", state.user.email);
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
+            return;
         }
 
         int deviceId = Integer.parseInt(messageParts[0]);
@@ -87,16 +87,16 @@ public class WebGetGraphDataLogic {
         //todo check user has access
         Device device = deviceDao.getByIdOrThrow(deviceId);
         if (device == null) {
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             log.debug("Device with passed id {} not found.", deviceId);
+            ctx.writeAndFlush(json(message.id, "Device with passed id not found."), ctx.voidPromise());
             return;
         }
 
         Widget widget = device.webDashboard.getWidgetById(widgetId);
 
         if (!(widget instanceof BaseWebGraph)) {
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             log.debug("Widget with passed id {} is not graph for deviceId {}.", widgetId, deviceId);
+            ctx.writeAndFlush(json(message.id, "Widget with passed id is not graph."), ctx.voidPromise());
             return;
         }
 
@@ -168,7 +168,7 @@ public class WebGetGraphDataLogic {
                 channel.writeAndFlush(noData(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
-                channel.writeAndFlush(serverError(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error reading reporting data."), channel.voidPromise());
             }
         });
     }
@@ -199,7 +199,7 @@ public class WebGetGraphDataLogic {
                 channel.writeAndFlush(noData(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
-                channel.writeAndFlush(serverError(msgId), channel.voidPromise());
+                channel.writeAndFlush(json(msgId, "Error reading reporting data from disk."), channel.voidPromise());
             }
         });
     }

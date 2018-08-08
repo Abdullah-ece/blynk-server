@@ -11,9 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  * The Blynk Project.
@@ -40,7 +39,7 @@ public class WebGetProductLogic {
 
         if (organization == null) {
             log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Cannot find organization."), ctx.voidPromise());
             return;
         }
 
@@ -49,13 +48,13 @@ public class WebGetProductLogic {
         if (product == null) {
             log.error("Cannot find product with id {} for org {} and user {}",
                     productId, organization.name, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Cannot find product with passed id."), ctx.voidPromise());
             return;
         }
 
         if (!organizationDao.hasAccess(user, orgId)) {
             log.error("User {} tries to access product he has no access.", user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User tries to access product he has no access."), ctx.voidPromise());
             return;
         }
 

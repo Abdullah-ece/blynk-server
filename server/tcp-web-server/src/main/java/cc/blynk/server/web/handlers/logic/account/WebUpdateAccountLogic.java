@@ -11,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 /**
  *
@@ -34,7 +34,7 @@ public final class WebUpdateAccountLogic {
             updatedUser = JsonParser.parseUserFromString(message.body);
         } catch (IOException ioe) {
             log.debug("Error parsing account info. {}", ioe.getMessage());
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Error parsing account info."), ctx.voidPromise());
             return;
         }
 

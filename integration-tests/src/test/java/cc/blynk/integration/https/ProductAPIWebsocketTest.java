@@ -31,11 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Currency;
 import java.util.Date;
 
-import static cc.blynk.integration.TestUtil.illegalCommand;
-import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
-import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.webJson;
 import static java.time.LocalTime.ofSecondOfDay;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -55,7 +53,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     public void getNonExistingProduct() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getProduct(1333);
-        client.verifyResult(illegalCommand(1));
+        client.verifyResult(webJson(1, "Cannot find product with passed id."));
     }
 
     @Test
@@ -89,7 +87,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         client.createProduct(orgId, product);
-        client.verifyResult(illegalCommandBody(1));
+        client.verifyResult(webJson(1, "Product is empty or has no name."));
     }
 
     @Test
@@ -114,7 +112,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.id = 1;
         product.name = "";
         client.updateProduct(orgId, product);
-        client.verifyResult(illegalCommandBody(2));
+        client.verifyResult(webJson(2, "Product is empty or has no name."));
     }
 
     @Test
@@ -281,7 +279,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product2.logoUrl = "/static/logo.png";
 
         client.createProduct(orgId, product);
-        client.verifyResult(illegalCommandBody(2));
+        client.verifyResult(webJson(2, "Organization already has product with that name."));
     }
 
     @Test
@@ -400,7 +398,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(createdDevice);
 
         client.deleteProduct(fromApiProduct.id);
-        client.verifyResult(notAllowed(3));
+        client.verifyResult(webJson(3, "You are not allowed to remove product with devices."));
     }
 
     @Test
@@ -614,7 +612,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(newDevice);
 
         client.canDeleteProduct(fromApiProduct.id);
-        client.verifyResult(notAllowed(4));
+        client.verifyResult(webJson(4, "You can't delete product with devices."));
     }
 
     @Test

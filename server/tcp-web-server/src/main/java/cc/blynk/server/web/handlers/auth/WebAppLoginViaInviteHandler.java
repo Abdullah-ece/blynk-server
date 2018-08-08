@@ -25,9 +25,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 
 /**
@@ -63,7 +62,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong income message format."), ctx.voidPromise());
             return;
         }
 
@@ -72,7 +71,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
 
         if (token == null || password == null) {
             log.error("Empty token or password field.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Empty token or password field."), ctx.voidPromise());
             return;
         }
 
@@ -80,14 +79,14 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
 
         if (tokenUser == null) {
             log.error("Invitation expired or was used already for {}.", message.body);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Invitation expired or was used already."), ctx.voidPromise());
             return;
         }
 
         User user = holder.userDao.getByName(tokenUser.email, tokenUser.appName);
         if (user == null) {
             log.error("User {} not found.", tokenUser);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "User not found."), ctx.voidPromise());
             return;
         }
 

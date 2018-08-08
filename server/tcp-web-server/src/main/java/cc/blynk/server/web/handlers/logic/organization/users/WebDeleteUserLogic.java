@@ -15,9 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -49,13 +48,13 @@ public final class WebDeleteUserLogic {
         User user = state.user;
         if (split.length < 2) {
             log.debug("Wrong delete user info request {} for {}.", message.body, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Wrong delete user info request."), ctx.voidPromise());
             return;
         }
 
         if (!user.isAdmin()) {
             log.error("Non admin {} tries to remove users.", user.email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Only admin allowed to remove users."), ctx.voidPromise());
             return;
         }
 
@@ -64,7 +63,7 @@ public final class WebDeleteUserLogic {
 
         if (emailsToDelete == null || emailsToDelete.length == 0) {
             log.error("Bad data for user delete for {}.", user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Delete command has empty body."), ctx.voidPromise());
             return;
         }
 
@@ -75,7 +74,7 @@ public final class WebDeleteUserLogic {
             if (userToDelete != null) {
                 if (userToDelete.isSuperAdmin()) {
                     log.error("{} tries to remove super admin.", user.email);
-                    ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(json(message.id, "You can't remove superadmin."), ctx.voidPromise());
                     return;
                 }
                 if (userToDelete.orgId == orgId) {

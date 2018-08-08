@@ -15,9 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.WebByteBufUtil.json;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -43,7 +42,7 @@ public class WebUpdateDeviceMetafieldLogic {
         User user = state.user;
         if (split.length < 2) {
             log.error("Body '{}' is wrong for update metafield for {}", message.body, user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Body is wrong for update metafield."), ctx.voidPromise());
             return;
         }
 
@@ -54,7 +53,7 @@ public class WebUpdateDeviceMetafieldLogic {
 
         if (existingDevice == null) {
             log.error("Device with passed id {} not found for {}.", deviceId, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Device with passed id not found."), ctx.voidPromise());
             return;
         }
 
@@ -62,7 +61,7 @@ public class WebUpdateDeviceMetafieldLogic {
 
         if (updatedMetaField == null) {
             log.error("Couldn't parse meta {} for {}.", split[1], user.email);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Couldn't parse metafield."), ctx.voidPromise());
             return;
         }
 
@@ -70,7 +69,7 @@ public class WebUpdateDeviceMetafieldLogic {
         if (fieldIndex == -1) {
             log.error("MetaField with id {} not found for device id {} for {}.",
                     updatedMetaField.id, deviceId, user.email);
-            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            ctx.writeAndFlush(json(message.id, "Couldn't find metafield with passed id."), ctx.voidPromise());
             return;
         }
 
