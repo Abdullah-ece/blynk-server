@@ -15,7 +15,7 @@ export function ProductsPreloadFetch() {
 
 export function ProductsFetch() {
   return {
-    type: 'API_PRODUCTS_PRELOAD_FETCH',
+    type: 'API_PRODUCTS_FETCH',
     ws: {
       request: {
         command: API_COMMANDS.GET_PRODUCTS
