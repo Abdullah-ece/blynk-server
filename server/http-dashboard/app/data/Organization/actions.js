@@ -65,11 +65,13 @@ export function OrganizationSendInvite(data = {}) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_SEND_INVITE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/organization/${data.id}/invite`,
-        data: data
+        command: API_COMMANDS.INVITE_USER,
+        query: [
+          data.id,
+          JSON.stringify(data)
+        ],
       }
     }
   };
