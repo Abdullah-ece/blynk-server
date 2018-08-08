@@ -60,11 +60,12 @@ export function ProductDeleteProgress({productId}) {
 export function ProductUpdate(data) {
   return {
     type: 'API_PRODUCT_UPDATE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: '/product',
-        data: data
+        command: API_COMMANDS.UPDATE_PRODUCT,
+        query: [
+          JSON.stringify(data),
+        ]
       }
     }
   };
