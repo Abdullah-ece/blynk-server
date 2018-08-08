@@ -168,11 +168,12 @@ export function ProductInfoDevicesOTAFirmwareInfoFetch({ firmwareUploadUrl }) {
 export function ProductUpdateDevices(data = false) {
   return {
     type: 'API_PRODUCT_UPDATE_DEVICES',
-    payload: {
+    ws: {
       request: {
-        method: 'POST',
-        url: '/product/updateDevices',
-        data: data
+        command: API_COMMANDS.UPDATE_DEVICES_META_IN_PRODUCT,
+        query: [
+          JSON.stringify(data)
+        ]
       }
     }
   };
