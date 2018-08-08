@@ -1,5 +1,3 @@
-import {API_URL} from "services/API/index";
-
 import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
 export const PreloadDevicesFetch = (data) => {
@@ -204,10 +202,9 @@ export const DeviceAvailableOrganizationsFetch = () => {
   return {
     type: 'API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH',
 
-    payload: {
+    ws: {
       request: {
-        method: 'get',
-        url: API_URL.organization()
+        command: API_COMMANDS.GET_ORGS,
       }
     }
   };
