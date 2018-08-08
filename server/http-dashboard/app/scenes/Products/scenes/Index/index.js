@@ -34,6 +34,7 @@ class ProductsIndex extends React.Component {
   }
 
   componentWillMount() {
+    this.props.ProductsFetch();
     // if (this.props.Organization && !this.props.Organization.canCreateOrgs) {
     //   this.context.router.push('/dashboard');
     // }
