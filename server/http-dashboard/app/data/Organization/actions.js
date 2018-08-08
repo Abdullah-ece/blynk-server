@@ -33,11 +33,12 @@ export function OrganizationSave(data = {}) {
     throw Error('Organization id is not specified');
   return {
     type: 'API_ORGANIZATION_SAVE',
-    payload: {
+    ws: {
       request: {
-        method: 'post',
-        url: `/organization/${data.id}`,
-        data: data
+        command: API_COMMANDS.UPDATE_ORG,
+        query: [
+          JSON.stringify(data)
+        ],
       }
     }
   };
