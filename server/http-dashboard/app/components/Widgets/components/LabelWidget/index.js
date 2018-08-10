@@ -94,7 +94,7 @@ class LabelWidget extends React.Component {
     return Canvasjs.formatNumber(value, this.props.data.decimalFormat);
   }
 
-  renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null}) {
+  renderLabelByParams(params = {alignment: WIDGETS_LABEL_TEXT_ALIGNMENT.LEFT, value: null, suffix: null, customText: null}) {
 
     const alignmentClassName = this.getTextAlignmentClassNameByAlignment(params.alignment);
 
@@ -115,6 +115,9 @@ class LabelWidget extends React.Component {
                 className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
               {params.suffix && (
                 <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
+              )}
+              {params.customText && (
+                <span className={"widgets--widget-web-label--custom-text"}>{params.customText || null}</span>
               )}
             </Dotdotdot>
           </div>
@@ -137,7 +140,8 @@ class LabelWidget extends React.Component {
     return this.renderLabelByParams({
       value: labelValue,
       suffix: this.props.data.valueSuffix,
-      alignment: this.props.data.alignment
+      alignment: this.props.data.alignment,
+      customText: this.getCurrentColorSet().customText,
     });
   }
 
@@ -145,7 +149,7 @@ class LabelWidget extends React.Component {
     return this.props.value;
   }
 
-  getLabelStyles() {
+  getCurrentColorSet(){
     const labelValue = this.getLabelValue();
     let currentColorSet = null;
     // Choose color set from all color sets based on label value. If label value not fit to any of color sets then
@@ -161,6 +165,11 @@ class LabelWidget extends React.Component {
       currentColorSet = {backgroundColor:"ffffff",textColor:"000000"};
     }
 
+    return currentColorSet;
+  }
+
+  getLabelStyles() {
+
     return !this.props.data.isColorSetEnabled ? {
       backgroundColor: "#" + this.props.data.backgroundColor,
       color: "#" + this.props.data.textColor
@@ -169,7 +178,7 @@ class LabelWidget extends React.Component {
         backgroundColor: "#" + backgroundColor,
         color: "#" + textColor
       };
-    })(currentColorSet);
+    })(this.getCurrentColorSet());
   }
 
   renderLabelLevel() {
