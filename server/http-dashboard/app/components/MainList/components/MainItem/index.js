@@ -70,7 +70,7 @@ class MainItem extends React.Component {
             </div>
             <div className="main-list--item-details-amount">
               { this.props.isActive !== false ? (
-                `${this.props.devicesCount || 0} Devices`
+                `${this.props.devicesCount || "No"} Device${this.props.devicesCount === 1 ? "":"s"}`
               ) : (
                 `Pending`
               )}
