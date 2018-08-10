@@ -198,13 +198,13 @@ class LinearWidget extends React.Component {
       };
     } else if (dateTo.diff(dateFrom, 'days') >= 1 && dateTo.diff(dateFrom, 'days') <= 6) {
       return {
-        tickFormat: 'DDD, hh:mm TT',
+        tickFormat: 'DDD',
         hoverFormat: 'DDD, D MMM, hh:mm TT',
         labelMaxWidth: 60,
       };
     } else if (dateTo.diff(dateFrom, 'days') >= 7 && dateTo.diff(dateFrom, 'month') === 0) {
       return {
-        tickFormat: 'DD MMM, hh:mm TT',
+        tickFormat: 'DD MMM',
         hoverFormat: 'DDD, D MMM, hh:mm TT',
         labelMaxWidth: 100,
       };
