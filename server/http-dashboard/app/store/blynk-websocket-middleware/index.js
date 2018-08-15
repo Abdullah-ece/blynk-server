@@ -32,13 +32,15 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
       if(connectionReadyPromise) {
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           connectionReadyPromise.then(() => {
             let response = command.apply(this, params);
 
             if(response && response.then) {
               response.then((data) => {
                 resolve(data);
+              }).catch((data) => {
+                reject(data);
               });
             }
           });

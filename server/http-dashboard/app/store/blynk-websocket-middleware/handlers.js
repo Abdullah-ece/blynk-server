@@ -267,6 +267,27 @@ export const Handlers = (params) => {
 
   };
 
+  const jsonHandler = ({ msgId, promiseReject }) => {
+
+    let body = decodeBody(dataView);
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage JsonHandler", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: `${body}`
+      });
+
+    promiseReject({
+      error: {
+        response: {
+          data: JSON.parse(body)
+        }
+      }
+    });
+
+  };
+
   const noDataHandler = ({ msgId, previousAction }) => {
 
     let deviceId = previousAction.value.deviceId;
@@ -404,6 +425,7 @@ export const Handlers = (params) => {
 
   return {
     ResponseOKHandler: responseOKHandler,
+    JsonHandler: jsonHandler,
     ApiCallHandler: apiCallHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,

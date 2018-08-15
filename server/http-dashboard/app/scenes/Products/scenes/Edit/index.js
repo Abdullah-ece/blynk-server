@@ -52,6 +52,8 @@ import PropTypes from 'prop-types';
     product: (() => {
       const products = fromJS(state.Product.products);
 
+      if(!products || !products.find) return null;
+
       let product = products.find((product) => Number(product.get('id')) === Number(ownProps.params.id));
 
       if(product) {

@@ -26,16 +26,17 @@ export const RESPONSE_CODES = {
 };
 
 export const COMMANDS = {
-  RESPONSE: 0,
-  LOGIN   : 2,
-  DEVICE_CONNECTED: 4,
-  HARDWARE: 20,
-  APP_SYNC: 25,
-  CHART_DATA_FETCH: 60,
-  LOG_EVENT: 64,
+  RESPONSE           : 0,
+  LOGIN              : 2,
+  DEVICE_CONNECTED   : 4,
+  HARDWARE           : 20,
+  APP_SYNC           : 25,
+  CHART_DATA_FETCH   : 60,
+  LOG_EVENT          : 64,
   DEVICE_DISCONNECTED: 71,
-  TRACK_DEVICE: 73,
-  LOG_EVENT_RESOLVE: 75,
+  TRACK_DEVICE       : 73,
+  LOG_EVENT_RESOLVE  : 75,
+  WEB_JSON           : 99,
 };
 
 export const API_COMMANDS = {
@@ -116,22 +117,25 @@ export const blynkWsApiCall = (params) => {
   }));
 
   let promiseResolve;
+  let promiseReject;
 
-  let promise = new Promise((resolve) => {
+  let promise = new Promise((resolve, reject) => {
     promiseResolve = resolve;
+    promiseReject = reject;
 
-  messages.push({
-    msgId         : MSG_ID,
-    value         : {
-      query: action.ws.request.query,
-      body : action.ws.request.body,
-    },
-    promise       : promise,
-    promiseResolve: promiseResolve,
-    previousAction: action,
+    messages.push({
+      msgId         : MSG_ID,
+      value         : {
+        query: action.ws.request.query,
+        body : action.ws.request.body,
+      },
+      promise       : promise,
+      promiseResolve: promiseResolve,
+      promiseReject : promiseReject,
+      previousAction: action,
+    });
+
   });
-
-});
 
   store.dispatch(websocketSend(value));
 
@@ -367,8 +371,16 @@ export const blynkWsMessage = (params) => {
   } else if (command === COMMANDS.CHART_DATA_FETCH) {
 
     handlers.ChartDataHandler({
-      msgId: ++MSG_ID,
+      msgId         : ++MSG_ID,
       previousAction: message,
+    });
+
+  } else if(command === COMMANDS.WEB_JSON) {
+
+    handlers.JsonHandler({
+      msgId         : ++MSG_ID,
+      previousAction: message.previousAction,
+      promiseReject : message.promiseReject,
     });
 
   } else if (command === COMMANDS.RESPONSE && responseCode === RESPONSE_CODES.NO_DATA) {
