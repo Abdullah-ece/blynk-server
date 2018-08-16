@@ -2,13 +2,15 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import * as API from './data/actions';
+import {AccountClearCredentials} from "data/Account/actions";
+import {LoginWsLogout} from "data/Login/actions";
 
 @connect(() => {
   return {};
 }, (dispatch) => {
   return {
-    Logout: bindActionCreators(API.Logout, dispatch)
+    LoginWsLogout: bindActionCreators(LoginWsLogout, dispatch),
+    AccountClearCredentials: bindActionCreators(AccountClearCredentials, dispatch),
   };
 })
 export default class Logout extends React.Component {
@@ -18,28 +20,17 @@ export default class Logout extends React.Component {
   };
 
   static propTypes = {
-    Logout: React.PropTypes.func,
+    LoginWsLogout: React.PropTypes.func,
+    AccountClearCredentials: React.PropTypes.func,
   };
 
   constructor(props) {
     super(props);
-
-    this.props.Logout().catch(() => {
-      this.context.router.push('/login');
-    }).then(() => {
-      this.context.router.push('/login');
-    });
   }
 
   componentWillMount() {
-    this.props.Logout().catch(() => {
-      this.context.router.push('/login');
-    }).then(() => {
-      this.context.router.push('/login');
-    });
-  }
-
-  componentDidUpdate() {
+    this.props.AccountClearCredentials();
+    this.props.LoginWsLogout();
     this.context.router.push('/login');
   }
 

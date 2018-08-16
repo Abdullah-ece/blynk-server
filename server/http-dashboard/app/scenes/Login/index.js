@@ -8,8 +8,12 @@ import {SubmissionError} from 'redux-form';
 
 import {connect} from 'react-redux';
 
-import * as API from './data/actions';
 import * as AccountAPI from 'data/Account/actions';
+
+import {
+  blynkWsLogin
+} from 'store/blynk-websocket-middleware/actions';
+
 
 import {encryptUserPassword} from 'services/Crypto';
 
@@ -19,7 +23,7 @@ import {encryptUserPassword} from 'services/Crypto';
   return {
     AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
     AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
-    Login: bindActionCreators(API.Login, dispatch)
+    blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch)
   };
 })
 export default class Login extends React.Component {
@@ -29,7 +33,7 @@ export default class Login extends React.Component {
   };
 
   static propTypes = {
-    Login: React.PropTypes.func,
+    blynkWsLogin: React.PropTypes.func,
     UnmarkAsRecentRegistered: React.PropTypes.func,
     AccountFetch: React.PropTypes.func,
     AccountSaveCredentials: React.PropTypes.func,
@@ -46,16 +50,14 @@ export default class Login extends React.Component {
 
   handleSubmit(values) {
 
-    // password - 84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=
-
     const password = encryptUserPassword(values.email, values.password);
 
     this.setState({
       loading: true
     });
-    return this.props.Login({
-      email: values.email,
-      password: password
+    return this.props.blynkWsLogin({
+      username: values.email,
+      hash: password
     }).catch(() => {
       this.setState({
         loading: false

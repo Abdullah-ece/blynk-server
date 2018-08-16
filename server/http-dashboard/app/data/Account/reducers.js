@@ -36,6 +36,16 @@ export default function Account(state = initialState, action) {
           password: action.value.password
         }
       };
+
+    case "ACCOUNT_CLEAR_CREDENTIALS":
+      return {
+        ...state,
+        credentials: {
+          username: '',
+          password: '',
+        }
+      };
+
     case "API_ACCOUNT_FAILURE":
       return {
         ...state,

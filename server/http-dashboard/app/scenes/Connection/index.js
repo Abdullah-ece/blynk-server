@@ -33,9 +33,6 @@ import {bindActionCreators} from 'redux';
 
 // import {encryptUserPassword} from 'services/Crypto';
 
-const LOGIN = 'admin@blynk.cc';
-const PASSWORD = '84inR6aLx6tZGaQyLrZSEVYCxWW8L88MG+gOn2cncgM=';
-
 @connect((state) => ({
   isUserLoggedIn  : state.Login.isWsLoggedIn,
   Account         : state.Account,
@@ -77,25 +74,28 @@ class Connection extends React.Component {
 
   componentWillMount() {
 
-    this.props.blynkWsConnect().then(() => {
-        this.props.blynkWsLogin({
-          username: LOGIN,
-          hash    : PASSWORD,
-        }).then(() => {
-          this.props.Login({
-            email   : LOGIN,
-            password: PASSWORD
-          }).catch(() => {
-            // @todo track case when nice credentials was saved but when user open browser credentials invalid
-          }).then(() => {
-            this.props.AccountFetch().then(() => {
-              this.props.LoginWsSuccess();
-              this.context.router.push('/devices');
-            });
-          });
-        });
+    const LOGIN = this.props.credentials.username;
+    const PASSWORD = this.props.credentials.password;
 
+    this.props.blynkWsConnect().then(() => {
       this.props.connectSuccess();
+
+      if (!LOGIN || !PASSWORD) {
+        return null;
+      }
+
+      this.props.blynkWsLogin({
+        username: LOGIN,
+        hash    : PASSWORD,
+      }).then(() => {
+        this.props.AccountFetch().then(() => {
+          this.props.LoginWsSuccess();
+          // this.context.router.push('/devices');
+        });
+      }).catch(() => {
+        this.context.router.push('/login');
+      });
+
     }).catch(() => {
       this.props.connectFailed();
     });
@@ -104,10 +104,6 @@ class Connection extends React.Component {
   render() {
 
     let placeholder = '';
-
-    // let credentialsExist = () => {
-    //   return this.props.credentials && this.props.credentials.username && this.props.credentials.password;
-    // };
 
     if(this.props.connectionStatus === CONNECTION_STATES_VALUES.NOT_CONNECTED)
       placeholder = 'Connecting';
@@ -127,11 +123,6 @@ class Connection extends React.Component {
         <ConnectionLoading placeholder={placeholder}/>
       );
     }
-
-    if (this.props.connectionStatus === CONNECTION_STATES_VALUES.SUCCESS && !this.props.isUserLoggedIn)
-      return (
-        <ConnectionLoading placeholder={placeholder}/>
-      );
 
     return this.props.children;
   }

@@ -22,6 +22,12 @@ export function AccountSaveCredentials({ username, password }) {
   };
 }
 
+export function AccountClearCredentials() {
+  return {
+    type: 'ACCOUNT_CLEAR_CREDENTIALS',
+  };
+}
+
 export function AccountResetPassword(data) {
   return {
     type: 'API_ACCOUNT_SEND_RESET_PASS',

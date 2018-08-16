@@ -69,6 +69,7 @@ export const API_COMMANDS = {
   GET_DEVICE_TIMELINE           : 127,
   LOG_EVENT_RESOLVE             : 75,
   DELETE_DEVICE                 : 128,
+  LOGOUT                        : 66,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
@@ -167,14 +168,18 @@ export const blynkWsLogin = (params) => {
   }));
 
   let promiseResolve;
-  let promise = new Promise((resolve) => {
+  let promiseReject;
+
+  let promise = new Promise((resolve, reject) => {
     promiseResolve = resolve;
+    promiseReject = reject;
 });
 
   messages.push({
     msgId: MSG_ID,
     promise: promise,
-    promiseResolve: promiseResolve
+    promiseResolve: promiseResolve,
+    promiseReject: promiseReject,
   });
 
   store.dispatch(websocketSend(value));
