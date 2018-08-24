@@ -72,7 +72,8 @@ class UnitField extends BaseField {
       Unit.Kelvin
     ],
     'Other': [
-      Unit.Percentage
+      Unit.Percentage,
+      Unit.PercentageSymbol,
     ]
   };
 
