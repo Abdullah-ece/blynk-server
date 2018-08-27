@@ -1,7 +1,7 @@
 package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -79,7 +79,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
  * Created on 2/1/2015.
  *
  */
-public class WebAppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
+public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMessage> {
 
     public final WebAppStateHolder state;
     private final WebAppHardwareLogic webAppHardwareLogic;

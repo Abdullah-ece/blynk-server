@@ -55,6 +55,7 @@ import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.webJson;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.AVG;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.MINUTE;
@@ -210,6 +211,21 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         }
 
         appWebSocketClient.verifyResult(new HardwareMessage(111, b("1 vw 10 1")));
+    }
+
+    @Test
+    public void webSocketWrongTrackCommand() throws Exception {
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        AppWebSocketClient appWebSocketClient2 = TestUtil.defaultClient();
+        appWebSocketClient2.start();
+        appWebSocketClient2.login(regularUser);
+        appWebSocketClient2.verifyResult(ok(1));
+        appWebSocketClient2.send("track null");
+        appWebSocketClient2.verifyResult(webJson(2, "Error parsing number. For input string: \"null\""));
     }
 
     @Test

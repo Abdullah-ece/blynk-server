@@ -22,13 +22,13 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
 
     protected static final Logger log = LogManager.getLogger(BaseSimpleChannelInboundHandler.class);
 
-    private final Class<I> type;
+    protected final Class<I> type;
 
     protected BaseSimpleChannelInboundHandler(Class<I> type) {
         this.type = type;
     }
 
-    private static int getMsgId(Object o) {
+    static int getMsgId(Object o) {
         if (o instanceof MessageBase) {
             return ((MessageBase) o).id;
         }
