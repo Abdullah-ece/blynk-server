@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -78,7 +79,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(getUserName(), createdDevice.activatedBy);
 
         client.getDevices(orgId);
-        Device[] devices = client.parseDevices(4);
+        DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
         assertEquals(2, devices.length);
     }
@@ -150,9 +151,10 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("super@blynk.cc", createdDevice.activatedBy);
 
         client.getDevices(fromApi.id);
-        Device[] devices = client.parseDevices(4);
+        DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
         assertEquals(1, devices.length);
+        assertEquals(product.name, devices[0].productName);
 
         client.getDevice(fromApi.id, devices[0].id);
         Device device = client.parseDevice(5);
@@ -197,7 +199,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("super@blynk.cc", createdDevice.activatedBy);
 
         client.getDevices(orgId);
-        Device[] devices = client.parseDevices(4);
+        DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -260,7 +262,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     public void getAllDevices() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.getDevices(orgId);
-        Device[] devices = client.parseDevices(1);
+        DeviceDTO[] devices = client.parseDevicesDTO(1);
         assertNotNull(devices);
         assertEquals(0, devices.length);
     }

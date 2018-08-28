@@ -125,7 +125,7 @@ public class DeviceDTO {
         this.deviceOtaInfo = deviceOtaInfo;
     }
 
-    private DeviceDTO(Device device, Product product) {
+    public DeviceDTO(Device device, Product product) {
         this.id = device.id;
         this.productId = device.productId;
         this.name = device.name;
