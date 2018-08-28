@@ -16,6 +16,10 @@ public class MeasurementUnitMetaField extends MetaField {
 
     public final String value;
 
+    public final float min;
+
+    public final float max;
+
     @JsonCreator
     public MeasurementUnitMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
@@ -23,20 +27,24 @@ public class MeasurementUnitMetaField extends MetaField {
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("units") MeasurementUnit units,
-                                    @JsonProperty("value") String value) {
+                                    @JsonProperty("value") String value,
+                                    @JsonProperty("min") float min,
+                                    @JsonProperty("max") float max) {
         super(id, name, role, isDefault, icon);
         this.units = units;
         this.value = value;
+        this.min = min;
+        this.max = max;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new MeasurementUnitMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
-                units, value);
+                units, value, min, max);
     }
 
     @Override
     public MetaField copy() {
-        return new MeasurementUnitMetaField(id, name, role, isDefault, icon, units, value);
+        return new MeasurementUnitMetaField(id, name, role, isDefault, icon, units, value, min, max);
     }
 }

@@ -22,6 +22,10 @@ public class CostMetaField extends MetaField {
 
     public final MeasurementUnit units;
 
+    public final float min;
+
+    public final float max;
+
     @JsonCreator
     public CostMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
@@ -31,22 +35,26 @@ public class CostMetaField extends MetaField {
                          @JsonProperty("currency") Currency currency,
                          @JsonProperty("price") double price,
                          @JsonProperty("perValue") double perValue,
-                         @JsonProperty("units") MeasurementUnit units) {
+                         @JsonProperty("units") MeasurementUnit units,
+                         @JsonProperty("min") float min,
+                         @JsonProperty("max") float max) {
         super(id, name, role, isDefault, icon);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
         this.units = units;
+        this.min = min;
+        this.max = max;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new CostMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
-                currency, price, perValue, units);
+                currency, price, perValue, units, min, max);
     }
 
     @Override
     public MetaField copy() {
-        return new CostMetaField(id, name, role, isDefault, icon, currency, price, perValue, units);
+        return new CostMetaField(id, name, role, isDefault, icon, currency, price, perValue, units, min, max);
     }
 }
