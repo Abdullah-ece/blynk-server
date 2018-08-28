@@ -33,8 +33,9 @@ public class ShiftMetaField extends MetaField {
                           @JsonProperty("name") String name,
                           @JsonProperty("role") Role role,
                           @JsonProperty("isDefault") boolean isDefault,
+                          @JsonProperty("icon") String icon,
                           @JsonProperty("shifts") Shift[] shifts) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.shifts = shifts == null ? EMPTY : shifts;
     }
 
@@ -62,13 +63,13 @@ public class ShiftMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new ShiftMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new ShiftMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
                 copyShifts(shifts));
     }
 
     @Override
     public MetaField copy() {
-        return new ShiftMetaField(id, name, role, isDefault, copyShifts(shifts));
+        return new ShiftMetaField(id, name, role, isDefault, icon, copyShifts(shifts));
     }
 
     private static Shift[] copyShifts(Shift[] shifts) {

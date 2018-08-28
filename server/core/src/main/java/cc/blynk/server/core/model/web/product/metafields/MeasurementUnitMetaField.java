@@ -21,21 +21,22 @@ public class MeasurementUnitMetaField extends MetaField {
                                     @JsonProperty("name") String name,
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("isDefault") boolean isDefault,
+                                    @JsonProperty("icon") String icon,
                                     @JsonProperty("units") MeasurementUnit units,
                                     @JsonProperty("value") String value) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.units = units;
         this.value = value;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new MeasurementUnitMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new MeasurementUnitMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
                 units, value);
     }
 
     @Override
     public MetaField copy() {
-        return new MeasurementUnitMetaField(id, name, role, isDefault, units, value);
+        return new MeasurementUnitMetaField(id, name, role, isDefault, icon, units, value);
     }
 }

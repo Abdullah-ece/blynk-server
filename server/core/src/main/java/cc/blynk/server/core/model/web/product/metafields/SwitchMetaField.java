@@ -23,10 +23,11 @@ public class SwitchMetaField extends MetaField {
                            @JsonProperty("name") String name,
                            @JsonProperty("role") Role role,
                            @JsonProperty("isDefault") boolean isDefault,
+                           @JsonProperty("icon") String icon,
                            @JsonProperty("from") String from,
                            @JsonProperty("to") String to,
                            @JsonProperty("value") String value) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.value = value;
         this.to = to;
         this.from = from;
@@ -34,13 +35,13 @@ public class SwitchMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new SwitchMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new SwitchMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
                 from, to, value);
     }
 
     @Override
     public MetaField copy() {
-        return new SwitchMetaField(id, name, role, isDefault, from, to, value);
+        return new SwitchMetaField(id, name, role, isDefault, icon, from, to, value);
     }
 
 }

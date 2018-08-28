@@ -21,9 +21,10 @@ public class ListMetaField extends MetaField {
                          @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("isDefault") boolean isDefault,
+                         @JsonProperty("icon") String icon,
                          @JsonProperty("options") String[] options,
                          @JsonProperty("selectedOption") String selectedOption) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.options = options;
         this.selectedOption = selectedOption;
     }
@@ -31,12 +32,12 @@ public class ListMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ListMetaField listMetaField = (ListMetaField) metaField;
-        return new ListMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new ListMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
                 listMetaField.options, selectedOption);
     }
 
     @Override
     public MetaField copy() {
-        return new ListMetaField(id, name, role, isDefault, options, selectedOption);
+        return new ListMetaField(id, name, role, isDefault, icon, options, selectedOption);
     }
 }

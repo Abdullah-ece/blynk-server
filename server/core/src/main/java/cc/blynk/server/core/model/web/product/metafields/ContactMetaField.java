@@ -57,6 +57,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("name") String name,
                             @JsonProperty("role") Role role,
                             @JsonProperty("isDefault") boolean isDefault,
+                            @JsonProperty("icon") String icon,
                             @JsonProperty("contact") String contact,
                             @JsonProperty("firstName") String firstName,
                             @JsonProperty("isFirstNameEnabled") boolean isFirstNameEnabled,
@@ -77,7 +78,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("zip") String zip,
                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.contact = contact;
         this.firstName = firstName;
         this.isFirstNameEnabled = isFirstNameEnabled;
@@ -108,7 +109,7 @@ public class ContactMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
-        return new ContactMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new ContactMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
                 contact,
                 firstName, contactMetaField.isFirstNameEnabled,
                 lastName, contactMetaField.isLastNameEnabled,
@@ -124,7 +125,7 @@ public class ContactMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new ContactMetaField(id, name, role, isDefault,
+        return new ContactMetaField(id, name, role, isDefault, icon,
                 contact,
                 firstName, isFirstNameEnabled,
                 lastName, isLastNameEnabled,

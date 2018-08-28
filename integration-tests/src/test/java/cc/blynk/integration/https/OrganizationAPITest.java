@@ -641,21 +641,21 @@ public class OrganizationAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, MeasurementUnit.Celsius, "36"),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, null, 0, 1000, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, null, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date().getTime())
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, null, new Date().getTime())
         };
 
         product.dataStreams = new DataStream[] {
@@ -770,7 +770,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -793,7 +793,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -899,7 +899,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -922,7 +922,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith")
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -1231,7 +1231,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", Role.ADMIN, true, "Kyiv")
+                new TextMetaField(1, "Location Name", Role.ADMIN, true, null, "Kyiv")
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -1251,7 +1251,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", Role.ADMIN, true, "Kyiv 2")
+                new TextMetaField(1, "Location Name", Role.ADMIN, true, null, "Kyiv 2")
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");

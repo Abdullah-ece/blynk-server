@@ -173,22 +173,22 @@ public class ProductAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, MeasurementUnit.Celsius, "36"),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, null, 0, 100, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, null, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date().getTime()),
-                new MeasurementUnitMetaField(10, "None Unit", Role.ADMIN, false, MeasurementUnit.None, "36"),
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, null, new Date().getTime()),
+                new MeasurementUnitMetaField(10, "None Unit", Role.ADMIN, false, null, MeasurementUnit.None, "36"),
         };
 
         product.dataStreams = new DataStream[] {
@@ -228,21 +228,21 @@ public class ProductAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, MeasurementUnit.Celsius, "36"),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, null, 0, 1000, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, null, MeasurementUnit.Celsius, "36"),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, new Date().getTime())
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, null, new Date().getTime())
         };
 
         product.dataStreams = new DataStream[] {
@@ -596,7 +596,7 @@ public class ProductAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, null, "Default Device")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -633,7 +633,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals("Default Device", textMetaField.value);
         }
 
-        newDevice.metaFields[0] = new TextMetaField(textMetaField.id, textMetaField.name, textMetaField.role, false, "My updated value");
+        newDevice.metaFields[0] = new TextMetaField(textMetaField.id, textMetaField.name, textMetaField.role, false, null, "My updated value");
 
         HttpPost updateDeviceReq = new HttpPost(httpsAdminServerUrl + "/devices/1");
         updateDeviceReq.setEntity(new StringEntity(newDevice.toString(), ContentType.APPLICATION_JSON));
@@ -656,7 +656,7 @@ public class ProductAPITest extends APIBaseTest {
 
         product.metaFields = new MetaField[] {
                 product.metaFields[0],
-                new NumberMetaField(2, "New metafield", Role.ADMIN, false, 123)
+                new NumberMetaField(2, "New metafield", Role.ADMIN, false, null, 0, 1000, 123)
         };
 
         HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");
@@ -704,7 +704,7 @@ public class ProductAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", Role.ADMIN, false, "Default Device")
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, null, "Default Device")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");
@@ -741,7 +741,7 @@ public class ProductAPITest extends APIBaseTest {
             assertEquals("Default Device", textMetaField.value);
         }
 
-        product.metaFields[0] = new TextMetaField(1, "Me updated test metafield", Role.USER, false, "Default Device");
+        product.metaFields[0] = new TextMetaField(1, "Me updated test metafield", Role.USER, false, null, "Default Device");
 
         HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");
         updateProductAndDevicesReq.setEntity(new StringEntity(new ProductAndOrgIdDTO(1, product).toString(), ContentType.APPLICATION_JSON));
@@ -782,7 +782,7 @@ public class ProductAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
                         "Dmitriy", true, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false, "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false)
@@ -823,7 +823,7 @@ public class ProductAPITest extends APIBaseTest {
             assertFalse(contactMetaField.isLastNameEnabled);
         }
 
-        product.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, "Tech Support",
+        product.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
                 "Dmitriy", true, "Dumanskiy", true, "dmitriy@blynk.cc", false,
                 "+38063673333",  false, "My street", false, "Ukraine", false,
                 "Kyiv", false, "Ukraine", false, "03322", false, false);

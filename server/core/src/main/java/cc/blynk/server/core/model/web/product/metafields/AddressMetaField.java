@@ -34,6 +34,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("name") String name,
                             @JsonProperty("role") Role role,
                             @JsonProperty("isDefault") boolean isDefault,
+                            @JsonProperty("icon") String icon,
                             @JsonProperty("streetAddress") String streetAddress,
                             @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
                             @JsonProperty("city") String city,
@@ -45,7 +46,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("country") String country,
                             @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
@@ -64,6 +65,7 @@ public class AddressMetaField extends MetaField {
         AddressMetaField addressMetaField = (AddressMetaField) metaField;
         return new AddressMetaField(
                 id, metaField.name, metaField.role, metaField.isDefault,
+                metaField.icon,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
                 state, addressMetaField.isStateEnabled,
@@ -77,6 +79,7 @@ public class AddressMetaField extends MetaField {
     public MetaField copy() {
         return new AddressMetaField(
                 id, name, role, isDefault,
+                icon,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,
                 state, isStateEnabled,

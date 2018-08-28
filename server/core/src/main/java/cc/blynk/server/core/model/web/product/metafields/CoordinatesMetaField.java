@@ -21,20 +21,21 @@ public class CoordinatesMetaField extends MetaField {
                                 @JsonProperty("name") String name,
                                 @JsonProperty("role") Role role,
                                 @JsonProperty("isDefault") boolean isDefault,
+                                @JsonProperty("icon") String icon,
                                 @JsonProperty("lat") double lat,
                                 @JsonProperty("lon") double lon) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.lat = lat;
         this.lon = lon;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CoordinatesMetaField(id, metaField.name, metaField.role, metaField.isDefault, lat, lon);
+        return new CoordinatesMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon, lat, lon);
     }
 
     @Override
     public MetaField copy() {
-        return new CoordinatesMetaField(id, name, role, isDefault, lat, lon);
+        return new CoordinatesMetaField(id, name, role, isDefault, icon, lat, lon);
     }
 }

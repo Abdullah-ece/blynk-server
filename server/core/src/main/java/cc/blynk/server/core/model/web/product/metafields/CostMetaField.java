@@ -27,11 +27,12 @@ public class CostMetaField extends MetaField {
                          @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
                          @JsonProperty("isDefault") boolean isDefault,
+                         @JsonProperty("icon") String icon,
                          @JsonProperty("currency") Currency currency,
                          @JsonProperty("price") double price,
                          @JsonProperty("perValue") double perValue,
                          @JsonProperty("units") MeasurementUnit units) {
-        super(id, name, role, isDefault);
+        super(id, name, role, isDefault, icon);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
@@ -40,12 +41,12 @@ public class CostMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CostMetaField(id, metaField.name, metaField.role, metaField.isDefault,
+        return new CostMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
                 currency, price, perValue, units);
     }
 
     @Override
     public MetaField copy() {
-        return new CostMetaField(id, name, role, isDefault, currency, price, perValue, units);
+        return new CostMetaField(id, name, role, isDefault, icon, currency, price, perValue, units);
     }
 }

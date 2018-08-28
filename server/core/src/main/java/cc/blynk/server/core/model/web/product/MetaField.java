@@ -63,11 +63,14 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final boolean isDefault;
 
-    public MetaField(int id, String name, Role role, boolean isDefault) {
+    public final String icon;
+
+    public MetaField(int id, String name, Role role, boolean isDefault, String icon) {
         this.id = id;
         this.name = name;
         this.role = role;
         this.isDefault = isDefault;
+        this.icon = icon;
     }
 
     public abstract MetaField copySpecificFieldsOnly(MetaField metaField);
