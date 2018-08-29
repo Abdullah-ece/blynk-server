@@ -52,7 +52,7 @@ import Store from './store';
 /* services */
 import {
   RouteGuestOnly,
-  // RouteAuthorizedOnly
+  RouteAuthorizedOnly
 } from './services/Login';
 
 /* vendor */
@@ -95,7 +95,7 @@ Store().then((store) => {
           </Route>
           <Route component={Connection}>
             <Route component={Layout}>
-              <Route component={UserLayout} /*onEnter={RouteAuthorizedOnly(store)}*/>
+              <Route component={UserLayout} onEnter={RouteAuthorizedOnly(store)}>
                 <Route path="/user-profile" component={UserProfile}/>
                 <Route path="/user-profile/:tab" component={UserProfile}/>>
                 <Route path="/devices" components={Devices}/>
@@ -125,7 +125,7 @@ Store().then((store) => {
               <Route path="/logout" component={Logout}/>
               <Route component={LoginLayout}>
                 <Route path="/login" component={Login} onEnter={RouteGuestOnly(store)}/>
-                <Route path="/forgot-pass" component={ForgotPass} /*onEnter={RouteGuestOnly(store)}*//>
+                <Route path="/forgot-pass" component={ForgotPass} onEnter={RouteGuestOnly(store)}/>
                 <Route path="/resetpass" component={ResetPass}/>
                 <Route path="/invite" component={Invite}/>
               </Route>

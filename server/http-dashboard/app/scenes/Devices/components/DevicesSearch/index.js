@@ -121,7 +121,7 @@ class DevicesSearch extends React.Component {
 
     for (let j in devices) {
       const device = devices[j];
-      const widgets = device.webDashboard.widgets;
+      const widgets = device && device.webDashboard && device.webDashboard.widgets || [];
       for (let k in widgets) {
         const widget = widgets[k];
 

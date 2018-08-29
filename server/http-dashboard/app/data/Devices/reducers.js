@@ -163,7 +163,7 @@ const initialState = {
   deviceDashboardLiveData: {},
   deviceDashboardData: {},
   deviceDashboard: {},
-  deviceDashboardLoading: true,
+  deviceDashboardLoading: false,
 
   timelineControls: {
     type: '',
@@ -636,6 +636,7 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         devices: action.payload.data.map((device) => getFieldsForDevicesList(device)),
+        devicesForSearch: action.payload.data,
         devicesPreloadLoading: false
       };
 

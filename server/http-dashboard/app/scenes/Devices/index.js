@@ -54,7 +54,7 @@ class Devices extends React.Component {
 
     const { params, location } = this.props;
 
-    if(this.props.devicesLoading || this.props.productsLoading) {
+    if((this.props.devicesLoading === undefined || this.props.devicesLoading) || (this.props.productsLoading === undefined || this.props.productsLoading)) {
       return (
         <FullSizeLoading placeholder={'Loading Devices'}/>
       );

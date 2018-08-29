@@ -50,7 +50,7 @@ class DashboardScene extends React.Component {
 
   componentDidMount() {
     // loading dash widgets
-    if(this.props.orgId) {
+    if (this.props.orgId) {
       this.fetchDashboard().then(this.fetchDashboardData);
     }
   }
@@ -60,8 +60,9 @@ class DashboardScene extends React.Component {
     if(prevProps.params.id !== this.props.params.id && this.props.orgId)
       this.fetchDashboard().then(this.fetchDashboardData);
 
-    if(!prevProps.orgId && this.props.orgId)
+    if(!prevProps.orgId && this.props.orgId) {
       this.fetchDashboard().then(this.fetchDashboardData);
+    }
 
     if(prevProps.timeFilter.time !== this.props.timeFilter.time)
       this.fetchDashboardData();

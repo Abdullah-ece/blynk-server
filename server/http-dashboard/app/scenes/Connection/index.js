@@ -90,7 +90,7 @@ class Connection extends React.Component {
       }).then(() => {
         this.props.AccountFetch().then(() => {
           this.props.LoginWsSuccess();
-          // this.context.router.push('/devices');
+          this.context.router.push('/devices');
         });
       }).catch(() => {
         this.context.router.push('/login');

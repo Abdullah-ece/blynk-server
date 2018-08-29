@@ -6,6 +6,8 @@ import {bindActionCreators} from 'redux';
 
 import {SubmissionError} from 'redux-form';
 
+import {LoginWsSuccess} from 'data/Login/actions';
+
 import {connect} from 'react-redux';
 
 import * as AccountAPI from 'data/Account/actions';
@@ -21,6 +23,7 @@ import {encryptUserPassword} from 'services/Crypto';
   return {};
 }, (dispatch) => {
   return {
+    LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
     AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
     AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
     blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch)
@@ -34,6 +37,7 @@ export default class Login extends React.Component {
 
   static propTypes = {
     blynkWsLogin: React.PropTypes.func,
+    LoginWsSuccess: React.PropTypes.func,
     UnmarkAsRecentRegistered: React.PropTypes.func,
     AccountFetch: React.PropTypes.func,
     AccountSaveCredentials: React.PropTypes.func,
@@ -70,6 +74,7 @@ export default class Login extends React.Component {
       });
       //todo this is not required since api send back user data on successful login
       this.props.AccountFetch().then(() => {
+        this.props.LoginWsSuccess();
         this.context.router.push('/devices');
       });
     });
