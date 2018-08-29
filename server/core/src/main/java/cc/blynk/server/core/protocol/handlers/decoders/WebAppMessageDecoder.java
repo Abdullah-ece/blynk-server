@@ -38,7 +38,6 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        log.trace("In webappdecoder: {}. Channel: {}.", msg, ctx.channel());
         if (msg instanceof BinaryWebSocketFrame) {
             try {
                 ByteBuf in = ((BinaryWebSocketFrame) msg).content();
