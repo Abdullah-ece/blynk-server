@@ -55,11 +55,11 @@ class Devices extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.blynkWsSetTrackDeviceId(null);
+    this.props.blynkWsSetTrackDeviceId(-1);
   }
 
   redirectToDeviceId(deviceId) {
-    this.props.blynkWsSetTrackDeviceId(deviceId);
+    this.props.blynkWsSetTrackDeviceId(deviceId || -1);
     const tab = this.context.router.params.tab || TABS.DASHBOARD;
     this.context.router.push('/devices/' + deviceId + "/" + tab);
   }
