@@ -40,9 +40,11 @@ public class WebGetProductsLogic {
         }
 
         organizationDao.calcDeviceCount(organization);
+        log.trace("In getProducts handler.");
 
         if (ctx.channel().isWritable()) {
             String productString = JsonParser.toJson(organization.products);
+            log.trace("Returning products for user {} and orgId {}.", user.email, user.orgId);
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }
