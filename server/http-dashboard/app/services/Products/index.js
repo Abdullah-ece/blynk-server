@@ -403,6 +403,11 @@ export const Unit = {
     key: 'Second',
     value: 'Second'
   },
+  SquareFeet: {
+    abbreviation: 'sq ft',
+    key: 'SquareFeet',
+    value: 'Square Feet'
+  },
 
 };
 
