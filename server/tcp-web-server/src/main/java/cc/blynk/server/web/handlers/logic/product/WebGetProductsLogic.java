@@ -41,17 +41,15 @@ public class WebGetProductsLogic {
         }
 
         organizationDao.calcDeviceCount(organization);
-
-        if (ctx.channel().isWritable()) {
-            String productString = JsonParser.toJson(organization.products);
-            if (productString == null) {
-                log.error("Empty response for WebGetProductsLogic and {}.", user.email);
-            } else {
-                log.trace("Returning products for user {} and orgId {}, length {}.",
-                        user.email, user.orgId, productString.length());
-                StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
-                ctx.writeAndFlush(response, ctx.voidPromise());
-            }
+        log.trace("In getProducts handler. Before.");
+        String productString = JsonParser.toJson(organization.products);
+        if (productString == null) {
+            log.error("Empty response for WebGetProductsLogic and {}.", user.email);
+        } else {
+            log.trace("Returning products for user {} and orgId {}, length {}.",
+                    user.email, user.orgId, productString.length());
+            StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
+            ctx.writeAndFlush(response, ctx.voidPromise());
         }
     }
 
