@@ -1,10 +1,10 @@
 package cc.blynk.server.servers.hardware;
 
+import cc.blynk.core.http.handlers.HttpToHttpsRedirectHandler;
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.AccountHandler;
 import cc.blynk.server.api.http.dashboard.AuthCookieHandler;
@@ -40,7 +40,6 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
-import static cc.blynk.utils.properties.ServerProperties.STATIC_FILES_FOLDER;
 
 /**
  * The Blynk Project.
@@ -77,6 +76,9 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         var stats = holder.stats;
 
         //http API handlers
+        HttpToHttpsRedirectHandler httpToHttpsRedirectHandler =
+                new HttpToHttpsRedirectHandler(holder.props.getAdminRootPath(),
+                        holder.props.getHttpsPortOrBlankIfDefaultAsString());
         NoMatchHandler noMatchHandler = new NoMatchHandler();
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
@@ -98,14 +100,15 @@ public class HardwareAndHttpAPIServer extends BaseServer {
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
                         .addLast(letsEncryptHandler)
-                        .addLast(webLoginHandler)
-                        .addLast(authCookieHandler)
-                        .addLast(new UploadHandler(jarPath, "/api/upload", "/" + STATIC_FILES_FOLDER))
-                        .addLast(accountHandler)
-                        .addLast(devicesHandler)
-                        .addLast(dataHandler)
-                        .addLast(productHandler)
-                        .addLast(organizationHandler)
+                        //.addLast(webLoginHandler)
+                        //.addLast(authCookieHandler)
+                        //.addLast(new UploadHandler(jarPath, "/api/upload", "/" + STATIC_FILES_FOLDER))
+                        //.addLast(accountHandler)
+                        //.addLast(devicesHandler)
+                        //.addLast(dataHandler)
+                        //.addLast(productHandler)
+                        //.addLast(organizationHandler)
+                        .addLast(httpToHttpsRedirectHandler)
                         .addLast(noMatchHandler)
                         .remove(this);
                 if (log.isTraceEnabled()) {

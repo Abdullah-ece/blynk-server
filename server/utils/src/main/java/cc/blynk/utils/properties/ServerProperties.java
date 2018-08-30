@@ -102,7 +102,7 @@ public class ServerProperties extends BaseProperties {
         return getBoolProperty("enable.db");
     }
 
-    private String getHttpsPortOrBlankIfDefaultAsString() {
+    public String getHttpsPortOrBlankIfDefaultAsString() {
         if (force80Port()) {
             //means default port 443 is used, so no need to attach it
             return "";
