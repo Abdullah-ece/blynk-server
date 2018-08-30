@@ -46,6 +46,7 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
                 int messageId = in.readUnsignedShort();
 
                 if (limitChecker.quotaReached(ctx, messageId)) {
+                    log.trace("Message quota reached.");
                     return;
                 }
 

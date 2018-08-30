@@ -30,6 +30,7 @@ public class WebGetProductsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        log.trace("In getProducts handler.");
         User user = state.user;
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
@@ -40,13 +41,17 @@ public class WebGetProductsLogic {
         }
 
         organizationDao.calcDeviceCount(organization);
-        log.trace("In getProducts handler.");
 
         if (ctx.channel().isWritable()) {
             String productString = JsonParser.toJson(organization.products);
-            log.trace("Returning products for user {} and orgId {}.", user.email, user.orgId);
-            StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
-            ctx.writeAndFlush(response, ctx.voidPromise());
+            if (productString == null) {
+                log.error("Empty response for WebGetProductsLogic and {}.", user.email);
+            } else {
+                log.trace("Returning products for user {} and orgId {}, length {}.",
+                        user.email, user.orgId, productString.length());
+                StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
+                ctx.writeAndFlush(response, ctx.voidPromise());
+            }
         }
     }
 
