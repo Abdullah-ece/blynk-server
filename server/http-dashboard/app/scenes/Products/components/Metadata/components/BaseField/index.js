@@ -97,8 +97,13 @@ class BaseField extends React.PureComponent {
                      field={this.props.field}
                      id={this.props.id}
                      form={this.props.form}
-                     isActive={this.state.isFocused}>
-        { this.component() }
+                     isActive={this.state.isFocused}
+                     addBefore={this.addBefore && this.addBefore()}
+                     >
+        <div>
+          { this.component() }
+        </div>
+
       </Metadata.Item>
     );
   }

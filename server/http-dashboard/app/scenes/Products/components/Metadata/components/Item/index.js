@@ -53,7 +53,9 @@ class MetadataItem extends React.PureComponent {
     metaFieldKey: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
-    ])
+    ]),
+
+    addBefore: PropTypes.any,
   };
 
   constructor(props) {
@@ -109,7 +111,19 @@ class MetadataItem extends React.PureComponent {
     this.setState({isActive: true});
   }
 
+  isPreviewDisabled(fieldName) {
+    switch(String(fieldName)){
+      case hardcodedRequiredMetadataFieldsNames.LocationName :
+        return this.props.field.get("isLocationGetFromDevice") || !this.props.field.get("isLocationEnabled");
+
+      default:
+        return false;
+    }
+  }
+
   preview() {
+
+    if(this.isPreviewDisabled(this.props.field.get("name"))) return null;
 
     const name = this.props.preview.name && this.props.preview.name.trim();
 
@@ -134,6 +148,21 @@ class MetadataItem extends React.PureComponent {
     this.props.touchFormById(this.props.form, ...Object.keys(this.props.fields));
   }
 
+  isRoleSelectDisabled(fieldName) {
+    switch(String(fieldName)){
+      case hardcodedRequiredMetadataFieldsNames.Manufacturer :
+        return true;
+
+      case hardcodedRequiredMetadataFieldsNames.LocationName :
+        return this.props.field.get("isLocationGetFromDevice") || !this.props.field.get("isLocationEnabled");
+
+      default:
+        return false;
+    }
+  }
+
+
+
   render() {
     let deleteButton;
     if (this.props.isDirty) {
@@ -152,11 +181,12 @@ class MetadataItem extends React.PureComponent {
       'product-metadata-item-active': this.state.isActive,
     });
 
-    const isRoleSelectDisabled = String(this.props.preview.name) === hardcodedRequiredMetadataFieldsNames.Manufacturer;
+    const isRoleSelectDisabled = this.isRoleSelectDisabled(this.props.field.get("name"));
 
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
+          {this.props.addBefore && this.props.addBefore}
           <Row gutter={0}>
             <Col span={2} style={{width: '48px'}}>
               <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>

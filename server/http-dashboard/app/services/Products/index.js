@@ -116,6 +116,7 @@ export const Metadata = {
     DEVICE_REFERENCE: 'DeviceReference',
     LIST: 'List',
     EMAIL: 'Email',
+    LOCATION: 'LocationField',
   }
 };
 
@@ -740,6 +741,9 @@ export const isMetadataPristine = () => ({
   ),
   [Metadata.Fields.LIST]: (field) => (
     !field.get('name') && !field.get('options')
+  ),
+  [Metadata.Fields.LOCATION]: (field) => (
+    !field.get('name')
   ),
   [Metadata.Fields.CONTACT]: (field) => (
     !field.get('name') && !field.get('isFirstNameEnabled') && !field.get('firstName') && !field.get('isLastNameEnabled') && !field.get('lastName') &&
