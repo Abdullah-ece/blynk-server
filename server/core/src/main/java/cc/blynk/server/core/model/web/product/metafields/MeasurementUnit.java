@@ -15,7 +15,7 @@ public enum MeasurementUnit {
     Kilometer,
 
     Feet,
-    Square_feet,
+    SquareFeet,
     Inch,
     Foot,
     Yard,
