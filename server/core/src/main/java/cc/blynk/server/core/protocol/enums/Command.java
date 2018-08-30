@@ -267,6 +267,8 @@ public final class Command {
             Map.entry(WEB_GET_ORG_LOCATIONS, "WebGetOrgLocations"),
             Map.entry(WEB_CAN_INVITE_USER, "WebCanInviteUser"),
             Map.entry(WEB_CREATE_PRODUCT, "WebCreateProduct"),
+            Map.entry(WEB_UPDATE_PRODUCT, "WebUpdateProduct"),
+            Map.entry(WEB_DELETE_PRODUCT, "WebDeleteProduct"),
             Map.entry(WEB_GET_PRODUCT, "WebGetProduct"),
             Map.entry(WEB_GET_PRODUCTS, "WebGetProducts"),
             Map.entry(WEB_UPDATE_DEVICES_META_IN_PRODUCT, "WebUpdateDevicesMeta"),
