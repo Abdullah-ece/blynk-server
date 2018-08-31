@@ -42,8 +42,8 @@ public class WebUpdateProductLogic {
 
         User user = state.user;
         if (productAndOrgIdDTO == null) {
-            log.error("Wrong create product command for {}.", user.email);
-            ctx.writeAndFlush(json(message.id, "Wrong create product command."), ctx.voidPromise());
+            log.error("Couldn't parse passed product for {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Couldn't parse passed product."), ctx.voidPromise());
             return;
         }
 
