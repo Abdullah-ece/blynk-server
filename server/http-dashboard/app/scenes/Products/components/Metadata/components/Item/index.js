@@ -3,6 +3,7 @@ import Scroll from 'react-scroll';
 import {Row, Col, Icon, Popconfirm, Button} from 'antd';
 import FormItem from 'components/FormItem';
 import Preview from 'scenes/Products/components/Preview';
+import IconSelect from './components/IconSelect';
 import {SortableHandle} from 'react-sortable-hoc';
 import {MetadataSelect} from 'components/Form';
 import {MetadataRoles} from 'services/Roles';
@@ -156,6 +157,7 @@ class MetadataItem extends React.PureComponent {
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
+          <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>
           <Row gutter={8}>
             <Col span={12}>
               {this.props.children}

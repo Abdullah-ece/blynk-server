@@ -1,0 +1,56 @@
+.icon-select-component {
+  position: absolute;
+  left: 28px;
+  top: 17px;
+  .selected-icon {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    position: relative;
+    cursor: pointer;
+    i {
+      line-height: 32px;
+      width: 100%;
+    }
+    .icons-list {
+      transition: 0.4s;
+      z-index: 10;
+      opacity: 1;
+      min-width: 210px;
+      background: white;
+      position: absolute;
+      top: 110%;
+      box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.2);
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      padding: 10px;
+      .icon-container {
+        float: left;
+        height: 32px;
+        width: 32px;
+        margin: 3px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        transition: 0.3s;
+        &:active {
+          background-color: #ffcdc7;
+          border-color: #ffcdc7;
+          i {
+            color: #e92126;
+          }
+        }
+        &:hover {
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          color: #e92126;
+          &:active {
+            border-color: #ffcdc7;
+          }
+        }
+
+      }
+    }
+  }
+}
