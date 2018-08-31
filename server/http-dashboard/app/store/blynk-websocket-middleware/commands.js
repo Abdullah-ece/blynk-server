@@ -73,20 +73,29 @@ export const API_COMMANDS = {
 };
 
 const blynkHeader = (msg_type, msg_id) => {
-  return String.fromCharCode(
-    msg_type,
-    msg_id >> 8, msg_id & 0xFF
+  return new Uint8Array(
+    [
+      msg_type,
+      msg_id >> 8,
+      msg_id & 0xFF
+    ]
   );
 };
 
-const str2ab = (str) => {
-  let buf = new ArrayBuffer(str.length); // 2 bytes for each char
-  let bufView = new Uint8Array(buf);
-  for (let i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
+const str2ab = (payload) => {
+  var encoder = new TextEncoder();
+  return encoder.encode(payload); // returns Uint8Array
 };
+
+const makeMessage = (msg_type, msg_id, payload) => {
+  var header = blynkHeader(msg_type, msg_id);
+  //todo optimize, overhead, requires 2x memory
+  var bodyBytes = str2ab(payload);
+  var result = new Uint8Array(header.length + bodyBytes.length);
+  result.set(header);
+  result.set(bodyBytes, header.length);
+  return result;
+}
 
 export const blynkWsConnect = (params) => {
   const {store, options} = params;
@@ -103,10 +112,8 @@ export const blynkWsApiCall = (params) => {
   if (options.isDebugMode)
     options.debug("blynkWsApiCall", action);
 
-  const value = str2ab(
-    blynkHeader(
-      action.ws.request.command, ++MSG_ID
-    ) + (action.ws.request.query || []).join('\0')
+  const value = makeMessage(
+      action.ws.request.command, ++MSG_ID, (action.ws.request.query || []).join('\0')
   );
 
   store.dispatch(blynkWsRequest({
@@ -153,10 +160,8 @@ export const blynkWsLogin = (params) => {
 
   const {user, hash} = action.value;
 
-  const value = str2ab(
-    blynkHeader(
-      COMMANDS.LOGIN, ++MSG_ID
-    ) + `${user}\0${hash}`
+  const value = makeMessage(
+      COMMANDS.LOGIN, ++MSG_ID, `${user}\0${hash}`
   );
 
   store.dispatch(blynkWsRequest({
@@ -196,10 +201,9 @@ export const blynkWsChartDataFetch = (params) => {
 
   const {deviceId, widgetId, graphPeriod, customRange} = action.value;
 
-  const request = str2ab(
-    blynkHeader(
-      COMMANDS.CHART_DATA_FETCH, ++MSG_ID
-    ) + `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
+  const request = makeMessage(
+      COMMANDS.CHART_DATA_FETCH, ++MSG_ID,
+      `${deviceId}\0${widgetId}\0${graphPeriod}\0${customRange[0]}\0${customRange[1]}`
   );
 
   store.dispatch(blynkWsRequest({
@@ -233,10 +237,8 @@ export const blynkWsHardware = (params) => {
 
   const {deviceId, pin, value} = action.value;
 
-  const request = str2ab(
-    blynkHeader(
-      COMMANDS.HARDWARE, ++MSG_ID
-    ) + `${deviceId}\0vw\0${pin}\0${value}`
+  const request = makeMessage(
+      COMMANDS.HARDWARE, ++MSG_ID, `${deviceId}\0vw\0${pin}\0${value}`
   );
 
   store.dispatch(blynkWsRequest({
@@ -260,10 +262,8 @@ export const blynkWsTrackDevice = (params) => {
 
   const {deviceId} = action.value;
 
-  const request = str2ab(
-    blynkHeader(
-      COMMANDS.TRACK_DEVICE, ++MSG_ID
-    ) + `${deviceId}`
+  const request = makeMessage(
+      COMMANDS.TRACK_DEVICE, ++MSG_ID, `${deviceId}`
   );
 
   store.dispatch(blynkWsRequest({
