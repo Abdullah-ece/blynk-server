@@ -13,7 +13,8 @@ export default class UnitStaticField extends BaseField.Static {
         Unit.Inch,
         Unit.Foot,
         Unit.Yard,
-        Unit.Mile
+        Unit.Mile,
+        Unit.SquareFeet,
       ],
       'Metric': [
         Unit.Millimeter,
