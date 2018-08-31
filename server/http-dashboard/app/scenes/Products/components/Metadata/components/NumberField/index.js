@@ -29,25 +29,45 @@ class NumberField extends BaseField {
 
   component() {
     return (
-      <FormItem offset={false}>
-        <FormItem.TitleGroup>
-          <FormItem.Title style={{width: '50%'}}>Number</FormItem.Title>
-          <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
-        </FormItem.TitleGroup>
-        <FormItem.Content>
-          <Input.Group compact>
-            <MetadataFormField style={{width: '50%'}} className={`metadata-name-field-${this.props.field.get('id')}`}
-                               onFocus={this.onFocus} onBlur={this.onBlur}
-                               validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
-              Validation.Rules.required, Validation.Rules.metafieldName,
-            ]}/>
-            <MetadataFormField style={{width: '50%'}} maxLength={15} onFocus={this.onFocus} onBlur={this.onBlur} name={`metaFields.${this.props.metaFieldKey}.value`}
-                               type="text" placeholder="Default value(optional)" validate={[
-              Validation.Rules.number
-            ]}/>
-          </Input.Group>
-        </FormItem.Content>
-      </FormItem>
+      <div>
+        <FormItem offset={false}>
+          <FormItem.TitleGroup>
+            <FormItem.Title style={{width: '50%'}}>Number</FormItem.Title>
+            <FormItem.Title style={{width: '50%'}}>Value (optional)</FormItem.Title>
+          </FormItem.TitleGroup>
+          <FormItem.Content>
+            <Input.Group compact>
+              <MetadataFormField style={{width: '50%'}} className={`metadata-name-field-${this.props.field.get('id')}`}
+                                 onFocus={this.onFocus} onBlur={this.onBlur}
+                                 validateOnBlur={true} name={`metaFields.${this.props.metaFieldKey}.name`} type="text" placeholder="Field Name" validate={[
+                Validation.Rules.required, Validation.Rules.metafieldName,
+              ]}/>
+              <MetadataFormField style={{width: '50%'}} maxLength={15} onFocus={this.onFocus} onBlur={this.onBlur} name={`metaFields.${this.props.metaFieldKey}.value`}
+                                 type="text" placeholder="Default value(optional)" validate={[
+                Validation.Rules.number
+              ]}/>
+            </Input.Group>
+          </FormItem.Content>
+        </FormItem>
+        <FormItem offset={false}>
+          <FormItem.TitleGroup>
+            <FormItem.Title style={{width: '50%'}}>Min/Max values (optional)</FormItem.Title>
+          </FormItem.TitleGroup>
+          <FormItem.Content>
+            <Input.Group compact>
+
+              <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
+                                 name={`metaFields.${this.props.metaFieldKey}.min`} type="text" placeholder="Min" validate={[
+                Validation.Rules.number
+              ]}/>
+              <MetadataFormField style={{width: '20%'}} onFocus={this.onFocus} onBlur={this.onBlur}
+                                 name={`metaFields.${this.props.metaFieldKey}.max`} type="text" placeholder="Max" validate={[
+                Validation.Rules.number
+              ]}/>
+            </Input.Group>
+          </FormItem.Content>
+        </FormItem>
+      </div>
     );
   }
 }
