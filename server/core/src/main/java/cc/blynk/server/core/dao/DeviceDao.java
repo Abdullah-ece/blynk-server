@@ -43,7 +43,7 @@ public class DeviceDao {
         }
 
         this.deviceSequence = new AtomicInteger(maxDeviceId);
-        log.info("Devices number is {}", devices.size());
+        log.info("Devices count is {}, sequence is {}", devices.size(), deviceSequence.get());
     }
 
     public int getId() {

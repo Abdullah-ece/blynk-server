@@ -32,7 +32,7 @@ public final class GetDevicesLogic {
             response = "[]";
         }
 
-        log.debug("Returning devices : {}", response);
+        //log.trace("Returning devices : {}", response);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
