@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -147,7 +146,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 throw new NotAllowedException("Product with passed id not exists.", message.id);
             }
 
-            device.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
+            device.metaFields = product.copyMetaFields();
             device.webDashboard = product.webDashboard.copy();
             holder.deviceDao.create(orgId, device);
 

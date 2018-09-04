@@ -65,9 +65,9 @@ public class Product {
         this.connectionType = product.connectionType;
         this.description = product.description;
         this.logoUrl = product.logoUrl;
-        this.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
-        this.dataStreams = ArrayUtil.copy(product.dataStreams, DataStream.class);
-        this.events = ArrayUtil.copy(product.events, Event.class);
+        this.metaFields = product.copyMetaFields();
+        this.dataStreams = product.copyDataStreams();
+        this.events = product.copyEvents();
         this.webDashboard = product.webDashboard.copy();
     }
 
@@ -129,6 +129,18 @@ public class Product {
     public void setOtaProgress(OtaProgress otaProgress) {
         this.otaProgress = otaProgress;
         this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public MetaField[] copyMetaFields() {
+        return ArrayUtil.copy(metaFields, MetaField.class);
+    }
+
+    private DataStream[] copyDataStreams() {
+        return ArrayUtil.copy(dataStreams, DataStream.class);
+    }
+
+    private Event[] copyEvents() {
+        return ArrayUtil.copy(events, Event.class);
     }
 
     @Override
