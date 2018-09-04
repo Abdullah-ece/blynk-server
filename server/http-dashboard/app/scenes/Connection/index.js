@@ -78,9 +78,9 @@ class Connection extends React.Component {
     const PASSWORD = this.props.credentials.password;
 
     this.props.blynkWsConnect().then(() => {
-      this.props.connectSuccess();
 
       if (!LOGIN || !PASSWORD) {
+        this.props.connectSuccess();
         return null;
       }
 
@@ -91,6 +91,7 @@ class Connection extends React.Component {
         this.props.AccountFetch().then(() => {
           this.props.LoginWsSuccess();
           this.context.router.push('/devices');
+          this.props.connectSuccess();
         });
       }).catch(() => {
         this.context.router.push('/login');
