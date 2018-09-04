@@ -157,9 +157,11 @@ class MetadataItem extends React.PureComponent {
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
-          <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>
-          <Row gutter={8}>
-            <Col span={12}>
+          <Row gutter={0}>
+            <Col span={2} style={{width: '48px'}}>
+              <IconSelect name={`metaFields.${this.props.metaFieldKey}.selectedIcon`}/>
+            </Col>
+            <Col span={10}>
               {this.props.children}
             </Col>
             <Col span={3}>

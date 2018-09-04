@@ -455,7 +455,7 @@ class ProductMetadata extends React.Component {
     const dynamicMetaFields = this.getDynamicMetaFields();
 
     return (
-      <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null}>
+      <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null} style={{minHeight: '500px'}}>
         <Metadata.ItemsList>
 
           {this.getStaticFields({

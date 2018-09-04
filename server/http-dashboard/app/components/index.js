@@ -18,4 +18,5 @@ export SimpleContentEditable from './SimpleContentEditable';
 export FontAwesome      from './FontAwesome';
 export Grids            from './Grids';
 export Cards            from './Cards';
+export LinearIcon       from './LinearIcon';
 export UI from './UI';

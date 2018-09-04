@@ -94,6 +94,12 @@ export const DEVICE_FORCE_UPDATE = {
   CLONE_PRODUCT: 'clone_product'
 };
 
+export const MetadataIconFieldName = 'selectedIcon';
+
+export const MetadataInitialValues = {
+  [MetadataIconFieldName]: 'cube'
+};
+
 export const Metadata = {
   Fields: {
     ADDRESS: 'Address',
@@ -157,6 +163,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
       role: Roles.USER.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'cube',
     },
     {
       id: 2,
@@ -164,6 +172,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
       role: Roles.USER.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'user',
     },
     {
       id: 3,
@@ -171,6 +181,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.LocationName,
       role: Roles.STAFF.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'map',
     },
     {
       id: 4,
@@ -179,6 +191,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       value: manufacturerDefaultValue,
       role: Roles.SUPER_ADMIN.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'factory2',
     },
     {
       id: 5,
@@ -186,6 +200,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       name: hardcodedRequiredMetadataFieldsNames.ModelName,
       role: Roles.STAFF.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'document',
     },
     {
       id: 6,
@@ -194,6 +210,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
       isDefault: true,
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'clock3',
     }
   ];
 };
