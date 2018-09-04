@@ -148,7 +148,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
             device.metaFields = product.copyMetaFields();
             device.webDashboard = product.webDashboard.copy();
-            holder.deviceDao.create(orgId, device);
+            holder.deviceDao.createWithPredefinedId(orgId, device);
 
             holder.tokenManager.updateRegularCache(token, tokenValue);
             dash.devices = ArrayUtil.add(dash.devices, device, Device.class);

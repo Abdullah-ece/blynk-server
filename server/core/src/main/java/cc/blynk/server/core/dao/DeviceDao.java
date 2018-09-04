@@ -46,10 +46,18 @@ public class DeviceDao {
         log.info("Devices number is {}", devices.size());
     }
 
-    public Device create(int orgId, Device device) {
-        device.id = deviceSequence.incrementAndGet();
+    public int getId() {
+        return deviceSequence.incrementAndGet();
+    }
+
+    public Device createWithPredefinedId(int orgId, Device device) {
         devices.put(new DeviceKey(orgId, device.productId, device.id), device);
         return device;
+    }
+
+    public Device create(int orgId, Device device) {
+        device.id = deviceSequence.incrementAndGet();
+        return createWithPredefinedId(orgId, device);
     }
 
     public Device delete(int deviceId) {
