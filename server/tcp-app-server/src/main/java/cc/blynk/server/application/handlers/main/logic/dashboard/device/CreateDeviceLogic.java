@@ -4,6 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -58,11 +61,27 @@ public final class CreateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (var device : dash.devices) {
-            if (device.id == newDevice.id) {
-                throw new NotAllowedException("Device with same id already exists.", message.id);
-            }
+        int orgId = user.orgId;
+        Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+
+        //todo temp solution
+        Product product;
+        if (newDevice.productId == -1) {
+            log.warn("Using random product for device {}.");
+            product = org.getFirstProduct();
+            newDevice.productId = product.id;
+        } else {
+            product = org.getProduct(newDevice.productId);
         }
+
+        if (product == null) {
+            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, orgId);
+            throw new NotAllowedException("Product with passed id not exists.", message.id);
+        }
+
+        newDevice.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
+        newDevice.webDashboard = product.webDashboard.copy();
+        holder.deviceDao.create(orgId, newDevice);
 
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 

@@ -7,7 +7,11 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -125,6 +129,28 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         DashBoard dash = tokenValue.dash;
 
         if (tokenValue.isTemporary()) {
+            int orgId = user.orgId;
+            Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
+
+            //todo temp solution
+            Product product;
+            if (device.productId == -1) {
+                log.warn("Using random product for device {}.");
+                product = org.getFirstProduct();
+                device.productId = product.id;
+            } else {
+                product = org.getProduct(device.productId);
+            }
+
+            if (product == null) {
+                log.error("Product with passed id {} not exists for org {}.", device.productId, orgId);
+                throw new NotAllowedException("Product with passed id not exists.", message.id);
+            }
+
+            device.metaFields = ArrayUtil.copy(product.metaFields, MetaField.class);
+            device.webDashboard = product.webDashboard.copy();
+            holder.deviceDao.create(orgId, device);
+
             holder.tokenManager.updateRegularCache(token, tokenValue);
             dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
             dash.updatedAt = System.currentTimeMillis();

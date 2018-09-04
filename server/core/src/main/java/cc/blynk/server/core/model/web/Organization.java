@@ -87,6 +87,10 @@ public class Organization {
         return false;
     }
 
+    public Product getFirstProduct() {
+        return products.length > 0 ? products[0] : null;
+    }
+
     public Product getProduct(int id)  {
         for (Product product : products) {
             if (product.id == id) {
