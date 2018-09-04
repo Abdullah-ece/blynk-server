@@ -83,19 +83,19 @@ const blynkHeader = (msg_type, msg_id) => {
 };
 
 const str2ab = (payload) => {
-  var encoder = new TextEncoder();
+  let encoder = new TextEncoder();
   return encoder.encode(payload); // returns Uint8Array
 };
 
 const makeMessage = (msg_type, msg_id, payload) => {
-  var header = blynkHeader(msg_type, msg_id);
+  let header = blynkHeader(msg_type, msg_id);
   //todo optimize, overhead, requires 2x memory
-  var bodyBytes = str2ab(payload);
-  var result = new Uint8Array(header.length + bodyBytes.length);
+  let bodyBytes = str2ab(payload);
+  let result = new Uint8Array(header.length + bodyBytes.length);
   result.set(header);
   result.set(bodyBytes, header.length);
   return result;
-}
+};
 
 export const blynkWsConnect = (params) => {
   const {store, options} = params;
