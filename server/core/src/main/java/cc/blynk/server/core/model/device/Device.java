@@ -226,6 +226,10 @@ public class Device implements Target {
         this.deviceOtaInfo = null;
     }
 
+    public String getNameOrDefault() {
+        return name == null ? "New Device" : name;
+    }
+
     public void setDeviceOtaInfo(DeviceOtaInfo deviceOtaInfo) {
         this.deviceOtaInfo = deviceOtaInfo;
         this.updatedAt = System.currentTimeMillis();
