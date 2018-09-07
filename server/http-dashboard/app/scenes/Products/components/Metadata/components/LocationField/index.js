@@ -4,13 +4,20 @@ import {Col, Row, Switch, Checkbox, Input} from 'antd';
 import _ from 'lodash';
 import {MetadataField as MetadataFormField} from 'components/Form';
 import Validation from 'services/Validation';
+import {LocationAutocomplete} from "components";
+import {FORMS} from "services/Products";
 import BaseField from '../BaseField/index';
 import {Form} from 'components/UI';
 import Static from './static';
-import {Field, Fields} from 'redux-form';
+import {Field, Fields, change} from 'redux-form';
 
 import './styles.less';
 
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+@connect(() => ({}), (dispatch) => ({
+  changeForm: bindActionCreators(change, dispatch)
+}))
 class LocationField extends BaseField {
 
   constructor(props) {
@@ -19,7 +26,7 @@ class LocationField extends BaseField {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.fieldLabeledCheckbox = this.fieldLabeledCheckbox.bind(this);
-
+    this.handleAddressSelect = this.handleAddressSelect.bind(this);
   }
 
   getPreviewValues() {
@@ -27,22 +34,6 @@ class LocationField extends BaseField {
     let value = [];
 
     const fields = [
-      {
-        name: 'firstName',
-        check: 'isFirstNameEnabled'
-      },
-      {
-        name: 'lastName',
-        check: 'isLastNameEnabled'
-      },
-      {
-        name: 'email',
-        check: 'isEmailEnabled'
-      },
-      {
-        name: 'phone',
-        check: 'isPhoneEnabled'
-      },
       {
         name: 'streetAddress',
         check: 'isStreetAddressEnabled'
@@ -59,37 +50,51 @@ class LocationField extends BaseField {
         name: 'zip',
         check: 'isZipEnabled'
       },
+      {
+        name: 'country',
+        check: 'isCountryEnabled'
+      },
+      {
+        name: 'buildingName',
+        check: 'isBuildingNameEnabled'
+      },
+      {
+        name: 'floor',
+        check: 'isFloorEnabled'
+      },
+      {
+        name: 'unit',
+        check: 'isUnitEnabled'
+      },
+      {
+        name: 'room',
+        check: 'isRoomEnabled'
+      },
+      {
+        name: 'zone',
+        check: 'isZoneEnabled'
+      },
 
     ];
 
     const placeholders = {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      email: 'mail@example.com',
-      phone: '+1 555 55 55',
       streetAddress: 'Street Address',
       city: 'City',
       state: 'State',
-      zip: 'ZIP'
+      country: 'Country',
+      buildingName: 'Building Name',
+      floor: 'Floor',
+      unit: 'Unit',
+      room: 'Room',
+      zone: 'Zone',
+      zip: 'ZIP',
     };
 
     const checkIsFieldValid = (field) => {
       return !!this.props.field.get(field.check);
     };
 
-    if( fields.slice(0, 2).every(checkIsFieldValid) ) {
-      let firstName, lastName;
-      if(this.props.field.get('isDefaultsEnabled')) {
-        firstName = this.props.field.get(fields[0].name) || placeholders.firstName;
-        lastName = this.props.field.get(fields[1].name) || placeholders.lastName;
-      } else {
-        firstName = placeholders.firstName;
-        lastName = placeholders.lastName;
-      }
-      value.push(`${firstName}, ${lastName}`);
-    }
-
-    (value.length ? fields.slice(2) : fields).forEach((field) => {
+    (fields).forEach((field) => {
       if (checkIsFieldValid(field)) {
         if (this.props.field.get('isDefaultsEnabled') && this.props.field.get(field.name)) {
           value.push(
@@ -115,6 +120,41 @@ class LocationField extends BaseField {
                 props.input.onChange(value);
               }}/>
     );
+  }
+
+  handleAddressSelect(values) {
+
+    const form = FORMS.PRODUCTS_PRODUCT_MANAGE;
+    const field = (fieldName) => `metaFields.${this.props.metaFieldKey}.${fieldName}`;
+
+    let streetString = '';
+
+    if(values.street)
+      streetString += values.street;
+
+    if(values.number)
+      streetString += ` ${values.number}`;
+
+    if(streetString) {
+      this.props.changeForm(form, field(`street`), streetString);
+    }
+
+    if(values.city) {
+      this.props.changeForm(form, field(`city`), values.city);
+    }
+
+    if(values.state) {
+      this.props.changeForm(form, field(`state`), values.state);
+    }
+
+    if(values.country) {
+      this.props.changeForm(form, field(`country`), values.country);
+    }
+
+    if(values.postal) {
+      this.props.changeForm(form, field(`zip`), values.postal);
+    }
+
   }
 
   labeledCheckbox(props) {
@@ -151,13 +191,24 @@ class LocationField extends BaseField {
                       onChange={checkbox.input.onChange}
             />
           </Form.Item>
-          <Form.Item className={`location-field-values-list-item-field`}>
-            <Input onBlur={this.onBlur}
-                   onFocus={this.onFocus}
-                   value={field.input.value}
-                   onChange={field.input.onChange}
-                   placeholder={props.label}
-                   disabled={!checkbox.input.value}/>
+          <Form.Item className={`location-field-values-list-item-field`} style={{width: '100%', maxWidth: '185px'}}>
+            { props.isLocationAutocomplete ? (
+              <LocationAutocomplete style={{width: '100%', maxWidth: '185px'}} onChange={field.input.onChange}
+                                    onSelect={this.handleAddressSelect}
+                                    value={field.input.value}
+                                    onFocus={this.onFocus}
+                                    onBlur={this.onBlur}
+                                    placeholder={props.label}
+                                    disabled={!checkbox.input.value}
+              />
+            ) : (
+              <Input onBlur={this.onBlur}
+                     onFocus={this.onFocus}
+                     value={field.input.value}
+                     onChange={field.input.onChange}
+                     placeholder={props.label}
+                     disabled={!checkbox.input.value}/>
+            )}
           </Form.Item>
         </Form.Items>
 
@@ -184,7 +235,7 @@ class LocationField extends BaseField {
               </div>
             </Col>
             {this.props.field.get('isLocationEnabled') && this.props.field.get('isLocationGetFromDevice') &&(
-              <Col span={24} className='location-field-location-from-device-info'>
+              <Col span={24} className="location-field-location-from-device-info">
                 <span>Set up location Datastream in Datastreams section</span>
               </Col>
             )}
@@ -200,6 +251,7 @@ class LocationField extends BaseField {
       [
         {
           label: `Street address`,
+          isLocationAutocomplete: true,
           names: [
             `metaFields.${this.props.metaFieldKey}.isStreetAddressEnabled`,
             `metaFields.${this.props.metaFieldKey}.streetAddress`
@@ -215,15 +267,15 @@ class LocationField extends BaseField {
         {
           label: `State/Province`,
           names: [
-            `metaFields.${this.props.metaFieldKey}.isStateProvinceEnabled`,
-            `metaFields.${this.props.metaFieldKey}.StateProvince`
+            `metaFields.${this.props.metaFieldKey}.isStateEnabled`,
+            `metaFields.${this.props.metaFieldKey}.state`
           ]
         },
         {
           label: `ZIP/Postal Code`,
           names: [
-            `metaFields.${this.props.metaFieldKey}.isZipPostalCodeEnabled`,
-            `metaFields.${this.props.metaFieldKey}.zipPostalCode`
+            `metaFields.${this.props.metaFieldKey}.isZipEnabled`,
+            `metaFields.${this.props.metaFieldKey}.zip`
           ]
         },
         {
@@ -309,8 +361,7 @@ class LocationField extends BaseField {
 
     return (
       <div>
-
-        <div style={{display: (this.props.field.get('isLocationEnabled') && !this.props.field.get('isLocationGetFromDevice') && 'block' || 'none')}}>
+        <div>
           <FormItem offset={false}>
             <FormItem.Title>Location</FormItem.Title>
             <FormItem.Content>
@@ -332,6 +383,18 @@ class LocationField extends BaseField {
           </Form.Item>
 
           <FormItem offset={false}>
+            <Row gutter={8}>
+              <Col span={12}>
+                <div className="location-field--column-title">
+                  ADDRESS ELEMENTS
+                </div>
+              </Col>
+              <Col span={12}>
+                <div className="location-field--column-title">
+                  PREMISES ELEMENTS
+                </div>
+              </Col>
+            </Row>
             <Row gutter={8}>
               {getColumns(!!this.props.field.get('isDefaultsEnabled')).map((column, i)=>{
                 return (

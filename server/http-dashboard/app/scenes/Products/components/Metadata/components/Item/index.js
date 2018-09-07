@@ -18,7 +18,7 @@ import {
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
 import Static from './static';
 // import _ from 'lodash';
-import {hardcodedRequiredMetadataFieldsNames} from 'services/Products';
+import {hardcodedRequiredMetadataFieldsNames, Metadata} from 'services/Products';
 import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => ({
@@ -111,19 +111,7 @@ class MetadataItem extends React.PureComponent {
     this.setState({isActive: true});
   }
 
-  isPreviewDisabled(fieldName) {
-    switch(String(fieldName)){
-      case hardcodedRequiredMetadataFieldsNames.LocationName :
-        return this.props.field.get("isLocationGetFromDevice") || !this.props.field.get("isLocationEnabled");
-
-      default:
-        return false;
-    }
-  }
-
   preview() {
-
-    if(this.isPreviewDisabled(this.props.field.get("name"))) return null;
 
     const name = this.props.preview.name && this.props.preview.name.trim();
 
@@ -148,13 +136,26 @@ class MetadataItem extends React.PureComponent {
     this.props.touchFormById(this.props.form, ...Object.keys(this.props.fields));
   }
 
+  isItemLocation() {
+    return this.props.field.get('type') === Metadata.Fields.LOCATION;
+  }
+
+  isItemEnabledLocation() {
+    return this.props.field.get('type') === Metadata.Fields.LOCATION && this.props.field.get('isLocationEnabled');
+  }
+
+  isItemLocationWithDataFromDevice() {
+    return this.props.field.get('type') === Metadata.Fields.LOCATION && this.props.field.get('isLocationGetFromDevice');
+  }
+
+  isContentVisible() {
+    return this.isItemLocation() ? this.isItemEnabledLocation() && !this.isItemLocationWithDataFromDevice() : true;
+  }
+
   isRoleSelectDisabled(fieldName) {
     switch(String(fieldName)){
       case hardcodedRequiredMetadataFieldsNames.Manufacturer :
         return true;
-
-      case hardcodedRequiredMetadataFieldsNames.LocationName :
-        return this.props.field.get("isLocationGetFromDevice") || !this.props.field.get("isLocationEnabled");
 
       default:
         return false;
@@ -181,40 +182,42 @@ class MetadataItem extends React.PureComponent {
       'product-metadata-item-active': this.state.isActive,
     });
 
-    const isRoleSelectDisabled = this.isRoleSelectDisabled(this.props.field.get("name"));
+    const isRoleSelectDisabled = this.isRoleSelectDisabled(this.props.field.get("name"), this.props.field.get('type'));
 
     return (
       <Scroll.Element name={this.props.field.name}>
         <div className={itemClasses}>
           {this.props.addBefore && this.props.addBefore}
-          <Row gutter={0}>
-            <Col span={2} style={{width: '48px'}}>
-              <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>
-            </Col>
-            <Col span={10}>
-              {this.props.children}
-            </Col>
-            <Col span={3}>
-              {isRoleSelectDisabled ? '' :
-                <FormItem offset={false}>
+          {this.isContentVisible() ? (
+            <Row gutter={0}>
+              <Col span={2} style={{width: '48px'}}>
+                <IconSelect name={`metaFields.${this.props.metaFieldKey}.selectedIcon`}/>
+              </Col>
+              <Col span={10}>
+                {this.props.children}
+              </Col>
+              <Col span={3}>
+                {isRoleSelectDisabled ? '' :
+                  <FormItem offset={false}>
 
-                  <FormItem.Title>Who can edit</FormItem.Title>
-                  <FormItem.Content>
-                    <MetadataSelect disabled={isRoleSelectDisabled}
-                                    onFocus={this.markAsActive}
-                                    onBlur={this.handleCancelDelete}
-                                    name={`metaFields.${this.props.metaFieldKey}.role`}
-                                    style={{width: '100%'}}
-                                    values={MetadataRoles}
-                    />
-                  </FormItem.Content>
-                </FormItem>
-              }
-            </Col>
-            <Col span={8}>
-              {this.preview()}
-            </Col>
-          </Row>
+                    <FormItem.Title>Who can edit</FormItem.Title>
+                    <FormItem.Content>
+                      <MetadataSelect disabled={isRoleSelectDisabled}
+                                      onFocus={this.markAsActive}
+                                      onBlur={this.handleCancelDelete}
+                                      name={`metaFields.${this.props.metaFieldKey}.role`}
+                                      style={{width: '100%'}}
+                                      values={MetadataRoles}
+                      />
+                    </FormItem.Content>
+                  </FormItem>
+                }
+              </Col>
+              <Col span={8}>
+                {this.preview()}
+              </Col>
+            </Row>
+          ) : (null)}
           {this.props.tools && (
             <div className="product-metadata-item-tools">
               <DragHandler/>

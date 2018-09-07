@@ -123,7 +123,6 @@ export const Metadata = {
 export const hardcodedRequiredMetadataFieldsNames = {
   DeviceName: 'Device Name',
   DeviceOwner: 'Device Owner',
-  LocationName: 'Location Name',
   Manufacturer: 'Manufacturer',
   ModelName: 'Model Name',
   TimezoneOfTheDevice: 'Device Timezone'
@@ -132,7 +131,6 @@ export const hardcodedRequiredMetadataFieldsNames = {
 export const hardcodedRequiredMetadataFieldsNamesList = [
   hardcodedRequiredMetadataFieldsNames.DeviceName,
   hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-  hardcodedRequiredMetadataFieldsNames.LocationName,
   hardcodedRequiredMetadataFieldsNames.Manufacturer,
   hardcodedRequiredMetadataFieldsNames.ModelName,
   hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice
@@ -142,9 +140,9 @@ export const filterMetadataFields = (fields, filterHardcoded = true) => {
 
   return fields.filter((field) => {
     if(filterHardcoded)
-      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0;
+      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0 && field.get('hardcoded');
 
-    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1;
+    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1 && !field.get('hardcoded');
   });
 };
 
@@ -166,6 +164,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'cube',
+      hardcoded: true,
     },
     {
       id: 2,
@@ -175,15 +174,28 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'user',
+      hardcoded: true,
     },
     {
       id: 3,
-      type: Metadata.Fields.TEXT,
-      name: hardcodedRequiredMetadataFieldsNames.LocationName,
+      type: Metadata.Fields.LOCATION,
+      name: 'Location Name',
       role: Roles.STAFF.value,
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'map',
+      isStreetAddressEnabled: true,
+      isCityEnabled: true,
+      isStateEnabled: true,
+      isZipEnabled: true,
+      isCountryEnabled: true,
+      isCoordinatesEnabled: false,
+      isBuildingNameEnabled: true,
+      isFloorEnabled: true,
+      isUnitEnabled: true,
+      isRoomEnabled: true,
+      isZoneEnabled: true,
+      hardcoded: true,
     },
     {
       id: 4,
@@ -194,6 +206,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'factory2',
+      hardcoded: true,
     },
     {
       id: 5,
@@ -203,6 +216,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'document',
+      hardcoded: true,
     },
     {
       id: 6,
@@ -213,6 +227,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'clock3',
+      hardcoded: true,
     }
   ];
 };
@@ -487,7 +502,6 @@ export const prepareProductForEdit = (data) => {
         const hardcodedFields = [
           hardcodedRequiredMetadataFieldsNames.DeviceName,
           hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-          hardcodedRequiredMetadataFieldsNames.LocationName,
           hardcodedRequiredMetadataFieldsNames.Manufacturer,
           hardcodedRequiredMetadataFieldsNames.ModelName,
           hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,

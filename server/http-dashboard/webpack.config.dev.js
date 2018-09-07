@@ -4,6 +4,9 @@ import autoprefixer from 'autoprefixer';
 import path from 'path';
 
 export default {
+  externals: {
+    'google': 'google'
+  },
   resolve: {
     extensions: ['*', '.js', '.jsx', '.json'],
     modules: [
