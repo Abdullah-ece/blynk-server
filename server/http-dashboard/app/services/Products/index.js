@@ -94,7 +94,7 @@ export const DEVICE_FORCE_UPDATE = {
   CLONE_PRODUCT: 'clone_product'
 };
 
-export const MetadataIconFieldName = 'selectedIcon';
+export const MetadataIconFieldName = 'icon';
 
 export const MetadataInitialValues = {
   [MetadataIconFieldName]: 'cube'
