@@ -45,6 +45,7 @@ public final class DeleteDeviceLogic {
         int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
         Device device = dash.devices[existingDeviceIndex];
         holder.tokenManager.deleteDevice(device);
+        holder.deviceDao.delete(device.id);
         Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
