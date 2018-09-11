@@ -27,10 +27,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
@@ -61,7 +57,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final LimitChecker registrationLimitChecker;
     private final String emailBody;
     private final OrganizationDao organizationDao;
-    private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
         this.userDao = holder.userDao;
@@ -72,15 +67,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         this.organizationDao = holder.organizationDao;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
         this.emailBody = holder.textHolder.registerEmailTemplate;
-
-        var allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
-        if (allowedUsersArray != null && allowedUsersArray.length > 0
-                && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
-            allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
-            log.debug("Created allowed user list : {}", (Object[]) allowedUsersArray);
-        } else {
-            allowedUsers = null;
-        }
     }
 
     @Override
@@ -114,12 +100,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         if (userDao.isUserExists(email, appName)) {
             log.warn("User with email {} already exists.", email);
             ctx.writeAndFlush(alreadyRegistered(message.id), ctx.voidPromise());
-            return;
-        }
-
-        if (allowedUsers != null && !allowedUsers.contains(email)) {
-            log.warn("User with email {} not allowed to register.", email);
-            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             return;
         }
 
