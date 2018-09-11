@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
@@ -76,6 +77,14 @@ public class TestAppClient extends BaseTestAppClient {
 
     public Device[] parseDevices() throws Exception {
         return parseDevices(1);
+    }
+
+    public MetaField[] parseMetafields() throws Exception {
+        return parseMetafields(1);
+    }
+
+    public MetaField[] parseMetafields(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), MetaField[].class);
     }
 
     public Device[] parseDevices(int expectedMessageOrder) throws Exception {
@@ -274,6 +283,10 @@ public class TestAppClient extends BaseTestAppClient {
     public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
         send("updateTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
+    }
+
+    public void getDeviceMetafield(int deviceId) {
+        send("getDeviceMetafields " + deviceId);
     }
 
     public void createReport(int dashId, Report report) {

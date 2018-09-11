@@ -30,6 +30,7 @@ import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
@@ -323,6 +324,8 @@ public final class CommandParserUtil {
                 return WEB_GET_DEVICE_TIMELINE;
             case "webdeletedevice" :
                 return WEB_DELETE_DEVICE;
+            case "getdevicemetafields" :
+                return GET_DEVICE_METAFIELDS;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

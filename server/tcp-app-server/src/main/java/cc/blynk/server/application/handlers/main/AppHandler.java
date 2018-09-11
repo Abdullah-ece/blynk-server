@@ -28,6 +28,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.CreateTagLogic;
@@ -91,6 +92,7 @@ import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
@@ -279,6 +281,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_DEVICE_METAFIELDS:
+                GetDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case CREATE_TAG :
