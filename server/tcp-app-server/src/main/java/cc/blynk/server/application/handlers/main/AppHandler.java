@@ -28,9 +28,10 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldsLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.CreateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.DeleteTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.GetTagsLogic;
@@ -115,6 +116,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
@@ -282,8 +284,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case GET_DEVICE_METAFIELDS:
-                GetDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+            case GET_DEVICE_METAFIELDS :
+                GetDeviceMetafieldsLogic.messageReceived(holder, ctx, state, msg);
+                break;
+            case UPDATE_DEVICE_METAFIELD :
+                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case CREATE_TAG :

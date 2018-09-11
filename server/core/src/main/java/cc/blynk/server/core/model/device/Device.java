@@ -8,6 +8,8 @@ import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Arrays;
@@ -127,6 +129,15 @@ public class Device implements Target {
         return -1;
     }
 
+    public int findMetaFieldIndexOrThrow(int id) {
+        for (int i = 0; i < metaFields.length; i++) {
+            if (metaFields[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Metafield with passed id not found.");
+    }
+
     public void updateMetaFields(MetaField[] updatedMetaFields) {
         MetaField[] metaFieldsCopy = Arrays.copyOf(metaFields, metaFields.length);
 
@@ -151,6 +162,10 @@ public class Device implements Target {
         List<MetaField> updatedSet = arrayToList(this.metaFields);
         updatedSet.removeAll(arrayToList(metaFields));
         this.metaFields = updatedSet.toArray(new MetaField[0]);
+    }
+
+    public void updateMetafield(MetaField updated) {
+        this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
     }
 
     @Override

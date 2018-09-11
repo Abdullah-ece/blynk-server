@@ -22,6 +22,10 @@ public final class Command {
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
+
+    public static final short GET_DEVICE_METAFIELDS = 10;
+    public static final short UPDATE_DEVICE_METAFIELD = 11;
+
     //HARDWARE commands
     public static final short TWEET = 12;
     public static final short EMAIL = 13;
@@ -72,8 +76,6 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
-
-    public static final short GET_DEVICE_METAFIELDS = 50;
 
     public static final short UPDATE_FACE = 51;
 
@@ -241,6 +243,8 @@ public final class Command {
             Map.entry(DELETE_REPORT, "deleteReport"),
             Map.entry(EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
+            Map.entry(GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
+            Map.entry(UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),

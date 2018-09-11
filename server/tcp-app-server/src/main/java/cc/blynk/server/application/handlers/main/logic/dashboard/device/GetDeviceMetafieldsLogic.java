@@ -17,11 +17,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class GetDeviceMetafieldLogic {
+public final class GetDeviceMetafieldsLogic {
 
-    private static final Logger log = LogManager.getLogger(GetDeviceMetafieldLogic.class);
+    private static final Logger log = LogManager.getLogger(GetDeviceMetafieldsLogic.class);
 
-    private GetDeviceMetafieldLogic() {
+    private GetDeviceMetafieldsLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,

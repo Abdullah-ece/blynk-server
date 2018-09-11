@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.response.ErrorMessage;
 import cc.blynk.server.core.model.web.response.OkMessage;
@@ -70,6 +71,7 @@ public final class JsonParser {
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
     private static final ObjectReader reportReader = MAPPER.readerFor(Report.class);
     private static final ObjectReader productReader = MAPPER.readerFor(Product.class);
+    private static final ObjectReader metafieldReader = MAPPER.readerFor(MetaField.class);
 
     private static final ObjectWriter organizationWriter = MAPPER.writerFor(Organization.class);
     private static final ObjectWriter errorMessageWriter = MAPPER.writerFor(ErrorMessage.class);
@@ -316,6 +318,10 @@ public final class JsonParser {
 
     public static Tag parseTag(String json, int msgId) {
         return parse(tagReader, json, "Error parsing tag.", msgId);
+    }
+
+    public static MetaField parseMetafield(String json, int msgId) {
+        return parse(metafieldReader, json, "Error parsing metafield", msgId);
     }
 
     private static <T> T parse(ObjectReader objectReader, String json, String errorMessage, int msgId) {
