@@ -1,10 +1,14 @@
 package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -31,11 +35,17 @@ public class WebDeleteDeviceLogic {
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
     private final TokenManager tokenManager;
+    private final SessionDao sessionDao;
+    private final BlockingIOProcessor blockingIOProcessor;
+    private final ReportingDiskDao reportingDiskDao;
 
     public WebDeleteDeviceLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
         this.tokenManager = holder.tokenManager;
+        this.sessionDao = holder.sessionDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.reportingDiskDao = holder.reportingDiskDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -60,24 +70,30 @@ public class WebDeleteDeviceLogic {
             return;
         }
 
+        int dashId = 0;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         deviceDao.delete(deviceId);
-
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
-
-        if (dash != null) {
-            try {
-                int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-                dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
-            } catch (Exception e) {
-                log.error("Error when removing device from the project for deviceId {} and orgId {}.", deviceId, orgId);
-                //no device in app dashboard. ignore.
-                //todo provide method without exception thrown
-            }
-        }
-
         tokenManager.deleteDevice(device);
-        user.lastModifiedTs = System.currentTimeMillis();
+        Session session = sessionDao.userSession.get(state.userKey);
+        session.closeHardwareChannelByDeviceId(dashId, deviceId);
+
+        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
+        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
+        dash.eraseValuesForDevice(deviceId);
+        try {
+            dash.deleteDeviceFromObjects(deviceId);
+        } catch (Exception e) {
+            log.warn("Error erasing widget device. Reason : {}", e.getMessage());
+        }
+        blockingIOProcessor.executeHistory(() -> {
+            try {
+                reportingDiskDao.delete(state.user, dashId, deviceId);
+            } catch (Exception e) {
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
+            }
+        });
+        dash.updatedAt = System.currentTimeMillis();
+        state.user.lastModifiedTs = dash.updatedAt;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
