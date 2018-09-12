@@ -1,6 +1,10 @@
 .icon-select-component {
   margin-top: 16px;
   .selected-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     width: 32px;
@@ -12,6 +16,7 @@
       width: 100%;
     }
     .icons-list {
+      left: 0;
       transition: 0.4s;
       z-index: 10;
       opacity: 1;
@@ -27,6 +32,9 @@
       border-radius: 5px;
       padding: 10px;
       .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         float: left;
         height: 32px;
         width: 32px;
