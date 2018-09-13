@@ -507,7 +507,7 @@ export const DEVICES_SORT = {
       const bCritical = b.criticalSinceLastView || 0;
       const bWarning = b.warningSinceLastView || 0;
       if (aCritical === bCritical && aWarning === bWarning) {
-        return String(a.id) > String(b.id) ? 1 : -1;
+        return a.name === b.name ? sortByProp(a,b,'id') : sortByProp(a, b, 'name', false);
       } else if(aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
       } else {
