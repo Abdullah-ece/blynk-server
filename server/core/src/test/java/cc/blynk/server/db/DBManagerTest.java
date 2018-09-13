@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
@@ -130,8 +129,8 @@ public class DBManagerTest {
     @Test
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", "127.0.0.1", false, Role.STAFF));
-        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", "127.0.0.1", false, Role.STAFF));
+        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", "127.0.0.1", false, 1));
+        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", "127.0.0.1", false, 1));
         dbManager.userDBDao.save(users);
         ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertEquals(2, dbUsers.size());
@@ -141,7 +140,7 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF));
+            users.add(new User("test" + i + "@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
@@ -153,19 +152,19 @@ public class DBManagerTest {
     @Test
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
         user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         user.name = "123";
         users.add(user);
-        user = new User("test2@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        user = new User("test2@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -187,7 +186,7 @@ public class DBManagerTest {
                 assertEquals(1, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
                 assertEquals("127.0.0.1", rs.getString("last_logged_ip"));
                 assertFalse(rs.getBoolean("is_facebook_user"));
-                assertEquals(Role.STAFF, Role.values()[rs.getInt("role")]);
+                assertEquals(1, rs.getInt("role_id"));
                 assertEquals(2000, rs.getInt("energy"));
 
                 assertEquals("{}", rs.getString("json"));
@@ -199,7 +198,7 @@ public class DBManagerTest {
     @Test
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -208,7 +207,7 @@ public class DBManagerTest {
         dbManager.userDBDao.save(users);
 
         users = new ArrayList<>();
-        user = new User("test@gmail.com", "pass2", AppNameUtil.BLYNK, "local2", "127.0.0.1", true, Role.SUPER_ADMIN);
+        user = new User("test@gmail.com", "pass2", AppNameUtil.BLYNK, "local2", "127.0.0.1", true, 0);
         user.name = "1234";
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
@@ -238,7 +237,7 @@ public class DBManagerTest {
         assertEquals(2, user.lastLoggedAt);
         assertEquals("127.0.0.2", user.lastLoggedIP);
         assertTrue(user.isFacebookUser);
-        assertEquals(Role.SUPER_ADMIN, user.role);
+        assertEquals(0, user.roleId);
         assertEquals(1000, user.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", user.profile.toString());
@@ -247,7 +246,7 @@ public class DBManagerTest {
     @Test
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, Role.SUPER_ADMIN);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, 0);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -275,7 +274,7 @@ public class DBManagerTest {
         assertEquals("127.0.0.1", dbUser.lastLoggedIP);
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
-        assertEquals(Role.SUPER_ADMIN, dbUser.role);
+        assertEquals(0, dbUser.roleId);
         assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", dbUser.profile.toString());
@@ -284,7 +283,7 @@ public class DBManagerTest {
     @Test
     public void testInsertGetDeleteUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, Role.SUPER_ADMIN);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, 0);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -312,7 +311,7 @@ public class DBManagerTest {
         assertEquals("127.0.0.1", dbUser.lastLoggedIP);
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
-        assertEquals(Role.SUPER_ADMIN, dbUser.role);
+        assertEquals(0, dbUser.roleId);
         assertEquals(2000, dbUser.energy);
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", dbUser.profile.toString());
@@ -386,7 +385,7 @@ public class DBManagerTest {
     @Test
     public void getUserIp() {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
+        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";

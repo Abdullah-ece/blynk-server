@@ -66,7 +66,7 @@ public final class WebUpdateUserInfoLogic {
 
         log.info("Updating {} user for .", userToUpdate.email, user.email);
         userToUpdate.name = userInviteDTO.name;
-        userToUpdate.setRole(userInviteDTO.role);
+        userToUpdate.setRole(userInviteDTO.roleId);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

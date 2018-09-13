@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
@@ -53,7 +52,7 @@ public class UserDao {
 
     public User getSuperAdmin() {
         for (User user : users.values()) {
-            if (user.role == Role.SUPER_ADMIN) {
+            if (user.isSuperAdmin()) {
                 return user;
             }
         }
@@ -89,7 +88,7 @@ public class UserDao {
     public List<User> getUsersByOrgId(int orgId, String filterMail) {
         List<User> result = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.orgId == orgId && user.role != Role.SUPER_ADMIN && !user.email.equals(filterMail)) {
+            if (user.orgId == orgId && !user.isSuperAdmin() && !user.email.equals(filterMail)) {
                 result.add(user);
             }
         }
@@ -305,23 +304,16 @@ public class UserDao {
 
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
-        User newUser = new User(email, null, appName, region, host, true, Role.STAFF);
+        //todo add default role instead of hardcoded
+        User newUser = new User(email, null, appName, region, host, true, 2);
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
     }
 
-    public User add(String email, String pass, String appName) {
+    public User add(String email, String pass, String appName, int orgId, int roleId) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, host, false, Role.STAFF);
-        newUser.status = UserStatus.Active;
-        add(newUser);
-        return newUser;
-    }
-
-    public User add(String email, String pass, String appName, int orgId, Role role) {
-        log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, host, false, role);
+        User newUser = new User(email, pass, appName, region, host, false, roleId);
         newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);
@@ -337,7 +329,7 @@ public class UserDao {
             return null;
         }
 
-        User newUser = new User(invite.email, null, appName, region, host, false, invite.role);
+        User newUser = new User(invite.email, null, appName, region, host, false, invite.roleId);
         newUser.name = invite.name;
         newUser.orgId = orgId;
         newUser.status = UserStatus.Pending;

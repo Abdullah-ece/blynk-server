@@ -23,7 +23,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -174,8 +173,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetProduct " + productId);
     }
 
-    public void inviteUser(int orgId, String email, String name, Role role) {
-        send("webInviteUser " + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, role));
+    public void inviteUser(int orgId, String email, String name, int roleId) {
+        send("webInviteUser " + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, roleId));
     }
 
     public void loginViaInvite(String token, String passHash) {

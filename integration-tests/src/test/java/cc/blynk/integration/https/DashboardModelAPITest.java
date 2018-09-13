@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
@@ -45,6 +44,7 @@ import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFr
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -98,7 +98,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -134,7 +134,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -145,7 +145,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals("123", webLabel.label);
             assertEquals(1, webLabel.sources[0].dataStream.pin);
             assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
-            assertEquals(null, webLabel.sources[0].dataStream.value);
+            assertNull(webLabel.sources[0].dataStream.value);
         }
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
@@ -198,7 +198,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -276,7 +276,7 @@ public class DashboardModelAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -450,8 +450,8 @@ public class DashboardModelAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", 2, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", 1, true, null, "My Default device Name")
         };
 
         WebLabel webLabel = new WebLabel();

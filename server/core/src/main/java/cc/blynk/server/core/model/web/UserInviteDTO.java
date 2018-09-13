@@ -16,20 +16,19 @@ public class UserInviteDTO {
 
     public final String name;
 
-    public final Role role;
+    public final int roleId;
 
     @JsonCreator
     public UserInviteDTO(@JsonProperty("email") String email,
                          @JsonProperty("name") String name,
-                         @JsonProperty("role") Role role) {
+                         @JsonProperty("roleId") int roleId) {
         this.email = email;
         this.name = name;
-        this.role = role;
+        this.roleId = roleId;
     }
 
     public boolean isNotValid() {
-        return email == null || email.isEmpty() || role == null
-                || role == Role.SUPER_ADMIN || BlynkEmailValidator.isNotValidEmail(email);
+        return email == null || email.isEmpty() || roleId <= 0 || BlynkEmailValidator.isNotValidEmail(email);
     }
 
     @Override

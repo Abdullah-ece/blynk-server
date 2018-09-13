@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 
@@ -31,7 +30,7 @@ public class ProjectTokenGenerator {
         String email = "dmitriy@blynk.cc";
         String pass = "b";
         String appName = AppNameUtil.BLYNK;
-        User user = new User(email, SHA256Util.makeHash(pass, email), appName, "local", "127.0.0.1", false, Role.STAFF);
+        User user = new User(email, SHA256Util.makeHash(pass, email), appName, "local", "127.0.0.1", false, 2);
         user.addEnergy(98000);
 
         int count = 300;

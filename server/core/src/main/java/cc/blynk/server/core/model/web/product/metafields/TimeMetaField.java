@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,21 +16,21 @@ public class TimeMetaField extends MetaField {
     @JsonCreator
     public TimeMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
-                         @JsonProperty("role") Role role,
+                         @JsonProperty("roleId") int roleId,
                          @JsonProperty("isDefault") boolean isDefault,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("time") long time) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.time = time;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new TimeMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon, time);
+        return new TimeMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon, time);
     }
 
     @Override
     public MetaField copy() {
-        return new TimeMetaField(id, name, role, isDefault, icon, time);
+        return new TimeMetaField(id, name, roleId, isDefault, icon, time);
     }
 }

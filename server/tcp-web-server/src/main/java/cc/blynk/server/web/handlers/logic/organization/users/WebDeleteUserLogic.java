@@ -52,11 +52,12 @@ public final class WebDeleteUserLogic {
             return;
         }
 
-        if (!user.isAdmin()) {
-            log.error("Non admin {} tries to remove users.", user.email);
-            ctx.writeAndFlush(json(message.id, "Only admin allowed to remove users."), ctx.voidPromise());
-            return;
-        }
+        //todo check user has access to modify the org
+        //if (!user.isAdmin()) {
+        //    log.error("Non admin {} tries to remove users.", user.email);
+        //    ctx.writeAndFlush(json(message.id, "Only admin allowed to remove users."), ctx.voidPromise());
+        //    return;
+        //}
 
         int orgId = Integer.parseInt(split[0]);
         String[] emailsToDelete = JsonParser.readAny(split[1], String[].class);

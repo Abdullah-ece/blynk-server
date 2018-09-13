@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,14 +22,14 @@ public class MeasurementUnitMetaField extends MetaField {
     @JsonCreator
     public MeasurementUnitMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
-                                    @JsonProperty("role") Role role,
+                                    @JsonProperty("roleId") int roleId,
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("units") MeasurementUnit units,
                                     @JsonProperty("value") double value,
                                     @JsonProperty("min") float min,
                                     @JsonProperty("max") float max) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.units = units;
         this.value = value;
         this.min = min;
@@ -39,12 +38,12 @@ public class MeasurementUnitMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new MeasurementUnitMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
+        return new MeasurementUnitMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon,
                 units, value, min, max);
     }
 
     @Override
     public MetaField copy() {
-        return new MeasurementUnitMetaField(id, name, role, isDefault, icon, units, value, min, max);
+        return new MeasurementUnitMetaField(id, name, roleId, isDefault, icon, units, value, min, max);
     }
 }

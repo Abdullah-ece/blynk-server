@@ -1,7 +1,6 @@
 package cc.blynk.server.db.dao.descriptor;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.Shift;
@@ -45,7 +44,7 @@ public class TableDescriptor {
     public static final String FORMULA_METAINFO_NAME = "Formula Names";
 
     public static final MetaField[] shifts = new MetaField[] {
-            new ShiftMetaField(1, SHIFTS_METAINFO_NAME, Role.ADMIN, false, null, new Shift[] {
+            new ShiftMetaField(1, SHIFTS_METAINFO_NAME, 1, false, null, new Shift[] {
                     //order is important. it defines related ids.
                     new Shift("Shift 3", "00:00:00", "08:00:00"),
                     new Shift("Shift 1", "08:00:00", "16:00:00"),
@@ -54,7 +53,7 @@ public class TableDescriptor {
     };
 
     public static final MetaField[] pumpNames = new MetaField[] {
-            new MultiTextMetaField(2, PUMP_METAINFO_NAME, Role.ADMIN, false, null, new String[]{
+            new MultiTextMetaField(2, PUMP_METAINFO_NAME, 1, false, null, new String[]{
                     "",
                     "Saphire",
                     "Boost",
@@ -68,7 +67,7 @@ public class TableDescriptor {
     };
 
     public static final MetaField[] formulaNames = new MetaField[] {
-            new MultiTextMetaField(3, FORMULA_METAINFO_NAME, Role.ADMIN, false, null, new String[]{
+            new MultiTextMetaField(3, FORMULA_METAINFO_NAME, 1, false, null, new String[]{
                     "",
                     "Towel White",
                     "Bed sheet White",

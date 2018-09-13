@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
@@ -45,17 +46,22 @@ public class Organization {
 
     public volatile int parentId = SUPER_ORG_PARENT_ID;
 
+    public Role[] roles;
+
     public Organization() {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public Organization(String name, String tzName, String logoUrl, boolean canCreateOrgs, int parentId) {
+    public Organization(String name, String tzName, String logoUrl,
+                        boolean canCreateOrgs, int parentId, Role... roles) {
         this();
         this.name = name;
         this.tzName = tzName;
         this.logoUrl = logoUrl;
         this.canCreateOrgs = canCreateOrgs;
         this.parentId = parentId;
+        //todo, org should always have at least 1 role
+        this.roles = roles == null ? new Role[0] : roles;
     }
 
     public void update(Organization updatedOrganization) {
@@ -132,6 +138,20 @@ public class Organization {
 
     public boolean isEmptyName() {
         return name == null || name.isEmpty();
+    }
+
+    public Role getRoleById(int id) {
+        for (Role role : roles) {
+            if (role.id == id) {
+                return role;
+            }
+        }
+        throw new RuntimeException("Role with passed id not found.");
+    }
+
+    //todo fix it. for now taking last one
+    public Role getDefaultRole() {
+        return roles[roles.length - 1];
     }
 
     @Override

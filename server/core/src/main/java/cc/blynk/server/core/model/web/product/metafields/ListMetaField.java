@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,12 +18,12 @@ public class ListMetaField extends MetaField {
     @JsonCreator
     public ListMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
-                         @JsonProperty("role") Role role,
+                         @JsonProperty("roleId") int roleId,
                          @JsonProperty("isDefault") boolean isDefault,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("options") String[] options,
                          @JsonProperty("selectedOption") String selectedOption) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.options = options;
         this.selectedOption = selectedOption;
     }
@@ -32,12 +31,12 @@ public class ListMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ListMetaField listMetaField = (ListMetaField) metaField;
-        return new ListMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
+        return new ListMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon,
                 listMetaField.options, selectedOption);
     }
 
     @Override
     public MetaField copy() {
-        return new ListMetaField(id, name, role, isDefault, icon, options, selectedOption);
+        return new ListMetaField(id, name, roleId, isDefault, icon, options, selectedOption);
     }
 }

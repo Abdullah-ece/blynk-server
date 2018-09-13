@@ -3,7 +3,6 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -67,7 +66,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/100/invite");
-        String data = new UserInviteDTO(email, "Dmitriy", Role.STAFF).toString();
+        String data = new UserInviteDTO(email, "Dmitriy", 2).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -80,14 +79,14 @@ public class InvitationAPITest extends APIBaseTest {
     public void userCantSendInvitation() throws Exception {
         String name = "user2@blynk.cc";
         String pass = "user2";
-        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.USER);
+        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, 4);
         holder.userDao.add(simpleUser);
 
         login(simpleUser.email, simpleUser.pass);
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = new UserInviteDTO(email, "Dmitriy", Role.USER).toString();
+        String data = new UserInviteDTO(email, "Dmitriy", 4).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -102,7 +101,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "user@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = new UserInviteDTO(email, "Dmitriy", Role.USER).toString();
+        String data = new UserInviteDTO(email, "Dmitriy", 4).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -117,7 +116,7 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = new UserInviteDTO(email, "Dmitriy", Role.STAFF).toString();
+        String data = new UserInviteDTO(email, "Dmitriy", 2).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -142,10 +141,9 @@ public class InvitationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         String name = "Dmitriy";
-        Role role = Role.STAFF;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = new UserInviteDTO(email, name, role).toString();
+        String data = new UserInviteDTO(email, name, 2).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -185,7 +183,7 @@ public class InvitationAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(email, user.email);
             assertEquals(name, user.name);
-            assertEquals(role, user.role);
+            assertEquals(2, user.roleId);
             assertEquals(1, user.orgId);
         }
 

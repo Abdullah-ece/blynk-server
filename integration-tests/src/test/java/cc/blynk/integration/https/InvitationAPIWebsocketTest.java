@@ -3,7 +3,6 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -36,7 +35,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     @Test
     public void sendInvitationForNonExistingOrganization() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(1000, "dmitriy@blynk.cc", "Dmitriy", Role.STAFF);
+        client.inviteUser(1000, "dmitriy@blynk.cc", "Dmitriy", 3);
         client.verifyResult(webJson(1, "Requested organization for invite doesn't exist."));
     }
 
@@ -66,14 +65,14 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     @Test
     public void userSendInvitationToExistingUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(orgId, getUserName(), "Dmitriy", Role.STAFF);
+        client.inviteUser(orgId, getUserName(), "Dmitriy", 3);
         client.verifyResult(webJson(1, "User already exists."));
     }
 
     @Test
     public void sendInvitationFromRegularUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", Role.STAFF);
+        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(1));
 
         verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
@@ -93,7 +92,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     @Test
     public void invitationFullFlow() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
-        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", Role.STAFF);
+        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
         client.verifyResult(ok(1));
 
         ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
@@ -124,7 +123,7 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         assertNotNull(user);
         assertEquals("test@gmail.com", user.email);
         assertEquals("Dmitriy", user.name);
-        assertEquals(Role.STAFF, user.role);
+        assertEquals(3, user.roleId);
         assertEquals(orgId, user.orgId);
 
         appWebSocketClient = defaultClient();

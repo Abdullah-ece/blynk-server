@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.FirmwareInfo;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -544,8 +543,8 @@ public class OTATest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", 2, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", 1, true, null, "My Default device Name")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

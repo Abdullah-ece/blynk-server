@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.db.dao.descriptor.MetaDataFormatters;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -31,11 +30,11 @@ public class ShiftMetaField extends MetaField {
     @JsonCreator
     public ShiftMetaField(@JsonProperty("id") int id,
                           @JsonProperty("name") String name,
-                          @JsonProperty("role") Role role,
+                          @JsonProperty("roleId") int roleId,
                           @JsonProperty("isDefault") boolean isDefault,
                           @JsonProperty("icon") String icon,
                           @JsonProperty("shifts") Shift[] shifts) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.shifts = shifts == null ? EMPTY : shifts;
     }
 
@@ -63,13 +62,13 @@ public class ShiftMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new ShiftMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
+        return new ShiftMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon,
                 copyShifts(shifts));
     }
 
     @Override
     public MetaField copy() {
-        return new ShiftMetaField(id, name, role, isDefault, icon, copyShifts(shifts));
+        return new ShiftMetaField(id, name, roleId, isDefault, icon, copyShifts(shifts));
     }
 
     private static Shift[] copyShifts(Shift[] shifts) {

@@ -1,8 +1,8 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
@@ -51,7 +51,11 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
     @Before
     public void initClients() throws Exception {
         Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev",
-                "/static/logo.png", true, SUPER_ORG_PARENT_ID);
+                "/static/logo.png", true, SUPER_ORG_PARENT_ID,
+                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                new Role(1, "Admin", 0b11111111111111111111),
+                new Role(2, "Staff", 0b11111111111111111111),
+                new Role(3, "User", 0b11111111111111111111));
         newOrg = holder.organizationDao.create(newOrg);
         orgId = newOrg.id;
         this.clientPair = initAppAndHardPair();
@@ -59,7 +63,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
         String superAdmin = "super@blynk.cc";
         String pass = "1";
         String hash = SHA256Util.makeHash(pass, superAdmin);
-        holder.userDao.add(superAdmin, hash, AppNameUtil.BLYNK, orgId, Role.SUPER_ADMIN);
+        holder.userDao.add(superAdmin, hash, AppNameUtil.BLYNK, orgId, Role.SUPER_ADMIN_ROLE_ID);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {

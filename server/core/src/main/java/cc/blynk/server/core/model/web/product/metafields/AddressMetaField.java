@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,7 +31,7 @@ public class AddressMetaField extends MetaField {
     @JsonCreator
     public AddressMetaField(@JsonProperty("id") int id,
                             @JsonProperty("name") String name,
-                            @JsonProperty("role") Role role,
+                            @JsonProperty("roleId") int roleId,
                             @JsonProperty("isDefault") boolean isDefault,
                             @JsonProperty("icon") String icon,
                             @JsonProperty("streetAddress") String streetAddress,
@@ -46,7 +45,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("country") String country,
                             @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
@@ -64,7 +63,7 @@ public class AddressMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         AddressMetaField addressMetaField = (AddressMetaField) metaField;
         return new AddressMetaField(
-                id, metaField.name, metaField.role, metaField.isDefault,
+                id, metaField.name, metaField.roleId, metaField.isDefault,
                 metaField.icon,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
@@ -78,7 +77,7 @@ public class AddressMetaField extends MetaField {
     @Override
     public MetaField copy() {
         return new AddressMetaField(
-                id, name, role, isDefault,
+                id, name, roleId, isDefault,
                 icon,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,

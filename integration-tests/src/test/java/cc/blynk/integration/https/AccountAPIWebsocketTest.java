@@ -5,7 +5,7 @@ import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
-import cc.blynk.server.core.model.web.Role;
+import cc.blynk.server.core.model.permissions.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -56,7 +56,7 @@ public class AccountAPIWebsocketTest extends APIBaseTest {
         assertEquals("admin@blynk.cc", user.name);
         assertEquals(BLYNK, user.appName);
         assertNull(user.pass);
-        assertEquals(Role.SUPER_ADMIN, user.role);
+        assertEquals(Role.SUPER_ADMIN_ROLE_ID, user.roleId);
         assertEquals(UserStatus.Active, user.status);
         assertNotNull(user.profile);
         assertEquals(1, user.profile.dashBoards.length);;

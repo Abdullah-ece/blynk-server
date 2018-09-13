@@ -13,7 +13,7 @@ CREATE TABLE users (
   last_logged timestamp,
   last_logged_ip text,
   is_facebook_user bool,
-  role int2,
+  role_id int,
   energy int,
   json text,
   PRIMARY KEY(email, appName)
@@ -70,7 +70,7 @@ CREATE TABLE invitation_tokens (
   token character(32),
   email text,
   name text,
-  role text,
+  role_id int,
   is_activated boolean DEFAULT FALSE,
   created_ts timestamp DEFAULT NOW(),
   activated_ts timestamp,

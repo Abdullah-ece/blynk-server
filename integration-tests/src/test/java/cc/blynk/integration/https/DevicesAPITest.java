@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -60,7 +59,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -79,7 +78,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -103,8 +102,9 @@ public class DevicesAPITest extends APIBaseTest {
 
         int productId = createProduct();
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
-        organization.selectedProducts = new int[]{productId};
+        Organization organization = new Organization("My Org", "Some TimeZone",
+                "/static/logo.png", false, SUPER_ORG_PARENT_ID);
+        organization.selectedProducts = new int[] {productId};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
         createOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -143,7 +143,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularAdmin.email, device.activatedBy);
@@ -175,7 +175,7 @@ public class DevicesAPITest extends APIBaseTest {
         int productId = createProduct();
 
         Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, SUPER_ORG_PARENT_ID);
-        organization.selectedProducts = new int[]{productId};
+        organization.selectedProducts = new int[] {productId};
 
         HttpPut createOrgReq = new HttpPut(httpsAdminServerUrl + "/organization");
         createOrgReq.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -254,7 +254,7 @@ public class DevicesAPITest extends APIBaseTest {
             numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals(1, numberMetaField.id);
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -262,7 +262,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNull(device.metadataUpdatedBy);
         }
 
-        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", 2, false, null, 0, 1000, 123D);
 
         HttpPost update = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
         update.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField), ContentType.APPLICATION_JSON));
@@ -280,7 +280,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(regularUser.email, device.metadataUpdatedBy);
         }
 
-        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", 2, false, null, 0, 1000, 123D);
 
         HttpPost update2 = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
         update2.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField2), ContentType.APPLICATION_JSON));
@@ -559,7 +559,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(Role.STAFF, numberMetaField.role);
+            assertEquals(2, numberMetaField.roleId);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals("Blynk Inc.", device.orgName);
             assertEquals("My product", device.productName);
@@ -589,8 +589,8 @@ public class DevicesAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", 2, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", 1, true, null, "My Default device Name")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

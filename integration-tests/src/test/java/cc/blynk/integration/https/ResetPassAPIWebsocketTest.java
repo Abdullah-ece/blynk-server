@@ -3,7 +3,6 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -88,7 +87,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         assertNotNull(user);
         assertEquals(getUserName(), user.email);
         assertEquals(getUserName(), user.name);
-        assertEquals(Role.USER, user.role);
+        assertEquals(3, user.roleId);
         assertEquals(orgId, user.orgId);
     }
 
@@ -130,7 +129,7 @@ public class ResetPassAPIWebsocketTest extends SingleServerInstancePerTestWithDB
         assertNotNull(user);
         assertEquals(getUserName(), user.email);
         assertEquals(getUserName(), user.name);
-        assertEquals(Role.USER, user.role);
+        assertEquals(3, user.roleId);
         assertEquals(orgId, user.orgId);
     }
 }

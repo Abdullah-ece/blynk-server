@@ -208,7 +208,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         }
 
         log.info("Updating {} user.", user.email);
-        existingUser.setRole(user.role);
+        existingUser.setRole(user.roleId);
 
         return ok();
     }
@@ -383,12 +383,6 @@ public class OrganizationHandler extends BaseHttpHandler {
         if (!organizationDao.hasAccess(httpSession.user, orgId)) {
             log.error("{} (orgId = {}) tries to send invite to another organization with id = {}",
                     httpSession.user.email, httpSession.user.orgId, orgId);
-            return forbidden();
-        }
-
-        if (httpSession.user.role.ordinal() > userInvite.role.ordinal()) {
-            log.error("User {} with role {} has no right to invite role {}.",
-                    httpSession.user.email, httpSession.user.role, userInvite.role);
             return forbidden();
         }
 

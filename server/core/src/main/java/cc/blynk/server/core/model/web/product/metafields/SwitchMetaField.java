@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,13 +20,13 @@ public class SwitchMetaField extends MetaField {
     @JsonCreator
     public SwitchMetaField(@JsonProperty("id") int id,
                            @JsonProperty("name") String name,
-                           @JsonProperty("role") Role role,
+                           @JsonProperty("roleId") int roleId,
                            @JsonProperty("isDefault") boolean isDefault,
                            @JsonProperty("icon") String icon,
                            @JsonProperty("from") String from,
                            @JsonProperty("to") String to,
                            @JsonProperty("value") String value) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.value = value;
         this.to = to;
         this.from = from;
@@ -35,13 +34,13 @@ public class SwitchMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new SwitchMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon,
+        return new SwitchMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon,
                 from, to, value);
     }
 
     @Override
     public MetaField copy() {
-        return new SwitchMetaField(id, name, role, isDefault, icon, from, to, value);
+        return new SwitchMetaField(id, name, roleId, isDefault, icon, from, to, value);
     }
 
 }

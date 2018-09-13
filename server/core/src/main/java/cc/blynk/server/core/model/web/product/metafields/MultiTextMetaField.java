@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,11 +21,11 @@ public class MultiTextMetaField extends MetaField {
     @JsonCreator
     public MultiTextMetaField(@JsonProperty("id") int id,
                               @JsonProperty("name") String name,
-                              @JsonProperty("role") Role role,
+                              @JsonProperty("roleId") int roleId,
                               @JsonProperty("isDefault") boolean isDefault,
                               @JsonProperty("icon") String icon,
                               @JsonProperty("values") String[] values) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.values = values;
     }
 
@@ -43,12 +42,13 @@ public class MultiTextMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new MultiTextMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon, values);
+        return new MultiTextMetaField(id, metaField.name,
+                metaField.roleId, metaField.isDefault, metaField.icon, values);
     }
 
     @Override
     public MetaField copy() {
-        return new MultiTextMetaField(id, name, role, isDefault, icon, values);
+        return new MultiTextMetaField(id, name, roleId, isDefault, icon, values);
     }
 
 }

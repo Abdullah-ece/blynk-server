@@ -3,7 +3,6 @@ package cc.blynk.test.utils;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.utils.AppNameUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +23,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FileManagerIntegrationTest {
 
-    private final User user1 = new User("name1", "pass1", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
-    private final User user2 = new User("name2", "pass2", AppNameUtil.BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
+    private final User user1 = new User("name1", "pass1", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+    private final User user2 = new User("name2", "pass2", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
 
     private FileManager fileManager;
 

@@ -3,8 +3,8 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -66,7 +66,7 @@ public class AccountAPITest extends APIBaseTest {
             assertEquals("admin@blynk.cc", user.name);
             assertEquals(BLYNK, user.appName);
             assertNull(user.pass);
-            assertEquals(Role.SUPER_ADMIN, user.role);
+            assertEquals(Role.SUPER_ADMIN_ROLE_ID, user.roleId);
             assertEquals(UserStatus.Active, user.status);
             assertNotNull(user.profile);
             assertEquals(1, user.profile.dashBoards.length);

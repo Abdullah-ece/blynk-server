@@ -3,7 +3,6 @@ package cc.blynk.server.db.dao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,12 +28,12 @@ public class UserDBDao {
 
     private static final String upsertUser =
             "INSERT INTO users (email, appName, region, ip, name, pass, last_modified, last_logged,"
-                    + " last_logged_ip, is_facebook_user, role, energy, json) "
+                    + " last_logged_ip, is_facebook_user, role_id, energy, json) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE "
                     + "SET ip = EXCLUDED.ip, pass = EXCLUDED.pass, name = EXCLUDED.name, "
                     + "last_modified = EXCLUDED.last_modified, "
                     + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
-                    + "is_facebook_user = EXCLUDED.is_facebook_user, role = EXCLUDED.role, "
+                    + "is_facebook_user = EXCLUDED.is_facebook_user, role_id = EXCLUDED.role_id, "
                     + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";
     private static final String selectIpForUser = "SELECT ip FROM users WHERE email = ? AND appName = ?";
@@ -99,7 +98,7 @@ public class UserDBDao {
                             rs.getString("region"),
                             rs.getString("ip"),
                             rs.getBoolean("is_facebook_user"),
-                            Role.values()[(rs.getInt("role"))],
+                            rs.getInt("role_id"),
                             rs.getString("name"),
                             getTs(rs, "last_modified"),
                             getTs(rs, "last_logged"),
@@ -142,7 +141,7 @@ public class UserDBDao {
                 ps.setTimestamp(8, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
                 ps.setString(9, user.lastLoggedIP);
                 ps.setBoolean(10, user.isFacebookUser);
-                ps.setInt(11, user.role.ordinal());
+                ps.setInt(11, user.roleId);
                 ps.setInt(12, user.energy);
                 ps.setString(13, user.profile.toString());
                 ps.addBatch();

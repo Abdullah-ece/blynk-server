@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,12 +18,12 @@ public class DeviceReferenceMetaField extends MetaField {
     @JsonCreator
     public DeviceReferenceMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
-                                    @JsonProperty("role") Role role,
+                                    @JsonProperty("roleId") int roleId,
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("selectedProductIds") int[] selectedProductIds,
                                     @JsonProperty("selectedDeviceId") long selectedDeviceId) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.selectedProductIds = selectedProductIds;
         this.selectedDeviceId = selectedDeviceId;
     }
@@ -32,12 +31,12 @@ public class DeviceReferenceMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
-        return new DeviceReferenceMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
+        return new DeviceReferenceMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, icon,
                 deviceReferenceMetaField.selectedProductIds, selectedDeviceId);
     }
 
     @Override
     public MetaField copy() {
-        return new DeviceReferenceMetaField(id, name, role, isDefault, icon, selectedProductIds, selectedDeviceId);
+        return new DeviceReferenceMetaField(id, name, roleId, isDefault, icon, selectedProductIds, selectedDeviceId);
     }
 }

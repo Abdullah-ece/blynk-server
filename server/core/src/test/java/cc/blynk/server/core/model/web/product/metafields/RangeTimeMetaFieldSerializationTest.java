@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import org.junit.Test;
 
 import java.time.LocalTime;
@@ -19,7 +18,7 @@ public class RangeTimeMetaFieldSerializationTest {
     @Test
     public void testSerialization() throws Exception {
         RangeTimeMetaField rangeTimeMetaField = new RangeTimeMetaField(1, "name",
-                Role.ADMIN, false,  null, LocalTime.ofSecondOfDay(1), LocalTime.ofSecondOfDay(100));
+                1, false,  null, LocalTime.ofSecondOfDay(1), LocalTime.ofSecondOfDay(100));
 
         String s = JsonParser.MAPPER.writeValueAsString(rangeTimeMetaField);
         assertNotNull(s);

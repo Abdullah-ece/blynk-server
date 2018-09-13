@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.web.product;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
@@ -59,16 +58,16 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final String name;
 
-    public final Role role;
+    public final int roleId;
 
     public final boolean isDefault;
 
     public final String icon;
 
-    public MetaField(int id, String name, Role role, boolean isDefault, String icon) {
+    public MetaField(int id, String name, int roleId, boolean isDefault, String icon) {
         this.id = id;
         this.name = name;
-        this.role = role;
+        this.roleId = roleId;
         this.isDefault = isDefault;
         this.icon = icon;
     }

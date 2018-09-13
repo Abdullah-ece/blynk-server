@@ -11,9 +11,9 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -215,10 +215,9 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         String name = "Dmitriy";
-        Role role = Role.ADMIN;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
-        String data = new UserInviteDTO(email, name, role).toString();
+        String data = new UserInviteDTO(email, name, 1).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -258,7 +257,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(email, user.email);
             assertEquals(name, user.name);
-            assertEquals(role, user.role);
+            assertEquals(1, user.roleId);
             assertEquals(2, user.orgId);
         }
 
@@ -291,10 +290,9 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String email = "dmitriy@blynk.cc";
         String name = "Dmitriy";
-        Role role = Role.ADMIN;
 
         HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/2/invite");
-        String data = new UserInviteDTO(email, name, role).toString();
+        String data = new UserInviteDTO(email, name, 1).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -335,7 +333,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertNotNull(user);
             assertEquals(email, user.email);
             assertEquals(name, user.name);
-            assertEquals(role, user.role);
+            assertEquals(1, user.roleId);
             assertEquals(2, user.orgId);
         }
 
@@ -344,10 +342,6 @@ public class OrganizationAPITest extends APIBaseTest {
         try (CloseableHttpResponse response = httpclient.execute(deleteOrg)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
-
-
-
-        Organization organization3 = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, -1);
 
         req = new HttpPut(httpsAdminServerUrl + "/organization");
         req.setEntity(new StringEntity(organization.toString(), ContentType.APPLICATION_JSON));
@@ -361,7 +355,7 @@ public class OrganizationAPITest extends APIBaseTest {
         }
 
         inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/3/invite");
-        data = new UserInviteDTO(email, name, role).toString();
+        data = new UserInviteDTO(email, name, 1).toString();
         inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
@@ -396,7 +390,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(1, fromApi.parentId);
         }
 
-        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
+        User regularAdmin = new User("new@hgmail.com", SHA256Util.makeHash("123", "new@hgmail.com"), BLYNK, "local", "127.0.0.1", false, 1);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -515,7 +509,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN_ROLE_ID);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
@@ -559,7 +553,7 @@ public class OrganizationAPITest extends APIBaseTest {
 
         String name = "newadmin@blynk.cc";
         String pass = "admin";
-        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
+        User newadmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN_ROLE_ID);
         newadmin.orgId = 2;
         newadmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
@@ -641,21 +635,21 @@ public class OrganizationAPITest extends APIBaseTest {
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, null, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, null, 0, 1000, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, null, MeasurementUnit.Celsius, 36, 0, 100),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
+                new TextMetaField(1, "My Farm", 1, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", 1, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", 1, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", 1, false, null, 0, 1000, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", 1, false, null, MeasurementUnit.Celsius, 36, 0, 100),
+                new CostMetaField(5, "Farm of Smith", 1, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
+                new ContactMetaField(6, "Farm of Smith", 1, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, null, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", 1, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, null, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, null, new Date().getTime())
+                new CoordinatesMetaField(8, "Farm Location", 1, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", 1, false, null, new Date().getTime())
         };
 
         product.dataStreams = new DataStream[] {
@@ -770,7 +764,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
+                new TextMetaField(1, "My Farm", 1, false, null, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -793,7 +787,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
+                new TextMetaField(1, "My Farm", 1, false, null, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -899,7 +893,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
+                new TextMetaField(1, "My Farm", 1, false, null, "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -922,7 +916,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, null, "Farm of Smith")
+                new TextMetaField(1, "My Farm", 1, false, null, "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -1231,7 +1225,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", Role.ADMIN, true, null, "Kyiv")
+                new TextMetaField(1, "Location Name", 1, true, null, "Kyiv")
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -1251,7 +1245,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", Role.ADMIN, true, null, "Kyiv 2")
+                new TextMetaField(1, "Location Name", 1, true, null, "Kyiv 2")
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");
@@ -1409,7 +1403,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = new UserInviteDTO("user@blynk.cc", "123", Role.ADMIN).toString();
+        String body = new UserInviteDTO("user@blynk.cc", "123", 1).toString();
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 
@@ -1426,7 +1420,7 @@ public class OrganizationAPITest extends APIBaseTest {
             assertEquals(3, fromApi.length);
             for (User user : fromApi) {
                 if (user.email.equals("user@blynk.cc")) {
-                    assertEquals(Role.ADMIN, user.role);
+                    assertEquals(1, user.roleId);
                 }
             }
         }
@@ -1437,7 +1431,7 @@ public class OrganizationAPITest extends APIBaseTest {
         login(admin.email, admin.pass);
 
         HttpPost req = new HttpPost(httpsAdminServerUrl + "/organization/1/users/update");
-        String body = new UserInviteDTO("userzzz@blynk.cc", "123", Role.ADMIN).toString();
+        String body = new UserInviteDTO("userzzz@blynk.cc", "123", 1).toString();
         req.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
 

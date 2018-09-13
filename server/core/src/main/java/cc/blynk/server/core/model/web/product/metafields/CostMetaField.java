@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +28,7 @@ public class CostMetaField extends MetaField {
     @JsonCreator
     public CostMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
-                         @JsonProperty("role") Role role,
+                         @JsonProperty("roleId") int roleId,
                          @JsonProperty("isDefault") boolean isDefault,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("currency") Currency currency,
@@ -38,7 +37,7 @@ public class CostMetaField extends MetaField {
                          @JsonProperty("units") MeasurementUnit units,
                          @JsonProperty("min") float min,
                          @JsonProperty("max") float max) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
@@ -49,12 +48,12 @@ public class CostMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CostMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
+        return new CostMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, icon,
                 currency, price, perValue, units, min, max);
     }
 
     @Override
     public MetaField copy() {
-        return new CostMetaField(id, name, role, isDefault, icon, currency, price, perValue, units, min, max);
+        return new CostMetaField(id, name, roleId, isDefault, icon, currency, price, perValue, units, min, max);
     }
 }

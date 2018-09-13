@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,12 +31,12 @@ public class RangeTimeMetaField extends MetaField {
     @JsonCreator
     public RangeTimeMetaField(@JsonProperty("id") int id,
                               @JsonProperty("name") String name,
-                              @JsonProperty("role") Role role,
+                              @JsonProperty("roleId") int roleId,
                               @JsonProperty("isDefault") boolean isDefault,
                               @JsonProperty("icon") String icon,
                               @JsonProperty("from") LocalTime from,
                               @JsonProperty("to") LocalTime to) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, roleId, isDefault, icon);
         this.from = from;
         this.to = to;
     }
@@ -50,11 +49,11 @@ public class RangeTimeMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new RangeTimeMetaField(
-                id, metaField.name, metaField.role, metaField.isDefault, metaField.icon, from, to);
+                id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon, from, to);
     }
 
     @Override
     public MetaField copy() {
-        return new RangeTimeMetaField(id, name, role, isDefault, icon, from, to);
+        return new RangeTimeMetaField(id, name, roleId, isDefault, icon, from, to);
     }
 }

@@ -5,7 +5,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.EventReceiver;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -85,13 +84,13 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, null, "Tech Support",
+                new NumberMetaField(1, "Jopa", 2, false, null, 0, 1000, 123D),
+                new ContactMetaField(6, "Farm of Smith", 1, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new TextMetaField(7, "Device Owner", Role.STAFF, false, null, "owner@blynk.cc")
+                new TextMetaField(7, "Device Owner", 2, false, null, "owner@blynk.cc")
         };
 
         CriticalEvent criticalEvent = new CriticalEvent(

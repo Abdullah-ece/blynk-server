@@ -1,17 +1,13 @@
 package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.UriTemplate;
-import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.DELETE;
 import cc.blynk.core.http.annotation.Metric;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
-import cc.blynk.core.http.annotation.Staff;
-import cc.blynk.core.http.annotation.SuperAdmin;
 import cc.blynk.core.http.rest.params.Param;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.WebException;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -49,8 +45,6 @@ public class HandlerWrapper {
 
     public final Param[] params;
 
-    public final Role allowedRoleAccess;
-
     public final short metricIndex;
 
     public final GlobalStats globalStats;
@@ -75,15 +69,6 @@ public class HandlerWrapper {
             metricIndex = metricAnnotation.value();
         } else {
             metricIndex = -1;
-        }
-        if (method.isAnnotationPresent(SuperAdmin.class)) {
-            this.allowedRoleAccess = Role.SUPER_ADMIN;
-        } else if (method.isAnnotationPresent(Admin.class)) {
-            this.allowedRoleAccess = Role.ADMIN;
-        } else if (method.isAnnotationPresent(Staff.class)) {
-            this.allowedRoleAccess = Role.STAFF;
-        } else {
-            this.allowedRoleAccess = null;
         }
 
         this.params = new Param[method.getParameterCount()];

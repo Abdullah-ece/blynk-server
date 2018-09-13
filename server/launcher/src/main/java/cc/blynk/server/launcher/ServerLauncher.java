@@ -8,8 +8,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.EventType;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -165,7 +165,11 @@ public final class ServerLauncher {
             }
 
             Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev",
-                    "/static/logo.png", true, SUPER_ORG_PARENT_ID);
+                    "/static/logo.png", true, SUPER_ORG_PARENT_ID,
+                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                    new Role(1, "Admin", 0b11111111111111111111),
+                    new Role(2, "Staff", 0b11111111111111111111),
+                    new Role(3, "User", 0b11111111111111111111));
             Organization mainOrg = holder.organizationDao.create(superOrg);
             mainOrg.isActive = true;
             holder.organizationDao.create(
@@ -177,7 +181,7 @@ public final class ServerLauncher {
             product.description = "Default Product Template";
             product.name = "Test Product";
             product.metaFields = new MetaField[] {
-                    new TextMetaField(1, "Device Name", Role.ADMIN, true, null, "Default device")
+                    new TextMetaField(1, "Device Name", 1, true, null, "Default device")
             };
             product.events = createDefaultEvents();
 
@@ -207,7 +211,7 @@ public final class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppNameUtil.BLYNK, superOrg.id, Role.SUPER_ADMIN);
+            holder.userDao.add(email, hash, AppNameUtil.BLYNK, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
 
             String vendorEmail = props.vendorEmail;
             if (vendorEmail != null) {
@@ -247,7 +251,7 @@ public final class ServerLauncher {
             for (int i = 0; i < 20; i++) {
                 email = name.replace("{i}", "" + i);
                 hash = SHA256Util.makeHash(pass, email);
-                holder.userDao.add(email, hash, BLYNK, superOrg.id, Role.STAFF);
+                holder.userDao.add(email, hash, BLYNK, superOrg.id, 2);
             }
         }
     }

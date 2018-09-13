@@ -11,9 +11,9 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -105,7 +105,8 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         Organization superOrg = organizationDao.getSuperOrg();
         int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
-        User newUser = userDao.add(email, pass, appName, orgId, Role.USER);
+        Role defaultOrgRole = superOrg.getDefaultRole();
+        User newUser = userDao.add(email, pass, appName, orgId, defaultOrgRole.id);
 
         log.info("Registered {}.", email);
 

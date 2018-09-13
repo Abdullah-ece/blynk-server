@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.OrgNotFoundException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
@@ -195,7 +196,9 @@ public class OrganizationDao {
         if (user.orgId == orgId) {
             return true;
         }
-        if (user.isAdmin()) {
+        Organization userOrg = getOrgById(user.orgId);
+        Role userRole = userOrg.getRoleById(user.roleId);
+        if (userRole.hasSubOrgAccess()) {
             //user is admin of parent org, so he can perform admin action on child org
             List<Organization> childOrgs = getOrgsByParentId(user.orgId);
             Organization org = getOrgById(childOrgs, orgId);

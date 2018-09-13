@@ -4,9 +4,9 @@ import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,7 +27,7 @@ public class User {
     public volatile String pass;
 
     @JsonView(View.WebUser.class)
-    public Role role;
+    public int roleId;
 
     //key fields
     @JsonView(View.WebUser.class)
@@ -74,7 +74,7 @@ public class User {
     }
 
     public User(String email, String pass, String appName, String region, String ip,
-                boolean isFacebookUser, Role role) {
+                boolean isFacebookUser, int roleId) {
         this();
         this.email = email;
         this.name = email;
@@ -83,12 +83,12 @@ public class User {
         this.region = region;
         this.ip = ip;
         this.isFacebookUser = isFacebookUser;
-        this.role = role;
+        this.roleId = roleId;
     }
 
     //used when user is fully read from DB
     public User(String email, String pass, String appName, String region, String ip,
-                boolean isFacebookUser,  Role role, String name,
+                boolean isFacebookUser, int roleId, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
                 Profile profile, int energy) {
         this.email = email;
@@ -98,7 +98,7 @@ public class User {
         this.region = region;
         this.ip = ip;
         this.isFacebookUser = isFacebookUser;
-        this.role = role;
+        this.roleId = roleId;
         this.name = name;
         this.lastModifiedTs = lastModifiedTs;
         this.lastLoggedAt = lastLoggedAt;
@@ -148,12 +148,8 @@ public class User {
         }
     }
 
-    public boolean isAdmin() {
-        return role == Role.ADMIN || role == Role.SUPER_ADMIN;
-    }
-
     public boolean isSuperAdmin() {
-        return role == Role.SUPER_ADMIN;
+        return roleId == Role.SUPER_ADMIN_ROLE_ID;
     }
 
     public void setName(String name) {
@@ -161,8 +157,8 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(int roleId) {
+        this.roleId = roleId;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 

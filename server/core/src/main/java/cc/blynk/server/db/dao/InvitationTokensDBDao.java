@@ -1,6 +1,5 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.db.model.InvitationToken;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,7 @@ public class InvitationTokensDBDao {
     public static final String activateToken = "UPDATE invitation_tokens SET is_activated = true, "
             + "activated_ts = NOW() WHERE token = ? and email = ?";
     public static final String insertToken =
-            "INSERT INTO invitation_tokens (token, email, name, role) values (?, ?, ?, ?)";
+            "INSERT INTO invitation_tokens (token, email, name, role_id) values (?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(InvitationTokensDBDao.class);
     private final HikariDataSource ds;
@@ -43,7 +42,7 @@ public class InvitationTokensDBDao {
 
             if (rs.next()) {
                 return new InvitationToken(rs.getString("token"), rs.getString("email"),
-                        rs.getString("name"), Role.valueOf(rs.getString("role")),
+                        rs.getString("name"), rs.getInt("role_id"),
                         rs.getBoolean("is_activated"), rs.getDate("created_ts"), rs.getDate("activated_ts"));
             }
         } catch (Exception e) {
@@ -82,7 +81,7 @@ public class InvitationTokensDBDao {
             ps.setString(1, invitationToken.token);
             ps.setString(2, invitationToken.email);
             ps.setString(3, invitationToken.name);
-            ps.setString(4, invitationToken.role.name());
+            ps.setInt(4, invitationToken.roleId);
 
             ps.executeUpdate();
             connection.commit();

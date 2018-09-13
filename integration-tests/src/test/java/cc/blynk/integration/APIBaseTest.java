@@ -5,9 +5,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
@@ -79,7 +79,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         String name = "admin@blynk.cc";
         String pass = "admin";
-        admin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN);
+        admin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN_ROLE_ID);
         admin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -88,7 +88,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         name = "admin2@blynk.cc";
         pass = "admin2";
-        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.ADMIN);
+        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, 1);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -97,15 +97,21 @@ public abstract class APIBaseTest extends CounterBase {
 
         name = "user@blynk.cc";
         pass = "user";
-        regularUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.STAFF);
+        regularUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, 2);
         regularUser.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
         regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
-        holder.organizationDao.create(new Organization("Blynk Inc.",
-                "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID));
+        holder.organizationDao.create(
+                new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID,
+                        new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                        new Role(1, "Admin", 0b11111111111111111111),
+                        new Role(2, "Staff", 0b11111111111111111111),
+                        new Role(3, "User", 0b11111111111111111111)
+                )
+        );
     }
 
     @After
