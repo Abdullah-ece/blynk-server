@@ -1,11 +1,12 @@
 import React from 'react';
 import {Row, Col} from 'antd';
 import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
-import {Metadata} from 'services/Products';
+import {Metadata, MetadataIconFieldName} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
 import {DeviceDelete} from 'scenes/Devices/scenes';
 import './styles.less';
+import {Roles} from "services/Roles";
 
 class DeviceInfo extends React.Component {
 
@@ -47,6 +48,86 @@ class DeviceInfo extends React.Component {
     let deviceActivatedTime = getCalendarFormatDate(this.props.device.activatedAt);
 
     let metadataUpdatedTime = getCalendarFormatDate(metadataUpdatedAt);
+
+    let locationsList = [
+      {
+        type: Metadata.Fields.LOCATION,
+        name: 'Warehouse S01',
+        role: Roles.STAFF.value,
+        [MetadataIconFieldName]: 'map',
+        city: 'New York',
+        state: 'NY',
+        country: 'United States',
+      },
+      {
+        type: Metadata.Fields.LOCATION,
+        name: 'Warehouse S02',
+        role: Roles.STAFF.value,
+        [MetadataIconFieldName]: 'map',
+        city: 'Washington',
+        state: 'DC',
+        country: 'United States',
+      }
+    ];
+
+    let metafields = [
+      /** Case 1 Location Disabled */
+
+      // {
+      //   type: Metadata.Fields.LOCATION,
+      //   isLocationEnabled: false,
+      // },
+
+      /** Case 2 Location Enabled but not filled */
+
+      // {
+      //   type: Metadata.Fields.LOCATION,
+      //   name: 'Warehouse S01',
+      //   role: Roles.STAFF.value,
+      //   [MetadataIconFieldName]: 'map',
+      //   isLocationEnabled: true,
+      // },
+
+      /** Case 3 Location Enabled and filled */
+
+      {
+        type: Metadata.Fields.LOCATION,
+        name: 'Warehouse S01',
+        role: Roles.STAFF.value,
+        [MetadataIconFieldName]: 'map',
+        isLocationEnabled: true,
+        city: 'New York',
+        state: 'NY',
+        country: 'United States',
+        isFilled: true,
+      },
+
+      {
+        type: Metadata.Fields.LOCATION,
+        name: 'Warehouse S02',
+        role: Roles.STAFF.value,
+        [MetadataIconFieldName]: 'map',
+        isLocationEnabled: true,
+        streetAddress: 'Sztuk Pieknycz 4',
+        city: 'Warsaw',
+        state: 'Mazowieckie',
+        zip: '01-255',
+        floor: '5th Floor',
+        unit: 'Unit 31',
+        country: 'Poland',
+        isFilled: true,
+      },
+
+    ];
+
+    // const metadataList = this.props.device.metaFields;
+    const metadataList = metafields;
+
+    const filterDisabledLocations = (metadataList) => {
+      return metadataList.filter((metadataField) => {
+        return metadataField.type !== Metadata.Fields.LOCATION || (metadataField.type === Metadata.Fields.LOCATION && metadataField.isLocationEnabled);
+      });
+    };
 
     return (
       <div className="device--device-info">
@@ -110,10 +191,10 @@ class DeviceInfo extends React.Component {
         </Row>
         <Row>
           <Col span={24}>
-            {this.props.device.metaFields && this.props.device.metaFields.length !== 0 &&
+            {metadataList && filterDisabledLocations(metadataList).length !== 0 &&
             (<Section title="Metadata">
               <div className="device--device-info-metadata-list">
-                {this.props.device.metaFields.map((field) => {
+                {filterDisabledLocations(metadataList).map((field) => {
 
                   const form = `device${this.props.device.id}metadataedit${field.name}`;
 
@@ -130,6 +211,12 @@ class DeviceInfo extends React.Component {
                     account: this.props.account,
                   };
 
+                  if (field.type === Metadata.Fields.LOCATION)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Location {...props} availableLocationsList={locationsList || []} isEditDisabled={true}/>
+                      </DeviceMetadata.Field>
+                    );
 
                   if (field.type === Metadata.Fields.TEXT)
                     return (

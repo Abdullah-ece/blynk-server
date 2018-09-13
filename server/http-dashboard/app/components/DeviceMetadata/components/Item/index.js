@@ -13,6 +13,7 @@ class Item extends React.Component {
     onEditClick: React.PropTypes.func,
     fieldRole: React.PropTypes.string,
     userRole: React.PropTypes.string,
+    isEditDisabled: React.PropTypes.bool,
   };
 
   constructor(props){
@@ -27,18 +28,26 @@ class Item extends React.Component {
   render() {
     return (
       <div className="device-metadata--item">
-        <Row type="flex">
-          <Col span={14}>
-            {this.props.children}
-          </Col>
-          <Col span={10} className="device-metadata--item-edit">
-            {isUserAbleToEdit(this.props.userRole, this.props.fieldRole) && (
-              <Button type="primary" onClick={this.onEditClick}>
-                <Icon type="edit"/>Edit
-              </Button>
-            )}
-          </Col>
-        </Row>
+        {this.props.isEditDisabled ? (
+          <Row type="flex">
+            <Col span={24}>
+              {this.props.children}
+            </Col>
+          </Row>
+        ) : (
+          <Row type="flex">
+            <Col span={14}>
+              {this.props.children}
+            </Col>
+            <Col span={10} className="device-metadata--item-edit">
+              {isUserAbleToEdit(this.props.userRole, this.props.fieldRole) && (
+                <Button type="primary" onClick={this.onEditClick}>
+                  <Icon type="edit"/>Edit
+                </Button>
+              )}
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }

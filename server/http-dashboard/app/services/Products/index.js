@@ -116,7 +116,7 @@ export const Metadata = {
     DEVICE_REFERENCE: 'DeviceReference',
     LIST: 'List',
     EMAIL: 'Email',
-    LOCATION: 'LocationField',
+    LOCATION: 'Location',
   }
 };
 

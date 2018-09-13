@@ -16,6 +16,8 @@ class Base extends React.Component {
     values: React.PropTypes.object,
     errors: React.PropTypes.object,
     account: React.PropTypes.object,
+    isEditDisabled: React.PropTypes.bool,
+    availableLocationsList: React.PropTypes.array,
   };
 
   constructor(props) {
@@ -86,7 +88,7 @@ class Base extends React.Component {
     const field = this.props.data;
 
     return (
-      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name}>
+      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName="device-metadata-modal"
