@@ -490,6 +490,14 @@ export const DEVICE_DASHBOARD_TIME_FILTERING_FORM_NAME = 'DEVICE_DASHBOARD_TIME_
 
 export const TIMELINE_ITEMS_PER_PAGE = 25;
 
+const sortByProp = (a,b,prop,asc) => {
+  if(asc) {
+    return String(a[prop]) > String(b[prop]) ? -1 : 1;
+  } else {
+    return String(a[prop]) > String(b[prop]) ? 1 : -1;
+  }
+};
+
 export const DEVICES_SORT = {
   REQUIRE_ATTENTION: {
     key: 'REQUIRE_ATTENTION',
@@ -499,7 +507,7 @@ export const DEVICES_SORT = {
       const bCritical = b.criticalSinceLastView || 0;
       const bWarning = b.warningSinceLastView || 0;
       if (aCritical === bCritical && aWarning === bWarning) {
-        return String(a.name) > String(b.name) ? 1 : -1;
+        return String(a.id) > String(b.id) ? 1 : -1;
       } else if(aCritical === bCritical) {
         return (aWarning > bWarning) ? -1 : (aWarning < bWarning) ? 1 : 0;
       } else {
@@ -510,44 +518,37 @@ export const DEVICES_SORT = {
   AZ: {
     key: 'AZ',
     compare: (a, b) => {
-      return String(a.name) > String(b.name) ? 1 : -1;
+      return a.name === b.name ? sortByProp(a,b,'id') : sortByProp(a, b, 'name', false);
     }
   },
   ZA: {
     key: 'ZA',
     compare: (a, b) => {
-      return String(a.name) > String(b.name) ? -1 : 1;
+      return a.name === b.name ? sortByProp(a,b,'id') : sortByProp(a, b, 'name', true);
     }
   },
   DATE_ADDED_ASC: {
     key: 'DATE_ADDED_ASC',
     compare: (a, b) => {
-      return Number(a.createdAt) > Number(b.createdAt) ? -1 : 1;
+      return a.createdAt === b.createdAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'createdAt', true);
     }
   },
   DATE_ADDED_DESC: {
     key: 'DATE_ADDED_DESC',
     compare: (a, b) => {
-      return Number(a.createdAt) > Number(b.createdAt) ? 1 : -1;
+      return a.createdAt === b.createdAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'createdAt', false);
     }
   },
   LAST_REPORTED_ASC: {
     key: 'LAST_REPORTED_ASC',
     compare: (a, b) => {
-      if(Number(a.dataReceivedAt) === Number(b.dataReceivedAt)) {
-        return String(a.name) > String(b.name) ? 1 : -1;
-      }
-      return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? -1 : 1;
+      return a.dataReceivedAt === b.dataReceivedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'dataReceivedAt', true);
     }
   },
   LAST_REPORTED_DESC: {
     key: 'LAST_REPORTED_DESC',
     compare: (a, b) => {
-      if(Number(a.dataReceivedAt) === Number(b.dataReceivedAt)) {
-        return String(a.name) > String(b.name) ? 1 : -1;
-      }
-
-      return Number(a.dataReceivedAt) > Number(b.dataReceivedAt) ? 1 : -1;
+      return a.dataReceivedAt === b.dataReceivedAt ? sortByProp(a,b,'id') : sortByProp(a, b, 'dataReceivedAt', false);
     },
   },
 
