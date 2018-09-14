@@ -99,6 +99,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
 
         //do insert anyway, as device was disconnected even it was relogged quickly
+        log.trace("Device {} goes offline DB event.", device.id);
         reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
 
         if (!dashBoard.isActive) {
@@ -146,6 +147,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         @Override
         public void run() {
             if (submittedTime > device.connectTime) {
+                log.trace("Device {} goes offline delayed DB event.", device.id);
                 reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
             } else {
                 log.debug("Hardware was logged. Delayed task skipped. Device id {}, token {}.",
