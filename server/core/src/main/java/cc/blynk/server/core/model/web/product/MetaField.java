@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.EmailMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
+import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -50,7 +51,8 @@ import org.jooq.SelectSelectStep;
         @JsonSubTypes.Type(value = CoordinatesMetaField.class, name = "Coordinates"),
         @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address"),
         @JsonSubTypes.Type(value = ListMetaField.class, name = "List"),
-        @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference")
+        @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference"),
+        @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
