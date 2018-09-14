@@ -70,7 +70,7 @@ public class WebResolveLogEventLogic {
             return;
         }
 
-        blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeEvent(() -> {
             MessageBase response;
             try {
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, comment)) {

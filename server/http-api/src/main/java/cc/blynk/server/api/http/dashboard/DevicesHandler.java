@@ -133,7 +133,7 @@ public class DevicesHandler extends BaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
-        blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeEvent(() -> {
             Response response;
             try {
                 String userComment = comment == null ? null : comment.comment;
