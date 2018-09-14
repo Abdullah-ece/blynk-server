@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -42,6 +43,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
@@ -247,6 +249,9 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 break;
             case WEB_DELETE_DEVICE :
                 webDeleteDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case LOGOUT :
+                LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

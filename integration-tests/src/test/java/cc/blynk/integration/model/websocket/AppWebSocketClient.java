@@ -202,6 +202,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("getAccount");
     }
 
+    public void logout() {
+        send("logout");
+    }
+
     public void deleteDevice(int orgId, int deviceId) {
         send("webDeleteDevice " + orgId + BODY_SEPARATOR + deviceId);
     }
