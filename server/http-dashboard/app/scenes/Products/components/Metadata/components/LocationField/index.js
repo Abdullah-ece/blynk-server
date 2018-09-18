@@ -229,12 +229,12 @@ class LocationField extends BaseField {
             </Col>
             <Col span={20}>
               <div style={{display: (this.props.field.get('isLocationEnabled') && 'inline-block' || 'none')}}>
-                <Field name={`metaFields.${this.props.metaFieldKey}.isLocationGetFromDevice`}
+                <Field name={`metaFields.${this.props.metaFieldKey}.useLocationDataFromDevice`}
                        component={this.switch}/>
                 <span className="location-field-enable-location-values-title"> Use location data from device (e.g. GPS)</span>
               </div>
             </Col>
-            {this.props.field.get('isLocationEnabled') && this.props.field.get('isLocationGetFromDevice') &&(
+            {this.props.field.get('isLocationEnabled') && this.props.field.get('useLocationDataFromDevice') &&(
               <Col span={24} className="location-field-location-from-device-info">
                 <span>Set up location Datastream in Datastreams section</span>
               </Col>

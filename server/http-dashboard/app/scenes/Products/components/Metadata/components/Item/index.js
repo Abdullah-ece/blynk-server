@@ -145,7 +145,7 @@ class MetadataItem extends React.PureComponent {
   }
 
   isItemLocationWithDataFromDevice() {
-    return this.props.field.get('type') === Metadata.Fields.LOCATION && this.props.field.get('isLocationGetFromDevice');
+    return this.props.field.get('type') === Metadata.Fields.LOCATION && this.props.field.get('useLocationDataFromDevice');
   }
 
   isContentVisible() {
