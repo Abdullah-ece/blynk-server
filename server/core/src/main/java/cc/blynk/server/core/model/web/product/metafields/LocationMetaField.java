@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LocationMetaField extends MetaField {
 
+    public final String siteName;
+
     public final boolean isLocationEnabled;
 
     public final String streetAddress;
@@ -63,6 +65,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("role") Role role,
                              @JsonProperty("isDefault") boolean isDefault,
                              @JsonProperty("icon") String icon,
+                             @JsonProperty("siteName") String siteName,
                              @JsonProperty("isLocationEnabled") boolean isLocationEnabled,
                              @JsonProperty("streetAddress") String streetAddress,
                              @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
@@ -89,6 +92,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("zone") String zone,
                              @JsonProperty("placeId") String placeId) {
         super(id, name, role, isDefault, icon);
+        this.siteName = siteName;
         this.isLocationEnabled = isLocationEnabled;
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
@@ -121,7 +125,7 @@ public class LocationMetaField extends MetaField {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
         return new LocationMetaField(
                 id, metaField.name, metaField.role, metaField.isDefault,
-                metaField.icon, addressMetaField.isLocationEnabled,
+                metaField.icon, addressMetaField.siteName, addressMetaField.isLocationEnabled,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
                 state, addressMetaField.isStateEnabled,
@@ -141,7 +145,7 @@ public class LocationMetaField extends MetaField {
     public MetaField copy() {
         return new LocationMetaField(
                 id, name, role, isDefault,
-                icon, isLocationEnabled,
+                icon, siteName, isLocationEnabled,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,
                 state, isStateEnabled,
