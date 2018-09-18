@@ -6,7 +6,6 @@ import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebGetGraphDataLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
@@ -15,6 +14,7 @@ import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
@@ -60,12 +60,13 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
@@ -113,7 +114,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
 
-    private final GlobalStats stats;
+    private final Holder holder;
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
@@ -147,12 +148,12 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
 
         this.state = state;
-        this.stats = holder.stats;
+        this.holder = holder;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementAppStat();
+        this.holder.stats.incrementAppStat();
         switch (msg.command) {
             case WEB_GET_ACCOUNT:
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
@@ -249,6 +250,9 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 break;
             case WEB_DELETE_DEVICE :
                 webDeleteDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_METAFIELD :
+                WebGetMetaFieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case LOGOUT :
                 LogoutLogic.messageReceived(ctx, state.user, msg);

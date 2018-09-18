@@ -164,6 +164,7 @@ public final class Command {
     public static final short WEB_UPDATE_DEVICE_METAFIELD = 126;
     public static final short WEB_GET_DEVICE_TIMELINE = 127;
     public static final short WEB_DELETE_DEVICE = 128;
+    public static final short WEB_GET_METAFIELD = 129;
 
     //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;

@@ -65,7 +65,7 @@ public class WebGetOrganizationLocationsLogic {
             for (MetaField metaField : device.metaFields) {
                 if (metaField instanceof LocationMetaField) {
                     LocationMetaField locationMetaField = (LocationMetaField) metaField;
-                    existingLocations.add(new LocationDTO(locationMetaField.siteName, device.id));
+                    existingLocations.add(new LocationDTO(locationMetaField.id, locationMetaField.siteName, device.id));
                     if (existingLocations.size() == 10) {
                         return existingLocations;
                     }

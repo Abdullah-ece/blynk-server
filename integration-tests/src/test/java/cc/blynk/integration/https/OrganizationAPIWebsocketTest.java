@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -78,6 +79,16 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals(1, locationDTOS.length);
         assertEquals(createdDevice.id, locationDTOS[0].deviceId);
         assertEquals("Warehouse 13", locationDTOS[0].siteName);
+        assertEquals(3, locationDTOS[0].id);
+
+        client.getMetafield(createdDevice.id, locationDTOS[0].id);
+        LocationMetaField metaField = (LocationMetaField) client.parseMetafield(5);
+        assertNotNull(metaField);
+        assertEquals(3, metaField.id);
+        assertEquals("Device Location", metaField.name);
+        assertEquals("Warehouse 13", metaField.siteName);
+        assertTrue(metaField.isLocationEnabled);
+        assertEquals("Baklazhana street 15", metaField.streetAddress);
     }
 
 }

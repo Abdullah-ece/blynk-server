@@ -100,6 +100,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 
 /**
  * The Blynk Project.
@@ -329,6 +330,8 @@ public final class CommandParserUtil {
                 return GET_DEVICE_METAFIELDS;
             case "updatedevicemetafield" :
                 return UPDATE_DEVICE_METAFIELD;
+            case "webgetmetafield" :
+                return WEB_GET_METAFIELD;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -231,6 +231,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetProductLocations " + productId);
     }
 
+    public void getMetafield(int deviceId, int metafieldId) {
+        send("webGetMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+    }
+
     public void getOrganization(int orgId) {
         send("webGetOrg " + orgId);
     }
@@ -289,6 +293,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public User parseAccount(int expectedMessageOrder) throws Exception {
         return JsonParser.parseUserFromString(getBody(expectedMessageOrder));
+    }
+
+    public MetaField parseMetafield(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseMetafield(getBody(expectedMessageOrder), 0);
     }
 
     public void send(String line) {

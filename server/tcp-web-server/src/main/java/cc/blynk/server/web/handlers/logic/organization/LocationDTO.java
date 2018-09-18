@@ -7,13 +7,17 @@ import java.util.Objects;
 
 public class LocationDTO {
 
+    public final int id;
+
     public final String siteName;
 
     public final int deviceId;
 
     @JsonCreator
-    public LocationDTO(@JsonProperty("siteName") String siteName,
+    public LocationDTO(@JsonProperty("id") int id,
+                       @JsonProperty("siteName") String siteName,
                        @JsonProperty("deviceId") int deviceId) {
+        this.id = id;
         this.siteName = siteName;
         this.deviceId = deviceId;
     }
