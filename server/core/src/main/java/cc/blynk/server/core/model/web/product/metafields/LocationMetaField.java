@@ -57,6 +57,8 @@ public class LocationMetaField extends MetaField {
 
     public final String zone;
 
+    public final boolean useLocationDataFromDevice;
+
     public final String placeId;
 
     @JsonCreator
@@ -90,6 +92,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("room") String room,
                              @JsonProperty("isZoneEnabled") boolean isZoneEnabled,
                              @JsonProperty("zone") String zone,
+                             @JsonProperty("useLocationDataFromDevice") boolean useLocationDataFromDevice,
                              @JsonProperty("placeId") String placeId) {
         super(id, name, role, isDefault, icon);
         this.siteName = siteName;
@@ -117,6 +120,7 @@ public class LocationMetaField extends MetaField {
         this.room = room;
         this.isZoneEnabled = isZoneEnabled;
         this.zone = zone;
+        this.useLocationDataFromDevice = useLocationDataFromDevice;
         this.placeId = placeId;
     }
 
@@ -137,6 +141,7 @@ public class LocationMetaField extends MetaField {
                 addressMetaField.isUnitEnabled, unit,
                 addressMetaField.isRoomEnabled, room,
                 addressMetaField.isZoneEnabled, zone,
+                addressMetaField.useLocationDataFromDevice,
                 placeId
         );
     }
@@ -157,6 +162,7 @@ public class LocationMetaField extends MetaField {
                 isUnitEnabled, unit,
                 isRoomEnabled, room,
                 isZoneEnabled, zone,
+                useLocationDataFromDevice,
                 placeId
         );
     }
