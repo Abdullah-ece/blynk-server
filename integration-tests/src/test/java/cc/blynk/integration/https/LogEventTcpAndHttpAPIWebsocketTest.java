@@ -91,7 +91,6 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
         newHardClient.stop();
-        client.verifyResult(hardwareConnected(1, "0-1"));
         client.reset();
 
         newHardClient = new TestHardClient("localhost", properties.getHttpPort());
