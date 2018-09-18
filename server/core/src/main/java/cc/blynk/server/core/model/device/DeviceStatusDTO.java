@@ -9,6 +9,8 @@ public class DeviceStatusDTO {
 
     public final int id;
 
+    public final int productId;
+
     public final String name;
 
     public final BoardType boardType;
@@ -35,6 +37,7 @@ public class DeviceStatusDTO {
 
     public DeviceStatusDTO(Device device) {
         this.id = device.id;
+        this.productId = device.productId;
         this.name = device.name;
         this.boardType = device.boardType;
         this.token = device.token;
