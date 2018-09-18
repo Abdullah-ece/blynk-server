@@ -43,9 +43,9 @@ public class DBManager implements Closeable {
 
     public InvitationTokensDBDao invitationTokensDBDao;
     public UserDBDao userDBDao;
-    RedeemDBDao redeemDBDao;
-    PurchaseDBDao purchaseDBDao;
-    FlashedTokensDBDao flashedTokensDBDao;
+    private RedeemDBDao redeemDBDao;
+    private PurchaseDBDao purchaseDBDao;
+    private FlashedTokensDBDao flashedTokensDBDao;
     CloneProjectDBDao cloneProjectDBDao;
     public ForwardingTokenDBDao forwardingTokenDBDao;
 
