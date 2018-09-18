@@ -62,7 +62,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
@@ -196,7 +196,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
             case WEB_GET_ORG_USERS :
                 webGetOrganizationUsersLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_GET_ORG_LOCATIONS :
+            case WEB_GET_PRODUCT_LOCATIONS:
                 webGetOrganizationLocationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_INVITE_USER :

@@ -32,6 +32,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
+import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -226,6 +227,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetDevices " + orgId);
     }
 
+    public void getProductLocations(int productId) {
+        send("webGetProductLocations " + productId);
+    }
+
     public void getOrganization(int orgId) {
         send("webGetOrg " + orgId);
     }
@@ -276,6 +281,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public DeviceDTO[] parseDevicesDTO(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO[].class);
+    }
+
+    public LocationDTO[] parseLocationsDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), LocationDTO[].class);
     }
 
     public User parseAccount(int expectedMessageOrder) throws Exception {

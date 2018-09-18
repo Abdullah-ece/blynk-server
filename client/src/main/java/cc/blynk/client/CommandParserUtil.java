@@ -86,7 +86,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
@@ -287,8 +287,8 @@ public final class CommandParserUtil {
                 return WEB_GET_ORGS;
             case "webgetorgusers" :
                 return WEB_GET_ORG_USERS;
-            case "webgetorglocations" :
-                return WEB_GET_ORG_LOCATIONS;
+            case "webgetproductlocations" :
+                return WEB_GET_PRODUCT_LOCATIONS;
             case "webcaninviteuser" :
                 return WEB_CAN_INVITE_USER;
             case "webupdateorg" :
