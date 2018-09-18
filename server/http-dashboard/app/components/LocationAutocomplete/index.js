@@ -12,6 +12,9 @@ class Index extends React.Component {
     onSelect: PropTypes.func,
     placeholder: PropTypes.string,
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
+    value: PropTypes.string,
     style: PropTypes.object,
   };
 
@@ -22,9 +25,13 @@ class Index extends React.Component {
       options: null
     };
 
+    this.isSelectFired = false;
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
   }
 
   componentDidMount() {
@@ -33,6 +40,16 @@ class Index extends React.Component {
     let map = ReactDOM.findDOMNode(this.mapRef);
 
     this.places = new google.maps.places.PlacesService(map);
+  }
+
+  handleBlur(value) {
+    if(this.props && this.props.onBlur)
+      this.props.onBlur(value);
+  }
+
+  handleFocus(value) {
+    if(this.props && this.props.onFocus)
+      this.props.onFocus(value);
   }
 
   handleChange(value) {
@@ -73,7 +90,9 @@ class Index extends React.Component {
         city: city, // locality
         state: state, // administrative_area_level_1
         country: country, // country,
-        postal: postalCode, // postal_code
+        postal: postalCode, // postal_code,
+        geometry: data.geometry, // geometry,
+        placeId: data.place_id, // placeId
       };
     };
 
@@ -91,20 +110,14 @@ class Index extends React.Component {
       if(data.number)
         resultString += ` ${data.number}`;
 
-      this.setState({
-        search: resultString
-      });
+      this.handleChange(resultString);
 
       this.props.onSelect(data);
-      this.props.onChange(resultString);
-
     });
   }
 
   handleSearchChange(value) {
-    this.setState({
-      search: value
-    });
+    this.handleChange(value);
 
     this.fetch(value);
   }
@@ -147,10 +160,12 @@ class Index extends React.Component {
           filterOption={false}
           placeholder={this.props.placeholder}
           optionFilterProp="children"
-          value={this.state.search}
+          value={this.props.value}
           onChange={this.handleChange}
           onSelect={this.handleSelectChange}
           onSearch={this.handleSearchChange}
+          onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
         >
           {this.state.options}
         </Select>

@@ -180,6 +180,76 @@ class LocationField extends BaseField {
 
     const checkbox = _.get(props, props.names[0]);
     const field = _.get(props, props.names[1]);
+    let additionalField = null;
+
+    //hardcode for lat lon
+    if(props.isLatLon) {
+      additionalField = _.get(props, props.names[2]);
+    }
+
+    if(props.isLocationAutocomplete) {
+
+      return (
+        <div className={`location-field-values-list-item`}>
+
+          <Form.Items layout="inline">
+            <Form.Item className={`location-field-values-list-item-checkbox`}>
+              <Checkbox size="small"
+                        checked={!!checkbox.input.value}
+                        onChange={checkbox.input.onChange}
+              />
+            </Form.Item>
+            <Form.Item className={`location-field-values-list-item-field`} style={{width: '100%', maxWidth: '185px'}}>
+              <LocationAutocomplete style={{width: '100%', maxWidth: '185px'}} onChange={field.input.onChange}
+                                      onSelect={this.handleAddressSelect}
+                                      value={field.input.value}
+                                      onFocus={this.onFocus}
+                                      onBlur={this.onBlur}
+                                      placeholder={props.label}
+                                      disabled={!checkbox.input.value}
+                />
+            </Form.Item>
+          </Form.Items>
+
+        </div>
+      );
+
+    }
+
+    if(props.isLatLon) {
+
+      return (
+        <div className={`location-field-values-list-item`}>
+
+          <Form.Items layout="inline">
+            <Form.Item className={`location-field-values-list-item-checkbox`}>
+              <Checkbox size="small"
+                        checked={!!checkbox.input.value}
+                        onChange={checkbox.input.onChange}
+              />
+            </Form.Item>
+            <Form.Item className={`location-field-values-list-item-field`} style={{width: '50%', maxWidth: '86px'}}>
+                <Input onBlur={this.onBlur}
+                       onFocus={this.onFocus}
+                       value={!field.input.value ? '' : field.input.value}
+                       onChange={field.input.onChange}
+                       placeholder={props.labels[0]}
+                       disabled={!checkbox.input.value}/>
+            </Form.Item>
+            <Form.Item className={`location-field-values-list-item-field`} style={{width: '50%', maxWidth: '87px'}}>
+                <Input onBlur={this.onBlur}
+                       onFocus={this.onFocus}
+                       value={!additionalField.input.value ? '' : additionalField.input.value}
+                       onChange={additionalField.input.onChange}
+                       placeholder={props.labels[1]}
+                       disabled={!checkbox.input.value}/>
+            </Form.Item>
+          </Form.Items>
+
+        </div>
+      );
+
+    }
 
     return (
       <div className={`location-field-values-list-item`}>
@@ -192,23 +262,12 @@ class LocationField extends BaseField {
             />
           </Form.Item>
           <Form.Item className={`location-field-values-list-item-field`} style={{width: '100%', maxWidth: '185px'}}>
-            { props.isLocationAutocomplete ? (
-              <LocationAutocomplete style={{width: '100%', maxWidth: '185px'}} onChange={field.input.onChange}
-                                    onSelect={this.handleAddressSelect}
-                                    value={field.input.value}
-                                    onFocus={this.onFocus}
-                                    onBlur={this.onBlur}
-                                    placeholder={props.label}
-                                    disabled={!checkbox.input.value}
-              />
-            ) : (
               <Input onBlur={this.onBlur}
                      onFocus={this.onFocus}
                      value={field.input.value}
                      onChange={field.input.onChange}
                      placeholder={props.label}
                      disabled={!checkbox.input.value}/>
-            )}
           </Form.Item>
         </Form.Items>
 
@@ -287,6 +346,11 @@ class LocationField extends BaseField {
         },
         {
           label: `Coordinates`,
+          isLatLon: true,
+          labels: [
+            'Lat',
+            'Lon'
+          ],
           names: [
             `metaFields.${this.props.metaFieldKey}.isCoordinatesEnabled`,
             `metaFields.${this.props.metaFieldKey}.lat`,

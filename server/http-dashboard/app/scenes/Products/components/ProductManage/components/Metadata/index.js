@@ -369,37 +369,37 @@ class ProductMetadata extends React.Component {
         tools: false,
       };
 
-      if (field.get('type') === MetadataService.Fields.LOCATION && field.get('hardcoded') === true) {
+      if (field.get('type') === MetadataService.Fields.LOCATION && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.LocationField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner && field.get('hardcoded') === true) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.DeviceOwnerField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceName && field.get('hardcoded') === true) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceName && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.DeviceNameField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.Manufacturer && field.get('hardcoded') === true) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.Manufacturer && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.ManufacturerField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.ModelName && field.get('hardcoded') === true) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.ModelName && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.ModelNameField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice && field.get('hardcoded') === true) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.TimezoneOfDeviceField {...props}/>
         );

@@ -140,9 +140,9 @@ export const filterMetadataFields = (fields, filterHardcoded = true) => {
 
   return fields.filter((field) => {
     if(filterHardcoded)
-      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0 && field.get('hardcoded');
+      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0 && field.get('isDefault');
 
-    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1 && !field.get('hardcoded');
+    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1 && !field.get('isDefault');
   });
 };
 
@@ -179,7 +179,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
     {
       id: 3,
       type: Metadata.Fields.LOCATION,
-      name: 'Location Name',
+      name: '',
       role: Roles.STAFF.value,
       isDefault: true,
       ...MetadataInitialValues,
