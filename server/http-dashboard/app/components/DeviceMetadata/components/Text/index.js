@@ -24,7 +24,7 @@ class Text extends Base {
     return (
       <Fieldset>
         <Fieldset.Legend type="dark">
-          <LinearIcon type={field.icon}/>
+          <LinearIcon type={field.icon || 'cube'}/>
           {field.name}
         </Fieldset.Legend>
         {field.value || <i>No Value</i>}

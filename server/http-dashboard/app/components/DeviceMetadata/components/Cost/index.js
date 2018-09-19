@@ -21,7 +21,7 @@ class Cost extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {!price && !units ? <i>No Value</i> : (
           <div>
             {Number(field.perValue) === 1 ? (

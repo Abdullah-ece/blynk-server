@@ -16,7 +16,7 @@ class Time extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {TimeService.fromTimestamp(field.time)}
       </Fieldset>
     );

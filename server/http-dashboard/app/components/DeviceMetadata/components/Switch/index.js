@@ -15,7 +15,7 @@ class Switch extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {Number(field.value) === 0 ? field.from : field.to}
       </Fieldset>
     );

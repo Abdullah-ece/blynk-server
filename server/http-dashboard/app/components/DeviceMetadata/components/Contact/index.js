@@ -44,7 +44,7 @@ class Contact extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {!data.length && <i>No Value</i>}
         {
           data.map((field, key) => {

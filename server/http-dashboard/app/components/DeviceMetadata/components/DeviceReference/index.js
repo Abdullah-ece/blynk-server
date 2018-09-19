@@ -24,7 +24,7 @@ class DeviceReference extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {value && value.name && (
           <Link to={`/devices/${value.id}`}>{value.name}</Link>
         ) || (<i>Device is not selected</i>)}
