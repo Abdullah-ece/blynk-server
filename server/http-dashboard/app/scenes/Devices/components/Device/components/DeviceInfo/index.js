@@ -70,58 +70,8 @@ class DeviceInfo extends React.Component {
       }
     ];
 
-    let metafields = [
-      /** Case 1 Location Disabled */
-
-      // {
-      //   type: Metadata.Fields.LOCATION,
-      //   isLocationEnabled: false,
-      // },
-
-      /** Case 2 Location Enabled but not filled */
-
-      // {
-      //   type: Metadata.Fields.LOCATION,
-      //   name: 'Warehouse S01',
-      //   role: Roles.STAFF.value,
-      //   [MetadataIconFieldName]: 'map',
-      //   isLocationEnabled: true,
-      // },
-
-      /** Case 3 Location Enabled and filled */
-
-      {
-        type: Metadata.Fields.LOCATION,
-        name: 'Warehouse S01',
-        role: Roles.STAFF.value,
-        [MetadataIconFieldName]: 'map',
-        isLocationEnabled: true,
-        city: 'New York',
-        state: 'NY',
-        country: 'United States',
-        isFilled: true,
-      },
-
-      {
-        type: Metadata.Fields.LOCATION,
-        name: 'Warehouse S02',
-        role: Roles.STAFF.value,
-        [MetadataIconFieldName]: 'map',
-        isLocationEnabled: true,
-        streetAddress: 'Sztuk Pieknycz 4',
-        city: 'Warsaw',
-        state: 'Mazowieckie',
-        zip: '01-255',
-        floor: '5th Floor',
-        unit: 'Unit 31',
-        country: 'Poland',
-        isFilled: true,
-      },
-
-    ];
-
-    // const metadataList = this.props.device.metaFields;
-    const metadataList = metafields;
+    const metadataList = this.props.device.metaFields;
+    // const metadataList = metafields;
 
     const filterDisabledLocations = (metadataList) => {
       return metadataList.filter((metadataField) => {
@@ -202,6 +152,7 @@ class DeviceInfo extends React.Component {
                     key: form,
                     form: form,
                     initialValues: field,
+                    modalWrapClassName: 'device-metadata-modal--location',
                   };
 
                   const props = {
@@ -209,12 +160,13 @@ class DeviceInfo extends React.Component {
                     data: field,
                     onChange: this.onChange.bind(this),
                     account: this.props.account,
+                    modalWrapClassName: 'device-metadata-modal--location',
                   };
 
                   if (field.type === Metadata.Fields.LOCATION)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Location {...props} availableLocationsList={locationsList || []} isEditDisabled={true}/>
+                        <DeviceMetadata.Location {...props} availableLocationsList={locationsList || []}/>
                       </DeviceMetadata.Field>
                     );
 
