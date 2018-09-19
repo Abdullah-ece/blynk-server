@@ -191,7 +191,7 @@ class MetadataItem extends React.PureComponent {
           {this.isContentVisible() ? (
             <Row gutter={0}>
               <Col span={2} style={{width: '48px'}}>
-                <IconSelect name={`metaFields.${this.props.metaFieldKey}.selectedIcon`}/>
+                <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>
               </Col>
               <Col span={10}>
                 {this.props.children}

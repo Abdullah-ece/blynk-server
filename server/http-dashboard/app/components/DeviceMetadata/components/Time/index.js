@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import TimeModal from './modal';
 import {Time as TimeService} from 'services/Metadata';
 
@@ -16,7 +16,7 @@ class Time extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
         {TimeService.fromTimestamp(field.time)}
       </Fieldset>
     );

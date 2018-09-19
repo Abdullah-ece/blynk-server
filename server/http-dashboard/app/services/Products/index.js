@@ -97,7 +97,7 @@ export const DEVICE_FORCE_UPDATE = {
 export const MetadataIconFieldName = 'icon';
 
 export const MetadataInitialValues = {
-  [MetadataIconFieldName]: 'cube'
+  [MetadataIconFieldName]: 'e874'
 };
 
 export const Metadata = {
@@ -163,7 +163,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'cube',
+      [MetadataIconFieldName]: 'e874',
       hardcoded: true,
     },
     {
@@ -173,7 +173,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'user',
+      [MetadataIconFieldName]: 'e71e',
       hardcoded: true,
     },
     {
@@ -183,7 +183,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.STAFF.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'map',
+      [MetadataIconFieldName]: 'e781',
       isStreetAddressEnabled: true,
       isCityEnabled: true,
       isStateEnabled: true,
@@ -205,7 +205,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.SUPER_ADMIN.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'factory2',
+      [MetadataIconFieldName]: 'e67e',
       hardcoded: true,
     },
     {
@@ -215,7 +215,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.STAFF.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'document',
+      [MetadataIconFieldName]: 'e6d8',
       hardcoded: true,
     },
     {
@@ -226,7 +226,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'clock3',
+      [MetadataIconFieldName]: 'e8e8',
       hardcoded: true,
     }
   ];

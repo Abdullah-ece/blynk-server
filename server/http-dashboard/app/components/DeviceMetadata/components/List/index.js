@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import ListModal from './modal';
 
 class List extends Base {
@@ -17,8 +17,8 @@ class List extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { value || (<i>No Value</i>)}
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        {value || (<i>No Value</i>)}
       </Fieldset>
     );
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import DeviceReferenceModal from './modal';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 @connect((state) => ({
   products: state.Product.products,
-  devices: state.Devices.devices,
+  devices : state.Devices.devices,
 }))
 class DeviceReference extends Base {
 
@@ -24,8 +24,8 @@ class DeviceReference extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { value && value.name && (
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        {value && value.name && (
           <Link to={`/devices/${value.id}`}>{value.name}</Link>
         ) || (<i>Device is not selected</i>)}
         {/*<i>No Device ={productIds}= ={value}=</i>*/}

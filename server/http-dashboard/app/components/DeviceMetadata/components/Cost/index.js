@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import CostModal from './modal';
 import {Currency, Unit} from 'services/Products';
 
@@ -21,16 +21,16 @@ class Cost extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { !price && !units ? <i>No Value</i> : (
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        {!price && !units ? <i>No Value</i> : (
           <div>
-            { Number(field.perValue) === 1 ? (
+            {Number(field.perValue) === 1 ? (
               <p>{`${Currency[currency].abbreviation} ${price} / ${Unit[units].abbreviation}`}</p>
             ) : (
               <p>{`${Currency[currency].abbreviation} ${price} / ${perValue} ${Unit[units].abbreviation}`}</p>
             )}
           </div>
-        ) }
+        )}
       </Fieldset>
     );
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import UnitModal from './modal';
 import {Unit as Units} from 'services/Products';
 
@@ -16,12 +16,12 @@ class Unit extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { !field.value && !field.units ? <i>No Value</i> : (
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        {!field.value && !field.units ? <i>No Value</i> : (
           <div>
             {field.value} {Units[field.units].abbreviation}
           </div>
-        ) }
+        )}
       </Fieldset>
     );
   }

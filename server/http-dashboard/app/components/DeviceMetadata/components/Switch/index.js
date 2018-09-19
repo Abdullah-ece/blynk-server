@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import SwitchModal from './modal';
 
 class Switch extends Base {
@@ -15,7 +15,7 @@ class Switch extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
         {Number(field.value) === 0 ? field.from : field.to}
       </Fieldset>
     );

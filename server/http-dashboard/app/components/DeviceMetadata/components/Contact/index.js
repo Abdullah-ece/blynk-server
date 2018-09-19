@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import ContactModal from './modal';
 
 class Contact extends Base {
@@ -44,8 +44,8 @@ class Contact extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
-        { !data.length && <i>No Value</i>}
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon}/> {field.name}         </Fieldset.Legend>
+        {!data.length && <i>No Value</i>}
         {
           data.map((field, key) => {
             return (<p key={key}>{field}</p>);
