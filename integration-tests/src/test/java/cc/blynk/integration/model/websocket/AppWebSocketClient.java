@@ -231,6 +231,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetProductLocations " + productId);
     }
 
+    public void getProductLocations(int productId, String searchString) {
+        send("webGetProductLocations " + productId + BODY_SEPARATOR + searchString);
+    }
+
     public void getMetafield(int deviceId, int metafieldId) {
         send("webGetMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
     }

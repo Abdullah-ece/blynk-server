@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,20 +27,25 @@ import static cc.blynk.server.internal.WebByteBufUtil.userHasNoAccessToOrg;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebGetOrganizationLocationsLogic {
+public class WebGetProductLocationsLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetOrganizationLocationsLogic.class);
+    private static final Logger log = LogManager.getLogger(WebGetProductLocationsLogic.class);
 
     private final OrganizationDao organizationDao;
     private final DeviceDao deviceDao;
 
-    public WebGetOrganizationLocationsLogic(Holder holder) {
+    public WebGetProductLocationsLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
         this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        int productId = Integer.parseInt(message.body);
+        String[] split = StringUtils.split2(message.body);
+        int productId = Integer.parseInt(split[0]);
+        String searchString = null;
+        if (split.length == 2) {
+            searchString = split[1];
+        }
 
         int orgId = organizationDao.getOrganizationIdByProductId(productId);
         User user = state.user;
@@ -50,7 +56,7 @@ public class WebGetOrganizationLocationsLogic {
         }
 
         List<Device> devices = deviceDao.getAllByProductId(productId);
-        Set<LocationDTO> existingLocations = getLocations(devices);
+        Set<LocationDTO> existingLocations = getLocations(devices, searchString);
 
         if (ctx.channel().isWritable()) {
             String locationsString = JsonParser.toJson(existingLocations);
@@ -59,15 +65,17 @@ public class WebGetOrganizationLocationsLogic {
         }
     }
 
-    private Set<LocationDTO> getLocations(List<Device> devices) {
+    private Set<LocationDTO> getLocations(List<Device> devices, String searchString) {
         Set<LocationDTO> existingLocations = new HashSet<>();
         for (Device device : devices) {
             for (MetaField metaField : device.metaFields) {
                 if (metaField instanceof LocationMetaField) {
                     LocationMetaField locationMetaField = (LocationMetaField) metaField;
-                    existingLocations.add(new LocationDTO(locationMetaField.id, locationMetaField.siteName, device.id));
-                    if (existingLocations.size() == 10) {
-                        return existingLocations;
+                    if (searchString == null || locationMetaField.matches(searchString)) {
+                        existingLocations.add(new LocationDTO(locationMetaField, device.id));
+                        if (existingLocations.size() == 10) {
+                            return existingLocations;
+                        }
                     }
                 }
             }

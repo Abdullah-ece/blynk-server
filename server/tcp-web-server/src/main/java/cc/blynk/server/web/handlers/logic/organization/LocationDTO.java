@@ -1,5 +1,6 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
+import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,6 +21,10 @@ public class LocationDTO {
         this.id = id;
         this.siteName = siteName;
         this.deviceId = deviceId;
+    }
+
+    public LocationDTO(LocationMetaField locationMetaField, int deviceId) {
+        this(locationMetaField.id, locationMetaField.siteName, deviceId);
     }
 
     @Override

@@ -91,4 +91,80 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals("Baklazhana street 15", metaField.streetAddress);
     }
 
+    @Test
+    public void getLocationsForProductWithAutoComplete() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name"),
+                new LocationMetaField(3, "Device Location", Role.ADMIN, false, null,
+                        "Warehouse 13",
+                        true, "Baklazhana street 15",
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, false, 0, 0,
+                        false, null,
+                        false, 0,
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, false,
+                        null)
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        client.getProductLocations(fromApiProduct.id, "Ware");
+        LocationDTO[] locationDTOS = client.parseLocationsDTO(3);
+        assertNotNull(locationDTOS);
+        assertEquals(1, locationDTOS.length);
+        assertEquals(createdDevice.id, locationDTOS[0].deviceId);
+        assertEquals("Warehouse 13", locationDTOS[0].siteName);
+        assertEquals(3, locationDTOS[0].id);
+
+        client.getProductLocations(fromApiProduct.id, "ware");
+        locationDTOS = client.parseLocationsDTO(4);
+        assertNotNull(locationDTOS);
+        assertEquals(1, locationDTOS.length);
+        assertEquals(createdDevice.id, locationDTOS[0].deviceId);
+        assertEquals("Warehouse 13", locationDTOS[0].siteName);
+        assertEquals(3, locationDTOS[0].id);
+
+        client.getProductLocations(fromApiProduct.id, "care");
+        locationDTOS = client.parseLocationsDTO(5);
+        assertNotNull(locationDTOS);
+        assertEquals(0, locationDTOS.length);
+
+        client.getProductLocations(fromApiProduct.id, "13");
+        locationDTOS = client.parseLocationsDTO(6);
+        assertNotNull(locationDTOS);
+        assertEquals(1, locationDTOS.length);
+        assertEquals(createdDevice.id, locationDTOS[0].deviceId);
+        assertEquals("Warehouse 13", locationDTOS[0].siteName);
+        assertEquals(3, locationDTOS[0].id);
+
+        client.getProductLocations(fromApiProduct.id, "house");
+        locationDTOS = client.parseLocationsDTO(7);
+        assertNotNull(locationDTOS);
+        assertEquals(1, locationDTOS.length);
+        assertEquals(createdDevice.id, locationDTOS[0].deviceId);
+        assertEquals("Warehouse 13", locationDTOS[0].siteName);
+        assertEquals(3, locationDTOS[0].id);
+    }
+
 }

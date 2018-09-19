@@ -22,10 +22,10 @@ import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLo
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
@@ -94,7 +94,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebGetOrganizationLogic webGetOrganizationLogic;
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
     private final WebGetOrganizationUsersLogic webGetOrganizationUsersLogic;
-    private final WebGetOrganizationLocationsLogic webGetOrganizationLocationsLogic;
+    private final WebGetProductLocationsLogic webGetProductLocationsLogic;
     private final WebCanInviteUserLogic canInviteUserLogic;
     private final WebCreateProductLogic webCreateProductLogic;
     private final WebGetProductLogic webGetProductLogic;
@@ -127,7 +127,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
         this.webGetOrganizationUsersLogic = new WebGetOrganizationUsersLogic(holder);
-        this.webGetOrganizationLocationsLogic = new WebGetOrganizationLocationsLogic(holder);
+        this.webGetProductLocationsLogic = new WebGetProductLocationsLogic(holder);
         this.canInviteUserLogic = new WebCanInviteUserLogic(holder);
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
         this.webGetProductLogic = new WebGetProductLogic(holder);
@@ -198,7 +198,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webGetOrganizationUsersLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT_LOCATIONS:
-                webGetOrganizationLocationsLogic.messageReceived(ctx, state, msg);
+                webGetProductLocationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_INVITE_USER :
                 canInviteUserLogic.messageReceived(ctx, state, msg);

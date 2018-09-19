@@ -128,6 +128,20 @@ public class LocationMetaField extends MetaField {
         this.placeId = placeId;
     }
 
+    public boolean matches(String searchString) {
+        return siteName != null && containsIgnoreCase(siteName, searchString);
+    }
+
+    private static boolean containsIgnoreCase(String str, String searchString)     {
+        int length = searchString.length();
+        for (int i = str.length() - length; i >= 0; i--) {
+            if (str.regionMatches(true, i, searchString, 0, length)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
