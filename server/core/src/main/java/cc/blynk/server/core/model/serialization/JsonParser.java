@@ -22,6 +22,7 @@ import cc.blynk.server.core.stats.model.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,6 +87,7 @@ public final class JsonParser {
     private static final ObjectWriter productWriter = MAPPER.writerFor(Product.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
     private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
+    private static final ObjectWriter metaFieldWriter = MAPPER.writerFor(new TypeReference<List<MetaField>>() {});
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .writerFor(DashBoard.class).withView(View.PublicOnly.class);
@@ -132,6 +134,10 @@ public final class JsonParser {
 
     public static String toJsonWeb(List<User> users) {
         return toJson(userWebWriter, users);
+    }
+
+    public static String toJson(List<MetaField> metaFields) {
+        return toJson(metaFieldWriter, metaFields);
     }
 
     public static String toJson(Profile profile) {
@@ -205,13 +211,13 @@ public final class JsonParser {
         organizationWriter.writeValue(file, org);
     }
 
-    private static String toJson(ObjectWriter writer, List<User> users) {
+    private static String toJson(ObjectWriter writer, List<?> list) {
         try {
-            return writer.writeValueAsString(users);
+            return writer.writeValueAsString(list);
         } catch (Exception e) {
             log.error("Error jsoning object.", e);
         }
-        return "{}";
+        return "[]";
     }
 
     private static String toJson(ObjectWriter writer, Object o) {
