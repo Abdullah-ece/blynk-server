@@ -22,10 +22,11 @@ public class DeviceReferenceMetaField extends MetaField {
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("includeInProvision") boolean includeInProvision,
                                     @JsonProperty("isMandatory") boolean isMandatory,
+                                    @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("selectedProductIds") int[] selectedProductIds,
                                     @JsonProperty("selectedDeviceId") long selectedDeviceId) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.selectedProductIds = selectedProductIds;
         this.selectedDeviceId = selectedDeviceId;
     }
@@ -34,13 +35,15 @@ public class DeviceReferenceMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
         return new DeviceReferenceMetaField(id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, icon,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                icon,
                 deviceReferenceMetaField.selectedProductIds, selectedDeviceId);
     }
 
     @Override
     public MetaField copy() {
         return new DeviceReferenceMetaField(id, name, role,
-                includeInProvision, isMandatory, icon, selectedProductIds, selectedDeviceId);
+                includeInProvision, isMandatory, isDefault,
+                icon, selectedProductIds, selectedDeviceId);
     }
 }

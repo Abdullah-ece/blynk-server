@@ -69,6 +69,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("role") Role role,
                              @JsonProperty("includeInProvision") boolean includeInProvision,
                              @JsonProperty("isMandatory") boolean isMandatory,
+                             @JsonProperty("isDefault") boolean isDefault,
                              @JsonProperty("icon") String icon,
                              @JsonProperty("siteName") String siteName,
                              @JsonProperty("isLocationEnabled") boolean isLocationEnabled,
@@ -98,7 +99,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("useLocationDataFromDevice") boolean useLocationDataFromDevice,
                              @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled,
                              @JsonProperty("placeId") String placeId) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.siteName = siteName;
         this.isLocationEnabled = isLocationEnabled;
         this.streetAddress = streetAddress;
@@ -148,7 +149,7 @@ public class LocationMetaField extends MetaField {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
         return new LocationMetaField(
                 id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon, addressMetaField.siteName, addressMetaField.isLocationEnabled,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
@@ -171,7 +172,7 @@ public class LocationMetaField extends MetaField {
     public MetaField copy() {
         return new LocationMetaField(
                 id, name, role,
-                includeInProvision, isMandatory,
+                includeInProvision, isMandatory, isDefault,
                 icon, siteName, isLocationEnabled,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,

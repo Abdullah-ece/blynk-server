@@ -25,13 +25,14 @@ public class MeasurementUnitMetaField extends MetaField {
                                     @JsonProperty("name") String name,
                                     @JsonProperty("role") Role role,
                                     @JsonProperty("includeInProvision") boolean includeInProvision,
+                                    @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("isMandatory") boolean isMandatory,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("units") MeasurementUnit units,
                                     @JsonProperty("value") String value,
                                     @JsonProperty("min") float min,
                                     @JsonProperty("max") float max) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.units = units;
         this.value = value;
         this.min = min;
@@ -41,13 +42,15 @@ public class MeasurementUnitMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new MeasurementUnitMetaField(id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, metaField.icon,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon,
                 units, value, min, max);
     }
 
     @Override
     public MetaField copy() {
         return new MeasurementUnitMetaField(id, name, role,
-                includeInProvision, isMandatory, icon, units, value, min, max);
+                includeInProvision, isMandatory, isDefault,
+                icon, units, value, min, max);
     }
 }

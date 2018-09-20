@@ -35,6 +35,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("role") Role role,
                             @JsonProperty("includeInProvision") boolean includeInProvision,
                             @JsonProperty("isMandatory") boolean isMandatory,
+                            @JsonProperty("isDefault") boolean isDefault,
                             @JsonProperty("icon") String icon,
                             @JsonProperty("streetAddress") String streetAddress,
                             @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
@@ -47,7 +48,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("country") String country,
                             @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
@@ -66,7 +67,7 @@ public class AddressMetaField extends MetaField {
         AddressMetaField addressMetaField = (AddressMetaField) metaField;
         return new AddressMetaField(
                 id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
@@ -81,7 +82,7 @@ public class AddressMetaField extends MetaField {
     public MetaField copy() {
         return new AddressMetaField(
                 id, name, role,
-                includeInProvision, isMandatory,
+                includeInProvision, isMandatory, isDefault,
                 icon,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,

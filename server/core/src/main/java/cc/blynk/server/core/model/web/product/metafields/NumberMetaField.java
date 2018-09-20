@@ -24,11 +24,12 @@ public class NumberMetaField extends MetaField {
                            @JsonProperty("role") Role role,
                            @JsonProperty("includeInProvision") boolean includeInProvision,
                            @JsonProperty("isMandatory") boolean isMandatory,
+                           @JsonProperty("isDefault") boolean isDefault,
                            @JsonProperty("icon") String icon,
                            @JsonProperty("min") float min,
                            @JsonProperty("max") float max,
                            @JsonProperty("value") double value) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.value = value;
         this.min = min;
         this.max = max;
@@ -37,13 +38,14 @@ public class NumberMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new NumberMetaField(id,
-                metaField.name, metaField.role, metaField.includeInProvision,
+                metaField.name, metaField.role, metaField.includeInProvision, metaField.isDefault,
                 metaField.isMandatory, metaField.icon, min, max, value);
     }
 
     @Override
     public MetaField copy() {
         return new NumberMetaField(id, name, role,
-                includeInProvision, isMandatory, icon, min, max, value);
+                includeInProvision, isMandatory, isDefault,
+                icon, min, max, value);
     }
 }

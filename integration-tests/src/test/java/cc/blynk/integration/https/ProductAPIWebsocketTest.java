@@ -127,22 +127,22 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, false, null, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, null, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, null, 0, 1000, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, null, MeasurementUnit.Celsius, "36", 0, 100),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false,null, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 1000, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, MeasurementUnit.Celsius, "36", 0, 100),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN,  false,false, false,null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, false, null, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, false, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, false, null, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, false, null, new Date().getTime()),
-                new MeasurementUnitMetaField(10, "None Unit", Role.ADMIN, false, false, null, MeasurementUnit.None, "36", 0, 100),
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, false, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, false, false, null, new Date().getTime()),
+                new MeasurementUnitMetaField(10, "None Unit", Role.ADMIN, false, false, false, null, MeasurementUnit.None, "36", 0, 100),
         };
 
         product.dataStreams = new DataStream[] {
@@ -176,21 +176,21 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", Role.ADMIN, false, false, null, "Farm of Smith"),
-                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, null, "0", "1", "Farm of Smith"),
-                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, null, 0, 100, 10.222),
-                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, null, MeasurementUnit.Celsius, "36", 0, 100),
-                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, null, "Tech Support",
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 100, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, MeasurementUnit.Celsius, "36", 0, 100),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, null, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, false, null, "My street", false,
+                new AddressMetaField(7, "Farm of Smith", Role.ADMIN, false, false, false, null, "My street", false,
                         "San Diego", false, "CA", false, "03322", false, "US", false, false),
-                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, false, null, 22.222, 23.333),
-                new TimeMetaField(9, "Some Time", Role.ADMIN, false, false, null, new Date().getTime())
+                new CoordinatesMetaField(8, "Farm Location", Role.ADMIN, false, false, false, null, 22.222, 23.333),
+                new TimeMetaField(9, "Some Time", Role.ADMIN, false, false, false, null, new Date().getTime())
         };
 
         product.dataStreams = new DataStream[] {
@@ -411,7 +411,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, null, "Default Device")
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, false, null, "Default Device")
         };
 
         client.createProduct(orgId, product);
@@ -435,7 +435,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("Default Device", textMetaField.value);
 
         newDevice.metaFields[0] = new TextMetaField(textMetaField.id,
-                textMetaField.name, textMetaField.role, false, false, null, "My updated value");
+                textMetaField.name, textMetaField.role, false, false, false, null, "My updated value");
 
         client.updateDevice(orgId, newDevice);
         newDevice = client.parseDevice(3);
@@ -451,7 +451,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         fromApiProduct.metaFields = new MetaField[] {
                 product.metaFields[0],
-                new NumberMetaField(2, "New metafield", Role.ADMIN, false, false, null, 0, 100, 123)
+                new NumberMetaField(2, "New metafield", Role.ADMIN, false, false, false, null, 0, 100, 123)
         };
 
         client.updateDevicesMeta(orgId, fromApiProduct);
@@ -486,7 +486,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, null, "Default Device")
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, false, null, "Default Device")
         };
 
         client.createProduct(orgId, product);
@@ -502,7 +502,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(newDevice);
 
         fromApiProduct.metaFields[0] = new TextMetaField(1,
-                "Me updated test metafield", Role.USER, false, false, null, "Default Device");
+                "Me updated test metafield", Role.USER, false, false, false, null, "Default Device");
 
         client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
@@ -532,7 +532,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, false, null, "Tech Support",
+                new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, false, false, null, "Tech Support",
                         "Dmitriy", true, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false, "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false)
@@ -559,7 +559,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertTrue(contactMetaField.isFirstNameEnabled);
         assertFalse(contactMetaField.isLastNameEnabled);
 
-        fromApiProduct.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, false, null, "Tech Support",
+        fromApiProduct.metaFields[0] = new ContactMetaField(1, "Farm of Smith", Role.ADMIN, false, false, false, null, "Tech Support",
                 "Dmitriy", true, "Dumanskiy", true, "dmitriy@blynk.cc", false,
                 "+38063673333",  false, "My street", false, "Ukraine", false,
                 "Kyiv", false, "Ukraine", false, "03322", false, false);

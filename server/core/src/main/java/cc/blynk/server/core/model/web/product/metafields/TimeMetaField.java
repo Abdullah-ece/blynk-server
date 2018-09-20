@@ -20,21 +20,24 @@ public class TimeMetaField extends MetaField {
                          @JsonProperty("role") Role role,
                          @JsonProperty("includeInProvision") boolean includeInProvision,
                          @JsonProperty("isMandatory") boolean isMandatory,
+                         @JsonProperty("isDefault") boolean isDefault,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("time") long time) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.time = time;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new TimeMetaField(id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, metaField.icon, time);
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon, time);
     }
 
     @Override
     public MetaField copy() {
         return new TimeMetaField(id, name, role,
-                includeInProvision, isMandatory, icon, time);
+                includeInProvision, isMandatory, isDefault,
+                icon, time);
     }
 }

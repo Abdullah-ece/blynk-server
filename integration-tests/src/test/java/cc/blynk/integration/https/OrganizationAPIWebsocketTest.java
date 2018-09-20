@@ -34,9 +34,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name"),
-                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, null,
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name"),
+                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",
                         false, null,
@@ -98,9 +98,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name"),
-                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, null,
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name"),
+                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",
                         false, null,

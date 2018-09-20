@@ -35,10 +35,11 @@ public class RangeTimeMetaField extends MetaField {
                               @JsonProperty("role") Role role,
                               @JsonProperty("includeInProvision") boolean includeInProvision,
                               @JsonProperty("isMandatory") boolean isMandatory,
+                              @JsonProperty("isDefault") boolean isDefault,
                               @JsonProperty("icon") String icon,
                               @JsonProperty("from") LocalTime from,
                               @JsonProperty("to") LocalTime to) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.from = from;
         this.to = to;
     }
@@ -52,12 +53,14 @@ public class RangeTimeMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new RangeTimeMetaField(
                 id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, metaField.icon, from, to);
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon, from, to);
     }
 
     @Override
     public MetaField copy() {
         return new RangeTimeMetaField(id, name, role,
-                includeInProvision, isMandatory, icon, from, to);
+                includeInProvision, isMandatory, isDefault,
+                icon, from, to);
     }
 }

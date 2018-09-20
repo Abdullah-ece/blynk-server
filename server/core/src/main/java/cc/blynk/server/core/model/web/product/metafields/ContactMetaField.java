@@ -58,6 +58,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("role") Role role,
                             @JsonProperty("includeInProvision") boolean includeInProvision,
                             @JsonProperty("isMandatory") boolean isMandatory,
+                            @JsonProperty("isDefault") boolean isDefault,
                             @JsonProperty("icon") String icon,
                             @JsonProperty("contact") String contact,
                             @JsonProperty("firstName") String firstName,
@@ -79,7 +80,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("zip") String zip,
                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.contact = contact;
         this.firstName = firstName;
         this.isFirstNameEnabled = isFirstNameEnabled;
@@ -111,7 +112,8 @@ public class ContactMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
         return new ContactMetaField(id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, icon,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                icon,
                 contact,
                 firstName, contactMetaField.isFirstNameEnabled,
                 lastName, contactMetaField.isLastNameEnabled,
@@ -128,7 +130,8 @@ public class ContactMetaField extends MetaField {
     @Override
     public MetaField copy() {
         return new ContactMetaField(id, name, role,
-                includeInProvision, isMandatory, icon,
+                includeInProvision, isMandatory, isDefault,
+                icon,
                 contact,
                 firstName, isFirstNameEnabled,
                 lastName, isLastNameEnabled,

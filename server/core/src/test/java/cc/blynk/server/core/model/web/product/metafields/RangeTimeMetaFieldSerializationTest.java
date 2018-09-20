@@ -19,7 +19,7 @@ public class RangeTimeMetaFieldSerializationTest {
     @Test
     public void testSerialization() throws Exception {
         RangeTimeMetaField rangeTimeMetaField = new RangeTimeMetaField(1, "name",
-                Role.ADMIN, false, false,  null, LocalTime.ofSecondOfDay(1), LocalTime.ofSecondOfDay(100));
+                Role.ADMIN, false, false, false,  null, LocalTime.ofSecondOfDay(1), LocalTime.ofSecondOfDay(100));
 
         String s = JsonParser.MAPPER.writeValueAsString(rangeTimeMetaField);
         assertNotNull(s);

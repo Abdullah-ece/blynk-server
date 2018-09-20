@@ -22,10 +22,11 @@ public class CoordinatesMetaField extends MetaField {
                                 @JsonProperty("role") Role role,
                                 @JsonProperty("includeInProvision") boolean includeInProvision,
                                 @JsonProperty("isMandatory") boolean isMandatory,
+                                @JsonProperty("isDefault") boolean isDefault,
                                 @JsonProperty("icon") String icon,
                                 @JsonProperty("lat") double lat,
                                 @JsonProperty("lon") double lon) {
-        super(id, name, role, includeInProvision, isMandatory, icon);
+        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.lat = lat;
         this.lon = lon;
     }
@@ -33,11 +34,13 @@ public class CoordinatesMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new CoordinatesMetaField(id, metaField.name, metaField.role,
-                metaField.includeInProvision, metaField.isMandatory, icon, lat, lon);
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault, icon, lat, lon);
     }
 
     @Override
     public MetaField copy() {
-        return new CoordinatesMetaField(id, name, role, includeInProvision, isMandatory, icon, lat, lon);
+        return new CoordinatesMetaField(id, name, role,
+                includeInProvision, isMandatory, isDefault,
+                icon, lat, lon);
     }
 }
