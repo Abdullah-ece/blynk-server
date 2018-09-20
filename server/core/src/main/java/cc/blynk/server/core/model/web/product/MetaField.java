@@ -63,15 +63,18 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final Role role;
 
-    public final boolean isDefault;
+    public final boolean includeInProvision;
+
+    public final boolean isMandatory;
 
     public final String icon;
 
-    public MetaField(int id, String name, Role role, boolean isDefault, String icon) {
+    public MetaField(int id, String name, Role role, boolean includeInProvision, boolean isMandatory, String icon) {
         this.id = id;
         this.name = name;
         this.role = role;
-        this.isDefault = isDefault;
+        this.includeInProvision = includeInProvision;
+        this.isMandatory = isMandatory;
         this.icon = icon;
     }
 

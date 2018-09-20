@@ -56,7 +56,8 @@ public class ContactMetaField extends MetaField {
     public ContactMetaField(@JsonProperty("id") int id,
                             @JsonProperty("name") String name,
                             @JsonProperty("role") Role role,
-                            @JsonProperty("isDefault") boolean isDefault,
+                            @JsonProperty("includeInProvision") boolean includeInProvision,
+                            @JsonProperty("isMandatory") boolean isMandatory,
                             @JsonProperty("icon") String icon,
                             @JsonProperty("contact") String contact,
                             @JsonProperty("firstName") String firstName,
@@ -78,7 +79,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("zip") String zip,
                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, role, includeInProvision, isMandatory, icon);
         this.contact = contact;
         this.firstName = firstName;
         this.isFirstNameEnabled = isFirstNameEnabled;
@@ -109,7 +110,8 @@ public class ContactMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
-        return new ContactMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
+        return new ContactMetaField(id, metaField.name, metaField.role,
+                metaField.includeInProvision, metaField.isMandatory, icon,
                 contact,
                 firstName, contactMetaField.isFirstNameEnabled,
                 lastName, contactMetaField.isLastNameEnabled,
@@ -125,7 +127,8 @@ public class ContactMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new ContactMetaField(id, name, role, isDefault, icon,
+        return new ContactMetaField(id, name, role,
+                includeInProvision, isMandatory, icon,
                 contact,
                 firstName, isFirstNameEnabled,
                 lastName, isLastNameEnabled,

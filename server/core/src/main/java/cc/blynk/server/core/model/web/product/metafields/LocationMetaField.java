@@ -67,7 +67,8 @@ public class LocationMetaField extends MetaField {
     public LocationMetaField(@JsonProperty("id") int id,
                              @JsonProperty("name") String name,
                              @JsonProperty("role") Role role,
-                             @JsonProperty("isDefault") boolean isDefault,
+                             @JsonProperty("includeInProvision") boolean includeInProvision,
+                             @JsonProperty("isMandatory") boolean isMandatory,
                              @JsonProperty("icon") String icon,
                              @JsonProperty("siteName") String siteName,
                              @JsonProperty("isLocationEnabled") boolean isLocationEnabled,
@@ -97,7 +98,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("useLocationDataFromDevice") boolean useLocationDataFromDevice,
                              @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled,
                              @JsonProperty("placeId") String placeId) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, role, includeInProvision, isMandatory, icon);
         this.siteName = siteName;
         this.isLocationEnabled = isLocationEnabled;
         this.streetAddress = streetAddress;
@@ -146,7 +147,8 @@ public class LocationMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
         return new LocationMetaField(
-                id, metaField.name, metaField.role, metaField.isDefault,
+                id, metaField.name, metaField.role,
+                metaField.includeInProvision, metaField.isMandatory,
                 metaField.icon, addressMetaField.siteName, addressMetaField.isLocationEnabled,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
@@ -168,7 +170,8 @@ public class LocationMetaField extends MetaField {
     @Override
     public MetaField copy() {
         return new LocationMetaField(
-                id, name, role, isDefault,
+                id, name, role,
+                includeInProvision, isMandatory,
                 icon, siteName, isLocationEnabled,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,

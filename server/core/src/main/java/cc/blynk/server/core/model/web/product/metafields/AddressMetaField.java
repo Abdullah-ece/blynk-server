@@ -33,7 +33,8 @@ public class AddressMetaField extends MetaField {
     public AddressMetaField(@JsonProperty("id") int id,
                             @JsonProperty("name") String name,
                             @JsonProperty("role") Role role,
-                            @JsonProperty("isDefault") boolean isDefault,
+                            @JsonProperty("includeInProvision") boolean includeInProvision,
+                            @JsonProperty("isMandatory") boolean isMandatory,
                             @JsonProperty("icon") String icon,
                             @JsonProperty("streetAddress") String streetAddress,
                             @JsonProperty("isStreetAddressEnabled") boolean isStreetAddressEnabled,
@@ -46,7 +47,7 @@ public class AddressMetaField extends MetaField {
                             @JsonProperty("country") String country,
                             @JsonProperty("isCountryEnabled") boolean isCountryEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, role, includeInProvision, isMandatory, icon);
         this.streetAddress = streetAddress;
         this.isStreetAddressEnabled = isStreetAddressEnabled;
         this.city = city;
@@ -64,7 +65,8 @@ public class AddressMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         AddressMetaField addressMetaField = (AddressMetaField) metaField;
         return new AddressMetaField(
-                id, metaField.name, metaField.role, metaField.isDefault,
+                id, metaField.name, metaField.role,
+                metaField.includeInProvision, metaField.isMandatory,
                 metaField.icon,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
                 city, addressMetaField.isCityEnabled,
@@ -78,7 +80,8 @@ public class AddressMetaField extends MetaField {
     @Override
     public MetaField copy() {
         return new AddressMetaField(
-                id, name, role, isDefault,
+                id, name, role,
+                includeInProvision, isMandatory,
                 icon,
                 streetAddress, isStreetAddressEnabled,
                 city, isCityEnabled,

@@ -39,8 +39,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -92,8 +92,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -216,8 +216,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -244,7 +244,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(0, device.metadataUpdatedAt);
         assertNull(device.metadataUpdatedBy);
 
-        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, false, null, 0, 1000, 123D);
         client.updateDeviceMetafield(device.id, updatedMetaField);
         client.verifyResult(ok(3));
 
@@ -254,7 +254,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(System.currentTimeMillis(), device.metadataUpdatedAt, 5000);
         assertEquals(getUserName(), device.metadataUpdatedBy);
 
-        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, false, null, 0, 1000, 123D);
         client.updateDeviceMetafield(device.id, updatedMetaField2);
         client.verifyResult(webJson(5, "Couldn't find metafield with passed id."));
     }
@@ -308,8 +308,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -352,8 +352,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -388,7 +388,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(Role.ADMIN, textMetaField.role);
         assertEquals("My Default device Name", textMetaField.value);
 
-        NumberMetaField newMeta = new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 10000D);
+        NumberMetaField newMeta = new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 10000D);
         appClient.updateDeviceMetafield(createdDevice.id, newMeta);
         appClient.verifyResult(ok(3));
 

@@ -18,10 +18,11 @@ public class TextMetaField extends MetaField {
     public TextMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
-                         @JsonProperty("isDefault") boolean isDefault,
+                         @JsonProperty("includeInProvision") boolean includeInProvision,
+                         @JsonProperty("isMandatory") boolean isMandatory,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("value") String value) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, role, includeInProvision, isMandatory, icon);
         this.value = value;
     }
 
@@ -32,12 +33,14 @@ public class TextMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new TextMetaField(id, metaField.name, metaField.role, metaField.isDefault, metaField.icon, value);
+        return new TextMetaField(id, metaField.name, metaField.role,
+                metaField.includeInProvision, metaField.isMandatory, metaField.icon, value);
     }
 
     @Override
     public MetaField copy() {
-        return new TextMetaField(id, name, role, isDefault, icon, value);
+        return new TextMetaField(id, name, role,
+                includeInProvision, isMandatory, icon, value);
     }
 
 }

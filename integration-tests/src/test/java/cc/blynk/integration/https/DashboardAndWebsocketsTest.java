@@ -688,8 +688,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         WebSwitch webSwitch = new WebSwitch();

@@ -262,7 +262,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertNull(device.metadataUpdatedBy);
         }
 
-        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField = new NumberMetaField(1, "Jopa2", Role.STAFF, false, false, null, 0, 1000, 123D);
 
         HttpPost update = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
         update.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField), ContentType.APPLICATION_JSON));
@@ -280,7 +280,7 @@ public class DevicesAPITest extends APIBaseTest {
             assertEquals(regularUser.email, device.metadataUpdatedBy);
         }
 
-        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, null, 0, 1000, 123D);
+        MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, false, null, 0, 1000, 123D);
 
         HttpPost update2 = new HttpPost(httpsAdminServerUrl + "/devices/1/1/updateMetaField");
         update2.setEntity(new StringEntity(JsonParser.toJson(updatedMetaField2), ContentType.APPLICATION_JSON));
@@ -589,8 +589,8 @@ public class DevicesAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, null, 0, 1000, 123D),
-                new TextMetaField(2, "Device Name", Role.ADMIN, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, true, null, "My Default device Name")
         };
 
         HttpPut req = new HttpPut(httpsAdminServerUrl + "/product");

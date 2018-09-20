@@ -30,7 +30,8 @@ public class CostMetaField extends MetaField {
     public CostMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
                          @JsonProperty("role") Role role,
-                         @JsonProperty("isDefault") boolean isDefault,
+                         @JsonProperty("includeInProvision") boolean includeInProvision,
+                         @JsonProperty("isMandatory") boolean isMandatory,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("currency") Currency currency,
                          @JsonProperty("price") double price,
@@ -38,7 +39,7 @@ public class CostMetaField extends MetaField {
                          @JsonProperty("units") MeasurementUnit units,
                          @JsonProperty("min") float min,
                          @JsonProperty("max") float max) {
-        super(id, name, role, isDefault, icon);
+        super(id, name, role, includeInProvision, isMandatory, icon);
         this.currency = currency;
         this.price = price;
         this.perValue = perValue;
@@ -49,12 +50,14 @@ public class CostMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CostMetaField(id, metaField.name, metaField.role, metaField.isDefault, icon,
+        return new CostMetaField(id, metaField.name, metaField.role,
+                metaField.includeInProvision, metaField.isMandatory, icon,
                 currency, price, perValue, units, min, max);
     }
 
     @Override
     public MetaField copy() {
-        return new CostMetaField(id, name, role, isDefault, icon, currency, price, perValue, units, min, max);
+        return new CostMetaField(id, name, role,
+                includeInProvision, isMandatory, icon, currency, price, perValue, units, min, max);
     }
 }
