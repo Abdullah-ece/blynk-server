@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import org.junit.Ignore;
@@ -21,6 +22,7 @@ import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
 import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -434,6 +436,56 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         MetaField[] metaFields = appClient.parseMetafields(2);
         assertNotNull(metaFields);
         assertEquals(0, metaFields.length);
+    }
+
+    @Test
+    public void testGetDevicesByReferenceMetafield() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new DeviceReferenceMetaField(2, "Device Ref", Role.ADMIN, true, true, true, null, null, -1L)
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        fromApiProduct.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new DeviceReferenceMetaField(2, "Device Ref", Role.ADMIN, true, true, true, null, new int[] {fromApiProduct.id}, -1L)
+        };
+
+        client.updateProduct(orgId, fromApiProduct);
+        fromApiProduct = client.parseProduct(2);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(3);
+        assertNotNull(createdDevice);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getDeviceMetafield(createdDevice.id);
+        MetaField[] metaFields = appClient.parseMetafields(2);
+        assertNotNull(metaFields);
+        assertEquals(1, metaFields.length);
+        MetaField metaField = metaFields[0];
+        assertTrue(metaField instanceof DeviceReferenceMetaField);
+
+        appClient.getDevicesByReferenceMetafield(createdDevice.id, metaField.id);
+        Device[] deviceDTOS = appClient.parseDevices(3);
+        assertNotNull(deviceDTOS);
+        assertEquals(1, deviceDTOS.length);
+        assertEquals("My New Device", deviceDTOS[0].name);
     }
 
     @Test

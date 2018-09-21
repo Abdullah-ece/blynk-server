@@ -305,6 +305,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateReport " + dashId + BODY_SEPARATOR + report.toString());
     }
 
+    public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {
+        send("getDevicesByReferenceMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
+    }
+
     public void getWidget(int dashId, long widgetId) {
         send("getWidget " + dashId + BODY_SEPARATOR + widgetId);
     }

@@ -120,6 +120,14 @@ public class Device implements Target {
         return null;
     }
 
+    public MetaField findMetaFieldByIdOrThrow(int id) {
+        MetaField metaField = findMetaFieldById(id);
+        if (metaField == null) {
+            throw new IllegalCommandException("Metafield with passed id not found.");
+        }
+        return metaField;
+    }
+
     public int findMetaFieldIndex(int id) {
         for (int i = 0; i < metaFields.length; i++) {
             if (metaFields[i].id == id) {
@@ -130,12 +138,11 @@ public class Device implements Target {
     }
 
     public int findMetaFieldIndexOrThrow(int id) {
-        for (int i = 0; i < metaFields.length; i++) {
-            if (metaFields[i].id == id) {
-                return i;
-            }
+        int index = findMetaFieldIndex(id);
+        if (index == -1) {
+            throw new IllegalCommandException("Metafield with passed id not found.");
         }
-        throw new IllegalCommandException("Metafield with passed id not found.");
+        return index;
     }
 
     public void updateMetaFields(MetaField[] updatedMetaFields) {

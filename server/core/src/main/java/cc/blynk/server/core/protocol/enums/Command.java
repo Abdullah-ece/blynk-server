@@ -165,8 +165,8 @@ public final class Command {
     public static final short WEB_GET_DEVICE_TIMELINE = 127;
     public static final short WEB_DELETE_DEVICE = 128;
     public static final short WEB_GET_METAFIELD = 129;
+    public static final short MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD = 130;
 
-    //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
 
     private Command() {
@@ -288,7 +288,8 @@ public final class Command {
             Map.entry(WEB_LOGIN_VIA_INVITE, "WebLoginViaInvite"),
             Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
-            Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice")
+            Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
+            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield")
     );
 
     public static String getNameByValue(short val) {

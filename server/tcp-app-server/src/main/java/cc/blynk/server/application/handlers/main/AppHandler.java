@@ -29,6 +29,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashSetti
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldsLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceMetafieldLogic;
@@ -107,6 +108,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -289,6 +291,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case UPDATE_DEVICE_METAFIELD :
                 UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                break;
+            case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
+                GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case CREATE_TAG :
