@@ -34,7 +34,7 @@ public final class GetDevicesByReferenceMetafieldLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        AppStateHolder state, StringMessage message) {
-        String split[] = StringUtils.split2(message.body);
+        String[] split = StringUtils.split2(message.body);
         int deviceId = Integer.parseInt(split[0]);
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
