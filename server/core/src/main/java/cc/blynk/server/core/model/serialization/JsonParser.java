@@ -87,7 +87,7 @@ public final class JsonParser {
     private static final ObjectWriter productWriter = MAPPER.writerFor(Product.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
     private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
-    private static final ObjectWriter metaFieldWriter = MAPPER.writerFor(new TypeReference<List<MetaField>>() {});
+    private static final ObjectWriter metaFieldWriter = MAPPER.writerFor(new TypeReference<List<MetaField>>() { });
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .writerFor(DashBoard.class).withView(View.PublicOnly.class);
