@@ -84,7 +84,7 @@ public class OrganizationDao {
         return false;
     }
 
-    public Product getProduct(int orgId, int productId) {
+    public Product getProductOrThrow(int orgId, int productId) {
         Organization org = getOrgByIdOrThrow(orgId);
         for (Product product : org.products) {
             if (product.id == productId) {
