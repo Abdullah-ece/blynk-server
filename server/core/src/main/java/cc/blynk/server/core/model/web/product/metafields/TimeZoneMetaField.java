@@ -2,8 +2,14 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
+import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.time.ZoneId;
 
 /**
  * The Blynk Project.
@@ -12,7 +18,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class TimeZoneMetaField extends MetaField {
 
-    public final String value;
+    @JsonSerialize(using = ZoneIdToString.class)
+    @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
+    public final ZoneId value;
 
     @JsonCreator
     public TimeZoneMetaField(@JsonProperty("id") int id,
@@ -22,7 +30,7 @@ public class TimeZoneMetaField extends MetaField {
                              @JsonProperty("isMandatory") boolean isMandatory,
                              @JsonProperty("isDefault") boolean isDefault,
                              @JsonProperty("icon") String icon,
-                             @JsonProperty("value") String value) {
+                             @JsonProperty("value") ZoneId value) {
         super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
         this.value = value;
     }
