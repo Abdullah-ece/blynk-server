@@ -86,6 +86,10 @@ public class Product {
         this.version++;
     }
 
+    public boolean isSubProduct() {
+        return parentId > 0;
+    }
+
     public boolean isValidEvents() {
         Set<Integer> set = new HashSet<>();
         for (Event event : events) {

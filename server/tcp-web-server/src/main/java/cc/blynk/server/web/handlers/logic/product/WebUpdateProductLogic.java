@@ -55,7 +55,7 @@ public class WebUpdateProductLogic {
             return;
         }
 
-        if (product.parentId > 0) {
+        if (product.isSubProduct()) {
             log.error("Product {} is reference and can be updated only via parent product. {}.",
                     product.id, user.email);
             ctx.writeAndFlush(json(message.id,
