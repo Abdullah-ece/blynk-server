@@ -90,6 +90,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
+        client.verifyResult(hardwareConnected(1, "0-" + device.id));
         newHardClient.stop();
         client.reset();
 
@@ -97,7 +98,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-1"));
+        client.verifyResult(hardwareConnected(1, "0-" + + device.id));
         client.reset();
 
         //we have to wait for DB.
