@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeZoneMetaField;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -52,7 +53,8 @@ import org.jooq.SelectSelectStep;
         @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address"),
         @JsonSubTypes.Type(value = ListMetaField.class, name = "List"),
         @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference"),
-        @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location")
+        @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location"),
+        @JsonSubTypes.Type(value = TimeZoneMetaField.class, name = "Tz")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
