@@ -9,12 +9,14 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -80,25 +82,55 @@ public class WebUpdateProductLogic {
 
         Product existingProduct = organization.getProductOrThrow(product.id);
 
-        if (!existingProduct.webDashboard.equals(product.webDashboard)) {
+        WebDashboard changedWebDashboard = product.webDashboard;
+        List<Integer> subProductIds = subProductIds(productAndOrgIdDTO.orgId, product.id);
+        if (!existingProduct.webDashboard.equals(changedWebDashboard)) {
             log.debug("Dashboard was changed. Updating all devices for {}.", user.email);
-            List<Device> devices = deviceDao.getAllByProductId(product.id);
-            long now = System.currentTimeMillis();
-            for (Device device : devices) {
-                device.webDashboard.update(product.webDashboard);
-                device.updatedAt = now;
+            updateProductDevicesDashboard(product.id, changedWebDashboard);
+            for (int productId : subProductIds) {
+                updateProductDevicesDashboard(productId, changedWebDashboard);
             }
-            log.debug("{} devices updated with new dashboard.", devices.size());
         }
 
         existingProduct.update(product);
-        log.debug("Product {} successfully updated for {}.", product, user.email);
+        for (int productId : subProductIds) {
+            Product subProduct = organizationDao.getProductById(productId);
+            if (subProduct != null) {
+                subProduct.update(product);
+            }
+        }
+        log.debug("Product {} and {} subProducts successfully updated for {}.",
+                product, subProductIds.size(), user.email);
 
         if (ctx.channel().isWritable()) {
             String productString = existingProduct.toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }
+    }
+
+    private List<Integer> subProductIds(int parentOrgId, int parentProductId) {
+        List<Integer> subProductIds = new ArrayList<>();
+        for (Organization org : organizationDao.organizations.values()) {
+            if (org.parentId == parentOrgId) {
+                for (Product subProduct : org.products) {
+                    if (subProduct.parentId == parentProductId) {
+                        subProductIds.add(subProduct.id);
+                    }
+                }
+            }
+        }
+        return subProductIds;
+    }
+
+    private void updateProductDevicesDashboard(int productId, WebDashboard updatedWebDashboard) {
+        List<Device> devices = deviceDao.getAllByProductId(productId);
+        long now = System.currentTimeMillis();
+        for (Device device : devices) {
+            device.webDashboard.update(updatedWebDashboard);
+            device.updatedAt = now;
+        }
+        log.debug("{} devices updated with new dashboard for productId {].", devices.size(), productId);
     }
 
 }

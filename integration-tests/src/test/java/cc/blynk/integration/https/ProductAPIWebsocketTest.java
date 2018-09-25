@@ -647,4 +647,43 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.deleteProduct(fromApiOrg.products[0].id);
         client.verifyResult(webJson(4, "Sub Org can't do anything with the Product Templates created by Meta Org."));
     }
+
+    @Test
+    public void createProductForSubOrgAndUpdateItViaParentProduct() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        Organization fromApiOrg = client.parseOrganization(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiOrg.products[0].parentId);
+
+        fromApiProduct.name = "Updated Name";
+        client.updateProduct(orgId, fromApiProduct);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+        assertEquals("Updated Name", fromApiProduct.name);
+
+        client.getProduct(fromApiOrg.products[0].id);
+        Product subProduct = client.parseProduct(4);
+        assertNotNull(subProduct);
+        assertEquals("Updated Name", subProduct.name);
+        assertEquals(fromApiProduct.id, subProduct.parentId);
+
+    }
 }
