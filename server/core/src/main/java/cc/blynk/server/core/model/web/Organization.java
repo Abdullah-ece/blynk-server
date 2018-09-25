@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
@@ -98,6 +99,15 @@ public class Organization {
             }
         }
         return null;
+    }
+
+    public Product getProductOrThrow(int productId) {
+        Product product = getProduct(productId);
+        if (product == null) {
+            throw new ProductNotFoundException("Product with passed id " + productId
+                    + " not found.");
+        }
+        return product;
     }
 
     public boolean isValidProductName(Product newProduct) {

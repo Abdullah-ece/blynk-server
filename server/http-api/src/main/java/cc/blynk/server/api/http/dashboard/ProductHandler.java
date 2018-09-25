@@ -147,7 +147,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest("Product with this name already exists.");
         }
 
-        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
 
         if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {
             log.info("Dashboard was changed. Updating all devices.");
@@ -175,7 +175,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
 
         if (updatedProduct.notValid()) {
             log.error("Product is not valid.", updatedProduct);

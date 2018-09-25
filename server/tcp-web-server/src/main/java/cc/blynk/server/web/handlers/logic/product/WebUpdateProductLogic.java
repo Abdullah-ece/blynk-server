@@ -63,13 +63,7 @@ public class WebUpdateProductLogic {
             return;
         }
 
-        Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
-
-        if (organization == null) {
-            log.error("Cannot find org with id {} for user {}", user.orgId, user.email);
-            ctx.writeAndFlush(json(message.id, "Cannot find organization."), ctx.voidPromise());
-            return;
-        }
+        Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
         if (organization.isSubOrg()) {
             log.error("User {} can't update products for sub organizations.", user.email);
@@ -84,7 +78,7 @@ public class WebUpdateProductLogic {
             return;
         }
 
-        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, product.id);
+        Product existingProduct = organization.getProductOrThrow(product.id);
 
         if (!existingProduct.webDashboard.equals(product.webDashboard)) {
             log.debug("Dashboard was changed. Updating all devices for {}.", user.email);

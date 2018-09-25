@@ -60,7 +60,7 @@ public class WebGetDeviceLogic {
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         //todo show only devices for specific org?
-        //Product product = org.getProduct(device.productId);
+        //Product product = org.getProductOrThrow(device.productId);
         Product product = organizationDao.getProductById(device.productId);
 
         if (product == null) {

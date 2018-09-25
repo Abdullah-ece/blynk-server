@@ -56,7 +56,7 @@ public class WebUpdateDevicesMetaInProductLogic {
             return;
         }
 
-        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
+        Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
 
         if (updatedProduct.notValid()) {
             log.error("Product {} is not valid for {}.", updatedProduct, user.email);
