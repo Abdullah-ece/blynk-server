@@ -55,6 +55,14 @@ public class WebUpdateProductLogic {
             return;
         }
 
+        if (product.parentId > 0) {
+            log.error("Product {} is reference and can be updated only via parent product. {}.",
+                    product.id, user.email);
+            ctx.writeAndFlush(json(message.id,
+                    "Sub Org can't do anything with the Product Templates created by Meta Org."), ctx.voidPromise());
+            return;
+        }
+
         Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
 
         if (organization == null) {
@@ -64,7 +72,7 @@ public class WebUpdateProductLogic {
         }
 
         if (organization.isSubOrg()) {
-            log.error("User {} can't create products for sub organizations.", user.email);
+            log.error("User {} can't update products for sub organizations.", user.email);
             ctx.writeAndFlush(json(message.id, "User can't create products for sub organizations."), ctx.voidPromise());
             return;
         }

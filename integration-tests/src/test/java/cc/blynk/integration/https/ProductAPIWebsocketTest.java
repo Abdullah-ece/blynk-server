@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -616,9 +617,34 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    @Ignore
-    //todo
-    public void checkProductCannotBeCreatedForSubOrg() throws Exception {
+    public void createProductForSubOrgAndCannotUpdateItDirectly() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
+        Product product = new Product();
+        product.name = "My product";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        Organization fromApiOrg = client.parseOrganization(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+        assertEquals(fromApiProduct.id, fromApiOrg.products[0].parentId);
+
+        client.updateProduct(fromApiOrg.id, fromApiOrg.products[0]);
+        client.verifyResult(webJson(3, "Sub Org can't do anything with the Product Templates created by Meta Org."));
+
+        client.deleteProduct(fromApiOrg.products[0].id);
+        client.verifyResult(webJson(4, "Sub Org can't do anything with the Product Templates created by Meta Org."));
     }
 }

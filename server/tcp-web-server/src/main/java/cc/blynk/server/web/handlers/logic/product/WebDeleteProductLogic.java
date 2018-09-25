@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,6 +36,15 @@ public class WebDeleteProductLogic {
         int productId = Integer.parseInt(message.body);
 
         User user = state.user;
+
+        Product product = organizationDao.getProductByIdOrThrow(productId);
+        if (product.parentId > 0) {
+            log.error("Product {} is reference and can be deleted only via parent product. {}.",
+                    product.id, user.email);
+            ctx.writeAndFlush(json(message.id,
+                    "Sub Org can't do anything with the Product Templates created by Meta Org."), ctx.voidPromise());
+            return;
+        }
 
         if (deviceDao.productHasDevices(productId)) {
             log.error("{} not allowed to remove product {} with devices.", user.email, productId);
