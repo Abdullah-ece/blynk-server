@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ContactMetaField extends MetaField {
 
-    public final String contact;
-
     public final String firstName;
 
     public volatile boolean isFirstNameEnabled;
@@ -60,7 +58,6 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("isMandatory") boolean isMandatory,
                             @JsonProperty("isDefault") boolean isDefault,
                             @JsonProperty("icon") String icon,
-                            @JsonProperty("contact") String contact,
                             @JsonProperty("firstName") String firstName,
                             @JsonProperty("isFirstNameEnabled") boolean isFirstNameEnabled,
                             @JsonProperty("lastName") String lastName,
@@ -81,7 +78,6 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
         super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
-        this.contact = contact;
         this.firstName = firstName;
         this.isFirstNameEnabled = isFirstNameEnabled;
         this.lastName = lastName;
@@ -114,7 +110,6 @@ public class ContactMetaField extends MetaField {
         return new ContactMetaField(id, metaField.name, metaField.role,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 icon,
-                contact,
                 firstName, contactMetaField.isFirstNameEnabled,
                 lastName, contactMetaField.isLastNameEnabled,
                 email, contactMetaField.isEmailEnabled,
@@ -132,7 +127,6 @@ public class ContactMetaField extends MetaField {
         return new ContactMetaField(id, name, role,
                 includeInProvision, isMandatory, isDefault,
                 icon,
-                contact,
                 firstName, isFirstNameEnabled,
                 lastName, isLastNameEnabled,
                 email, isEmailEnabled,

@@ -127,7 +127,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
                 new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, null, "Tech Support",
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
