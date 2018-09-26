@@ -209,16 +209,17 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       [MetadataIconFieldName]: 'e67e',
       hardcoded: true,
     },
-    {
-      id: 5,
-      type: Metadata.Fields.TEXT,
-      name: hardcodedRequiredMetadataFieldsNames.ModelName,
-      role: Roles.STAFF.value,
-      isDefault: true,
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'e6d8',
-      hardcoded: true,
-    },
+    /** Hide Model metadata for current customer */
+    // {
+    //   id: 5,
+    //   type: Metadata.Fields.TEXT,
+    //   name: hardcodedRequiredMetadataFieldsNames.ModelName,
+    //   role: Roles.STAFF.value,
+    //   isDefault: true,
+    //   ...MetadataInitialValues,
+    //   [MetadataIconFieldName]: 'e6d8',
+    //   hardcoded: true,
+    // },
     {
       id: 6,
       type: Metadata.Fields.TIMEZONE,
