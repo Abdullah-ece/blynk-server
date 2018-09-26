@@ -99,6 +99,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
         client.verifyResult(hardwareConnected(1, "0-" + + device.id));
+        newHardClient.stop();
         client.reset();
 
         //we have to wait for DB.
@@ -113,10 +114,11 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals(0, timeLineResponse.totalResolved);
         List<LogEvent> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
-        assertEquals(3, logEvents.size());
-        assertEquals(EventType.ONLINE, logEvents.get(0).eventType);
-        assertEquals(EventType.OFFLINE, logEvents.get(1).eventType);
-        assertEquals(EventType.ONLINE, logEvents.get(2).eventType);
+        assertEquals(4, logEvents.size());
+        assertEquals(EventType.OFFLINE, logEvents.get(0).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(1).eventType);
+        assertEquals(EventType.OFFLINE, logEvents.get(2).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(3).eventType);
     }
 
     private static Device createProductAndDevice(AppWebSocketClient client, int orgId) throws Exception {
