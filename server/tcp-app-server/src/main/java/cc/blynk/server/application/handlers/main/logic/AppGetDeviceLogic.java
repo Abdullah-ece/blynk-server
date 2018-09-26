@@ -1,4 +1,4 @@
-package cc.blynk.server.web.handlers.logic.product;
+package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
@@ -17,11 +17,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public final class WebGetProductLogic {
+public final class AppGetDeviceLogic {
 
-    private static final Logger log = LogManager.getLogger(WebGetProductLogic.class);
+    private static final Logger log = LogManager.getLogger(AppGetDeviceLogic.class);
 
-    private WebGetProductLogic() {
+    private AppGetDeviceLogic() {
     }
 
     public static void messageReceived(Holder holder,

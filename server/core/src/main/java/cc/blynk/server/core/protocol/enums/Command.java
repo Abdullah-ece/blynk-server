@@ -23,8 +23,8 @@ public final class Command {
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
 
-    public static final short GET_DEVICE_METAFIELDS = 10;
-    public static final short UPDATE_DEVICE_METAFIELD = 11;
+    public static final short MOBILE_GET_DEVICE_METAFIELDS = 10;
+    public static final short MOBILE_UPDATE_DEVICE_METAFIELD = 11;
 
     //HARDWARE commands
     public static final short TWEET = 12;
@@ -166,6 +166,7 @@ public final class Command {
     public static final short WEB_DELETE_DEVICE = 128;
     public static final short WEB_GET_METAFIELD = 129;
     public static final short MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD = 130;
+    public static final short MOBILE_GET_DEVICE = 131;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
@@ -244,8 +245,8 @@ public final class Command {
             Map.entry(DELETE_REPORT, "deleteReport"),
             Map.entry(EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
-            Map.entry(GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
-            Map.entry(UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
+            Map.entry(MOBILE_GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
+            Map.entry(MOBILE_UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
@@ -289,7 +290,8 @@ public final class Command {
             Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
             Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
-            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield")
+            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield"),
+            Map.entry(MOBILE_GET_DEVICE, "MobileGetDevice")
     );
 
     public static String getNameByValue(short val) {

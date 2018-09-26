@@ -30,7 +30,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
@@ -50,6 +49,8 @@ import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -66,7 +67,6 @@ import static cc.blynk.server.core.protocol.enums.Command.TWEET;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
@@ -328,9 +328,9 @@ public final class CommandParserUtil {
             case "webdeletedevice" :
                 return WEB_DELETE_DEVICE;
             case "getdevicemetafields" :
-                return GET_DEVICE_METAFIELDS;
+                return MOBILE_GET_DEVICE_METAFIELDS;
             case "updatedevicemetafield" :
-                return UPDATE_DEVICE_METAFIELD;
+                return MOBILE_UPDATE_DEVICE_METAFIELD;
             case "webgetmetafield" :
                 return WEB_GET_METAFIELD;
             case "getdevicesbyreferencemetafield" :

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -38,7 +38,7 @@ public final class GetDeviceMetafieldsLogic {
         log.debug("Returning {} metafields for deviceId {}.", filtered.size(), deviceId);
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICE_METAFIELDS, message.id, response), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_GET_DEVICE_METAFIELDS, message.id, response), ctx.voidPromise());
         }
     }
 

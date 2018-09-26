@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.AppGetDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
@@ -94,7 +95,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
@@ -108,7 +108,10 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -118,7 +121,6 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
@@ -286,10 +288,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case GET_DEVICE_METAFIELDS :
+            case MOBILE_GET_DEVICE_METAFIELDS:
                 GetDeviceMetafieldsLogic.messageReceived(holder, ctx, state, msg);
                 break;
-            case UPDATE_DEVICE_METAFIELD :
+            case MOBILE_UPDATE_DEVICE_METAFIELD:
                 UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
@@ -370,6 +372,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case EXPORT_REPORT :
                 ExportReportLogic.messageReceived(holder, ctx, state.user, msg);
+                break;
+
+            case MOBILE_GET_DEVICE :
+                AppGetDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
         }
     }
