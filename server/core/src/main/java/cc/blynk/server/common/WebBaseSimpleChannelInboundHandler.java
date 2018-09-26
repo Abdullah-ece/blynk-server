@@ -5,9 +5,6 @@ import cc.blynk.server.internal.WebByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
-import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleBaseServerException;
-import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -30,9 +27,11 @@ public abstract class WebBaseSimpleChannelInboundHandler<I> extends BaseSimpleCh
                 ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), "Error parsing number. "
                         + nfe.getMessage()), ctx.voidPromise());
             } catch (BaseServerException bse) {
-                handleBaseServerException(ctx, bse, getMsgId(msg));
+                log.debug("Error processing request. Reason : {}", bse.getMessage());
+                ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), bse.getMessage()), ctx.voidPromise());
             } catch (Exception e) {
-                handleGeneralException(ctx, e);
+                log.debug("Unexpected error. {}", e.getMessage());
+                ctx.writeAndFlush(WebByteBufUtil.json(getMsgId(msg), e.getMessage()), ctx.voidPromise());
             } finally {
                 ReferenceCountUtil.release(msg);
             }

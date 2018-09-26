@@ -659,7 +659,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("New Sub Org", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);

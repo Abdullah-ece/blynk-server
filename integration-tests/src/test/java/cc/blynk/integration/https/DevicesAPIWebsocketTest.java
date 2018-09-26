@@ -258,7 +258,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, false, false, null, 0, 1000, 123D);
         client.updateDeviceMetafield(device.id, updatedMetaField2);
-        client.verifyResult(webJson(5, "Couldn't find metafield with passed id."));
+        client.verifyResult(webJson(5, "Metafield with passed id not found."));
     }
 
     @Test

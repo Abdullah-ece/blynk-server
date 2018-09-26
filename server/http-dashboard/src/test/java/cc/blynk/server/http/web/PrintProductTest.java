@@ -58,7 +58,7 @@ public class PrintProductTest {
                 new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 100, 10.222),
                 new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, MeasurementUnit.Celsius, "36", 0, 100),
                 new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
-                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, null, "Tech Support",
+                new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false, "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
