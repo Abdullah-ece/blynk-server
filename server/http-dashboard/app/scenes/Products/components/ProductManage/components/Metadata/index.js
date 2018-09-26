@@ -359,8 +359,6 @@ class ProductMetadata extends React.Component {
 
     metaFields.forEach((field, key) => {
 
-      if (!field.has('name')) return false;
-
       const props = {
         id: field.get('id'),
         key: key,

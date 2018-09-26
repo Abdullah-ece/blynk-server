@@ -117,6 +117,7 @@ export const Metadata = {
     LIST: 'List',
     EMAIL: 'Email',
     LOCATION: 'Location',
+    TIMEZONE: 'Tz',
   }
 };
 
@@ -140,9 +141,9 @@ export const filterMetadataFields = (fields, filterHardcoded = true) => {
 
   return fields.filter((field) => {
     if(filterHardcoded)
-      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0 && field.get('isDefault');
+      return field.get('isDefault');
 
-    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1 && !field.get('isDefault');
+    return !field.get('isDefault');
   });
 };
 
@@ -220,7 +221,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
     },
     {
       id: 6,
-      type: Metadata.Fields.TEXT,
+      type: Metadata.Fields.TIMEZONE,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
