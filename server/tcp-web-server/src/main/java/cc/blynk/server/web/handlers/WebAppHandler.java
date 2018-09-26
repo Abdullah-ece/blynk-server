@@ -97,7 +97,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebGetProductLocationsLogic webGetProductLocationsLogic;
     private final WebCanInviteUserLogic canInviteUserLogic;
     private final WebCreateProductLogic webCreateProductLogic;
-    private final WebGetProductLogic webGetProductLogic;
     private final WebGetProductsLogic webGetProductsLogic;
     private final WebUpdateProductLogic webUpdateProductLogic;
     private final WebDeleteProductLogic webDeleteProductLogic;
@@ -129,7 +128,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webGetProductLocationsLogic = new WebGetProductLocationsLogic(holder);
         this.canInviteUserLogic = new WebCanInviteUserLogic(holder);
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
-        this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
         this.webUpdateProductLogic = new WebUpdateProductLogic(holder);
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
@@ -205,7 +203,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webCreateProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT :
-                webGetProductLogic.messageReceived(ctx, state, msg);
+                WebGetProductLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case WEB_GET_PRODUCTS :
                 webGetProductsLogic.messageReceived(ctx, state, msg);
