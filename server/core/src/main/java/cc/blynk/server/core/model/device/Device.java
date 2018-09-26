@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
@@ -172,6 +173,9 @@ public class Device implements Target {
     }
 
     public void updateMetafield(MetaField updated) {
+        if (updated instanceof TextMetaField && "Device Name".equalsIgnoreCase(updated.name)) {
+            this.name = ((TextMetaField) updated).value;
+        }
         this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
         this.metadataUpdatedAt = System.currentTimeMillis();
     }
