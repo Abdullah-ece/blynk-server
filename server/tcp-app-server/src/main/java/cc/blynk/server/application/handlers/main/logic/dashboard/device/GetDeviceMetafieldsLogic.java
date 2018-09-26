@@ -38,7 +38,8 @@ public final class GetDeviceMetafieldsLogic {
         log.debug("Returning {} metafields for deviceId {}.", filtered.size(), deviceId);
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_GET_DEVICE_METAFIELDS, message.id, response), ctx.voidPromise());
+            ctx.writeAndFlush(
+                    makeUTF8StringMessage(MOBILE_GET_DEVICE_METAFIELDS, message.id, response), ctx.voidPromise());
         }
     }
 
