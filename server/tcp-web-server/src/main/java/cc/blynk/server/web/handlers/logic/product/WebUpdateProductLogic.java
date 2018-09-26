@@ -130,7 +130,7 @@ public class WebUpdateProductLogic {
             device.webDashboard.update(updatedWebDashboard);
             device.updatedAt = now;
         }
-        log.debug("{} devices updated with new dashboard for productId {].", devices.size(), productId);
+        log.debug("{} devices updated with new dashboard for productId {}.", devices.size(), productId);
     }
 
 }

@@ -30,7 +30,6 @@ public class WebGetProductsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
-        log.trace("In getProducts handler.");
         User user = state.user;
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
@@ -41,7 +40,6 @@ public class WebGetProductsLogic {
         }
 
         organizationDao.calcDeviceCount(organization);
-        log.trace("In getProducts handler. Before.");
         String productString = JsonParser.toJson(organization.products);
         if (productString == null) {
             log.error("Empty response for WebGetProductsLogic and {}.", user.email);

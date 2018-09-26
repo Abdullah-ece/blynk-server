@@ -137,7 +137,7 @@ public class Device implements Target {
         return -1;
     }
 
-    public int findMetaFieldIndexOrThrow(int id) {
+    private int findMetaFieldIndexOrThrow(int id) {
         int index = findMetaFieldIndex(id);
         if (index == -1) {
             throw new IllegalCommandException("Metafield with passed id not found.");
@@ -173,6 +173,7 @@ public class Device implements Target {
 
     public void updateMetafield(MetaField updated) {
         this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
+        this.metadataUpdatedAt = System.currentTimeMillis();
     }
 
     @Override

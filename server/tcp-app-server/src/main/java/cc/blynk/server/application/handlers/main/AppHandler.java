@@ -290,7 +290,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetDeviceMetafieldsLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case UPDATE_DEVICE_METAFIELD :
-                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);

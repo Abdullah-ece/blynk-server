@@ -2,6 +2,7 @@ package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceMetafieldLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -17,7 +18,6 @@ import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
-import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
@@ -110,7 +110,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
     private final WebInviteUserLogic webInviteUserLogic;
-    private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
 
@@ -143,7 +142,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
-        this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
 
@@ -243,7 +241,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webInviteUserLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
-                webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
