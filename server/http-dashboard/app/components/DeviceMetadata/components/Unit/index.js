@@ -19,7 +19,7 @@ class Unit extends Base {
         <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {!field.value && !field.units ? <i>No Value</i> : (
           <div>
-            {field.value} {Units[field.units].abbreviation}
+            {field.value} { Units[field.units] && Units[field.units].abbreviation || (<i>No Unit</i>) }
           </div>
         )}
       </Fieldset>

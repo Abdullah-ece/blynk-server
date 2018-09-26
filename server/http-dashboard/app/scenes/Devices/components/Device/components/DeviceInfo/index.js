@@ -21,7 +21,7 @@ class DeviceInfo extends React.Component {
   }
 
   getDeviceStatus() {
-    if (!this.props.device.status)
+    if (!this.props.device || !this.props.device.status)
       return 'offline';
 
     if (this.props.device && this.props.device.status === 'OFFLINE') {
