@@ -27,6 +27,9 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
 
+import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_NAME;
+import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_OWNER;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -99,8 +102,16 @@ public abstract class MetaField implements CopyObject<MetaField> {
         return null;
     }
 
+    public boolean isDeviceNameMetaField() {
+        return DEVICE_NAME.equalsIgnoreCase(name);
+    }
+
+    public boolean isDeviceOwnerMetaField() {
+        return DEVICE_OWNER.equalsIgnoreCase(name);
+    }
+
     public void validate() {
-        if (name == null || name.equals("")) {
+        if (name == null || name.isEmpty()) {
             throw new IllegalCommandBodyException("Metafield is not valid. Name is empty.");
         }
     }

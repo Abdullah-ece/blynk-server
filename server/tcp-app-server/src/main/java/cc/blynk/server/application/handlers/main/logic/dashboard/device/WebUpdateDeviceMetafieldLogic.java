@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -53,6 +54,7 @@ public final class WebUpdateDeviceMetafieldLogic {
 
         for (MetaField metaField : metaFields) {
             metaField.validate();
+            verifyOwnerAndDeviceName(metaField);
         }
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
@@ -61,6 +63,20 @@ public final class WebUpdateDeviceMetafieldLogic {
         device.updateMetafields(metaFields);
         device.metadataUpdatedBy = user.email;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+    private static void verifyOwnerAndDeviceName(MetaField metaField) {
+        if (metaField instanceof TextMetaField) {
+            TextMetaField textMetaField = (TextMetaField) metaField;
+            if (textMetaField.value == null || textMetaField.value.isEmpty()) {
+                if (textMetaField.isDeviceNameMetaField()) {
+                    throw new IllegalCommandBodyException("Metafield is not valid. Device name value is empty.");
+                }
+                if (textMetaField.isDeviceOwnerMetaField()) {
+                    throw new IllegalCommandBodyException("Metafield is not valid. Device owner value is empty.");
+                }
+            }
+        }
     }
 
 }

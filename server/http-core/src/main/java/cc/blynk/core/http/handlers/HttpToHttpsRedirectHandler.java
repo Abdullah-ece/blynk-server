@@ -52,7 +52,7 @@ public class HttpToHttpsRedirectHandler extends ChannelInboundHandlerAdapter {
             String[] split = hostHeader.split(":");
             hostHeader = split[0];
         }
-        if (!httpsPort.equals("")) {
+        if (!httpsPort.isEmpty()) {
             return hostHeader + httpsPort;
         }
         return hostHeader;
