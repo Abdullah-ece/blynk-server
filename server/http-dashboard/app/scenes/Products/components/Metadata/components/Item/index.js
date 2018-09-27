@@ -1,18 +1,16 @@
 import React from 'react';
 import Scroll from 'react-scroll';
-import {Row, Col, Icon, Popconfirm, Button} from 'antd';
-import FormItem from 'components/FormItem';
+import {Row, Col, Icon, Popconfirm, Button, Form, Switch, Checkbox, Select} from 'antd';
 import Preview from 'scenes/Products/components/Preview';
 import IconSelect from './components/IconSelect';
 import {SortableHandle} from 'react-sortable-hoc';
-import {MetadataSelect} from 'components/Form';
-import {MetadataRoles} from 'services/Roles';
 import classnames from 'classnames';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
   // reduxForm,
   touch,
+  Field,
   // Form,
   getFormSyncErrors} from 'redux-form';
 const DragHandler = SortableHandle(() => <Icon type="bars" className="cursor-move"/>);
@@ -162,7 +160,24 @@ class MetadataItem extends React.PureComponent {
     }
   }
 
+  checkboxComponent(props) {
+    return (
+      <Col span={11} offset={2}>
+        <Checkbox className="product-metadata-item--mandatory-checkbox-label" checked={!!props.input.value} onChange={props.input.onChange}>
+          This is a mandatory field
+        </Checkbox>
+      </Col>
+    );
+  }
 
+  switchComponent(props) {
+    return (
+      <Col span={11}>
+        <Switch size={"small"} className="product-metadata-item--switch" checked={!!props.input.value} onChange={props.input.onChange}/>
+        <label className="product-metadata-item--switch--label">Include in mobile app provisioning</label>
+      </Col>
+    );
+  }
 
   render() {
     let deleteButton;
@@ -190,29 +205,70 @@ class MetadataItem extends React.PureComponent {
           {this.props.addBefore && this.props.addBefore}
           {this.isContentVisible() ? (
             <Row gutter={0}>
-              <Col span={2} style={{width: '48px'}}>
+              <Col span={2} className="product-metadata-item--icon-select-section">
                 <IconSelect name={`metaFields.${this.props.metaFieldKey}.icon`}/>
               </Col>
-              <Col span={10}>
+              <Col span={14}>
                 {this.props.children}
+                <Row className="product-metadata-item--provisioning-section">
+                  <Col>
+                    <Form>
+                      <Form.Item label="Mobile App Provisioning">
+                        <Row type="flex">
+                          <Field component={this.switchComponent} name={`metaFields.${this.props.metaFieldKey}.includeInProvision`} />
+                          <Field component={this.checkboxComponent} name={`metaFields.${this.props.metaFieldKey}.isMandatory`} />
+                        </Row>
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+                { !isRoleSelectDisabled ? (
+                  <Row className="product-metadata-item--permissions-section">
+                    <Col>
+                      <Form>
+                        <Form.Item label="Permissions" className="normal-offset"/>
+                        <Row type="flex">
+                          <Col span={11}>
+                            <Form.Item label="Who can view">
+                              <Select className="product-metadata-item--permissions-section--roles-select" mode="multiple" placeholder={'Who can view'} allowClear={true}>
+                                <Select.Option key={'User'}>User</Select.Option>
+                                <Select.Option key={'Staff'}>Staff</Select.Option>
+                                <Select.Option key={'Admin'}>Admin</Select.Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col span={11} offset={2}>
+                            <Form.Item label="Who can edit">
+                              <Select className="product-metadata-item--permissions-section--roles-select" mode="multiple" placeholder={'Who can edit'} allowClear={true}>
+                                <Select.Option key={'User'}>User</Select.Option>
+                                <Select.Option key={'Staff'}>Staff</Select.Option>
+                                <Select.Option key={'Admin'}>Admin</Select.Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </Col>
+                  </Row>
+                ) : (null)}
               </Col>
-              <Col span={3}>
-                {isRoleSelectDisabled ? '' :
-                  <FormItem offset={false}>
+              {/*<Col span={3}>*/}
+                {/*{isRoleSelectDisabled ? '' :*/}
+                  {/*<FormItem offset={false}>*/}
 
-                    <FormItem.Title>Who can edit</FormItem.Title>
-                    <FormItem.Content>
-                      <MetadataSelect disabled={isRoleSelectDisabled}
-                                      onFocus={this.markAsActive}
-                                      onBlur={this.handleCancelDelete}
-                                      name={`metaFields.${this.props.metaFieldKey}.role`}
-                                      style={{width: '100%'}}
-                                      values={MetadataRoles}
-                      />
-                    </FormItem.Content>
-                  </FormItem>
-                }
-              </Col>
+                    {/*<FormItem.Title>Who can edit</FormItem.Title>*/}
+                    {/*<FormItem.Content>*/}
+                      {/*<MetadataSelect disabled={isRoleSelectDisabled}*/}
+                                      {/*onFocus={this.markAsActive}*/}
+                                      {/*onBlur={this.handleCancelDelete}*/}
+                                      {/*name={`metaFields.${this.props.metaFieldKey}.role`}*/}
+                                      {/*style={{width: '100%'}}*/}
+                                      {/*values={MetadataRoles}*/}
+                      {/*/>*/}
+                    {/*</FormItem.Content>*/}
+                  {/*</FormItem>*/}
+                {/*}*/}
+              {/*</Col>*/}
               <Col span={8}>
                 {this.preview()}
               </Col>
