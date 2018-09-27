@@ -272,7 +272,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123),
+                new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123, 1),
                 new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
         };
 
@@ -290,7 +290,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(device.metaFields);
         assertEquals(2, device.metaFields.length);
 
-        MetaField updatedMetaField = new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, null, 0, 1000, 123);
+        MetaField updatedMetaField = new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, null, 0, 1000, 123, 1);
         client.updateDeviceMetafield(device.id, updatedMetaField);
         client.verifyResult(webJson(3, "Metafield is not valid. Units field is empty."));
 
