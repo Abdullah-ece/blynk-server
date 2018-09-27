@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -23,6 +24,7 @@ import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,6 +37,7 @@ import java.util.Date;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static java.time.LocalTime.ofSecondOfDay;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -690,6 +693,25 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
 
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
         client.createProduct(orgId, product);
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
@@ -709,16 +731,37 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(fromApiProduct.id, fromApiOrg.products[0].parentId);
 
         fromApiProduct.name = "Updated Name";
+        webLabel = new WebLabel();
+        webLabel.label = "4444";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
         client.updateProduct(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
         assertEquals("Updated Name", fromApiProduct.name);
+        assertNotNull(fromApiProduct.webDashboard.widgets[0]);
+        assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
 
         client.getProduct(fromApiOrg.products[0].id);
         Product subProduct = client.parseProduct(4);
         assertNotNull(subProduct);
         assertEquals("Updated Name", subProduct.name);
         assertEquals(fromApiProduct.id, subProduct.parentId);
-
+        assertNotNull(subProduct.webDashboard.widgets[0]);
+        assertEquals("4444", subProduct.webDashboard.widgets[0].label);
     }
 }
