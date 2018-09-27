@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
-import cc.blynk.server.application.handlers.main.logic.AppGetDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
@@ -20,6 +19,7 @@ import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileGetDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.PurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
@@ -289,7 +289,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
             case MOBILE_GET_DEVICE_METAFIELDS:
-                GetDeviceMetafieldsLogic.messageReceived(holder, ctx, state, msg);
+                GetDeviceMetafieldsLogic.messageReceived(holder, ctx, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
                 WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
@@ -375,7 +375,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
 
             case MOBILE_GET_DEVICE :
-                AppGetDeviceLogic.messageReceived(holder, ctx, state.user, msg);
+                MobileGetDeviceLogic.messageReceived(holder, ctx, msg);
                 break;
         }
     }

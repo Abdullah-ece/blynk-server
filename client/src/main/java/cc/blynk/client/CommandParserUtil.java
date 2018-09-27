@@ -48,6 +48,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
@@ -335,6 +336,8 @@ public final class CommandParserUtil {
                 return WEB_GET_METAFIELD;
             case "getdevicesbyreferencemetafield" :
                 return MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+            case "getdevice" :
+                return MOBILE_GET_DEVICE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

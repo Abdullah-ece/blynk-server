@@ -3,8 +3,8 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
-import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Role;
@@ -350,6 +350,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         Product product = new Product();
         product.name = "My product";
+        product.logoUrl = "MyLogo.png";
         product.metaFields = new MetaField[] {
                 new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
                 new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
@@ -363,6 +364,56 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice.name = "My New Device";
         newDevice.productId = fromApiProduct.id;
 
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+
+        appClient.getDevice(createdDevice.id);
+        DeviceDTO deviceDTO = appClient.parseDeviceDTO(2);
+
+        assertNotNull(deviceDTO);
+        assertEquals("My product", deviceDTO.productName);
+        assertEquals("MyLogo.png", deviceDTO.productLogoUrl);
+
+        MetaField[] metaFields = deviceDTO.metaFields;
+        assertNotNull(metaFields);
+        assertEquals(2, metaFields.length);
+        NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
+        assertEquals(1, numberMetaField.id);
+        assertEquals("Jopa", numberMetaField.name);
+        assertEquals(Role.STAFF, numberMetaField.role);
+        assertEquals(123D, numberMetaField.value, 0.1);
+        TextMetaField textMetaField = (TextMetaField) metaFields[1];
+        assertEquals(2, textMetaField.id);
+        assertEquals("Device Name", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("My Default device Name", textMetaField.value);
+    }
+
+    @Test
+    public void getDeviceFromMobile() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
 
         client.createDevice(orgId, newDevice);
         Device createdDevice = client.parseDevice(2);

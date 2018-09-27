@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -105,6 +106,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public Report parseReportFromResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.parseReport(getBody(expectedMessageOrder), 0);
+    }
+
+    public DeviceDTO parseDeviceDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO.class);
     }
 
     public BinaryMessage getBinaryBody() throws Exception {
@@ -287,6 +292,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getDeviceMetafield(int deviceId) {
         send("getDeviceMetafields " + deviceId);
+    }
+
+    public void getDevice(int deviceId) {
+        send("getDevice " + deviceId);
     }
 
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {

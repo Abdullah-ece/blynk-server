@@ -27,6 +27,9 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_NAME;
 import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_OWNER;
 
@@ -86,6 +89,17 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.isMandatory = isMandatory;
         this.isDefault = isDefault;
         this.icon = icon;
+    }
+
+    //todo fix
+    public static List<MetaField> filter(MetaField[] metaFields) {
+        var resultList = new ArrayList<MetaField>();
+        for (MetaField metaField : metaFields) {
+            //if (metaField.includeInProvision) {
+                resultList.add(metaField);
+            //}
+        }
+        return resultList;
     }
 
     public abstract MetaField copySpecificFieldsOnly(MetaField metaField);
