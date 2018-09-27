@@ -21,7 +21,7 @@ export default class Field extends React.Component {
       help = error || warning || '';
     }
 
-    if (!touched && input.value && error) {
+    if (!touched && displayError && input.value && error) {
       validateStatus = 'error';
       help = error || warning || '';
     }
