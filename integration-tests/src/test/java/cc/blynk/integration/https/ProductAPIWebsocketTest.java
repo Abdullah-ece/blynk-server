@@ -166,6 +166,41 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createProductWithWrongMetafields() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "createProductWithMetafields2";
+        product.description = "Description";
+        product.boardType = "ESP8266";
+        product.connectionType = ConnectionType.WI_FI;
+        product.logoUrl = "/static/logo.png";
+
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "Farm of Smith"),
+                new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "0", "1", "Farm of Smith"),
+                new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 1000, 10.222),
+                new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, null, 36, 0, 100),
+                new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100)
+        };
+
+        product.dataStreams = new DataStream[] {
+                new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
+        };
+
+        client.createProduct(orgId, product);
+        client.verifyResult(webJson(1, "Metafield is not valid. Units field is empty."));
+
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, null, Role.ADMIN, false, false, false, null, "Farm of Smith"),
+        };
+
+        client.createProduct(orgId, product);
+        client.verifyResult(webJson(2, "Metafield is not valid. Name is empty."));
+    }
+
+    @Test
     public void createProductWithWidgets() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 

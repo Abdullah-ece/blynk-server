@@ -98,10 +98,12 @@ public class ProductHandler extends BaseHttpHandler {
     public Response create(ProductAndOrgIdDTO productAndOrgIdDTO) {
         Product product = productAndOrgIdDTO.product;
 
-        if (product == null || product.notValid()) {
-            log.error("Product is empty or has not name. {}", product);
-            return badRequest("Product is empty or has not name.");
+        if (product == null) {
+            log.error("Product is empty.");
+            return badRequest("Product is empty.");
         }
+
+        product.validate();
 
         Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
@@ -135,10 +137,7 @@ public class ProductHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        if (updatedProduct.notValid()) {
-            log.error("Product is not valid.", updatedProduct);
-            return badRequest();
-        }
+        updatedProduct.validate();
 
         Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
@@ -177,10 +176,7 @@ public class ProductHandler extends BaseHttpHandler {
 
         Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
 
-        if (updatedProduct.notValid()) {
-            log.error("Product is not valid.", updatedProduct);
-            return badRequest();
-        }
+        updatedProduct.validate();
 
         existingProduct.update(updatedProduct);
 

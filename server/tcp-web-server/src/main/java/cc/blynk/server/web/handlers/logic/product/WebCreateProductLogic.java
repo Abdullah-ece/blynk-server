@@ -43,11 +43,13 @@ public class WebCreateProductLogic {
 
         Product product = productAndOrgIdDTO.product;
 
-        if (product == null || product.notValid()) {
-            log.error("Product is empty or has no name {} for {}.", product, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
+        if (product == null) {
+            log.error("Product is empty {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Product is empty."), ctx.voidPromise());
             return;
         }
+
+        product.validate();
 
         Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
 

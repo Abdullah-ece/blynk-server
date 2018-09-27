@@ -50,20 +50,15 @@ public class WebUpdateDevicesMetaInProductLogic {
 
         Product updatedProduct = productAndOrgIdDTO.product;
 
-        if (updatedProduct == null || updatedProduct.notValid()) {
-            log.error("Product is empty or has no name {} for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
+        if (updatedProduct == null) {
+            log.error("Product is empty for {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Product is empty."), ctx.voidPromise());
             return;
         }
+
+        updatedProduct.validate();
 
         Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
-
-        if (updatedProduct.notValid()) {
-            log.error("Product {} is not valid for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is not valid."), ctx.voidPromise());
-            return;
-        }
-
         existingProduct.update(updatedProduct);
 
         List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);

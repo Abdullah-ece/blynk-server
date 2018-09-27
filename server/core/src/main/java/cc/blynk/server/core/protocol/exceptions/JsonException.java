@@ -9,7 +9,7 @@ public class JsonException extends RuntimeException {
 
     public final int msgId;
 
-    public JsonException(String message, int msgId) {
+    public JsonException(int msgId, String message) {
         super(message, null, true, false);
         this.msgId = msgId;
     }
