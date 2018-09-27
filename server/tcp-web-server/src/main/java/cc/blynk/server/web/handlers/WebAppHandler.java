@@ -2,7 +2,7 @@ package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceMetafieldLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -239,7 +239,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webInviteUserLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
-                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
+                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);

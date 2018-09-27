@@ -102,7 +102,7 @@ public class WebUpdateProductLogic {
             }
         }
         log.debug("Product {} and {} subProducts successfully updated for {}.",
-                product, subProductIds.size(), user.email);
+                product.id, subProductIds.size(), user.email);
 
         if (ctx.channel().isWritable()) {
             String productString = existingProduct.toString();

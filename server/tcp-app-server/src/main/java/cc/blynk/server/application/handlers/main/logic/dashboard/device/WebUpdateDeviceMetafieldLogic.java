@@ -20,11 +20,11 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.09.18.
  */
-public final class UpdateDeviceMetafieldLogic {
+public final class WebUpdateDeviceMetafieldLogic {
 
-    private static final Logger log = LogManager.getLogger(UpdateDeviceMetafieldLogic.class);
+    private static final Logger log = LogManager.getLogger(WebUpdateDeviceMetafieldLogic.class);
 
-    private UpdateDeviceMetafieldLogic() {
+    private WebUpdateDeviceMetafieldLogic() {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {

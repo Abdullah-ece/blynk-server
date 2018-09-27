@@ -33,7 +33,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevic
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceMetafieldLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.CreateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.DeleteTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.GetTagsLogic;
@@ -292,7 +292,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetDeviceMetafieldsLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
-                UpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
+                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
