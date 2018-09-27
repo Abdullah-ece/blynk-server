@@ -88,7 +88,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         client.createProduct(orgId, product);
-        client.verifyResult(webJson(1, "Product is empty or has no name."));
+        client.verifyResult(webJson(1, "Product name is empty."));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.id = 1;
         product.name = "";
         client.updateProduct(orgId, product);
-        client.verifyResult(webJson(2, "Product is empty or has no name."));
+        client.verifyResult(webJson(2, "Product name is empty."));
     }
 
     @Test
