@@ -38,6 +38,8 @@ public final class UpdateDeviceMetafieldLogic {
         String metafieldString = split[1];
         MetaField metaField = JsonParser.parseMetafield(metafieldString, message.id);
 
+        metaField.validate();
+
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
         log.trace("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);

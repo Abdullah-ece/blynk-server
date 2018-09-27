@@ -11,6 +11,8 @@ import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import org.junit.Ignore;
@@ -18,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
@@ -259,6 +262,43 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         MetaField updatedMetaField2 = new NumberMetaField(3, "Jopa2", Role.STAFF, false, false, false, null, 0, 1000, 123D);
         client.updateDeviceMetafield(device.id, updatedMetaField2);
         client.verifyResult(webJson(5, "Metafield with passed id not found."));
+    }
+
+    @Test
+    public void createDeviceAndUpdateUnitMetafield() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123),
+                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device device = client.parseDevice(2);
+        assertEquals("My New Device", device.name);
+        assertNotNull(device.metaFields);
+        assertEquals(2, device.metaFields.length);
+
+        MetaField updatedMetaField = new MeasurementUnitMetaField(1, "Jopa", Role.STAFF, false, false, false, null, null, 0, 1000, 123);
+        client.updateDeviceMetafield(device.id, updatedMetaField);
+        client.verifyResult(webJson(3, "Metafield is not valid. Units field is empty."));
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.updateDeviceMetafield(device.id, updatedMetaField);
+        appClient.verifyResult(illegalCommandBody(2));
     }
 
     @Test

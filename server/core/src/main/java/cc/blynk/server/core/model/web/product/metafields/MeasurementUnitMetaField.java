@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.web.product.metafields;
 
 import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -37,6 +38,14 @@ public class MeasurementUnitMetaField extends MetaField {
         this.value = value;
         this.min = min;
         this.max = max;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (units == null) {
+            throw new IllegalCommandBodyException("Metafield is not valid. Units field is empty.");
+        }
     }
 
     @Override

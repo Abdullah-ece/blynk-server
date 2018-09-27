@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeZoneMetaField;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -96,6 +97,12 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public String getNotificationEmail() {
         return null;
+    }
+
+    public void validate() {
+        if (name == null || name.equals("")) {
+            throw new IllegalCommandBodyException("Metafield is not valid. Name is empty.");
+        }
     }
 
     @Override
