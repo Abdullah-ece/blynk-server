@@ -74,7 +74,6 @@ class UnitField extends BaseField {
     ],
     'Other'           : [
       Unit.Percentage,
-      Unit.PercentageSymbol,
     ]
   };
 

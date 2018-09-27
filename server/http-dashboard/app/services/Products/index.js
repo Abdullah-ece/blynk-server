@@ -392,12 +392,7 @@ export const Unit = {
   Percentage: {
     abbreviation: '%',
     key: 'Percentage',
-    value: 'Percentage'
-  },
-  PercentageSymbol: {
-    abbreviation: '%',
-    key: 'PercentageSymbol',
-    value: '%'
+    value: 'Percentage, %'
   },
   RPM: {
     abbreviation: 'rpm',
