@@ -14,7 +14,7 @@ public class MeasurementUnitMetaField extends MetaField {
 
     public final MeasurementUnit units;
 
-    public final String value;
+    public final double value;
 
     public final float min;
 
@@ -29,7 +29,7 @@ public class MeasurementUnitMetaField extends MetaField {
                                     @JsonProperty("isMandatory") boolean isMandatory,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("units") MeasurementUnit units,
-                                    @JsonProperty("value") String value,
+                                    @JsonProperty("value") double value,
                                     @JsonProperty("min") float min,
                                     @JsonProperty("max") float max) {
         super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
