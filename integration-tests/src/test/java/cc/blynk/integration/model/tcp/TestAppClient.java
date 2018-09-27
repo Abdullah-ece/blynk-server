@@ -293,6 +293,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + metaField.toString());
     }
 
+    public void updateDeviceMetafields(int deviceId, MetaField[] metaFields) {
+        send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + JsonParser.toJson(metaFields));
+    }
+
     public void createReport(int dashId, Report report) {
         createReport(dashId, report.toString());
     }

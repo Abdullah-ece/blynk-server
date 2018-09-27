@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,14 +37,28 @@ public final class UpdateDeviceMetafieldLogic {
 
         int deviceId = Integer.parseInt(split[0]);
         String metafieldString = split[1];
-        MetaField metaField = JsonParser.parseMetafield(metafieldString, message.id);
 
-        metaField.validate();
+        MetaField[] metaFields;
+        //https://github.com/blynkkk/knight/issues/1498
+        if (metafieldString.startsWith("{")) {
+            metaFields = new MetaField[] {
+                    JsonParser.parseMetafield(metafieldString, message.id)
+            };
+        } else {
+            metaFields = JsonParser.readAny(metafieldString, MetaField[].class);
+            if (metaFields == null) {
+                throw new IllegalCommandBodyException("Error parsing metafields batch.");
+            }
+        }
+
+        for (MetaField metaField : metaFields) {
+            metaField.validate();
+        }
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
         log.trace("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);
-        device.updateMetafield(metaField);
+        device.updateMetafields(metaFields);
         device.metadataUpdatedBy = user.email;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -130,6 +130,10 @@ public class Device implements Target {
     }
 
     public int findMetaFieldIndex(int id) {
+        return findMetaFieldIndex(this.metaFields, id);
+    }
+
+    private static int findMetaFieldIndex(MetaField[] metaFields, int id) {
         for (int i = 0; i < metaFields.length; i++) {
             if (metaFields[i].id == id) {
                 return i;
@@ -139,7 +143,11 @@ public class Device implements Target {
     }
 
     private int findMetaFieldIndexOrThrow(int id) {
-        int index = findMetaFieldIndex(id);
+        return findMetaFieldIndexOrThrow(this.metaFields, id);
+    }
+
+    private static int findMetaFieldIndexOrThrow(MetaField[] metaFields, int id) {
+        int index = findMetaFieldIndex(metaFields, id);
         if (index == -1) {
             throw new IllegalCommandException("Metafield with passed id not found.");
         }
@@ -173,11 +181,29 @@ public class Device implements Target {
     }
 
     public void updateMetafield(MetaField updated) {
+        updateNameForDeviceNameMeta(updated);
+        this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
+        this.metadataUpdatedAt = System.currentTimeMillis();
+    }
+
+    public void updateMetafields(MetaField[] updatedMetafields) {
+        MetaField[] localCopy = Arrays.copyOf(this.metaFields, this.metaFields.length);
+        for (MetaField updated : updatedMetafields) {
+            int i = findMetaFieldIndexOrThrow(localCopy, updated.id);
+            if (i != -1) {
+                updateNameForDeviceNameMeta(updated);
+                localCopy[i] = updated;
+            }
+        }
+
+        this.metaFields = localCopy;
+        this.metadataUpdatedAt = System.currentTimeMillis();
+    }
+
+    private void updateNameForDeviceNameMeta(MetaField updated) {
         if (updated instanceof TextMetaField && "Device Name".equalsIgnoreCase(updated.name)) {
             this.name = ((TextMetaField) updated).value;
         }
-        this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
-        this.metadataUpdatedAt = System.currentTimeMillis();
     }
 
     @Override

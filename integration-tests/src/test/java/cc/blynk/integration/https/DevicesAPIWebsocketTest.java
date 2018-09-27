@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
@@ -443,6 +444,127 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("Jopa", numberMetaField.name);
         assertEquals(Role.STAFF, numberMetaField.role);
         assertEquals(10000D, numberMetaField.value, 0.1);
+    }
+
+    @Test
+    public void updateDeviceMetafieldFromMobileviaBatch() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getDeviceMetafield(createdDevice.id);
+        MetaField[] metaFields = appClient.parseMetafields(2);
+        assertNotNull(metaFields);
+        assertEquals(2, metaFields.length);
+
+        NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
+        assertEquals(1, numberMetaField.id);
+        assertEquals("Jopa", numberMetaField.name);
+        assertEquals(Role.STAFF, numberMetaField.role);
+        assertEquals(123D, numberMetaField.value, 0.1);
+
+        TextMetaField textMetaField = (TextMetaField) metaFields[1];
+        assertEquals(2, textMetaField.id);
+        assertEquals("Device Name", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("My Default device Name", textMetaField.value);
+
+        metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 1000),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "New Name")
+        };
+        appClient.updateDeviceMetafields(createdDevice.id, metaFields);
+        appClient.verifyResult(ok(3));
+
+        appClient.getDeviceMetafield(createdDevice.id);
+        metaFields = appClient.parseMetafields(4);
+        assertNotNull(metaFields);
+        assertEquals(2, metaFields.length);
+
+        numberMetaField = (NumberMetaField) metaFields[0];
+        assertEquals(1, numberMetaField.id);
+        assertEquals("Jopa", numberMetaField.name);
+        assertEquals(1000D, numberMetaField.value, 0.1);
+
+        textMetaField = (TextMetaField) metaFields[1];
+        assertEquals(2, textMetaField.id);
+        assertEquals("Device Name", textMetaField.name);
+        assertEquals("New Name", textMetaField.value);
+    }
+
+    @Test
+    public void updateDeviceMetafieldFromMobileviaBatchFails() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                new NumberMetaField(1, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 123D),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getDeviceMetafield(createdDevice.id);
+        MetaField[] metaFields = appClient.parseMetafields(2);
+        assertNotNull(metaFields);
+        assertEquals(2, metaFields.length);
+
+        NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
+        assertEquals(1, numberMetaField.id);
+        assertEquals("Jopa", numberMetaField.name);
+        assertEquals(Role.STAFF, numberMetaField.role);
+        assertEquals(123D, numberMetaField.value, 0.1);
+
+        TextMetaField textMetaField = (TextMetaField) metaFields[1];
+        assertEquals(2, textMetaField.id);
+        assertEquals("Device Name", textMetaField.name);
+        assertEquals(Role.ADMIN, textMetaField.role);
+        assertEquals("My Default device Name", textMetaField.value);
+
+        metaFields = new MetaField[] {
+                new NumberMetaField(10, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 1000),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "New Name")
+        };
+        appClient.updateDeviceMetafields(createdDevice.id, metaFields);
+        appClient.verifyResult(illegalCommand(3));
     }
 
     @Test
