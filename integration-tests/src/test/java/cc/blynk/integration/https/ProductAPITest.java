@@ -176,7 +176,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "Farm of Smith"),
                 new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "0", "1", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 100, 10.222),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 100, 10.222, 1),
                 new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, MeasurementUnit.Celsius, 36, 0, 100),
                 new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
                 new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, "Tech Support",
@@ -231,7 +231,7 @@ public class ProductAPITest extends APIBaseTest {
                 new TextMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "Farm of Smith"),
                 new SwitchMetaField(1, "My Farm", Role.ADMIN, false, false, false, null, "0", "1", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", Role.ADMIN, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 1000, 10.222),
+                new NumberMetaField(3, "Farm of Smith", Role.ADMIN, false, false, false, null, 0, 1000, 10.222, 1),
                 new MeasurementUnitMetaField(4, "Farm of Smith", Role.ADMIN, false, false, false, null, MeasurementUnit.Celsius, 36, 0, 100),
                 new CostMetaField(5, "Farm of Smith", Role.ADMIN, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
                 new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, "Tech Support",
@@ -656,7 +656,7 @@ public class ProductAPITest extends APIBaseTest {
 
         product.metaFields = new MetaField[] {
                 product.metaFields[0],
-                new NumberMetaField(2, "New metafield", Role.ADMIN, false, false, false, null, 0, 1000, 123)
+                new NumberMetaField(2, "New metafield", Role.ADMIN, false, false, false, null, 0, 1000, 123, 1)
         };
 
         HttpPost updateProductAndDevicesReq = new HttpPost(httpsAdminServerUrl + "/product/updateDevices");

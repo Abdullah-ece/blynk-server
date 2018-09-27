@@ -128,7 +128,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
                 new ContactMetaField(6, "Farm of Smith", Role.ADMIN, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,

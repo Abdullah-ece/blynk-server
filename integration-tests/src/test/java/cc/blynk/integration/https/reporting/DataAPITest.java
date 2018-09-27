@@ -288,7 +288,7 @@ public class DataAPITest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D),
+                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
                 new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
         };
 
