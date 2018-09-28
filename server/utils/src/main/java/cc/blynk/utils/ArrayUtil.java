@@ -106,7 +106,7 @@ public final class ArrayUtil {
         if (array.length == 0) {
             return Collections.emptyList();
         }
-        List<T> list = new ArrayList<>();
+        List<T> list = new ArrayList<>(array.length);
         Collections.addAll(list, array);
         return list;
     }
