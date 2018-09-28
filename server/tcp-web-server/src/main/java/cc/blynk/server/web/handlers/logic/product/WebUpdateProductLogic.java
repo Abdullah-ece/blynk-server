@@ -16,7 +16,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -85,7 +84,7 @@ public class WebUpdateProductLogic {
         Product existingProduct = organization.getProductOrThrow(product.id);
 
         WebDashboard changedWebDashboard = product.webDashboard;
-        List<Integer> subProductIds = subProductIds(productAndOrgIdDTO.orgId, product.id);
+        List<Integer> subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
         if (!existingProduct.webDashboard.equals(changedWebDashboard)) {
             log.debug("Dashboard was changed. Updating all devices for {}.", user.email);
             updateProductDevicesDashboard(product.id, changedWebDashboard);
@@ -109,20 +108,6 @@ public class WebUpdateProductLogic {
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
         }
-    }
-
-    private List<Integer> subProductIds(int parentOrgId, int parentProductId) {
-        List<Integer> subProductIds = new ArrayList<>();
-        for (Organization org : organizationDao.organizations.values()) {
-            if (org.parentId == parentOrgId) {
-                for (Product subProduct : org.products) {
-                    if (subProduct.parentId == parentProductId) {
-                        subProductIds.add(subProduct.id);
-                    }
-                }
-            }
-        }
-        return subProductIds;
     }
 
     private void updateProductDevicesDashboard(int productId, WebDashboard updatedWebDashboard) {

@@ -96,6 +96,20 @@ public class OrganizationDao {
                 + " not found in organization with id " + orgId);
     }
 
+    public List<Integer> subProductIds(int parentOrgId, int parentProductId) {
+        List<Integer> subProductIds = new ArrayList<>();
+        for (Organization org : organizations.values()) {
+            if (org.parentId == parentOrgId) {
+                for (Product subProduct : org.products) {
+                    if (subProduct.parentId == parentProductId) {
+                        subProductIds.add(subProduct.id);
+                    }
+                }
+            }
+        }
+        return subProductIds;
+    }
+
     public Collection<Organization> getAll(User user) {
         if (user.isSuperAdmin()) {
             return organizations.values();
