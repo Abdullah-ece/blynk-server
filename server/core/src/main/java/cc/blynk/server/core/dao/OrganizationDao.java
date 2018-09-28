@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -96,8 +97,8 @@ public class OrganizationDao {
                 + " not found in organization with id " + orgId);
     }
 
-    public List<Integer> subProductIds(int parentOrgId, int parentProductId) {
-        List<Integer> subProductIds = new ArrayList<>();
+    public int[] subProductIds(int parentOrgId, int parentProductId) {
+        IntArray subProductIds = new IntArray();
         for (Organization org : organizations.values()) {
             if (org.parentId == parentOrgId) {
                 for (Product subProduct : org.products) {
@@ -107,7 +108,7 @@ public class OrganizationDao {
                 }
             }
         }
-        return subProductIds;
+        return subProductIds.toArray();
     }
 
     public Collection<Organization> getAll(User user) {

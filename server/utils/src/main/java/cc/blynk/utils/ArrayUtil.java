@@ -74,7 +74,7 @@ public final class ArrayUtil {
         return false;
     }
 
-    public static int[] convertIntegersToInt(List<Integer> integers) {
+    private static int[] convertIntegersToInt(List<Integer> integers) {
         int[] result = new int[integers.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = integers.get(i);

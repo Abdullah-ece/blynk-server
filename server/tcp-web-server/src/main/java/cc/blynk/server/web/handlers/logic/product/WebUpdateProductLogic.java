@@ -84,7 +84,7 @@ public class WebUpdateProductLogic {
         Product existingProduct = organization.getProductOrThrow(product.id);
 
         WebDashboard changedWebDashboard = product.webDashboard;
-        List<Integer> subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
+        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
         if (!existingProduct.webDashboard.equals(changedWebDashboard)) {
             log.debug("Dashboard was changed. Updating all devices for {}.", user.email);
             updateProductDevicesDashboard(product.id, changedWebDashboard);
@@ -101,7 +101,7 @@ public class WebUpdateProductLogic {
             }
         }
         log.debug("Product {} and {} subProducts successfully updated for {}.",
-                product.id, subProductIds.size(), user.email);
+                product.id, subProductIds.length, user.email);
 
         if (ctx.channel().isWritable()) {
             String productString = existingProduct.toString();
