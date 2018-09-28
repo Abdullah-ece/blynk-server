@@ -1,7 +1,6 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -28,7 +27,6 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
-import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.epoll.Epoll;
@@ -82,7 +80,6 @@ public class Holder {
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
-    public final SlackWrapper slackWrapper;
 
     public final Limits limits;
     public final TextHolder textHolder;
@@ -95,7 +92,7 @@ public class Holder {
 
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
-                  TwitterProperties twitterProperties, SlackProperties slackProperties,
+                  TwitterProperties twitterProperties,
                   boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -148,7 +145,6 @@ public class Holder {
         this.mailWrapper = new MailWrapper(mailProperties, serverProperties.productName);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, serverProperties.productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
-        this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, serverProperties.region);
 
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
@@ -172,7 +168,7 @@ public class Holder {
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
                   MailWrapper mailWrapper,
                   GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
-                  SlackWrapper slackWrapper, BlockingIOProcessor blockingIOProcessor,
+                  BlockingIOProcessor blockingIOProcessor,
                   String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -201,7 +197,6 @@ public class Holder {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
-        this.slackWrapper = slackWrapper;
 
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);

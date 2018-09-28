@@ -29,11 +29,8 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldsLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.CreateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.DeleteTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.GetTagsLogic;
@@ -109,9 +106,6 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_B
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -296,6 +290,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
+                break;
+            case GET_DEVICE :
+                GetDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
 
             case CREATE_TAG :
