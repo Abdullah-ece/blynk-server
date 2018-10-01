@@ -95,9 +95,9 @@ public abstract class MetaField implements CopyObject<MetaField> {
     public static List<MetaField> filter(MetaField[] metaFields) {
         var resultList = new ArrayList<MetaField>();
         for (MetaField metaField : metaFields) {
-            //if (metaField.includeInProvision) {
+            if (metaField.includeInProvision) {
                 resultList.add(metaField);
-            //}
+            }
         }
         return resultList;
     }
