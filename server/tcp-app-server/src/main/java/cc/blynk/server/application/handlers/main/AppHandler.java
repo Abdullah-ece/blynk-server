@@ -294,7 +294,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetDeviceMetafieldsLogic.messageReceived(holder, ctx, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
-                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
+                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD :
                 GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);

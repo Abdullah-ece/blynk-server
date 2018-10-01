@@ -239,7 +239,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webInviteUserLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
-                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state.user, msg);
+                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);

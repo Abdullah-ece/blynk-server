@@ -1,7 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
@@ -9,10 +10,12 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.StateHolderBase;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -28,11 +31,18 @@ public final class WebUpdateDeviceMetafieldLogic {
     private WebUpdateDeviceMetafieldLogic() {
     }
 
-    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder,
+                                       ChannelHandlerContext ctx, StateHolderBase state, StringMessage message) {
+        messageReceived(holder, ctx, state, message, state instanceof AppStateHolder);
+    }
+
+    private static void messageReceived(Holder holder,
+                                        ChannelHandlerContext ctx,
+                                        StateHolderBase state, StringMessage message, boolean isApp) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
-            log.error("Body '{}' is wrong for update metafield for {}", message.body, user.email);
+            log.error("Body '{}' is wrong for update metafield for {}", message.body, state.user.email);
             throw new IllegalCommandException("Wrong income message format for update metafield.");
         }
 
@@ -59,10 +69,16 @@ public final class WebUpdateDeviceMetafieldLogic {
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
-        log.trace("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, user.email);
+        log.trace("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, state.user.email);
         device.updateMetafields(metaFields);
-        device.metadataUpdatedBy = user.email;
+        device.metadataUpdatedBy = state.user.email;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+
+        //if update comes from the app - send update to the web
+        if (isApp) {
+            Session session = holder.sessionDao.userSession.get(state.userKey);
+            session.sendToSelectedDeviceOnWeb(WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
+        }
     }
 
     private static void verifyOwnerAndDeviceName(MetaField metaField) {
