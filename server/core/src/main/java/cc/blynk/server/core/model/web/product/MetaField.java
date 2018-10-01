@@ -91,7 +91,6 @@ public abstract class MetaField implements CopyObject<MetaField> {
         this.icon = icon;
     }
 
-    //todo fix
     public static List<MetaField> filter(MetaField[] metaFields) {
         var resultList = new ArrayList<MetaField>();
         for (MetaField metaField : metaFields) {
