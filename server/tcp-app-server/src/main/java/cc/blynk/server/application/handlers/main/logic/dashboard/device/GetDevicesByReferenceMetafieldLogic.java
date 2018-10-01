@@ -53,7 +53,7 @@ public final class GetDevicesByReferenceMetafieldLogic {
         for (int productId : deviceReferenceMetaField.selectedProductIds) {
             for (Map.Entry<DeviceKey, Device> entry : holder.deviceDao.devices.entrySet()) {
                 Device tempDevice = entry.getValue();
-                if (device.productId == productId) {
+                if (tempDevice.productId == productId) {
                     result.add(new IdNameDTO(tempDevice));
                 }
             }

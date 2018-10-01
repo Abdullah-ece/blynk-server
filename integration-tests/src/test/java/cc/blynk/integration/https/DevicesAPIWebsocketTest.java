@@ -352,8 +352,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.name = "My product";
         product.logoUrl = "MyLogo.png";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 123D, 1),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
@@ -403,8 +403,8 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name")
+                new NumberMetaField(1, "Jopa", Role.STAFF, true, false, false, null, 0, 1000, 123D, 1),
+                new TextMetaField(2, "Device Name", Role.ADMIN, true, false, true, null, "My Default device Name")
         };
 
         client.createProduct(orgId, product);
