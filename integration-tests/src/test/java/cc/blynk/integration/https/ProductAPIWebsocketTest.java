@@ -764,4 +764,115 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(subProduct.webDashboard.widgets[0]);
         assertEquals("4444", subProduct.webDashboard.widgets[0].label);
     }
+
+    @Test
+    public void createProductForSubOrgAndUpdateItAndItDevicesViaParentProduct() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "Parent product";
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, false, null, "Default Device")
+        };
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "123";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization("Sub Org for test 2", "Some TimeZone", "/static/logo.png", false, orgId);
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        Organization fromApiSubOrg = client.parseOrganization(2);
+        assertNotNull(fromApiSubOrg);
+        assertEquals(orgId, fromApiSubOrg.parentId);
+        assertEquals(organization.name, fromApiSubOrg.name);
+        assertEquals(organization.tzName, fromApiSubOrg.tzName);
+        assertNotNull(fromApiSubOrg.products);
+        assertEquals(1, fromApiSubOrg.products.length);
+        Product productInResponse = fromApiSubOrg.products[0];
+        assertEquals(fromApiProduct.id + 1, productInResponse.id);
+        assertEquals(fromApiProduct.id, productInResponse.parentId);
+        assertNotNull(productInResponse.metaFields);
+        assertEquals(1, productInResponse.metaFields.length);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device for subproduct";
+        newDevice.productId = productInResponse.id;
+
+        client.createDevice(fromApiSubOrg.id, newDevice);
+        Device createdSubDevice = client.parseDevice(3);
+        assertNotNull(createdSubDevice);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals(1, createdSubDevice.metaFields.length);
+
+        fromApiProduct.name = "Updated Name";
+        webLabel = new WebLabel();
+        webLabel.label = "4444";
+        webLabel.id = 2;
+        webLabel.x = 4;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 2, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+        fromApiProduct.metaFields = new MetaField[] {
+                new TextMetaField(1, "My test metafield 2", Role.ADMIN, false, false, false, null, "Default Device")
+        };
+
+        client.updateDevicesMeta(orgId, fromApiProduct);
+        fromApiProduct = client.parseProduct(4);
+        assertNotNull(fromApiProduct);
+        assertEquals("Updated Name", fromApiProduct.name);
+        assertNotNull(fromApiProduct.webDashboard.widgets[0]);
+        assertEquals("4444", fromApiProduct.webDashboard.widgets[0].label);
+        assertNotNull(fromApiProduct.metaFields);
+        assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
+
+        client.getProduct(fromApiSubOrg.products[0].id);
+        Product subProduct = client.parseProduct(5);
+        assertNotNull(subProduct);
+        assertEquals("Updated Name", subProduct.name);
+        assertEquals(fromApiProduct.id, subProduct.parentId);
+        assertNotNull(subProduct.webDashboard.widgets[0]);
+        assertEquals("4444", subProduct.webDashboard.widgets[0].label);
+        assertNotNull(fromApiProduct.metaFields);
+        assertEquals("My test metafield 2", fromApiProduct.metaFields[0].name);
+
+        client.getDevice(fromApiSubOrg.id, createdSubDevice.id);
+        createdSubDevice = client.parseDevice(6);
+        assertNotNull(createdSubDevice);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals(1, createdSubDevice.metaFields.length);
+        assertNotNull(createdSubDevice.metaFields);
+        assertEquals("My test metafield 2", createdSubDevice.metaFields[0].name);
+
+    }
 }

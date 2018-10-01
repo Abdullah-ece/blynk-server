@@ -61,27 +61,40 @@ public class WebUpdateDevicesMetaInProductLogic {
         Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
         existingProduct.update(updatedProduct);
 
-        List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
-        long now = System.currentTimeMillis();
-        for (Device device : devices) {
-            device.updateMetaFields(updatedProduct.metaFields);
-
-            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields)
-                    .toArray(new MetaField[0]);
-            device.addMetaFields(addedMetaFields);
-
-            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields)
-                    .toArray(new MetaField[0]);
-            device.deleteMetaFields(deletedMetaFields);
-
-            device.metadataUpdatedAt = now;
-            device.metadataUpdatedBy = user.email;
+        updateDeviceMeta(updatedProduct.id, updatedProduct.metaFields, user.email);
+        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, updatedProduct.id);
+        for (int subProductId : subProductIds) {
+            Product subProduct = organizationDao.getProductById(subProductId);
+            if (subProduct != null) {
+                subProduct.update(updatedProduct);
+            }
+            updateDeviceMeta(subProductId, updatedProduct.metaFields, user.email);
         }
 
         if (ctx.channel().isWritable()) {
             String productString = existingProduct.toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
+        }
+    }
+
+    //todo optimize
+    private void updateDeviceMeta(int productId, MetaField[] metaFields, String userEmail) {
+        List<Device> devices = deviceDao.getAllByProductId(productId);
+        long now = System.currentTimeMillis();
+        for (Device device : devices) {
+            device.updateMetaFields(metaFields);
+
+            MetaField[] addedMetaFields = ArrayUtil.substruct(metaFields, device.metaFields)
+                    .toArray(new MetaField[0]);
+            device.addMetaFields(addedMetaFields);
+
+            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, metaFields)
+                    .toArray(new MetaField[0]);
+            device.deleteMetaFields(deletedMetaFields);
+
+            device.metadataUpdatedAt = now;
+            device.metadataUpdatedBy = userEmail;
         }
     }
 
