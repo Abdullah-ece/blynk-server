@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.web.product.metafields.AddressMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
+import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -525,7 +526,22 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, false, null, "Default Device")
+                new TextMetaField(1, "My test metafield", Role.ADMIN, false, false, false, null, "Default Device"),
+                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, "icon",
+                        "Warehouse 13",
+                        true, "Baklazhana street 15",
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, false, 0, 0,
+                        false, null,
+                        false, 0,
+                        false, null,
+                        false, null,
+                        false, null,
+                        false, false,
+                        null)
         };
 
         client.createProduct(orgId, product);
@@ -542,23 +558,43 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         fromApiProduct.metaFields[0] = new TextMetaField(1,
                 "Me updated test metafield", Role.USER, false, false, false, null, "Default Device");
+        fromApiProduct.metaFields[1] = new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, "icon2",
+                "Warehouse 13",
+                true, "Baklazhana street 15",
+                false, null,
+                false, null,
+                false, null,
+                false, null,
+                false, false, 0, 0,
+                false, null,
+                false, 0,
+                false, null,
+                false, null,
+                false, null,
+                false, false,
+                null);
 
         client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
-        assertEquals(1, fromApiProduct.metaFields.length);
+        assertEquals(2, fromApiProduct.metaFields.length);
 
         client.getDevice(orgId, newDevice.id);
         Device device = client.parseDevice(4);
         assertNotNull(newDevice);
         assertEquals("My New Device", device.name);
         assertNotNull(device.metaFields);
-        assertEquals(1, device.metaFields.length);
+        assertEquals(2, device.metaFields.length);
+
         TextMetaField textMetaField = (TextMetaField) device.metaFields[0];
         assertEquals(1, textMetaField.id);
         assertEquals("Me updated test metafield", textMetaField.name);
-        assertEquals(Role.USER, textMetaField.role);
         assertEquals("Default Device", textMetaField.value);
+
+        LocationMetaField locationMetaField = (LocationMetaField) device.metaFields[1];
+        assertEquals(3, locationMetaField.id);
+        assertEquals("Device Location", locationMetaField.name);
+        assertEquals("icon2", locationMetaField.icon);
     }
 
     @Test
