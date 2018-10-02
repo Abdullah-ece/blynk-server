@@ -372,27 +372,17 @@ class Edit extends React.Component {
   //
   saveProductAndUpdateDevices(product) {
 
-    this.saveProduct({
+    this.updateDevicesByProduct({
       product: product,
       orgId: this.props.orgId
-    }).then(() => {
-      this.updateDevicesByProduct({
-        product: product,
-        orgId: this.props.orgId
-      })
-        .then(this.handleProductSaveSuccess)
-        .catch((response) => {
-          this.setState({
-            deviceForceUpdateLoading: false
-          });
-          message.error(response && response.error && response.error.response.message || 'Cannot save product');
+    }).then(this.handleProductSaveSuccess)
+      .catch((response) => {
+        this.setState({
+          deviceForceUpdateLoading: false
         });
-    }).catch((response) => {
-      this.setState({
-        deviceForceUpdateLoading: false
-      });
-      message.error(response && response.error && response.error.response.message || 'Cannot save product');
+        message.error(response && response.error && response.error.response.message || 'Cannot save product');
     });
+
   }
 
   saveProductWithoutDevicesUpdate(product) {
