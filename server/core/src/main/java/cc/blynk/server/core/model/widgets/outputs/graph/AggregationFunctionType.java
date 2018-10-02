@@ -55,17 +55,17 @@ public enum AggregationFunctionType {
     private Field<?> applyAggregation(Field<?> field) {
         switch (this) {
             case COUNT:
-                return field.count();
+                return DSL.count(field);
             case SUM :
-                return field.sum();
+                return DSL.sum((Field<Number>) field);
             case AVG :
-                return field.avg();
+                return DSL.avg((Field<Number>) field);
             case MED :
-                return field.median();
+                return DSL.median((Field<Number>) field);
             case MIN :
-                return field.min();
+                return DSL.min(field);
             case MAX :
-                return field.max();
+                return DSL.max(field);
             default :
                 throw new RuntimeException("Not yet supported...");
         }
