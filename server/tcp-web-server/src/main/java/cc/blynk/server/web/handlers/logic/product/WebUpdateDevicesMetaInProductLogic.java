@@ -91,7 +91,7 @@ public class WebUpdateDevicesMetaInProductLogic {
     //todo optimize
     private void updateDevice(int productId, MetaField[] metaFields, WebDashboard webDashboard, String userEmail) {
         List<Device> devices = deviceDao.getAllByProductId(productId);
-        log.debug("Updating {} devices meta for {}", devices.size(), userEmail);
+        log.debug("Updating {} devices meta for productId {} for {}", devices.size(), productId, userEmail);
         long now = System.currentTimeMillis();
         for (Device device : devices) {
             device.updateMetaFields(metaFields);

@@ -81,7 +81,7 @@ public final class WebUpdateProductLogic {
                 subProduct.update(product);
             }
         }
-        log.debug("Product {} and {} subProducts successfully updated for {}.",
+        log.debug("Product with id {} and {} subProducts successfully updated for {}.",
                 product.id, subProductIds.length, user.email);
 
         if (ctx.channel().isWritable()) {
