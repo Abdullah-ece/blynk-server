@@ -2,21 +2,15 @@ package cc.blynk.server.web.handlers.logic.product;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
-import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -26,19 +20,15 @@ import static cc.blynk.server.internal.WebByteBufUtil.json;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.04.18.
  */
-public class WebUpdateProductLogic {
+public final class WebUpdateProductLogic {
 
     private static final Logger log = LogManager.getLogger(WebUpdateProductLogic.class);
 
-    private final OrganizationDao organizationDao;
-    private final DeviceDao deviceDao;
-
-    public WebUpdateProductLogic(Holder holder) {
-        this.organizationDao = holder.organizationDao;
-        this.deviceDao = holder.deviceDao;
+    private WebUpdateProductLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder,
+                                       ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         ProductAndOrgIdDTO productAndOrgIdDTO = JsonParser.readAny(message.body, ProductAndOrgIdDTO.class);
 
         User user = state.user;
@@ -66,7 +56,7 @@ public class WebUpdateProductLogic {
             return;
         }
 
-        Organization organization = organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
+        Organization organization = holder.organizationDao.getOrgByIdOrThrow(productAndOrgIdDTO.orgId);
 
         if (organization.isSubOrg()) {
             log.error("User {} can't update products for sub organizations.", user.email);
@@ -82,20 +72,11 @@ public class WebUpdateProductLogic {
         }
 
         Product existingProduct = organization.getProductOrThrow(product.id);
-
-        WebDashboard changedWebDashboard = product.webDashboard;
-        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
-        if (!existingProduct.webDashboard.equals(changedWebDashboard)) {
-            log.debug("Dashboard was changed. Updating all devices for {}.", user.email);
-            updateProductDevicesDashboard(product.id, changedWebDashboard);
-            for (int productId : subProductIds) {
-                updateProductDevicesDashboard(productId, changedWebDashboard);
-            }
-        }
-
         existingProduct.update(product);
+
+        int[] subProductIds = holder.organizationDao.subProductIds(productAndOrgIdDTO.orgId, product.id);
         for (int productId : subProductIds) {
-            Product subProduct = organizationDao.getProductById(productId);
+            Product subProduct = holder.organizationDao.getProductById(productId);
             if (subProduct != null) {
                 subProduct.update(product);
             }
@@ -110,14 +91,5 @@ public class WebUpdateProductLogic {
         }
     }
 
-    private void updateProductDevicesDashboard(int productId, WebDashboard updatedWebDashboard) {
-        List<Device> devices = deviceDao.getAllByProductId(productId);
-        long now = System.currentTimeMillis();
-        for (Device device : devices) {
-            device.webDashboard.update(updatedWebDashboard);
-            device.updatedAt = now;
-        }
-        log.debug("{} devices updated with new dashboard for productId {}.", devices.size(), productId);
-    }
 
 }

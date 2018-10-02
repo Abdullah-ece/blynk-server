@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -59,16 +60,25 @@ public class WebUpdateDevicesMetaInProductLogic {
         updatedProduct.validate();
 
         Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
+
+        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, updatedProduct.id);
+
+        WebDashboard changedWebDashboard = null;
+        if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {
+            log.debug("Dashboard was changed. Updating devices dashboard for {}.", user.email);
+            changedWebDashboard = updatedProduct.webDashboard;
+        }
+
         existingProduct.update(updatedProduct);
 
-        updateDeviceMeta(updatedProduct.id, updatedProduct.metaFields, user.email);
-        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, updatedProduct.id);
+        updateDevice(updatedProduct.id, updatedProduct.metaFields, changedWebDashboard, user.email);
+
         for (int subProductId : subProductIds) {
             Product subProduct = organizationDao.getProductById(subProductId);
             if (subProduct != null) {
                 subProduct.update(updatedProduct);
             }
-            updateDeviceMeta(subProductId, updatedProduct.metaFields, user.email);
+            updateDevice(subProductId, updatedProduct.metaFields, changedWebDashboard, user.email);
         }
 
         if (ctx.channel().isWritable()) {
@@ -79,7 +89,7 @@ public class WebUpdateDevicesMetaInProductLogic {
     }
 
     //todo optimize
-    private void updateDeviceMeta(int productId, MetaField[] metaFields, String userEmail) {
+    private void updateDevice(int productId, MetaField[] metaFields, WebDashboard webDashboard, String userEmail) {
         List<Device> devices = deviceDao.getAllByProductId(productId);
         long now = System.currentTimeMillis();
         for (Device device : devices) {
@@ -93,6 +103,11 @@ public class WebUpdateDevicesMetaInProductLogic {
                     .toArray(new MetaField[0]);
             device.deleteMetaFields(deletedMetaFields);
 
+            if (webDashboard != null) {
+                device.webDashboard.update(webDashboard);
+            }
+
+            device.updatedAt = now;
             device.metadataUpdatedAt = now;
             device.metadataUpdatedBy = userEmail;
         }
