@@ -21,7 +21,7 @@ class Location extends Base {
         <Fieldset>
           <Fieldset.Legend type="dark">
                 <span className="device-metadata--location-field--title">
-                  <LinearIcon type="map"/>
+                  <LinearIcon type={field.icon || 'map'}/>
                   {field.name}
                 </span>
           </Fieldset.Legend>
