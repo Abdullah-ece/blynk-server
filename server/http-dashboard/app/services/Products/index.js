@@ -164,7 +164,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'e874',
+      [MetadataIconFieldName]: 'e60d',
       hardcoded: true,
     },
     {
