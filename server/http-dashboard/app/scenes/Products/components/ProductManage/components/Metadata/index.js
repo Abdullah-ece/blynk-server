@@ -465,10 +465,14 @@ class ProductMetadata extends React.Component {
       <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null} style={{minHeight: '500px'}}>
         <Metadata.ItemsList>
 
+          <div style={{fontSize: '18', fontWeight: '500', margin: '16px 0'}}>System Metadata</div>
+
           {this.getStaticFields({
             reduxFormFields: this.props.fields,
             metaFields: metaFields,
           })}
+
+          <div style={{fontSize: '18', fontWeight: '500', margin: '16px 0'}}>Custom Metadata</div>
 
           { metaFields && metaFields.size && (
             <this.SortableList items={dynamicMetaFields}
