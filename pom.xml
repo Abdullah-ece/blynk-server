@@ -177,7 +177,7 @@
         <acme4j-client.version>2.3</acme4j-client.version>
         <javax.mail.version>1.6.1</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
-        <jooq.version>3.11.5</jooq.version>
+        <jooq.version>3.10.8</jooq.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
