@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.dashboard.dto;
 
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.Unit;
@@ -44,6 +45,8 @@ public class OrganizationDTO {
 
     public final String parentOrgName;
 
+    public final Role[] roles;
+
     @JsonCreator
     public OrganizationDTO(@JsonProperty("id") int id,
                            @JsonProperty("name") String name,
@@ -59,7 +62,8 @@ public class OrganizationDTO {
                            @JsonProperty("products") Product[] products,
                            @JsonProperty("selectedProducts") int[] selectedProducts,
                            @JsonProperty("parentId") int parentId,
-                           @JsonProperty("parentOrgName") String parentOrgName) {
+                           @JsonProperty("parentOrgName") String parentOrgName,
+                           @JsonProperty("roles") Role[] roles) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -75,6 +79,7 @@ public class OrganizationDTO {
     this.selectedProducts = selectedProducts;
     this.parentId = parentId;
     this.parentOrgName = parentOrgName;
+    this.roles = roles;
   }
 
   public OrganizationDTO(Organization org, String parentOrgName) {
@@ -93,6 +98,7 @@ public class OrganizationDTO {
         this.selectedProducts = org.selectedProducts;
         this.parentId = org.parentId;
         this.parentOrgName = parentOrgName;
+        this.roles = org.roles;
     }
 
     @Override
