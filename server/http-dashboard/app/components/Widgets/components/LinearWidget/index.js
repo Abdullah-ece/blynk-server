@@ -81,13 +81,13 @@ class LinearWidget extends React.Component {
 
       const getLegendsTemplate = (data) => {
 
-        const getLegendTemplate = (name, value, color) => {
+        const getLegendTemplate = (index, name, value, color) => {
           return (
             `<div class="chart-tooltip-legends-legend">
                 <div class="chart-tooltip-legends-legend-circle" style="background: ${color}"></div>
                 <div class="chart-tooltip-legends-legend-name">${name}:</div>
                 <div class="chart-tooltip-legends-legend-value">
-                  ${String(value)} ${this.props.data.sources[0].dataStream.units ? Unit[this.props.data.sources[0].dataStream.units].abbreviation : ""}
+                  ${String(value)} ${this.props.data.sources[index].dataStream.units ? Unit[this.props.data.sources[index].dataStream.units].abbreviation : ""}
                 </div>
               </div>`
           );
@@ -95,8 +95,9 @@ class LinearWidget extends React.Component {
 
         const legends = [];
 
-        data.forEach((item) => {
+        data.forEach((item, index) => {
           legends.push(getLegendTemplate(
+            index,
             item.name,
             item.y,
             item.color

@@ -1,4 +1,4 @@
-package cc.blynk.server.api.http.dashboard.dto;
+package cc.blynk.server.core.model.dto;
 
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
@@ -56,7 +56,7 @@ public class DeviceDTO {
 
     public final String metadataUpdatedBy;
 
-    public final MetaField[] metaFields;
+    public MetaField[] metaFields;
 
     public final WebDashboard webDashboard;
 
@@ -150,6 +150,11 @@ public class DeviceDTO {
             this.productName = product.name;
             this.productLogoUrl = product.logoUrl;
         }
+    }
+
+    public DeviceDTO(Device device, Product product, MetaField[] metaFields) {
+        this(device, product);
+        this.metaFields = metaFields;
     }
 
     public DeviceDTO(Device device, Product product, Map<LogEventCountKey, Integer> counters) {

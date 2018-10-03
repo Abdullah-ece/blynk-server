@@ -12,11 +12,50 @@ export default class Field extends React.Component {
     title: React.PropTypes.string
   };
 
-  titledField({autoFocus = false, title, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  static getValidateStatus({validateOnBlur, displayError, input, meta: {active, touched, error, warning}}) {
+
+    let validateStatus = 'success';
+    let help = '';
+    if (touched && displayError && error) {
+      validateStatus = 'error';
+      help = error || warning || '';
+    }
+
+    if (!touched && displayError && input.value && error) {
+      validateStatus = 'error';
+      help = error || warning || '';
+    }
+
+    if (validateOnBlur && active) {
+      validateStatus = 'success';
+      help = '';
+    }
+
+    return {
+      validateStatus,
+      help
+    };
+
+  }
+
+  titledField({validateOnBlur = true, autoFocus = false, style = {}, className = '', title, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+
+    const {validateStatus, help} = Field.getValidateStatus({
+      validateOnBlur,
+      displayError,
+      input,
+      meta: {
+        touched,
+        error,
+        warning
+      }
+    });
+
     return (
-      <Form.Item validateStatus={touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success'}
-                 className="form-field"
-                 help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
+      <Form.Item validateStatus={validateStatus}
+                 className={`form-field ${className}`}
+                 style={style}
+                 help={help}>
         <FormItem>
           <FormItem.Title>
             { title }
@@ -30,12 +69,25 @@ export default class Field extends React.Component {
     );
   }
 
-  simpleField({autoFocus = false, displayError = true, validateStatus = false, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  simpleField({validateOnBlur = true, style = {}, className = '', autoFocus = false, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+
+    const {validateStatus, help} = Field.getValidateStatus({
+      validateOnBlur,
+      displayError,
+      input,
+      meta: {
+        touched,
+        error,
+        warning
+      }
+    });
+
     return (
       <Form.Item
-        validateStatus={validateStatus || (touched && displayError ? (error ? 'error' : warning ? 'warning' : '' ) : 'success')}
-        className="form-field"
-        help={touched && displayError ? (error || warning ? error || warning : '' ) : ''}>
+        validateStatus={validateStatus}
+        className={`form-field ${className}`}
+        style={style}
+        help={help}>
         <Input autoFocus={autoFocus || null} {...input} rows={rows} type={type} placeholder={placeholder}
                prefix={icon ? <Icon type={icon} className="form--field-icon"/> : null}/>
       </Form.Item>

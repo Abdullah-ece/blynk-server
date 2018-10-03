@@ -7,7 +7,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
@@ -377,7 +376,6 @@ public final class TestUtil {
                 mock(MailWrapper.class),
                 mock(GCMWrapper.class),
                 mock(SMSWrapper.class),
-                mock(SlackWrapper.class),
                 mock(BlockingIOProcessor.class),
                 dbFileName);
     }
@@ -389,7 +387,6 @@ public final class TestUtil {
                 mock(MailWrapper.class),
                 mock(GCMWrapper.class),
                 mock(SMSWrapper.class),
-                mock(SlackWrapper.class),
                 new BlockingIOProcessor(
                         serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 1),
                         serverProperties.getIntProperty("notifications.queue.limit", 100)

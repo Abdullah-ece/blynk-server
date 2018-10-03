@@ -199,6 +199,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         Path path;
         String uri = request.uri();
+        if (uri.contains("/..")) {
+            sendError(ctx, NOT_FOUND);
+            return;
+        }
         String[] uriParts = uri.split("\\?");
         uri = uriParts[0];
 

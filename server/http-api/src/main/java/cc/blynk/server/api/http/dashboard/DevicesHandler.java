@@ -16,7 +16,6 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.core.http.utils.AdminHttpUtil;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.CommentDTO;
-import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
@@ -26,6 +25,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
@@ -133,7 +133,7 @@ public class DevicesHandler extends BaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
         organizationDao.verifyUserAccessToDevice(user, device);
 
-        blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeEvent(() -> {
             Response response;
             try {
                 String userComment = comment == null ? null : comment.comment;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import RangeModal from './modal';
 import {TimeRange} from 'services/Metadata';
 
@@ -16,7 +16,7 @@ class Range extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         from {TimeRange.fromMinutes(field.from)} to {TimeRange.fromMinutes(field.to)}
       </Fieldset>
     );

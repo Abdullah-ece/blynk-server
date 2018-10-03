@@ -87,6 +87,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
+        log.trace("Device {} goes online DB event.", device.id);
         reportingDBManager.insertSystemEvent(device.id, EventType.ONLINE);
 
         channel.flush();

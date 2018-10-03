@@ -43,11 +43,13 @@ public class WebCreateProductLogic {
 
         Product product = productAndOrgIdDTO.product;
 
-        if (product == null || product.notValid()) {
-            log.error("Product is empty or has no name {} for {}.", product, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
+        if (product == null) {
+            log.error("Product is empty {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Product is empty."), ctx.voidPromise());
             return;
         }
+
+        product.validate();
 
         Organization organization = organizationDao.getOrgById(productAndOrgIdDTO.orgId);
 
@@ -77,8 +79,8 @@ public class WebCreateProductLogic {
         }
 
         product = organizationDao.createProduct(productAndOrgIdDTO.orgId, product);
-        log.debug("Product for {} (orgId={}) successfully created. OrgId - {}, {}.",
-                user.email, user.orgId, productAndOrgIdDTO.orgId, product);
+        log.debug("Product for {} and orgId={} successfully created. UserOrgId={}, {}.",
+                user.email, productAndOrgIdDTO.orgId, user.orgId, product);
 
         if (ctx.channel().isWritable()) {
             String productString = product.toString();

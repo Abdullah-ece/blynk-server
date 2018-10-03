@@ -30,7 +30,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
@@ -49,6 +48,10 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -84,12 +87,13 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
@@ -99,7 +103,6 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE_META
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_USER_INFO;
-import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE_METAFIELD;
 
 /**
  * The Blynk Project.
@@ -208,6 +211,8 @@ public final class CommandParserUtil {
                 return DELETE_DEVICE;
             case "getdevices" :
                 return GET_DEVICES;
+            case "getdevice" :
+                return MOBILE_GET_DEVICE;
 
             case "createtag" :
                 return CREATE_TAG;
@@ -287,8 +292,8 @@ public final class CommandParserUtil {
                 return WEB_GET_ORGS;
             case "webgetorgusers" :
                 return WEB_GET_ORG_USERS;
-            case "webgetorglocations" :
-                return WEB_GET_ORG_LOCATIONS;
+            case "webgetproductlocations" :
+                return WEB_GET_PRODUCT_LOCATIONS;
             case "webcaninviteuser" :
                 return WEB_CAN_INVITE_USER;
             case "webupdateorg" :
@@ -326,9 +331,13 @@ public final class CommandParserUtil {
             case "webdeletedevice" :
                 return WEB_DELETE_DEVICE;
             case "getdevicemetafields" :
-                return GET_DEVICE_METAFIELDS;
+                return MOBILE_GET_DEVICE_METAFIELDS;
             case "updatedevicemetafield" :
-                return UPDATE_DEVICE_METAFIELD;
+                return MOBILE_UPDATE_DEVICE_METAFIELD;
+            case "webgetmetafield" :
+                return WEB_GET_METAFIELD;
+            case "getdevicesbyreferencemetafield" :
+                return MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

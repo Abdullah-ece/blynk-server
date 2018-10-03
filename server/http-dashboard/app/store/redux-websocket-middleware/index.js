@@ -5,6 +5,8 @@ import WS_ACTIONS, {
   _websocketMessage
 } from './actions';
 
+let pingInterval = null;
+
 const onSocketOpen = (params) => {
   const {socket, resolve, store, options} = params;
 
@@ -15,7 +17,7 @@ const onSocketOpen = (params) => {
       if(socket && socket.send) {
         socket.send('');
       }
-      setTimeout(keepAlive, timeout);
+      pingInterval = setTimeout(keepAlive, timeout);
     }
 
     if(options.isDebugMode) {
@@ -125,6 +127,10 @@ export const createWsMiddleware = (options = {}) => {
     };
 
     if(action && action.type === WS_ACTIONS.WEBSOCKET_CONNECT || action.type === WS_ACTIONS.WEBSOCKET_CLOSE) {
+
+      if(pingInterval)
+        clearTimeout(pingInterval);
+
       next(action);
       return new Promise((resolve, reject) => {
         socket = wsConnect({

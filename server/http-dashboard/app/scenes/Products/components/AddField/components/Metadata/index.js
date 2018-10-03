@@ -9,76 +9,96 @@ export default class AddMetadataFields extends Base {
     {
       type: Metadata.Fields.TEXT,
       title: 'Text',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'text-size',
     },
     {
       type: Metadata.Fields.NUMBER,
       title: 'Number',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'dial',
     },
     {
       type: Metadata.Fields.UNIT,
       title: 'Unit',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'expand3',
     },
     {
       type: Metadata.Fields.RANGE,
       title: 'Time Range',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'history2',
     },
     {
       type: Metadata.Fields.CONTACT,
       title: 'Contact',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'contacts',
     },
     {
       type: Metadata.Fields.TIME,
       title: 'Time',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'clock3',
     },
     {
       type: Metadata.Fields.COST,
       title: 'Cost',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'receipt',
     },
     {
       type: Metadata.Fields.COORDINATES,
       title: 'Coordinates',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'map-marker',
     },
     {
       type: Metadata.Fields.SWITCH,
       title: 'Switch',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'toggle-off',
     },
     {
       type: Metadata.Fields.DEVICE_REFERENCE,
       title: 'Device Reference',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'link',
     },
     {
       type: Metadata.Fields.LIST,
       title: 'List',
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'list4',
     }
   ];
 
   typesPredefinedValues = {
+    [Metadata.Fields.TEXT]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e9a2',
+    },
+    [Metadata.Fields.NUMBER]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e776',
+    },
+    [Metadata.Fields.UNIT]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e951',
+    },
+    [Metadata.Fields.RANGE]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e8e4',
+    },
+    [Metadata.Fields.CONTACT]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e71a',
+    },
+    [Metadata.Fields.TIME]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e8e8',
+    },
+    [Metadata.Fields.COORDINATES]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e77a',
+    },
+    [Metadata.Fields.SWITCH]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e670',
+    },
+    [Metadata.Fields.LIST]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e930',
+    },
+    [Metadata.Fields.DEVICE_REFERENCE]: {
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e915',
+    },
     [Metadata.Fields.COST]: {
       values: {
         currency: Currency.USD.key
-      }
+      },
+      ...MetadataInitialValues,
+      [MetadataIconFieldName]: 'e757',
     }
   };
 

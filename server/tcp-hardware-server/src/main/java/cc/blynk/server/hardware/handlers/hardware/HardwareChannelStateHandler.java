@@ -1,15 +1,12 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.DeviceDao;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -41,16 +38,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private final GCMWrapper gcmWrapper;
     private final String pushNotificationBody;
     private final ReportingDBManager reportingDBManager;
-    private final OrganizationDao organizationDao;
-    private final DeviceDao deviceDao;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
         this.pushNotificationBody = holder.textHolder.pushNotificationBody;
         this.reportingDBManager = holder.reportingDBManager;
-        this.organizationDao = holder.organizationDao;
-        this.deviceDao = holder.deviceDao;
     }
 
     @Override
@@ -63,15 +56,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 var device = state.device;
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
+                reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
 
-                Product product = organizationDao.getProductById(device.productId);
-                int ignorePeriod = product == null ? 0 : product.getIgnorePeriod();
-                if (ignorePeriod > 0) {
-                    ctx.executor().schedule(
-                            new DelayedOfflineSystemEvent(device), ignorePeriod, TimeUnit.MILLISECONDS);
-                } else {
-                    sentOfflineMessage(ctx, session, state.dash, device);
-                }
+                sentOfflineMessage(ctx, session, state.dash, device);
             }
         }
     }
@@ -97,9 +84,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             log.trace("Changing device status. Device {}, dashId {}", device, dashBoard.id);
             device.disconnected();
         }
-
-        //do insert anyway, as device was disconnected even it was relogged quickly
-        reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
 
         if (!dashBoard.isActive) {
             return;
@@ -130,27 +114,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             //https://github.com/blynkkk/blynk-server/issues/493
             ctx.executor().schedule(new DelayedPush(device, notification, message, dashId),
                     notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
-        }
-    }
-
-    private final class DelayedOfflineSystemEvent implements Runnable {
-
-        private final Device device;
-        private final long submittedTime;
-
-        DelayedOfflineSystemEvent(Device device) {
-            this.device = device;
-            this.submittedTime = System.currentTimeMillis();
-        }
-
-        @Override
-        public void run() {
-            if (submittedTime > device.connectTime) {
-                reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
-            } else {
-                log.debug("Hardware was logged. Delayed task skipped. Device id {}, token {}.",
-                        device.id, device.token);
-            }
         }
     }
 

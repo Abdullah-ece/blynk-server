@@ -1,11 +1,11 @@
 package cc.blynk.server.web.handlers.logic.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -60,7 +60,7 @@ public class WebGetDeviceLogic {
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         //todo show only devices for specific org?
-        //Product product = org.getProduct(device.productId);
+        //Product product = org.getProductOrThrow(device.productId);
         Product product = organizationDao.getProductById(device.productId);
 
         if (product == null) {

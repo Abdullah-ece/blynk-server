@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.web.product.MetadataType;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -28,6 +29,7 @@ import java.util.List;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -77,6 +79,47 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertEquals("This is my description", logEvents.get(0).description);
     }
 
+    @Test
+    //https://github.com/blynkkk/knight/issues/1276
+    public void testDeviceQuicklyReconnects() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(hardwareConnected(1, "0-" + device.id));
+        newHardClient.stop();
+        client.reset();
+
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + device.token);
+        newHardClient.verifyResult(ok(1));
+        client.verifyResult(hardwareConnected(1, "0-" + + device.id));
+        newHardClient.stop();
+        client.reset();
+
+        //we have to wait for DB.
+        sleep(500);
+
+        long now = System.currentTimeMillis();
+        client.getTimeline(orgId, device.id, null, null, 0, now, 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+        assertEquals(0, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        List<LogEvent> logEvents = timeLineResponse.eventList;
+        assertNotNull(timeLineResponse.eventList);
+        assertEquals(4, logEvents.size());
+        assertEquals(EventType.OFFLINE, logEvents.get(0).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(1).eventType);
+        assertEquals(EventType.OFFLINE, logEvents.get(2).eventType);
+        assertEquals(EventType.ONLINE, logEvents.get(3).eventType);
+    }
+
     private static Device createProductAndDevice(AppWebSocketClient client, int orgId) throws Exception {
         Product product = new Product();
         product.name = "My product";
@@ -84,16 +127,16 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", 2, false, null, 0, 1000, 123D),
-                new ContactMetaField(6, "Farm of Smith", 1, false, null, "Tech Support",
+                new NumberMetaField(1, "Jopa", 2, false, false, false, null, 0, 1000, 123D, 1),
+                new ContactMetaField(6, "Farm of Smith", 1, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new TextMetaField(7, "Device Owner", 2, false, null, "owner@blynk.cc")
+                new TextMetaField(7, "Device Owner", 2, false, false, false, null, "owner@blynk.cc")
         };
 
-        CriticalEvent criticalEvent = new CriticalEvent(
+        Event criticalEvent = new CriticalEvent(
                 1,
                 "Temp is super high",
                 "This is my description",
@@ -107,7 +150,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 null
         );
 
-        OnlineEvent onlineEvent = new OnlineEvent(
+        Event onlineEvent = new OnlineEvent(
                 2,
                 "Device is online!",
                 null,
@@ -119,9 +162,23 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
                 null
         );
 
+        Event offlineEvent = new OfflineEvent(
+                3,
+                "Device is offline!",
+                null,
+                false,
+                new EventReceiver[] {
+                        new EventReceiver(6, MetadataType.Contact, "Farm of Smith")
+                },
+                null,
+                null,
+                0
+        );
+
         product.events = new Event[] {
                 criticalEvent,
-                onlineEvent
+                onlineEvent,
+                offlineEvent
         };
 
         client.createProduct(orgId, product);

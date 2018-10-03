@@ -1,6 +1,6 @@
 import React from 'react';
 import Base from '../Base';
-import {Fieldset} from 'components';
+import {Fieldset, LinearIcon} from 'components';
 import CoordinatesModal from './modal';
 
 class Coordinates extends Base {
@@ -15,7 +15,7 @@ class Coordinates extends Base {
 
     return (
       <Fieldset>
-        <Fieldset.Legend type="dark">{field.name}</Fieldset.Legend>
+        <Fieldset.Legend type="dark"> <LinearIcon type={field.icon || 'cube'}/> {field.name}         </Fieldset.Legend>
         {field.lat || <i>No Value</i>}, {field.lon || <i>No Value</i>}
       </Fieldset>
     );

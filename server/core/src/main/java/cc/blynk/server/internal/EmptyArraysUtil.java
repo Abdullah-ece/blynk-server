@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.utils.IntArray;
 
 /**
  * The Blynk Project.
@@ -28,8 +29,8 @@ public final class EmptyArraysUtil {
     private EmptyArraysUtil() {
     }
 
-    public static final int[] EMPTY_INTS = {};
     public static final WebSource[] EMPTY_WEB_SOURCES = {};
+    public static final int[] EMPTY_INTS = IntArray.EMPTY;
     public static final DashBoard[] EMPTY_DASHBOARDS = {};
     public static final Tag[] EMPTY_TAGS = {};
     public static final Device[] EMPTY_DEVICES = {};

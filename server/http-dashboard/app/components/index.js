@@ -19,4 +19,5 @@ export FontAwesome      from './FontAwesome';
 export Grids            from './Grids';
 export Cards            from './Cards';
 export LinearIcon       from './LinearIcon';
+export LocationAutocomplete from './LocationAutocomplete';
 export UI from './UI';

@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertEquals;
@@ -44,6 +45,21 @@ public class AccountAPIWebsocketTest extends APIBaseTest {
         assertNotNull(user);
         assertEquals("user@blynk.cc", user.email);
         assertEquals("user@blynk.cc", user.name);
+    }
+
+    @Test
+    public void logout() throws Exception {
+        AppWebSocketClient appWebSocketClient = TestUtil.loggedDefaultClient(regularUser);
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(1);
+        assertNotNull(user);
+        appWebSocketClient.logout();
+        appWebSocketClient.verifyResult(ok(2));
+
+        while (!appWebSocketClient.isClosed()) {
+            sleep(50);
+        }
+        assertTrue(appWebSocketClient.isClosed());
     }
 
     @Test

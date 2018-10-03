@@ -156,7 +156,7 @@ class DevicesList extends React.Component {
 
       if (nameToSearch) {
         return devices.filter(device =>
-          device.name.toLowerCase().indexOf(nameToSearch) !== -1
+          device && device.name && device.name.toLowerCase().indexOf(nameToSearch) !== -1
         );
       }
     }

@@ -21,6 +21,8 @@ public enum MetadataType {
     Coordinates,
     Address,
     List,
-    DeviceReference
+    DeviceReference,
+    Location,
+    Tz
 
 }

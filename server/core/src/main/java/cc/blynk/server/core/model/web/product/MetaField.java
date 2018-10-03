@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.EmailMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
+import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -16,12 +17,20 @@ import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TimeZoneMetaField;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_NAME;
+import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_OWNER;
 
 /**
  * The Blynk Project.
@@ -49,7 +58,9 @@ import org.jooq.SelectSelectStep;
         @JsonSubTypes.Type(value = CoordinatesMetaField.class, name = "Coordinates"),
         @JsonSubTypes.Type(value = AddressMetaField.class, name = "Address"),
         @JsonSubTypes.Type(value = ListMetaField.class, name = "List"),
-        @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference")
+        @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference"),
+        @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location"),
+        @JsonSubTypes.Type(value = TimeZoneMetaField.class, name = "Tz")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
@@ -60,16 +71,33 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final int roleId;
 
+    public final boolean includeInProvision;
+
+    public final boolean isMandatory;
+
     public final boolean isDefault;
 
     public final String icon;
 
-    public MetaField(int id, String name, int roleId, boolean isDefault, String icon) {
+    public MetaField(int id, String name, int roleId,
+                     boolean includeInProvision, boolean isMandatory, boolean isDefault, String icon) {
         this.id = id;
         this.name = name;
         this.roleId = roleId;
+        this.includeInProvision = includeInProvision;
+        this.isMandatory = isMandatory;
         this.isDefault = isDefault;
         this.icon = icon;
+    }
+
+    public static List<MetaField> filter(MetaField[] metaFields) {
+        var resultList = new ArrayList<MetaField>();
+        for (MetaField metaField : metaFields) {
+            if (metaField.includeInProvision) {
+                resultList.add(metaField);
+            }
+        }
+        return resultList;
     }
 
     public abstract MetaField copySpecificFieldsOnly(MetaField metaField);
@@ -84,6 +112,20 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public String getNotificationEmail() {
         return null;
+    }
+
+    public boolean isDeviceNameMetaField() {
+        return DEVICE_NAME.equalsIgnoreCase(name);
+    }
+
+    public boolean isDeviceOwnerMetaField() {
+        return DEVICE_OWNER.equalsIgnoreCase(name);
+    }
+
+    public void validate() {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalCommandBodyException("Metafield is not valid. Name is empty.");
+        }
     }
 
     @Override

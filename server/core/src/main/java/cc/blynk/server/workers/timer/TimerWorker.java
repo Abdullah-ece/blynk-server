@@ -20,14 +20,13 @@ import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
+import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -102,7 +101,7 @@ public class TimerWorker implements Runnable {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
                     add(userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, -1L, -1L, rule.triggerTime, rule.actions);
+                            rule.triggerTime.id, rule.triggerTime, rule.actions);
                 }
             }
         }
@@ -128,8 +127,7 @@ public class TimerWorker implements Runnable {
     }
 
     private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
-                     int additionalId, long deviceTilesId, long templateId,
-                     TimerTime time, BaseAction[] actions) {
+                     int additionalId, TimerTime time, BaseAction[] actions) {
         ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
         for (BaseAction action : actions) {
             if (action.isValid()) {
@@ -139,7 +137,7 @@ public class TimerWorker implements Runnable {
         if (!validActions.isEmpty()) {
             getExecutorOrCreate(time.time).put(
                     new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
-                            deviceTilesId, templateId, time),
+                            -1L, -1L, time),
                     validActions.toArray(new BaseAction[0]));
         }
     }
@@ -245,16 +243,14 @@ public class TimerWorker implements Runnable {
                 if (key.isTilesTimer()) {
                     Widget widget = dash.getWidgetById(key.deviceTilesId);
                     if (widget instanceof DeviceTiles) {
-                        List<Integer> list = new ArrayList<>();
+                        IntArray intArray = new IntArray();
                         DeviceTiles deviceTiles = (DeviceTiles) widget;
                         for (Tile tile : deviceTiles.tiles) {
                             if (tile.templateId == key.templateId) {
-                                list.add(tile.deviceId);
+                                intArray.add(tile.deviceId);
                             }
                         }
-                        if (list.size() > 0) {
-                            deviceIds = ArrayUtil.convertIntegersToInt(list);
-                        }
+                        deviceIds = intArray.toArray();
                     }
                 } else {
                     Target target = dash.getTarget(key.deviceId);

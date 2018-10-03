@@ -7,9 +7,9 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Arrays;
@@ -120,7 +120,19 @@ public class Device implements Target {
         return null;
     }
 
+    public MetaField findMetaFieldByIdOrThrow(int id) {
+        MetaField metaField = findMetaFieldById(id);
+        if (metaField == null) {
+            throw new IllegalCommandException("Metafield with passed id not found.");
+        }
+        return metaField;
+    }
+
     public int findMetaFieldIndex(int id) {
+        return findMetaFieldIndex(this.metaFields, id);
+    }
+
+    private static int findMetaFieldIndex(MetaField[] metaFields, int id) {
         for (int i = 0; i < metaFields.length; i++) {
             if (metaFields[i].id == id) {
                 return i;
@@ -129,13 +141,16 @@ public class Device implements Target {
         return -1;
     }
 
-    public int findMetaFieldIndexOrThrow(int id) {
-        for (int i = 0; i < metaFields.length; i++) {
-            if (metaFields[i].id == id) {
-                return i;
-            }
+    private int findMetaFieldIndexOrThrow(int id) {
+        return findMetaFieldIndexOrThrow(this.metaFields, id);
+    }
+
+    private static int findMetaFieldIndexOrThrow(MetaField[] metaFields, int id) {
+        int index = findMetaFieldIndex(metaFields, id);
+        if (index == -1) {
+            throw new IllegalCommandException("Metafield with passed id not found.");
         }
-        throw new IllegalCommandException("Metafield with passed id not found.");
+        return index;
     }
 
     public void updateMetaFields(MetaField[] updatedMetaFields) {
@@ -164,8 +179,24 @@ public class Device implements Target {
         this.metaFields = updatedSet.toArray(new MetaField[0]);
     }
 
-    public void updateMetafield(MetaField updated) {
-        this.metaFields = ArrayUtil.copyAndReplace(metaFields, updated, findMetaFieldIndexOrThrow(updated.id));
+    public void updateMetafields(MetaField[] updatedMetafields) {
+        MetaField[] localCopy = Arrays.copyOf(this.metaFields, this.metaFields.length);
+        for (MetaField updated : updatedMetafields) {
+            int i = findMetaFieldIndexOrThrow(localCopy, updated.id);
+            if (i != -1) {
+                updateNameForDeviceNameMeta(updated);
+                localCopy[i] = updated;
+            }
+        }
+
+        this.metaFields = localCopy;
+        this.metadataUpdatedAt = System.currentTimeMillis();
+    }
+
+    private void updateNameForDeviceNameMeta(MetaField updated) {
+        if (updated instanceof TextMetaField && updated.isDeviceNameMetaField()) {
+            this.name = ((TextMetaField) updated).value;
+        }
     }
 
     @Override

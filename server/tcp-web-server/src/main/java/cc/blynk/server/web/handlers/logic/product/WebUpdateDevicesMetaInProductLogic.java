@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -50,43 +51,66 @@ public class WebUpdateDevicesMetaInProductLogic {
 
         Product updatedProduct = productAndOrgIdDTO.product;
 
-        if (updatedProduct == null || updatedProduct.notValid()) {
-            log.error("Product is empty or has no name {} for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is empty or has no name."), ctx.voidPromise());
+        if (updatedProduct == null) {
+            log.error("Product is empty for {}.", user.email);
+            ctx.writeAndFlush(json(message.id, "Product is empty."), ctx.voidPromise());
             return;
         }
 
-        Product existingProduct = organizationDao.getProduct(productAndOrgIdDTO.orgId, updatedProduct.id);
+        updatedProduct.validate();
 
-        if (updatedProduct.notValid()) {
-            log.error("Product {} is not valid for {}.", updatedProduct, user.email);
-            ctx.writeAndFlush(json(message.id, "Product is not valid."), ctx.voidPromise());
-            return;
+        Product existingProduct = organizationDao.getProductOrThrow(productAndOrgIdDTO.orgId, updatedProduct.id);
+
+        int[] subProductIds = organizationDao.subProductIds(productAndOrgIdDTO.orgId, updatedProduct.id);
+
+        WebDashboard changedWebDashboard = null;
+        if (!existingProduct.webDashboard.equals(updatedProduct.webDashboard)) {
+            log.debug("Dashboard was changed. Updating devices dashboard for {}.", user.email);
+            changedWebDashboard = updatedProduct.webDashboard;
         }
 
         existingProduct.update(updatedProduct);
 
-        List<Device> devices = deviceDao.getAllByProductId(updatedProduct.id);
-        long now = System.currentTimeMillis();
-        for (Device device : devices) {
-            device.updateMetaFields(updatedProduct.metaFields);
+        updateDevice(updatedProduct.id, updatedProduct.metaFields, changedWebDashboard, user.email);
 
-            MetaField[] addedMetaFields = ArrayUtil.substruct(updatedProduct.metaFields, device.metaFields)
-                    .toArray(new MetaField[0]);
-            device.addMetaFields(addedMetaFields);
-
-            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, updatedProduct.metaFields)
-                    .toArray(new MetaField[0]);
-            device.deleteMetaFields(deletedMetaFields);
-
-            device.metadataUpdatedAt = now;
-            device.metadataUpdatedBy = user.email;
+        for (int subProductId : subProductIds) {
+            Product subProduct = organizationDao.getProductById(subProductId);
+            if (subProduct != null) {
+                subProduct.update(updatedProduct);
+            }
+            updateDevice(subProductId, updatedProduct.metaFields, changedWebDashboard, user.email);
         }
 
         if (ctx.channel().isWritable()) {
             String productString = existingProduct.toString();
             StringMessage response = makeUTF8StringMessage(message.command, message.id, productString);
             ctx.writeAndFlush(response, ctx.voidPromise());
+        }
+    }
+
+    //todo optimize
+    private void updateDevice(int productId, MetaField[] metaFields, WebDashboard webDashboard, String userEmail) {
+        List<Device> devices = deviceDao.getAllByProductId(productId);
+        log.debug("Updating {} devices meta for productId {} for {}", devices.size(), productId, userEmail);
+        long now = System.currentTimeMillis();
+        for (Device device : devices) {
+            device.updateMetaFields(metaFields);
+
+            MetaField[] addedMetaFields = ArrayUtil.substruct(metaFields, device.metaFields)
+                    .toArray(new MetaField[0]);
+            device.addMetaFields(addedMetaFields);
+
+            MetaField[] deletedMetaFields = ArrayUtil.substruct(device.metaFields, metaFields)
+                    .toArray(new MetaField[0]);
+            device.deleteMetaFields(deletedMetaFields);
+
+            if (webDashboard != null) {
+                device.webDashboard.update(webDashboard);
+            }
+
+            device.updatedAt = now;
+            device.metadataUpdatedAt = now;
+            device.metadataUpdatedBy = userEmail;
         }
     }
 

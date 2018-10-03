@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -85,7 +86,7 @@ public class OrganizationDao {
         return false;
     }
 
-    public Product getProduct(int orgId, int productId) {
+    public Product getProductOrThrow(int orgId, int productId) {
         Organization org = getOrgByIdOrThrow(orgId);
         for (Product product : org.products) {
             if (product.id == productId) {
@@ -95,6 +96,20 @@ public class OrganizationDao {
         log.error("Product with passed id {} not found in organization with id {}.", productId, orgId);
         throw new ProductNotFoundException("Product with passed id " + productId
                 + " not found in organization with id " + orgId);
+    }
+
+    public int[] subProductIds(int parentOrgId, int parentProductId) {
+        IntArray subProductIds = new IntArray();
+        for (Organization org : organizations.values()) {
+            if (org.parentId == parentOrgId) {
+                for (Product subProduct : org.products) {
+                    if (subProduct.parentId == parentProductId) {
+                        subProductIds.add(subProduct.id);
+                    }
+                }
+            }
+        }
+        return subProductIds.toArray();
     }
 
     public Collection<Organization> getAll(User user) {

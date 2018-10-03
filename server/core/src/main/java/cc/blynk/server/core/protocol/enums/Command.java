@@ -23,8 +23,8 @@ public final class Command {
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
 
-    public static final short GET_DEVICE_METAFIELDS = 10;
-    public static final short UPDATE_DEVICE_METAFIELD = 11;
+    public static final short MOBILE_GET_DEVICE_METAFIELDS = 10;
+    public static final short MOBILE_UPDATE_DEVICE_METAFIELD = 11;
 
     //HARDWARE commands
     public static final short TWEET = 12;
@@ -76,6 +76,7 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
+    public static final short GET_DEVICE = 50;
 
     public static final short UPDATE_FACE = 51;
 
@@ -145,7 +146,7 @@ public final class Command {
     public static final short WEB_GET_ORG = 106;
     public static final short WEB_GET_ORGS = 107;
     public static final short WEB_GET_ORG_USERS = 108;
-    public static final short WEB_GET_ORG_LOCATIONS = 109;
+    public static final short WEB_GET_PRODUCT_LOCATIONS = 109;
     public static final short WEB_CAN_INVITE_USER = 110;
     public static final short WEB_UPDATE_ORG = 111;
     public static final short WEB_CREATE_PRODUCT = 112;
@@ -164,8 +165,10 @@ public final class Command {
     public static final short WEB_UPDATE_DEVICE_METAFIELD = 126;
     public static final short WEB_GET_DEVICE_TIMELINE = 127;
     public static final short WEB_DELETE_DEVICE = 128;
+    public static final short WEB_GET_METAFIELD = 129;
+    public static final short MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD = 130;
+    public static final short MOBILE_GET_DEVICE = 131;
 
-    //right now we have less than 100 commands
     public static final int LAST_COMMAND_INDEX = 150;
 
     private Command() {
@@ -216,6 +219,7 @@ public final class Command {
             Map.entry(CREATE_DEVICE, "CreateDevice"),
             Map.entry(UPDATE_DEVICE, "UpdateDevice"),
             Map.entry(DELETE_DEVICE, "DeleteDevice"),
+            Map.entry(GET_DEVICE, "GetDevice"),
             Map.entry(GET_DEVICES, "GetDevices"),
             Map.entry(ADD_ENERGY, "AddEnergy"),
             Map.entry(GET_ENERGY, "GetEnergy"),
@@ -243,8 +247,8 @@ public final class Command {
             Map.entry(DELETE_REPORT, "deleteReport"),
             Map.entry(EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
-            Map.entry(GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
-            Map.entry(UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
+            Map.entry(MOBILE_GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
+            Map.entry(MOBILE_UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
@@ -268,7 +272,7 @@ public final class Command {
             Map.entry(WEB_GET_ORG, "WebGetOrg"),
             Map.entry(WEB_GET_ORGS, "WebGetOrgs"),
             Map.entry(WEB_GET_ORG_USERS, "WebGetOrgUsers"),
-            Map.entry(WEB_GET_ORG_LOCATIONS, "WebGetOrgLocations"),
+            Map.entry(WEB_GET_PRODUCT_LOCATIONS, "WebGetProductLocations"),
             Map.entry(WEB_CAN_INVITE_USER, "WebCanInviteUser"),
             Map.entry(WEB_CREATE_PRODUCT, "WebCreateProduct"),
             Map.entry(WEB_UPDATE_PRODUCT, "WebUpdateProduct"),
@@ -287,7 +291,9 @@ public final class Command {
             Map.entry(WEB_LOGIN_VIA_INVITE, "WebLoginViaInvite"),
             Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
-            Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice")
+            Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
+            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield"),
+            Map.entry(MOBILE_GET_DEVICE, "MobileGetDevice")
     );
 
     public static String getNameByValue(short val) {

@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -105,6 +106,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public Report parseReportFromResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.parseReport(getBody(expectedMessageOrder), 0);
+    }
+
+    public DeviceDTO parseDeviceDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO.class);
     }
 
     public BinaryMessage getBinaryBody() throws Exception {
@@ -289,8 +294,16 @@ public class TestAppClient extends BaseTestAppClient {
         send("getDeviceMetafields " + deviceId);
     }
 
+    public void getDevice(int deviceId) {
+        send("getDevice " + deviceId);
+    }
+
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {
         send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + metaField.toString());
+    }
+
+    public void updateDeviceMetafields(int deviceId, MetaField[] metaFields) {
+        send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + JsonParser.toJson(metaFields));
     }
 
     public void createReport(int dashId, Report report) {
@@ -303,6 +316,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void updateReport(int dashId, Report report) {
         send("updateReport " + dashId + BODY_SEPARATOR + report.toString());
+    }
+
+    public void getDevicesByReferenceMetafield(int deviceId, int metafieldId) {
+        send("getDevicesByReferenceMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
     public void getWidget(int dashId, long widgetId) {
@@ -319,6 +336,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void exportReport(int dashId, int reportId) {
         send("exportReport " + dashId + BODY_SEPARATOR + reportId);
+    }
+
+    public void getDevice(int dashId, int deviceId) {
+        send("getDevice " + dashId + BODY_SEPARATOR + deviceId);
     }
 
     public void send(String line) {

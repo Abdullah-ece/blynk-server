@@ -8,6 +8,7 @@ class LinearIcon extends React.Component {
 
   static propTypes = {
     type: PropTypes.string,
+    style: PropTypes.string,
   };
 
   render() {
@@ -1981,7 +1982,7 @@ class LinearIcon extends React.Component {
     delete icons['0'];
 
     return (
-      <span className={`linearicon-${this.props.type}`}/>
+      <span className={`linearicon-${this.props.type}`} style={this.props.style || {}}/>
     );
   }
 

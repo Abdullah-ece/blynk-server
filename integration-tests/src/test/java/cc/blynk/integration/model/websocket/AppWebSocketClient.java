@@ -17,10 +17,10 @@ package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
-import cc.blynk.server.api.http.dashboard.dto.DeviceDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
@@ -31,6 +31,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
+import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -201,6 +202,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("getAccount");
     }
 
+    public void logout() {
+        send("logout");
+    }
+
     public void deleteDevice(int orgId, int deviceId) {
         send("webDeleteDevice " + orgId + BODY_SEPARATOR + deviceId);
     }
@@ -219,6 +224,18 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public void getDevices(int orgId) {
         send("webGetDevices " + orgId);
+    }
+
+    public void getProductLocations(int productId) {
+        send("webGetProductLocations " + productId);
+    }
+
+    public void getProductLocations(int productId, String searchString) {
+        send("webGetProductLocations " + productId + BODY_SEPARATOR + searchString);
+    }
+
+    public void getMetafield(int deviceId, int metafieldId) {
+        send("webGetMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
     public void getOrganization(int orgId) {
@@ -273,8 +290,16 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), DeviceDTO[].class);
     }
 
+    public LocationDTO[] parseLocationsDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), LocationDTO[].class);
+    }
+
     public User parseAccount(int expectedMessageOrder) throws Exception {
         return JsonParser.parseUserFromString(getBody(expectedMessageOrder));
+    }
+
+    public MetaField parseMetafield(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseMetafield(getBody(expectedMessageOrder), 0);
     }
 
     public void send(String line) {

@@ -1,0 +1,60 @@
+@import "components/Layout/style-guide";
+
+.device-metadata--location-field--title {
+  [class^="linearicon-"], [class*=" linearicon-"] {
+    margin-right: 16px;
+  }
+}
+
+.device-metadata--location-field--description {
+  margin-top: 16px;
+}
+
+.device-metadata--location-field--add-location-btn {
+  margin-top: 5px;
+}
+
+.device-metadata--location-field--add-new {
+  color: @color-primary;
+  border-top: 1px solid @color-dark-grey-25;
+}
+
+.device-metadata--location-field--info-list {
+  margin-top: 16px;
+}
+
+.device-metadata--location-field--info-list-item {
+  margin-top: 8px;
+}
+
+.device-metadata-modal--location .ant-modal {
+  width: 820px !important;
+}
+
+.device-metadata--location-field--site-name {
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.device-metadata--location-field--info-list--primary {
+  margin-top: 16px;
+}
+
+.device-metadata--location-field--map-overlay {
+  transition: .15s;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #ffffff99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-metadata--item:hover {
+  .device-metadata--location-field--map-overlay {
+    opacity: 1;
+  }
+}

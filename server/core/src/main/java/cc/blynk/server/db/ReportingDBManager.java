@@ -139,7 +139,7 @@ public class ReportingDBManager implements Closeable {
 
     public void insertSystemEvent(int deviceId, EventType eventType) {
         if (isDBEnabled()) {
-            blockingIOProcessor.executeDB(() -> eventDBDao.insertSystemEvent(deviceId, eventType));
+            blockingIOProcessor.executeEvent(() -> eventDBDao.insertSystemEvent(deviceId, eventType));
         }
     }
 

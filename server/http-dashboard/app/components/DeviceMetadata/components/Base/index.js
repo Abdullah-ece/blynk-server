@@ -2,6 +2,7 @@ import React from 'react';
 import {Modal} from 'components';
 import {Button} from 'antd';
 import Item from '../Item';
+import {Metadata} from 'services/Products';
 
 import './styles.less';
 
@@ -9,6 +10,7 @@ class Base extends React.Component {
 
   static propTypes = {
     form: React.PropTypes.string,
+    modalWrapClassName: React.PropTypes.string,
     data: React.PropTypes.object,
     onChange: React.PropTypes.func,
     initialize: React.PropTypes.func,
@@ -16,6 +18,8 @@ class Base extends React.Component {
     values: React.PropTypes.object,
     errors: React.PropTypes.object,
     account: React.PropTypes.object,
+    isEditDisabled: React.PropTypes.bool,
+    availableLocationsList: React.PropTypes.array,
   };
 
   constructor(props) {
@@ -85,11 +89,13 @@ class Base extends React.Component {
 
     const field = this.props.data;
 
+    const itemField = this.props.data && this.props.data.type === Metadata.Fields.LOCATION ? this.props.data : {};
+
     return (
-      <Item onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name}>
+      <Item field={itemField} onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
-               wrapClassName="device-metadata-modal"
+               wrapClassName={`device-metadata-modal ${this.props.modalWrapClassName || ''}`}
                closable={false}
                title={field.name}
                onCancel={this.handleCancelClick}

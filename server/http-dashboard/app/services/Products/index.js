@@ -97,7 +97,7 @@ export const DEVICE_FORCE_UPDATE = {
 export const MetadataIconFieldName = 'icon';
 
 export const MetadataInitialValues = {
-  [MetadataIconFieldName]: 'cube'
+  [MetadataIconFieldName]: 'e874'
 };
 
 export const Metadata = {
@@ -116,13 +116,14 @@ export const Metadata = {
     DEVICE_REFERENCE: 'DeviceReference',
     LIST: 'List',
     EMAIL: 'Email',
+    LOCATION: 'Location',
+    TIMEZONE: 'Tz',
   }
 };
 
 export const hardcodedRequiredMetadataFieldsNames = {
   DeviceName: 'Device Name',
   DeviceOwner: 'Device Owner',
-  LocationName: 'Location Name',
   Manufacturer: 'Manufacturer',
   ModelName: 'Model Name',
   TimezoneOfTheDevice: 'Device Timezone'
@@ -131,7 +132,6 @@ export const hardcodedRequiredMetadataFieldsNames = {
 export const hardcodedRequiredMetadataFieldsNamesList = [
   hardcodedRequiredMetadataFieldsNames.DeviceName,
   hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-  hardcodedRequiredMetadataFieldsNames.LocationName,
   hardcodedRequiredMetadataFieldsNames.Manufacturer,
   hardcodedRequiredMetadataFieldsNames.ModelName,
   hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice
@@ -141,9 +141,9 @@ export const filterMetadataFields = (fields, filterHardcoded = true) => {
 
   return fields.filter((field) => {
     if(filterHardcoded)
-      return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) >= 0;
+      return field.get('isDefault');
 
-    return hardcodedRequiredMetadataFieldsNamesList.indexOf(field.get('name')) === -1;
+    return !field.get('isDefault');
   });
 };
 
@@ -164,7 +164,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'cube',
+      [MetadataIconFieldName]: 'e60d',
+      hardcoded: true,
     },
     {
       id: 2,
@@ -173,16 +174,29 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'user',
+      [MetadataIconFieldName]: 'e71e',
+      hardcoded: true,
     },
     {
       id: 3,
-      type: Metadata.Fields.TEXT,
-      name: hardcodedRequiredMetadataFieldsNames.LocationName,
+      type: Metadata.Fields.LOCATION,
+      name: '',
       role: Roles.STAFF.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'map',
+      [MetadataIconFieldName]: 'e781',
+      isStreetAddressEnabled: true,
+      isCityEnabled: true,
+      isStateEnabled: true,
+      isZipEnabled: true,
+      isCountryEnabled: true,
+      isCoordinatesEnabled: false,
+      isBuildingNameEnabled: true,
+      isFloorEnabled: true,
+      isUnitEnabled: true,
+      isRoomEnabled: true,
+      isZoneEnabled: true,
+      hardcoded: true,
     },
     {
       id: 4,
@@ -192,26 +206,30 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       role: Roles.SUPER_ADMIN.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'factory2',
+      [MetadataIconFieldName]: 'e67e',
+      hardcoded: true,
     },
-    {
-      id: 5,
-      type: Metadata.Fields.TEXT,
-      name: hardcodedRequiredMetadataFieldsNames.ModelName,
-      role: Roles.STAFF.value,
-      isDefault: true,
-      ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'document',
-    },
+    /** Hide Model metadata for current customer */
+    // {
+    //   id: 5,
+    //   type: Metadata.Fields.TEXT,
+    //   name: hardcodedRequiredMetadataFieldsNames.ModelName,
+    //   role: Roles.STAFF.value,
+    //   isDefault: true,
+    //   ...MetadataInitialValues,
+    //   [MetadataIconFieldName]: 'e6d8',
+    //   hardcoded: true,
+    // },
     {
       id: 6,
-      type: Metadata.Fields.TEXT,
+      type: Metadata.Fields.TIMEZONE,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
       role: Roles.USER.value,
       isDefault: true,
       ...MetadataInitialValues,
-      [MetadataIconFieldName]: 'clock3',
+      [MetadataIconFieldName]: 'e8e8',
+      hardcoded: true,
     }
   ];
 };
@@ -374,12 +392,7 @@ export const Unit = {
   Percentage: {
     abbreviation: '%',
     key: 'Percentage',
-    value: 'Percentage'
-  },
-  PercentageSymbol: {
-    abbreviation: '%',
-    key: 'PercentageSymbol',
-    value: '%'
+    value: 'Percentage, %'
   },
   RPM: {
     abbreviation: 'rpm',
@@ -486,7 +499,6 @@ export const prepareProductForEdit = (data) => {
         const hardcodedFields = [
           hardcodedRequiredMetadataFieldsNames.DeviceName,
           hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-          hardcodedRequiredMetadataFieldsNames.LocationName,
           hardcodedRequiredMetadataFieldsNames.Manufacturer,
           hardcodedRequiredMetadataFieldsNames.ModelName,
           hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
@@ -740,6 +752,9 @@ export const isMetadataPristine = () => ({
   ),
   [Metadata.Fields.LIST]: (field) => (
     !field.get('name') && !field.get('options')
+  ),
+  [Metadata.Fields.LOCATION]: (field) => (
+    !field.get('name')
   ),
   [Metadata.Fields.CONTACT]: (field) => (
     !field.get('name') && !field.get('isFirstNameEnabled') && !field.get('firstName') && !field.get('isLastNameEnabled') && !field.get('lastName') &&

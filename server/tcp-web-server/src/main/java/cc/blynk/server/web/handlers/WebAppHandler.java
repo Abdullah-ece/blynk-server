@@ -1,11 +1,12 @@
 package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.WebAppHardwareLogic;
 import cc.blynk.server.web.handlers.logic.WebGetGraphDataLogic;
 import cc.blynk.server.web.handlers.logic.account.WebGetAccountLogic;
@@ -14,17 +15,17 @@ import cc.blynk.server.web.handlers.logic.device.WebCreateDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebDeleteDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
+import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
-import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebDeleteOrganizationLogic;
-import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
@@ -42,6 +43,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.TRACK_DEVICE;
@@ -58,12 +60,13 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_DEVICE_TIMELINE;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORGS;
-import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
@@ -91,12 +94,10 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebGetOrganizationLogic webGetOrganizationLogic;
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
     private final WebGetOrganizationUsersLogic webGetOrganizationUsersLogic;
-    private final WebGetOrganizationLocationsLogic webGetOrganizationLocationsLogic;
+    private final WebGetProductLocationsLogic webGetProductLocationsLogic;
     private final WebCanInviteUserLogic canInviteUserLogic;
     private final WebCreateProductLogic webCreateProductLogic;
-    private final WebGetProductLogic webGetProductLogic;
     private final WebGetProductsLogic webGetProductsLogic;
-    private final WebUpdateProductLogic webUpdateProductLogic;
     private final WebDeleteProductLogic webDeleteProductLogic;
     private final WebUpdateDeviceLogic webUpdateDeviceLogic;
     private final WebUpdateDevicesMetaInProductLogic webUpdateDevicesMetaInProductLogic;
@@ -107,11 +108,10 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebDeleteOrganizationLogic webDeleteOrganizationLogic;
     private final WebCanDeleteProductLogic webCanDeleteProductLogic;
     private final WebInviteUserLogic webInviteUserLogic;
-    private final WebUpdateDeviceMetafieldLogic webUpdateDeviceMetafieldLogic;
     private final WebGetDeviceTimelineLogic webGetDeviceTimelineLogic;
     private final WebDeleteDeviceLogic webDeleteDeviceLogic;
 
-    private final GlobalStats stats;
+    private final Holder holder;
 
     public WebAppHandler(Holder holder, WebAppStateHolder state) {
         super(StringMessage.class);
@@ -124,12 +124,10 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
         this.webGetOrganizationUsersLogic = new WebGetOrganizationUsersLogic(holder);
-        this.webGetOrganizationLocationsLogic = new WebGetOrganizationLocationsLogic(holder);
+        this.webGetProductLocationsLogic = new WebGetProductLocationsLogic(holder);
         this.canInviteUserLogic = new WebCanInviteUserLogic(holder);
         this.webCreateProductLogic = new WebCreateProductLogic(holder);
-        this.webGetProductLogic = new WebGetProductLogic(holder);
         this.webGetProductsLogic = new WebGetProductsLogic(holder);
-        this.webUpdateProductLogic = new WebUpdateProductLogic(holder);
         this.webDeleteProductLogic = new WebDeleteProductLogic(holder);
         this.webUpdateDeviceLogic = new WebUpdateDeviceLogic(holder);
         this.webUpdateDevicesMetaInProductLogic = new WebUpdateDevicesMetaInProductLogic(holder);
@@ -140,17 +138,16 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.webDeleteOrganizationLogic = new WebDeleteOrganizationLogic(holder);
         this.webCanDeleteProductLogic = new WebCanDeleteProductLogic(holder);
         this.webInviteUserLogic = new WebInviteUserLogic(holder);
-        this.webUpdateDeviceMetafieldLogic = new WebUpdateDeviceMetafieldLogic(holder);
         this.webGetDeviceTimelineLogic = new WebGetDeviceTimelineLogic(holder);
         this.webDeleteDeviceLogic = new WebDeleteDeviceLogic(holder);
 
         this.state = state;
-        this.stats = holder.stats;
+        this.holder = holder;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementAppStat();
+        this.holder.stats.incrementAppStat();
         switch (msg.command) {
             case WEB_GET_ACCOUNT:
                 WebGetAccountLogic.messageReceived(ctx, state, msg);
@@ -194,8 +191,8 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
             case WEB_GET_ORG_USERS :
                 webGetOrganizationUsersLogic.messageReceived(ctx, state, msg);
                 break;
-            case WEB_GET_ORG_LOCATIONS :
-                webGetOrganizationLocationsLogic.messageReceived(ctx, state, msg);
+            case WEB_GET_PRODUCT_LOCATIONS:
+                webGetProductLocationsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_CAN_INVITE_USER :
                 canInviteUserLogic.messageReceived(ctx, state, msg);
@@ -204,13 +201,13 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webCreateProductLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_PRODUCT :
-                webGetProductLogic.messageReceived(ctx, state, msg);
+                WebGetProductLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case WEB_GET_PRODUCTS :
                 webGetProductsLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_UPDATE_PRODUCT :
-                webUpdateProductLogic.messageReceived(ctx, state, msg);
+                WebUpdateProductLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case WEB_DELETE_PRODUCT :
                 webDeleteProductLogic.messageReceived(ctx, state, msg);
@@ -240,13 +237,19 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webInviteUserLogic.messageReceived(ctx, state.user, msg);
                 break;
             case WEB_UPDATE_DEVICE_METAFIELD :
-                webUpdateDeviceMetafieldLogic.messageReceived(ctx, state, msg);
+                WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case WEB_GET_DEVICE_TIMELINE :
                 webGetDeviceTimelineLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_DELETE_DEVICE :
                 webDeleteDeviceLogic.messageReceived(ctx, state, msg);
+                break;
+            case WEB_GET_METAFIELD :
+                WebGetMetaFieldLogic.messageReceived(holder, ctx, state, msg);
+                break;
+            case LOGOUT :
+                LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

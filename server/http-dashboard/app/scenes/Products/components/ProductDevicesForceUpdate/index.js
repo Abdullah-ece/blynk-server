@@ -108,7 +108,7 @@ class ProductDeviceForceUpdate extends React.Component {
                 <Radio value={DEVICE_FORCE_UPDATE.UPDATE_DEVICES}>
                   Update {this.props.product.deviceCount} active { DevicesText }
                 </Radio>
-                <Radio value={DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE} disabled={true}>
+                <Radio value={DEVICE_FORCE_UPDATE.SAVE_WITHOUT_UPDATE}>
                   Save changes. Don't update active { DevicesText }
                 </Radio>
                 <Radio value={DEVICE_FORCE_UPDATE.CLONE_PRODUCT}>

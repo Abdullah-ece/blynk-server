@@ -4,6 +4,7 @@ import {AddMetadataFields} from 'scenes/Products/components/AddField';
 import {
   Metadata as MetadataService,
   filterDynamicMetadataFields,
+
   hardcodedRequiredMetadataFieldsNames,
   FORMS,
   isMetadataPristine,
@@ -243,6 +244,14 @@ class ProductMetadata extends React.Component {
         />
       );
     }
+    if (field.get('type') === MetadataService.Fields.LOCATION) {
+      element = (
+        <MetadataFields.LocationField
+          isDirty={!isMetadataPristine()[MetadataService.Fields.LOCATION](field)}
+          {...props}
+        />
+      );
+    }
 
     return element || null;
 
@@ -350,8 +359,6 @@ class ProductMetadata extends React.Component {
 
     metaFields.forEach((field, key) => {
 
-      if (!field.has('name')) return false;
-
       const props = {
         id: field.get('id'),
         key: key,
@@ -360,37 +367,37 @@ class ProductMetadata extends React.Component {
         tools: false,
       };
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.LocationName) {
+      if (field.get('type') === MetadataService.Fields.LOCATION && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.LocationField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceOwner && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.DeviceOwnerField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceName) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.DeviceName && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.DeviceNameField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.Manufacturer) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.Manufacturer && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.ManufacturerField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.ModelName) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.ModelName && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.ModelNameField {...props}/>
         );
       }
 
-      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice) {
+      if (field.get('name') === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice && field.get('isDefault') === true) {
         elements.push(
           <MetadataFields.TimezoneOfDeviceField {...props}/>
         );
@@ -458,10 +465,14 @@ class ProductMetadata extends React.Component {
       <div className={this.state.isSortEnabled ? 'no-mouse-selection' : null} style={{minHeight: '500px'}}>
         <Metadata.ItemsList>
 
+          <div style={{fontSize: '18', fontWeight: '500', margin: '16px 0'}}>System Metadata</div>
+
           {this.getStaticFields({
             reduxFormFields: this.props.fields,
             metaFields: metaFields,
           })}
+
+          <div style={{fontSize: '18', fontWeight: '500', margin: '16px 0'}}>Custom Metadata</div>
 
           { metaFields && metaFields.size && (
             <this.SortableList items={dynamicMetaFields}

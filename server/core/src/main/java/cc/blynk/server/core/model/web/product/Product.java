@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
-import cc.blynk.server.core.model.web.product.events.OfflineEvent;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.ArrayUtil;
 
 import java.util.HashSet;
@@ -23,7 +23,7 @@ public class Product {
 
     public int id;
 
-    public int parentId;
+    public int parentId = -1;
 
     public volatile String name;
 
@@ -86,6 +86,10 @@ public class Product {
         this.version++;
     }
 
+    public boolean isSubProduct() {
+        return parentId > 0;
+    }
+
     public boolean isValidEvents() {
         Set<Integer> set = new HashSet<>();
         for (Event event : events) {
@@ -113,17 +117,13 @@ public class Product {
         return null;
     }
 
-    public int getIgnorePeriod() {
-        for (Event event : events) {
-            if (event instanceof OfflineEvent) {
-                return ((OfflineEvent) event).ignorePeriod;
-            }
+    public void validate() {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalCommandBodyException("Product name is empty.");
         }
-        return 0;
-    }
-
-    public boolean notValid() {
-        return name == null || name.isEmpty();
+        for (MetaField metaField : metaFields) {
+            metaField.validate();
+        }
     }
 
     public void setOtaProgress(OtaProgress otaProgress) {

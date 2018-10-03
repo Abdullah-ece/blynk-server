@@ -26,6 +26,7 @@ public class BlockingIOProcessor implements Closeable {
 
     //DB pool is needed as in case DB goes down messaging still should work
     public final ThreadPoolExecutor dbExecutor;
+    private final ThreadPoolExecutor dbEventExecutor;
 
     public final ThreadPoolExecutor dbGetServerExecutor;
 
@@ -48,8 +49,13 @@ public class BlockingIOProcessor implements Closeable {
                 TimeUnit.MINUTES,
                 new ArrayBlockingQueue<>(250),
                 BlynkTPFactory.build("db"));
-        //local server doesn't use DB usually, so this thread may be not necessary
-        this.dbExecutor.allowCoreThreadTimeOut(true);
+        this.dbEventExecutor = new ThreadPoolExecutor(
+                1,
+                1,
+                10L,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<>(1000),
+                BlynkTPFactory.build("dbEvents"));
 
         this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
                 TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
@@ -66,6 +72,10 @@ public class BlockingIOProcessor implements Closeable {
 
     public void executeDB(Runnable task) {
         dbExecutor.execute(task);
+    }
+
+    public void executeEvent(Runnable task) {
+        dbEventExecutor.execute(task);
     }
 
     public void executeHistory(Runnable task) {

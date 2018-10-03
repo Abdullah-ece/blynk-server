@@ -157,7 +157,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
         for (Product product : org.products) {
             for (MetaField metaField : product.metaFields) {
-                if (metaField.isDefault && "Location Name".equalsIgnoreCase(metaField.name)) {
+                if ("Location Name".equalsIgnoreCase(metaField.name)) {
                     existingLocations.add(((TextMetaField) metaField).value);
                 }
             }

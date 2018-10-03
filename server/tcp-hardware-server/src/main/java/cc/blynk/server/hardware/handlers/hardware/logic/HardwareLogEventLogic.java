@@ -89,7 +89,7 @@ public class HardwareLogEventLogic {
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, message.id, bodyForWeb, device.id);
 
         var desc = splitBody.length > 1 ? splitBody[1] : null;
-        blockingIOProcessor.executeDB(() -> {
+        blockingIOProcessor.executeEvent(() -> {
             try {
                 long now = System.currentTimeMillis();
                 reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), desc);

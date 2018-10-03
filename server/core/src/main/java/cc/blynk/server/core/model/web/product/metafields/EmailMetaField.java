@@ -17,10 +17,12 @@ public class EmailMetaField extends MetaField {
     public EmailMetaField(@JsonProperty("id") int id,
                           @JsonProperty("name") String name,
                           @JsonProperty("roleId") int roleId,
+                          @JsonProperty("includeInProvision") boolean includeInProvision,
+                          @JsonProperty("isMandatory") boolean isMandatory,
                           @JsonProperty("isDefault") boolean isDefault,
                           @JsonProperty("icon") String icon,
                           @JsonProperty("value") String value) {
-        super(id, name, roleId, isDefault, icon);
+        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
         this.value = value;
     }
 
@@ -31,12 +33,16 @@ public class EmailMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new EmailMetaField(id, metaField.name, metaField.roleId, metaField.isDefault, metaField.icon, value);
+        return new EmailMetaField(id, metaField.name, metaField.roleId,
+                metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
+                metaField.icon, value);
     }
 
     @Override
     public MetaField copy() {
-        return new EmailMetaField(id, name, roleId, isDefault, icon, value);
+        return new EmailMetaField(id, name, roleId,
+                includeInProvision, isMandatory, isDefault,
+                icon, value);
     }
 
 }

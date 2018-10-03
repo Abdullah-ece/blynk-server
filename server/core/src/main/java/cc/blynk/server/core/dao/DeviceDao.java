@@ -25,7 +25,7 @@ public class DeviceDao {
 
     private static final Logger log = LogManager.getLogger(DeviceDao.class);
 
-    final ConcurrentMap<DeviceKey, Device> devices;
+    public final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
 
     public DeviceDao(ConcurrentMap<UserKey, User> users) {

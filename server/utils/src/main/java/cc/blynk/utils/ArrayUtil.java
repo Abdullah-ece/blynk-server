@@ -74,7 +74,7 @@ public final class ArrayUtil {
         return false;
     }
 
-    public static int[] convertIntegersToInt(List<Integer> integers) {
+    private static int[] convertIntegersToInt(List<Integer> integers) {
         int[] result = new int[integers.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = integers.get(i);
@@ -106,7 +106,7 @@ public final class ArrayUtil {
         if (array.length == 0) {
             return Collections.emptyList();
         }
-        List<T> list = new ArrayList<>();
+        List<T> list = new ArrayList<>(array.length);
         Collections.addAll(list, array);
         return list;
     }
