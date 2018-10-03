@@ -43,7 +43,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
  */
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
-    public final HardwareStateHolder state;
+    private final HardwareStateHolder state;
     private final Holder holder;
     private final HardwareLogic hardware;
     private final HardwareLogEventLogic hardwareLogEventLogic;
