@@ -133,7 +133,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product fromApiProduct = client.parseProduct(1);
         assertNotNull(fromApiProduct);
 
-        Organization organization = new Organization("My Org", "Some TimeZone", "/static/logo.png", false, orgId);
+        Organization organization = new Organization("My SubOrg", "Some TimeZone", "/static/logo.png", false, orgId);
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
@@ -164,6 +164,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(product.name, devices[0].productName);
+        assertEquals("My SubOrg", devices[0].orgName);
 
         client.getDevice(fromApi.id, devices[0].id);
         Device device = client.parseDevice(5);
@@ -171,7 +172,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
-    public void createDeviceForAnotherOrganizationAndIsVisibleForParentOrg() throws Exception {
+    public void createDeviceForAnotherOrganizationAndIsNotVisibleForParentOrg() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
 
         Product product = new Product();
@@ -210,11 +211,13 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getDevices(orgId);
         DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
-        assertEquals(1, devices.length);
+        assertEquals(0, devices.length);
 
-        client.getDevice(orgId, devices[0].id);
-        Device device = client.parseDevice(5);
-        assertNotNull(device);
+        client.getDevices(fromApi.id);
+        devices = client.parseDevicesDTO(5);
+        assertNotNull(devices);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
     }
 
     @Test

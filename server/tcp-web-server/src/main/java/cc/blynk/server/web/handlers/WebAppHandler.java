@@ -89,7 +89,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
     private final WebGetGraphDataLogic getWebGraphDataLogic;
     private final WebResolveLogEventLogic webResolveLogEventLogic;
     private final WebCreateDeviceLogic webCreateDeviceLogic;
-    private final WebGetDevicesLogic webGetDevicesLogic;
     private final WebGetDeviceLogic webGetDeviceLogic;
     private final WebGetOrganizationLogic webGetOrganizationLogic;
     private final WebGetOrganizationsLogic webGetOrganizationsLogic;
@@ -119,7 +118,6 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
         this.getWebGraphDataLogic = new WebGetGraphDataLogic(holder);
         this.webResolveLogEventLogic = new WebResolveLogEventLogic(holder);
         this.webCreateDeviceLogic = new WebCreateDeviceLogic(holder);
-        this.webGetDevicesLogic = new WebGetDevicesLogic(holder);
         this.webGetDeviceLogic = new WebGetDeviceLogic(holder);
         this.webGetOrganizationLogic = new WebGetOrganizationLogic(holder);
         this.webGetOrganizationsLogic = new WebGetOrganizationsLogic(holder);
@@ -177,7 +175,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 webUpdateDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case WEB_GET_DEVICES :
-                webGetDevicesLogic.messageReceived(ctx, state, msg);
+                WebGetDevicesLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case WEB_GET_DEVICE :
                 webGetDeviceLogic.messageReceived(ctx, state, msg);
