@@ -56,9 +56,6 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         int maxWebLength = holder.limits.webRequestMaxSize;
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
-        String rootPath = holder.props.getAdminRootPath();
-        String jarPath = holder.props.jarPath;
-
         ExternalAPIHandler externalAPIHandler = new ExternalAPIHandler(holder, "/external/api");
 
         GlobalStats stats = holder.stats;
