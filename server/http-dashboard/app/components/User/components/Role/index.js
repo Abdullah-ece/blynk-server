@@ -2,14 +2,20 @@ import React from 'react';
 
 import {Select} from 'antd';
 
-import {UsersAvailableRoles, Roles} from 'services/Roles';
+import {Roles, SUPER_ADMIN_ROLE_ID} from 'services/Roles';
 
 import './styles.less';
 
+import {connect} from 'react-redux';
+
+@connect((state) => ({
+  roles: state.Organization.roles,
+}))
 export default class Role extends React.Component {
 
   static propTypes = {
     role: React.PropTypes.string,
+    roles: React.PropTypes.any,
     onChange: React.PropTypes.func
   };
 
@@ -19,8 +25,9 @@ export default class Role extends React.Component {
 
   getRolesList() {
     const options = [];
-    UsersAvailableRoles.forEach((role) => {
-      options.push(<Select.Option key={role.value} disabled={role.disabled}>{role.title}</Select.Option>);
+    this.props.roles.filter((role) => role && role.id && role.id !== SUPER_ADMIN_ROLE_ID).forEach((role) => {
+      let key = `${role.id}`;
+      options.push(<Select.Option key={key} value={key}>{role.name}</Select.Option>);
     });
     return options;
   }
@@ -36,8 +43,8 @@ export default class Role extends React.Component {
 
     return (
       (role === Roles.SUPER_ADMIN.value && <div>{Roles.SUPER_ADMIN.title}</div> ) || (
-        <Select labelInValue className="user--role-select"
-                value={{key: role}}
+        <Select className="user--role-select"
+                value={`${role}`}
                 onChange={this.onChange.bind(this)} disabled={role === Roles.SUPER_ADMIN.value}>
         { options }
         </Select>)

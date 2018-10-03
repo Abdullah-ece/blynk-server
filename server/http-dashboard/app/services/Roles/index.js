@@ -1,3 +1,5 @@
+export const SUPER_ADMIN_ROLE_ID = 0;
+
 const Roles = {
   'SUPER_ADMIN': {
     value: 'SUPER_ADMIN',

@@ -1,4 +1,5 @@
 import React from 'react';
+import {displayError} from "services/ErrorHandling";
 import {alphabetSort} from 'services/Sort';
 import {Table, Button, message, Popconfirm} from 'antd';
 
@@ -81,9 +82,8 @@ class OrganizationUsers extends React.Component {
         value: Roles.USER.value,
       }],
       filterMultiple: false,
-      onFilter: (value, record) => record.role === value,
-      sorter: (a, b) => alphabetSort(a.role, b.role),
-      render: (text, record) => <Role role={record.role} onChange={this.onRoleChange.bind(this, record)}/>
+      onFilter: (value, record) => record.roleId === value,
+      render: (text, record) => <Role role={record.roleId} onChange={this.onRoleChange.bind(this, record)}/>
     }, {
       title: 'Status',
       dataIndex: 'status',
@@ -120,7 +120,7 @@ class OrganizationUsers extends React.Component {
       });
     }).catch((err) => {
       initState();
-      message.error(err && err.error && err.error.response.message);
+      displayError(err, message.error);
     });
   }
 
@@ -138,12 +138,13 @@ class OrganizationUsers extends React.Component {
     };
 
     this.props.OrganizationUpdateUser(this.props.Account.orgId, Object.assign({}, user, {
-      role: role.key
+      roleId: role
     })).then(() => {
       resetUsersList();
     }).catch((err) => {
+      hide();
       resetUsersList();
-      message.error(err && err.error && err.error.response.message);
+      displayError(err, message.error);
     });
   }
 
