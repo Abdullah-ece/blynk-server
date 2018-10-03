@@ -882,7 +882,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-1"));
+        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -900,7 +900,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-1"));
+        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
     }
 
     @Test
@@ -947,7 +947,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-1"));
+        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -965,7 +965,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-1"));
+        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
     }
 
     @Test
@@ -1015,7 +1015,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-1"));
+        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -1033,7 +1033,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-1"));
+        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
     }
 
     @Test
