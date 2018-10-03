@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ListMetaField extends MetaField {
 
+    public static final String TEMPLATE_ID = "TemplateId";
+
     public final String[] options;
 
     public final String selectedOption;
