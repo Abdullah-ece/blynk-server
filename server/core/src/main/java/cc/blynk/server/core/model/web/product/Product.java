@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.events.Event;
+import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.ArrayUtil;
 
@@ -115,6 +116,18 @@ public class Product {
             }
         }
         return null;
+    }
+
+    public boolean hasTemplateId(String templateId) {
+        for (MetaField metaField : metaFields) {
+            if (metaField instanceof ListMetaField && metaField.isTemplateIdMetaField()) {
+                ListMetaField listMetaField = (ListMetaField) metaField;
+                if (ArrayUtil.contains(listMetaField.options, templateId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void validate() {

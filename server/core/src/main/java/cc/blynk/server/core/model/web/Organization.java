@@ -95,7 +95,10 @@ public class Organization {
     }
 
     public Product getFirstProduct() {
-        return products.length > 0 ? products[0] : null;
+        if (products.length > 0) {
+            return products[0];
+        }
+        throw new ProductNotFoundException("Organization is empty and without any product.");
     }
 
     public Product getProduct(int id)  {

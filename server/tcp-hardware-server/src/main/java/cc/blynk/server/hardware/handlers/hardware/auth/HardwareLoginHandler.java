@@ -7,18 +7,15 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
-import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.structure.LRUCache;
@@ -129,34 +126,35 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         DashBoard dash = tokenValue.dash;
 
         if (tokenValue.isTemporary()) {
-            int orgId = user.orgId;
-            Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
-
-            //todo temp solution
-            Product product;
-            if (device.productId == -1) {
-                log.warn("Using random product for device {}.");
-                product = org.getFirstProduct();
-                device.productId = product.id;
-            } else {
-                product = org.getProduct(device.productId);
-            }
-
-            if (product == null) {
-                log.error("Product with passed id {} not exists for org {}.", device.productId, orgId);
-                throw new NotAllowedException("Product with passed id not exists.", message.id);
-            }
-
-            device.metaFields = product.copyMetaFields();
-            device.webDashboard = product.webDashboard.copy();
-            holder.deviceDao.createWithPredefinedId(orgId, device);
-
-            holder.tokenManager.updateRegularCache(token, tokenValue);
-            dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
-            dash.updatedAt = System.currentTimeMillis();
+            //this is special case for provisioned devices, we adding additional
+            //handler in order to add product to the device
+            ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstGandler",
+                    new ProvisionedHardwareFirstHandler(holder, user, dash, device));
+            ctx.writeAndFlush(ok(message.id));
+            return;
         }
 
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
+        createSessionAndReregister(ctx, user, dash, device, message.id);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
+        if (evt instanceof CreateSessionForwardMessage) {
+            CreateSessionForwardMessage bridgeForwardMessage = (CreateSessionForwardMessage) evt;
+            log.debug("Triggered user event for provisioned device (id={}).", bridgeForwardMessage.device.id);
+            createSessionAndReregister(ctx,
+                    bridgeForwardMessage.user,
+                    bridgeForwardMessage.dash,
+                    bridgeForwardMessage.device,
+                    bridgeForwardMessage.msgId);
+        } else {
+            ctx.fireUserEventTriggered(evt);
+        }
+    }
+
+    private void createSessionAndReregister(ChannelHandlerContext ctx,
+                                            User user, DashBoard dash, Device device, int msgId) {
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, dash, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
@@ -165,11 +163,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
-            completeLogin(ctx.channel(), session, user, dash, device, message.id);
+            completeLogin(ctx.channel(), session, user, dash, device, msgId);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
+                    completeLogin(channelFuture.channel(), session, user, dash, device, msgId));
         }
     }
 

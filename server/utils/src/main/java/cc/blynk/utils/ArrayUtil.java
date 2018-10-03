@@ -74,6 +74,15 @@ public final class ArrayUtil {
         return false;
     }
 
+    public static boolean contains(final String[] ar, final String val) {
+        for (String arVal : ar) {
+            if (arVal.equals(val)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static int[] convertIntegersToInt(List<Integer> integers) {
         int[] result = new int[integers.size()];
         for (int i = 0; i < result.length; i++) {

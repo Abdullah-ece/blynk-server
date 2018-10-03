@@ -29,6 +29,7 @@ import org.jooq.SelectSelectStep;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.server.core.model.web.product.metafields.ListMetaField.TEMPLATE_ID;
 import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_NAME;
 import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DEVICE_OWNER;
 
@@ -115,11 +116,15 @@ public abstract class MetaField implements CopyObject<MetaField> {
     }
 
     public boolean isDeviceNameMetaField() {
-        return DEVICE_NAME.equalsIgnoreCase(name);
+        return DEVICE_NAME.equals(name);
     }
 
     public boolean isDeviceOwnerMetaField() {
-        return DEVICE_OWNER.equalsIgnoreCase(name);
+        return DEVICE_OWNER.equals(name);
+    }
+
+    public boolean isTemplateIdMetaField() {
+        return TEMPLATE_ID.equals(name);
     }
 
     public void validate() {
