@@ -50,7 +50,7 @@ public class CostMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CostMetaField(id, metaField.name, metaField.role,
+        return new CostMetaField(id, metaField.name, metaField.roleId,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 icon,
                 currency, price, perValue, units, min, max);

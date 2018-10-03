@@ -3,7 +3,6 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
@@ -34,9 +33,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name"),
-                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, null,
+                new NumberMetaField(1, "Jopa", 2, false, false, false, null, 0, 1000, 123D, 1),
+                new TextMetaField(2, "Device Name", 1, false, false, true, null, "My Default device Name"),
+                new LocationMetaField(3, "Device Location", 1, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",
                         false, null,
@@ -98,9 +97,9 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", Role.STAFF, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", Role.ADMIN, false, false, true, null, "My Default device Name"),
-                new LocationMetaField(3, "Device Location", Role.ADMIN, false, false, false, null,
+                new NumberMetaField(1, "Jopa", 2, false, false, false, null, 0, 1000, 123D, 1),
+                new TextMetaField(2, "Device Name", 1, false, false, true, null, "My Default device Name"),
+                new LocationMetaField(3, "Device Location", 1, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",
                         false, null,

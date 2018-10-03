@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.web.product.metafields;
 
-import cc.blynk.server.core.model.web.Role;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
@@ -25,26 +24,26 @@ public class TimeZoneMetaField extends MetaField {
     @JsonCreator
     public TimeZoneMetaField(@JsonProperty("id") int id,
                              @JsonProperty("name") String name,
-                             @JsonProperty("role") Role role,
+                             @JsonProperty("roleId") int roleId,
                              @JsonProperty("includeInProvision") boolean includeInProvision,
                              @JsonProperty("isMandatory") boolean isMandatory,
                              @JsonProperty("isDefault") boolean isDefault,
                              @JsonProperty("icon") String icon,
                              @JsonProperty("value") ZoneId value) {
-        super(id, name, role, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
         this.value = value;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new TimeZoneMetaField(id, metaField.name, metaField.role,
+        return new TimeZoneMetaField(id, metaField.name, metaField.roleId,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon, value);
     }
 
     @Override
     public MetaField copy() {
-        return new TimeZoneMetaField(id, name, role,
+        return new TimeZoneMetaField(id, name, roleId,
                 includeInProvision, isMandatory, isDefault,
                 icon, value);
     }
