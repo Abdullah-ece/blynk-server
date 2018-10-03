@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -25,6 +26,19 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWithDBAndNewOrg {
+
+    @Test
+    public void getOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals("Blynk Inc.", organizationDTO.name);
+        assertEquals(-1, organizationDTO.parentId);
+        assertEquals(orgId, organizationDTO.id);
+        assertNotNull(organizationDTO.roles);
+        assertEquals(4, organizationDTO.roles.length);
+    }
 
     @Test
     public void getLocationsForProduct() throws Exception {

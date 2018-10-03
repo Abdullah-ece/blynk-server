@@ -17,6 +17,7 @@ package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.api.http.dashboard.dto.ProductAndOrgIdDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -274,8 +275,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), User[].class);
     }
 
-    public Organization parseOrganization(int expectedMessageOrder) throws Exception {
-        return JsonParser.parseOrganization(getBody(expectedMessageOrder), 0);
+    public OrganizationDTO parseOrganizationDTO(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), OrganizationDTO.class);
     }
 
     public Organization[] parseOrganizations(int expectedMessageOrder) throws Exception {

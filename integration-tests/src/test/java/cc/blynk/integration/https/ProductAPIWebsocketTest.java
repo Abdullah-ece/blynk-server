@@ -2,6 +2,7 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
@@ -704,7 +705,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        Organization fromApiOrg = client.parseOrganization(2);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiOrg);
         assertEquals(orgId, fromApiOrg.parentId);
         assertEquals(organization.name, fromApiOrg.name);
@@ -755,7 +756,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        Organization fromApiOrg = client.parseOrganization(2);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiOrg);
         assertEquals(orgId, fromApiOrg.parentId);
         assertEquals(organization.name, fromApiOrg.name);
@@ -837,7 +838,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        Organization fromApiSubOrg = client.parseOrganization(2);
+        OrganizationDTO fromApiSubOrg = client.parseOrganizationDTO(2);
         assertNotNull(fromApiSubOrg);
         assertEquals(orgId, fromApiSubOrg.parentId);
         assertEquals(organization.name, fromApiSubOrg.name);

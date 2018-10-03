@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -137,7 +138,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        Organization fromApi = client.parseOrganization(2);
+        OrganizationDTO fromApi = client.parseOrganizationDTO(2);
         assertNotNull(fromApi);
         assertEquals(orgId, fromApi.parentId);
         assertEquals(organization.name, fromApi.name);
@@ -186,7 +187,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         organization.selectedProducts = new int[] {fromApiProduct.id};
 
         client.createOrganization(organization);
-        Organization fromApi = client.parseOrganization(2);
+        OrganizationDTO fromApi = client.parseOrganizationDTO(2);
         assertNotNull(fromApi);
         assertEquals(orgId, fromApi.parentId);
         assertEquals(organization.name, fromApi.name);
