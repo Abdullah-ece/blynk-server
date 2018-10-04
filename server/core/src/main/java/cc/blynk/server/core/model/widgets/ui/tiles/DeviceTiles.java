@@ -287,6 +287,16 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
         this.tiles = ArrayUtil.add(this.tiles, newTile, Tile.class);
     }
 
+    public void replaceTileTemplate(TileTemplate newTileTemplate, int existingTileTemplateIndex) {
+        TileTemplate[] updatedTemplates = Arrays.copyOf(templates, templates.length);
+        TileTemplate existingTileTemplate = templates[existingTileTemplateIndex];
+        updatedTemplates[existingTileTemplateIndex] = newTileTemplate;
+        //do not override widgets field, as we have separate commands for it.
+
+        newTileTemplate.widgets = existingTileTemplate.widgets;
+        this.templates = updatedTemplates;
+    }
+
     @Override
     public void deleteDevice(int deviceId) {
         Tile[] localTiles = this.tiles;
