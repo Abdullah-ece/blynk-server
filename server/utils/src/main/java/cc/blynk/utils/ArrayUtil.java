@@ -16,6 +16,12 @@ public final class ArrayUtil {
     private ArrayUtil() {
     }
 
+    public static int[] add(int[] array, int el) {
+        int[] newArray = Arrays.copyOf(array, array.length + 1);
+        newArray[newArray.length - 1] = el;
+        return newArray;
+    }
+
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
         newArray[newArray.length - 1] = element;

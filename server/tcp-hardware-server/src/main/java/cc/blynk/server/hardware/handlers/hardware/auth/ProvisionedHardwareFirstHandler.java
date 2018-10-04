@@ -95,7 +95,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(user, dash, device));
-                    dash.addDevice(device);
+                    dash.addDevice(device, templateId);
                     ctx.pipeline().fireUserEventTriggered(
                             new CreateSessionForwardMessage(user, dash, device, message.id));
                     break;

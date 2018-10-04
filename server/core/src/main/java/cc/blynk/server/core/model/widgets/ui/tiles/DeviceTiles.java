@@ -271,6 +271,22 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
         return -1;
     }
 
+    public TileTemplate getTileTemplateByTemplateId(String templateId) {
+        for (TileTemplate tileTemplate : templates) {
+            if (templateId.equals(tileTemplate.templateId)) {
+                return tileTemplate;
+            }
+        }
+        return null;
+    }
+
+    public void addTile(TileTemplate tileTemplate, int deviceId) {
+        Tile newTile = new Tile(deviceId, tileTemplate.id, null,
+                tileTemplate.dataStream == null ? null : new DataStream(tileTemplate.dataStream)
+        );
+        this.tiles = ArrayUtil.add(this.tiles, newTile, Tile.class);
+    }
+
     @Override
     public void deleteDevice(int deviceId) {
         Tile[] localTiles = this.tiles;

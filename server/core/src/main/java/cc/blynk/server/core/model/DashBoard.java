@@ -718,8 +718,18 @@ public class DashBoard {
         this.devices = list.toArray(new Device[0]);
     }
 
-    public void addDevice(Device device) {
+    public void addDevice(Device device, String templateId) {
         this.devices = ArrayUtil.add(this.devices, device, Device.class);
+        if (templateId != null) {
+            DeviceTiles deviceTiles = getWidgetByType(DeviceTiles.class);
+            if (deviceTiles != null) {
+                TileTemplate tileTemplate = deviceTiles.getTileTemplateByTemplateId(templateId);
+                if (tileTemplate != null) {
+                    deviceTiles.addTile(tileTemplate, device.id);
+                    tileTemplate.addDeviceId(device.id);
+                }
+            }
+        }
         this.updatedAt = System.currentTimeMillis();
     }
 
