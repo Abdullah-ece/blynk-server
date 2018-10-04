@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -96,8 +95,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(user, dash, device));
-                    dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
-                    dash.updatedAt = System.currentTimeMillis();
+                    dash.addDevice(device);
                     ctx.pipeline().fireUserEventTriggered(
                             new CreateSessionForwardMessage(user, dash, device, message.id));
                     break;
