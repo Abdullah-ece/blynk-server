@@ -1,5 +1,18 @@
 export const SUPER_ADMIN_ROLE_ID = 0;
 
+export const filterSuperAdmin = (roles = []) => {
+  return roles.filter((role) => role && role.id && role.id !== SUPER_ADMIN_ROLE_ID);
+};
+
+export const formatRolesToKeyValueList = (roles) => {
+  return roles.map((role) => {
+    return {
+      key: `${role.id}`,
+      value: `${role.name}`
+    };
+  });
+};
+
 const Roles = {
   'SUPER_ADMIN': {
     value: 'SUPER_ADMIN',

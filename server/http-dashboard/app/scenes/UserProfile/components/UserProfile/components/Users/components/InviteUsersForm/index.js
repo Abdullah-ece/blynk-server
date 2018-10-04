@@ -1,23 +1,18 @@
 import React from 'react';
-import {reduxForm} from 'redux-form';
-import {Form, Button} from 'antd';
-import FormItem from 'components/FormItem';
-import {Field as FormField, Select as FormSelect} from 'components/Form';
-import Validation from 'services/Validation';
-import {InviteAvailableRoles} from 'services/Roles';
+import _ from 'lodash';
+import {filterSuperAdmin, formatRolesToKeyValueList} from "services/Roles";
 
-import './styles.less';
+import InviteForm from './components';
 
-@reduxForm({
-  form: 'OrganizationSettingsInviteUsersForm',
-  initialValues: {
-    role: InviteAvailableRoles[0].key
-  },
-  touchOnBlur: false
-})
+import {connect} from 'react-redux';
+
+@connect((state) => ({
+  roles: state.Organization.roles,
+}))
 class InviteUsersForm extends React.Component {
 
   static propTypes = {
+    roles: React.PropTypes.any,
     invalid: React.PropTypes.bool,
     pristine: React.PropTypes.bool,
     submitting: React.PropTypes.bool,
@@ -29,53 +24,20 @@ class InviteUsersForm extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      role: InviteAvailableRoles[0].key
-    };
   }
 
   render() {
-    const {invalid, pristine, handleSubmit, submitting} = this.props;
+
+    const initialValues = {
+      role: `${_.first(filterSuperAdmin(this.props.roles)).id}`,
+    };
+
+    const rolesList = formatRolesToKeyValueList(
+      filterSuperAdmin(this.props.roles)
+    );
 
     return (
-      <Form onSubmit={handleSubmit.bind(this)} layout="inline">
-        <FormField title="Name" type="text" name="name"
-                   icon="user"
-                   placeholder="Enter name"
-                   validate={[
-                     Validation.Rules.required,
-                     Validation.Rules.fullname,
-                     Validation.Rules.minLength(3)
-                   ]}/>
-
-        <FormField title="Email" type="text" name="email"
-                   icon="mail"
-                   placeholder="Enter email"
-                   validate={[
-                     Validation.Rules.required,
-                     Validation.Rules.email
-                   ]}/>
-
-        <FormSelect title="Role" type="text" name="role"
-                    className="user-profile--organization-settings--invite-users-form-role-select"
-                    values={InviteAvailableRoles} validate={[
-          Validation.Rules.required,
-        ]}/>
-
-        <Form.Item>
-          <FormItem>
-            <FormItem.Title />
-            <FormItem.Content>
-              <Button type="primary" size="default" htmlType="submit"
-                      loading={submitting}
-                      disabled={invalid || pristine || submitting}>
-                Invite
-              </Button>
-            </FormItem.Content>
-          </FormItem>
-        </Form.Item>
-      </Form>
+      <InviteForm initialValues={initialValues} rolesList={rolesList}/>
     );
 
   }
