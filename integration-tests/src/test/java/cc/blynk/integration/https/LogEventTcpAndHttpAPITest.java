@@ -840,7 +840,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
         newHardClient.send("login " + token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        newHardClient.verifyResult(ok(1));
 
         HttpGet getEvents = new HttpGet(httpsAdminServerUrl + "/devices/1/1/timeline?from=0&to=" + System.currentTimeMillis() + "&limit=10&offset=0");
         try (CloseableHttpResponse response = httpclient.execute(getEvents)) {
