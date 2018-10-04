@@ -7,7 +7,7 @@ import {Status, Role} from 'components/User';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {Roles} from 'services/Roles';
+import {filterSuperAdmin} from 'services/Roles';
 
 import {
   OrganizationFetch,
@@ -71,18 +71,16 @@ class OrganizationUsers extends React.Component {
       title: 'Role',
       dataIndex: 'role',
       sortOrder: sortedInfo.columnKey === 'role' && sortedInfo.order,
-      filters: [{
-        text: Roles.ADMIN.title,
-        value: Roles.ADMIN.value,
-      }, {
-        text: Roles.STAFF.title,
-        value: Roles.STAFF.value,
-      }, {
-        text: Roles.USER.title,
-        value: Roles.USER.value,
-      }],
+      filters: [
+        ...filterSuperAdmin(this.props.Organization.roles).map((role) => ({
+          text: role.name,
+          value: `${role.id}`
+        }))
+      ],
       filterMultiple: false,
-      onFilter: (value, record) => record.roleId === value,
+      onFilter: (value, record) => {
+        return Number(record.roleId) === Number(value);
+      },
       render: (text, record) => <Role role={`${record.roleId}`} onChange={this.onRoleChange.bind(this, record)}/>
     }, {
       title: 'Status',
