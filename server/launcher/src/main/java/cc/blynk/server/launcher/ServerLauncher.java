@@ -27,7 +27,6 @@ import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareSSLServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -58,9 +57,8 @@ import static cc.blynk.utils.AppNameUtil.BLYNK;
  *
  * By default starts 4 servers on different ports:
  *
- * 1 server socket for SSL/TLS Hardware (8441 default)
  * 1 server socket for HTTP API, Blynk hardware protocol, web sockets (8080 default)
- * 1 server socket for HTTPS API, Blynk app protocol, web sockets (9443 default)
+ * 1 server socket for HTTPS API, Blynk app protocol, hardware secured blynkapp, web sockets (9443 default)
  * 1 server socket for MQTT (8440 default)
  *
  * In addition launcher start all related to business logic threads like saving user profiles thread, timers
@@ -129,7 +127,6 @@ public final class ServerLauncher {
                 restore);
 
         BaseServer[] servers = new BaseServer[] {
-                new HardwareSSLServer(holder),
                 new HardwareAndHttpAPIServer(holder),
                 new AppAndHttpsServer(holder),
                 new MQTTHardwareServer(holder)
