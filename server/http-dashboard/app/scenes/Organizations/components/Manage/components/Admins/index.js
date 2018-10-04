@@ -1,7 +1,7 @@
 import React                from 'react';
 import {AdminInviteForm}    from './components';
 import {alphabetSort}       from 'services/Sort';
-import {Roles}              from 'services/Roles';
+import {ORG_INVITE_ROLE_ID} from 'services/Roles';
 import {connect}            from 'react-redux';
 import {Status}             from 'components/User';
 import {
@@ -105,7 +105,7 @@ class Admins extends React.Component {
       this.props.changeForm(Manage.FORM_NAME, 'admins', this.props.formValues.get('admins').update((admins) => admins.push({
         name: data.name,
         email: data.email,
-        role: Roles.ADMIN.value,
+        roleId: ORG_INVITE_ROLE_ID,
         status: 'Pending'
       })).toJS());
 

@@ -13,6 +13,8 @@ export const formatRolesToKeyValueList = (roles) => {
   });
 };
 
+export const ORG_INVITE_ROLE_ID = 1;
+
 const Roles = {
   'SUPER_ADMIN': {
     value: 'SUPER_ADMIN',

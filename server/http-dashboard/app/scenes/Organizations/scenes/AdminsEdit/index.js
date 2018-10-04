@@ -20,7 +20,7 @@ import {
   OrganizationsAdminsInviteLoadingToggle,
   OrganizationsAdminsDeleteLoadingToggle,
 } from 'data/Organizations/actions';
-import {Roles}    from 'services/Roles';
+import {ORG_INVITE_ROLE_ID} from 'services/Roles';
 import {
   reset,
   SubmissionError,
@@ -89,7 +89,7 @@ class AdminsEditScene extends React.Component {
         id: this.props.params.id,
         email: user.email,
         name: user.name,
-        role: Roles.ADMIN.value
+        roleId: ORG_INVITE_ROLE_ID,
       }).then(() => {
         this.props.OrganizationsUsersFetch({
           id: this.props.params.id
@@ -137,7 +137,7 @@ class AdminsEditScene extends React.Component {
     const tableListProps = {
       loading: this.props.admins.get('userDeleteLoading'),
       onAdminDelete: this.handleAdminDelete,
-      data: this.props.admins.get('users').filter(user => user.get('role') === Roles.ADMIN.value),
+      data: this.props.admins.get('users').filter(user => user.get('roleId') === ORG_INVITE_ROLE_ID),
     };
 
     return (
