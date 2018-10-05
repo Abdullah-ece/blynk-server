@@ -61,8 +61,7 @@ class MetadataItemStatic extends React.Component {
 
                 {
                   this.props.roles.filter((role) => (
-                    // (this.props.role || []).indexOf(Number(role.id)) !== -1
-                    ([1,2] || []).indexOf(Number(role.id)) !== -1
+                    (this.props.role || []).indexOf(Number(role.id)) !== -1
                   )).map((role) => (
                     <div className="product-metadata-static-field product-metadata-static-field-inline" key={role.id}>
                       {role.name}

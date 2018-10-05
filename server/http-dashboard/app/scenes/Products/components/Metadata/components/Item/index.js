@@ -258,7 +258,7 @@ class MetadataItem extends React.PureComponent {
                           {/*</Col>*/}
                           <Col span={11} /*offset={2}*/>
                             <Form.Item label="Who can edit">
-                              <Field component={this.rolesComponent} name={`metaFields.${this.props.metaFieldKey}.roleId`} placeholder={'Who can edit'} />
+                              <Field component={this.rolesComponent} name={`metaFields.${this.props.metaFieldKey}.roleIds`} placeholder={'Who can edit'} />
                             </Form.Item>
                           </Col>
                         </Row>

@@ -84,7 +84,7 @@ class Metadata extends React.Component {
             {...props}
             name={field.name}
             value={field.value}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -95,7 +95,7 @@ class Metadata extends React.Component {
             {...props}
             name={field.name}
             value={field.value}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -107,7 +107,7 @@ class Metadata extends React.Component {
             name={field.name}
             value={field.value}
             units={field.units}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -117,7 +117,7 @@ class Metadata extends React.Component {
           <AddressField.Static
             {...props}
             name={field.name}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
             streetAddress={field.streetAddress}
             city={field.city}
             state={field.state}
@@ -133,7 +133,7 @@ class Metadata extends React.Component {
             {...props}
             name={field.name}
             time={field.time}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -145,7 +145,7 @@ class Metadata extends React.Component {
             name={field.name}
             from={field.from}
             to={field.to}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -159,7 +159,7 @@ class Metadata extends React.Component {
             perValue={field.perValue}
             currency={field.currency}
             units={field.units}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -171,7 +171,7 @@ class Metadata extends React.Component {
             name={field.name}
             lat={field.lat}
             lon={field.lon}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -183,7 +183,7 @@ class Metadata extends React.Component {
             name={field.name}
             from={field.from}
             to={field.to}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
           />
         );
       }
@@ -193,7 +193,7 @@ class Metadata extends React.Component {
           <DeviceReferenceField.Static
             {...props}
             name={field.name}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
             selectedProductIds={field.selectedProductIds}
           />
         );
@@ -204,7 +204,7 @@ class Metadata extends React.Component {
           <ListField.Static
             {...props}
             name={field.name}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
             options={field.options}
           />
         );
@@ -214,7 +214,7 @@ class Metadata extends React.Component {
         fields.push(
           <ContactField.Static
             {...props}
-            role={convertRoleToArr(field.roleId)}
+            role={convertRoleToArr(field.roleIds)}
             fields={{
               name: field.name,
               isDefaultsEnabled: field.isDefaultsEnabled,
@@ -276,7 +276,7 @@ class Metadata extends React.Component {
         key: key,
         name: field.name,
         value: field.value,
-        role: convertRoleToArr(field.roleId)
+        role: convertRoleToArr(field.roleIds)
       };
 
       if (field.name && field.name === hardcodedRequiredMetadataFieldsNames.LocationName) {
