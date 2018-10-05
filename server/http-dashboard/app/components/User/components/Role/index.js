@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Select} from 'antd';
 
-import {Roles, SUPER_ADMIN_ROLE_ID} from 'services/Roles';
+import {SUPER_ADMIN_ROLE_ID, SUPER_ADMIN_ROLE_TITLE} from 'services/Roles';
 
 import './styles.less';
 
@@ -42,10 +42,10 @@ export default class Role extends React.Component {
     const role = this.props && this.props.role;
 
     return (
-      (role === Roles.SUPER_ADMIN.value && <div>{Roles.SUPER_ADMIN.title}</div> ) || (
+      (role === SUPER_ADMIN_ROLE_ID && <div>{SUPER_ADMIN_ROLE_TITLE}</div> ) || (
         <Select className="user--role-select"
                 value={`${role}`}
-                onChange={this.onChange.bind(this)} disabled={role === Roles.SUPER_ADMIN.value}>
+                onChange={this.onChange.bind(this)} disabled={role === SUPER_ADMIN_ROLE_ID}>
         { options }
         </Select>)
     );

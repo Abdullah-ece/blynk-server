@@ -1,4 +1,5 @@
 export const SUPER_ADMIN_ROLE_ID = 0;
+export const SUPER_ADMIN_ROLE_TITLE = 'Super Admin';
 
 export const filterSuperAdmin = (roles = []) => {
   return roles.filter((role) => role && role.id && role.id !== SUPER_ADMIN_ROLE_ID);
