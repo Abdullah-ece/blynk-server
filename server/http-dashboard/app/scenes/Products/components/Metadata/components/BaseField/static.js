@@ -5,7 +5,7 @@ import Metadata from 'scenes/Products/components/Metadata';
 class BaseFieldStatic extends React.Component {
 
   static propTypes = {
-    role: React.PropTypes.string
+    role: React.PropTypes.array
   };
 
   constructor(props) {
