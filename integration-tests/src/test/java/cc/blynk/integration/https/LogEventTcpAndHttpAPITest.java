@@ -754,13 +754,13 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", 2, false, false, false, null, 0, 1000, 123D, 1),
-                new ContactMetaField(6, "Farm of Smith", 1, false, false, false, "Tech Support",
+                new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
+                new ContactMetaField(6, "Farm of Smith", new int[] {1}, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
                         "Ukraine", false,
                         "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new TextMetaField(7, "Device Owner", 2, false, false, false, null, "owner@blynk.cc")
+                new TextMetaField(7, "Device Owner", new int[] {2}, false, false, false, null, "owner@blynk.cc")
         };
 
         CriticalEvent criticalEvent = new CriticalEvent(
