@@ -21,13 +21,13 @@ public class MultiTextMetaField extends MetaField {
     @JsonCreator
     public MultiTextMetaField(@JsonProperty("id") int id,
                               @JsonProperty("name") String name,
-                              @JsonProperty("roleId") int roleId,
+                              @JsonProperty("roleIds") int[] roleIds,
                               @JsonProperty("includeInProvision") boolean includeInProvision,
                               @JsonProperty("isMandatory") boolean isMandatory,
                               @JsonProperty("isDefault") boolean isDefault,
                               @JsonProperty("icon") String icon,
                               @JsonProperty("values") String[] values) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.values = values;
     }
 
@@ -44,14 +44,14 @@ public class MultiTextMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new MultiTextMetaField(id, metaField.name, metaField.roleId,
+        return new MultiTextMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon, values);
     }
 
     @Override
     public MetaField copy() {
-        return new MultiTextMetaField(id, name, roleId,
+        return new MultiTextMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, values);
     }

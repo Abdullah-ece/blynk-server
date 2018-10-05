@@ -18,27 +18,27 @@ public class CoordinatesMetaField extends MetaField {
     @JsonCreator
     public CoordinatesMetaField(@JsonProperty("id") int id,
                                 @JsonProperty("name") String name,
-                                @JsonProperty("roleId") int roleId,
+                                @JsonProperty("roleIds") int[] roleIds,
                                 @JsonProperty("includeInProvision") boolean includeInProvision,
                                 @JsonProperty("isMandatory") boolean isMandatory,
                                 @JsonProperty("isDefault") boolean isDefault,
                                 @JsonProperty("icon") String icon,
                                 @JsonProperty("lat") double lat,
                                 @JsonProperty("lon") double lon) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.lat = lat;
         this.lon = lon;
     }
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new CoordinatesMetaField(id, metaField.name, metaField.roleId,
+        return new CoordinatesMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault, icon, lat, lon);
     }
 
     @Override
     public MetaField copy() {
-        return new CoordinatesMetaField(id, name, roleId,
+        return new CoordinatesMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, lat, lon);
     }

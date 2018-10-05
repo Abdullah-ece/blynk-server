@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeZoneMetaField;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -70,7 +71,7 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final String name;
 
-    public final int roleId;
+    public final int[] roleIds;
 
     public final boolean includeInProvision;
 
@@ -80,11 +81,11 @@ public abstract class MetaField implements CopyObject<MetaField> {
 
     public final String icon;
 
-    public MetaField(int id, String name, int roleId,
+    public MetaField(int id, String name, int[] roleIds,
                      boolean includeInProvision, boolean isMandatory, boolean isDefault, String icon) {
         this.id = id;
         this.name = name;
-        this.roleId = roleId;
+        this.roleIds = roleIds == null ? EmptyArraysUtil.EMPTY_INTS : roleIds;
         this.includeInProvision = includeInProvision;
         this.isMandatory = isMandatory;
         this.isDefault = isDefault;

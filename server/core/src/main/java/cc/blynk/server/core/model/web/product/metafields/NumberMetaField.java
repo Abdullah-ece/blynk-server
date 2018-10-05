@@ -22,7 +22,7 @@ public class NumberMetaField extends MetaField {
     @JsonCreator
     public NumberMetaField(@JsonProperty("id") int id,
                            @JsonProperty("name") String name,
-                           @JsonProperty("roleId") int roleId,
+                           @JsonProperty("roleIds") int[] roleIds,
                            @JsonProperty("includeInProvision") boolean includeInProvision,
                            @JsonProperty("isMandatory") boolean isMandatory,
                            @JsonProperty("isDefault") boolean isDefault,
@@ -31,7 +31,7 @@ public class NumberMetaField extends MetaField {
                            @JsonProperty("max") float max,
                            @JsonProperty("value") double value,
                            @JsonProperty("step") float step) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.value = value;
         this.min = min;
         this.max = max;
@@ -41,13 +41,13 @@ public class NumberMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         return new NumberMetaField(id,
-                metaField.name, metaField.roleId, metaField.includeInProvision, metaField.isDefault,
+                metaField.name, metaField.roleIds, metaField.includeInProvision, metaField.isDefault,
                 metaField.isMandatory, metaField.icon, min, max, value, step);
     }
 
     @Override
     public MetaField copy() {
-        return new NumberMetaField(id, name, roleId,
+        return new NumberMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, min, max, value, step);
     }

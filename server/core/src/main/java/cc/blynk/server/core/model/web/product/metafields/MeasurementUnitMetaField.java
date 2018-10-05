@@ -25,7 +25,7 @@ public class MeasurementUnitMetaField extends MetaField {
     @JsonCreator
     public MeasurementUnitMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
-                                    @JsonProperty("roleId") int roleId,
+                                    @JsonProperty("roleIds") int[] roleIds,
                                     @JsonProperty("includeInProvision") boolean includeInProvision,
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("isMandatory") boolean isMandatory,
@@ -35,7 +35,7 @@ public class MeasurementUnitMetaField extends MetaField {
                                     @JsonProperty("min") float min,
                                     @JsonProperty("max") float max,
                                     @JsonProperty("step") float step) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.units = units;
         this.value = value;
         this.min = min;
@@ -53,7 +53,7 @@ public class MeasurementUnitMetaField extends MetaField {
 
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
-        return new MeasurementUnitMetaField(id, metaField.name, metaField.roleId,
+        return new MeasurementUnitMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon,
                 units, value, min, max, step);
@@ -61,7 +61,7 @@ public class MeasurementUnitMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new MeasurementUnitMetaField(id, name, roleId,
+        return new MeasurementUnitMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, units, value, min, max, step);
     }

@@ -65,7 +65,7 @@ public class LocationMetaField extends MetaField {
     @JsonCreator
     public LocationMetaField(@JsonProperty("id") int id,
                              @JsonProperty("name") String name,
-                             @JsonProperty("roleId") int roleId,
+                             @JsonProperty("roleIds") int[] roleIds,
                              @JsonProperty("includeInProvision") boolean includeInProvision,
                              @JsonProperty("isMandatory") boolean isMandatory,
                              @JsonProperty("isDefault") boolean isDefault,
@@ -98,7 +98,7 @@ public class LocationMetaField extends MetaField {
                              @JsonProperty("useLocationDataFromDevice") boolean useLocationDataFromDevice,
                              @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled,
                              @JsonProperty("placeId") String placeId) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.siteName = siteName;
         this.isLocationEnabled = isLocationEnabled;
         this.streetAddress = streetAddress;
@@ -147,7 +147,7 @@ public class LocationMetaField extends MetaField {
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         LocationMetaField addressMetaField = (LocationMetaField) metaField;
         return new LocationMetaField(
-                id, metaField.name, metaField.roleId,
+                id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon, addressMetaField.siteName, addressMetaField.isLocationEnabled,
                 streetAddress, addressMetaField.isStreetAddressEnabled,
@@ -170,7 +170,7 @@ public class LocationMetaField extends MetaField {
     @Override
     public MetaField copy() {
         return new LocationMetaField(
-                id, name, roleId,
+                id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, siteName, isLocationEnabled,
                 streetAddress, isStreetAddressEnabled,

@@ -18,14 +18,14 @@ public class DeviceReferenceMetaField extends MetaField {
     @JsonCreator
     public DeviceReferenceMetaField(@JsonProperty("id") int id,
                                     @JsonProperty("name") String name,
-                                    @JsonProperty("roleId") int roleId,
+                                    @JsonProperty("roleIds") int[] roleIds,
                                     @JsonProperty("includeInProvision") boolean includeInProvision,
                                     @JsonProperty("isMandatory") boolean isMandatory,
                                     @JsonProperty("isDefault") boolean isDefault,
                                     @JsonProperty("icon") String icon,
                                     @JsonProperty("selectedProductIds") int[] selectedProductIds,
                                     @JsonProperty("selectedDeviceId") long selectedDeviceId) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.selectedProductIds = selectedProductIds;
         this.selectedDeviceId = selectedDeviceId;
     }
@@ -33,7 +33,7 @@ public class DeviceReferenceMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         DeviceReferenceMetaField deviceReferenceMetaField = (DeviceReferenceMetaField) metaField;
-        return new DeviceReferenceMetaField(id, metaField.name, metaField.roleId,
+        return new DeviceReferenceMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 icon,
                 deviceReferenceMetaField.selectedProductIds, selectedDeviceId);
@@ -41,7 +41,7 @@ public class DeviceReferenceMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new DeviceReferenceMetaField(id, name, roleId,
+        return new DeviceReferenceMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, selectedProductIds, selectedDeviceId);
     }

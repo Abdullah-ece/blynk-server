@@ -20,14 +20,14 @@ public class ListMetaField extends MetaField {
     @JsonCreator
     public ListMetaField(@JsonProperty("id") int id,
                          @JsonProperty("name") String name,
-                         @JsonProperty("roleId") int roleId,
+                         @JsonProperty("roleIds") int[] roleIds,
                          @JsonProperty("includeInProvision") boolean includeInProvision,
                          @JsonProperty("isMandatory") boolean isMandatory,
                          @JsonProperty("isDefault") boolean isDefault,
                          @JsonProperty("icon") String icon,
                          @JsonProperty("options") String[] options,
                          @JsonProperty("selectedOption") String selectedOption) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.options = options;
         this.selectedOption = selectedOption;
     }
@@ -35,7 +35,7 @@ public class ListMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ListMetaField listMetaField = (ListMetaField) metaField;
-        return new ListMetaField(id, metaField.name, metaField.roleId,
+        return new ListMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 metaField.icon,
                 listMetaField.options, selectedOption);
@@ -43,7 +43,7 @@ public class ListMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new ListMetaField(id, name, roleId,
+        return new ListMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon, options, selectedOption);
     }

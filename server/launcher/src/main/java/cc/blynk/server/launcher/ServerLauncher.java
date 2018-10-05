@@ -176,7 +176,7 @@ public final class ServerLauncher {
             product.description = "Default Product Template";
             product.name = "Test Product";
             product.metaFields = new MetaField[] {
-                    new TextMetaField(1, "Device Name", 1, false, false, true, null, "Default device")
+                    new TextMetaField(1, "Device Name", new int[] {1}, false, false, true, null, "Default device")
             };
             product.events = createDefaultEvents();
 

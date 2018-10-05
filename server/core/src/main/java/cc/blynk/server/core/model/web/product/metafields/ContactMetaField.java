@@ -52,7 +52,7 @@ public class ContactMetaField extends MetaField {
     @JsonCreator
     public ContactMetaField(@JsonProperty("id") int id,
                             @JsonProperty("name") String name,
-                            @JsonProperty("roleId") int roleId,
+                            @JsonProperty("roleIds") int[] roleIds,
                             @JsonProperty("includeInProvision") boolean includeInProvision,
                             @JsonProperty("isMandatory") boolean isMandatory,
                             @JsonProperty("isDefault") boolean isDefault,
@@ -76,7 +76,7 @@ public class ContactMetaField extends MetaField {
                             @JsonProperty("zip") String zip,
                             @JsonProperty("isZipEnabled") boolean isZipEnabled,
                             @JsonProperty("isDefaultsEnabled") boolean isDefaultsEnabled) {
-        super(id, name, roleId, includeInProvision, isMandatory, isDefault, icon);
+        super(id, name, roleIds, includeInProvision, isMandatory, isDefault, icon);
         this.firstName = firstName;
         this.isFirstNameEnabled = isFirstNameEnabled;
         this.lastName = lastName;
@@ -106,7 +106,7 @@ public class ContactMetaField extends MetaField {
     @Override
     public MetaField copySpecificFieldsOnly(MetaField metaField) {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
-        return new ContactMetaField(id, metaField.name, metaField.roleId,
+        return new ContactMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
                 icon,
                 firstName, contactMetaField.isFirstNameEnabled,
@@ -123,7 +123,7 @@ public class ContactMetaField extends MetaField {
 
     @Override
     public MetaField copy() {
-        return new ContactMetaField(id, name, roleId,
+        return new ContactMetaField(id, name, roleIds,
                 includeInProvision, isMandatory, isDefault,
                 icon,
                 firstName, isFirstNameEnabled,

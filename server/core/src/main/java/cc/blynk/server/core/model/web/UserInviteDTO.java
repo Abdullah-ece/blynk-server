@@ -21,7 +21,7 @@ public class UserInviteDTO {
     @JsonCreator
     public UserInviteDTO(@JsonProperty("email") String email,
                          @JsonProperty("name") String name,
-                         @JsonProperty("roleId") int roleId) {
+                         @JsonProperty("roleIds") int roleId) {
         this.email = email;
         this.name = name;
         this.roleId = roleId;

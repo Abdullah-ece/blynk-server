@@ -824,7 +824,7 @@ public class LogEventTcpAndHttpAPITest extends APIBaseTest {
             assertNotNull(device.metaFields);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(2, numberMetaField.roleId);
+            assertEquals(2, numberMetaField.roleIds);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertNotNull(device.token);
 
