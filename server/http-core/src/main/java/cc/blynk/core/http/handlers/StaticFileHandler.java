@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -199,10 +200,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         Path path;
         String uri = request.uri();
-        if (uri.contains("/..")) {
+
+        if (isNotSecure(uri)) {
             sendError(ctx, NOT_FOUND);
             return;
         }
+
         String[] uriParts = uri.split("\\?");
         uri = uriParts[0];
 
@@ -328,6 +331,20 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             return deviceDao.getByIdOrThrow(deviceId);
         }
         return null;
+    }
+
+    private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
+
+    private static boolean isNotSecure(String uri) {
+        if (uri.isEmpty() || uri.charAt(0) != '/') {
+            return true;
+        }
+
+        return uri.contains(File.separator + '.')
+                || uri.contains('.' + File.separator)
+                || uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.'
+                || INSECURE_URI.matcher(uri).matches();
+
     }
 
     @Override
