@@ -1,12 +1,11 @@
 import React from 'react';
 import {Row, Col} from 'antd';
 import {Fieldset, DeviceStatus, DeviceAuthToken, Section, DeviceMetadata, /*BackTop*/} from 'components';
-import {Metadata, MetadataIconFieldName} from 'services/Products';
+import {Metadata} from 'services/Products';
 import _ from 'lodash';
 import {getCalendarFormatDate} from 'services/Date';
 import {DeviceDelete} from 'scenes/Devices/scenes';
 import './styles.less';
-import {Roles} from "services/Roles";
 
 class DeviceInfo extends React.Component {
 
@@ -48,27 +47,6 @@ class DeviceInfo extends React.Component {
     let deviceActivatedTime = getCalendarFormatDate(this.props.device.activatedAt);
 
     let metadataUpdatedTime = getCalendarFormatDate(metadataUpdatedAt);
-
-    let locationsList = [
-      {
-        type: Metadata.Fields.LOCATION,
-        name: 'Warehouse S01',
-        role: Roles.STAFF.value,
-        [MetadataIconFieldName]: 'map',
-        city: 'New York',
-        state: 'NY',
-        country: 'United States',
-      },
-      {
-        type: Metadata.Fields.LOCATION,
-        name: 'Warehouse S02',
-        role: Roles.STAFF.value,
-        [MetadataIconFieldName]: 'map',
-        city: 'Washington',
-        state: 'DC',
-        country: 'United States',
-      }
-    ];
 
     const metadataList = this.props.device.metaFields;
     // const metadataList = metafields;
@@ -166,7 +144,7 @@ class DeviceInfo extends React.Component {
                   if (field.type === Metadata.Fields.LOCATION)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
-                        <DeviceMetadata.Location {...props} availableLocationsList={locationsList || []}/>
+                        <DeviceMetadata.Location {...props}/>
                       </DeviceMetadata.Field>
                     );
 
