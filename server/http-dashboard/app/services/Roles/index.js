@@ -77,7 +77,7 @@ const MetadataRoles = [
   }
 ];
 
-const MetadataRolesDefault = MetadataRoles[0].key;
+const MetadataRolesDefault = [];
 
 export {
   MetadataRoles,
