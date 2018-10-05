@@ -88,8 +88,6 @@ export {
 };
 
 export const isUserAbleToEdit = (userRole, fieldRole) => {
-  // roles should be in ascending order
-  const permissions = ['USER','STAFF','ADMIN','SUPER_ADMIN'];
 
-  return permissions.slice(0, permissions.indexOf(userRole)+1).indexOf(fieldRole) !== -1;
+  return (Array.isArray(fieldRole) ? fieldRole : [fieldRole]).indexOf(Number(userRole)) !== -1;
 };

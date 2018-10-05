@@ -7,7 +7,11 @@ import {
 import google from 'google';
 import {Row, Col, Button, Icon} from 'antd';
 import './styles.less';
+import {connect} from 'react-redux';
 
+@connect((state) => ({
+  roles: state.Organization.roles
+}))
 class Item extends React.Component {
 
   static propTypes = {

@@ -92,7 +92,7 @@ class Base extends React.Component {
     const itemField = this.props.data && this.props.data.type === Metadata.Fields.LOCATION ? this.props.data : {};
 
     return (
-      <Item field={itemField} onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.role} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
+      <Item field={itemField} onEditClick={this.handleEdit} userRole={this.props.account.role} fieldRole={field.roleId} fieldName={field.name} isEditDisabled={this.props.isEditDisabled}>
         { this.getPreviewComponent() }
         <Modal visible={this.state.editVisible}
                wrapClassName={`device-metadata-modal ${this.props.modalWrapClassName || ''}`}
