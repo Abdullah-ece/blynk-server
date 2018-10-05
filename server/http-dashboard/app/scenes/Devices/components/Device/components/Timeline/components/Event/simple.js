@@ -16,7 +16,8 @@ class Simple extends React.Component {
   }
 
   render() {
-    const time = getCalendarFormatDate(this.props.event.ts);
+    // const time = getCalendarFormatDate(this.props.event.ts);
+    const time = getCalendarFormatDate(this.props.event.ts, true);
 
     const className = classnames({
       "devices--device-timeline--event": true,
