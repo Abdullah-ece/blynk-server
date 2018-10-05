@@ -1,7 +1,7 @@
 const initialState = {
   name: '',
   email: '',
-  roleIds: 0,
+  roleIds: [],
   orgId: null,
   resetPasswordProcessing: false,
   credentials: {
