@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
-import {Roles} from '../Roles';
 import {
   DEFAULT_HARDWARE_TYPE,
   DEFAULT_CONNECTION_TYPE,
@@ -161,7 +160,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       id: 1,
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.DeviceName,
-      role: Roles.USER.value,
+      roleId: [],
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e60d',
@@ -171,7 +170,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       id: 2,
       type: Metadata.Fields.EMAIL,
       name: hardcodedRequiredMetadataFieldsNames.DeviceOwner,
-      role: Roles.USER.value,
+      roleId: [],
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e71e',
@@ -181,7 +180,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       id: 3,
       type: Metadata.Fields.LOCATION,
       name: '',
-      role: Roles.STAFF.value,
+      roleId: [],
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e781',
@@ -203,7 +202,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TEXT,
       name: hardcodedRequiredMetadataFieldsNames.Manufacturer,
       value: manufacturerDefaultValue,
-      role: Roles.SUPER_ADMIN.value,
+      roleId: [],
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e67e',
@@ -225,7 +224,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       type: Metadata.Fields.TIMEZONE,
       name: hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice,
       value: timezoneDefaultValue || null,
-      role: Roles.USER.value,
+      roleId: [],
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e8e8',
@@ -256,12 +255,6 @@ export const PRODUCT_CREATE_INITIAL_VALUES = ({timezoneDefaultValue, manufacture
     }
   ]
 });
-
-export const exampleMetadataField = {
-  type: Metadata.Fields.TEXT,
-  name: 'Example: Serial Number',
-  role: 'ADMIN'
-};
 
 export const Unit = {
   None: {

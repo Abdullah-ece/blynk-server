@@ -2,6 +2,7 @@ import React from 'react';
 import Scroll from 'react-scroll';
 import {Row, Col, Icon, Popconfirm, Button, Form, Switch, Checkbox, Select} from 'antd';
 import Preview from 'scenes/Products/components/Preview';
+import {filterSuperAdmin} from 'services/Roles';
 import IconSelect from './components/IconSelect';
 import {SortableHandle} from 'react-sortable-hoc';
 import classnames from 'classnames';
@@ -20,6 +21,7 @@ import {hardcodedRequiredMetadataFieldsNames, Metadata} from 'services/Products'
 import PropTypes from 'prop-types';
 
 @connect((state, ownProps) => ({
+  roles: state.Organization.roles,
   events: state.Product.edit.events.fields,
   fieldsErrors: getFormSyncErrors(ownProps.form)(state)
 }), (dispatch) => ({
@@ -52,6 +54,7 @@ class MetadataItem extends React.PureComponent {
       PropTypes.string,
       PropTypes.number
     ]),
+    roles: PropTypes.array,
 
     addBefore: PropTypes.any,
   };
@@ -65,6 +68,7 @@ class MetadataItem extends React.PureComponent {
       isActive: false
     };
 
+    this.rolesComponent = this.rolesComponent.bind(this);
     this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
     this.handleCancelDelete = this.handleCancelDelete.bind(this);
     this.markAsActive = this.markAsActive.bind(this);
@@ -128,6 +132,25 @@ class MetadataItem extends React.PureComponent {
       </Preview>
     );
 
+  }
+
+  rolesComponent(props) {
+
+    const getValue = () => {
+      return props.input.value.map((value) => `${value}`);
+    };
+
+    const onChange = (value) => {
+      props.input.onChange(value.map((value) => Number(value)));
+    };
+
+    return (
+      <Select value={getValue()} onChange={onChange} className="product-metadata-item--permissions-section--roles-select" mode="multiple" placeholder={props.placeholder} allowClear={true}>
+        { filterSuperAdmin(this.props.roles).map((role) => (
+          <Select.Option key={`${role.id}`}>{role.name}</Select.Option>
+        ))}
+      </Select>
+    );
   }
 
   handleSubmit() {
@@ -228,22 +251,14 @@ class MetadataItem extends React.PureComponent {
                       <Form>
                         <Form.Item label="Permissions" className="normal-offset"/>
                         <Row type="flex">
-                          <Col span={11}>
-                            <Form.Item label="Who can view">
-                              <Select className="product-metadata-item--permissions-section--roles-select" mode="multiple" placeholder={'Who can view'} allowClear={true}>
-                                <Select.Option key={'User'}>User</Select.Option>
-                                <Select.Option key={'Staff'}>Staff</Select.Option>
-                                <Select.Option key={'Admin'}>Admin</Select.Option>
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col span={11} offset={2}>
+                          {/*<Col span={11}>*/}
+                            {/*<Form.Item label="Who can view">*/}
+                              {/*<Field component={this.rolesComponent} name={`metaFields.${this.props.metaFieldKey}.includeInProvision`} placeholder={'Who can view'} />*/}
+                            {/*</Form.Item>*/}
+                          {/*</Col>*/}
+                          <Col span={11} /*offset={2}*/>
                             <Form.Item label="Who can edit">
-                              <Select className="product-metadata-item--permissions-section--roles-select" mode="multiple" placeholder={'Who can edit'} allowClear={true}>
-                                <Select.Option key={'User'}>User</Select.Option>
-                                <Select.Option key={'Staff'}>Staff</Select.Option>
-                                <Select.Option key={'Admin'}>Admin</Select.Option>
-                              </Select>
+                              <Field component={this.rolesComponent} name={`metaFields.${this.props.metaFieldKey}.roleId`} placeholder={'Who can edit'} />
                             </Form.Item>
                           </Col>
                         </Row>
