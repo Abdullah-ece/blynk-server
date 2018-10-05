@@ -7,13 +7,13 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
-import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.APIBaseTest.createNumberMeta;
+import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,8 +47,8 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name"),
+                createNumberMeta(1, "Jopa", 123D),
+                createTextMeta(2, "Device Name", "My Default device Name"),
                 new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",
@@ -111,8 +111,8 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name"),
+                createNumberMeta(1, "Jopa", 123D),
+                createTextMeta(2, "Device Name", "My Default device Name"),
                 new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, null,
                         "Warehouse 13",
                         true, "Baklazhana street 15",

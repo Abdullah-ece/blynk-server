@@ -766,7 +766,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith")
+                createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -789,7 +789,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith")
+                createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -895,7 +895,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith")
+                createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -918,7 +918,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith")
+                createTextMeta(1, "My Farm", "Farm of Smith")
         };
         product2.dataStreams = new DataStream[] {
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
@@ -1227,7 +1227,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product.connectionType = ConnectionType.WI_FI;
         product.logoUrl = "/static/logo.png";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", new int[] {1}, false, false, true, null, "Kyiv")
+                createTextMeta(1, "Location Name", "Kyiv")
         };
 
         HttpPut createProductReq = new HttpPut(httpsAdminServerUrl + "/product");
@@ -1247,7 +1247,7 @@ public class OrganizationAPITest extends APIBaseTest {
         product2.connectionType = ConnectionType.WI_FI;
         product2.logoUrl = "/static/logo.png";
         product2.metaFields = new MetaField[] {
-                new TextMetaField(1, "Location Name", new int[] {1}, false, false, true, null, "Kyiv 2")
+                createTextMeta(1, "Location Name", "Kyiv 2")
         };
 
         HttpPut req2 = new HttpPut(httpsAdminServerUrl + "/product");

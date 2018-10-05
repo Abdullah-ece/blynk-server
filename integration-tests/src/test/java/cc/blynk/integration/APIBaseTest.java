@@ -8,6 +8,11 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
+import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
@@ -154,5 +159,31 @@ public abstract class APIBaseTest extends CounterBase {
         return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), getUserName(), "1", "user_profile_json.txt", properties, 10000);
     }
 
+    public static MeasurementUnitMetaField createMeasurementMeta(int id, String name, double value, MeasurementUnit measurementUnit) {
+        return new MeasurementUnitMetaField(id, name, new int[] {1}, false, false, false, null, measurementUnit, value, 0, 1000, 1);
+    }
 
+    public static NumberMetaField createNumberMeta(int id, String name, double value) {
+        return createNumberMeta(id, name, value, false);
+    }
+
+    public static NumberMetaField createNumberMeta(int id, String name, double value, boolean include) {
+        return new NumberMetaField(id, name, new int[] {1}, include, false, false, null, 0, 1000, value, 1);
+    }
+
+    public static TextMetaField createTextMeta(int id, String name, String value) {
+        return createTextMeta(id, name, value, false);
+    }
+
+    public static TextMetaField createTextMeta(int id, String name, String value, boolean include) {
+        return new TextMetaField(id, name, new int[] {1}, include, false, false, null, value);
+    }
+
+    public static ContactMetaField createContactMeta(int id, String name) {
+        return new ContactMetaField(id, name, new int[] {1}, false, false, false, "Tech Support",
+                "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                "+38063673333",  false, "My street", false,
+                "Ukraine", false,
+                "Kyiv", false, "Ukraine", false, "03322", false, false);
+    }
 }

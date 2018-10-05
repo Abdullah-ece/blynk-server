@@ -14,9 +14,6 @@ import cc.blynk.server.core.model.web.product.events.CriticalEvent;
 import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.core.model.web.product.events.OfflineEvent;
 import cc.blynk.server.core.model.web.product.events.OnlineEvent;
-import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
-import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import org.junit.Before;
@@ -26,6 +23,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static cc.blynk.integration.APIBaseTest.createContactMeta;
+import static cc.blynk.integration.APIBaseTest.createNumberMeta;
+import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
@@ -127,13 +127,9 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
-                new ContactMetaField(6, "Farm of Smith", new int[] {1}, false, false, false, "Tech Support",
-                        "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
-                        "+38063673333",  false, "My street", false,
-                        "Ukraine", false,
-                        "Kyiv", false, "Ukraine", false, "03322", false, false),
-                new TextMetaField(7, "Device Owner", new int[] {2}, false, false, false, null, "owner@blynk.cc")
+                createNumberMeta(1, "Jopa", 123D),
+                createContactMeta(6, "Farm of Smith"),
+                createTextMeta(7, "Device Owner", "owner@blynk.cc")
         };
 
         Event criticalEvent = new CriticalEvent(

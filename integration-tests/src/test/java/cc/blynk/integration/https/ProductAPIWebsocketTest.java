@@ -44,6 +44,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Currency;
 import java.util.Date;
 
+import static cc.blynk.integration.APIBaseTest.createContactMeta;
+import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
+import static cc.blynk.integration.APIBaseTest.createNumberMeta;
+import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
@@ -81,9 +85,9 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith"),
+                createTextMeta(1, "My Farm", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", new int[] {1}, false, false, false, null, ofSecondOfDay(60),  ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", new int[] {1}, false, false, false, null, 0, 100, 10.222, 1),
+                createNumberMeta(3, "Farm of Smith", 10.222),
                 new MeasurementUnitMetaField(4, "Farm of Smith", new int[] {1}, false, false, false, null, MeasurementUnit.Celsius, 36, 0, 100, 1),
                 new CostMetaField(5, "Farm of Smith", new int[] {1}, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
                 new ContactMetaField(6, "Farm of Smith", new int[] {1}, false, false, false, "Tech Support",
@@ -221,10 +225,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith"),
+                createTextMeta(1, "My Farm", "Farm of Smith"),
                 new SwitchMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "0", "1", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", new int[] {1}, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", new int[] {1}, false, false, false, null, 0, 1000, 10.222, 1),
+                createNumberMeta(3, "Farm of Smith", 10.222),
                 new MeasurementUnitMetaField(4, "Farm of Smith", new int[] {1}, false, false, false, null, MeasurementUnit.Celsius, 36, 0, 100, 1),
                 new CostMetaField(5, "Farm of Smith", new int[] {1}, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
                 new ContactMetaField(6, "Farm of Smith", new int[] {1},  false,false, false, "Tech Support",
@@ -270,11 +274,11 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith"),
+                createTextMeta(1, "My Farm", "Farm of Smith"),
                 new SwitchMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "0", "1", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", new int[] {1}, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", new int[] {1}, false, false, false, null, 0, 1000, 10.222, 1),
-                new MeasurementUnitMetaField(4, "Farm of Smith", new int[] {1}, false, false, false, null, null, 36, 0, 100, 1),
+                createNumberMeta(3, "Farm of Smith", 10.222),
+                createMeasurementMeta(4, "Farm of Smith", 1, null),
                 new CostMetaField(5, "Farm of Smith", new int[] {1}, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100)
         };
 
@@ -305,12 +309,12 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.logoUrl = "/static/logo.png";
 
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "Farm of Smith"),
+                createTextMeta(1, "My Farm", "Farm of Smith"),
                 new SwitchMetaField(1, "My Farm", new int[] {1}, false, false, false, null, "0", "1", "Farm of Smith"),
                 new RangeTimeMetaField(2, "Farm of Smith", new int[] {1}, false, false, false, null, ofSecondOfDay(60), ofSecondOfDay(120)),
-                new NumberMetaField(3, "Farm of Smith", new int[] {1}, false, false, false, null, 0, 100, 10.222, 1),
-                new MeasurementUnitMetaField(4, "Farm of Smith", new int[] {1}, false, false, false, null, MeasurementUnit.Celsius, 36, 0, 100, 1),
-                new CostMetaField(5, "Farm of Smith", new int[] {1}, false, false, false, null, Currency.getInstance("USD"), 9.99, 1, MeasurementUnit.Gallon, 0, 100),
+                createNumberMeta(3, "Farm of Smith", 10.222),
+                createMeasurementMeta(4, "Farm of Smith", 100, MeasurementUnit.Celsius),
+                createContactMeta(5, "Farm of Smith"),
                 new ContactMetaField(6, "Farm of Smith", new int[] {1}, false, false, false, "Tech Support",
                         "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
                         "+38063673333",  false, "My street", false,
@@ -540,7 +544,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", new int[] {1}, false, false, false, null, "Default Device")
+                createTextMeta(1, "My test metafield", "Default Device")
         };
 
         client.createProduct(orgId, product);
@@ -563,8 +567,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(1, textMetaField.roleIds[0]);
         assertEquals("Default Device", textMetaField.value);
 
-        newDevice.metaFields[0] = new TextMetaField(textMetaField.id,
-                textMetaField.name, textMetaField.roleIds, false, false, false, null, "My updated value");
+        newDevice.metaFields[0] = createTextMeta(textMetaField.id, textMetaField.name, "My updated value");
 
         client.updateDevice(orgId, newDevice);
         newDevice = client.parseDevice(3);
@@ -580,7 +583,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
 
         fromApiProduct.metaFields = new MetaField[] {
                 product.metaFields[0],
-                new NumberMetaField(2, "New metafield", new int[] {1}, false, false, false, null, 0, 100, 123, 1)
+                createNumberMeta(2, "New metafield", 123)
         };
 
         client.updateDevicesMeta(orgId, fromApiProduct);
@@ -615,7 +618,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.boardType = "ESP8266";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield",new int[] { 1}, false, false, false, null, "Default Device"),
+                createTextMeta(1, "My test metafield", "Default Device"),
                 new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, "icon",
                         "Warehouse 13",
                         true, "Baklazhana street 15",
@@ -645,8 +648,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newDevice = client.parseDevice(2);
         assertNotNull(newDevice);
 
-        fromApiProduct.metaFields[0] = new TextMetaField(1,
-                "Me updated test metafield", new int[] {2}, false, false, false, null, "Default Device");
+        fromApiProduct.metaFields[0] = createTextMeta(1, "Me updated test metafield", "Default Device");
         fromApiProduct.metaFields[1] = new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, "icon2",
                 "Warehouse 13",
                 true, "Baklazhana street 15",
@@ -897,7 +899,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         Product product = new Product();
         product.name = "Parent product";
         product.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield", new int[] {1}, false, false, false, null, "Default Device")
+                createTextMeta(1, "My test metafield", "Default Device")
         };
 
         WebLabel webLabel = new WebLabel();
@@ -969,7 +971,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 webLabel
         });
         fromApiProduct.metaFields = new MetaField[] {
-                new TextMetaField(1, "My test metafield 2",new int[] { 1}, false, false, false, null, "Default Device")
+                createTextMeta(1, "My test metafield 2", "Default Device")
         };
 
         client.updateDevicesMeta(orgId, fromApiProduct);

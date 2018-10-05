@@ -17,7 +17,6 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
@@ -118,7 +117,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(2, numberMetaField.roleIds[0]);
+            assertEquals(1, numberMetaField.roleIds[0]);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -182,7 +181,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
             assertEquals(2, device.metaFields.length);
             NumberMetaField numberMetaField = (NumberMetaField) device.metaFields[0];
             assertEquals("Jopa", numberMetaField.name);
-            assertEquals(2, numberMetaField.roleIds[0]);
+            assertEquals(1, numberMetaField.roleIds[0]);
             assertEquals(123D, numberMetaField.value, 0.1);
             assertEquals(System.currentTimeMillis(), device.activatedAt, 5000);
             assertEquals(regularUser.email, device.activatedBy);
@@ -687,8 +686,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         product.logoUrl = "/logoUrl";
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
-                new NumberMetaField(1, "Jopa", new int[] {2}, false, false, false, null, 0, 1000, 123D, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name")
+                createNumberMeta(1, "Jopa", 123D),
+                createTextMeta(2, "Device Name", "My Default device Name")
         };
 
         WebSwitch webSwitch = new WebSwitch();
