@@ -137,7 +137,7 @@ class MetadataItem extends React.PureComponent {
   rolesComponent(props) {
 
     const getValue = () => {
-      return props.input.value.map((value) => `${value}`);
+      return (Array.isArray(props.input.value) ? props.input.value : []).map((value) => `${value}`);
     };
 
     const onChange = (value) => {
