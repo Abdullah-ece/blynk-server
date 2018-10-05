@@ -4,19 +4,23 @@ import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
-import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
-import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
-import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.APIBaseTest.createListMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
@@ -142,9 +146,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                new MeasurementUnitMetaField(1, "Jopa", new int[] {2}, true, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123, 1),
-                createTextMeta(2, "Device Name", "My Default device Name"),
-                new ListMetaField(3, "Template Id", new int[] {1}, false, false, true, null, new String[] {"TMPL0001"}, null)
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createListMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);
@@ -193,15 +196,114 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
     }
 
     @Test
+    public void testProvisionFlowWithDeviceTiles() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createMeasurementMeta(1, "Jopa", 1, MeasurementUnit.Celsius),
+                createTextMeta(2, "Device Name", "My Default device Name")
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Product product2 = new Product();
+        product2.name = "My product2";
+        product2.metaFields = new MetaField[] {
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createListMeta(3, "Template Id", "TMPL0001")
+        };
+        client.createProduct(orgId, product2);
+        Product fromApiProduct2 = client.parseProduct(2);
+        assertNotNull(fromApiProduct2);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getProvisionToken(1, newDevice);
+        Device deviceFromApi = appClient.parseDevice(2);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        appClient.createWidget(1, deviceTiles);
+        appClient.verifyResult(ok(3));
+
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "TMPL0001", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
+
+        appClient.createTemplate(1, widgetId, tileTemplate);
+        appClient.verifyResult(ok(4));
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(hardwareConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+
+        appClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = appClient.parseDevice(6);
+        assertNotNull(provisionedDevice);
+        assertNotNull(provisionedDevice.metaFields);
+        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(fromApiProduct2.id, provisionedDevice.productId);
+        assertNotNull(provisionedDevice.hardwareInfo);
+        assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+
+        newHardClient.stop();
+        appClient.reset();
+
+        newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+
+        appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        PageTileTemplate pageTileTemplate = (PageTileTemplate) deviceTiles.templates[0];
+        assertEquals("name", pageTileTemplate.name);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(provisionedDevice.id, deviceTiles.tiles[0].deviceId);
+        assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+    }
+
+    @Test
     public void testProvisionFlowNoTemplateIdMetafield() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
 
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new MeasurementUnitMetaField(1, "Jopa", new int[] {2}, true, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name"),
-                new ListMetaField(3, "Template Id", new int[] {1}, false, false, true, null, new String[] {"TMPL0002"}, null)
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createListMeta(3, "Template Id", "TMPL0002")
         };
 
         client.createProduct(orgId, product);
@@ -264,8 +366,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product = new Product();
         product.name = "My product";
         product.metaFields = new MetaField[] {
-                new MeasurementUnitMetaField(1, "Jopa", new int[] {2}, true, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name")
+                createTextMeta(2, "Device Name", "My Default device Name", true),
         };
 
         client.createProduct(orgId, product);
@@ -275,9 +376,8 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Product product2 = new Product();
         product2.name = "My product2";
         product2.metaFields = new MetaField[] {
-                new MeasurementUnitMetaField(1, "Jopa", new int[] {2}, true, false, false, null, MeasurementUnit.Celsius, 0, 1000, 123, 1),
-                new TextMetaField(2, "Device Name", new int[] {1}, false, false, true, null, "My Default device Name"),
-                new ListMetaField(3, "Template Id", new int[] {1}, false, false, true, null, new String[] {"TMPL0001"}, null)
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createListMeta(3, "Template Id", "TMPL0001")
         };
         client.createProduct(orgId, product2);
         Product fromApiProduct2 = client.parseProduct(2);

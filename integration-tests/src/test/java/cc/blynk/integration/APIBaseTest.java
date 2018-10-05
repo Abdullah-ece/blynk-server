@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
@@ -177,6 +178,10 @@ public abstract class APIBaseTest extends CounterBase {
 
     public static TextMetaField createTextMeta(int id, String name, String value, boolean include) {
         return new TextMetaField(id, name, new int[] {1}, include, false, false, null, value);
+    }
+
+    public static ListMetaField createListMeta(int id, String name, String templateId) {
+        return new ListMetaField(id, name, new int[] {1}, false, false, true, null, new String[] {templateId}, null);
     }
 
     public static ContactMetaField createContactMeta(int id, String name) {

@@ -32,7 +32,7 @@ public final class MobileGetDeviceLogic {
         Product product = holder.organizationDao.getProductByIdOrThrow(device.productId);
         MetaField[] filtered = MetaField.filter(device.metaFields).toArray(new MetaField[0]);
         String response = new DeviceDTO(device, product, filtered).toString();
-        log.debug("Returning deviceId {} fpr mobile app.", device.id);
+        log.debug("Returning deviceId {} for mobile app.", device.id);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
