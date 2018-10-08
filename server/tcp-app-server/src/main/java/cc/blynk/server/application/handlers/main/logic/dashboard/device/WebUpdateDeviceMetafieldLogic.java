@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -32,13 +31,8 @@ public final class WebUpdateDeviceMetafieldLogic {
     }
 
     public static void messageReceived(Holder holder,
-                                       ChannelHandlerContext ctx, StateHolderBase state, StringMessage message) {
-        messageReceived(holder, ctx, state, message, state instanceof AppStateHolder);
-    }
-
-    private static void messageReceived(Holder holder,
                                         ChannelHandlerContext ctx,
-                                        StateHolderBase state, StringMessage message, boolean isApp) {
+                                        StateHolderBase state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -75,10 +69,8 @@ public final class WebUpdateDeviceMetafieldLogic {
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        if (isApp) {
-            Session session = holder.sessionDao.userSession.get(state.userKey);
-            session.sendToSelectedDeviceOnWeb(WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
-        }
+        Session session = holder.sessionDao.userSession.get(state.userKey);
+        session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 
     private static void verifyOwnerAndDeviceName(MetaField metaField) {

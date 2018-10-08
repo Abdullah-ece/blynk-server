@@ -564,6 +564,17 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("Jopa", numberMetaField.name);
         assertEquals(1, numberMetaField.roleIds[0]);
         assertEquals(10000D, numberMetaField.value, 0.1);
+
+        AppWebSocketClient client2 = loggedDefaultClient(getUserName(), "1");
+        client2.track(createdDevice.id);
+        client2.verifyResult(ok(1));
+
+        newMeta = createNumberMeta(1, "Jopa", 10001D, true);
+        client.updateDeviceMetafield(createdDevice.id, newMeta);
+        client.verifyResult(ok(4));
+
+        client2.verifyResult(new StringMessage(4, Command.WEB_UPDATE_DEVICE_METAFIELD,
+                String.valueOf(createdDevice.id) + BODY_SEPARATOR + newMeta.toString()));
     }
 
     @Test
