@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.DeviceKey;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.IdNameDTO;
@@ -35,7 +35,7 @@ public final class GetDevicesByReferenceMetafieldLogic {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                       AppStateHolder state, StringMessage message) {
+                                       MobileStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
         int deviceId = Integer.parseInt(split[0]);
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
