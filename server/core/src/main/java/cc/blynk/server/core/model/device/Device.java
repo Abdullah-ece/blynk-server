@@ -85,6 +85,7 @@ public class Device implements Target {
 
     public volatile boolean isUserIcon;
 
+    @JsonView(View.Web.class)
     public volatile WebDashboard webDashboard = new WebDashboard();
 
     public boolean isNotValid() {
