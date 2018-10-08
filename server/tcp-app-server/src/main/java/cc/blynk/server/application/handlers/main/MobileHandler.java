@@ -298,7 +298,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 GetDevicesByReferenceMetafieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case MOBILE_GET_DEVICE :
-                MobileGetDeviceLogic.messageReceived(ctx, state.user, msg);
+                MobileGetDeviceLogic.messageReceived(holder, ctx, msg);
                 break;
 
             case CREATE_TAG :
