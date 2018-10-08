@@ -1,14 +1,16 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
-import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -18,23 +20,23 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  */
 public final class MobileGetDeviceLogic {
 
+    private static final Logger log = LogManager.getLogger(MobileGetDeviceLogic.class);
+
     private MobileGetDeviceLogic() {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = StringUtils.split2(message.body);
-        int dashId = Integer.parseInt(split[0]);
-        int deviceId = Integer.parseInt(split[1]);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, StringMessage message) {
+        int deviceId = Integer.parseInt(message.body);
+        Device device = holder.deviceDao.getById(deviceId);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = dash.getDeviceById(deviceId);
-        if (device == null) {
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-        } else {
-            if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_GET_DEVICE,
-                        message.id, device.toString()), ctx.voidPromise());
-            }
+        Product product = holder.organizationDao.getProductByIdOrThrow(device.productId);
+        MetaField[] filtered = MetaField.filter(device.metaFields).toArray(new MetaField[0]);
+        String response = new DeviceDTO(device, product, filtered).toString();
+        log.debug("Returning deviceId {} for mobile app.", device.id);
+
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(
+                    makeUTF8StringMessage(MOBILE_GET_DEVICE, message.id, response), ctx.voidPromise());
         }
     }
 
