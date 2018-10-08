@@ -76,7 +76,7 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
-    public static final short MOBILE_GET_DEVICE = 131;
+    public static final short GET_DEVICE = 50;
 
     public static final short UPDATE_FACE = 51;
 
@@ -292,8 +292,7 @@ public final class Command {
             Map.entry(WEB_UPDATE_DEVICE_METAFIELD, "WebUpdateDeviceMetafield"),
             Map.entry(WEB_GET_DEVICE_TIMELINE, "WebGetDeviceTimeline"),
             Map.entry(WEB_DELETE_DEVICE, "WebDeleteDevice"),
-            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield"),
-            Map.entry(MOBILE_GET_DEVICE, "MobileGetDevice")
+            Map.entry(MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD, "GetDevicesByReferenceMetafield")
     );
 
     public static String getNameByValue(short val) {

@@ -3,7 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
@@ -32,7 +32,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
         properties.setProperty("data.folder", TestUtil.getDataFolder());
         holder = createDefaultHolder(properties, "db-test.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
+        appServer = new MobileAndHttpsServer(holder).start();
         assertNotNull(holder.dbManager.getConnection());
     }
 

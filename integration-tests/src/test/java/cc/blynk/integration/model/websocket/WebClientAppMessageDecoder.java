@@ -2,7 +2,7 @@ package cc.blynk.integration.model.websocket;
 
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.WSMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -29,7 +29,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
  */
 public class WebClientAppMessageDecoder extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LogManager.getLogger(WebAppMessageDecoder.class);
+    private static final Logger log = LogManager.getLogger(WSMessageDecoder.class);
 
     private final GlobalStats stats;
     private final QuotaLimitChecker limitChecker;

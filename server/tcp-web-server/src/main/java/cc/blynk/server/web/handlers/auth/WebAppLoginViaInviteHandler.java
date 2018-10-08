@@ -1,7 +1,7 @@
 package cc.blynk.server.web.handlers.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
+import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
@@ -52,7 +52,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
     private static void cleanPipeline(DefaultChannelPipeline pipeline) {
         pipeline.removeIfExists(WebAppLoginHandler.class);
         pipeline.removeIfExists(UserNotLoggedHandler.class);
-        pipeline.removeIfExists(GetServerHandler.class);
+        pipeline.removeIfExists(MobileGetServerHandler.class);
         pipeline.removeIfExists(WebAppLoginViaInviteHandler.class);
     }
 

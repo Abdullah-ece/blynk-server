@@ -1,7 +1,7 @@
 package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
+import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
@@ -247,7 +247,7 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 WebGetMetaFieldLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case LOGOUT :
-                LogoutLogic.messageReceived(ctx, state.user, msg);
+                MobileLogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

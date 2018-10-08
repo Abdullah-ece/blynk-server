@@ -52,7 +52,6 @@ import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;

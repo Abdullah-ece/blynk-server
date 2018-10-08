@@ -15,7 +15,7 @@ import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaFiel
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.http.Header;
@@ -78,7 +78,7 @@ public abstract class APIBaseTest extends CounterBase {
         this.holder = createDefaultHolder(properties, "db-test.properties");
         assertNotNull(holder.dbManager.getConnection());
 
-        this.httpsAdminServer = new AppAndHttpsServer(holder).start();
+        this.httpsAdminServer = new MobileAndHttpsServer(holder).start();
 
         // Allow TLSv1 protocol only
         this.httpclient = getDefaultHttpsClient();
