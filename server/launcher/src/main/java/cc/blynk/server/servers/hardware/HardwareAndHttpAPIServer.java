@@ -10,8 +10,8 @@ import cc.blynk.server.api.http.dashboard.ExternalAPIHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
-import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
+import cc.blynk.server.api.websockets.handlers.WSHandler;
+import cc.blynk.server.api.websockets.handlers.WSWrapperEncoder;
 import cc.blynk.server.common.handlers.AlreadyLoggedHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
@@ -108,9 +108,9 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast("WSChannelState", hardwareChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))
-                        .addLast("WSWebSocket", new WebSocketHandler(stats))
+                        .addLast("WSWebSocket", new WSHandler(stats))
                         .addLast("WSMessageDecoder", new MessageDecoder(stats, holder.limits))
-                        .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
+                        .addLast("WSSocketWrapper", new WSWrapperEncoder())
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
                         .addLast("WSNotLogged", alreadyLoggedHandler);

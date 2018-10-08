@@ -25,7 +25,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebSource;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.AppNameUtil;
@@ -128,7 +128,7 @@ public final class ServerLauncher {
 
         BaseServer[] servers = new BaseServer[] {
                 new HardwareAndHttpAPIServer(holder),
-                new AppAndHttpsServer(holder),
+                new MobileAndHttpsServer(holder),
                 new MQTTHardwareServer(holder)
         };
 
