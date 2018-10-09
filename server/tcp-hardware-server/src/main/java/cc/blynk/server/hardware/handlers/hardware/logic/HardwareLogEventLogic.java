@@ -106,14 +106,19 @@ public class HardwareLogEventLogic {
             if (metaField != null) {
                 String to = metaField.getNotificationEmail();
                 if (to != null && !to.isEmpty()) {
+                    String eventDescription;
+                    if (desc == null || desc.isEmpty()) {
+                        eventDescription = event.description == null ? "" : event.description;
+                    } else {
+                        eventDescription = desc;
+                    }
                     mail(to, device.name + ": " + event.name,
                             eventLogEmailBody
                                     .replace("{DEVICE_URL}", deviceUrl + device.id)
                                     .replace("{DEVICE_NAME}", device.name)
                                     .replace("{DATE_TIME}", formatter.format(LocalDateTime.now()))
                                     .replace("{EVENT_NAME}", event.name)
-                                    .replace("{EVENT_DESCRIPTION}",
-                                            desc == null || desc.isEmpty() ? event.description : desc)
+                                    .replace("{EVENT_DESCRIPTION}", eventDescription)
                     );
                 }
             }
