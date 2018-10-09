@@ -76,7 +76,7 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
-    public static final short GET_DEVICE = 50;
+    public static final short MOBILE_GET_DEVICE = 50;
 
     public static final short UPDATE_FACE = 51;
 
@@ -167,7 +167,6 @@ public final class Command {
     public static final short WEB_DELETE_DEVICE = 128;
     public static final short WEB_GET_METAFIELD = 129;
     public static final short MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD = 130;
-    public static final short MOBILE_GET_DEVICE = 131;
 
     public static final int LAST_COMMAND_INDEX = 150;
 
