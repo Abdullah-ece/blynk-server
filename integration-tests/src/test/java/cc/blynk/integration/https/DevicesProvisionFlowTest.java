@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -272,6 +273,15 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+
+        client.reset();
+        //we need separate call here as getDevice for mobile has filtered devices
+        client.getDevice(orgId, deviceFromApi.id);
+        Device webDevice = client.parseDevice(1);
+        MetaField templateIdMeta = webDevice.findMetaFieldById(3);
+        assertNotNull(templateIdMeta);
+        assertTrue(templateIdMeta instanceof ListMetaField);
+        assertEquals("TMPL0001", ((ListMetaField) templateIdMeta).selectedOption);
 
         newHardClient.stop();
         appClient.reset();

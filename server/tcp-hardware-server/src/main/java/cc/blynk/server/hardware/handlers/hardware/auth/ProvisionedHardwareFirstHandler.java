@@ -7,7 +7,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
 import cc.blynk.utils.StringUtils;
@@ -89,7 +91,11 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     }
                     device.productId = product.id;
                     device.hardwareInfo = hardwareInfo;
-                    device.metaFields = product.copyMetaFields();
+                    MetaField[] copyMetafields = product.copyMetaFields();
+                    if (templateId != null) {
+                        setTemplateIdInMeta(copyMetafields, templateId);
+                    }
+                    device.metaFields = copyMetafields;
                     device.webDashboard = product.webDashboard.copy();
                     holder.deviceDao.createWithPredefinedId(orgId, device);
 
@@ -102,6 +108,17 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
             }
         } else {
             log.warn("Expecting only internal command here for user {}", user.email);
+        }
+    }
+
+    private static void setTemplateIdInMeta(MetaField[] metaFields, String templateId) {
+        for (int i = 0; i < metaFields.length; i++) {
+            MetaField metaField = metaFields[i];
+            if (metaField instanceof ListMetaField && metaField.isTemplateIdMetaField()) {
+                ListMetaField listMetaField = (ListMetaField) metaField;
+                metaFields[i] = listMetaField.copy(templateId);
+                return;
+            }
         }
     }
 

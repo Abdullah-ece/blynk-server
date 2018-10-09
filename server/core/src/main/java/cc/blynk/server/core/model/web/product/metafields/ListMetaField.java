@@ -47,4 +47,10 @@ public class ListMetaField extends MetaField {
                 includeInProvision, isMandatory, isDefault,
                 icon, options, selectedOption);
     }
+
+    public MetaField copy(String selectedOption) {
+        return new ListMetaField(id, name, roleIds,
+                includeInProvision, isMandatory, isDefault,
+                icon, options, selectedOption);
+    }
 }
