@@ -179,7 +179,7 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
     {
       id: 3,
       type: Metadata.Fields.LOCATION,
-      name: '',
+      name: 'Location',
       roleIds: [],
       isDefault: true,
       ...MetadataInitialValues,
