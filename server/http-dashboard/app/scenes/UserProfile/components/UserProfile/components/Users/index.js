@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {displayError} from "services/ErrorHandling";
 import {Section, Item} from '../../../Section';
 import InviteUsersForm from './components/InviteUsersForm';
 import OrganizationUsers from './components/OrganizationUsers';
@@ -24,7 +25,7 @@ class Users extends Component {
       id: this.props.Account.orgId,
       email: values.email,
       name: values.name,
-      role: values.role
+      roleId: Number(values.role),
     }).then(() => {
       this.props.onOrganizationUsersFetch({
         id: this.props.Account.orgId
@@ -33,7 +34,7 @@ class Users extends Component {
       this.showInviteSuccess();
     }).catch((err) => {
       this.showInviteError(
-        err.error.response.message || 'Error sending invite'
+        displayError(err) || 'Error sending invite'
       );
       new SubmissionError(err);
     });
@@ -41,7 +42,7 @@ class Users extends Component {
 
   showInviteError(message) {
     Modal.warning({
-      title: 'Ooops!',
+      title: 'Error sending invite',
       content: String(message)
     });
   }

@@ -37,7 +37,7 @@ class InviteUsersForm extends React.Component {
     );
 
     return (
-      <InviteForm initialValues={initialValues} rolesList={rolesList}/>
+      <InviteForm onSubmit={this.props.onSubmit} initialValues={initialValues} rolesList={rolesList}/>
     );
 
   }
