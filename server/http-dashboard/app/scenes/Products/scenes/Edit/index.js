@@ -17,6 +17,7 @@ import {fromJS, Map} from 'immutable';
 import {message} from 'antd';
 import {MainLayout} from 'components';
 import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
+import {displayError} from "services/ErrorHandling";
 // import {OrganizationFetch} from 'data/Organization/actions';
 import {
   // repareProductForSave,
@@ -380,7 +381,7 @@ class Edit extends React.Component {
         this.setState({
           deviceForceUpdateLoading: false
         });
-        message.error(response && response.error && response.error.response.message || 'Cannot save product');
+        displayError(response, message.error);
     });
 
   }
@@ -392,7 +393,7 @@ class Edit extends React.Component {
     })
       .then(this.handleProductSaveSuccess)
       .catch((response) => {
-        message.error(response && response.error && response.error.response.message || 'Cannot save product');
+        displayError(response, message.error);
       });
   }
 
@@ -407,7 +408,7 @@ class Edit extends React.Component {
         this.setState({
           deviceForceUpdateLoading: false
         });
-        message.error(response && response.error && response.error.response.message || 'Cannot clone product');
+        displayError(response, message.error);
       });
 
   }
@@ -421,8 +422,8 @@ class Edit extends React.Component {
   handleDelete() {
     return this.props.Delete(this.props.params.id).then(() => {
       this.context.router.push('/products?deleted=true');
-    }).catch((err) => {
-      message.error(err.message || 'Cannot delete product');
+    }).catch((response) => {
+      displayError(response, message.error);
     });
   }
 
