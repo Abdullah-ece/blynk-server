@@ -75,8 +75,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     if (templateId == null) {
                         Organization org = holder.organizationDao.getOrgByIdOrThrow(orgId);
                         product = org.getFirstProduct();
-                        log.warn("No templateId from hardware. Getting first product (id={}) for provisioned device.",
-                                product.id);
+                        log.warn("No templateId from hardware. Getting first product (id={}) "
+                                + "for provisioned device {}.", product.id, device.id);
                     } else {
                         product = holder.organizationDao.getProductByTemplateId(templateId);
                         if (product == null) {
