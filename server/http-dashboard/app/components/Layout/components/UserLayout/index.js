@@ -137,9 +137,9 @@ class UserLayout extends React.Component {
         <Menu.Item key="/user-profile/users">
           Users
         </Menu.Item>
-        <Menu.Item key="/user-profile/branding">
-          Branding
-        </Menu.Item>
+        {/*<Menu.Item key="/user-profile/branding">*/}
+          {/*Branding*/}
+        {/*</Menu.Item>*/}
         <Menu.Item key="/user-profile/roles-and-permissions">
           Roles & Permissions
         </Menu.Item>

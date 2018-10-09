@@ -8,7 +8,7 @@ import {
 import MyAccount from './components/AccountSettings';
 import OrganizationSettings from './components/OrganizationSettings';
 import Users from './components/Users';
-import Branding from './components/Branding';
+// import Branding from './components/Branding';
 import {RolesAndPermissions} from 'scenes/UserProfile/scenes';
 
 class UserProfile extends Component {
@@ -72,12 +72,12 @@ class UserProfile extends Component {
                        onResetForm = {this.props.onResetForm}/>
               </Tabs.TabPane>
 
-              <Tabs.TabPane tab={<span>{TABS.BRANDING.value}</span>} key={TABS.BRANDING.key}>
-                <Branding Organization={this.props.Organization}
-                          onOrganizationSave={this.props.onOrganizationSave}
-                          onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}
-                          onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>
-              </Tabs.TabPane>
+              {/*<Tabs.TabPane tab={<span>{TABS.BRANDING.value}</span>} key={TABS.BRANDING.key}>*/}
+                {/*<Branding Organization={this.props.Organization}*/}
+                          {/*onOrganizationSave={this.props.onOrganizationSave}*/}
+                          {/*onOrganizationLogoUpdate={this.props.onOrganizationLogoUpdate}*/}
+                          {/*onOrganizationBrandingUpdate={this.props.onOrganizationBrandingUpdate}/>*/}
+              {/*</Tabs.TabPane>*/}
 
               <Tabs.TabPane tab={<span>{TABS.ROLES_AND_PERMISSIONS.value}</span>} key={TABS.ROLES_AND_PERMISSIONS.key}>
                 <RolesAndPermissions />
