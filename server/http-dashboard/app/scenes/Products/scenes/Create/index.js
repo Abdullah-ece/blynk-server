@@ -25,6 +25,7 @@ import {
 } from 'redux-form';
 import {message} from 'antd';
 import {bindActionCreators} from 'redux';
+import {displayError} from "services/ErrorHandling";
 // import {ProductsUpdateMetadataFirstTime} from 'data/Storage/actions';
 import {
   FORMS,
@@ -302,7 +303,7 @@ class Create extends React.Component {
       this.context.router.push(`/products/?success=true`);
 
     }).catch((response) => {
-      message.error(response && response.error && response.error.response.message || 'Cannot create product');
+      displayError(response, message.error);
     });
 
   }
