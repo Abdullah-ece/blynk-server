@@ -412,7 +412,7 @@ class LabelWidgetSettings extends React.Component {
 
               <div className="modal-window-widget-settings-config-column-bar-configuration">
                 <ItemsGroup>
-                  <Item label="X: Data" offset="medium">
+                  <Item label="Data" offset="medium">
                     <Select displayError={false}
                             dropdownMatchSelectWidth={false}
                             name="sources.0.sourceType"
