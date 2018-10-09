@@ -19,8 +19,8 @@ class Item extends React.Component {
     children: React.PropTypes.any,
     fieldName: React.PropTypes.string,
     onEditClick: React.PropTypes.func,
-    fieldRole: React.PropTypes.string,
-    userRole: React.PropTypes.string,
+    fieldRole: React.PropTypes.array,
+    userRole: React.PropTypes.number,
     isEditDisabled: React.PropTypes.bool,
   };
 

@@ -89,5 +89,8 @@ export {
 
 export const isUserAbleToEdit = (userRole, fieldRole) => {
 
+  if(userRole === SUPER_ADMIN_ROLE_ID)
+    return true;
+
   return (Array.isArray(fieldRole) ? fieldRole : [fieldRole]).indexOf(Number(userRole)) !== -1;
 };
