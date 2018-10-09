@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.integration.model.tcp.TestSslHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
@@ -425,4 +426,69 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
     }
 
+    @Test
+    public void testProvisionFlowNoTemplateIdInDeviceWithSSLClient() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.metaFields = new MetaField[] {
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+        };
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Product product2 = new Product();
+        product2.name = "My product2";
+        product2.metaFields = new MetaField[] {
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createListMeta(3, "Template Id", "TMPL0001")
+        };
+        client.createProduct(orgId, product2);
+        Product fromApiProduct2 = client.parseProduct(2);
+        assertNotNull(fromApiProduct2);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.boardType = BoardType.ESP32_Dev_Board;
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort());
+        appClient.start();
+        appClient.login(getUserName(), "1");
+        appClient.verifyResult(ok(1));
+        appClient.getProvisionToken(1, newDevice);
+        Device deviceFromApi = appClient.parseDevice(2);
+        assertNotNull(deviceFromApi);
+        assertNotNull(deviceFromApi.token);
+
+        TestSslHardClient newHardClient = new TestSslHardClient("localhost", properties.getHttpsPort());
+        newHardClient.start();
+        newHardClient.send("login " + deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.never(hardwareConnected(1, "1-1"));
+
+        newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        newHardClient.verifyResult(ok(2));
+        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+
+        appClient.getDevice(deviceFromApi.id);
+        Device provisionedDevice = appClient.parseDevice(4);
+        assertNotNull(provisionedDevice);
+        assertNotNull(provisionedDevice.metaFields);
+        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(fromApiProduct.id, provisionedDevice.productId);
+        assertNotNull(provisionedDevice.hardwareInfo);
+        assertNull(provisionedDevice.hardwareInfo.templateId);
+
+        newHardClient.stop();
+        appClient.reset();
+
+        newHardClient = new TestSslHardClient("localhost", properties.getHttpsPort());
+        newHardClient.start();
+        newHardClient.send("login " + deviceFromApi.token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+    }
 }
