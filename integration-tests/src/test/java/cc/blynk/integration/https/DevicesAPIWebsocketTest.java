@@ -430,8 +430,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
@@ -474,8 +475,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
@@ -493,8 +495,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.updateDeviceMetafield(createdDevice.id, newMeta);
         appClient.verifyResult(ok(3));
 
-        appClient.getDeviceMetafield(createdDevice.id);
-        metaFields = appClient.parseMetafields(4);
+        appClient.getDevice(createdDevice.id, true);
+        device = appClient.parseDevice(4);
+        metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         numberMetaField = (NumberMetaField) metaFields[0];
@@ -532,8 +535,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
@@ -555,8 +559,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.verifyResult(new StringMessage(3, Command.WEB_UPDATE_DEVICE_METAFIELD,
                 String.valueOf(createdDevice.id) + BODY_SEPARATOR + newMeta.toString()));
 
-        appClient.getDeviceMetafield(createdDevice.id);
-        metaFields = appClient.parseMetafields(4);
+        appClient.getDevice(createdDevice.id, true);
+        device = appClient.parseDevice(4);
+        metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         numberMetaField = (NumberMetaField) metaFields[0];
@@ -605,8 +610,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
 
@@ -629,8 +635,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.updateDeviceMetafields(createdDevice.id, metaFields);
         appClient.verifyResult(ok(3));
 
-        appClient.getDeviceMetafield(createdDevice.id);
-        metaFields = appClient.parseMetafields(4);
+        appClient.getDevice(createdDevice.id, true);
+        device = appClient.parseDevice(4);
+        metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
 
@@ -673,8 +680,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
 
@@ -725,8 +733,9 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         NumberMetaField numberMetaField = (NumberMetaField) metaFields[0];
@@ -744,14 +753,15 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         appClient.updateDeviceMetafield(createdDevice.id, updatedMeta);
         appClient.verifyResult(ok(3));
 
-        appClient.getDeviceMetafield(createdDevice.id);
-        metaFields = appClient.parseMetafields(4);
+        appClient.getDevice(createdDevice.id, true);
+        device = appClient.parseDevice(4);
+        metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(2, metaFields.length);
         assertEquals("Updated Name", ((TextMetaField) metaFields[1]).value);
 
         client.getDevice(orgId, createdDevice.id);
-        Device device = client.parseDevice(3);
+        device = client.parseDevice(3);
         assertEquals("Updated Name", device.name);
     }
 

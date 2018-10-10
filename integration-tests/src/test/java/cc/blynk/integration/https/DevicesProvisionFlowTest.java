@@ -74,8 +74,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(0, metaFields.length);
     }
@@ -116,8 +117,9 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.start();
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
-        appClient.getDeviceMetafield(createdDevice.id);
-        MetaField[] metaFields = appClient.parseMetafields(2);
+        appClient.getDevice(createdDevice.id, true);
+        Device device = appClient.parseDevice(2);
+        MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
         assertEquals(1, metaFields.length);
         MetaField metaField = metaFields[0];

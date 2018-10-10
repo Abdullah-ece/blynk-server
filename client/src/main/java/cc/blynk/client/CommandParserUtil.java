@@ -50,7 +50,6 @@ import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
@@ -330,8 +329,6 @@ public final class CommandParserUtil {
                 return WEB_GET_DEVICE_TIMELINE;
             case "webdeletedevice" :
                 return WEB_DELETE_DEVICE;
-            case "getdevicemetafields" :
-                return MOBILE_GET_DEVICE_METAFIELDS;
             case "updatedevicemetafield" :
                 return MOBILE_UPDATE_DEVICE_METAFIELD;
             case "webgetmetafield" :

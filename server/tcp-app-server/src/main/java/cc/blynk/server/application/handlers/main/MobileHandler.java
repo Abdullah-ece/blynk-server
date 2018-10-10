@@ -26,7 +26,6 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.MobileCreateDas
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileDeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.MobileUpdateDashSettingLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDeviceMetafieldsLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesByReferenceMetafieldLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileCreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.MobileDeleteDeviceLogic;
@@ -110,7 +109,6 @@ import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
-import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE_METAFIELDS;
 import static cc.blynk.server.core.protocol.enums.Command.MOBILE_UPDATE_DEVICE_METAFIELD;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
@@ -287,9 +285,6 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case GET_DEVICES :
                 MobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
-                break;
-            case MOBILE_GET_DEVICE_METAFIELDS:
-                GetDeviceMetafieldsLogic.messageReceived(holder, ctx, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
                 WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);

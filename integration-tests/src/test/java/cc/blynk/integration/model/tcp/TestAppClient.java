@@ -290,10 +290,6 @@ public class TestAppClient extends BaseTestAppClient {
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
-    public void getDeviceMetafield(int deviceId) {
-        send("getDeviceMetafields " + deviceId);
-    }
-
     public void getDevice(int deviceId) {
         send("getDevice " + deviceId);
     }

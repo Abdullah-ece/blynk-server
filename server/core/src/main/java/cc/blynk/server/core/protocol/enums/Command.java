@@ -23,7 +23,6 @@ public final class Command {
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
 
-    public static final short MOBILE_GET_DEVICE_METAFIELDS = 10;
     public static final short MOBILE_UPDATE_DEVICE_METAFIELD = 11;
 
     //HARDWARE commands
@@ -246,7 +245,6 @@ public final class Command {
             Map.entry(DELETE_REPORT, "deleteReport"),
             Map.entry(EXPORT_REPORT, "exportReport"),
             Map.entry(RESET_PASSWORD, "resetPass"),
-            Map.entry(MOBILE_GET_DEVICE_METAFIELDS, "GetDeviceMetafields"),
             Map.entry(MOBILE_UPDATE_DEVICE_METAFIELD, "UpdateDeviceMetafield"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
