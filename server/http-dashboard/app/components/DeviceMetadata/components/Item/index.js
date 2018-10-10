@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import {Metadata} from "services/Products";
 import {
-  isUserAbleToEdit, SUPER_ADMIN_ROLE_ID
+  isUserAbleToEdit
 } from "services/Roles";
 import google from 'google';
 import {Row, Col, Button, Icon} from 'antd';
@@ -97,7 +97,7 @@ class Item extends React.Component {
             </Col>
             { (this.props.field && this.props.field.type === Metadata.Fields.LOCATION && this.props.field.lat && this.props.field.lon) && (
               <Col span={10}>
-                {this.props.userRole === SUPER_ADMIN_ROLE_ID || (this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole)) ? (
+                {this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole) ? (
                   <div className="device-metadata--location-field--map-overlay">
                     <Button type="primary" onClick={this.onEditClick}>
                       <Icon type="edit"/>Edit
@@ -108,7 +108,7 @@ class Item extends React.Component {
               </Col>
             ) || (
               <Col span={10} className="device-metadata--item-edit">
-                {this.props.userRole === SUPER_ADMIN_ROLE_ID ||  (this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole)) ? (
+                {this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole) ? (
                   <Button type="primary" onClick={this.onEditClick}>
                     <Icon type="edit"/>Edit
                   </Button>
