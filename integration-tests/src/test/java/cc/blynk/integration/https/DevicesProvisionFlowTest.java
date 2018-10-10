@@ -78,7 +78,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device device = appClient.parseDevice(2);
         MetaField[] metaFields = device.metaFields;
         assertNotNull(metaFields);
-        assertEquals(0, metaFields.length);
+        assertEquals(2, metaFields.length);
     }
 
     @Test
