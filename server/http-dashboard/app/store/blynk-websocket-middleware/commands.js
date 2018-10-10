@@ -108,13 +108,16 @@ export const blynkWsConnect = (params) => {
 };
 
 export const blynkWsApiCall = (params) => {
+
+  MSG_ID = ++MSG_ID;
+
   const {store, action, options} = params;
 
   if (options.isDebugMode)
-    options.debug("blynkWsApiCall", action);
+    options.debug("blynkWsApiCall", action, MSG_ID);
 
   const value = makeMessage(
-      action.ws.request.command, ++MSG_ID, (action.ws.request.query || []).join('\0')
+      action.ws.request.command, MSG_ID, (action.ws.request.query || []).join('\0')
   );
 
   store.dispatch(blynkWsRequest({
