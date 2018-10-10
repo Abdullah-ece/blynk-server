@@ -397,37 +397,37 @@ export const Unit = {
   Year: {
     abbreviation: 'yr',
     key: 'Year',
-    value: 'Year'
+    value: 'Year(s)'
   },
   Month: {
     abbreviation: 'mo',
     key: 'Month',
-    value: 'Month'
+    value: 'Month(s)'
   },
   Week: {
     abbreviation: 'wk',
     key: 'Week',
-    value: 'Week'
+    value: 'Week(s)'
   },
   Day: {
     abbreviation: 'd',
     key: 'Day',
-    value: 'Day'
+    value: 'Day(s)'
   },
   Hour: {
     abbreviation: 'hr',
     key: 'Hour',
-    value: 'Hour'
+    value: 'Hour(s)'
   },
   Minute: {
     abbreviation: 'min',
     key: 'Minute',
-    value: 'Minute'
+    value: 'Minute(s)'
   },
   Second: {
     abbreviation: 's',
     key: 'Second',
-    value: 'Second'
+    value: 'Second(s)'
   },
   SquareFeet: {
     abbreviation: 'sq ft',

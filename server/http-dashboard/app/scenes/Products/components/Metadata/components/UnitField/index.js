@@ -35,6 +35,7 @@ class UnitField extends BaseField {
     },
     'Duration'        : [
       Unit.Year,
+      Unit.Quarter,
       Unit.Month,
       Unit.Week,
       Unit.Day,

@@ -89,6 +89,16 @@ class BaseField extends React.Component {
         Unit.Kilogram
       ]
     },
+    'Duration'        : [
+      Unit.Year,
+      Unit.Quarter,
+      Unit.Month,
+      Unit.Week,
+      Unit.Day,
+      Unit.Hour,
+      Unit.Minute,
+      Unit.Second
+    ],
     'Volume': {
       'Imperial': [
         Unit.Pint,
