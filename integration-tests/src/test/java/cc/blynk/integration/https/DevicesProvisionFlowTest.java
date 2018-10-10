@@ -182,7 +182,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
@@ -269,7 +269,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(6);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
@@ -355,7 +355,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);

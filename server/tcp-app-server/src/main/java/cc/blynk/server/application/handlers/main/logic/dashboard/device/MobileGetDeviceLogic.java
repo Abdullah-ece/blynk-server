@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
-import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,8 +29,7 @@ public final class MobileGetDeviceLogic {
         Device device = holder.deviceDao.getById(deviceId);
 
         Product product = holder.organizationDao.getProductByIdOrThrow(device.productId);
-        MetaField[] filtered = MetaField.filter(device.metaFields).toArray(new MetaField[0]);
-        String response = new DeviceDTO(device, product, filtered).toString();
+        String response = new DeviceDTO(device, product).toString();
         log.debug("Returning deviceId {} for mobile app.", device.id);
 
         if (ctx.channel().isWritable()) {
