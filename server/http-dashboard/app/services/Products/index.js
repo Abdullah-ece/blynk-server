@@ -206,6 +206,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       isDefault: true,
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e67e',
+      includeInProvision: false,
+      isMandatory: false,
       hardcoded: true,
     },
     /** Hide Model metadata for current customer */

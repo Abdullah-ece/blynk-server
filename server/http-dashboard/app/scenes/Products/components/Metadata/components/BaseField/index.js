@@ -83,7 +83,8 @@ class BaseField extends React.PureComponent {
   render() {
 
     return (
-      <Metadata.Item preview={this.getPreviewValues()}
+      <Metadata.Item hideMobileAppProvisioning={this.hideMobileAppProvisioning}
+                     preview={this.getPreviewValues()}
                      metaFieldKey={this.props.metaFieldKey}
                      // onChange={this.props.onChange}
                      onDelete={this.handleDelete}

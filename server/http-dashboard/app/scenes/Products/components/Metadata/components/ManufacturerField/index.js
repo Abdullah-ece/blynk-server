@@ -8,6 +8,8 @@ import Static     from './static';
 
 class ManufacturerField extends BaseField {
 
+  hideMobileAppProvisioning = true;
+
   constructor(props) {
     super(props);
 

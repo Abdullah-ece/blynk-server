@@ -30,6 +30,7 @@ import PropTypes from 'prop-types';
 class MetadataItem extends React.PureComponent {
 
   static propTypes = {
+    hideMobileAppProvisioning: PropTypes.bool,
     events: PropTypes.any,
     anyTouched: PropTypes.bool,
     isDirty: PropTypes.bool,
@@ -233,18 +234,20 @@ class MetadataItem extends React.PureComponent {
               </Col>
               <Col span={14}>
                 {this.props.children}
-                <Row className="product-metadata-item--provisioning-section">
-                  <Col>
-                    <Form>
-                      <Form.Item label="Mobile App Provisioning">
-                        <Row type="flex">
-                          <Field component={this.switchComponent} name={`metaFields.${this.props.metaFieldKey}.includeInProvision`} />
-                          <Field component={this.checkboxComponent} name={`metaFields.${this.props.metaFieldKey}.isMandatory`} />
-                        </Row>
-                      </Form.Item>
-                    </Form>
-                  </Col>
-                </Row>
+                { this.props.hideMobileAppProvisioning === true ? (null) : (
+                  <Row className="product-metadata-item--provisioning-section">
+                    <Col>
+                      <Form>
+                        <Form.Item label="Mobile App Provisioning">
+                          <Row type="flex">
+                            <Field component={this.switchComponent} name={`metaFields.${this.props.metaFieldKey}.includeInProvision`} />
+                            <Field component={this.checkboxComponent} name={`metaFields.${this.props.metaFieldKey}.isMandatory`} />
+                          </Row>
+                        </Form.Item>
+                      </Form>
+                    </Col>
+                  </Row>
+                ) }
                 { !isRoleSelectDisabled ? (
                   <Row className="product-metadata-item--permissions-section">
                     <Col>
