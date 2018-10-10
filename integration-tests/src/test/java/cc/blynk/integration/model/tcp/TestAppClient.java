@@ -298,6 +298,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("getDevice " + deviceId);
     }
 
+    public void getDevice(int deviceId, boolean includeInProvisionOnly) {
+        send("getDevice " + deviceId + BODY_SEPARATOR + includeInProvisionOnly);
+    }
+
     public void updateDeviceMetafield(int deviceId, MetaField metaField) {
         send("updateDeviceMetafield " + deviceId + BODY_SEPARATOR + metaField.toString());
     }

@@ -178,11 +178,11 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.verifyResult(ok(2));
         appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
 
-        appClient.getDevice(deviceFromApi.id);
+        appClient.getDevice(deviceFromApi.id, true);
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(2, provisionedDevice.metaFields.length);
+        assertEquals(1, provisionedDevice.metaFields.length);
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
