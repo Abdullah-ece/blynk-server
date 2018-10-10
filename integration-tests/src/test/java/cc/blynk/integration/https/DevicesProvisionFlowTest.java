@@ -30,6 +30,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +47,24 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
+
+    @Test
+    public void connectHardwareWithProvisionToken() throws Exception {
+        String provisionToken = "daaaa444763d403ea91bf1a89feda9e3";
+        String templateId = "TMPL99744";
+        TestHardClient newHardClient = new TestHardClient("airiusfans-qa.blynk.cc", 80);
+        newHardClient.start();
+        newHardClient.send("login " + provisionToken);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.send("internal " + b("ver 0.5.4 tmpl " + templateId + " h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build DOOM"));
+        newHardClient.verifyResult(ok(2));
+
+        while (true) {
+            sleep(1000);
+            newHardClient.send("ping");
+        }
+    }
 
     @Test
     public void metafieldsForMobileFilteredByIncludeInProvision() throws Exception {
@@ -178,6 +197,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
+
+        newHardClient.send("ping");
+        newHardClient.verifyResult(ok(3));
+
         appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id, true);

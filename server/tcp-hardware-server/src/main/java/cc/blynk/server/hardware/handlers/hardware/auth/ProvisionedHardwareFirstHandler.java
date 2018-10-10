@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.internal.CreateSessionForwardMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,8 +103,10 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(user, dash, device));
                     dash.addDevice(device, templateId);
-                    ctx.pipeline().fireUserEventTriggered(
-                            new CreateSessionForwardMessage(user, dash, device, message.id));
+
+                    ChannelPipeline pipeline = ctx.pipeline();
+                    pipeline.remove(this)
+                            .fireUserEventTriggered(new CreateSessionForwardMessage(user, dash, device, message.id));
                     break;
             }
         } else {
