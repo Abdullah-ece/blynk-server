@@ -81,7 +81,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
-            log.trace("Changing device status. Device {}, dashId {}", device, dashBoard.id);
+            log.trace("Changing device status. Device {}, dashId {}", device.id, dashBoard.id);
             device.disconnected();
         }
 
