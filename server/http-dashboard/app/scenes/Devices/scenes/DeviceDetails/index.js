@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import {
-//   message,
-// } from 'antd';
+import {
+  message,
+} from 'antd';
 import {
   Device
 } from 'scenes/Devices/components';
@@ -18,6 +18,7 @@ import {TABS, TAB_URLS} from 'services/Devices';
 // import {DeviceDetailsUpdate} from 'data/Devices/actions';
 import {StartLoading, FinishLoading} from 'data/PageLoading/actions';
 import {bindActionCreators} from 'redux';
+import {displayError} from "services/ErrorHandling";
 // import {Map} from 'immutable';
 
 @connect((state) => ({
@@ -102,6 +103,8 @@ class DeviceDetailsScene extends React.Component {
       id: id || this.props.params.id
     }).then(() => {
       this.props.finishLoading();
+    }).catch((err) => {
+      displayError(err, message.error);
     });
   }
 
