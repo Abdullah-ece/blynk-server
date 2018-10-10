@@ -1,6 +1,7 @@
 import * as AccountAPI from "data/Account/actions";
 import React from 'react';
 import * as API from "scenes/Login/data/actions";
+import {displayError} from "services/ErrorHandling";
 
 import {
   ConnectionLoading
@@ -10,6 +11,8 @@ import {
   ConnectFailed,
   ConnectSuccess,
 } from 'data/Connection/actions';
+
+import {message} from 'antd';
 
 import {
   CONNECTION_STATES_VALUES
@@ -27,7 +30,7 @@ import PropTypes from 'prop-types';
 // import Login from 'scenes/Login';
 // import LoginLayout from 'components/LoginLayout';
 
-import {LoginWsSuccess} from 'data/Login/actions';
+import {LoginWsLogout, LoginWsSuccess} from 'data/Login/actions';
 
 import {bindActionCreators} from 'redux';
 
@@ -39,13 +42,15 @@ import {bindActionCreators} from 'redux';
   connectionStatus: state.Connection.connection,
   credentials     : state.Account.credentials || {},
 }), (dispatch) => ({
-  AccountFetch  : bindActionCreators(AccountAPI.Account, dispatch),
-  LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
-  Login         : bindActionCreators(API.Login, dispatch),
-  blynkWsConnect: bindActionCreators(blynkWsConnect, dispatch),
-  blynkWsLogin  : bindActionCreators(blynkWsLogin, dispatch),
-  connectSuccess: bindActionCreators(ConnectSuccess, dispatch),
-  connectFailed : bindActionCreators(ConnectFailed, dispatch),
+  AccountFetch           : bindActionCreators(AccountAPI.Account, dispatch),
+  LoginWsSuccess         : bindActionCreators(LoginWsSuccess, dispatch),
+  Login                  : bindActionCreators(API.Login, dispatch),
+  blynkWsConnect         : bindActionCreators(blynkWsConnect, dispatch),
+  blynkWsLogin           : bindActionCreators(blynkWsLogin, dispatch),
+  connectSuccess         : bindActionCreators(ConnectSuccess, dispatch),
+  connectFailed          : bindActionCreators(ConnectFailed, dispatch),
+  LoginWsLogout          : bindActionCreators(LoginWsLogout, dispatch),
+  AccountClearCredentials: bindActionCreators(AccountAPI.AccountClearCredentials, dispatch),
 }))
 class Connection extends React.Component {
 
@@ -54,22 +59,24 @@ class Connection extends React.Component {
   };
 
   static propTypes = {
-    connectionStatus: PropTypes.number,
-    isUserLoggedIn  : PropTypes.bool,
-    router          : PropTypes.object,
-    Account         : PropTypes.object,
-    children        : PropTypes.object,
-    credentials     : PropTypes.shape({
+    connectionStatus       : PropTypes.number,
+    isUserLoggedIn         : PropTypes.bool,
+    router                 : PropTypes.object,
+    Account                : PropTypes.object,
+    children               : PropTypes.object,
+    credentials            : PropTypes.shape({
       username: PropTypes.string,
       password: PropTypes.string,
     }),
-    blynkWsConnect  : PropTypes.func,
-    blynkWsLogin    : PropTypes.func,
-    connectSuccess  : PropTypes.func,
-    connectFailed   : PropTypes.func,
-    Login           : PropTypes.func,
-    LoginWsSuccess  : PropTypes.func,
-    AccountFetch    : PropTypes.func,
+    blynkWsConnect         : PropTypes.func,
+    blynkWsLogin           : PropTypes.func,
+    connectSuccess         : PropTypes.func,
+    connectFailed          : PropTypes.func,
+    Login                  : PropTypes.func,
+    LoginWsSuccess         : PropTypes.func,
+    AccountFetch           : PropTypes.func,
+    LoginWsLogout          : PropTypes.func,
+    AccountClearCredentials: PropTypes.func,
   };
 
   componentWillMount() {
@@ -93,7 +100,11 @@ class Connection extends React.Component {
           this.context.router.push('/devices');
           this.props.connectSuccess();
         });
-      }).catch(() => {
+      }).catch((err) => {
+        displayError(err, message.error);
+        this.props.connectSuccess();
+        this.props.AccountClearCredentials();
+        this.props.LoginWsLogout();
         this.context.router.push('/login');
       });
 
