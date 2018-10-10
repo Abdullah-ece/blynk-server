@@ -33,7 +33,7 @@ class OrganizationSettings extends React.Component {
   }
 
   showInviteSuccess() {
-    message.success('Invite has been sent to email!');
+    message.success('Invite has been sent to email');
   }
 
   handleTimezoneChange(timezone) {

@@ -48,7 +48,7 @@ class Users extends Component {
   }
 
   showInviteSuccess() {
-    message.success('Invite has been sent to email!');
+    message.success('Invite has been sent to email');
   }
 
   render() {
