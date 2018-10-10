@@ -92,7 +92,7 @@ class UnitField extends BaseField {
 
     return (
       <div>
-        <Field title="Number"
+        <Field title="Units"
                className={`metadata-name-field-${this.props.field.get('id')} normal-offset`}
                onFocus={this.onFocus}
                onBlur={this.onBlur}
