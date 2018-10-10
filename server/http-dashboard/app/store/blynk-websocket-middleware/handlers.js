@@ -6,6 +6,7 @@ import {
   blynkWsDeviceConnect,
   blynkWsDeviceDisconnect,
   blynkChartDataResponse,
+  blynkWsDeviceMetadataUpdate,
 } from './actions';
 
 import {
@@ -198,6 +199,31 @@ export const Handlers = (params) => {
 
     store.dispatch(blynkWsDeviceDisconnect({
       deviceId
+    }));
+
+  };
+
+  const deviceMetadataUpdateHandler = ({ msgId }) => {
+
+    const body = decodeBody(dataView);
+
+    const bodyArray = body.split('\0');
+
+    const deviceId = bodyArray[0].replace('0-', '');
+
+    const metafield = JSON.parse(bodyArray[1]);
+
+    if (options.isDebugMode)
+      options.debug("blynkWsMessage DeviceMetadataUpdate", action, {
+        command     : command,
+        msgId       : msgId,
+        bodyArray: bodyArray,
+        deviceId
+      });
+
+    store.dispatch(blynkWsDeviceMetadataUpdate({
+      deviceId,
+      metafield,
     }));
 
   };
@@ -426,6 +452,7 @@ export const Handlers = (params) => {
   return {
     ResponseOKHandler: responseOKHandler,
     JsonHandler: jsonHandler,
+    DeviceMetadataUpdateHandler: deviceMetadataUpdateHandler,
     ApiCallHandler: apiCallHandler,
     HardwareHandler: hardwareHandler,
     LogEventHandler: logEventHandler,

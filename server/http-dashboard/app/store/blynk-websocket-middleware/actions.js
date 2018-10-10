@@ -1,17 +1,18 @@
 export const ACTIONS = {
-  'BLYNK_WS_TRACK_DEVICE_ID'    : 'BLYNK_WS_TRACK_DEVICE_ID',
-  'BLYNK_WS_CHART_DATA_RESPONSE': 'BLYNK_WS_CHART_DATA_RESPONSE',
-  'BLYNK_WS_CHART_DATA_FETCH'   : 'BLYNK_WS_CHART_DATA_FETCH',
-  'BLYNK_WS_REQUEST'            : 'BLYNK_WS_REQUEST',
-  'BLYNK_WS_RESPONSE'           : 'BLYNK_WS_RESPONSE',
-  'BLYNK_WS_CONNECT'            : 'BLYNK_WS_CONNECT',
-  'BLYNK_WS_LOGIN'              : 'BLYNK_WS_LOGIN',
-  'BLYNK_WS_VIRTUAL_WRITE'      : 'BLYNK_WS_VIRTUAL_WRITE',
-  'BLYNK_WS_HARDWARE'           : 'BLYNK_WS_HARDWARE',
-  'BLYNK_WS_LOG_EVENT'          : 'BLYNK_WS_LOG_EVENT',
-  'BLYNK_WS_LOG_EVENT_RESOLVE'  : 'BLYNK_WS_LOG_EVENT_RESOLVE',
-  'BLYNK_WS_DEVICE_CONNECT'     : 'BLYNK_WS_DEVICE_CONNECT',
-  'BLYNK_WS_DEVICE_DISCONNECT'  : 'BLYNK_WS_DEVICE_DISCONNECT',
+  'BLYNK_WS_TRACK_DEVICE_ID'        : 'BLYNK_WS_TRACK_DEVICE_ID',
+  'BLYNK_WS_CHART_DATA_RESPONSE'    : 'BLYNK_WS_CHART_DATA_RESPONSE',
+  'BLYNK_WS_CHART_DATA_FETCH'       : 'BLYNK_WS_CHART_DATA_FETCH',
+  'BLYNK_WS_REQUEST'                : 'BLYNK_WS_REQUEST',
+  'BLYNK_WS_RESPONSE'               : 'BLYNK_WS_RESPONSE',
+  'BLYNK_WS_CONNECT'                : 'BLYNK_WS_CONNECT',
+  'BLYNK_WS_DEVICE_METAFIELD_UPDATE': 'BLYNK_WS_DEVICE_METAFIELD_UPDATE',
+  'BLYNK_WS_LOGIN'                  : 'BLYNK_WS_LOGIN',
+  'BLYNK_WS_VIRTUAL_WRITE'          : 'BLYNK_WS_VIRTUAL_WRITE',
+  'BLYNK_WS_HARDWARE'               : 'BLYNK_WS_HARDWARE',
+  'BLYNK_WS_LOG_EVENT'              : 'BLYNK_WS_LOG_EVENT',
+  'BLYNK_WS_LOG_EVENT_RESOLVE'      : 'BLYNK_WS_LOG_EVENT_RESOLVE',
+  'BLYNK_WS_DEVICE_CONNECT'         : 'BLYNK_WS_DEVICE_CONNECT',
+  'BLYNK_WS_DEVICE_DISCONNECT'      : 'BLYNK_WS_DEVICE_DISCONNECT',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -123,6 +124,14 @@ export const blynkWsChartDataFetch = ({ deviceId, widgetId, period, customRange 
     widgetId,
     graphPeriod: period,
     customRange
+  }
+});
+
+export const blynkWsDeviceMetadataUpdate = ({ deviceId, metafield }) => ({
+  type: ACTIONS.BLYNK_WS_DEVICE_METAFIELD_UPDATE,
+  value: {
+    deviceId,
+    metafield,
   }
 });
 

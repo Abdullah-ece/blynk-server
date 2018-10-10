@@ -26,17 +26,18 @@ export const RESPONSE_CODES = {
 };
 
 export const COMMANDS = {
-  RESPONSE           : 0,
-  LOGIN              : 2,
-  DEVICE_CONNECTED   : 4,
-  HARDWARE           : 20,
-  APP_SYNC           : 25,
-  CHART_DATA_FETCH   : 60,
-  LOG_EVENT          : 64,
-  DEVICE_DISCONNECTED: 71,
-  TRACK_DEVICE       : 73,
-  LOG_EVENT_RESOLVE  : 75,
-  WEB_JSON           : 99,
+  RESPONSE               : 0,
+  LOGIN                  : 2,
+  DEVICE_CONNECTED       : 4,
+  HARDWARE               : 20,
+  APP_SYNC               : 25,
+  CHART_DATA_FETCH       : 60,
+  LOG_EVENT              : 64,
+  DEVICE_DISCONNECTED    : 71,
+  TRACK_DEVICE           : 73,
+  LOG_EVENT_RESOLVE      : 75,
+  UPDATE_DEVICE_METAFIELD: 126,
+  WEB_JSON               : 99,
 };
 
 export const API_COMMANDS = {
@@ -329,17 +330,15 @@ export const blynkWsMessage = (params) => {
       previousAction: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
     });
 
-  } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
-
-    handlers.ApiCallHandler({
-      msgId: ++MSG_ID,
-      previousAction: message.previousAction,
-      promiseResolve: message.promiseResolve,
-    });
-
   } else if (command === COMMANDS.HARDWARE) {
 
     handlers.HardwareHandler({
+      msgId: ++MSG_ID
+    });
+
+  } else if (command === COMMANDS.UPDATE_DEVICE_METAFIELD) {
+
+    handlers.DeviceMetadataUpdateHandler({
       msgId: ++MSG_ID
     });
 
@@ -393,6 +392,14 @@ export const blynkWsMessage = (params) => {
     handlers.NoDataHandler({
       msgId: ++MSG_ID,
       previousAction: message,
+    });
+
+  } else if (API_COMMANDS_CODES_ARRAY.indexOf(command) >= 0) {
+
+    handlers.ApiCallHandler({
+      msgId: ++MSG_ID,
+      previousAction: message && message.previousAction,
+      promiseResolve: message && message.promiseResolve,
     });
 
   } else {

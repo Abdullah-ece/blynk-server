@@ -326,6 +326,28 @@ export default function Devices(state = initialState, action) {
         deviceDetails: deviceDetails,
       };
 
+    case ACTIONS.BLYNK_WS_DEVICE_METAFIELD_UPDATE:
+
+      if(state.deviceDetails && Number(state.deviceDetails.id) === Number(action.value.deviceId)) {
+
+        let metaFields = state.deviceDetails.metaFields.map((metaField) => {
+          if(action.value.metafield && action.value.metafield.id && metaField.id === action.value.metafield.id) {
+            return action.value.metafield;
+          }
+          return metaField;
+        });
+
+        return {
+          ...state,
+          deviceDetails: {
+            ...state.deviceDetails,
+            metaFields: metaFields
+          }
+        };
+      }
+
+      return state;
+
     case ACTIONS.BLYNK_WS_HARDWARE:
       return updateDevicesDashboardLiveData(state, action);
 
