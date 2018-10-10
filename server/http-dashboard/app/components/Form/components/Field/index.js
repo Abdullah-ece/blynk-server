@@ -12,7 +12,9 @@ export default class Field extends React.Component {
     title: React.PropTypes.string
   };
 
-  static getValidateStatus({validateOnBlur, displayError, input, meta: {active, touched, error, warning}}) {
+  static getValidateStatus({validateOnBlur, displayError, input, meta}) {
+
+    const {active, touched, error, warning} = meta;
 
     let validateStatus = 'success';
     let help = '';
@@ -38,7 +40,7 @@ export default class Field extends React.Component {
 
   }
 
-  titledField({validateOnBlur = true, autoFocus = false, style = {}, className = '', title, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  titledField({validateOnBlur = true, autoFocus = false, style = {}, className = '', title, displayError = true, placeholder, rows, input, type, icon, meta: {active, touched, error, warning}}) {
 
     const {validateStatus, help} = Field.getValidateStatus({
       validateOnBlur,
@@ -47,7 +49,8 @@ export default class Field extends React.Component {
       meta: {
         touched,
         error,
-        warning
+        warning,
+        active,
       }
     });
 
@@ -69,7 +72,7 @@ export default class Field extends React.Component {
     );
   }
 
-  simpleField({validateOnBlur = true, style = {}, className = '', autoFocus = false, displayError = true, placeholder, rows, input, type, icon, meta: {touched, error, warning}}) {
+  simpleField({validateOnBlur = true, style = {}, className = '', autoFocus = false, displayError = true, placeholder, rows, input, type, icon, meta: {active, touched, error, warning}}) {
 
     const {validateStatus, help} = Field.getValidateStatus({
       validateOnBlur,
@@ -78,7 +81,8 @@ export default class Field extends React.Component {
       meta: {
         touched,
         error,
-        warning
+        warning,
+        active,
       }
     });
 

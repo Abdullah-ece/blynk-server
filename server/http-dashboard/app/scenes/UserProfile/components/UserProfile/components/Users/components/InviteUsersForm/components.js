@@ -35,6 +35,7 @@ class InviteUsersForm extends React.Component {
       <Form onSubmit={handleSubmit.bind(this)} layout="inline">
         <FormField title="Name" type="text" name="name"
                    icon="user"
+                   validateOnBlur={true}
                    placeholder="Enter name"
                    validate={[
                      Validation.Rules.required,
@@ -44,6 +45,7 @@ class InviteUsersForm extends React.Component {
 
         <FormField title="Email" type="text" name="email"
                    icon="mail"
+                   validateOnBlur={true}
                    placeholder="Enter email"
                    validate={[
                      Validation.Rules.required,
