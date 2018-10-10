@@ -18,6 +18,10 @@ class Text extends Base {
     return this.props.data.name === hardcodedRequiredMetadataFieldsNames.TimezoneOfTheDevice;
   }
 
+  isManufacturer() {
+    return this.props.data.name === hardcodedRequiredMetadataFieldsNames.Manufacturer;
+  }
+
   getPreviewComponent() {
     const field = this.props.data;
 
@@ -35,7 +39,7 @@ class Text extends Base {
   getEditableComponent() {
     return (
       <div>
-        <TextModal form={this.props.form} isDeviceOwner={this.isDeviceOwner()}
+        <TextModal form={this.props.form} isManufacturer={this.isManufacturer()} isDeviceOwner={this.isDeviceOwner()}
                    isTimezoneOfDevice={this.isTimezoneOfDevice()}/>
       </div>
     );

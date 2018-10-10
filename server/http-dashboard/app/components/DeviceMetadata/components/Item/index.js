@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import {Metadata} from "services/Products";
 import {
-  isUserAbleToEdit
+  isUserAbleToEdit, SUPER_ADMIN_ROLE_ID
 } from "services/Roles";
 import google from 'google';
 import {Row, Col, Button, Icon} from 'antd';
@@ -22,6 +22,7 @@ class Item extends React.Component {
     fieldRole: React.PropTypes.array,
     userRole: React.PropTypes.number,
     isEditDisabled: React.PropTypes.bool,
+    isManufacturer: React.PropTypes.bool,
   };
 
   constructor(props){
@@ -96,22 +97,22 @@ class Item extends React.Component {
             </Col>
             { (this.props.field && this.props.field.type === Metadata.Fields.LOCATION && this.props.field.lat && this.props.field.lon) && (
               <Col span={10}>
-                {isUserAbleToEdit(this.props.userRole, this.props.fieldRole) && (
+                {this.props.userRole === SUPER_ADMIN_ROLE_ID || (this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole)) ? (
                   <div className="device-metadata--location-field--map-overlay">
                     <Button type="primary" onClick={this.onEditClick}>
                       <Icon type="edit"/>Edit
                     </Button>
                   </div>
-                )}
+                ) : (null)}
                 <div ref={(ref) => this.googleMapRef = ref} style={{height: 'calc(100%)'}}/>
               </Col>
             ) || (
               <Col span={10} className="device-metadata--item-edit">
-                {isUserAbleToEdit(this.props.userRole, this.props.fieldRole) && (
+                {this.props.userRole === SUPER_ADMIN_ROLE_ID ||  (this.props.isManufacturer === false && isUserAbleToEdit(this.props.userRole, this.props.fieldRole)) ? (
                   <Button type="primary" onClick={this.onEditClick}>
                     <Icon type="edit"/>Edit
                   </Button>
-                )}
+                ): (null)}
               </Col>
             ) }
           </Row>
