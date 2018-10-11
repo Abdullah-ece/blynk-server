@@ -111,9 +111,11 @@ class LabelWidget extends React.Component {
         {!isNoData && (
           <div className={`widgets--widget-web-label--container ${valueSizeClassName}`}>
             <Dotdotdot clamp={1}>
-              <span
-                className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
-              {params.suffix && (
+              {!params.customText && (
+                <span
+                  className={`${valueClassName}`}>{isStringValue ? params.value : this.formatLabelValue(params.value)}</span>
+              ) || (null)}
+              {!params.customText && params.suffix && (
                 <span className="widgets--widget-web-label--suffix">{params.suffix || null}</span>
               )}
               {params.customText && (
