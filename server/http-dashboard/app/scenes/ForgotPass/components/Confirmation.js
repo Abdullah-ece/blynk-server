@@ -21,9 +21,9 @@ export default class Confirmation extends React.Component {
   render() {
     return (
       <div className="confirm-container">
-        <div className="form-header">Password restoration</div>
+        <div className="form-header">Password reset</div>
         <div className="password-restoration-info-message">
-          Check your inbox for instructions on how to restore password
+          Check your inbox for instructions on how to reset your password
         </div>
         <Button type="primary"
                 size="default"
