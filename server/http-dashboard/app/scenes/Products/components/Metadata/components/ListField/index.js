@@ -1,8 +1,10 @@
 import React from 'react';
 import FormItem from 'components/FormItem';
-import {MetadataField as MetadataFormField, MetadataSelect as MetadataFormSelect} from 'components/Form';
+import {MetadataField as MetadataFormField} from 'components/Form';
 import Validation from 'services/Validation';
 import BaseField from '../BaseField/index';
+import {Select} from "antd";
+import {Field} from "redux-form";
 import Static from './static';
 
 class ListField extends BaseField {
@@ -28,6 +30,39 @@ class ListField extends BaseField {
     };
   }
 
+  optionsComponent(props) {
+
+    const onChange = (value) => {
+
+      const values = [];
+
+      value.forEach((value = '') => {
+        if(value.indexOf(',') >= 0 && value.indexOf(',') < value.length) {
+          let list = value.replace(/(\r\n|\n|\r)/gm,"").split(',');
+
+          list.map((item) => values.push(item));
+        } else {
+          values.push(value);
+        }
+      });
+
+      props.input.onChange(values);
+    };
+
+    const getValue = () => {
+      return Array.isArray(props.input.value) ? props.input.value : [];
+    };
+
+    return (
+      <Select style={{width: '100%', marginBottom: '24px'}}
+              mode="tags"
+              onChange={onChange}
+              value={getValue()}
+              defaultValue={[]}
+              placeholder={`Type option and press enter`}/>
+    );
+  }
+
   component() {
 
     return (
@@ -42,11 +77,7 @@ class ListField extends BaseField {
         </FormItem.Content>
         <FormItem.Title>Options</FormItem.Title>
         <FormItem.Content>
-          <MetadataFormSelect mode="tags"
-                              name={`metaFields.${this.props.metaFieldKey}.options`}
-                              defaultValue={[]}
-                              placeholder={`Type option and press enter`}
-                              values={[]}/>
+          <Field component={this.optionsComponent} name={`metaFields.${this.props.metaFieldKey}.options`}/>
         </FormItem.Content>
       </FormItem>
     );
