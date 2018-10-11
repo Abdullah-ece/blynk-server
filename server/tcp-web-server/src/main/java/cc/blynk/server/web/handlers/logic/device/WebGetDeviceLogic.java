@@ -63,12 +63,6 @@ public class WebGetDeviceLogic {
         //Product product = org.getProductOrThrow(device.productId);
         Product product = organizationDao.getProductById(device.productId);
 
-        if (product == null) {
-            log.error("Product with passed id {} not exists for org {}.", device.productId, orgId);
-            ctx.writeAndFlush(json(message.id, "Product with passed id doesn't exist."), ctx.voidPromise());
-            return;
-        }
-
         if (ctx.channel().isWritable()) {
             String devicesString = new DeviceDTO(device, product, org.name).toString();
             ctx.writeAndFlush(
