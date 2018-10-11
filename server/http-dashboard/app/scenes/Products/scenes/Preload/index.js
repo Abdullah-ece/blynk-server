@@ -12,12 +12,17 @@ import FullSizeLoading from 'scenes/FullSizeLoading';
 @connect((state) => ({
   orgId: state.Account.orgId,
   productsLoading: state.Product.productsPreloadLoading,
-  organizationsLoading: state.Organization.organizationPreloadLoading
+  organizationsLoading: state.Organization.organizationPreloadLoading,
+  Organization: state.Organization,
 }), (dispatch) => ({
   fetchOrganization: bindActionCreators(OrganizationPreloadFetch, dispatch),
   fetchProduct     : bindActionCreators(ProductsPreloadFetch, dispatch),
 }))
 class ProductsPreload extends React.Component {
+
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
 
   static propTypes = {
     children: PropTypes.any,
@@ -26,6 +31,7 @@ class ProductsPreload extends React.Component {
     fetchProduct: PropTypes.func,
     productsLoading: PropTypes.bool,
     organizationsLoading: PropTypes.bool,
+    Organization: PropTypes.object,
   };
 
   componentWillMount() {
@@ -36,6 +42,11 @@ class ProductsPreload extends React.Component {
   }
 
   render() {
+
+    if(this.props.Organization && this.props.Organization.parentId !== -1) {
+      this.context.router.push('/devices');
+      return null;
+    }
 
     if(this.props.productsLoading || this.props.organizationsLoading)
       return <FullSizeLoading />;

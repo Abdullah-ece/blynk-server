@@ -185,10 +185,12 @@ class UserLayout extends React.Component {
                 <Icon type="hdd"/>
                 <span>Devices</span>
               </Menu.Item>
-              <Menu.Item key="/products">
-                <Icon type="appstore-o"/>
-                <span>Products</span>
-              </Menu.Item>
+              { this.props.Organization && this.props.Organization.parentId === -1 ? (
+                <Menu.Item key="/products">
+                  <Icon type="appstore-o"/>
+                  <span>Products</span>
+                </Menu.Item>
+              ) : (null)}
               {this.props.Organization && this.props.Organization.canCreateOrgs && (
                 <Menu.Item key="/organizations">
                   <Icon type="usergroup-add"/>
