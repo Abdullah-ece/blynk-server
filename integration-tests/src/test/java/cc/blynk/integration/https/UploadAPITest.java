@@ -32,6 +32,19 @@ import static org.junit.Assert.assertTrue;
 public class UploadAPITest extends APIBaseTest {
 
     @Test
+    //todo fix
+    public void uploadFileToServerNoAuth() throws Exception {
+        String pathToImage = upload("logo.png");
+
+        HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
+
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+
+    @Test
     public void uploadFileToServer() throws Exception {
         login(admin.email, admin.pass);
 
