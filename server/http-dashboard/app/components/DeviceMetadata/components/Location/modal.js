@@ -112,7 +112,7 @@ class LocationModal extends React.Component {
 
   input(props) {
     return (
-      <Input placeholder={props.placeholder} onChange={props.input.onChange} value={Number(props.input.value) === 0 ? '' : props.input.value}/>
+      <Input placeholder={props.placeholder} onChange={props.input.onChange} value={props.input.value}/>
     );
   }
 
