@@ -84,7 +84,10 @@ class Index extends React.Component {
       country = parser(data.address_components, 'country');
       postalCode = parser(data.address_components, 'postal_code');
 
+      let streetAddress = data.adr_address.match(/address\">(.*?)</);
+
       return {
+        streetAddress: streetAddress && streetAddress[1] || '',
         number: streetNumber, // street_number
         street: address, // route,
         city: city, // locality
@@ -102,10 +105,7 @@ class Index extends React.Component {
 
       const data = parseResponse(response);
 
-      let resultString = '';
-
-      if(data.street)
-        resultString += data.street;
+      let resultString = data.streetAddress || '';
 
       if(data.number)
         resultString += ` ${data.number}`;

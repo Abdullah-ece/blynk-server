@@ -127,13 +127,7 @@ class LocationModal extends React.Component {
       const form = this.props.form;
       const field = (fieldName) => `${fieldName}`;
 
-      let streetString = '';
-
-      if(values.street)
-        streetString += values.street;
-
-      if(values.number)
-        streetString += ` ${values.number}`;
+      let streetString = values.streetAddress;
 
       props.input.onChange(streetString.trim());
 
