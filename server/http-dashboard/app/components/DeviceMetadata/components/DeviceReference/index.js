@@ -49,7 +49,7 @@ class DeviceReference extends Base {
 
     const products = productIds.map((productId) => {
       return _.find(this.props.products, (product) => Number(product.id) === Number(productId));
-    }).map((product) => {
+    }).filter((product) => !!product).map((product) => {
       return {
         id: Number(product.id),
         name: product.name,
