@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
@@ -223,17 +224,17 @@ public class TestAppClient extends BaseTestAppClient {
         send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }
 
-    public void login(String email, String pass, boolean noHash) {
-        send("login " + email + BODY_SEPARATOR + (noHash ? pass : SHA256Util.makeHash(pass, email)));
+    public void loginNoHash(String email, String pass) {
+        send("login " + email + BODY_SEPARATOR +pass
+                + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + AppNameUtil.BLYNK);
     }
 
     public void login(String email, String pass) {
-        login(email, pass, false);
+        login(email, pass, "Android", "2.27.0");
     }
 
     public void login(String email, String pass, String os, String version) {
-        send("login " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email)
-                + BODY_SEPARATOR + os + BODY_SEPARATOR + version);
+        login(email, pass, os, version, AppNameUtil.BLYNK);
     }
 
     public void login(String email, String pass, String os, String version, String appName) {

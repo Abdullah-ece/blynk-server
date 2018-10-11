@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -49,6 +50,7 @@ import static org.mockito.Mockito.verify;
 public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBAndNewOrg {
 
     @Test
+    @Ignore
     public void connectHardwareWithProvisionToken() throws Exception {
         String provisionToken = "daaaa444763d403ea91bf1a89feda9e3";
         String templateId = "TMPL99744";

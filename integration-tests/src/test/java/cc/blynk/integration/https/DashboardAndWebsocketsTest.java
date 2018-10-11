@@ -292,7 +292,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
 
         TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort(), properties);
         appClient.start();
-        appClient.login(regularUser.email, regularUser.pass, true);
+        appClient.loginNoHash(regularUser.email, regularUser.pass);
         appClient.verifyResult(ok(1));
 
         appClient.activate(0);
