@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
+import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -186,6 +187,12 @@ public class User {
             }
         }
         return false;
+    }
+
+    public void update(UserInviteDTO userInviteDTO) {
+        this.name = userInviteDTO.name;
+        this.roleId = userInviteDTO.roleId;
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     @Override

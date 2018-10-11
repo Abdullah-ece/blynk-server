@@ -62,11 +62,10 @@ public final class WebUpdateUserInfoLogic {
             }
         }
 
-        User userToUpdate = userDao.getByName(userInviteDTO.name, user.appName);
+        User userToUpdate = userDao.getByName(userInviteDTO.email, user.appName);
 
         log.info("Updating {} user for .", userToUpdate.email, user.email);
-        userToUpdate.name = userInviteDTO.name;
-        userToUpdate.setRole(userInviteDTO.roleId);
+        userToUpdate.update(userInviteDTO);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

@@ -3,6 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
@@ -15,9 +16,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -178,6 +183,29 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals(createdDevice.id, locationDTOS[0].deviceId);
         assertEquals("Warehouse 13", locationDTOS[0].siteName);
         assertEquals(3, locationDTOS[0].id);
+    }
+
+    @Test
+    public void updateInvitedUserInfo() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(1));
+
+        verify(holder.mailWrapper).sendHtml(eq("test@gmail.com"), eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+
+        User user = new User();
+        user.email = "test@gmail.com";
+        user.name = "Dmitriy2";
+        user.roleId = 1;
+        client.updateUserInfo(orgId, user);
+        client.verifyResult(ok(2));
+
+        client.getOrgUsers(orgId);
+        User[] users = client.parseUsers(3);
+        assertNotNull(users);
+        assertEquals(1, users.length);
+        assertEquals(1, users[0].roleId);
+        assertEquals("Dmitriy2", users[0].name);
     }
 
 }

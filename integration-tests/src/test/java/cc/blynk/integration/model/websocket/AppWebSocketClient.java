@@ -267,6 +267,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webUpdateDeviceMetafield " + deviceId + BODY_SEPARATOR_STRING + metaField);
     }
 
+    public void updateUserInfo(int orgId, User user) {
+        send("WebUpdateUserInfo " + orgId + BODY_SEPARATOR_STRING + user.toString());
+    }
+
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }
