@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -180,7 +181,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
                 String body = resetEmailBody
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace("{host}", host)
-                        .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(trimmedEmail, "UTF-8"));
+                        .replace("{link}", resetURL + token + "&email="
+                                + URLEncoder.encode(trimmedEmail, StandardCharsets.UTF_8));
                 String subject = "Reset your " + org.name + " Dashboard password";
 
                 mailWrapper.sendHtml(trimmedEmail, subject, body);

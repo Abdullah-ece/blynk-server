@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
@@ -107,7 +108,7 @@ public final class WebInviteUserLogic {
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)
                         .replace("{link}", inviteURL + token + "&email="
-                                + URLEncoder.encode(userInvite.email, "UTF-8"));
+                                + URLEncoder.encode(userInvite.email, StandardCharsets.UTF_8));
                 mailWrapper.sendHtml(userInvite.email, "Invitation to " + org.name + " dashboard.", body);
                 log.info("Invitation sent to {}. From {}", userInvite.email, user.email);
                 response = ok(message.id);

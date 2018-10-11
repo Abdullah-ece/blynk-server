@@ -97,8 +97,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                 blynkLogin(ctx, message.id, email, messageParts[1], version, appName);
             }
         } else {
-            //todo this is for back compatibility
-            blynkLogin(ctx, message.id, email, messageParts[1], version, AppNameUtil.BLYNK);
+            log.error("Wrong income message format for login {}.", message.body);
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         }
     }
 
