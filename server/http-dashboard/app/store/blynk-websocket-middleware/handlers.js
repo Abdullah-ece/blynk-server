@@ -412,7 +412,13 @@ export const Handlers = (params) => {
       options.debug("blynkWsMessage ChartData", action, {
         command     : command,
         msgId       : msgId,
-        bodyArray: `${deviceId} ${points} ${JSON.stringify(points)}`
+        bodyArray: {
+          deviceId: deviceId,
+          points: points,
+          pointsJson: JSON.stringify(points),
+          graphPeriod,
+          widgetId: widgetId,
+        }
       });
 
     store.dispatch(blynkWsResponse({
