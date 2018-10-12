@@ -7,8 +7,9 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.BaseToken;
+import cc.blynk.server.internal.token.ResetPassToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -102,15 +103,15 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     }
 
     private void reset(ChannelHandlerContext ctx, String token, String passHash, int msgId) {
-        TokenUser tokenUser = tokensPool.getUser(token);
-        if (tokenUser == null) {
+        ResetPassToken resetPassToken = tokensPool.getResetPassToken(token);
+        if (resetPassToken == null) {
             log.warn("Invalid token for reset password {}", token);
             ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
-            String email = tokenUser.email;
-            User user = userDao.getByName(email, tokenUser.appName);
+            String email = resetPassToken.email;
+            User user = userDao.getByName(email, resetPassToken.appName);
             if (user == null) {
-                log.warn("User is not exists anymore. {}", tokenUser);
+                log.warn("User is not exists anymore. {}", resetPassToken);
                 ctx.writeAndFlush(json(msgId, "User is not exists anymore."), ctx.voidPromise());
                 return;
             }
@@ -130,8 +131,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
     }
 
     private void verifyToken(ChannelHandlerContext ctx, String token, int msgId) {
-        TokenUser tokenUser = tokensPool.getUser(token);
-        if (tokenUser == null) {
+        BaseToken baseToken = tokensPool.getBaseToken(token);
+        if (baseToken == null) {
             log.warn("Invalid token for reset pass {}.", token);
             ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
@@ -156,7 +157,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             return;
         }
 
-        if (tokensPool.hasToken(trimmedEmail, appName)) {
+        if (tokensPool.hasResetToken(trimmedEmail, appName)) {
             tokensPool.cleanupOldTokens();
             log.warn("Reset code was already generated.");
             ctx.writeAndFlush(json(msgId, "Reset code was already generated."), ctx.voidPromise());
@@ -173,8 +174,8 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("{} trying to reset pass.", trimmedEmail);
 
-        TokenUser userToken = new TokenUser(trimmedEmail, appName);
-        tokensPool.addToken(token, userToken);
+        ResetPassToken resetPassToken = new ResetPassToken(trimmedEmail, appName);
+        tokensPool.addToken(token, resetPassToken);
 
         blockingIOProcessor.execute(() -> {
             try {

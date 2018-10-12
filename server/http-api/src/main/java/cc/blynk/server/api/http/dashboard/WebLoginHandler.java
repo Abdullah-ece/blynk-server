@@ -16,8 +16,9 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.InviteToken;
+import cc.blynk.server.internal.token.ResetPassToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -124,14 +125,14 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Empty token or password field.");
         }
 
-        TokenUser tokenUser = tokensPool.getUser(token);
+        InviteToken inviteToken = tokensPool.getInviteToken(token);
 
-        if (tokenUser == null) {
+        if (inviteToken == null) {
             log.error("Invalid reset token.");
             return badRequest("Your invitation expired or was used already. Please request new one.");
         }
 
-        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
+        User user = userDao.getByName(inviteToken.email, inviteToken.appName);
         if (user == null) {
             log.error("User not found.");
             return badRequest("Your invitation expired or was used already. Please request new one.");
@@ -163,14 +164,14 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Empty token or password field.");
         }
 
-        TokenUser tokenUser = tokensPool.getUser(token);
+        ResetPassToken resetPassToken = tokensPool.getResetPassToken(token);
 
-        if (tokenUser == null) {
+        if (resetPassToken == null) {
             log.error("Invalid reset token.");
             return badRequest("Your invitation expired or was used already. Please request new one.");
         }
 
-        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
+        User user = userDao.getByName(resetPassToken.email, resetPassToken.appName);
         if (user == null) {
             log.error("User not found.");
             return badRequest("Token does not exist.");
@@ -228,7 +229,7 @@ public class WebLoginHandler extends BaseHttpHandler {
             return badRequest("Organization for that user is no longer exist.");
         }
 
-        tokensPool.addToken(token, new TokenUser(user.email, user.appName));
+        tokensPool.addToken(token, new ResetPassToken(user.email, user.appName));
 
         blockingIOProcessor.execute(() -> {
             Response response;

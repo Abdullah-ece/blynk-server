@@ -10,8 +10,8 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.InviteToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.utils.FileLoaderUtil;
@@ -103,7 +103,7 @@ public final class WebInviteUserLogic {
         blockingIOProcessor.execute(() -> {
             MessageBase response;
             try {
-                tokensPool.addToken(token,  new TokenUser(userInvite.email, appName));
+                tokensPool.addToken(token,  new InviteToken(userInvite.email, appName));
                 String body = inviteTemplate
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)

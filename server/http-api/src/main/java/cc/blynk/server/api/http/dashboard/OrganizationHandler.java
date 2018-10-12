@@ -33,8 +33,8 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.InviteToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -404,7 +404,7 @@ public class OrganizationHandler extends BaseHttpHandler {
         blockingIOProcessor.execute(() -> {
             Response response;
             try {
-                tokensPool.addToken(token,  new TokenUser(userInvite.email, appName));
+                tokensPool.addToken(token,  new InviteToken(userInvite.email, appName));
                 String message = inviteTemplate
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)

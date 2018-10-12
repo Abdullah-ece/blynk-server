@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.web.WebLoginViaInviteMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
-import cc.blynk.server.internal.TokenUser;
+import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.web.handlers.WebAppHandler;
 import cc.blynk.server.web.session.WebAppStateHolder;
 import cc.blynk.utils.IPUtils;
@@ -75,17 +75,17 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
             return;
         }
 
-        TokenUser tokenUser = holder.tokensPool.getUser(token);
+        InviteToken inviteToken = holder.tokensPool.getInviteToken(token);
 
-        if (tokenUser == null) {
+        if (inviteToken == null) {
             log.error("Invitation expired or was used already for {}.", message.body);
             ctx.writeAndFlush(json(message.id, "Invitation expired or was used already."), ctx.voidPromise());
             return;
         }
 
-        User user = holder.userDao.getByName(tokenUser.email, tokenUser.appName);
+        User user = holder.userDao.getByName(inviteToken.email, inviteToken.appName);
         if (user == null) {
-            log.error("User {} not found.", tokenUser);
+            log.error("User {} not found.", inviteToken);
             ctx.writeAndFlush(json(message.id, "User not found."), ctx.voidPromise());
             return;
         }

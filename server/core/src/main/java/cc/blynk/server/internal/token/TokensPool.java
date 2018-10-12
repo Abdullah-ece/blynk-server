@@ -37,16 +37,25 @@ public final class TokensPool implements Closeable {
         FileUtils.deleteQuietly(path);
     }
 
-    public void addToken(String token, ResetPassToken user) {
-        log.info("Adding token for {} user to the pool", user.email);
+    public void addToken(String token, BaseToken baseToken) {
+        log.info("Adding {} token for {} user to the pool", baseToken.getClass().getSimpleName(), baseToken.email);
         cleanupOldTokens();
-        tokens.put(token, user);
+        tokens.put(token, baseToken);
+    }
+
+    public InviteToken getInviteToken(String token) {
+        return getTokenByType(token, InviteToken.class);
     }
 
     public ResetPassToken getResetPassToken(String token) {
+        return getTokenByType(token, ResetPassToken.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getTokenByType(String token, Class<T> clazz) {
         BaseToken baseToken = getBaseToken(token);
-        if (baseToken instanceof ResetPassToken) {
-            return (ResetPassToken) baseToken;
+        if (clazz.isInstance(baseToken)) {
+            return (T) baseToken;
         }
         return null;
     }
