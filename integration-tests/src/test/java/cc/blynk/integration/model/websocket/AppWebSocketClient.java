@@ -271,6 +271,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("WebUpdateUserInfo " + orgId + BODY_SEPARATOR_STRING + user.toString());
     }
 
+    public void getTempSecureToken() {
+        send("webGetTempSecureToken");
+    }
+
     public TimelineResponseDTO parseTimelineResponse(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), TimelineResponseDTO.class);
     }

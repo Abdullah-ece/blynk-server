@@ -26,6 +26,7 @@ import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationsLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebGetProductLocationsLogic;
+import cc.blynk.server.web.handlers.logic.organization.WebGetTempSecureTokenLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebUpdateOrganizationLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebCanInviteUserLogic;
 import cc.blynk.server.web.handlers.logic.organization.users.WebDeleteUserLogic;
@@ -67,6 +68,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_DEVICE;
@@ -248,6 +250,9 @@ public class WebAppHandler extends WebBaseSimpleChannelInboundHandler<StringMess
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case WEB_GET_TEMP_SECURE_TOKEN :
+                WebGetTempSecureTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
         }
     }

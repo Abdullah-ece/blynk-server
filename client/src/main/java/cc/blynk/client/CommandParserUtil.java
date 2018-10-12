@@ -93,6 +93,7 @@ import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_ORG_USERS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCTS;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_PRODUCT_LOCATIONS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_GET_TEMP_SECURE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_INVITE_USER;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_UPDATE_ACCOUNT;
@@ -335,6 +336,8 @@ public final class CommandParserUtil {
                 return WEB_GET_METAFIELD;
             case "getdevicesbyreferencemetafield" :
                 return MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
+            case "webgettempsecuretoken" :
+                return WEB_GET_TEMP_SECURE_TOKEN;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
