@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-import {Metadata} from "services/Products";
+import {Metadata, MAP_STYLES} from "services/Products";
 import {
   isUserAbleToEdit
 } from "services/Roles";
@@ -58,7 +58,8 @@ class Item extends React.Component {
       this.map = new google.maps.Map(ReactDOM.findDOMNode(this.googleMapRef), {
         zoom            : 3,
         center          : myLatLng,
-        disableDefaultUI: true
+        disableDefaultUI: true,
+        styles: MAP_STYLES
       });
 
       if (lat && lon) {

@@ -6,6 +6,7 @@ import {Field, getFormValues, change} from 'redux-form';
 import PropTypes from 'prop-types';
 import google from 'google';
 import {connect} from 'react-redux';
+import {MAP_STYLES} from "services/Products";
 import {bindActionCreators} from 'redux';
 
 @connect((state, ownProps) => ({
@@ -64,7 +65,8 @@ class LocationModal extends React.Component {
       this.map = new google.maps.Map(ReactDOM.findDOMNode(this.googleMapRef), {
         zoom            : 3,
         center          : myLatLng,
-        disableDefaultUI: true
+        disableDefaultUI: true,
+        styles: MAP_STYLES
       });
 
       if (lat && lon) {
@@ -93,7 +95,8 @@ class LocationModal extends React.Component {
     this.map = new google.maps.Map(ReactDOM.findDOMNode(this.googleMapRef), {
       zoom: 4,
       center: myLatLng,
-      disableDefaultUI: true
+      disableDefaultUI: true,
+      styles: MAP_STYLES,
     });
 
     new google.maps.Marker({
@@ -186,12 +189,16 @@ class LocationModal extends React.Component {
 
   render() {
 
+    const mapStyles = {
+      display: this.props.formValues.lat && this.props.formValues.lon ? 'block' : 'none',
+    };
+
     return (
       <div>
 
         <Row type="flex">
           <Col span={10}>
-            <Form.Item className="medium-offset" label={this.props.formValues.name}>
+            <Form.Item className="medium-offset" label="Name">
               <Field component={this.input} name={'siteName'} placeholder={this.props.formValues.name}/>
             </Form.Item>
 
@@ -267,7 +274,7 @@ class LocationModal extends React.Component {
             )}
           </Col>
           <Col span={12} offset={1}>
-            <div ref={(ref) => this.googleMapRef = ref} style={{height: 'calc(100% - 32px)', margin: '16px 0'}}/>
+            <div ref={(ref) => this.googleMapRef = ref} style={{height: 'calc(100% - 32px)', margin: '16px 0', ...mapStyles}}/>
           </Col>
         </Row>
 
