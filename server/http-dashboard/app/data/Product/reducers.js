@@ -56,7 +56,8 @@ const initialState = {
     devicesList: [],
     selectedDeviceId: 0,
   },
-  products: null
+  products: null,
+  secureUploadToken: null,
 };
 
 export default function Product(state = initialState, action) {
@@ -95,6 +96,12 @@ export default function Product(state = initialState, action) {
             status : null,
           }
         }
+      };
+
+    case "API_PRODUCTS_SECURE_TOKEN_FOR_UPLOAD_FETCH_SUCCESS":
+      return {
+        ...state,
+        secureUploadToken: action.value,
       };
 
     case "PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE":

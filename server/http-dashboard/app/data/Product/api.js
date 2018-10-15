@@ -2,6 +2,17 @@ import {API_URL} from "services/API";
 
 import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
+export function SecureTokenForUploadFetch() {
+  return {
+    type: 'API_PRODUCTS_SECURE_TOKEN_FOR_UPLOAD_FETCH',
+    ws: {
+      request: {
+        command: API_COMMANDS.WEB_GET_TEMP_SECURE_TOKEN
+      }
+    }
+  };
+}
+
 export function ProductsPreloadFetch() {
   return {
     type: 'API_PRODUCTS_PRELOAD_FETCH',

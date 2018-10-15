@@ -9,18 +9,22 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ProductInfoUpdateInvalidFlag} from 'data/Product/actions';
 import {AVAILABLE_HARDWARE_TYPES, AVAILABLE_CONNECTION_TYPES} from 'services/Devices';
+import {SecureTokenForUploadFetch} from "data/Product/api";
 
 import './styles.less';
 
-@connect(() => ({
-
+@connect((state) => ({
+  secureUploadToken: state.Product.secureUploadToken,
 }), (dispatch) => ({
+  secureTokenForUploadFetch: bindActionCreators(SecureTokenForUploadFetch, dispatch),
   updateInfoInvalidFlag: bindActionCreators(ProductInfoUpdateInvalidFlag, dispatch)
 }))
 class Info extends React.Component {
 
   static propTypes = {
+    secureUploadToken: React.PropTypes.string,
     updateInfoInvalidFlag: React.PropTypes.func,
+    secureTokenForUploadFetch: React.PropTypes.func,
     invalid: React.PropTypes.bool
   };
 
@@ -28,6 +32,8 @@ class Info extends React.Component {
     super(props);
 
     this.invalid = false;
+
+    this.props.secureTokenForUploadFetch();
   }
 
   componentWillReceiveProps(props) {
@@ -51,6 +57,10 @@ class Info extends React.Component {
   }
 
   render() {
+
+    const fileProps = {
+      token: this.props.secureUploadToken
+    };
 
     return (
 
@@ -93,6 +103,7 @@ class Info extends React.Component {
                                         logo={input.value}
                                         error={error}
                                         touched={touched}
+                                        fileProps={fileProps}
                                         hint={() => (
                                           <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
                                         )}

@@ -10,6 +10,7 @@ class ImageUploader extends React.Component {
     onChange: React.PropTypes.func,
     text: React.PropTypes.any,
     error: React.PropTypes.any,
+    fileProps: React.PropTypes.any,
     touched: React.PropTypes.any,
     hint: React.PropTypes.any,
     logo: React.PropTypes.string,
@@ -62,9 +63,14 @@ class ImageUploader extends React.Component {
       'image-uploader-error': this.props.touched && this.props.error
     });
 
+    const fileProps = {
+      ...this.fileProps,
+      ...this.props.fileProps,
+    };
+
     return (
       <div className={classNames}>
-        <Upload.Dragger {...this.fileProps} onChange={this.onChange.bind(this)}>
+        <Upload.Dragger {...fileProps} onChange={this.onChange.bind(this)}>
           { this.props.logo && (
             <div className="image-uploader-cover">
               { this.props.logo !== this.props.defaultImage && (

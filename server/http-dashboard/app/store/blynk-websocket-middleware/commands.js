@@ -71,6 +71,7 @@ export const API_COMMANDS = {
   LOG_EVENT_RESOLVE             : 75,
   DELETE_DEVICE                 : 128,
   LOGOUT                        : 66,
+  WEB_GET_TEMP_SECURE_TOKEN     : 131,
 };
 
 const blynkHeader = (msg_type, msg_id) => {
