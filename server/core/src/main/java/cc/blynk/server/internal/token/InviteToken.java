@@ -25,7 +25,4 @@ public final class InviteToken extends BaseToken implements Serializable {
                 + '}';
     }
 
-    public boolean isSame(String email, String appName) {
-        return this.email.equals(email) && this.appName.equals(appName);
-    }
 }

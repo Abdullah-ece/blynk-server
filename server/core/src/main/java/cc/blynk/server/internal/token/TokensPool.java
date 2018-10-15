@@ -41,6 +41,10 @@ public final class TokensPool implements Closeable {
         tokens.put(token, baseToken);
     }
 
+    public UploadTempToken getUploadToken(String token) {
+        return getTokenByType(token, UploadTempToken.class);
+    }
+
     public InviteToken getInviteToken(String token) {
         return getTokenByType(token, InviteToken.class);
     }

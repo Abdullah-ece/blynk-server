@@ -16,6 +16,9 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
+import cc.blynk.server.internal.token.TokensPool;
+import cc.blynk.server.internal.token.UploadTempToken;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -24,6 +27,7 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
+import io.netty.handler.codec.http.multipart.DiskAttribute;
 import io.netty.handler.codec.http.multipart.DiskFileUpload;
 import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -40,26 +44,31 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.forbidden;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 
-
+/**
+ *
+ */
 public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger log = LogManager.getLogger(UploadHandler.class);
 
     private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
-    final String handlerUri;
+    private final String handlerUri;
     private HttpPostRequestDecoder decoder;
     private final String staticFolderPath;
     private final String uploadFolder;
+    private final TokensPool tokensPool;
 
-    public UploadHandler(String staticFolderPath, String handlerUri, String uploadFolder) {
+    public UploadHandler(String staticFolderPath, String handlerUri, String uploadFolder, TokensPool tokensPool) {
         super(false);
         this.handlerUri = handlerUri;
         this.staticFolderPath = staticFolderPath;
         this.uploadFolder = uploadFolder.endsWith("/") ? uploadFolder : uploadFolder + "/";
+        this.tokensPool = tokensPool;
     }
 
     @Override
@@ -69,7 +78,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
         }
     }
 
-    public boolean accept(ChannelHandlerContext ctx, HttpRequest req) {
+    public boolean accept(HttpRequest req) {
         return req.method() == HttpMethod.POST && req.uri().startsWith(handlerUri);
     }
 
@@ -78,7 +87,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            if (!accept(ctx, req)) {
+            if (!accept(req)) {
                 ctx.fireChannelRead(msg);
                 return;
             }
@@ -95,13 +104,18 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
         }
 
         if (decoder != null && msg instanceof HttpContent) {
-                // New chunk is received
+            // New chunk is received
             HttpContent chunk = (HttpContent) msg;
             try {
+                validateAuthToken();
                 decoder.offer(chunk);
-            } catch (ErrorDataDecoderException e) {
-                log.error("Error creating http post offer.", e);
-                ctx.writeAndFlush(badRequest(e.getMessage()));
+            } catch (ForbiddenWebException e) {
+                log.error("Error validating request.", e);
+                ctx.writeAndFlush(forbidden(e.getMessage()));
+                return;
+            } catch (Exception decoderE) {
+                log.error("Error creating http post offer.", decoderE);
+                ctx.writeAndFlush(badRequest(decoderE.getMessage()));
                 return;
             } finally {
                 chunk.release();
@@ -113,7 +127,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
                 try {
                     String path = finishUpload();
                     if (path != null) {
-                        response = afterUpload(ctx, path);
+                        response = afterUpload(path);
                     } else {
                         response = serverError("Can't find binary data in request.");
                     }
@@ -129,7 +143,18 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
         }
     }
 
-    public Response afterUpload(ChannelHandlerContext ctx, String path) {
+    private void validateAuthToken() throws Exception {
+        InterfaceHttpData tokenParam = decoder.getBodyHttpData("token");
+        DiskAttribute diskAttribute = (DiskAttribute) tokenParam;
+        String token = diskAttribute.getValue();
+        UploadTempToken uploadTempToken = tokensPool.getUploadToken(token);
+        if (uploadTempToken == null) {
+            throw new ForbiddenWebException("No auth token for upload.");
+        }
+        log.debug("Found upload token {}", uploadTempToken);
+    }
+
+    private Response afterUpload(String path) {
         return ok(path);
     }
 
@@ -145,8 +170,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
                         String uploadedFilename = diskFileUpload.getFilename();
                         String extension = "";
                         if (uploadedFilename.contains(".")) {
-                            extension = uploadedFilename.substring(uploadedFilename.lastIndexOf("."),
-                                    uploadedFilename.length());
+                            extension = uploadedFilename.substring(uploadedFilename.lastIndexOf("."));
                         }
                         String finalName = tmpFile.getFileName().toString() + extension;
 

@@ -144,7 +144,8 @@ public class MobileAndHttpsServer extends BaseServer {
 
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
-                        .addLast(new UploadHandler(jarPath, "/api/upload", "/" + STATIC_FILES_FOLDER))
+                        .addLast(new UploadHandler(jarPath,
+                                "/api/upload", "/" + STATIC_FILES_FOLDER, holder.tokensPool))
                         .addLast(webLoginHandler)
                         .addLast(authCookieHandler)
                         .addLast(accountHandler)
