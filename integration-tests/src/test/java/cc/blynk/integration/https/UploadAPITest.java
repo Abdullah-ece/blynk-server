@@ -38,7 +38,7 @@ public class UploadAPITest extends APIBaseTest {
     public void uploadFileToServerNoAuth() throws Exception {
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
-        String token = client.getBody();
+        String token = client.parseToken(1).token;
         String pathToImage = upload(token, "logo.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
@@ -66,7 +66,6 @@ public class UploadAPITest extends APIBaseTest {
 
         post.setEntity(entity);
 
-        String staticPath;
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(403, response.getStatusLine().getStatusCode());
             String errorMessage = consumeText(response);
@@ -80,7 +79,7 @@ public class UploadAPITest extends APIBaseTest {
 
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
-        String token = client.getBody();
+        String token = client.parseToken(1).token;
         String pathToImage = upload(token, "logo.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort() + pathToImage);
@@ -96,7 +95,7 @@ public class UploadAPITest extends APIBaseTest {
 
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
-        String token = client.getBody();
+        String token = client.parseToken(1).token;
         String pathToImage = upload(token, "logo with space in name.png");
 
         HttpGet index = new HttpGet("https://localhost:" + properties.getHttpsPort()  + pathToImage);
@@ -140,7 +139,7 @@ public class UploadAPITest extends APIBaseTest {
 
         AppWebSocketClient client = loggedDefaultClient("admin@blynk.cc", "admin");
         client.getTempSecureToken();
-        String token = client.getBody();
+        String token = client.parseToken(1).token;
 
         upload(token, "logo.png");
         upload(token, "logo.png");

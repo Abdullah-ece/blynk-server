@@ -33,6 +33,7 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineDTO;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
 import cc.blynk.server.web.handlers.logic.organization.LocationDTO;
+import cc.blynk.server.web.handlers.logic.organization.Token;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -309,6 +310,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     public MetaField parseMetafield(int expectedMessageOrder) throws Exception {
         return JsonParser.parseMetafield(getBody(expectedMessageOrder), 0);
+    }
+
+    public Token parseToken(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Token.class);
     }
 
     public void send(String line) {

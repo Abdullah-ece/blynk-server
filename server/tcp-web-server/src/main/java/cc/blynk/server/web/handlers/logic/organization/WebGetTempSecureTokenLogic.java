@@ -25,13 +25,15 @@ public final class WebGetTempSecureTokenLogic {
     }
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage msg) {
-        String token = TokenGeneratorUtil.generateNewToken();
-        holder.tokensPool.addToken(token, new UploadTempToken(user.email));
+        String tokenString = TokenGeneratorUtil.generateNewToken();
+        holder.tokensPool.addToken(tokenString, new UploadTempToken(user.email));
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, token), ctx.voidPromise());
+            Token token = new Token(tokenString);
+            ctx.writeAndFlush(
+                    makeASCIIStringMessage(msg.command, msg.id, token.toString()),
+                    ctx.voidPromise());
         }
     }
-
 
 }
