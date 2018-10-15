@@ -17,7 +17,7 @@ public class SerializationTokenPoolTest {
     @Test
     public void someTEst() {
         String path = System.getProperty("java.io.tmpdir");
-        TokensPool tokensPool = new TokensPool(path, 1000_000);
+        TokensPool tokensPool = new TokensPool(path);
 
         String token = TokenGeneratorUtil.generateNewToken();
         ResetPassToken resetPassToken = new ResetPassToken("dima@mail.us", "Blynk");
@@ -29,7 +29,7 @@ public class SerializationTokenPoolTest {
 
         tokensPool.close();
 
-        TokensPool tokensPool2 = new TokensPool(path, 1000_000);
+        TokensPool tokensPool2 = new TokensPool(path);
         ConcurrentHashMap<String, BaseToken> tokens = tokensPool2.getTokens();
         assertNotNull(tokens);
         assertEquals(2, tokens.size());
@@ -38,13 +38,11 @@ public class SerializationTokenPoolTest {
         assertNotNull(resetPassToken);
         assertEquals("dima@mail.us", resetPassToken.email);
         assertEquals("Blynk", resetPassToken.appName);
-        assertEquals(System.currentTimeMillis(), resetPassToken.createdAt, 5000L);
 
         inviteToken = (InviteToken) tokens.get(token2);
         assertNotNull(inviteToken);
         assertEquals("dima2@mail.us", inviteToken.email);
         assertEquals("Blynk2", inviteToken.appName);
-        assertEquals(System.currentTimeMillis(), inviteToken.createdAt, 5000L);
 
     }
 
