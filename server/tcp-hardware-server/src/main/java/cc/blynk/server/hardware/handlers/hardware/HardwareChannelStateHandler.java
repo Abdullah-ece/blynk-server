@@ -56,8 +56,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 var device = state.device;
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
-                reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
-
                 sentOfflineMessage(ctx, session, state.dash, device);
             }
         }
@@ -83,6 +81,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (!isHardwareConnected) {
             log.trace("Changing device status. Device {}, dashId {}", device.id, dashBoard.id);
             device.disconnected();
+            reportingDBManager.insertSystemEvent(device.id, EventType.OFFLINE);
         }
 
         if (!dashBoard.isActive) {
