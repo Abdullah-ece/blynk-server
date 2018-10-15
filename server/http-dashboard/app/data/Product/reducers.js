@@ -101,7 +101,7 @@ export default function Product(state = initialState, action) {
     case "API_PRODUCTS_SECURE_TOKEN_FOR_UPLOAD_FETCH_SUCCESS":
       return {
         ...state,
-        secureUploadToken: action.value,
+        secureUploadToken: action.payload && action.payload.data && action.payload.data.token,
       };
 
     case "PRODUCT_INFO_OTA_FIRMWARE_UPLOAD_UPDATE":

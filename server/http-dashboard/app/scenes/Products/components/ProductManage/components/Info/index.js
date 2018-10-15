@@ -59,7 +59,9 @@ class Info extends React.Component {
   render() {
 
     const fileProps = {
-      token: this.props.secureUploadToken
+      data: {
+        token: this.props.secureUploadToken
+      }
     };
 
     return (
