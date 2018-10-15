@@ -3,7 +3,8 @@ import {
   DEVICES_SORT,
   TIMELINE_TIME_FILTERS,
   TIMELINE_TYPE_FILTERS,
-  DEVICES_FILTERS
+  DEVICES_FILTERS,
+  getDefaultDeviceName
 } from 'services/Devices';
 import {
   hardcodedRequiredMetadataFieldsNames
@@ -780,6 +781,7 @@ export default function Devices(state = initialState, action) {
       return {
         ...state,
         deviceDetails: {
+          defaultName: getDefaultDeviceName(action.payload.data),
           ...cutDeviceNameMetaFieldFromMetaFields(action.payload.data)
         }
       };

@@ -47,11 +47,11 @@ class DeviceNameScene extends React.Component {
 
   render() {
 
-    if(!this.props.device || !this.props.device.name)
+    if(!this.props.device)
       return null;
 
     return (
-      <DeviceName value={this.props.device.name} onChange={this.handleDeviceNameChange}/>
+      <DeviceName value={this.props.device.name || this.props.device.defaultName || 'Empty'} onChange={this.handleDeviceNameChange}/>
     );
   }
 

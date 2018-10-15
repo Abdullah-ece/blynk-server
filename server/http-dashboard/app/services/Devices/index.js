@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import {hardcodedRequiredMetadataFieldsNames} from "services/Products";
+
 export const HARDWARES = {
   "Arduino 101": {
     "key": "Arduino 101",
@@ -616,6 +618,24 @@ export const TAB_URLS = {
   [TABS.DASHBOARD]   : "dashboard",
   [TABS.TIMELINE]    : "timeline",
   [TABS.DEVICE_INFO] : "info",
+};
+
+export const getDefaultDeviceName = (device) => {
+  if(!device || !device.metaFields || !Array.isArray(device.metaFields)) {
+    return null;
+  }
+
+  const defaultDeviceNameField = hardcodedRequiredMetadataFieldsNames.DeviceName;
+
+  let name = null;
+
+  device.metaFields.forEach((metafield) => {
+    if(metafield.name === defaultDeviceNameField) {
+      name = metafield.value;
+    }
+  });
+
+  return name || 'Empty';
 };
 
 export const SETUP_PRODUCT_KEY = "SETUP_NEW_PRODUCT";
