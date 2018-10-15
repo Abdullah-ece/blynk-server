@@ -10,7 +10,7 @@ import {
   FILTERED_DEVICES_SORT,
 } from 'services/Devices';
 import {
-  hardcodedRequiredMetadataFieldsNames
+  Metadata
 } from 'services/Products';
 import _ from 'lodash';
 
@@ -94,8 +94,8 @@ class DevicesList extends React.Component {
   getLocationName(device) {
     if (device && device.metaFields && device.metaFields.length) {
       return device.metaFields.reduce((location, item) => {
-        if (String(item.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName) {
-          return item.value;
+        if (String(item.type).trim() === Metadata.Fields.LOCATION) {
+          return item.streetAddress;
         }
         return location;
       }, '');

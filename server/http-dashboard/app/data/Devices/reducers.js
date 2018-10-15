@@ -7,7 +7,7 @@ import {
   getDefaultDeviceName
 } from 'services/Devices';
 import {
-  hardcodedRequiredMetadataFieldsNames
+  Metadata
 } from 'services/Products';
 
 import _ from 'lodash';
@@ -123,7 +123,7 @@ const getLocationMetaFieldOnly = (metaFields) => {
     return [];
 
   return metaFields.filter((field) => (
-    field && field.name && String(field.name).trim() === hardcodedRequiredMetadataFieldsNames.LocationName
+    field && field.type === Metadata.Fields.LOCATION
   ));
 };
 

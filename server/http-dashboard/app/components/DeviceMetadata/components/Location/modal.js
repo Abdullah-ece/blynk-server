@@ -139,6 +139,10 @@ class LocationModal extends React.Component {
         this.props.changeForm(form, field(`lon`), values.geometry.location.lng());
       }
 
+      if(values.placeId) {
+        this.props.changeForm(form, field(`placeId`), values.placeId);
+      }
+
       if(streetString) {
         this.props.changeForm(form, field(`streetAddress`), streetString);
       }
