@@ -37,19 +37,19 @@ class Location extends Base {
     const cityInfo = [];
 
     if (field.buildingName && field.isBuildingNameEnabled)
-      addressInfo.push(field.buildingName);
+      addressInfo.push(<div className="device-metadata--location-field--info-list-item--option">Building: {field.buildingName}</div>);
 
     if (field.floor && field.isFloorEnabled)
-      addressInfo.push(`${field.floor}`);
+      addressInfo.push(<div className="device-metadata--location-field--info-list-item--option">Floor: {field.floor}</div>);
 
     if (field.unit && field.isUnitEnabled)
-      addressInfo.push(`${field.unit}`);
+      addressInfo.push(<div className="device-metadata--location-field--info-list-item--option">Unit: {field.unit}</div>);
 
     if (field.room && field.isRoomEnabled)
-      addressInfo.push(`${field.room}`);
+      addressInfo.push(<div className="device-metadata--location-field--info-list-item--option">Room: {field.room}</div>);
 
     if (field.zone && field.isZoneEnabled)
-      addressInfo.push(`${field.zone}`);
+      addressInfo.push(<div className="device-metadata--location-field--info-list-item--option">Zone: {field.zone}</div>);
 
     if (field.city && field.isCityEnabled)
       cityInfo.push(field.city);
@@ -84,12 +84,6 @@ class Location extends Base {
                   </div>
                 )}
 
-                {addressInfo && addressInfo.length > 0 && (
-                  <div className="device-metadata--location-field--info-list-item">
-                    {addressInfo.join(', ')}
-                  </div>
-                )}
-
                 { ((cityInfo && cityInfo.length) || field.country ) && (
                   <div className="device-metadata--location-field--info-list--primary">
                     {cityInfo && cityInfo.length > 0 && (
@@ -103,6 +97,12 @@ class Location extends Base {
                         {field.country}
                       </div>
                     )}
+                  </div>
+                )}
+
+                {addressInfo && addressInfo.length > 0 && (
+                  <div className="device-metadata--location-field--info-list--primary">
+                    {addressInfo}
                   </div>
                 )}
 
