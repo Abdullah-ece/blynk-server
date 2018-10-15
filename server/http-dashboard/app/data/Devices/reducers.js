@@ -130,6 +130,7 @@ const getLocationMetaFieldOnly = (metaFields) => {
 const getFieldsForDevicesList = (device) => ({
   id: Number(device.id),
   name: device.name,
+  defaultName: getDefaultDeviceName(device),
   productName: device.productName,
   criticalSinceLastView: device.criticalSinceLastView,
   warningSinceLastView: device.warningSinceLastView,

@@ -635,7 +635,7 @@ export const getDefaultDeviceName = (device) => {
     }
   });
 
-  return name || 'Empty';
+  return name || 'Device Name';
 };
 
 export const SETUP_PRODUCT_KEY = "SETUP_NEW_PRODUCT";

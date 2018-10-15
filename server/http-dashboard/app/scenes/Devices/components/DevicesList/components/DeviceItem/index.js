@@ -12,6 +12,7 @@ class DeviceItem extends React.Component {
     device: PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string,
+      defaultName: PropTypes.string,
       productName: PropTypes.string,
       criticalSinceLastView: PropTypes.number,
       warningSinceLastView: PropTypes.number,
@@ -50,7 +51,7 @@ class DeviceItem extends React.Component {
       <div className={className} onClick={this.handleDeviceClick}>
         <div className="navigation-devices-list-item-inner">
           <div className="navigation-devices-list-item-name">
-            <Dotdotdot clamp={1}>{this.props.device.name}</Dotdotdot>
+            <Dotdotdot clamp={1}>{this.props.device.name || this.props.device.defaultName || 'Empty'}</Dotdotdot>
           </div>
           <div className="navigation-devices-list-item-product-name">
             <Dotdotdot clamp={1}>{this.props.device.productName || (
