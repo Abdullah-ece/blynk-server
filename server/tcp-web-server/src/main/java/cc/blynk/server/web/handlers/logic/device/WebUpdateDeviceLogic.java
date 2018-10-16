@@ -60,6 +60,12 @@ public class WebUpdateDeviceLogic {
             return;
         }
 
+        if (newDevice.isNotValid()) {
+            log.error("WebUpdate device for {} has wrong name or board. {}", user.email, newDevice);
+            ctx.writeAndFlush(json(message.id, "Device has no name or board type selected."), ctx.voidPromise());
+            return;
+        }
+
         //default dash for all devices...
         final int dashId = 0;
         DashBoard dash = user.profile.getDashById(dashId);

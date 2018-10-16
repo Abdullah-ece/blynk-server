@@ -33,7 +33,7 @@ public class Device implements Target {
 
     public volatile String name;
 
-    public volatile BoardType boardType;
+    public volatile BoardType boardType = BoardType.Generic_Board;
 
     @JsonView(View.Private.class)
     public volatile String token;
@@ -89,7 +89,7 @@ public class Device implements Target {
     public volatile WebDashboard webDashboard = new WebDashboard();
 
     public boolean isNotValid() {
-        return boardType == null || (name != null && name.length() > 50);
+        return name == null || name.isEmpty() || name.length() > 50;
     }
 
     public Device() {
