@@ -146,6 +146,9 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
     private void validateAuthToken() throws Exception {
         InterfaceHttpData tokenParam = decoder.getBodyHttpData("token");
         DiskAttribute diskAttribute = (DiskAttribute) tokenParam;
+        if (diskAttribute == null) {
+            throw new ForbiddenWebException("No auth token for upload.");
+        }
         String token = diskAttribute.getValue();
         UploadTempToken uploadTempToken = tokensPool.getUploadToken(token);
         if (uploadTempToken == null) {
