@@ -148,6 +148,13 @@ class DeviceInfo extends React.Component {
                       </DeviceMetadata.Field>
                     );
 
+                  if (field.type === Metadata.Fields.EMAIL)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Text {...props}/>
+                      </DeviceMetadata.Field>
+                    );
+
                   if (field.type === Metadata.Fields.TEXT)
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
