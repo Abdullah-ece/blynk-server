@@ -49,6 +49,7 @@ class NumberField extends BaseField {
                    onBlur={this.onBlur}
                    validateOnBlur={true}
                    name={`metaFields.${this.props.metaFieldKey}.value`}
+                   validate={[Validation.Rules.number]}
                    placeholder="Optional"
             />
           </Col>
