@@ -3,7 +3,6 @@ package cc.blynk.server.web.handlers.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -80,9 +79,8 @@ public class WebAppHardwareLogic {
 
         //sending to shared dashes and master-master apps
 
-        //"0-" - temp solution, until app will not support new format.
-        session.sendToSharedApps(channel, SharedTokenManager.ALL,
-                APP_SYNC, message.id, "0-" + message.body);
+        //"0" - temp solution, until app will not support new format.
+        session.sendToApps(APP_SYNC, message.id, 0, deviceId, split[1]);
 
         session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, split[1], deviceId);
 

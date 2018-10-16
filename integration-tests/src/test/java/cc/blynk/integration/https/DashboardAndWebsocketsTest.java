@@ -246,6 +246,26 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
     }
 
     @Test
+    public void mobileGetHardwarecommandFromWebSocket() throws Exception {
+        AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.login(regularUser);
+        appWebSocketClient.verifyResult(ok(1));
+
+        TestAppClient appClient = new TestAppClient("localhost", properties.getHttpsPort(), properties);
+        appClient.start();
+        appClient.loginNoHash(regularUser.email, regularUser.pass);
+        appClient.verifyResult(ok(1));
+
+        appWebSocketClient.send("hardware 0 vw 10 100");
+        appClient.verifyResult(appSync(2, "0-0 vw 10 100"));
+
+        appClient.sync(1);
+        appClient.verifyResult(appSync(2, b("0-0 vw 10 100")));
+
+    }
+
+    @Test
     public void trackCommandWorks() throws Exception {
         AppWebSocketClient appWebSocketClient = TestUtil.defaultClient();
         appWebSocketClient.start();
