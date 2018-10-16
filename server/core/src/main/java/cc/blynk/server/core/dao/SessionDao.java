@@ -6,7 +6,7 @@ import cc.blynk.server.core.session.CookieUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -72,7 +72,7 @@ public class SessionDao {
         }
     }
 
-    public HttpSession getUserFromCookie(FullHttpRequest request) {
+    public HttpSession getUserFromCookie(HttpRequest request) {
         Cookie cookie = CookieUtil.findCookieByName(request, SESSION_COOKIE);
 
         if (cookie != null) {

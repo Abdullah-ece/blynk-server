@@ -16,6 +16,8 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.server.core.dao.HttpSession;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.internal.token.UploadTempToken;
@@ -62,13 +64,16 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
     private final String staticFolderPath;
     private final String uploadFolder;
     private final TokensPool tokensPool;
+    private final SessionDao sessionDao;
 
-    public UploadHandler(String staticFolderPath, String handlerUri, String uploadFolder, TokensPool tokensPool) {
+    public UploadHandler(String staticFolderPath, String handlerUri, String uploadFolder,
+                         TokensPool tokensPool, SessionDao sessionDao) {
         super(false);
         this.handlerUri = handlerUri;
         this.staticFolderPath = staticFolderPath;
         this.uploadFolder = uploadFolder.endsWith("/") ? uploadFolder : uploadFolder + "/";
         this.tokensPool = tokensPool;
+        this.sessionDao = sessionDao;
     }
 
     @Override
@@ -95,24 +100,27 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
             try {
                 log.debug("Incoming {} {}", req.method(), req.uri());
                 decoder = new HttpPostRequestDecoder(factory, req);
+                validateAuthToken(req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
                 ctx.writeAndFlush(badRequest(e.getMessage()));
                 return;
+            } catch (ForbiddenWebException e) {
+                log.error("Error validating request.", e);
+                ctx.writeAndFlush(forbidden(e.getMessage()));
+                return;
+            } catch (Exception decoderE) {
+                log.error("Error creating http post offer.", decoderE);
+                ctx.writeAndFlush(badRequest(decoderE.getMessage()));
+                return;
             }
-
         }
 
         if (decoder != null && msg instanceof HttpContent) {
             // New chunk is received
             HttpContent chunk = (HttpContent) msg;
             try {
-                validateAuthToken();
                 decoder.offer(chunk);
-            } catch (ForbiddenWebException e) {
-                log.error("Error validating request.", e);
-                ctx.writeAndFlush(forbidden(e.getMessage()));
-                return;
             } catch (Exception decoderE) {
                 log.error("Error creating http post offer.", decoderE);
                 ctx.writeAndFlush(badRequest(decoderE.getMessage()));
@@ -143,11 +151,17 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
         }
     }
 
-    private void validateAuthToken() throws Exception {
+    private void validateAuthToken(HttpRequest request) throws Exception {
         InterfaceHttpData tokenParam = decoder.getBodyHttpData("token");
         DiskAttribute diskAttribute = (DiskAttribute) tokenParam;
         if (diskAttribute == null) {
-            throw new ForbiddenWebException("No auth token for upload.");
+            HttpSession httpSession = sessionDao.getUserFromCookie(request);
+            if (httpSession == null) {
+                throw new ForbiddenWebException("No auth token for upload.");
+            } else {
+                log.debug("Found session cookie for upload {}.", httpSession.user);
+                return;
+            }
         }
         String token = diskAttribute.getValue();
         UploadTempToken uploadTempToken = tokensPool.getUploadToken(token);
