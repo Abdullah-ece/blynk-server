@@ -27,6 +27,7 @@ class DeviceInfoScene extends React.Component {
     fetchDevice: PropTypes.func,
     fetchDevices: PropTypes.func,
     fetchProducts: PropTypes.func,
+    onDeviceDelete: PropTypes.func,
     updateDeviceMetadata: PropTypes.func,
   };
 
@@ -62,7 +63,7 @@ class DeviceInfoScene extends React.Component {
     const {device,account} = this.props;
 
     return (
-      <DeviceInfo device={device} account={account} onMetadataChange={this.handleMetadataChange}/>
+      <DeviceInfo device={device} account={account} onMetadataChange={this.handleMetadataChange} onDeviceDelete={this.props.onDeviceDelete}/>
     );
   }
 

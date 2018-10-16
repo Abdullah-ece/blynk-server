@@ -19,6 +19,7 @@ class Index extends React.Component {
   static propTypes = {
     location: React.PropTypes.object,
     params: React.PropTypes.object,
+    onDeviceDelete: React.PropTypes.func,
 
     redirectToDeviceId: React.PropTypes.func,
   };
@@ -85,7 +86,7 @@ class Index extends React.Component {
           <DevicesList activeDeviceId={Number(this.props.params.id)} onDeviceSelect={this.handleDeviceSelect}/>
         </PageLayout.Navigation>
         <PageLayout.Content>
-          <DeviceDetails params={this.props.params} location={this.props.location}/>
+          <DeviceDetails params={this.props.params} location={this.props.location} onDeviceDelete={this.props.onDeviceDelete}/>
         </PageLayout.Content>
       </PageLayout>
     );

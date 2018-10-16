@@ -51,6 +51,7 @@ class DeviceDetailsScene extends React.Component {
     productId: PropTypes.number,
     //
     fetchDeviceDetails: PropTypes.func,
+    onDeviceDelete: PropTypes.func,
     fetchProducts: PropTypes.func,
     updateDevice: PropTypes.func,
     // updateDeviceDetails: PropTypes.func,
@@ -151,6 +152,7 @@ class DeviceDetailsScene extends React.Component {
 
     return (
       <Device params={this.props.params}
+              onDeviceDelete={this.props.onDeviceDelete}
               location={this.props.location}
               productId={this.props.productId}
               onTabChange={this.handleTabChange}
