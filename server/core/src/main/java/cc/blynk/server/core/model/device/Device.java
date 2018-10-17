@@ -89,7 +89,7 @@ public class Device implements Target {
     public volatile WebDashboard webDashboard = new WebDashboard();
 
     public boolean isNotValid() {
-        return name == null || name.isEmpty() || name.length() > 50;
+        return name == null || name.isEmpty() || name.trim().isEmpty() || name.length() > 50;
     }
 
     public Device() {
