@@ -9,13 +9,11 @@ import cc.blynk.core.http.handlers.url.UrlMapper;
 import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.core.http.utils.UrlStartWithMapper;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.dashboard.AccountHandler;
 import cc.blynk.server.api.http.dashboard.AuthCookieHandler;
 import cc.blynk.server.api.http.dashboard.DataHandler;
 import cc.blynk.server.api.http.dashboard.DevicesHandler;
 import cc.blynk.server.api.http.dashboard.ExternalAPIHandler;
 import cc.blynk.server.api.http.dashboard.OTAHandler;
-import cc.blynk.server.api.http.dashboard.OrganizationHandler;
 import cc.blynk.server.api.http.dashboard.ProductHandler;
 import cc.blynk.server.api.http.dashboard.WebLoginHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
@@ -114,12 +112,9 @@ public class MobileAndHttpsServer extends BaseServer {
 
         var webLoginHandler = new WebLoginHandler(holder, apiPath);
         var authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        var accountHandler = new AccountHandler(holder, apiPath);
         var devicesHandler = new DevicesHandler(holder, apiPath);
         var dataHandler = new DataHandler(holder, apiPath);
         var productHandler = new ProductHandler(holder, apiPath);
-        var organizationHandler = new OrganizationHandler(holder, apiPath);
-
         var alreadyLoggedHandler = new AlreadyLoggedHandler();
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
         var otaHandler = new OTAHandler(holder, apiPath);
@@ -149,11 +144,9 @@ public class MobileAndHttpsServer extends BaseServer {
                                 holder.tokensPool, holder.sessionDao))
                         .addLast(webLoginHandler)
                         .addLast(authCookieHandler)
-                        .addLast(accountHandler)
                         .addLast(devicesHandler)
                         .addLast(dataHandler)
                         .addLast(productHandler)
-                        .addLast(organizationHandler)
                         .addLast(otaHandler)
                         .addLast(noMatchHandler)
                         .remove(this);

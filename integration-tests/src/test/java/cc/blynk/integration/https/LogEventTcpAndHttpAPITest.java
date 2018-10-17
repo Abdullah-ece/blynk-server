@@ -65,6 +65,8 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Deprecated
+//todo implement in websockets api
 public class LogEventTcpAndHttpAPITest extends APIBaseTest {
 
     private BaseServer hardwareServer;
