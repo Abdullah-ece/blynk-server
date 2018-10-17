@@ -619,7 +619,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         product.connectionType = ConnectionType.WI_FI;
         product.metaFields = new MetaField[] {
                 createTextMeta(1, "My test metafield", "Default Device"),
-                new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, "icon",
+                new LocationMetaField(2, "Device Location", new int[] {1}, false, false, false, "icon",
                         "Warehouse 13",
                         true, "Baklazhana street 15",
                         false, null,
@@ -633,7 +633,8 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                         false, null,
                         false, null,
                         false, false,
-                        null)
+                        null),
+                createContactMeta(3, "Contact", "contact_icon")
         };
 
         client.createProduct(orgId, product);
@@ -649,7 +650,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(newDevice);
 
         fromApiProduct.metaFields[0] = createTextMeta(1, "Me updated test metafield", "Default Device");
-        fromApiProduct.metaFields[1] = new LocationMetaField(3, "Device Location", new int[] {1}, false, false, false, "icon2",
+        fromApiProduct.metaFields[1] = new LocationMetaField(2, "Device Location", new int[] {1}, false, false, false, "icon2",
                 "Warehouse 13",
                 true, "Baklazhana street 15",
                 false, null,
@@ -664,18 +665,19 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 false, null,
                 false, false,
                 null);
+        fromApiProduct.metaFields[2] = createContactMeta(3, "Contact", "contact_icon_2");
 
         client.updateDevicesMeta(orgId, fromApiProduct);
         fromApiProduct = client.parseProduct(3);
         assertNotNull(fromApiProduct);
-        assertEquals(2, fromApiProduct.metaFields.length);
+        assertEquals(3, fromApiProduct.metaFields.length);
 
         client.getDevice(orgId, newDevice.id);
         Device device = client.parseDevice(4);
         assertNotNull(newDevice);
         assertEquals("My New Device", device.name);
         assertNotNull(device.metaFields);
-        assertEquals(2, device.metaFields.length);
+        assertEquals(3, device.metaFields.length);
 
         TextMetaField textMetaField = (TextMetaField) device.metaFields[0];
         assertEquals(1, textMetaField.id);
@@ -683,9 +685,14 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals("Default Device", textMetaField.value);
 
         LocationMetaField locationMetaField = (LocationMetaField) device.metaFields[1];
-        assertEquals(3, locationMetaField.id);
+        assertEquals(2, locationMetaField.id);
         assertEquals("Device Location", locationMetaField.name);
         assertEquals("icon2", locationMetaField.icon);
+
+        ContactMetaField contactMetaField = (ContactMetaField) device.metaFields[2];
+        assertEquals(3, contactMetaField.id);
+        assertEquals("Contact", contactMetaField.name);
+        assertEquals("contact_icon_2", contactMetaField.icon);
     }
 
     @Test

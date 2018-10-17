@@ -108,7 +108,7 @@ public class ContactMetaField extends MetaField {
         ContactMetaField contactMetaField = (ContactMetaField) metaField;
         return new ContactMetaField(id, metaField.name, metaField.roleIds,
                 metaField.includeInProvision, metaField.isMandatory, metaField.isDefault,
-                icon,
+                metaField.icon,
                 firstName, contactMetaField.isFirstNameEnabled,
                 lastName, contactMetaField.isLastNameEnabled,
                 email, contactMetaField.isEmailEnabled,

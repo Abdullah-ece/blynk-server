@@ -191,4 +191,12 @@ public abstract class APIBaseTest extends CounterBase {
                 "Ukraine", false,
                 "Kyiv", false, "Ukraine", false, "03322", false, false);
     }
+
+    public static ContactMetaField createContactMeta(int id, String name, String icon) {
+        return new ContactMetaField(id, name, new int[] {1}, false, false, false, icon,
+                "Dmitriy", false, "Dumanskiy", false, "dmitriy@blynk.cc", false,
+                "+38063673333",  false, "My street", false,
+                "Ukraine", false,
+                "Kyiv", false, "Ukraine", false, "03322", false, false);
+    }
 }
