@@ -42,15 +42,7 @@ public class WebGetDeviceLogic {
         int orgId = Integer.parseInt(split[0]);
         int deviceId = Integer.parseInt(split[1]);
 
-        //todo refactor when permissions ready
-        //todo check access for the device
         User user = state.user;
-        if (!organizationDao.hasAccess(user, orgId)) {
-            log.error("User {} not allowed to access orgId {}", user.email, orgId);
-            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
-            return;
-        }
-
         Device device = deviceDao.getById(deviceId);
         if (device == null) {
             log.error("Device {} not found for {}.", deviceId, user.email);
@@ -59,9 +51,21 @@ public class WebGetDeviceLogic {
         }
 
         Organization org = organizationDao.getOrgByIdOrThrow(orgId);
-        //todo show only devices for specific org?
-        //Product product = org.getProductOrThrow(device.productId);
-        Product product = organizationDao.getProductById(device.productId);
+        Product product = org.getProduct(device.productId);
+        //this means orgId is wrong
+        if (product == null) {
+            log.error("Device {} not found for {}, probably wrong orgId {}.", deviceId, state.user.email, orgId);
+            ctx.writeAndFlush(json(message.id, "Device not found."), ctx.voidPromise());
+            return;
+        }
+
+        //todo refactor when permissions ready
+        //todo check access for the device
+        if (!organizationDao.hasAccess(user, orgId)) {
+            log.error("User {} not allowed to access orgId {}", user.email, orgId);
+            ctx.writeAndFlush(userHasNoAccessToOrg(message.id), ctx.voidPromise());
+            return;
+        }
 
         if (ctx.channel().isWritable()) {
             String devicesString = new DeviceDTO(device, product, org.name).toString();
