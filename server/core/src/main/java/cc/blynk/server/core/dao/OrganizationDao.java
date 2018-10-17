@@ -271,16 +271,16 @@ public class OrganizationDao {
         org.deleteProduct(productId);
     }
 
-    public boolean delete(int id) {
-        Organization org = organizations.remove(id);
+    public boolean delete(int orgId) {
+        Organization org = organizations.remove(orgId);
         if (org != null) {
-            List<User> users = userDao.getAllUsersByOrgId(id);
+            List<User> users = userDao.getAllUsersByOrgId(orgId);
             for (User user : users) {
                 UserKey userKey = new UserKey(user.email, user.appName);
                 userDao.delete(userKey);
                 fileManager.delete(userKey);
             }
-            fileManager.deleteOrg(id);
+            fileManager.deleteOrg(orgId);
             return true;
         }
         return false;
