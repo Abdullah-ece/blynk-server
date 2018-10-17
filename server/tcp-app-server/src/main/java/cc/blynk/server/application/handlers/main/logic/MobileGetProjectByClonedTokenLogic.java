@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -137,7 +136,7 @@ public class MobileGetProjectByClonedTokenLogic {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        newDash.addTimers(timerWorker, new UserKey(user));
+        newDash.addTimers(timerWorker, user.email);
 
         byte[] data = ByteUtils.compress(newDash.toString());
         return makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, msgId, data);

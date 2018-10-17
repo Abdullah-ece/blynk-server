@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
@@ -111,7 +110,7 @@ public class Holder {
 
         if (restore) {
             try {
-                ConcurrentMap<UserKey, User> allUsers = dbManager.userDBDao.getAllUsers(serverProperties.region);
+                ConcurrentMap<String, User> allUsers = dbManager.userDBDao.getAllUsers(serverProperties.region);
                 this.userDao = new UserDao(allUsers, serverProperties.region, serverProperties.host);
             } catch (Exception e) {
                 System.out.println("Error restoring data from DB!");

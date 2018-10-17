@@ -50,7 +50,7 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        var session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.userSession.get(state.user.email);
         var split = split3(message.body);
 
         if (split.length < 3) {
@@ -130,7 +130,8 @@ public class BridgeLogic {
                 ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
 
-            ctx.pipeline().fireUserEventTriggered(new BridgeForwardMessage(bridgeMessage, tokenvalue, state.userKey));
+            ctx.pipeline().fireUserEventTriggered(
+                    new BridgeForwardMessage(bridgeMessage, tokenvalue, state.user.email));
         }
     }
 }

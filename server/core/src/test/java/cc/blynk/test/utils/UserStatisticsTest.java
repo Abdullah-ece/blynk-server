@@ -1,7 +1,6 @@
 package cc.blynk.test.utils;
 
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -28,7 +27,7 @@ import java.util.zip.DeflaterOutputStream;
 public class UserStatisticsTest {
 
     static FileManager fileManager;
-    static Map<UserKey, User> users;
+    static Map<String, User> users;
 
     @BeforeClass
     public static void init() {

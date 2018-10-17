@@ -42,13 +42,13 @@ public final class MobileAssignTokenLogic {
             var dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
-                log.error("{} token not exists for app {}.", token, user.appName);
+                log.error("{} token not exists for orgId {}.", token, user.orgId);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
             if (dbFlashedToken.isActivated) {
-                log.error("{} token is already activated for app {}.", token, user.appName);
+                log.error("{} token is already activated for orgId {}.", token, user.orgId);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }

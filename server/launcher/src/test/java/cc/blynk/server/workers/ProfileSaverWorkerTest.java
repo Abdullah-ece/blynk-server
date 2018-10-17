@@ -4,11 +4,9 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.utils.AppNameUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,16 +50,16 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true), organizationDao);
 
-        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
+        User user1 = new User("1", "", 1, "local", "127.0.0.1", false, 2);
+        User user2 = new User("2", "", 1, "local", "127.0.0.1", false, 2);
+        User user3 = new User("3", "", 1, "local", "127.0.0.1", false, 2);
+        User user4 = new User("4", "", 1, "local", "127.0.0.1", false, 2);
 
-        ConcurrentMap<UserKey, User> userMap = new ConcurrentHashMap<>();
-        userMap.put(new UserKey(user1), user1);
-        userMap.put(new UserKey(user2), user2);
-        userMap.put(new UserKey(user3), user3);
-        userMap.put(new UserKey(user4), user4);
+        ConcurrentMap<String, User> userMap = new ConcurrentHashMap<>();
+        userMap.put(user1.email, user1);
+        userMap.put(user2.email, user2);
+        userMap.put(user3.email, user3);
+        userMap.put(user4.email, user4);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
@@ -75,16 +73,16 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
-        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
+        User user1 = new User("1", "", 1, "local", "127.0.0.1", false, 2);
+        User user2 = new User("2", "", 1, "local", "127.0.0.1", false, 2);
+        User user3 = new User("3", "", 1, "local", "127.0.0.1", false, 2);
+        User user4 = new User("4", "", 1, "local", "127.0.0.1", false, 2);
 
-        Map<UserKey, User> userMap = new HashMap<>();
-        userMap.put(new UserKey("1", AppNameUtil.BLYNK), user1);
-        userMap.put(new UserKey("2", AppNameUtil.BLYNK), user2);
-        userMap.put(new UserKey("3", AppNameUtil.BLYNK), user3);
-        userMap.put(new UserKey("4", AppNameUtil.BLYNK), user4);
+        Map<String, User> userMap = new HashMap<>();
+        userMap.put("1", user1);
+        userMap.put("2", user2);
+        userMap.put("3", user3);
+        userMap.put("4", user4);
 
         Thread.sleep(1);
 

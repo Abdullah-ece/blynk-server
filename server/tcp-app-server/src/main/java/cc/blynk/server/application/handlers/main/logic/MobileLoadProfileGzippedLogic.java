@@ -57,13 +57,12 @@ public final class MobileLoadProfileGzippedLogic {
             int dashId = Integer.parseInt(parts[1]);
             String publishingEmail = parts[2];
             //this is for simplification of testing.
-            String appName = parts.length == 4 ? parts[3] : state.userKey.appName;
 
             holder.blockingIOProcessor.executeDB(() -> {
                 try {
                     FlashedToken flashedToken = holder.dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
-                        User publishingUser = holder.userDao.getByName(publishingEmail, appName);
+                        User publishingUser = holder.userDao.getByName(publishingEmail);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);

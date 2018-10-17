@@ -28,7 +28,6 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
@@ -50,7 +49,6 @@ import java.util.Map;
 
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
 
 /**
  * Entry point for server launch.
@@ -206,7 +204,7 @@ public final class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppNameUtil.BLYNK, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
+            holder.userDao.add(email, hash, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
 
             String vendorEmail = props.vendorEmail;
             if (vendorEmail != null) {
@@ -246,7 +244,7 @@ public final class ServerLauncher {
             for (int i = 0; i < 20; i++) {
                 email = name.replace("{i}", "" + i);
                 hash = SHA256Util.makeHash(pass, email);
-                holder.userDao.add(email, hash, BLYNK, superOrg.id, 2);
+                holder.userDao.add(email, hash, superOrg.id, 2);
             }
         }
     }

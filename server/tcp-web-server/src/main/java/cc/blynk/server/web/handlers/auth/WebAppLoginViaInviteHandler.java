@@ -83,7 +83,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
             return;
         }
 
-        User user = holder.userDao.getByName(inviteToken.email, inviteToken.appName);
+        User user = holder.userDao.getByName(inviteToken.email);
         if (user == null) {
             log.error("User {} not found.", inviteToken);
             ctx.writeAndFlush(json(message.id, "User not found."), ctx.voidPromise());
@@ -111,7 +111,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
 
         Channel channel = ctx.channel();
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.user.email, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering websocket app channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
@@ -130,7 +130,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
                 msgId, user.toString()), channel.voidPromise());
         holder.tokensPool.removeToken(token);
 
-        log.info("{} {}-app ({}) joined via invite.", user.email, user.appName, version);
+        log.info("{} orgId={} ({}) joined via invite.", user.email, user.orgId, version);
     }
 
     @Override

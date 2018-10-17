@@ -37,7 +37,7 @@ public final class MobileShareLogic {
                 break;
         }
 
-        Session session = holder.sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.userSession.get(state.user.email);
         session.sendToSharedApps(ctx.channel(), dash.sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

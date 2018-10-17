@@ -46,7 +46,7 @@ public final class MobileDeleteDeviceLogic {
         Device device = dash.devices[existingDeviceIndex];
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);
-        Session session = holder.sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.userSession.get(state.user.email);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);

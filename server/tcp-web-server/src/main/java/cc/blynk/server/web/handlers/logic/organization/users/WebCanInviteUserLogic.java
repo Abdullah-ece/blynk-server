@@ -31,8 +31,8 @@ public final class WebCanInviteUserLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String userEMailToInvite = message.body;
-        if (userDao.contains(userEMailToInvite, state.userKey.appName)) {
-            log.debug("User {}-{} already exists in system.", userEMailToInvite, state.userKey.appName);
+        if (userDao.contains(userEMailToInvite)) {
+            log.debug("User {}-{} already exists in system.", userEMailToInvite, state.user.email);
             ctx.writeAndFlush(json(message.id, "User already exists in the system."), ctx.voidPromise());
         } else {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

@@ -43,7 +43,7 @@ public class MqttHardwareLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, MqttPublishMessage msg) {
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.user.email);
 
         String body = msg.payload().readSlice(msg.payload().capacity()).toString(StandardCharsets.UTF_8);
 

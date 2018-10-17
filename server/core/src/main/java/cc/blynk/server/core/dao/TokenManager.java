@@ -21,7 +21,7 @@ public class TokenManager {
     private final DBManager dbManager;
     private final String host;
 
-    public TokenManager(ConcurrentMap<UserKey, User> users, DBManager dbManager, String host) {
+    public TokenManager(ConcurrentMap<String, User> users, DBManager dbManager, String host) {
         Collection<User> allUsers = users.values();
         this.regularTokenManager = new RegularTokenManager(allUsers);
         this.sharedTokenManager = new SharedTokenManager(allUsers);

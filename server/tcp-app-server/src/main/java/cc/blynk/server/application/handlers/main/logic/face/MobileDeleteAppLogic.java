@@ -49,9 +49,9 @@ public final class MobileDeleteAppLogic {
         var result = new ArrayList<DashBoard>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
-                timerWorker.deleteTimers(state.userKey, dash);
+                timerWorker.deleteTimers(state.user.email, dash);
                 tokenManager.deleteDash(dash);
-                sessionDao.closeHardwareChannelByDashId(state.userKey, dash.id);
+                sessionDao.closeHardwareChannelByDashId(state.user.email, dash.id);
             } else {
                 result.add(dash);
             }

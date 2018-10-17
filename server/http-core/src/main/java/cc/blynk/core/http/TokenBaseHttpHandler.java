@@ -5,7 +5,6 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.internal.ReregisterChannelUtil;
@@ -42,7 +41,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
             return;
         }
 
-        Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
+        Session session = sessionDao.getOrCreateSessionByUser(tokenValue.user.email, ctx.channel().eventLoop());
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), handler, params);
         } else {

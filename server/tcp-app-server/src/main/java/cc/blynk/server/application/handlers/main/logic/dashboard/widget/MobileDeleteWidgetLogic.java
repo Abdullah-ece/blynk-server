@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -88,14 +87,14 @@ public final class MobileDeleteWidgetLogic {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateId);
             if (widgetToDelete instanceof Tabs) {
                 tileTemplate.widgets = deleteTabs(timerWorker,
-                        user, state.userKey, dash.id, deviceTilesId,
+                        user, state.user.email, dash.id, deviceTilesId,
                         templateId, tileTemplate.widgets, 0);
             }
             int index = tileTemplate.getWidgetIndexByIdOrThrow(widgetId);
             tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, index, Widget.class);
         } else {
             if (widgetToDelete instanceof Tabs) {
-                dash.widgets = deleteTabs(timerWorker, user, state.userKey, dash.id,
+                dash.widgets = deleteTabs(timerWorker, user, state.user.email, dash.id,
                         deviceTilesId, templateId, dash.widgets, 0);
             }
             int index = dash.getWidgetIndexByIdOrThrow(widgetId);
@@ -105,9 +104,9 @@ public final class MobileDeleteWidgetLogic {
         dash.cleanPinStorage(widgetToDelete, true);
 
         if (widgetToDelete instanceof Timer) {
-            timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
+            timerWorker.delete(state.user.email, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);
         } else if (widgetToDelete instanceof Eventor) {
-            timerWorker.delete(state.userKey, (Eventor) widgetToDelete, dashId);
+            timerWorker.delete(state.user.email, (Eventor) widgetToDelete, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
@@ -116,7 +115,7 @@ public final class MobileDeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    static Widget[] deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
+    static Widget[] deleteTabs(TimerWorker timerWorker, User user, String userKey,
                                int dashId, long deviceTilesId, long templateId,
                                Widget[] widgets, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();

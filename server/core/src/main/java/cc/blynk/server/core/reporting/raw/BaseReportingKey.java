@@ -14,21 +14,21 @@ import java.io.Serializable;
 public final class BaseReportingKey implements Serializable {
 
     public final String email;
-    public final String appName;
+    public final int orgId;
     public final int dashId;
     public final int deviceId;
     public final PinType pinType;
     public final byte pin;
 
     public BaseReportingKey(User user, GraphPinRequest graphPinRequest) {
-        this(user.email, user.appName,
+        this(user.email, user.orgId,
              graphPinRequest.dashId, graphPinRequest.deviceId,
              graphPinRequest.pinType, graphPinRequest.pin);
     }
 
-    public BaseReportingKey(String email, String appName, int dashId, int deviceId, PinType pinType, byte pin) {
+    public BaseReportingKey(String email, int orgId, int dashId, int deviceId, PinType pinType, byte pin) {
         this.email = email;
-        this.appName = appName;
+        this.orgId = orgId;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.pinType = pinType;
@@ -58,7 +58,7 @@ public final class BaseReportingKey implements Serializable {
         if (email != null ? !email.equals(that.email) : that.email != null) {
             return false;
         }
-        if (appName != null ? !appName.equals(that.appName) : that.appName != null) {
+        if (orgId != that.orgId) {
             return false;
         }
         return pinType == that.pinType;
@@ -67,7 +67,7 @@ public final class BaseReportingKey implements Serializable {
     @Override
     public int hashCode() {
         int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + (appName != null ? appName.hashCode() : 0);
+        result = 31 * result + orgId;
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);

@@ -127,7 +127,7 @@ public final class MobileUpdateWidgetLogic {
             if (newWidget instanceof Tabs) {
                 Tabs newTabs = (Tabs) newWidget;
                 tileTemplate.widgets = MobileDeleteWidgetLogic.deleteTabs(timerWorker,
-                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        user, state.user.email, dash.id, deviceTilesId, deviceTilesTemplateId,
                         tileTemplate.widgets, newTabs.tabs.length - 1);
             }
             tileTemplate.widgets = ArrayUtil.copyAndReplace(
@@ -136,7 +136,7 @@ public final class MobileUpdateWidgetLogic {
             if (newWidget instanceof Tabs) {
                 Tabs newTabs = (Tabs) newWidget;
                 dash.widgets = MobileDeleteWidgetLogic.deleteTabs(timerWorker,
-                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        user, state.user.email, dash.id, deviceTilesId, deviceTilesTemplateId,
                         dash.widgets, newTabs.tabs.length - 1);
             }
             dash.widgets = ArrayUtil.copyAndReplace(
@@ -147,15 +147,15 @@ public final class MobileUpdateWidgetLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {
-            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
+            timerWorker.delete(state.user.email, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (prevWidget instanceof Eventor) {
-            timerWorker.delete(state.userKey, (Eventor) prevWidget, dashId);
+            timerWorker.delete(state.user.email, (Eventor) prevWidget, dashId);
         }
 
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.userKey, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
+            timerWorker.add(state.user.email, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (newWidget instanceof Eventor) {
-            timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
+            timerWorker.add(state.user.email, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

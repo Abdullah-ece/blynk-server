@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -50,11 +49,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.userKey, state.user, state.dash, state.device);
+        messageReceived(ctx, message, state.user.email, state.user, state.dash, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
-                                UserKey userKey, User user, DashBoard dash, Device device) {
+                                String email, User user, DashBoard dash, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -84,7 +83,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             device.updateWebDashboard(pin, pinType, value, now);
             device.dataReceivedAt = now;
 
-            Session session = sessionDao.userSession.get(userKey);
+            Session session = sessionDao.userSession.get(email);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
             if (dash.isActive) {

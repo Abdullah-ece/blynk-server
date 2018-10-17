@@ -29,18 +29,18 @@ public class SessionDao {
     public final static AttributeKey<HttpSession> userSessionAttributeKey = AttributeKey.valueOf("userSession");
     public static final String SESSION_COOKIE = "session";
     private static final Logger log = LogManager.getLogger(SessionDao.class);
-    public final ConcurrentHashMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Session> userSession = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     //threadsafe
-    public Session getOrCreateSessionByUser(UserKey key, EventLoop initialEventLoop) {
-        Session group = userSession.get(key);
+    public Session getOrCreateSessionByUser(String email, EventLoop initialEventLoop) {
+        Session group = userSession.get(email);
         //only one side came
         if (group == null) {
             Session value = new Session(initialEventLoop);
-            group = userSession.putIfAbsent(key, value);
+            group = userSession.putIfAbsent(email, value);
             if (group == null) {
-                log.trace("Creating unique session for user: {}", key);
+                log.trace("Creating unique session for user: {}", email);
                 return value;
             }
         }
@@ -58,14 +58,14 @@ public class SessionDao {
         httpSession.remove(sessionId);
     }
 
-    public void deleteUser(UserKey userKey) {
-        Session session = userSession.remove(userKey);
+    public void deleteUser(String email) {
+        Session session = userSession.remove(email);
         if (session != null) {
             session.closeAll();
         }
         for (Map.Entry<String, User> entry : httpSession.entrySet()) {
             User user = entry.getValue();
-            if (user.email.equals(userKey.email) && user.appName.equals(userKey.appName)) {
+            if (user.email.equals(email)) {
                 httpSession.remove(entry.getKey());
                 return;
             }
@@ -86,8 +86,8 @@ public class SessionDao {
         return null;
     }
 
-    public void closeHardwareChannelByDashId(UserKey userKey, int dashId) {
-        Session session = userSession.get(userKey);
+    public void closeHardwareChannelByDashId(String email, int dashId) {
+        Session session = userSession.get(email);
         session.closeHardwareChannelByDashId(dashId);
     }
 
@@ -101,8 +101,8 @@ public class SessionDao {
         allChannels.close().awaitUninterruptibly();
     }
 
-    public void closeAppChannelsByUser(UserKey userKey) {
-        Session session = userSession.get(userKey);
+    public void closeAppChannelsByUser(String email) {
+        Session session = userSession.get(email);
         if (session != null) {
             for (Channel appChannel : session.appChannels) {
                 appChannel.close();

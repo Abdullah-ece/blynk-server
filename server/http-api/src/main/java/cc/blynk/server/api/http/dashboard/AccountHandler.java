@@ -45,7 +45,7 @@ public class AccountHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
     public Response update(User updatedUser) {
-        User existingUser = userDao.getByName(updatedUser.email, updatedUser.appName);
+        User existingUser = userDao.getByName(updatedUser.email);
         existingUser.setName(updatedUser.name);
         return ok(existingUser);
     }

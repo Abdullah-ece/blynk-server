@@ -93,7 +93,7 @@ public class ReportingDiskDao implements Closeable {
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
-                FileUtils.getUserStorageDir(user.email, user.appName),
+                FileUtils.getUserStorageDir(user.email),
                 generateFilename(dashId, deviceId, pinType, pin, type)
         );
         if (Files.exists(userDataFile)) {
@@ -176,7 +176,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     private Path getUserReportingFolderPath(User user) {
-        return Paths.get(dataFolder, FileUtils.getUserStorageDir(user.email, user.appName));
+        return Paths.get(dataFolder, FileUtils.getUserStorageDir(user.email));
     }
 
     public int delete(User user) {
@@ -313,7 +313,7 @@ public class ReportingDiskDao implements Closeable {
         //store history data only for the pins assigned to the superchart
         Widget widgetWithLogPins = dash.getWidgetWithLoggedPin(deviceId, pin, pinType);
         if (widgetWithLogPins != null) {
-            BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
+            BaseReportingKey key = new BaseReportingKey(user.email, user.orgId, dash.id, deviceId, pinType, pin);
             averageAggregator.collect(key, ts, doubleVal);
             if (device.webDashboard.needRawDataForGraph(pin, pinType)) {
                 rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));

@@ -2,7 +2,6 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
@@ -339,7 +338,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForTimer() throws Exception {
-        User user = holder.userDao.users.get(new UserKey(getUserName(), "Blynk"));
+        User user = holder.userDao.users.get(getUserName());
         Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = "100500";

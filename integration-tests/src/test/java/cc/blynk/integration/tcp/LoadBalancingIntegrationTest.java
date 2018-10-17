@@ -125,7 +125,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         //waiting for DB update
         TestUtil.sleep(500);
 
-        assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
+        assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort2, properties2);
         appClient2.start();
@@ -144,7 +144,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String host;
         //waiting for channel to be closed.
         //but only limited amount if time
-        while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
+        while ((host = holder2.dbManager.getUserServerIp(username2)) == null && tries < 100) {
             TestUtil.sleep(10);
             tries++;
         }
@@ -183,7 +183,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         //waiting for DB update
         TestUtil.sleep(500);
 
-        assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
+        assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort2, properties2);
         appClient2.start();

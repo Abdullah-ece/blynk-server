@@ -79,7 +79,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             reportingDao.process(state.user, dash, device, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
-            var session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.userSession.get(state.user.email);
             processEventorAndWebhook(state.user, dash, deviceId, session, pin, pinType, value, now);
         }
     }

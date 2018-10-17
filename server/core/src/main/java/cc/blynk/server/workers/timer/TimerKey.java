@@ -1,6 +1,5 @@
 package cc.blynk.server.workers.timer;
 
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 
 /**
@@ -10,7 +9,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
  */
 public class TimerKey {
 
-    public final UserKey userKey;
+    public final String userKey;
 
     public final int dashId;
 
@@ -26,9 +25,9 @@ public class TimerKey {
 
     public final TimerTime time;
 
-    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId,
+    public TimerKey(String email, int dashId, int deviceId, long widgetId,
                     int additionalId, long deviceTilesId, long templateId, TimerTime time) {
-        this.userKey = userKey;
+        this.userKey = email;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.widgetId = widgetId;

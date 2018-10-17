@@ -20,7 +20,6 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
@@ -147,7 +146,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
 
         return ok(session.isHardwareConnected(dashId, deviceId));
     }
@@ -164,7 +163,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
 
         return ok(tokenValue.dash.isActive && session.isAppConnected());
     }
@@ -375,7 +374,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("No widget for SetWidgetProperty command.");
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
         session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
                 deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + value);
         return ok();
@@ -463,7 +462,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
         if (session == null) {
             log.debug("No session for user {}.", user.email);
             return ok();
@@ -528,7 +527,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
         if (body != null) {
-            Session session = sessionDao.userSession.get(new UserKey(user));
+            Session session = sessionDao.userSession.get(user.email);
             if (session == null) {
                 log.error("No session for user {}.", user.email);
                 return ok();

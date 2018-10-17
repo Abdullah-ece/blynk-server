@@ -109,7 +109,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             ctx.writeAndFlush(json(msgId, "Invalid token for reset password."), ctx.voidPromise());
         } else {
             String email = resetPassToken.email;
-            User user = userDao.getByName(email, resetPassToken.appName);
+            User user = userDao.getByName(email);
             if (user == null) {
                 log.warn("User is not exists anymore. {}", resetPassToken);
                 ctx.writeAndFlush(json(msgId, "User is not exists anymore."), ctx.voidPromise());
@@ -149,7 +149,7 @@ public class WebAppResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             return;
         }
 
-        User user = userDao.getByName(trimmedEmail, appName);
+        User user = userDao.getByName(trimmedEmail);
 
         if (user == null) {
             log.debug("User does not exists.");

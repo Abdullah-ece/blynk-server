@@ -74,7 +74,7 @@ public class WebDeleteDeviceLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         deviceDao.delete(deviceId);
         tokenManager.deleteDevice(device);
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.user.email);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         int existingDeviceIndex = dash.getDeviceIndexById(deviceId);

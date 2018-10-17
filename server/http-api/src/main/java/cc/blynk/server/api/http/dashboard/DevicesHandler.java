@@ -20,7 +20,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -139,7 +138,7 @@ public class DevicesHandler extends BaseHttpHandler {
                 String userComment = comment == null ? null : comment.comment;
                 if (reportingDBManager.eventDBDao.resolveEvent(logEventId, user.name, userComment)) {
                     response = ok();
-                    Session session = sessionDao.userSession.get(new UserKey(user));
+                    Session session = sessionDao.userSession.get(user.email);
                     String body = logEventId + StringUtils.BODY_SEPARATOR_STRING + user.email;
                     if (comment != null) {
                         body = body + StringUtils.BODY_SEPARATOR + userComment;

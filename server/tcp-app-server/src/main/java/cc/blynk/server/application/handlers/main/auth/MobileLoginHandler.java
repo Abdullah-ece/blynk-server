@@ -5,6 +5,7 @@ import cc.blynk.server.application.handlers.main.MobileHandler;
 import cc.blynk.server.application.handlers.main.MobileResetPasswordHandler;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareLoginHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
+import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
@@ -93,8 +94,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
                 facebookLogin(ctx, message.id, email, messageParts[1], version);
             } else {
-                String appName = messageParts[4];
-                blynkLogin(ctx, message.id, email, messageParts[1], version, appName);
+                blynkLogin(ctx, message.id, email, messageParts[1], version);
             }
         } else {
             log.error("Wrong income message format for login {}.", message.body);
@@ -124,9 +124,10 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                             FacebookTokenResponse facebookTokenResponse =
                                     JsonParser.parseFacebookTokenResponse(responseBody);
                             if (email.equalsIgnoreCase(facebookTokenResponse.email)) {
-                                User user = holder.userDao.getByName(email, AppNameUtil.BLYNK);
+                                User user = holder.userDao.getByName(email);
                                 if (user == null) {
-                                    user = holder.userDao.addFacebookUser(email, AppNameUtil.BLYNK);
+                                    user = holder.userDao.addFacebookUser(email,
+                                            OrganizationDao.DEFAULT_ORGANIZATION_ID);
                                 }
 
                                 login(ctx, messageId, user, version);
@@ -149,9 +150,8 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                 });
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
-                            Version version, String appName) {
-        var user = holder.userDao.getByName(email, appName);
+    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass, Version version) {
+        var user = holder.userDao.getByName(email);
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
@@ -188,7 +188,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             user.region = holder.props.region;
         }
 
-        var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.user.email, channel.eventLoop());
         if (session.isSameEventLoop(channel)) {
             completeLogin(channel, session, user, messageId, version);
         } else {
@@ -209,7 +209,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                 log.trace("{}-{}. Sending App Connected event to hardware for project {}.",
-                        user.email, user.appName, dashBoard.id);
+                        user.email, user.orgId, dashBoard.id);
                 session.sendMessageToHardware(dashBoard.id, BLYNK_INTERNAL, 7777, "acon");
             }
         }
@@ -222,7 +222,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                     channel.voidPromise());
         }
 
-        log.info("{} {}-app ({}) joined.", user.email, user.appName, version);
+        log.info("{} {}-app ({}) joined.", user.email, user.orgId, version);
     }
 
     @Override

@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.server.db.dao.RawEntry;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
-import cc.blynk.utils.AppNameUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +39,6 @@ public class RawDataDBTest {
         assertNotNull(reportingDBManager.getConnection());
         user = new User();
         user.email = "test@test.com";
-        user.appName = AppNameUtil.BLYNK;
     }
 
     @AfterClass

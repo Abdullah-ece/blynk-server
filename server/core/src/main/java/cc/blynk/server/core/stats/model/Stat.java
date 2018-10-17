@@ -3,7 +3,6 @@ package cc.blynk.server.core.stats.model;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -74,7 +73,7 @@ public class Stat {
         int activeMonth = 0;
 
         this.ts = System.currentTimeMillis();
-        for (Map.Entry<UserKey, Session> entry: sessionDao.userSession.entrySet()) {
+        for (Map.Entry<String, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             if (session.isHardwareConnected() && session.isAppConnected()) {
@@ -88,7 +87,7 @@ public class Stat {
                 appActive++;
                 totalOnlineApps += session.appChannels.size();
             }
-            UserKey userKey = entry.getKey();
+            String userKey = entry.getKey();
             User user = userDao.users.get(userKey);
 
             if (user != null) {

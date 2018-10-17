@@ -91,7 +91,7 @@ public final class SetWidgetPropertyLogic {
             dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.user.email);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

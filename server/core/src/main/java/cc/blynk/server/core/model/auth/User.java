@@ -9,9 +9,10 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+
+import java.util.Objects;
 
 /**
  * User: ddumanskiy
@@ -33,9 +34,6 @@ public class User {
     //key fields
     @JsonView(View.WebUser.class)
     public String email;
-
-    @JsonView(View.WebUser.class)
-    public String appName;
 
     public String region;
     public String ip;
@@ -70,17 +68,16 @@ public class User {
         this.profile.dashBoards = new DashBoard[] {new DashBoard()};
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
-        this.appName = AppNameUtil.BLYNK;
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
-    public User(String email, String pass, String appName, String region, String ip,
+    public User(String email, String pass, int orgId, String region, String ip,
                 boolean isFacebookUser, int roleId) {
         this();
         this.email = email;
         this.name = email;
         this.pass = pass;
-        this.appName = appName;
+        this.orgId = orgId;
         this.region = region;
         this.ip = ip;
         this.isFacebookUser = isFacebookUser;
@@ -88,14 +85,14 @@ public class User {
     }
 
     //used when user is fully read from DB
-    public User(String email, String pass, String appName, String region, String ip,
+    public User(String email, String pass, int orgId, String region, String ip,
                 boolean isFacebookUser, int roleId, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
                 Profile profile, int energy) {
         this.email = email;
         this.name = email;
         this.pass = pass;
-        this.appName = appName;
+        this.orgId = orgId;
         this.region = region;
         this.ip = ip;
         this.isFacebookUser = isFacebookUser;
@@ -110,11 +107,11 @@ public class User {
 
     @JsonProperty("id")
     private String id() {
-        return email + "-" + appName;
+        return email + "-" + orgId;
     }
 
     public boolean notEnoughEnergy(int price) {
-        return price > energy && AppNameUtil.BLYNK.equals(appName);
+        return price > energy && orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
     public boolean hasAccess(int orgId) {
@@ -200,24 +197,17 @@ public class User {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof User)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         User user = (User) o;
-
-        if (email != null ? !email.equals(user.email) : user.email != null) {
-            return false;
-        }
-        return !(appName != null ? !appName.equals(user.appName) : user.appName != null);
-
+        return orgId == user.orgId
+                && Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + (appName != null ? appName.hashCode() : 0);
-        return result;
+        return Objects.hash(email, orgId);
     }
 
     @Override

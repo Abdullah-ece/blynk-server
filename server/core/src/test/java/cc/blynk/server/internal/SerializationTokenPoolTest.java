@@ -24,7 +24,7 @@ public class SerializationTokenPoolTest {
         tokensPool.addToken(token, resetPassToken);
 
         String token2 = TokenGeneratorUtil.generateNewToken();
-        InviteToken inviteToken = new InviteToken("dima2@mail.us", "Blynk2");
+        InviteToken inviteToken = new InviteToken("dima2@mail.us", 1);
         tokensPool.addToken(token2, inviteToken);
 
         tokensPool.close();
@@ -42,7 +42,7 @@ public class SerializationTokenPoolTest {
         inviteToken = (InviteToken) tokens.get(token2);
         assertNotNull(inviteToken);
         assertEquals("dima2@mail.us", inviteToken.email);
-        assertEquals("Blynk2", inviteToken.appName);
+        assertEquals(1, inviteToken.orgId);
 
     }
 

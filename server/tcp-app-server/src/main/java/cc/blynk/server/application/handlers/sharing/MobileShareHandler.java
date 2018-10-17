@@ -43,7 +43,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
         this.state = state;
         this.holder = holder;
 
-        this.hardwareApp = new MobileShareHardwareLogic(holder, state.userKey.email);
+        this.hardwareApp = new MobileShareHardwareLogic(holder, state.user.email);
 
     }
 

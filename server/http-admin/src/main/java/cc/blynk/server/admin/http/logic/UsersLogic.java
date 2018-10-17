@@ -17,7 +17,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -83,7 +82,7 @@ public class UsersLogic extends BaseHttpHandler {
             filterParam = filter == null ? null : filter.name;
         }
 
-        List<User> users = userDao.searchByUsername(filterParam, null);
+        List<User> users = userDao.searchByUsername(filterParam);
         return appendTotalCountHeader(
                 ok(sort(users, sortField, sortOrder), page, size), users.size()
         );
@@ -94,8 +93,7 @@ public class UsersLogic extends BaseHttpHandler {
     public Response getUserByName(@PathParam("id") String id) {
         String[] parts =  slitByLast(id);
         String email = parts[0];
-        String appName = parts[1];
-        User user = userDao.getByName(email, appName);
+        User user = userDao.getByName(email);
         if (user == null) {
             return notFound();
         }
@@ -124,12 +122,11 @@ public class UsersLogic extends BaseHttpHandler {
     @GET
     @Path("/token/force")
     public Response forceToken(@QueryParam("email") String email,
-                               @QueryParam("app") String app,
                                @QueryParam("dashId") int dashId,
                                @QueryParam("deviceId") int deviceId,
                                @QueryParam("new") String newToken) {
 
-        User user = userDao.getUsers().get(new UserKey(email, app));
+        User user = userDao.getUsers().get(email);
 
         if (user == null) {
             return badRequest("No user with such email.");
@@ -152,9 +149,9 @@ public class UsersLogic extends BaseHttpHandler {
 
         String[] parts =  slitByLast(id);
         String name = parts[0];
-        String appName = parts[1];
+        int orgId = Integer.parseInt(parts[1]);
 
-        User oldUser = userDao.getByName(name, appName);
+        User oldUser = userDao.getByName(name);
 
         //name was changed, but not password - do not allow this.
         //as name is used as salt for pass generation
@@ -208,22 +205,20 @@ public class UsersLogic extends BaseHttpHandler {
     public Response deleteUserByName(@PathParam("id") String id) {
         String[] parts =  slitByLast(id);
         String email = parts[0];
-        String appName = parts[1];
 
-        UserKey userKey = new UserKey(email, appName);
-        User user = userDao.delete(userKey);
+        User user = userDao.delete(email);
         if (user == null) {
             return notFound();
         }
 
-        if (!fileManager.delete(email, appName)) {
+        if (!fileManager.delete(email)) {
             return notFound();
         }
 
         reportingDao.delete(user);
 
-        dbManager.deleteUser(userKey);
-        sessionDao.deleteUser(userKey);
+        dbManager.deleteUser(email);
+        sessionDao.deleteUser(email);
 
         log.info("User {} successfully removed.", email);
 

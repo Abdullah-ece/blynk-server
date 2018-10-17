@@ -64,14 +64,14 @@ public class MobileGetServerHandler extends SimpleChannelInboundHandler<GetServe
             return;
         }
 
-        if (userDao.contains(email, appName)) {
+        if (userDao.contains(email)) {
             //user exists on current server. so returning ip of current server
             ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
             log.debug("Searching user {}-{} on another server.", email, appName);
             //user is on other server
             blockingIOProcessor.executeDB(() -> {
-                String userServer = dbManager.getUserServerIp(email, appName);
+                String userServer = dbManager.getUserServerIp(email);
                 if (userServer == null || userServer.isEmpty()) {
                     log.info("Could not find user ip for {}-{}. Returning current ip.", email, appName);
                     userServer = currentIp;

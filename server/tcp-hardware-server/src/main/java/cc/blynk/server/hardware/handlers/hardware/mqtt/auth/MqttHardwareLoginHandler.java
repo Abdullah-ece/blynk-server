@@ -94,7 +94,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         pipeline.replace(this, "HHArdwareMqttHandler", new MqttHardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(
-                hardwareStateHolder.userKey, ctx.channel().eventLoop());
+                hardwareStateHolder.user.email, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user, dash, device, -1);

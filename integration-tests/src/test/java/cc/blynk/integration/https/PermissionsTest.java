@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +55,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         String subOrgUser1 = "subOrgUser1@blynk.cc";
         String pass = "1";
         String hash = SHA256Util.makeHash(pass, subOrgUser1);
-        holder.userDao.add(subOrgUser1.toLowerCase(), hash, AppNameUtil.BLYNK, fromApiOrg.id, 1);
+        holder.userDao.add(subOrgUser1.toLowerCase(), hash, fromApiOrg.id, 1);
 
         Device newDevice = new Device();
         newDevice.name = "My New Device";
@@ -110,7 +109,7 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
         String subOrgUser1 = "subOrgUser1@blynk.cc";
         String pass = "1";
         String hash = SHA256Util.makeHash(pass, subOrgUser1);
-        holder.userDao.add(subOrgUser1.toLowerCase(), hash, AppNameUtil.BLYNK, fromApiOrg.id, 1);
+        holder.userDao.add(subOrgUser1.toLowerCase(), hash, fromApiOrg.id, 1);
 
         Organization organization2 = new Organization(
                 "SubOrg2", "Some TimeZone", "/static/logo.png", true, fromApiOrg.id,

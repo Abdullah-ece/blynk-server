@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
@@ -63,7 +62,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
         String superAdmin = "super@blynk.cc";
         String pass = "1";
         String hash = SHA256Util.makeHash(pass, superAdmin);
-        holder.userDao.add(superAdmin, hash, AppNameUtil.BLYNK, orgId, Role.SUPER_ADMIN_ROLE_ID);
+        holder.userDao.add(superAdmin, hash, orgId, Role.SUPER_ADMIN_ROLE_ID);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {

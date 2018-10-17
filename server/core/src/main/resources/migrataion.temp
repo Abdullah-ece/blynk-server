@@ -1,4 +1,2 @@
-alter table users drop column role;
-alter table users add column role_id int;
-alter table invitation_tokens drop column role;
-alter table invitation_tokens add column role_id int;
+alter table users add column org_id int;
+alter table users drop column appName;

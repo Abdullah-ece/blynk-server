@@ -127,7 +127,7 @@ public abstract class BaseReportTask implements Runnable {
 
         String date = LocalDate.now(report.tzName).toString();
         Path userCsvFolder = FileUtils.getUserReportDir(
-                key.user.email, key.user.appName, key.reportId, date);
+                key.user.email, key.user.orgId, key.reportId, date);
 
         try {
             DashBoard dash = key.user.profile.getDashByIdOrThrow(key.dashId);

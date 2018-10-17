@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -36,7 +35,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
     public final String downloadUrl;
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
-                           MailWrapper mailWrapper, ReportingDiskDao reportingDao, Map<UserKey, User> users) {
+                           MailWrapper mailWrapper, ReportingDiskDao reportingDao, Map<String, User> users) {
         super(corePoolSize,  BlynkTPFactory.build("report"));
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
@@ -47,9 +46,9 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
         init(users);
     }
 
-    private void init(Map<UserKey, User> users) {
+    private void init(Map<String, User> users) {
         int counter = 0;
-        for (Map.Entry<UserKey, User> entry : users.entrySet()) {
+        for (Map.Entry<String, User> entry : users.entrySet()) {
             User user = entry.getValue();
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Widget widget : dashBoard.widgets) {

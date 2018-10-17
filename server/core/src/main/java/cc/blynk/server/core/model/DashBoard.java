@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -495,15 +494,15 @@ public class DashBoard {
         }
     }
 
-    public void addTimers(TimerWorker timerWorker, UserKey userKey) {
+    public void addTimers(TimerWorker timerWorker, String email) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceTiles) {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
-                deviceTiles.addTimers(timerWorker, userKey, id);
+                deviceTiles.addTimers(timerWorker, email, id);
             } else if (widget instanceof Timer) {
-                timerWorker.add(userKey, (Timer) widget, id, -1L, -1L);
+                timerWorker.add(email, (Timer) widget, id, -1L, -1L);
             } else if (widget instanceof Eventor) {
-                timerWorker.add(userKey, (Eventor) widget, id);
+                timerWorker.add(email, (Eventor) widget, id);
             }
         }
     }

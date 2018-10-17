@@ -160,7 +160,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(
-                hardwareStateHolder.userKey, ctx.channel().eventLoop());
+                hardwareStateHolder.user.email, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user, dash, device, msgId);

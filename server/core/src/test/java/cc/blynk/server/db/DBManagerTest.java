@@ -1,7 +1,6 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
@@ -10,7 +9,6 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -113,7 +112,7 @@ public class DBManagerTest {
 
 
         try (Connection connection = dbManager.getConnection();
-             Writer gzipWriter = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(new File("/home/doom369/output.csv.gz"))), "UTF-8")) {
+             Writer gzipWriter = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(new File("/home/doom369/output.csv.gz"))), StandardCharsets.UTF_8)) {
 
             CopyManager copyManager = new CopyManager(connection.unwrap(BaseConnection.class));
 
@@ -129,10 +128,10 @@ public class DBManagerTest {
     @Test
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", "127.0.0.1", false, 1));
-        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", "127.0.0.1", false, 1));
+        users.add(new User("test1@gmail.com", "pass", 2, "local", "127.0.0.1", false, 1));
+        users.add(new User("test1@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1));
         dbManager.userDBDao.save(users);
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
+        ConcurrentMap<String, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertEquals(2, dbUsers.size());
     }
 
@@ -140,31 +139,31 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1));
+            users.add(new User("test" + i + "@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
 
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
+        ConcurrentMap<String, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
         System.out.println("Records : " + dbUsers.size());
     }
 
     @Test
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+        User user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1);
         user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+        user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
         user.name = "123";
         users.add(user);
-        user = new User("test2@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+        user = new User("test2@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -178,7 +177,7 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from users where email = 'test@gmail.com'")) {
             while (rs.next()) {
                 assertEquals("test@gmail.com", rs.getString("email"));
-                assertEquals(AppNameUtil.BLYNK, rs.getString("appName"));
+                assertEquals(1, rs.getInt("org_id"));
                 assertEquals("local", rs.getString("region"));
                 assertEquals("123", rs.getString("name"));
                 assertEquals("pass", rs.getString("pass"));
@@ -198,7 +197,7 @@ public class DBManagerTest {
     @Test
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+        User user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", false, 1);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -207,7 +206,7 @@ public class DBManagerTest {
         dbManager.userDBDao.save(users);
 
         users = new ArrayList<>();
-        user = new User("test@gmail.com", "pass2", AppNameUtil.BLYNK, "local2", "127.0.0.1", true, 0);
+        user = new User("test@gmail.com", "pass2", 1, "local2", "127.0.0.1", true, 0);
         user.name = "1234";
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
@@ -223,12 +222,12 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        ConcurrentMap<UserKey, User>  persistent = dbManager.userDBDao.getAllUsers("local2");
+        ConcurrentMap<String, User>  persistent = dbManager.userDBDao.getAllUsers("local2");
 
-        user = persistent.get(new UserKey("test@gmail.com", AppNameUtil.BLYNK));
+        user = persistent.get("test@gmail.com");
 
         assertEquals("test@gmail.com", user.email);
-        assertEquals(AppNameUtil.BLYNK, user.appName);
+        assertEquals(1, user.orgId);
         assertEquals("local2", user.region);
         assertEquals("pass2", user.pass);
         assertEquals("1234", user.name);
@@ -246,7 +245,7 @@ public class DBManagerTest {
     @Test
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, 0);
+        User user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", true, 0);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -259,14 +258,14 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
+        ConcurrentMap<String, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
 
         assertNotNull(dbUsers);
         assertEquals(1, dbUsers.size());
-        User dbUser = dbUsers.get(new UserKey(user.email, user.appName));
+        User dbUser = dbUsers.get(user.email);
 
         assertEquals("test@gmail.com", dbUser.email);
-        assertEquals(AppNameUtil.BLYNK, dbUser.appName);
+        assertEquals(1, dbUser.orgId);
         assertEquals("local", dbUser.region);
         assertEquals("pass", dbUser.pass);
         assertEquals(0, dbUser.lastModifiedTs);
@@ -283,7 +282,7 @@ public class DBManagerTest {
     @Test
     public void testInsertGetDeleteUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, 0);
+        User user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", true, 0);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -296,14 +295,14 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        Map<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
+        Map<String, User> dbUsers = dbManager.userDBDao.getAllUsers("local");
 
         assertNotNull(dbUsers);
         assertEquals(1, dbUsers.size());
-        User dbUser = dbUsers.get(new UserKey(user.email, user.appName));
+        User dbUser = dbUsers.get(user.email);
 
         assertEquals("test@gmail.com", dbUser.email);
-        assertEquals(AppNameUtil.BLYNK, dbUser.appName);
+        assertEquals(1, dbUser.orgId);
         assertEquals("local", dbUser.region);
         assertEquals("pass", dbUser.pass);
         assertEquals(0, dbUser.lastModifiedTs);
@@ -316,7 +315,7 @@ public class DBManagerTest {
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", dbUser.profile.toString());
 
-        assertTrue(dbManager.userDBDao.deleteUser(new UserKey(user.email, user.appName)));
+        assertTrue(dbManager.userDBDao.deleteUser(user.email));
         dbUsers = dbManager.userDBDao.getAllUsers("local");
         assertNotNull(dbUsers);
         assertEquals(0, dbUsers.size());
@@ -378,14 +377,14 @@ public class DBManagerTest {
 
     @Test
     public void getUserIpNotExists() {
-        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com", AppNameUtil.BLYNK);
+        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com");
         assertNull(userIp);
     }
 
     @Test
     public void getUserIp() {
         ArrayList<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 2);
+        User user = new User("test@gmail.com", "pass", 1, "local", "127.0.0.1", false, 2);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -393,7 +392,7 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com", AppNameUtil.BLYNK);
+        String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com");
         assertEquals("127.0.0.1", userIp);
     }
 }
