@@ -17,6 +17,7 @@ import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.webJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -78,6 +79,51 @@ public class PermissionsTest extends SingleServerInstancePerTestWithDBAndNewOrg 
 
         subUserClient.getDevice(orgId, createdDevice.id);
         subUserClient.verifyResult(webJson(2, "User has no access to this organization."));
+    }
+
+    @Test
+    public void createSubOrgOfSubOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient("super@blynk.cc", "1");
+
+        Product product = new Product();
+        product.name = "My product";
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Organization organization = new Organization(
+                "SubOrg1", "Some TimeZone", "/static/logo.png", true, orgId,
+                new Role(1, "Admin", 0b11111111111111111111));
+        organization.selectedProducts = new int[] {fromApiProduct.id};
+
+        client.createOrganization(organization);
+        OrganizationDTO fromApiOrg = client.parseOrganizationDTO(2);
+        assertNotNull(fromApiOrg);
+        assertEquals(orgId, fromApiOrg.parentId);
+        assertEquals(organization.name, fromApiOrg.name);
+        assertEquals(organization.tzName, fromApiOrg.tzName);
+        assertNotNull(fromApiOrg.products);
+        assertEquals(1, fromApiOrg.products.length);
+        assertEquals(fromApiProduct.id + 1, fromApiOrg.products[0].id);
+
+        String subOrgUser1 = "subOrgUser1@blynk.cc";
+        String pass = "1";
+        String hash = SHA256Util.makeHash(pass, subOrgUser1);
+        holder.userDao.add(subOrgUser1.toLowerCase(), hash, AppNameUtil.BLYNK, fromApiOrg.id, 1);
+
+        Organization organization2 = new Organization(
+                "SubOrg2", "Some TimeZone", "/static/logo.png", true, fromApiOrg.id,
+                new Role(1, "Admin", 0b11111111111111111111));
+
+        AppWebSocketClient subUserClient = loggedDefaultClient(subOrgUser1, "1");
+        subUserClient.createOrganization(organization2);
+        OrganizationDTO fromApiOrg2 = subUserClient.parseOrganizationDTO(1);
+        assertNotNull(fromApiOrg2);
+        assertEquals(fromApiOrg2.parentId, fromApiOrg.id);
+        assertEquals(organization2.name, fromApiOrg2.name);
+        assertEquals(organization2.tzName, fromApiOrg2.tzName);
+        assertNull(fromApiOrg2.products);
     }
 
 }

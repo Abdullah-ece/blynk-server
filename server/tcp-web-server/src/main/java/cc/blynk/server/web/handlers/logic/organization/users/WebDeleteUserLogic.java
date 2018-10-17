@@ -69,8 +69,8 @@ public final class WebDeleteUserLogic {
         }
 
         String appName = user.appName;
-        for (String email : emailsToDelete) {
-            UserKey userToDeleteKey = new UserKey(email, appName);
+        for (String emailToDelete : emailsToDelete) {
+            UserKey userToDeleteKey = new UserKey(emailToDelete, appName);
             User userToDelete = userDao.getByName(userToDeleteKey);
             if (userToDelete != null) {
                 if (userToDelete.isSuperAdmin()) {
@@ -79,7 +79,7 @@ public final class WebDeleteUserLogic {
                     return;
                 }
                 if (userToDelete.orgId == orgId) {
-                    log.info("Deleting {} user for {}.", email, user.email);
+                    log.info("Deleting {} user for {}.", emailToDelete, user.email);
                     userDao.delete(userToDeleteKey);
                     fileManager.delete(userToDeleteKey);
                     dbManager.deleteUser(userToDeleteKey);
