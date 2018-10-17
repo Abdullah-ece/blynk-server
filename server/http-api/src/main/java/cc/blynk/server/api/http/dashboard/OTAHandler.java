@@ -2,7 +2,6 @@ package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.ContextUser;
 import cc.blynk.core.http.annotation.DELETE;
@@ -93,7 +92,6 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/start")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Admin
     public Response startOTA(@ContextUser User user, StartOtaDTO startOtaDTO) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
@@ -163,7 +161,6 @@ public class OTAHandler extends BaseHttpHandler {
     @POST
     @Path("/stop")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Admin
     public Response stopOTA(@ContextUser User user, StartOtaDTO startOtaDTO) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 
@@ -201,7 +198,6 @@ public class OTAHandler extends BaseHttpHandler {
     @DELETE
     @Path("/deleteProgress/{productId}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Admin
     public Response deleteProgress(@ContextUser User user, @PathParam("productId") int productId) {
         Organization organization = organizationDao.getOrgByIdOrThrow(user.orgId);
 

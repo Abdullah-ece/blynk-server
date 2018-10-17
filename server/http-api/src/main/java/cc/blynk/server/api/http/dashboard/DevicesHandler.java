@@ -2,7 +2,6 @@ package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.ContextUser;
@@ -283,7 +282,6 @@ public class DevicesHandler extends BaseHttpHandler {
 
     @DELETE
     @Path("/{orgId}/{deviceId}")
-    @Admin
     public Response delete(@ContextUser User user,
                            @PathParam("orgId") int userOrgId,
                            @PathParam("deviceId") int deviceId) {

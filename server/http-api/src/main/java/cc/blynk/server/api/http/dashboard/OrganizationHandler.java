@@ -2,7 +2,6 @@ package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.ContextUser;
@@ -12,8 +11,6 @@ import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
-import cc.blynk.core.http.annotation.Staff;
-import cc.blynk.core.http.annotation.SuperAdmin;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.dashboard.dto.EmailDTO;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
@@ -169,7 +166,6 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @POST
     @Path("/{orgId}/canInviteUser")
-    @Admin
     public Response checkUserEmail(EmailDTO webEmail) {
         if (userDao.contains(webEmail.email, BLYNK)) {
             return badRequest("User already exists in system.");
@@ -181,7 +177,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/users/update")
-    @Admin
     public Response updateUserInfo(@Context ChannelHandlerContext ctx,
                                    @PathParam("orgId") int orgId, UserInviteDTO user) {
         if (user.isNotValid()) {
@@ -216,7 +211,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/users/delete")
-    @Admin
     public Response deleteUsers(@Context ChannelHandlerContext ctx,
                                 @PathParam("orgId") int orgId, String[] emailsToDelete) {
         HttpSession httpSession = ctx.channel().attr(SessionDao.userSessionAttributeKey).get();
@@ -254,7 +248,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    @Admin
     public Response create(@ContextUser User user, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
@@ -310,7 +303,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}")
-    @Admin
     public Response update(@ContextUser User user, @PathParam("orgId") int orgId, Organization newOrganization) {
         if (isEmpty(newOrganization)) {
             log.error("Organization is empty.");
@@ -345,7 +337,6 @@ public class OrganizationHandler extends BaseHttpHandler {
 
     @DELETE
     @Path("/{orgId}")
-    @SuperAdmin
     public Response delete(@PathParam("orgId") int orgId) {
         if (orgId == OrganizationDao.DEFAULT_ORGANIZATION_ID) {
             log.error("Delete operation for initial organization (orgId = 1) is not allowed.");
@@ -365,7 +356,6 @@ public class OrganizationHandler extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{orgId}/invite")
-    @Staff
     public Response sendInviteEmail(@Context ChannelHandlerContext ctx,
                                     @PathParam("orgId") int orgId, UserInviteDTO userInvite) {
         if (orgId == 0 || userInvite.isNotValid()) {

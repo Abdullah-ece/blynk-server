@@ -2,7 +2,6 @@ package cc.blynk.server.api.http.dashboard;
 
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Admin;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.ContextUser;
 import cc.blynk.core.http.annotation.DELETE;
@@ -203,7 +202,6 @@ public class ProductHandler extends BaseHttpHandler {
     @GET
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/canDeleteProduct/{id}")
-    @Admin
     public Response canDeleteProduct(@PathParam("id") int productId) {
         if (deviceDao.productHasDevices(productId)) {
             return forbidden();
@@ -214,7 +212,6 @@ public class ProductHandler extends BaseHttpHandler {
     @DELETE
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    @Admin
     public Response delete(@ContextUser User user, @PathParam("id") int productId) {
         if (organizationDao.deleteProduct(user, productId)) {
             return ok();
