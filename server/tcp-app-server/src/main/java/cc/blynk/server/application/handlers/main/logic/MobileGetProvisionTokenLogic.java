@@ -41,10 +41,6 @@ public final class MobileGetProvisionTokenLogic {
 
         Device temporaryDevice = JsonParser.parseDevice(deviceString, message.id);
 
-        if (temporaryDevice.isNotValid()) {
-            throw new IllegalCommandException("Income device message is not valid.");
-        }
-
         temporaryDevice.id = holder.deviceDao.getId();
 
         String tempToken = TokenGeneratorUtil.generateNewToken();
