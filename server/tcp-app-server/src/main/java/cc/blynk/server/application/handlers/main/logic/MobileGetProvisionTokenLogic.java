@@ -9,6 +9,8 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
@@ -20,6 +22,8 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 06.04.18.
  */
 public final class MobileGetProvisionTokenLogic {
+
+    private static final Logger log = LogManager.getLogger(MobileGetProvisionTokenLogic.class);
 
     private MobileGetProvisionTokenLogic() {
     }
@@ -44,6 +48,7 @@ public final class MobileGetProvisionTokenLogic {
         temporaryDevice.id = holder.deviceDao.getId();
 
         String tempToken = TokenGeneratorUtil.generateNewToken();
+        log.debug("Getting provision token {} for deviceId {}.", tempToken, temporaryDevice.id);
         holder.tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
 
         if (ctx.channel().isWritable()) {
