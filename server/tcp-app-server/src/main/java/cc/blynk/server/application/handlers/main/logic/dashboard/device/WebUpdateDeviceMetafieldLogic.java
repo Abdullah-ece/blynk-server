@@ -63,7 +63,7 @@ public final class WebUpdateDeviceMetafieldLogic {
 
         Device device = holder.deviceDao.getByIdOrThrow(deviceId);
 
-        log.trace("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, state.user.email);
+        log.debug("Updating metafield {} for device {} and user {}.", metafieldString, deviceId, state.user.email);
         device.updateMetafields(metaFields);
         device.metadataUpdatedBy = state.user.email;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

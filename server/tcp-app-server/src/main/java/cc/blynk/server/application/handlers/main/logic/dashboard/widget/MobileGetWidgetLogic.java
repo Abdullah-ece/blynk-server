@@ -45,7 +45,8 @@ public final class MobileGetWidgetLogic {
                     makeUTF8StringMessage(GET_WIDGET, message.id, widgetString),
                     ctx.voidPromise()
             );
-            log.debug("Get widget {}.", widgetString);
+            log.debug("Get widget {} for {}.", widget.id, user.email);
+            log.trace(widgetString);
         }
     }
 

@@ -42,7 +42,8 @@ public final class MobileUpdateDeviceLogic {
 
         var newDevice = JsonParser.parseDevice(deviceString, message.id);
 
-        log.debug("Updating new device {}.", deviceString);
+        log.debug("Updating new device {}.", newDevice.id);
+        log.trace(deviceString);
 
         if (newDevice.isNotValid()) {
             throw new IllegalCommandException("Income device message is not valid.");
