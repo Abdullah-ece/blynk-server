@@ -56,6 +56,8 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Deprecated
+//todo implement those tests
 public class DashboardModelAPITest extends APIBaseTest {
 
     private BaseServer hardwareServer;

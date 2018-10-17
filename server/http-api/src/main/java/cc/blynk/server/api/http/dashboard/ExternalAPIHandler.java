@@ -40,7 +40,6 @@ import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
@@ -90,7 +89,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     private static final Logger log = LogManager.getLogger(ExternalAPIHandler.class);
     private final BlockingIOProcessor blockingIOProcessor;
     private final OrganizationDao organizationDao;
-    private final DBManager dbManager;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDiskDao reportingDiskDao;
@@ -102,7 +100,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         super(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
-        this.dbManager = holder.dbManager;
         this.mailWrapper = holder.mailWrapper;
         this.gcmWrapper = holder.gcmWrapper;
         this.reportingDiskDao = holder.reportingDiskDao;
