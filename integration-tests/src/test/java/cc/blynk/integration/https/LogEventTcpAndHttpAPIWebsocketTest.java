@@ -73,7 +73,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(1));
         newHardClient.send("logEvent temp_is_high");
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, "0-1"));
+        client.verifyResult(hardwareConnected(1, "0-" + device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -86,7 +86,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         List<LogEvent> logEvents = timeLineResponse.eventList;
         assertNotNull(timeLineResponse.eventList);
         assertEquals(1, logEvents.size());
-        assertEquals(1, logEvents.get(0).deviceId);
+        assertEquals(device.id, logEvents.get(0).deviceId);
         assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Temp is super high", logEvents.get(0).name);
@@ -103,13 +103,13 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-1"));
+        client.verifyResult(hardwareConnected(1, "0-" + device.id));
         client.reset();
 
         newHardClient.send("logEvent temp_is_high");
         newHardClient.verifyResult(ok(2));
 
-        client.verifyResult(logEvent(2, "1 CRITICAL temp_is_high"));
+        client.verifyResult(logEvent(2, device.id + " CRITICAL temp_is_high"));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         logEventId = logEvent.id;
 
         AppWebSocketClient client2 = loggedDefaultClient(getUserName(), "1");
-        client2.track(1);
+        client2.track(device.id);
         client2.verifyResult(ok(1));
 
         client.resolveEvent(device.id, logEventId, "resolve comment");
@@ -239,7 +239,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        client.verifyResult(logEvent(111, "1 CRITICAL temp_is_high"));
+        client.verifyResult(logEvent(111, device.id + " CRITICAL temp_is_high"));
     }
 
     @Test
@@ -266,7 +266,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertNotNull(logEvents);
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
-        assertEquals(1, logEvents.get(0).deviceId);
+        assertEquals(device.id, logEvents.get(0).deviceId);
         assertEquals(EventType.ONLINE, logEvents.get(0).eventType);
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Device is online!", logEvents.get(0).name);
@@ -296,7 +296,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         List<LogEvent> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
-        assertEquals(1, logEvents.get(0).deviceId);
+        assertEquals(device.id, logEvents.get(0).deviceId);
         assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Temp is super high", logEvents.get(0).name);
@@ -327,7 +327,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         List<LogEvent> logEvents = timeLineResponse.eventList;
         assertNotNull(logEvents);
         assertEquals(1, logEvents.size());
-        assertEquals(1, logEvents.get(0).deviceId);
+        assertEquals(device.id, logEvents.get(0).deviceId);
         assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Temp is super high", logEvents.get(0).name);
@@ -526,6 +526,8 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(1));
         client.verifyResult(hardwareConnected(1, "0-" + device.id));
         client.reset();
+
+        sleep(500);
 
         client.getTimeline(orgId, device.id, null, null, 0, System.currentTimeMillis(), 0, 10);
         TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
