@@ -38,8 +38,6 @@ public class Device implements Target {
     @JsonView(View.Private.class)
     public volatile String token;
 
-    public volatile String vendor;
-
     public volatile ConnectionType connectionType;
 
     @JsonView(View.Private.class)
@@ -222,7 +220,6 @@ public class Device implements Target {
 
     public void updateFromMobile(Device newDevice) {
         this.name = newDevice.name;
-        this.vendor = newDevice.vendor;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
         this.iconName = newDevice.iconName;

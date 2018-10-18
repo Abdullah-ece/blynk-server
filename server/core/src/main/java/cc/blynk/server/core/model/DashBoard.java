@@ -728,6 +728,9 @@ public class DashBoard {
                     deviceTiles.addTile(tileTemplate, device.id);
                     tileTemplate.addDeviceId(device.id);
                     device.iconName = tileTemplate.iconName;
+                    if (tileTemplate.boardType != null) {
+                        device.boardType = tileTemplate.boardType;
+                    }
                 }
             }
         }
