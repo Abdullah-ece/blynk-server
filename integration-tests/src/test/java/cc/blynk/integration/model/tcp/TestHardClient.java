@@ -64,6 +64,14 @@ public class TestHardClient extends BaseTestHardwareClient {
         send("hardsync " + pinType.pintTypeChar + "r" + BODY_SEPARATOR + pin1 + BODY_SEPARATOR + pin2);
     }
 
+    public void logEvent(String eventName) {
+        send("logEvent " + eventName);
+    }
+
+    public void logEvent(String eventName, String description) {
+        send("logEvent " + eventName + BODY_SEPARATOR + description);
+    }
+
     public void replace(SimpleClientHandler simpleClientHandler) {
         this.channel.pipeline().removeLast();
         this.channel.pipeline().addLast(simpleClientHandler);

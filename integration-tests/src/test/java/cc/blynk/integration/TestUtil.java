@@ -31,6 +31,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.WebJsonMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLogEventMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -177,6 +178,10 @@ public final class TestUtil {
 
     public static StringMessage internal(int msgId, String body) {
         return new StringMessage(msgId, BLYNK_INTERNAL, b(body));
+    }
+
+    public static HardwareLogEventMessage logEvent(int msgId, String body) {
+        return new HardwareLogEventMessage(msgId, b(body));
     }
 
     public static StringMessage hardwareConnected(int msgId, String body) {
