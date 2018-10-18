@@ -32,6 +32,7 @@ import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
+import static cc.blynk.server.core.model.device.BoardType.ESP8266;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -276,7 +277,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.verifyResult(ok(3));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "TMPL0001", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "TMPL0001", "name", "iconName", ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
         appClient.createTemplate(1, widgetId, tileTemplate);
@@ -301,6 +302,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
         assertEquals("iconName", provisionedDevice.iconName);
+        assertEquals(ESP8266, provisionedDevice.boardType);
 
         client.reset();
         //we need separate call here as getDevice for mobile has filtered devices
