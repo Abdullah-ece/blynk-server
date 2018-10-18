@@ -2,18 +2,25 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDBAndNewOrg;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.dto.DeviceDTO;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
 import cc.blynk.server.core.model.web.product.metafields.NumberMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebLineGraph;
+import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import org.junit.Ignore;
@@ -24,6 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
+import static cc.blynk.integration.TestUtil.createWebLabelWidget;
+import static cc.blynk.integration.TestUtil.createWebLineGraph;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
@@ -33,6 +43,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -766,6 +777,165 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
     }
 
     @Test
+    public void createDeviceWithWidgets() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.webDashboard = new WebDashboard(new Widget[] {
+                createWebLabelWidget(1, "123"),
+                createWebLineGraph(2, "graph")
+        });
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertNotNull(createdDevice.metaFields);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals(getUserName(), createdDevice.activatedBy);
+        assertNotNull(createdDevice.webDashboard);
+        assertEquals(2, createdDevice.webDashboard.widgets.length);
+        assertEquals("123", createdDevice.webDashboard.widgets[0].label);
+        assertEquals("graph", createdDevice.webDashboard.widgets[1].label);
+    }
+
+    @Test
+    public void createDeviceWithWidgetsAndValueUpdated() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.webDashboard = new WebDashboard(new Widget[] {
+                createWebLabelWidget(1, "123")
+        });
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        assertNotNull(createdDevice.token);
+        String token = createdDevice.token;
+        assertEquals("My New Device", createdDevice.name);
+        assertEquals(System.currentTimeMillis(), createdDevice.activatedAt, 5000);
+        assertEquals(getUserName(), createdDevice.activatedBy);
+        assertNotNull(createdDevice.webDashboard);
+        assertEquals(1, createdDevice.webDashboard.widgets.length);
+        assertTrue(createdDevice.webDashboard.widgets[0] instanceof WebLabel);
+        WebLabel webLabel = (WebLabel) createdDevice.webDashboard.widgets[0];
+        assertEquals("123", webLabel.label);
+        assertEquals(1, webLabel.sources[0].dataStream.pin);
+        assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
+        assertNull(webLabel.sources[0].dataStream.value);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        newHardClient.verifyResult(ok(1));
+        newHardClient.send("hardware vw 1 121");
+        client.verifyResult(hardwareConnected(1, "0-" + createdDevice.id));
+
+        client.getDevice(orgId, createdDevice.id);
+        createdDevice = client.parseDevice(4);
+
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertNotNull(createdDevice.webDashboard);
+        assertEquals(1, createdDevice.webDashboard.widgets.length);
+        assertTrue(createdDevice.webDashboard.widgets[0] instanceof WebLabel);
+        webLabel = (WebLabel) createdDevice.webDashboard.widgets[0];
+        assertEquals("123", webLabel.label);
+        assertEquals(1, webLabel.sources[0].dataStream.pin);
+        assertEquals(PinType.VIRTUAL, webLabel.sources[0].dataStream.pinType);
+        assertEquals("121", webLabel.sources[0].dataStream.value);
+    }
+
+    @Test
+    public void testDashboardIsInheritedByAllDevicesNotUpdated() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+
+        Product product = new Product();
+        product.name = "My product";
+        product.webDashboard = new WebDashboard(new Widget[] {
+                createWebLabelWidget(1, "123"),
+                createWebLineGraph(2, "graph")
+        });
+
+        client.createProduct(orgId, product);
+        Product fromApiProduct = client.parseProduct(1);
+        assertNotNull(fromApiProduct);
+
+        Device newDevice = new Device();
+        newDevice.name = "My New Device";
+        newDevice.productId = fromApiProduct.id;
+
+        client.createDevice(orgId, newDevice);
+        Device createdDevice = client.parseDevice(2);
+        assertNotNull(createdDevice);
+
+        WebLabel webLabel = createWebLabelWidget(1, "1234");
+        webLabel.x = 111;
+        webLabel.y = 111;
+        webLabel.width = 111;
+        webLabel.height = 111;
+        WebLineGraph webLineGraph = createWebLineGraph(2, "graph4");
+        fromApiProduct.webDashboard = new WebDashboard(new Widget[] {
+                webLabel,
+                webLineGraph
+        });
+
+        client.updateProduct(orgId, fromApiProduct);
+        fromApiProduct = client.parseProduct(3);
+        assertNotNull(fromApiProduct);
+        assertEquals(product.name, fromApiProduct.name);
+        assertEquals(product.description, fromApiProduct.description);
+        assertNotNull(fromApiProduct.webDashboard);
+        assertEquals(2, fromApiProduct.webDashboard.widgets.length);
+        webLabel = (WebLabel) fromApiProduct.webDashboard.widgets[0];
+        assertEquals("1234", webLabel.label);
+        assertEquals(111, webLabel.x);
+        assertEquals(111, webLabel.y);
+        assertEquals(111, webLabel.height);
+        assertEquals(111, webLabel.width);
+
+        client.getDevice(orgId, createdDevice.id);
+        createdDevice = client.parseDevice(4);
+
+        assertNotNull(createdDevice);
+        assertEquals("My New Device", createdDevice.name);
+        assertNotNull(createdDevice.webDashboard);
+        assertEquals(2, createdDevice.webDashboard.widgets.length);
+        assertTrue(createdDevice.webDashboard.widgets[0] instanceof WebLabel);
+        webLabel = (WebLabel) createdDevice.webDashboard.widgets[0];
+        assertEquals("123", webLabel.label);
+        assertEquals(1, webLabel.x);
+        assertEquals(2, webLabel.y);
+        assertEquals(10, webLabel.height);
+        assertEquals(20, webLabel.width);
+
+        WebSource webSource = webLabel.sources[0];
+        assertEquals("Web Source Label", webSource.label);
+        assertEquals(1, webSource.dataStream.pin);
+        assertEquals(PinType.VIRTUAL, webSource.dataStream.pinType);
+    }
+
+        @Test
     @Ignore
     //todo finish
     public void getDevicesWithSortingByMultiFields2() {

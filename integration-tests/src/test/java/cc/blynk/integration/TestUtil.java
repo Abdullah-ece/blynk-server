@@ -13,11 +13,18 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebLineGraph;
+import cc.blynk.server.core.model.widgets.web.WebSlider;
+import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.WebSwitch;
+import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -52,6 +59,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
@@ -423,5 +431,86 @@ public final class TestUtil {
                 .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
+    }
+
+    public static WebLabel createWebLabelWidget(int id, String label) {
+        return createWebLabelWidget(id, label, 1);
+    }
+
+    public static WebLabel createWebLabelWidget(int id, String label, int pin) {
+        WebLabel webLabel = new WebLabel();
+        webLabel.id = id;
+        webLabel.label = label;
+        webLabel.x = 1;
+        webLabel.y = 2;
+        webLabel.height = 10;
+        webLabel.width = 20;
+        webLabel.sources = new WebSource[] {
+                new WebSource("Web Source Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        return webLabel;
+    }
+
+    public static WebSwitch createWebSwitchWidget(int id, String onLabel, int pin) {
+        WebSwitch webSwitch = new WebSwitch();
+        webSwitch.id = id;
+        webSwitch.onLabel = onLabel;
+        webSwitch.x = 3;
+        webSwitch.y = 4;
+        webSwitch.height = 50;
+        webSwitch.width = 60;
+        webSwitch.sources = new WebSource[] {
+                new WebSource("Web Source Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        return webSwitch;
+    }
+
+    public static WebSlider createWebSliderWidget(int id, String label, int pin) {
+        WebSlider webSlider = new WebSlider();
+        webSlider.id = id;
+        webSlider.label = label;
+        webSlider.x = 3;
+        webSlider.y = 4;
+        webSlider.height = 50;
+        webSlider.width = 60;
+        webSlider.sources = new WebSource[] {
+                new WebSource("Web Source Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+        return webSlider;
+    }
+
+    public static WebLineGraph createWebLineGraph(int id, String label) {
+        return createWebLineGraph(id, label, 1);
+    }
+
+    public static WebLineGraph createWebLineGraph(int id, String label, int pin) {
+        WebLineGraph webGraph = new WebLineGraph();
+        webGraph.id = id;
+        webGraph.label = label;
+        webGraph.x = 3;
+        webGraph.y = 4;
+        webGraph.height = 10;
+        webGraph.width = 20;
+        webGraph.sources = new WebSource[] {
+                new WebSource("Web Source Label", "#334455", false,
+                        RAW_DATA, new DataStream((byte) pin, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null,
+                        SortOrder.ASC, 10, false, null, false)
+        };
+        return webGraph;
     }
 }

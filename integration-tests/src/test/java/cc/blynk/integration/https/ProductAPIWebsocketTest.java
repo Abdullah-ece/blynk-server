@@ -34,7 +34,9 @@ import cc.blynk.server.core.model.web.product.metafields.SwitchMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.web.product.metafields.TimeMetaField;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
+import cc.blynk.server.core.model.widgets.web.WebSwitch;
 import cc.blynk.server.core.model.widgets.web.label.WebLabel;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,6 +50,9 @@ import static cc.blynk.integration.APIBaseTest.createContactMeta;
 import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
+import static cc.blynk.integration.TestUtil.createWebLabelWidget;
+import static cc.blynk.integration.TestUtil.createWebSliderWidget;
+import static cc.blynk.integration.TestUtil.createWebSwitchWidget;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.webJson;
@@ -330,14 +335,10 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
                 new DataStream(0, (byte) 0, false, false, PinType.VIRTUAL, null, 0, 50, "Temperature", MeasurementUnit.Celsius)
         };
 
-        WebLabel webLabel = new WebLabel();
-        webLabel.label = "123";
-        webLabel.x = 1;
-        webLabel.y = 2;
-        webLabel.height = 10;
-        webLabel.width = 20;
         product.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
+                createWebLabelWidget(1, "123"),
+                createWebSwitchWidget(2, "onLabel", 1),
+                createWebSliderWidget(3, "Slider", 1)
         });
 
         client.createProduct(orgId, product);
@@ -354,24 +355,37 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertNotNull(fromApi.metaFields);
         assertEquals(10, fromApi.metaFields.length);
         assertNotNull(fromApi.webDashboard);
-        assertEquals(1, fromApi.webDashboard.widgets.length);
-        assertEquals("123", fromApi.webDashboard.widgets[0].label);
-        assertEquals(1, fromApi.webDashboard.widgets[0].x);
-        assertEquals(2, fromApi.webDashboard.widgets[0].y);
-        assertEquals(10, fromApi.webDashboard.widgets[0].height);
-        assertEquals(20, fromApi.webDashboard.widgets[0].width);
+        assertEquals(3, fromApi.webDashboard.widgets.length);
+
+        WebLabel webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+        assertEquals("123", webLabel.label);
+        assertEquals(1, webLabel.id);
+        assertEquals(1, webLabel.x);
+        assertEquals(2, webLabel.y);
+        assertEquals(10, webLabel.height);
+        assertEquals(20, webLabel.width);
+
+        WebSwitch webSwitch = (WebSwitch) fromApi.webDashboard.widgets[1];
+        assertEquals("onLabel", webSwitch.onLabel);
+        assertEquals(2, webSwitch.id);
+        assertEquals(3, webSwitch.x);
+        assertEquals(4, webSwitch.y);
+        assertEquals(50, webSwitch.height);
+        assertEquals(60, webSwitch.width);
+
+        WebSlider webSlider = (WebSlider) fromApi.webDashboard.widgets[2];
+        assertEquals("Slider", webSlider.label);
+        assertEquals(3, webSlider.id);
+        assertEquals(3, webSlider.x);
+        assertEquals(4, webSlider.y);
+        assertEquals(50, webSlider.height);
+        assertEquals(60, webSlider.width);
 
         product.id = fromApi.id;
         product.description = "Description2";
 
-        webLabel = new WebLabel();
-        webLabel.label = "updated";
-        webLabel.x = 1;
-        webLabel.y = 2;
-        webLabel.height = 10;
-        webLabel.width = 20;
         product.webDashboard = new WebDashboard(new Widget[] {
-                webLabel
+                createWebLabelWidget(1, "updated")
         });
 
         client.updateProduct(orgId, product);
@@ -381,11 +395,14 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         assertEquals(product.description, fromApi.description);
         assertNotNull(fromApi.webDashboard);
         assertEquals(1, fromApi.webDashboard.widgets.length);
-        assertEquals("updated", fromApi.webDashboard.widgets[0].label);
-        assertEquals(1, fromApi.webDashboard.widgets[0].x);
-        assertEquals(2, fromApi.webDashboard.widgets[0].y);
-        assertEquals(10, fromApi.webDashboard.widgets[0].height);
-        assertEquals(20, fromApi.webDashboard.widgets[0].width);
+
+        webLabel = (WebLabel) fromApi.webDashboard.widgets[0];
+        assertEquals("updated", webLabel.label);
+        assertEquals(1, webLabel.id);
+        assertEquals(1, webLabel.x);
+        assertEquals(2, webLabel.y);
+        assertEquals(10, webLabel.height);
+        assertEquals(20, webLabel.width);
     }
 
     @Test
