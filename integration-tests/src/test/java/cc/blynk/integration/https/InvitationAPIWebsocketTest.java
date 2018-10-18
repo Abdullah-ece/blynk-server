@@ -40,33 +40,27 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
     }
 
     @Test
-    //todo finish
-    public void userCantSendInvitation() throws Exception {
-        /*
-        String name = "user2@blynk.cc";
-        String pass = "user2";
-        User simpleUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.USER);
-        holder.userDao.add(simpleUser);
-
-        login(simpleUser.email, simpleUser.pass);
-
-        String email = "dmitriy@blynk.cc";
-        HttpPost inviteReq = new HttpPost(httpsAdminServerUrl + "/organization/1/invite");
-        String data = new UserInviteDTO(email, "Dmitriy", Role.USER).toString();
-        inviteReq.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpclient.execute(inviteReq)) {
-            assertEquals(403, response.getStatusLine().getStatusCode());
-            assertEquals("{\"error\":{\"message\":\"You are not allowed to perform this action.\"}}", consumeText(response));
-        }
-        */
-    }
-
-    @Test
     public void userSendInvitationToExistingUser() throws Exception {
         AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
         client.inviteUser(orgId, getUserName(), "Dmitriy", 3);
         client.verifyResult(webJson(1, "User already exists."));
+    }
+
+    @Test
+    public void canInviteExisting() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.canInviteUser(getUserName());
+        client.verifyResult(webJson(1, getUserName() + " already registered in the system."));
+    }
+
+    @Test
+    public void canInviteExistingPending() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.inviteUser(orgId, "test@gmail.com", "Dmitriy", 3);
+        client.verifyResult(ok(1));
+
+        client.canInviteUser("test@gmail.com");
+        client.verifyResult(webJson(2, "Invitation for test@gmail.com was already sent."));
     }
 
     @Test

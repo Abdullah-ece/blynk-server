@@ -338,6 +338,8 @@ public final class CommandParserUtil {
                 return MOBILE_GET_DEVICES_BY_REFERENCE_METAFIELD;
             case "webgettempsecuretoken" :
                 return WEB_GET_TEMP_SECURE_TOKEN;
+            case "caninviteuser" :
+                return WEB_CAN_INVITE_USER;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

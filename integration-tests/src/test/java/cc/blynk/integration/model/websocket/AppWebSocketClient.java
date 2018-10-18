@@ -180,6 +180,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webInviteUser " + orgId + BODY_SEPARATOR_STRING + new UserInviteDTO(email, name, roleId));
     }
 
+    public void canInviteUser(String email) {
+        send("canInviteUser " + email);
+    }
+
     public void loginViaInvite(String token, String passHash) {
         send("webLoginViaInvite " + token + BODY_SEPARATOR_STRING + passHash);
     }
