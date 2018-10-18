@@ -300,6 +300,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(fromApiProduct2.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
+        assertEquals("iconName", provisionedDevice.iconName);
 
         client.reset();
         //we need separate call here as getDevice for mobile has filtered devices
