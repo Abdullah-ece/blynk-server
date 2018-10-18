@@ -189,7 +189,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
             }
         } else {
-            log.debug("Taking token from cache.");
+            log.trace("Taking token {} from cache.", token);
             sendRedirectResponse(ctx, token, cacheEntry.value, msgId);
         }
     }
