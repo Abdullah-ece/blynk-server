@@ -222,7 +222,7 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void loginNoHash(String email, String pass) {
         send("login " + email + BODY_SEPARATOR +pass
-                + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + AppNameUtil.BLYNK);
+                + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + BLYNK);
     }
 
     public void login(String email, String pass) {
