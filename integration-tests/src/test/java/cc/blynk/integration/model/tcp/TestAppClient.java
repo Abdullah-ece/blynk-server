@@ -230,7 +230,7 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass) {
-        login(email, pass, "Android", "2.27.0");
+        login(email, pass, "Android", "2.27.0", BLYNK);
     }
 
     public void login(String email, String pass, String os, String version) {
@@ -361,6 +361,14 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getProvisionToken(int dashId, Device device) {
         send("getProvisionToken " + dashId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void createApp(App app) {
+        send("createApp " + app.toString());
+    }
+
+    public void loadProfileGzipped() {
+        send("loadProfileGzipped");
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {
