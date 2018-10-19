@@ -19,6 +19,7 @@ class Device extends React.Component {
     location: React.PropTypes.object,
     productId: React.PropTypes.number,
     onTabChange: React.PropTypes.func,
+    onDeviceDelete: React.PropTypes.func,
     // onChange: React.PropTypes.func,
     // updateDevice: React.PropTypes.func,
     // onDeviceChange: React.PropTypes.func,
@@ -76,7 +77,7 @@ class Device extends React.Component {
           </TabPane>
           <TabPane tab="Device Info" key={TABS.DEVICE_INFO}>
             <div className="devices-device-tab-inner">
-              <DeviceInfo params={this.props.params}/>
+              <DeviceInfo params={this.props.params} onDeviceDelete={this.props.onDeviceDelete}/>
             </div>
           </TabPane>
         </Tabs>

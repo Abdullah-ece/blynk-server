@@ -12,6 +12,7 @@ class DeviceInfo extends React.Component {
   static propTypes = {
     device: React.PropTypes.object,
     onMetadataChange: React.PropTypes.func,
+    onDeviceDelete: React.PropTypes.func,
     account: React.PropTypes.object,
   };
 
@@ -108,7 +109,7 @@ class DeviceInfo extends React.Component {
           </Col>
           <Col span={8}>
 
-            <DeviceDelete deviceId={this.props.device.id} />
+            <DeviceDelete deviceId={this.props.device.id} onDeviceDelete={this.props.onDeviceDelete}/>
 
             <div className="device--device-info-logo">
               {this.props.device.productLogoUrl && (
@@ -145,6 +146,13 @@ class DeviceInfo extends React.Component {
                     return (
                       <DeviceMetadata.Field {...fieldProps}>
                         <DeviceMetadata.Location {...props}/>
+                      </DeviceMetadata.Field>
+                    );
+
+                  if (field.type === Metadata.Fields.EMAIL)
+                    return (
+                      <DeviceMetadata.Field {...fieldProps}>
+                        <DeviceMetadata.Text {...props}/>
                       </DeviceMetadata.Field>
                     );
 

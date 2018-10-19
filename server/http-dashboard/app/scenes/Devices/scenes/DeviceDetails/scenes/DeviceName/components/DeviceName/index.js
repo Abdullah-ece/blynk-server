@@ -1,5 +1,5 @@
 import React from 'react';
-import {ContentEditable} from 'components';
+import {ContentEditableInput} from 'components';
 import PropTypes from 'prop-types';
 
 class DeviceName extends React.Component {
@@ -18,7 +18,7 @@ class DeviceName extends React.Component {
     } = this.props;
 
     return (
-      <ContentEditable value={value} onChange={onChange}/>
+      <ContentEditableInput maxLength={40} value={value} onChange={onChange}/>
     );
   }
 

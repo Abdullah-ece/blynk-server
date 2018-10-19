@@ -20,8 +20,8 @@ class DeviceDelete extends Component {
     deviceId: React.PropTypes.number,
     organization: React.PropTypes.object,
     fetchDevices: React.PropTypes.func,
+    onDeviceDelete: React.PropTypes.func,
     handleDeviceDelete: React.PropTypes.func,
-
   };
 
   constructor(props) {
@@ -30,11 +30,8 @@ class DeviceDelete extends Component {
     this.handleDelete = this.handleDelete.bind(this);
   }
 
-  handleDelete(deviceId, orgId) {
-    this.props.handleDeviceDelete(deviceId,orgId).then(() =>{
-      this.props.fetchDevices({orgId: this.props.organization.id});
-      this.context.router.push('/devices');
-    });
+  handleDelete(deviceId) {
+    this.props.onDeviceDelete(deviceId);
   }
 
   render() {

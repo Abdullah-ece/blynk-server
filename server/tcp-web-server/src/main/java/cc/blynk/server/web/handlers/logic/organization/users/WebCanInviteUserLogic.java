@@ -2,6 +2,8 @@ package cc.blynk.server.web.handlers.logic.organization.users;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
 import cc.blynk.server.web.session.WebAppStateHolder;
@@ -31,11 +33,21 @@ public final class WebCanInviteUserLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
         String userEMailToInvite = message.body;
-        if (userDao.contains(userEMailToInvite)) {
-            log.debug("User {}-{} already exists in system.", userEMailToInvite, state.user.email);
-            ctx.writeAndFlush(json(message.id, "User already exists in the system."), ctx.voidPromise());
-        } else {
+
+        User userToInvite = userDao.getByName(userEMailToInvite);
+        if (userToInvite == null) {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+        } else {
+            if (userToInvite.status == UserStatus.Active) {
+                log.debug("User {}-{} already registered in the system for invite.",
+                        userEMailToInvite, state.user.orgId);
+                ctx.writeAndFlush(json(message.id, userEMailToInvite + " already registered in the system."),
+                        ctx.voidPromise());
+            } else {
+                log.debug("Invitation for {} was already sent.", userEMailToInvite);
+                ctx.writeAndFlush(json(message.id, "Invitation for " + userEMailToInvite + " was already sent."),
+                        ctx.voidPromise());
+            }
         }
     }
 

@@ -98,6 +98,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                         setTemplateIdInMeta(copyMetafields, templateId);
                     }
                     device.metaFields = copyMetafields;
+                    device.updateNameFromMetafields();
                     device.webDashboard = product.webDashboard.copy();
                     holder.deviceDao.createWithPredefinedId(orgId, device);
 

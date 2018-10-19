@@ -1,8 +1,7 @@
 import React from 'react';
 
-import './ant-overrides.less';
-
-import './styles.less';
+import '../StyleGuide/ant-overrides.less';
+import '../StyleGuide/styles.less';
 
 export UserLayout from './components/UserLayout';
 export UserProfileLayout from './components/UserProfileLayout';

@@ -17,8 +17,6 @@ public class DeviceStatusDTO {
 
     public final String token;
 
-    public final String vendor;
-
     public final ConnectionType connectionType;
 
     public final Status status;
@@ -41,7 +39,6 @@ public class DeviceStatusDTO {
         this.name = device.name;
         this.boardType = device.boardType;
         this.token = device.token;
-        this.vendor = device.vendor;
         this.connectionType = device.connectionType;
         this.status = device.status;
         this.disconnectTime = device.disconnectTime;
