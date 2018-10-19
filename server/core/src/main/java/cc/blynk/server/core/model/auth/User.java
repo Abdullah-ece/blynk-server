@@ -71,12 +71,12 @@ public class User {
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;
     }
 
-    public User(String email, String pass, int orgId, String region, String ip,
+    public User(String email, String passHash, int orgId, String region, String ip,
                 boolean isFacebookUser, int roleId) {
         this();
         this.email = email;
         this.name = email;
-        this.pass = pass;
+        this.pass = passHash;
         this.orgId = orgId;
         this.region = region;
         this.ip = ip;
@@ -85,13 +85,13 @@ public class User {
     }
 
     //used when user is fully read from DB
-    public User(String email, String pass, int orgId, String region, String ip,
+    public User(String email, String passHash, int orgId, String region, String ip,
                 boolean isFacebookUser, int roleId, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
                 Profile profile, int energy) {
         this.email = email;
         this.name = email;
-        this.pass = pass;
+        this.pass = passHash;
         this.orgId = orgId;
         this.region = region;
         this.ip = ip;

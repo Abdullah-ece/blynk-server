@@ -17,7 +17,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
@@ -30,6 +29,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.StringJoiner;
 
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -217,7 +217,7 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void register(String email, String pass) {
-        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
+        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + BLYNK);
     }
 
     public void register(String email, String pass, String appName) {
@@ -226,7 +226,7 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void loginNoHash(String email, String pass) {
         send("login " + email + BODY_SEPARATOR +pass
-                + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + AppNameUtil.BLYNK);
+                + BODY_SEPARATOR + "Android" + BODY_SEPARATOR + "2.27.0" + BODY_SEPARATOR + BLYNK);
     }
 
     public void login(String email, String pass) {
@@ -234,7 +234,7 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass, String os, String version) {
-        login(email, pass, os, version, AppNameUtil.BLYNK);
+        login(email, pass, os, version, BLYNK);
     }
 
     public void login(String email, String pass, String os, String version, String appName) {
@@ -291,6 +291,10 @@ public class TestAppClient extends BaseTestAppClient {
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
+    public void createApp(App app) {
+        send("createApp " + app.toString());
+    }
+
     public void getDevice(int deviceId) {
         send("getDevice " + deviceId);
     }
@@ -345,6 +349,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
+    }
+
+    public void loadProfileGzipped() {
+        send("loadProfileGzipped");
     }
 
     public void send(String line, int id) {

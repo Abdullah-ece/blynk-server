@@ -302,9 +302,9 @@ public class UserDao {
         return newUser;
     }
 
-    public User add(String email, String pass, int orgId, int roleId) {
+    public User add(String email, String passHash, int orgId, int roleId) {
         log.debug("Adding new user {}. OrgId : {}", email, orgId);
-        User newUser = new User(email, pass, orgId, region, host, false, roleId);
+        User newUser = new User(email, passHash, orgId, region, host, false, roleId);
         newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);

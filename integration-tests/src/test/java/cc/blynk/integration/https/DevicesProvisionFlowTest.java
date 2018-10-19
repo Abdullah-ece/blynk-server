@@ -5,22 +5,34 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.model.tcp.TestSslHardClient;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
+import cc.blynk.server.notifications.mail.QrHolder;
+import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.StringUtils;
+import junit.framework.TestCase;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.APIBaseTest.createListMeta;
@@ -28,6 +40,7 @@ import static cc.blynk.integration.APIBaseTest.createMeasurementMeta;
 import static cc.blynk.integration.APIBaseTest.createNumberMeta;
 import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.defaultClient;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.loggedDefaultClient;
 import static cc.blynk.integration.TestUtil.ok;
@@ -38,6 +51,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -67,6 +81,84 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
             sleep(1000);
             newHardClient.send("ping");
         }
+    }
+
+    @Test
+    public void fullProvisionTest() throws Exception {
+        //Step 1. Create new user to be Blynk app project creator
+        String superUser = "super@blynk.cc";
+        String pass = "1";
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+        appClient.login(superUser, pass);
+        appClient.verifyResult(ok(1));
+
+        int dashId = 0;
+
+        //Step 2. Create minimal project with 1 widget.
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.label = "Temperature";
+        valueDisplay.id = 1;
+        valueDisplay.pin = 1;
+        valueDisplay.width = 4;
+        valueDisplay.height = 1;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        appClient.createWidget(dashId, valueDisplay);
+        appClient.verifyResult(ok(2));
+
+        //Step 3. Create the app
+        App app = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "My app", null, new int[] {dashId});
+        appClient.createApp(app);
+        App appFromApi = appClient.parseApp(3);
+        assertNotNull(appFromApi);
+        assertNotNull(appFromApi.id);
+        assertTrue(appFromApi.id.startsWith("blynk"));
+        appClient.send("emailQr " + dashId + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
+        appClient.verifyResult(ok(4));
+        verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "New Project")), any(QrHolder.class));
+
+        //Step 4. Invite new user
+        String invitedUser = "test@gmail.com";
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.inviteUser(orgId, invitedUser, "Dmitriy", 3);
+        client.verifyResult(ok(1));
+        ArgumentCaptor<String> bodyArgumentCapture = ArgumentCaptor.forClass(String.class);
+        verify(holder.mailWrapper, timeout(1000).times(1)).sendHtml(eq(invitedUser),
+                eq("Invitation to Blynk Inc. dashboard."), bodyArgumentCapture.capture());
+        String body = bodyArgumentCapture.getValue();
+        String token = body.substring(body.indexOf("token=") + 6, body.indexOf("&"));
+        assertEquals(32, token.length());
+        verify(holder.mailWrapper).sendHtml(eq(invitedUser),
+                eq("Invitation to Blynk Inc. dashboard."), contains("/dashboard/invite?token="));
+        String passHash = SHA256Util.makeHash("123", invitedUser);
+        AppWebSocketClient appWebSocketClient = defaultClient();
+        appWebSocketClient.start();
+        appWebSocketClient.loginViaInvite(token, passHash);
+        User user = appWebSocketClient.parseAccount(1);
+        TestCase.assertNotNull(user);
+        assertEquals(invitedUser, user.email);
+        assertEquals("Dmitriy", user.name);
+        assertEquals(3, user.roleId);
+        assertEquals(orgId, user.orgId);
+
+        //Step 5. Login via app
+        TestAppClient invitedUserAppClient = new TestAppClient(properties);
+        invitedUserAppClient.start();
+        invitedUserAppClient.login(invitedUser, "123");
+        invitedUserAppClient.verifyResult(ok(1));
+
+        invitedUserAppClient.loadProfileGzipped();
+        Profile profile = invitedUserAppClient.parseProfile(2);
+        assertNotNull(profile);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        DashBoard dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        ValueDisplay valueDisplayInNewProfile = (ValueDisplay) dashBoard.getWidgetById(valueDisplay.id);
+        assertNotNull(valueDisplayInNewProfile);
     }
 
     @Test

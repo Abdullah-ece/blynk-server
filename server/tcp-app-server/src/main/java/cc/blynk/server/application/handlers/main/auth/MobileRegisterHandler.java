@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
@@ -70,8 +69,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         String[] messageParts = StringUtils.split3(message.body);
 
-        //expecting message with 2 parts at least.
-        if (messageParts.length < 2) {
+        if (messageParts.length < 3) {
             log.error("Register Handler. Wrong income message format. {}", message);
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
@@ -79,7 +77,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         String email = messageParts[0].trim().toLowerCase();
         String pass = messageParts[1];
-        String appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
+        String appName = messageParts[2];
         Organization superOrg = organizationDao.getSuperOrgOrThrow();
         int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
 
@@ -97,10 +95,10 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
             return;
         }
 
-        Role defaultOrgRole = superOrg.getDefaultRole();
-        User newUser = userDao.add(email, pass, orgId, defaultOrgRole.id);
+        int defaultOrgRoleId = superOrg.getDefaultRoleId();
+        User newUser = userDao.add(email, pass, orgId, defaultOrgRoleId);
 
-        log.info("Registered {}.", email);
+        log.info("Registered {} for orgId={}.", email, orgId);
         createProjectForExportedApp(newUser, appName, message.id);
 
         ctx.pipeline().remove(this);
