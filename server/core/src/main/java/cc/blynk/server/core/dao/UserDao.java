@@ -1,13 +1,18 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.UserInviteDTO;
+import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -278,6 +283,65 @@ public class UserDao {
         return data;
     }
 
+    public void createProjectForExportedApp(TimerWorker timerWorker,
+                                            TokenManager tokenManager,
+                                            User newUser, String appName, int msgId) {
+        if (appName.equals(AppNameUtil.BLYNK)) {
+            return;
+        }
+
+        User parentUser = null;
+        App app = null;
+
+        for (User user : users.values()) {
+            app = user.profile.getAppById(appName);
+            if (app != null) {
+                parentUser = user;
+                break;
+            }
+        }
+
+        if (app == null) {
+            log.error("Unable to find app with id {}", appName);
+            return;
+        }
+
+        if (app.isMultiFace) {
+            log.info("App supports multi faces. Skipping profile creation.");
+            return;
+        }
+
+        int dashId = app.projectIds[0];
+        DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
+
+        //todo ugly, but quick. refactor
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
+
+        clonedDash.id = 1;
+        clonedDash.parentId = dash.parentId;
+        clonedDash.createdAt = System.currentTimeMillis();
+        clonedDash.updatedAt = clonedDash.createdAt;
+        clonedDash.isActive = true;
+        clonedDash.eraseValues();
+        clonedDash.removeDevicesProvisionedFromDeviceTiles();
+
+        clonedDash.addTimers(timerWorker, new UserKey(newUser));
+
+        newUser.profile.dashBoards = new DashBoard[] {clonedDash};
+
+        if (app.provisionType == ProvisionType.STATIC) {
+            for (Device device : clonedDash.devices) {
+                device.erase();
+            }
+        } else {
+            for (Device device : clonedDash.devices) {
+                device.erase();
+                String token = TokenGeneratorUtil.generateNewToken();
+                tokenManager.assignToken(newUser, clonedDash, device, token);
+            }
+        }
+    }
+
     /**
      * Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com
      */
@@ -311,9 +375,9 @@ public class UserDao {
         return newUser;
     }
 
-    public User add(String email, String pass, String appName, int orgId, int roleId) {
+    public User add(String email, String passHash, String appName, int orgId, int roleId) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, host, false, roleId);
+        User newUser = new User(email, passHash, appName, region, host, false, roleId);
         newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);
