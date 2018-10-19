@@ -216,10 +216,6 @@ public class TestAppClient extends BaseTestAppClient {
         send("createDash " + dashJson);
     }
 
-    public void register(String email, String pass) {
-        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
-    }
-
     public void register(String email, String pass, String appName) {
         send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }
@@ -230,7 +226,7 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass) {
-        login(email, pass, "Android", "2.27.0");
+        login(email, pass, "Android", "2.27.0", AppNameUtil.BLYNK);
     }
 
     public void login(String email, String pass, String os, String version) {
