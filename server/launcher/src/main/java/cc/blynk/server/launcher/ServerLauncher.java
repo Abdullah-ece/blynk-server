@@ -1,13 +1,18 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.ConnectionType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.SortOrder;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.EventType;
@@ -157,7 +162,7 @@ public final class ServerLauncher {
                 pass = StringUtils.randomPassword(24);
             }
 
-            Organization superOrg = new Organization("Blynk Inc.", "Europe/Kiev",
+            Organization superOrg = new Organization("Airius", "Europe/Kiev",
                     "/static/logo.png", true, SUPER_ORG_PARENT_ID,
                     new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
                     new Role(1, "Admin", 0b11111111111111111111),
@@ -204,20 +209,26 @@ public final class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
+            User superAdmin = holder.userDao.add(email, hash, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
+            DashBoard defaultSuperAdminDash = new DashBoard();
+            defaultSuperAdminDash.id = 1;
+            defaultSuperAdminDash.name = "Main Airius Project";
 
-            String vendorEmail = props.vendorEmail;
-            if (vendorEmail != null) {
-                String subj = "Your private Blynk server for " + props.productName + " is up!";
-                String body = buildServerUpEmailBody(url, email, pass);
-                holder.blockingIOProcessor.messagingExecutor.execute(() -> {
-                    try {
-                        holder.mailWrapper.sendHtml(vendorEmail, subj, body);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
+            DashBoard childDash = new DashBoard();
+            childDash.id = 123;
+            childDash.name = "Child Airius Project";
+            childDash.parentId = defaultSuperAdminDash.id;
+            childDash.isPreview = true;
+            superAdmin.profile.dashBoards = new DashBoard[] {
+                    defaultSuperAdminDash,
+                    childDash
+            };
+            App app = new App("airiusprod", Theme.Blynk,
+                    ProvisionType.DYNAMIC,
+                    0, false, "Airius app", null, new int[] {childDash.id});
+            superAdmin.profile.apps = new App[] {
+                app
+            };
 
             for (int i = 0; i < 20; i++) {
                 Device device = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
@@ -238,10 +249,10 @@ public final class ServerLauncher {
 
             //todo
             //for local testing. will be removed in future.
-            //always adding 20 users to initial organization
+            //always adding 10 users to initial organization
             String name = "user{i}@blynk.cc";
             pass = "123";
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 10; i++) {
                 email = name.replace("{i}", "" + i);
                 hash = SHA256Util.makeHash(pass, email);
                 holder.userDao.add(email, hash, superOrg.id, 2);
