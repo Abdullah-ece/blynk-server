@@ -17,7 +17,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.11/server-0.39.11.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.12/server-0.39.12.jar"
         
 
 server.properties
@@ -59,6 +59,7 @@ IP Tables
 
         sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
         sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 9443
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 8441 -j REDIRECT --to-port 9443
         
         sudo apt-get install iptables-persistent
         
