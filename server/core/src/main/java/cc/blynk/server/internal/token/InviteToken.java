@@ -20,9 +20,9 @@ public final class InviteToken extends BaseToken implements Serializable {
 
     @Override
     public String toString() {
-        return "InviteToken{" +
-                "orgId=" + orgId +
-                ", appName='" + appName + '\'' +
-                '}';
+        return "InviteToken{"
+                + "orgId=" + orgId
+                + ", appName='" + appName + '\''
+                + '}';
     }
 }
