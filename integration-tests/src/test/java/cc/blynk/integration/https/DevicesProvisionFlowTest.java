@@ -94,7 +94,15 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.login(superUser, pass);
         appClient.verifyResult(ok(1));
 
-        int dashId = 0;
+        int parentId = 0;
+
+        DashBoard childDash = new DashBoard();
+        childDash.id = 123;
+        childDash.name = "Test";
+        childDash.parentId = parentId;
+        childDash.isPreview = true;
+        appClient.createDash(childDash);
+        appClient.verifyResult(ok(2));
 
         //Step 2. Create minimal project with 1 widget.
         ValueDisplay valueDisplay = new ValueDisplay();
@@ -104,21 +112,21 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         valueDisplay.width = 4;
         valueDisplay.height = 1;
         valueDisplay.pinType = PinType.VIRTUAL;
-        appClient.createWidget(dashId, valueDisplay);
-        appClient.verifyResult(ok(2));
+        appClient.createWidget(childDash.id, valueDisplay);
+        appClient.verifyResult(ok(3));
 
         //Step 3. Create the app
         App app = new App(null, Theme.BlynkLight,
                 ProvisionType.DYNAMIC,
-                0, false, "My app", null, new int[] {dashId});
+                0, false, "My app", null, new int[] {childDash.id});
         appClient.createApp(app);
-        App appFromApi = appClient.parseApp(3);
+        App appFromApi = appClient.parseApp(4);
         assertNotNull(appFromApi);
         assertNotNull(appFromApi.id);
         assertTrue(appFromApi.id.startsWith("blynk"));
-        appClient.send("emailQr " + dashId + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
-        appClient.verifyResult(ok(4));
-        verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "New Project")), any(QrHolder.class));
+        appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
+        appClient.verifyResult(ok(5));
+        verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. Invite new user
         String invitedUser = "test@gmail.com";
@@ -159,6 +167,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(dashBoard);
         ValueDisplay valueDisplayInNewProfile = (ValueDisplay) dashBoard.getWidgetById(valueDisplay.id);
         assertNotNull(valueDisplayInNewProfile);
+        assertEquals(parentId, dashBoard.parentId);
+        assertEquals(1, dashBoard.id);
+        assertTrue(dashBoard.isPreview);
+        assertTrue(dashBoard.isActive);
     }
 
     @Test

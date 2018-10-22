@@ -4,6 +4,7 @@ import cc.blynk.server.internal.token.BaseToken;
 import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.internal.token.ResetPassToken;
 import cc.blynk.server.internal.token.TokensPool;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class SerializationTokenPoolTest {
         tokensPool.addToken(token, resetPassToken);
 
         String token2 = TokenGeneratorUtil.generateNewToken();
-        InviteToken inviteToken = new InviteToken("dima2@mail.us", 1);
+        InviteToken inviteToken = new InviteToken("dima2@mail.us", 1, AppNameUtil.BLYNK);
         tokensPool.addToken(token2, inviteToken);
 
         tokensPool.close();

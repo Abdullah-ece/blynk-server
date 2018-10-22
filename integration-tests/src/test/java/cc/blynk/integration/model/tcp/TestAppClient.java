@@ -291,10 +291,6 @@ public class TestAppClient extends BaseTestAppClient {
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
-    public void createApp(App app) {
-        send("createApp " + app.toString());
-    }
-
     public void getDevice(int deviceId) {
         send("getDevice " + deviceId);
     }
@@ -349,10 +345,6 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
-    }
-
-    public void loadProfileGzipped() {
-        send("loadProfileGzipped");
     }
 
     public void send(String line, int id) {

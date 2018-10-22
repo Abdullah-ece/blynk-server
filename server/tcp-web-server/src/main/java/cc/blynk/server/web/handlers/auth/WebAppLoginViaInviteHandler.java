@@ -99,6 +99,9 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
                 ? new Version(messageParts[2], messageParts[3])
                 : Version.UNKNOWN_VERSION;
 
+        holder.userDao.createProjectForExportedApp(holder.timerWorker, holder.tokenManager,
+                user, inviteToken.appName, message.id);
+
         login(ctx, message.id, user, version, token);
     }
 

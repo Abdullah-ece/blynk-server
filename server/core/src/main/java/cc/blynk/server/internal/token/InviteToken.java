@@ -10,18 +10,19 @@ import java.io.Serializable;
 public final class InviteToken extends BaseToken implements Serializable {
 
     public final int orgId;
+    public final String appName;
 
-    public InviteToken(String email, int orgId) {
+    public InviteToken(String email, int orgId, String appName) {
         super(email, DEFAULT_EXPIRE_TIME);
         this.orgId = orgId;
+        this.appName = appName;
     }
 
     @Override
     public String toString() {
-        return "InviteToken{"
-                + "email='" + email + '\''
-                + ", orgId='" + orgId + '\''
-                + '}';
+        return "InviteToken{" +
+                "orgId=" + orgId +
+                ", appName='" + appName + '\'' +
+                '}';
     }
-
 }

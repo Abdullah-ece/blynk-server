@@ -4,17 +4,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.enums.ProvisionType;
-import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
@@ -79,7 +72,10 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
         String email = messageParts[0].trim().toLowerCase();
         String passHash = messageParts[1];
         String appName = messageParts[2];
-        log.info("Trying register user : {}, app : {}", email, appName);
+        Organization superOrg = organizationDao.getSuperOrgOrThrow();
+        int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
+
+        log.info("Trying register user : {}, app : {}, orgId : {}", email, appName, orgId);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
             log.error("Register Handler. Wrong email: {}", email);
@@ -93,14 +89,12 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
             return;
         }
 
-        Organization superOrg = organizationDao.getSuperOrg();
-        int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
         int defaultOrgRoleId = superOrg.getDefaultRoleId();
         User newUser = userDao.add(email, passHash, orgId, defaultOrgRoleId);
 
         log.info("Registered {}.", email);
 
-        userDao.createProjectForExportedApp(timerWorker, tokenManager, newUser, message.id);
+        userDao.createProjectForExportedApp(timerWorker, tokenManager, newUser, appName, message.id);
 
         ctx.pipeline().remove(this);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
