@@ -85,13 +85,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             return;
         }
 
-        if (user.pass == null) {
-            log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(json(msgId, "Facebook user tries to login with pass. {}"), ctx.voidPromise());
-            return;
-        }
-
-        if (!user.pass.equals(pass)) {
+        if (user.pass == null || !user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(json(msgId, "User credentials are wrong."), ctx.voidPromise());
             return;
