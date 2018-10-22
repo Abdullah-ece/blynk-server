@@ -90,7 +90,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                                     device.id, templateId, product.id);
                         }
                     }
-                    log.info("Provisioning new deviceId {}, productId {}.", device.id, product.id);
+                    log.info("Provisioning new deviceId {}, productId {}, templId {}.",
+                            device.id, product.id, templateId);
                     device.productId = product.id;
                     device.hardwareInfo = hardwareInfo;
                     MetaField[] copyMetafields = product.copyMetaFields();

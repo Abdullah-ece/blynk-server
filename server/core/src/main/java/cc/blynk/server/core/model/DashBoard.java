@@ -38,6 +38,8 @@ import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +60,8 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  * Time: 13:04
  */
 public class DashBoard {
+
+    private static final Logger log = LogManager.getLogger(DashBoard.class);
 
     //-1 means this is not child project
     private static final int IS_PARENT_DASH = -1;
@@ -724,21 +728,33 @@ public class DashBoard {
 
     public void addDevice(Device device, String templateId) {
         this.devices = ArrayUtil.add(this.devices, device, Device.class);
-        if (templateId != null) {
-            DeviceTiles deviceTiles = getWidgetByType(DeviceTiles.class);
-            if (deviceTiles != null) {
-                TileTemplate tileTemplate = deviceTiles.getTileTemplateByTemplateId(templateId);
-                if (tileTemplate != null) {
-                    deviceTiles.addTile(tileTemplate, device.id);
-                    tileTemplate.addDeviceId(device.id);
-                    device.iconName = tileTemplate.iconName;
-                    if (tileTemplate.boardType != null) {
-                        device.boardType = tileTemplate.boardType;
-                    }
-                }
-            }
-        }
+        addDeviceToTemplate(device, templateId);
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    private void addDeviceToTemplate(Device device, String templateId) {
+        if (templateId == null) {
+            return;
+        }
+
+        DeviceTiles deviceTiles = getWidgetByType(DeviceTiles.class);
+        if (deviceTiles == null) {
+            log.warn("Device tiles widget not found for deviceId {}.", device.id);
+            return;
+        }
+
+        TileTemplate tileTemplate = deviceTiles.getTileTemplateByTemplateId(templateId);
+        if (tileTemplate == null) {
+            log.warn("Could not find templateId {} for deviceId {}.", templateId, device.id);
+            return;
+        }
+
+        deviceTiles.addTile(tileTemplate, device.id);
+        tileTemplate.addDeviceId(device.id);
+        device.iconName = tileTemplate.iconName;
+        if (tileTemplate.boardType != null) {
+            device.boardType = tileTemplate.boardType;
+        }
     }
 
     @Override
