@@ -4,7 +4,7 @@ CREATE DATABASE blynk;
 
 CREATE TABLE users (
   email text NOT NULL,
-  org_id id,
+  org_id int,
   region text,
   ip text,
   name text,
