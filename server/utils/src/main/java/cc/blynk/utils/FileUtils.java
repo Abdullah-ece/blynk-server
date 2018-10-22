@@ -200,15 +200,12 @@ public final class FileUtils {
         }
     }
 
-    public static Path getUserReportDir(String email, String appName, int reportId, String date) {
-        return Paths.get(FileUtils.CSV_DIR, email + "_" + appName + "_" + reportId + "_" + date);
+    public static Path getUserReportDir(String email, int orgId, int reportId, String date) {
+        return Paths.get(FileUtils.CSV_DIR, email + "_" + orgId + "_" + reportId + "_" + date);
     }
 
-    public static String getUserStorageDir(String email, String appName) {
-        if (AppNameUtil.BLYNK.equals(appName)) {
-            return email;
-        }
-        return email + "_" + appName;
+    public static String getUserStorageDir(String email) {
+        return email;
     }
 
     public static String downloadUrl(String host, String httpPort, boolean forcePort80) {

@@ -14,6 +14,7 @@ import cc.blynk.server.internal.token.InviteToken;
 import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.web.handlers.logic.organization.WebGetOrganizationUsersLogic;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
@@ -26,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -88,11 +88,10 @@ public final class WebInviteUserLogic {
             return;
         }
 
-        String appName = BLYNK;
-        User invitedUser = userDao.invite(userInvite, orgId, appName);
+        User invitedUser = userDao.invite(userInvite, orgId);
 
         if (invitedUser == null) {
-            log.error("User {}-{} already exists.", userInvite.email, appName);
+            log.error("User {} already exists for orgId {}.", userInvite.email, orgId);
             ctx.writeAndFlush(json(message.id, "User already exists."), ctx.voidPromise());
             return;
         }
@@ -103,7 +102,7 @@ public final class WebInviteUserLogic {
         blockingIOProcessor.execute(() -> {
             MessageBase response;
             try {
-                tokensPool.addToken(token,  new InviteToken(userInvite.email, appName));
+                tokensPool.addToken(token,  new InviteToken(userInvite.email, orgId, getAppName()));
                 String body = inviteTemplate
                         .replace(Placeholders.ORGANIZATION, org.name)
                         .replace(Placeholders.PRODUCT_NAME, productName)
@@ -118,7 +117,15 @@ public final class WebInviteUserLogic {
             }
             ctx.writeAndFlush(response);
         });
+    }
 
+    //todo for now we take first app name from superadmin
+    private String getAppName() {
+        User superAdmin = userDao.getSuperAdmin();
+        if (superAdmin.profile.apps.length == 0) {
+            return AppNameUtil.BLYNK;
+        }
+        return superAdmin.profile.apps[0].id;
     }
 
 }

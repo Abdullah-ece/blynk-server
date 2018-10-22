@@ -69,7 +69,7 @@ public final class WebUpdateDeviceMetafieldLogic {
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         //if update comes from the app - send update to the web
-        Session session = holder.sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.userSession.get(state.user.email);
         session.sendToSelectedDeviceOnWeb(ctx.channel(), WEB_UPDATE_DEVICE_METAFIELD, message.id, split[1], device.id);
     }
 

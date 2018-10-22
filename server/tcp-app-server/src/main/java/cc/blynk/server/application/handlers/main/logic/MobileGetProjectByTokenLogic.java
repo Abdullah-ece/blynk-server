@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.serialization.CopyUtil;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,12 +36,12 @@ public final class MobileGetProjectByTokenLogic {
             FlashedToken dbFlashedToken = holder.dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
-                log.error("{} token not exists for app {} for {} (GetProject).", token, user.appName, user.email);
+                log.error("{} token not exists for orgId {} for {} (GetProject).", token, user.orgId, user.email);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
-            User publishUser = holder.userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
+            User publishUser = holder.userDao.getByName(dbFlashedToken.email);
 
             DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
             DashBoard copy = CopyUtil.deepCopy(dash);

@@ -3,40 +3,23 @@ package cc.blynk.server.api.http.dashboard;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.CookieHeader;
 import cc.blynk.core.http.annotation.FormParam;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.auth.UserStatus;
-import cc.blynk.server.core.model.web.Organization;
-import cc.blynk.server.internal.token.InviteToken;
-import cc.blynk.server.internal.token.ResetPassToken;
-import cc.blynk.server.internal.token.TokensPool;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
-import cc.blynk.utils.properties.Placeholders;
-import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 
-import java.net.URLEncoder;
-
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
 
 /**
@@ -52,27 +35,10 @@ public class WebLoginHandler extends BaseHttpHandler {
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
     private final UserDao userDao;
-    private final OrganizationDao organizationDao;
-    private final String resetURL;
-    private final String host;
-    private final String emailBody;
-    private final MailWrapper mailWrapper;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final TokensPool tokensPool;
-    private final String productName;
 
     public WebLoginHandler(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
-        this.organizationDao = holder.organizationDao;
-
-        this.resetURL = "https://" + holder.props.getProperty("server.host") + "/dashboard" + "/resetPass?token=";
-        this.host = "https://" + holder.props.getProperty("server.host");
-        this.mailWrapper = holder.mailWrapper;
-        this.emailBody = FileLoaderUtil.readWebResetPassMailBody();
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.tokensPool = holder.tokensPool;
-        this.productName = holder.props.productName;
     }
 
     private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
@@ -94,7 +60,7 @@ public class WebLoginHandler extends BaseHttpHandler {
 
         email = email.toLowerCase();
 
-        User user = userDao.getByName(email, BLYNK);
+        User user = userDao.getByName(email);
 
         if (user == null) {
             log.error("User not found.");
@@ -105,81 +71,6 @@ public class WebLoginHandler extends BaseHttpHandler {
             log.error("Wrong password for {}", user.name);
             return badRequest("Wrong password or username.");
         }
-
-        Response response = ok(user);
-
-        Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
-        response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
-
-        return response;
-    }
-
-    @POST
-    @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/invite")
-    public Response loginViaInvite(@FormParam("token") String token,
-                                   @FormParam("password") String password) {
-
-        if (token == null || password == null) {
-            log.error("Empty token or password field.");
-            return badRequest("Empty token or password field.");
-        }
-
-        InviteToken inviteToken = tokensPool.getInviteToken(token);
-
-        if (inviteToken == null) {
-            log.error("Invalid reset token.");
-            return badRequest("Your invitation expired or was used already. Please request new one.");
-        }
-
-        User user = userDao.getByName(inviteToken.email, inviteToken.appName);
-        if (user == null) {
-            log.error("User not found.");
-            return badRequest("Your invitation expired or was used already. Please request new one.");
-        }
-
-        user.pass = password;
-        user.status = UserStatus.Active;
-        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
-        org.isActive = true;
-
-        tokensPool.removeToken(token);
-
-        Response response = ok(user);
-
-        Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
-        response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
-
-        return response;
-    }
-
-    @POST
-    @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/resetPass")
-    public Response resetPass(@FormParam("token") String token,
-                              @FormParam("password") String password) {
-
-        if (token == null || password == null) {
-            log.error("Empty token or password field.");
-            return badRequest("Empty token or password field.");
-        }
-
-        ResetPassToken resetPassToken = tokensPool.getResetPassToken(token);
-
-        if (resetPassToken == null) {
-            log.error("Invalid reset token.");
-            return badRequest("Your invitation expired or was used already. Please request new one.");
-        }
-
-        User user = userDao.getByName(resetPassToken.email, resetPassToken.appName);
-        if (user == null) {
-            log.error("User not found.");
-            return badRequest("Token does not exist.");
-        }
-
-        user.pass = password;
-        user.status = UserStatus.Active;
-        tokensPool.removeToken(token);
 
         Response response = ok(user);
 
@@ -202,56 +93,6 @@ public class WebLoginHandler extends BaseHttpHandler {
         Cookie cookie = makeDefaultSessionCookie("", 0);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
         return response;
-    }
-
-    @POST
-    @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/sendResetPass")
-    public Response sendResetPath(@Context ChannelHandlerContext ctx, @FormParam("email") String email) {
-        if (BlynkEmailValidator.isNotValidEmail(email)) {
-            log.info("User email {} format field is wrong .", email);
-            return badRequest("User email field is wrong.");
-        }
-
-        String token = TokenGeneratorUtil.generateNewToken();
-        log.info("{} trying to reset pass.", email);
-
-        User user = userDao.getByName(email, BLYNK);
-
-        if (user == null) {
-            log.info("User with passed email {} not found.", email);
-            return ok("Email was sent.");
-        }
-
-        Organization org = organizationDao.getOrgByIdOrThrow(user.orgId);
-        if (org == null) {
-            log.info("Organization with orgId {} not found.", user.orgId);
-            return badRequest("Organization for that user is no longer exist.");
-        }
-
-        tokensPool.addToken(token, new ResetPassToken(user.email, user.appName));
-
-        blockingIOProcessor.execute(() -> {
-            Response response;
-            try {
-                String body = emailBody
-                        .replace(Placeholders.ORGANIZATION, org.name)
-                        .replace(Placeholders.PRODUCT_NAME, productName)
-                        .replace("{host}", host)
-                        .replace("{link}", resetURL + token + "&email=" + URLEncoder.encode(email, "UTF-8"));
-                String subject = "Reset your " + org.name + " Dashboard password";
-
-                mailWrapper.sendHtml(email, subject, body);
-                log.info("Reset email sent to {}.", email);
-                response = ok("Email was sent.");
-            } catch (Exception e) {
-                log.info("Error sending mail for {}. Reason : {}", email, e.getMessage());
-                response = badRequest("Error sending reset email.");
-            }
-            ctx.writeAndFlush(response);
-        });
-
-        return null;
     }
 
 }

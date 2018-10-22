@@ -28,7 +28,7 @@ public class DeviceDao {
     public final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
 
-    public DeviceDao(ConcurrentMap<UserKey, User> users) {
+    public DeviceDao(ConcurrentMap<String, User> users) {
         devices = new ConcurrentHashMap<>();
 
         int maxDeviceId = 0;

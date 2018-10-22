@@ -110,9 +110,9 @@ public final class MobileCreateWidgetLogic {
 
         TimerWorker timerWorker = holder.timerWorker;
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.userKey, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
+            timerWorker.add(state.user.email, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
         } else if (newWidget instanceof Eventor) {
-            timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
+            timerWorker.add(state.user.email, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
@@ -230,12 +229,12 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
         }
     }
 
-    public int addTimers(TimerWorker timerWorker, UserKey userKey, int dashId) {
+    public int addTimers(TimerWorker timerWorker, String email, int dashId) {
         int counter = 0;
         for (TileTemplate template : templates) {
             for (Widget widgetInTemplate : template.widgets) {
                 if (widgetInTemplate instanceof Timer) {
-                    timerWorker.add(userKey, (Timer) widgetInTemplate, dashId, this.id, template.id);
+                    timerWorker.add(email, (Timer) widgetInTemplate, dashId, this.id, template.id);
                     counter++;
                 }
             }

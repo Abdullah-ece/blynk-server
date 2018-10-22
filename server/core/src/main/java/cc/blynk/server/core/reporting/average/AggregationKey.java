@@ -19,8 +19,8 @@ public final class AggregationKey implements Serializable {
     private final BaseReportingKey baseReportingKey;
     public final long ts;
 
-    public AggregationKey(String email, String appName, int dashId, int deviceId, PinType pinType, byte pin, long ts) {
-        this(new BaseReportingKey(email, appName, dashId, deviceId, pinType, pin), ts);
+    public AggregationKey(String email, int orgId, int dashId, int deviceId, PinType pinType, byte pin, long ts) {
+        this(new BaseReportingKey(email, orgId, dashId, deviceId, pinType, pin), ts);
     }
 
     public AggregationKey(BaseReportingKey baseReportingKey, long ts) {
@@ -40,8 +40,8 @@ public final class AggregationKey implements Serializable {
         return baseReportingKey.email;
     }
 
-    public String getAppName() {
-        return baseReportingKey.appName;
+    public int getOrgId() {
+        return baseReportingKey.orgId;
     }
 
     public int getDashId() {

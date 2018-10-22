@@ -20,7 +20,6 @@ import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
@@ -138,7 +137,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return badRequest("Event with code not found in product.");
         }
 
-        var session = sessionDao.userSession.get(new UserKey(tokenValue.user));
+        var session = sessionDao.userSession.get(tokenValue.user.email);
         var bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + eventCode;
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, 111, bodyForWeb, device.id);
 
@@ -186,7 +185,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
 
         return ok(session.isHardwareConnected(dashId, deviceId));
     }
@@ -203,7 +202,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
 
         return ok(tokenValue.dash.isActive && session.isAppConnected());
     }
@@ -411,7 +410,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Error setting widget property.");
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
         session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
                 deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
         return ok();
@@ -538,7 +537,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
         if (session == null) {
             log.debug("No session for user {}.", user.email);
             return Response.ok();
@@ -661,7 +660,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
         if (body != null) {
-            Session session = sessionDao.userSession.get(new UserKey(user));
+            Session session = sessionDao.userSession.get(user);
             if (session == null) {
                 log.error("No session for user {}.", user.email);
                 return Response.ok();

@@ -1,6 +1,5 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import com.zaxxer.hikari.HikariDataSource;
@@ -27,17 +26,17 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 public class UserDBDao {
 
     private static final String upsertUser =
-            "INSERT INTO users (email, appName, region, ip, name, pass, last_modified, last_logged,"
+            "INSERT INTO users (email, org_id, region, ip, name, pass, last_modified, last_logged,"
                     + " last_logged_ip, is_facebook_user, role_id, energy, json) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, org_id) DO UPDATE "
                     + "SET ip = EXCLUDED.ip, pass = EXCLUDED.pass, name = EXCLUDED.name, "
                     + "last_modified = EXCLUDED.last_modified, "
                     + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
                     + "is_facebook_user = EXCLUDED.is_facebook_user, role_id = EXCLUDED.role_id, "
                     + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";
-    private static final String selectIpForUser = "SELECT ip FROM users WHERE email = ? AND appName = ?";
-    private static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
+    private static final String selectIpForUser = "SELECT ip FROM users WHERE email = ?";
+    private static final String deleteUser = "DELETE FROM users WHERE email = ?";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
     private final HikariDataSource ds;
@@ -60,14 +59,13 @@ public class UserDBDao {
         return dbVersion;
     }
 
-    public String getUserServerIp(String email, String appName) {
+    public String getUserServerIp(String email) {
         String ip = null;
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectIpForUser)) {
 
             statement.setString(1, email);
-            statement.setString(2, appName);
 
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -76,14 +74,14 @@ public class UserDBDao {
                 connection.commit();
             }
         } catch (Exception e) {
-            log.error("Error getting user server ip. {}-{}. Reason : {}", email, appName, e.getMessage());
+            log.error("Error getting user server ip. {}. Reason : {}", email, e.getMessage());
         }
 
         return ip;
     }
 
-    public ConcurrentMap<UserKey, User> getAllUsers(String region) throws Exception {
-        ConcurrentMap<UserKey, User> users = new ConcurrentHashMap<>();
+    public ConcurrentMap<String, User> getAllUsers(String region) throws Exception {
+        ConcurrentMap<String, User> users = new ConcurrentHashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectAllUsers)) {
@@ -94,7 +92,7 @@ public class UserDBDao {
                     User user = new User(
                             rs.getString("email"),
                             rs.getString("pass"),
-                            rs.getString("appName"),
+                            rs.getInt("org_id"),
                             rs.getString("region"),
                             rs.getString("ip"),
                             rs.getBoolean("is_facebook_user"),
@@ -107,7 +105,7 @@ public class UserDBDao {
                             rs.getInt("energy")
                             );
 
-                    users.put(new UserKey(user), user);
+                    users.put(user.email, user);
                 }
                 connection.commit();
             }
@@ -132,7 +130,7 @@ public class UserDBDao {
 
             for (User user : users) {
                 ps.setString(1, user.email);
-                ps.setString(2, user.appName);
+                ps.setInt(2, user.orgId);
                 ps.setString(3, user.region);
                 ps.setString(4, user.ip);
                 ps.setString(5, user.name);
@@ -155,20 +153,19 @@ public class UserDBDao {
         log.info("Storing users finished. Time {}. Users saved {}", System.currentTimeMillis() - start, users.size());
     }
 
-    public boolean deleteUser(UserKey userKey) {
+    public boolean deleteUser(String email) {
         int removed = 0;
 
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(deleteUser)) {
 
-            ps.setString(1, userKey.email);
-            ps.setString(2, userKey.appName);
+            ps.setString(1, email);
 
             removed = ps.executeUpdate();
 
             connection.commit();
         } catch (Exception e) {
-            log.error("Error removing user {} from DB.", userKey, e);
+            log.error("Error removing user {} from DB.", email, e);
         }
 
         return removed > 0;

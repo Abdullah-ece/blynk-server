@@ -78,7 +78,7 @@ public class ReportingDBTest {
         aggregationValue.update(1.0D);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(
-                new AggregationKey("123", "appName", 1, 1, PinType.VIRTUAL, (byte) 1, System.currentTimeMillis() / MINUTE),
+                new AggregationKey("123", 1, 1, 1, PinType.VIRTUAL, (byte) 1, System.currentTimeMillis() / MINUTE),
                 aggregationValue
         );
         reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);

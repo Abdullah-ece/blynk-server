@@ -4,7 +4,7 @@ CREATE DATABASE blynk;
 
 CREATE TABLE users (
   email text NOT NULL,
-  appName text NOT NULL,
+  org_id id,
   region text,
   ip text,
   name text,
@@ -16,7 +16,7 @@ CREATE TABLE users (
   role_id int,
   energy int,
   json text,
-  PRIMARY KEY(email, appName)
+  PRIMARY KEY(email, org_id)
 );
 
 CREATE TABLE redeem (

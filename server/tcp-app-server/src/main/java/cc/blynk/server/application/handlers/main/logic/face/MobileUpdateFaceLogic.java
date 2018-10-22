@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
@@ -58,19 +57,18 @@ public final class MobileUpdateFaceLogic {
         boolean hasFaces = false;
         int count = 0;
         log.info("Updating face {} for user {}-{}. App Ids : {}", parentDashId,
-                user.email, user.appName, JsonParser.valueToJsonAsString(appIds));
+                user.email, user.orgId, JsonParser.valueToJsonAsString(appIds));
         for (User existingUser : holder.userDao.users.values()) {
             for (DashBoard existingDash : existingUser.profile.dashBoards) {
-                if (existingDash.parentId == parentDashId && (existingUser == user
-                        || appIds.contains(existingUser.appName))) {
+                if (existingDash.parentId == parentDashId) {
                     hasFaces = true;
                     //we found child project-face
-                    log.debug("Found face for {}-{}.", existingUser.email, existingUser.appName);
+                    log.debug("Found face for {}-{}.", existingUser.email, existingUser.orgId);
                     try {
                         existingDash.updateFaceFields(dash);
                         //do not close connection for initiator
                         if (existingUser != user) {
-                            holder.sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
+                            holder.sessionDao.closeAppChannelsByUser(existingUser.email);
                         }
                         count++;
                     } catch (Exception e) {

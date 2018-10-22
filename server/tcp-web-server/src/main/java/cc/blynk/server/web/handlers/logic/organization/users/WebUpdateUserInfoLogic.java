@@ -62,7 +62,7 @@ public final class WebUpdateUserInfoLogic {
             }
         }
 
-        User userToUpdate = userDao.getByName(userInviteDTO.email, user.appName);
+        User userToUpdate = userDao.getByName(userInviteDTO.email);
 
         log.info("Updating {} user for .", userToUpdate.email, user.email);
         userToUpdate.update(userInviteDTO);

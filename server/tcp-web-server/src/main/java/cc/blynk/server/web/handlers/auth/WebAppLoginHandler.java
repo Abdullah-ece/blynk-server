@@ -10,7 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.server.web.handlers.WebAppHandler;
 import cc.blynk.server.web.session.WebAppStateHolder;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -70,14 +69,12 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                 ? new Version(messageParts[2], messageParts[3])
                 : Version.UNKNOWN_VERSION;
 
-        String appName =  messageParts.length > 4 ? messageParts[4] : AppNameUtil.BLYNK;
-
-        blynkLogin(ctx, message.id, email, messageParts[1], version, appName);
+        blynkLogin(ctx, message.id, email, messageParts[1], version);
     }
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
-                            Version version, String appName) {
-        User user = holder.userDao.getByName(email, appName);
+                            Version version) {
+        User user = holder.userDao.getByName(email);
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
@@ -103,7 +100,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
         Channel channel = ctx.channel();
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.user.email, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering websocket app channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
@@ -120,7 +117,7 @@ public class WebAppLoginHandler extends SimpleChannelInboundHandler<LoginMessage
         session.addWebChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
 
-        log.info("{} {}-app ({}) joined.", user.email, user.appName, version);
+        log.info("{} orgId={} ({}) joined.", user.email, user.orgId, version);
     }
 
     @Override

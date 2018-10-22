@@ -53,8 +53,8 @@ public final class MobileUpdateDashLogic {
         var existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
         TimerWorker timerWorker = holder.timerWorker;
-        timerWorker.deleteTimers(state.userKey, existingDash);
-        updatedDash.addTimers(timerWorker, state.userKey);
+        timerWorker.deleteTimers(state.user.email, existingDash);
+        updatedDash.addTimers(timerWorker, state.user.email);
 
         existingDash.updateFields(updatedDash);
         user.lastModifiedTs = existingDash.updatedAt;

@@ -15,7 +15,6 @@ import cc.blynk.server.api.http.dashboard.dto.StartOtaDTO;
 import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -139,7 +138,7 @@ public class OTAHandler extends BaseHttpHandler {
             device.setDeviceOtaInfo(deviceOtaInfo);
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(user.email);
         if (session != null) {
             for (Channel channel : session.hardwareChannels) {
                 HardwareStateHolder hardwareState = getHardState(channel);

@@ -2,7 +2,6 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -64,11 +63,11 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private void process(long now) {
-        for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
+        for (Map.Entry<String, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
             //for now checking widgets for active app only
             if ((allowRunWithoutApp || session.isAppConnected()) && session.isHardwareConnected()) {
-                UserKey userKey = entry.getKey();
+                String userKey = entry.getKey();
                 User user = userDao.users.get(userKey);
                 if (user != null) {
                     for (DashBoard dashBoard : user.profile.dashBoards) {

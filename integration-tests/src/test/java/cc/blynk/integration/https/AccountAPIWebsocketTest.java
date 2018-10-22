@@ -12,7 +12,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.sleep;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -70,7 +69,7 @@ public class AccountAPIWebsocketTest extends APIBaseTest {
         assertNotNull(user);
         assertEquals("admin@blynk.cc", user.email);
         assertEquals("admin@blynk.cc", user.name);
-        assertEquals(BLYNK, user.appName);
+        assertEquals(1, user.orgId);
         assertNull(user.pass);
         assertEquals(Role.SUPER_ADMIN_ROLE_ID, user.roleId);
         assertEquals(UserStatus.Active, user.status);

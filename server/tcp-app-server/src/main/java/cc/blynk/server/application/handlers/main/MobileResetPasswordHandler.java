@@ -97,7 +97,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
         } else {
             String email = resetPassToken.email;
-            User user = userDao.getByName(email, resetPassToken.appName);
+            User user = userDao.getByName(email);
             if (user == null) {
                 log.warn("User is not exists anymore. {}", resetPassToken);
                 ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
@@ -137,7 +137,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
             return;
         }
 
-        User user = userDao.getByName(trimmedEmail, appName);
+        User user = userDao.getByName(trimmedEmail);
 
         if (user == null) {
             log.debug("User does not exists.");

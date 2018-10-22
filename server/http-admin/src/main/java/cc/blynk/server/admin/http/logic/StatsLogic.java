@@ -11,7 +11,6 @@ import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -72,14 +71,14 @@ public class StatsLogic extends BaseHttpHandler {
     public Response getRequestPerUser(@QueryParam("_sortField") String sortField,
                                           @QueryParam("_sortDir") SortOrder sortOrder) {
         List<RequestPerSecondResponse> res = new ArrayList<>();
-        for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
+        for (Map.Entry<String, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             int appReqRate = session.getAppRequestRate();
             int hardReqRate = session.getHardRequestRate();
 
             if (appReqRate > 0 || hardReqRate > 0) {
-                res.add(new RequestPerSecondResponse(entry.getKey().email, appReqRate, hardReqRate));
+                res.add(new RequestPerSecondResponse(entry.getKey(), appReqRate, hardReqRate));
             }
         }
         return ok(sort(res, sortField, sortOrder));
@@ -170,7 +169,7 @@ public class StatsLogic extends BaseHttpHandler {
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
-                String name = user.email + "-" + user.appName;
+                String name = user.email + "-" + user.orgId;
                 if (ip == null) {
                     res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "app"));
                     for (DashBoard dashBoard : user.profile.dashBoards) {

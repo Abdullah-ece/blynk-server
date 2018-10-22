@@ -34,11 +34,11 @@ public class UserDao {
 
     private static final Logger log = LogManager.getLogger(UserDao.class);
 
-    public final ConcurrentMap<UserKey, User> users;
+    public final ConcurrentMap<String, User> users;
     private final String region;
     private final String host;
 
-    public UserDao(ConcurrentMap<UserKey, User> users, String region, String host) {
+    public UserDao(ConcurrentMap<String, User> users, String region, String host) {
         //reading DB to RAM.
         this.users = users;
         this.region = region;
@@ -46,8 +46,8 @@ public class UserDao {
         log.info("Region : {}. Host : {}.", region, host);
     }
 
-    public boolean isUserExists(String name, String appName) {
-        return users.get(new UserKey(name, appName)) != null;
+    public boolean isUserExists(String name) {
+        return users.get(name) != null;
     }
 
     public boolean isSuperAdminExists() {
@@ -64,30 +64,25 @@ public class UserDao {
         return null;
     }
 
-    public User getByName(UserKey uSerKey) {
-        return users.get(uSerKey);
+    public User getByName(String name) {
+        return users.get(name);
     }
 
-    public User getByName(String name, String appName) {
-        return users.get(new UserKey(name, appName));
-    }
-
-    public boolean contains(String name, String appName) {
-        return users.containsKey(new UserKey(name, appName));
+    public boolean contains(String name) {
+        return users.containsKey(name);
     }
 
     //for tests only
-    public Map<UserKey, User> getUsers() {
+    public Map<String, User> getUsers() {
         return users;
     }
 
-    public List<User> searchByUsername(String name, String appName) {
+    public List<User> searchByUsername(String name) {
         if (name == null) {
             return new ArrayList<>(users.values());
         }
 
-        return users.values().stream().filter(user -> user.email.contains(name)
-                && (appName == null || user.appName.equals(appName))).collect(Collectors.toList());
+        return users.values().stream().filter(user -> user.email.contains(name)).collect(Collectors.toList());
     }
 
     public List<User> getUsersByOrgId(int orgId, String filterMail) {
@@ -110,16 +105,12 @@ public class UserDao {
         return result;
     }
 
-    public User delete(UserKey userKey) {
-        return users.remove(userKey);
-    }
-
-    public User delete(String name, String appName) {
-        return delete(new UserKey(name, appName));
+    public User delete(String email) {
+        return users.remove(email);
     }
 
     public void add(User user) {
-        users.put(new UserKey(user), user);
+        users.put(user.email, user);
     }
 
     public Map<String, Integer> getBoardsUsage() {
@@ -325,7 +316,7 @@ public class UserDao {
         clonedDash.eraseValues();
         clonedDash.removeDevicesProvisionedFromDeviceTiles();
 
-        clonedDash.addTimers(timerWorker, new UserKey(newUser));
+        clonedDash.addTimers(timerWorker, newUser.email);
 
         newUser.profile.dashBoards = new DashBoard[] {clonedDash};
 
@@ -366,36 +357,34 @@ public class UserDao {
         return url.substring(doubleslash, end);
     }
 
-    public User addFacebookUser(String email, String appName) {
-        log.debug("Adding new facebook user {}. App : {}", email, appName);
+    public User addFacebookUser(String email, int orgId) {
+        log.debug("Adding new facebook user {}. OrgId : {}", email, orgId);
         //todo add default role instead of hardcoded
-        User newUser = new User(email, null, appName, region, host, true, 2);
+        User newUser = new User(email, null, orgId, region, host, true, 2);
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
     }
 
-    public User add(String email, String passHash, String appName, int orgId, int roleId) {
-        log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, passHash, appName, region, host, false, roleId);
+    public User add(String email, String passHash, int orgId, int roleId) {
+        log.debug("Adding new user {}. OrgId : {}", email, orgId);
+        User newUser = new User(email, passHash, orgId, region, host, false, roleId);
         newUser.orgId = orgId;
         newUser.status = UserStatus.Active;
         add(newUser);
         return newUser;
     }
 
-    public User invite(UserInviteDTO invite, int orgId, String appName) {
-        UserKey userKey = new UserKey(invite.email, appName);
-        User existingUser = users.get(userKey);
+    public User invite(UserInviteDTO invite, int orgId) {
+        User existingUser = users.get(invite.email);
 
         //do not allow to invite signed up user
         if (existingUser != null && existingUser.status == UserStatus.Active) {
             return null;
         }
 
-        User newUser = new User(invite.email, null, appName, region, host, false, invite.roleId);
+        User newUser = new User(invite.email, null, orgId, region, host, false, invite.roleId);
         newUser.name = invite.name;
-        newUser.orgId = orgId;
         newUser.status = UserStatus.Pending;
         add(newUser);
         return newUser;

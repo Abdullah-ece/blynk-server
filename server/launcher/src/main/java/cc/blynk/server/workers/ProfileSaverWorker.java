@@ -87,7 +87,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
             backupTs = now;
             for (User user : userDao.users.values()) {
                 try {
-                    Path path = fileManager.generateBackupFileName(user.email, user.appName);
+                    Path path = fileManager.generateBackupFileName(user.email, user.orgId);
                     JsonParser.writeUser(path.toFile(), user);
                 } catch (Exception e) {
                     //ignore

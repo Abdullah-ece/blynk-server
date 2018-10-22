@@ -1,6 +1,5 @@
 package cc.blynk.server.core.session;
 
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 
 /**
@@ -15,11 +14,9 @@ import cc.blynk.server.core.model.auth.User;
 public abstract class StateHolderBase {
 
     public final User user;
-    public final UserKey userKey;
 
     public StateHolderBase(User user) {
         this.user = user;
-        this.userKey = new UserKey(user);
     }
 
     public abstract boolean contains(String sharedToken);

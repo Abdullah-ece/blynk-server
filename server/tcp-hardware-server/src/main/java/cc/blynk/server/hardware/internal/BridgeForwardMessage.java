@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.internal;
 
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
 /**
@@ -15,12 +14,12 @@ public class BridgeForwardMessage {
 
     public final TokenValue tokenValue;
 
-    public final UserKey userKey;
+    public final String email;
 
-    public BridgeForwardMessage(StringMessage bridgeMessage, TokenValue tokenValue, UserKey userKey) {
+    public BridgeForwardMessage(StringMessage bridgeMessage, TokenValue tokenValue, String email) {
         this.message = bridgeMessage;
         this.tokenValue = tokenValue;
-        this.userKey = userKey;
+        this.email = email;
     }
 }
 

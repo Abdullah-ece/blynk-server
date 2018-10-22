@@ -15,7 +15,6 @@ import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.ReportingDBDao;
-import cc.blynk.utils.AppNameUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -266,13 +265,12 @@ public class RealtimeStatsDBTest {
     public void testManyConnections() throws Exception {
         User user = new User();
         user.email = "test@test.com";
-        user.appName = AppNameUtil.BLYNK;
         Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
         AggregationValue value = new AggregationValue();
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(user.email, user.appName, i, 0, PinType.ANALOG, (byte) i, ts), value);
+            map.put(new AggregationKey(user.email, user.orgId, i, 0, PinType.ANALOG, (byte) i, ts), value);
             reportingDBManager.insertReporting(map, GraphGranularityType.MINUTE);
             reportingDBManager.insertReporting(map, GraphGranularityType.HOURLY);
             reportingDBManager.insertReporting(map, GraphGranularityType.DAILY);

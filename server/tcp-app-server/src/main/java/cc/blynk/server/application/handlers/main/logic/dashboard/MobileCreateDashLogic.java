@@ -95,7 +95,7 @@ public final class MobileCreateDashLogic {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        newDash.addTimers(holder.timerWorker, state.userKey);
+        newDash.addTimers(holder.timerWorker, state.user.email);
 
         if (!generateTokensForDevices) {
             newDash.eraseValues();

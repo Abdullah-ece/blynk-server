@@ -24,7 +24,7 @@ public final class MobileLogoutLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage msg) {
-        log.debug("User {}-{} did logout.", user.email, user.appName);
+        log.debug("User {}-{} did logout.", user.email, user.orgId);
         ctx.writeAndFlush(ok(msg.id), ctx.voidPromise());
 
         String uid = msg.body;

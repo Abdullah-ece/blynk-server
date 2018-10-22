@@ -94,7 +94,7 @@ public class ReportingWorker implements Runnable {
 
                 try {
                     Path userReportFolder = Paths.get(reportingPath,
-                            FileUtils.getUserStorageDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
+                            FileUtils.getUserStorageDir(keyToRemove.getEmail()));
                     if (Files.notExists(userReportFolder)) {
                         Files.createDirectories(userReportFolder);
                     }

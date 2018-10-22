@@ -163,8 +163,9 @@ public class Organization {
     }
 
     //todo fix it. for now taking last one
-    public Role getDefaultRole() {
-        return roles[roles.length - 1];
+    public int getDefaultRoleId() {
+        Role lastRole = roles[roles.length - 1];
+        return lastRole == null ? 1 : lastRole.id;
     }
 
     @Override

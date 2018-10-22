@@ -33,14 +33,14 @@ public class MobileChannelStateHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         var state = getAppState(ctx.channel());
         if (state != null) {
-            var session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.userSession.get(state.user.email);
             if (session != null) {
                 log.trace("Application channel disconnect. {}", ctx.channel());
 
                 for (var dashBoard : state.user.profile.dashBoards) {
                     if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                         log.trace("{}-{}. Sending App Disconnected event to hardware.",
-                                state.user.email, state.user.appName);
+                                state.user.email, state.user.orgId);
                         session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "adis");
                     }
                 }

@@ -1,7 +1,6 @@
 package cc.blynk.server.tools;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -35,7 +34,7 @@ public final class ForwardingTokenGenerator {
 
     private static void process(DBManager dbManager, String region, String ip) throws Exception {
         System.out.println("Reading all users from region : " + region + ". Forward to " + ip);
-        ConcurrentMap<UserKey, User> users = dbManager.userDBDao.getAllUsers(region);
+        ConcurrentMap<String, User> users = dbManager.userDBDao.getAllUsers(region);
         System.out.println("Read " + users.size() + " users.");
         int count = 0;
         List<ForwardingTokenEntry> entryList = new ArrayList<>(1100);

@@ -59,13 +59,13 @@ public class OrganizationDao {
     /**
      * Super org is initially created organization
      */
-    public Organization getSuperOrg() {
+    public Organization getSuperOrgOrThrow() {
         for (Organization org : organizations.values()) {
             if (org.parentId == Organization.SUPER_ORG_PARENT_ID) {
                 return org;
             }
         }
-        return null;
+        throw new RuntimeException("Super organization is missing! Should never happen!");
     }
 
     public Organization create(Organization organization) {
@@ -276,9 +276,8 @@ public class OrganizationDao {
         if (org != null) {
             List<User> users = userDao.getAllUsersByOrgId(orgId);
             for (User user : users) {
-                UserKey userKey = new UserKey(user.email, user.appName);
-                userDao.delete(userKey);
-                fileManager.delete(userKey);
+                userDao.delete(user.email);
+                fileManager.delete(user.email);
             }
             fileManager.deleteOrg(orgId);
             return true;

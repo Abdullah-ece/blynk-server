@@ -38,7 +38,6 @@ import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
-import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -85,7 +84,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         String name = "admin@blynk.cc";
         String pass = "admin";
-        admin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, Role.SUPER_ADMIN_ROLE_ID);
+        admin = new User(name, SHA256Util.makeHash(pass, name), 1, "local", "127.0.0.1", false, Role.SUPER_ADMIN_ROLE_ID);
         admin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -94,7 +93,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         name = "admin2@blynk.cc";
         pass = "admin2";
-        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, 1);
+        regularAdmin = new User(name, SHA256Util.makeHash(pass, name), 1, "local", "127.0.0.1", false, 1);
         regularAdmin.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };
@@ -103,7 +102,7 @@ public abstract class APIBaseTest extends CounterBase {
 
         name = "user@blynk.cc";
         pass = "user";
-        regularUser = new User(name, SHA256Util.makeHash(pass, name), BLYNK, "local", "127.0.0.1", false, 2);
+        regularUser = new User(name, SHA256Util.makeHash(pass, name), 1, "local", "127.0.0.1", false, 2);
         regularUser.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
         };

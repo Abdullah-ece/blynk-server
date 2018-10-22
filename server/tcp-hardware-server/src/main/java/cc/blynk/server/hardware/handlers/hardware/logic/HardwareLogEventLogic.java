@@ -84,7 +84,7 @@ public class HardwareLogEventLogic {
             return;
         }
 
-        var session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.userSession.get(state.user.email);
         var bodyForWeb = event.getType() + StringUtils.BODY_SEPARATOR_STRING + message.body;
         session.sendToSelectedDeviceOnWeb(HARDWARE_LOG_EVENT, message.id, bodyForWeb, device.id);
 

@@ -6,8 +6,6 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.AppNameUtil;
@@ -46,9 +44,6 @@ public class UsersLogicTest {
 
     private User user;
 
-    @Mock
-    private Session session;
-
     private UsersLogic usersLogic;
     private static final String TEST_USER = "test_user";
     private static Path userFile;
@@ -57,9 +52,9 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", "127.0.0.1", false, 1);
+        user = new User(TEST_USER, "123", 1, "local", "127.0.0.1", false, 1);
         when(userDao.delete(any())).thenReturn(user);
-        sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
+        sessionDao.getOrCreateSessionByUser(user.email, mock(EventLoop.class));
         FileManager fileManager = new FileManager(null, null);
         usersLogic = new UsersLogic(userDao, sessionDao, dbManager, fileManager, null, reportingDao, "admin");
 
@@ -72,7 +67,7 @@ public class UsersLogicTest {
     }
 
     @Test
-    public void deleteUserByName() throws Exception {
+    public void deleteUserByName() {
         Response response = usersLogic.deleteUserByName(TEST_USER + "-" + AppNameUtil.BLYNK);
 
         assertEquals(OK, response.status());
@@ -81,7 +76,7 @@ public class UsersLogicTest {
     }
 
     @Test
-    public void deleteFakeUserByName() throws Exception {
+    public void deleteFakeUserByName() {
         Response response = usersLogic.deleteUserByName("fake user" + "-" + AppNameUtil.BLYNK);
 
         assertEquals(NOT_FOUND, response.status());

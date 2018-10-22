@@ -1,7 +1,6 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
@@ -118,9 +117,9 @@ public class DBManager implements Closeable {
         return config;
     }
 
-    public void deleteUser(UserKey userKey) {
-        if (isDBEnabled() && userKey != null) {
-            blockingIOProcessor.executeDB(() -> userDBDao.deleteUser(userKey));
+    public void deleteUser(String email) {
+        if (isDBEnabled() && email != null) {
+            blockingIOProcessor.executeDB(() -> userDBDao.deleteUser(email));
         }
     }
 
@@ -205,9 +204,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public String getUserServerIp(String email, String appName) {
+    public String getUserServerIp(String email) {
         if (isDBEnabled()) {
-            return userDBDao.getUserServerIp(email, appName);
+            return userDBDao.getUserServerIp(email);
         }
         return null;
     }

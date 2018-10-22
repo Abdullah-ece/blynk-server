@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -68,10 +67,8 @@ public final class WebDeleteUserLogic {
             return;
         }
 
-        String appName = user.appName;
         for (String emailToDelete : emailsToDelete) {
-            UserKey userToDeleteKey = new UserKey(emailToDelete, appName);
-            User userToDelete = userDao.getByName(userToDeleteKey);
+            User userToDelete = userDao.getByName(emailToDelete);
             if (userToDelete != null) {
                 if (userToDelete.isSuperAdmin()) {
                     log.error("{} tries to remove super admin.", user.email);
@@ -80,10 +77,10 @@ public final class WebDeleteUserLogic {
                 }
                 if (userToDelete.orgId == orgId) {
                     log.info("Deleting {} user for {}.", emailToDelete, user.email);
-                    userDao.delete(userToDeleteKey);
-                    fileManager.delete(userToDeleteKey);
-                    dbManager.deleteUser(userToDeleteKey);
-                    sessionDao.deleteUser(userToDeleteKey);
+                    userDao.delete(emailToDelete);
+                    fileManager.delete(emailToDelete);
+                    dbManager.deleteUser(emailToDelete);
+                    sessionDao.deleteUser(emailToDelete);
                 }
             }
         }

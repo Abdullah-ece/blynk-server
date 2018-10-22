@@ -216,6 +216,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("createDash " + dashJson);
     }
 
+    public void register(String email, String pass) {
+        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + BLYNK);
+    }
+
     public void register(String email, String pass, String appName) {
         send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }

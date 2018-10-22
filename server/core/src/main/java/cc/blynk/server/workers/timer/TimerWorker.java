@@ -2,7 +2,6 @@ package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -73,9 +72,9 @@ public class TimerWorker implements Runnable {
         init(userDao.users);
     }
 
-    private void init(ConcurrentMap<UserKey, User> users) {
+    private void init(ConcurrentMap<String, User> users) {
         int counter = 0;
-        for (Map.Entry<UserKey, User> entry : users.entrySet()) {
+        for (Map.Entry<String, User> entry : users.entrySet()) {
             for (DashBoard dashBoard : entry.getValue().profile.dashBoards) {
                 for (Widget widget : dashBoard.widgets) {
                     if (widget instanceof DeviceTiles) {
@@ -96,7 +95,7 @@ public class TimerWorker implements Runnable {
         log.info("Timers : {}", counter);
     }
 
-    public void add(UserKey userKey, Eventor eventor, int dashId) {
+    public void add(String userKey, Eventor eventor, int dashId) {
         if (eventor.rules != null) {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
@@ -107,7 +106,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void add(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
+    public void add(String userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
         if (timer.isValid()) {
             if (timer.isValidStart()) {
                 TimerTime timerTime = new TimerTime(timer.startTime);
@@ -126,7 +125,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
+    private void add(String userKey, int dashId, int deviceId, long widgetId,
                      int additionalId, TimerTime time, BaseAction[] actions) {
         ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
         for (BaseAction action : actions) {
@@ -142,7 +141,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void delete(UserKey userKey, Eventor eventor, int dashId) {
+    public void delete(String userKey, Eventor eventor, int dashId) {
         if (eventor.rules != null) {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
@@ -153,7 +152,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void delete(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
+    public void delete(String userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
         if (timer.isValidStart()) {
             delete(userKey, dashId, timer.deviceId, timer.id, 0,
                     deviceTilesId, templateId, new TimerTime(timer.startTime));
@@ -164,7 +163,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId,
+    private void delete(String userKey, int dashId, int deviceId, long widgetId, int additionalId,
                         long deviceTilesId, long templateId, TimerTime time) {
         ConcurrentHashMap<TimerKey, BaseAction[]> secondExecutor = timerExecutors.get(time.time);
         if (secondExecutor != null) {
@@ -278,7 +277,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int[] deviceIds) {
+    private void triggerTimer(SessionDao sessionDao, String userKey, String value, int dashId, int[] deviceIds) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
             if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceIds)) {
@@ -290,7 +289,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void deleteTimers(UserKey userKey, DashBoard dash) {
+    public void deleteTimers(String userKey, DashBoard dash) {
         for (Widget widget : dash.widgets) {
             if (widget instanceof DeviceTiles) {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
@@ -303,7 +302,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void deleteTimers(UserKey userKey, int dashId, DeviceTiles deviceTiles) {
+    private void deleteTimers(String userKey, int dashId, DeviceTiles deviceTiles) {
         for (TileTemplate template : deviceTiles.templates) {
             for (Widget widgetInTemplate : template.widgets) {
                 if (widgetInTemplate instanceof Timer) {

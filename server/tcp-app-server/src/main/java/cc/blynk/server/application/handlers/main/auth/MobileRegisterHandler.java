@@ -1,17 +1,13 @@
 package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
-import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
@@ -45,21 +41,15 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
     private final UserDao userDao;
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
-    private final MailWrapper mailWrapper;
-    private final BlockingIOProcessor blockingIOProcessor;
     private final LimitChecker registrationLimitChecker;
-    private final String emailBody;
     private final OrganizationDao organizationDao;
 
     public MobileRegisterHandler(Holder holder) {
         this.userDao = holder.userDao;
         this.tokenManager = holder.tokenManager;
         this.timerWorker = holder.timerWorker;
-        this.mailWrapper = holder.mailWrapper;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
         this.organizationDao = holder.organizationDao;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
-        this.emailBody = holder.textHolder.registerEmailTemplate;
     }
 
     @Override
@@ -82,7 +72,10 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
         String email = messageParts[0].trim().toLowerCase();
         String passHash = messageParts[1];
         String appName = messageParts[2];
-        log.info("Trying register user : {}, app : {}", email, appName);
+        Organization superOrg = organizationDao.getSuperOrgOrThrow();
+        int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
+
+        log.info("Trying register user : {}, app : {}, orgId : {}", email, appName, orgId);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
             log.error("Register Handler. Wrong email: {}", email);
@@ -90,29 +83,16 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
             return;
         }
 
-        if (userDao.isUserExists(email, appName)) {
+        if (userDao.isUserExists(email)) {
             log.warn("User with email {} already exists.", email);
             ctx.writeAndFlush(alreadyRegistered(message.id), ctx.voidPromise());
             return;
         }
 
-        Organization superOrg = organizationDao.getSuperOrg();
-        int orgId = superOrg == null ? OrganizationDao.DEFAULT_ORGANIZATION_ID : superOrg.id;
-        Role defaultOrgRole = superOrg.getDefaultRole();
-        User newUser = userDao.add(email, passHash, appName, orgId, defaultOrgRole.id);
+        int defaultOrgRoleId = superOrg.getDefaultRoleId();
+        User newUser = userDao.add(email, passHash, orgId, defaultOrgRoleId);
 
         log.info("Registered {}.", email);
-
-        //sending greeting email only for Blynk apps
-        if (AppNameUtil.BLYNK.equals(appName)) {
-            blockingIOProcessor.execute(() -> {
-                try {
-                    mailWrapper.sendHtml(email, "Get started with Blynk", emailBody);
-                } catch (Exception e) {
-                    log.warn("Error sending greeting email for {}.", email);
-                }
-            });
-        }
 
         userDao.createProjectForExportedApp(timerWorker, tokenManager, newUser, appName, message.id);
 

@@ -1444,7 +1444,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient1.register("test@blynk.cc", "a", "Blynk");
         appClient1.verifyResult(ok(1));
 
-        User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        User user = holder.userDao.getByName("test@blynk.cc");
         assertNull(user.lastLoggedIP);
 
         verify(holder.mailWrapper).sendHtml(eq("test@blynk.cc"), eq("Get started with Blynk"), contains("Welcome to Blynk, a platform to build your next awesome IOT project."));
@@ -1452,7 +1452,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient1.login("test@blynk.cc", "a");
         appClient1.verifyResult(ok(2));
 
-        user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        user = holder.userDao.getByName("test@blynk.cc");
         assertNull(user.lastLoggedIP);
     }
 

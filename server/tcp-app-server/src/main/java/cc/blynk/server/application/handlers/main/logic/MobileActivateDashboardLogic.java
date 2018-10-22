@@ -48,7 +48,7 @@ public final class MobileActivateDashboardLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         SessionDao sessionDao = holder.sessionDao;
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.user.email);
 
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {

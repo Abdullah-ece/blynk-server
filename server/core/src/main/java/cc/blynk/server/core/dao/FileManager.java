@@ -109,12 +109,12 @@ public class FileManager {
         return Paths.get(orgDataDir.toString(), orgId + ORG_FILE_EXTENSION);
     }
 
-    public Path generateFileName(String email, String appName) {
-        return Paths.get(dataDir.toString(), email + "." + appName + USER_FILE_EXTENSION);
+    public Path generateFileName(String email) {
+        return Paths.get(dataDir.toString(), email + USER_FILE_EXTENSION);
     }
 
-    public Path generateBackupFileName(String email, String appName) {
-        return Paths.get(backupDataDir.toString(), email + "." + appName + ".user."
+    public Path generateBackupFileName(String email, int orgId) {
+        return Paths.get(backupDataDir.toString(), email + "." + orgId + ".user."
                 + new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
@@ -129,12 +129,8 @@ public class FileManager {
         return true;
     }
 
-    public boolean delete(UserKey userKey) {
-        return delete(userKey.email, userKey.appName);
-    }
-
-    public boolean delete(String email, String appName) {
-        Path file = generateFileName(email, appName);
+    public boolean delete(String email) {
+        Path file = generateFileName(email);
         try {
             FileUtils.move(file, this.deletedDataDir);
         } catch (IOException e) {
@@ -150,7 +146,7 @@ public class FileManager {
     }
 
     public void overrideUserFile(User user) throws IOException {
-        Path path = generateFileName(user.email, user.appName);
+        Path path = generateFileName(user.email);
 
         JsonParser.writeUser(path.toFile(), user);
     }
@@ -188,11 +184,11 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public ConcurrentMap<UserKey, User> deserializeUsers() {
+    public ConcurrentMap<String, User> deserializeUsers() {
         log.debug("Starting reading user DB.");
 
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**" + USER_FILE_EXTENSION);
-        ConcurrentMap<UserKey, User> temp;
+        ConcurrentMap<String, User> temp;
         try {
             temp = Files.walk(dataDir, 1).parallel()
                     .filter(path -> Files.isRegularFile(path) && pathMatcher.matches(path))
@@ -213,7 +209,7 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(UserKey::new, identity()));
+                    .collect(Collectors.toConcurrentMap((user) -> user.email, identity()));
         } catch (Exception e) {
             log.error("Error reading user profiles from disk. {}", e.getMessage());
             throw new RuntimeException(e);
