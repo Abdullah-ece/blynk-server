@@ -55,12 +55,18 @@ public class Organization {
 
     public Organization(String name, String tzName, String logoUrl,
                         boolean canCreateOrgs, int parentId, Role... roles) {
+        this(name, tzName, logoUrl, canCreateOrgs, parentId, false, roles);
+    }
+
+    public Organization(String name, String tzName, String logoUrl,
+                        boolean canCreateOrgs, int parentId, boolean isActive, Role... roles) {
         this();
         this.name = name;
         this.tzName = tzName;
         this.logoUrl = logoUrl;
         this.canCreateOrgs = canCreateOrgs;
         this.parentId = parentId;
+        this.isActive = isActive;
         //todo, org should always have at least 1 role
         this.roles = roles == null ? new Role[0] : roles;
     }

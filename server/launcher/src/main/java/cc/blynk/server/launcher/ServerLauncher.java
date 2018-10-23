@@ -33,14 +33,12 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
-import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
@@ -162,47 +160,12 @@ public final class ServerLauncher {
                 pass = StringUtils.randomPassword(24);
             }
 
-            Organization superOrg = new Organization("Airius", "Europe/Kiev",
-                    "/static/logo.png", true, SUPER_ORG_PARENT_ID,
-                    new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
-                    new Role(1, "Admin", 0b11111111111111111111),
-                    new Role(2, "Staff", 0b11111111111111111111),
-                    new Role(3, "User", 0b11111111111111111111));
-            Organization mainOrg = holder.organizationDao.create(superOrg);
-            mainOrg.isActive = true;
-            holder.organizationDao.create(
-                    new Organization("New Organization Inc. (orgId=2)",
-                            "Europe/Kiev", "/static/logo.png", false, superOrg.id));
-            Product product = new Product();
-            product.boardType = "Particle Photon";
-            product.connectionType = ConnectionType.WI_FI;
-            product.description = "Default Product Template";
-            product.name = "Test Product";
-            product.metaFields = new MetaField[] {
-                    new TextMetaField(1, "Device Name", new int[] {1}, false, false, true, null, "Default device")
-            };
-            product.events = createDefaultEvents();
-
-            WebLabel webLabel = new WebLabel();
-            webLabel.label = "Test val";
-            webLabel.id = 1;
-            webLabel.x = 0;
-            webLabel.y = 0;
-            webLabel.height = 1;
-            webLabel.width = 2;
-            webLabel.sources = new WebSource[] {
-                    new WebSource("some Label", "#334455",
-                            false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
-                            null,
-                            null,
-                            null, SortOrder.ASC, 10, false, null, false)
-            };
-
-            product.webDashboard = new WebDashboard(new Widget[] {
-                    webLabel
-            });
-
-            holder.organizationDao.createProduct(mainOrg.id, product);
+            Organization superOrg;
+            if (holder.organizationDao.organizations.size() == 0) {
+                superOrg = createDefaultOrgData(holder);
+            } else {
+                superOrg = holder.organizationDao.getSuperOrgOrThrow();
+            }
 
             System.out.println("Your Admin url is " + url);
             System.out.println("Your Admin login email is " + email);
@@ -229,35 +192,80 @@ public final class ServerLauncher {
             superAdmin.profile.apps = new App[] {
                 app
             };
+        }
+    }
 
-            for (int i = 0; i < 20; i++) {
-                Device device = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
-                        product.id, ConnectionType.WI_FI);
-                device.hardwareInfo = new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
-                        "WI-FI", "0.0.0", null, 1, -1);
-                holder.deviceDao.create(mainOrg.id, device);
-                for (EventType eventType : EventType.values()) {
-                    try {
-                        Event event = product.findEventByType(eventType);
-                        holder.reportingDBManager.insertEvent(device.id, eventType,
-                                System.currentTimeMillis(), event.hashCode(), null);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+    private static Organization createDefaultOrgData(Holder holder) {
+        System.out.println("Creating default organization structure.");
+        Organization superOrg = new Organization("Airius", "Europe/Kiev",
+                "/static/logo.png", true, SUPER_ORG_PARENT_ID, true,
+                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                new Role(1, "Admin", 0b11111111111111111111),
+                new Role(2, "Staff", 0b11111111111111111111),
+                new Role(3, "User", 0b11111111111111111111));
+        superOrg = holder.organizationDao.create(superOrg);
+
+        holder.organizationDao.create(
+                new Organization("New Organization Inc. (orgId=2)",
+                        "Europe/Kiev", "/static/logo.png", false, superOrg.id));
+
+        Product product = new Product();
+        product.boardType = "Particle Photon";
+        product.connectionType = ConnectionType.WI_FI;
+        product.description = "Default Product Template";
+        product.name = "Test Product";
+        product.metaFields = new MetaField[] {
+                new TextMetaField(1, "Device Name", new int[] {1}, false, false, true, null, "Default device")
+        };
+        product.events = createDefaultEvents();
+
+        WebLabel webLabel = new WebLabel();
+        webLabel.label = "Test val";
+        webLabel.id = 1;
+        webLabel.x = 0;
+        webLabel.y = 0;
+        webLabel.height = 1;
+        webLabel.width = 2;
+        webLabel.sources = new WebSource[] {
+                new WebSource("some Label", "#334455",
+                        false, RAW_DATA, new DataStream((byte) 0, PinType.VIRTUAL),
+                        null,
+                        null,
+                        null, SortOrder.ASC, 10, false, null, false)
+        };
+
+        product.webDashboard = new WebDashboard(new Widget[] {
+                webLabel
+        });
+
+        holder.organizationDao.createProduct(superOrg.id, product);
+
+        for (int i = 0; i < 20; i++) {
+            Device device = new Device("My Device " + i, BoardType.ESP8266, "auth_123",
+                    product.id, ConnectionType.WI_FI);
+            device.hardwareInfo = new HardwareInfo("1.0.0", "0.5.0", "Particle Photon", "atm33",
+                    "WI-FI", "0.0.0", null, 1, -1);
+            holder.deviceDao.create(superOrg.id, device);
+            for (EventType eventType : EventType.values()) {
+                try {
+                    Event event = product.findEventByType(eventType);
+                    holder.reportingDBManager.insertEvent(device.id, eventType,
+                            System.currentTimeMillis(), event.hashCode(), null);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-
-            //todo
-            //for local testing. will be removed in future.
-            //always adding 10 users to initial organization
-            String name = "user{i}@blynk.cc";
-            pass = "123";
-            for (int i = 0; i < 10; i++) {
-                email = name.replace("{i}", "" + i);
-                hash = SHA256Util.makeHash(pass, email);
-                holder.userDao.add(email, hash, superOrg.id, 2);
-            }
         }
+
+        String name = "user{i}@blynk.cc";
+        String pass = "123";
+        for (int i = 0; i < 10; i++) {
+            String email = name.replace("{i}", "" + i);
+            String hash = SHA256Util.makeHash(pass, email);
+            holder.userDao.add(email, hash, superOrg.id, 2);
+        }
+
+        return superOrg;
     }
 
     private static Event[] createDefaultEvents() {
@@ -282,13 +290,6 @@ public final class ServerLauncher {
                 warningEvent,
                 criticalEvent
         };
-    }
-
-    private static String buildServerUpEmailBody(String url, String email, String pass) {
-        String sb = "Your Admin url is " + url + "<br>"
-                + "Your Admin login email is <b>" + email + "</b><br>"
-                + "Your Admin password is <b>" + pass + "</b>";
-        return FileLoaderUtil.readNewServerUpTemplateAsString().replace(Placeholders.DYNAMIC_SECTION, sb);
     }
 
     private static boolean startServers(BaseServer[] servers) {
