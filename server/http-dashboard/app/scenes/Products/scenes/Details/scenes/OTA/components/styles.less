@@ -14,10 +14,8 @@
     margin: 32px 0;
 
     h4 {
-      font-size: 18px;
-      color: @color-dark-grey;
        margin: 29px 0;
-      font-weight: normal;
+      .font-book-text-group-title-dark;
     }
 
     &-progress {
@@ -36,8 +34,8 @@
     transition: 0.15s;
 
     &-error {
+      .font-book-text-group-title;
       color: @color-critical;
-      font-size: 18px;
       margin-bottom: 16px;
     }
 
@@ -54,20 +52,16 @@
       overflow: hidden;
     }
     &-firmware-name {
+      .font-book-text-group-title;
       color: @color-dark-grey-75;
-      font-weight: 500;
-      font-size: 18px;
       &-success {
+        .font-book-text-group-title;
         color: @color-positive;
-        font-size: 18px;
-        font-weight: 500;
       }
     }
 
     &-log {
-      color: @color-dark-grey-50;
-      font-size: 12px;
-      font-weight: normal;
+      .font-book-notice-text;
       line-height: 22px;
       &-upload-start {
 
@@ -78,9 +72,7 @@
     }
 
     &-file-name {
-      font-weight: normal;
-      font-size: 16px;
-      color: @color-dark-grey;
+      .font-book-text;
       margin: 16px 0;
     }
 
@@ -95,14 +87,12 @@
     &-footer {
       margin-top: 32px;
       &-selected-devices-count {
-        font-size: 18px;
-        font-weight: 500;
+        .font-book-text-group-title;
         line-height: 34px;
         vertical-align: middle;
       }
       &-upload-progress {
-        font-size: 18px;
-        font-weight: 500;
+        .font-book-text-group-title;
         line-height: 34px;
         vertical-align: middle;
         color: @color-dark-grey-75;
