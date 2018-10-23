@@ -58,9 +58,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     &--value {
-      font-family: Phenomena, sans-serif;
-      font-weight: 300;
-      font-size: 36px;
+      .font-book-custom-widget-slider-value;
       line-height: 36px;
       white-space: nowrap;
       &--no-data {
@@ -68,9 +66,8 @@
       }
     }
     &--suffix {
-      font-family: BebasNeue, Phenomena, sans-serif;
+      .font-book-custom-widget-slider-value-suffix;
       margin-left: 4px;
-      font-size: 18px;
     }
   }
   &--slider {
@@ -118,8 +115,7 @@
     top: -26px;
   }
   .ant-slider-mark-text, .ant-slider-mark-text-active {
-    color: @color-dark-grey;
-    font-size: 12px;
+    .font-book-custom-widget-slider-value-suffix;
   }
   .ant-slider-handle {
     margin-left: -12px;
