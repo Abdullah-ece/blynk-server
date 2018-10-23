@@ -188,7 +188,8 @@ public final class ServerLauncher {
             };
             App app = new App("airiusprod", Theme.Blynk,
                     ProvisionType.DYNAMIC,
-                    0, false, "Airius app", null, new int[] {childDash.id});
+                    600084223, //BLYNK_GREEN
+                    false, "Airius app", null, new int[] {childDash.id});
             superAdmin.profile.apps = new App[] {
                 app
             };
