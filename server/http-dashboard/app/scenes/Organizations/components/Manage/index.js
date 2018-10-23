@@ -51,7 +51,7 @@ class Manage extends React.Component {
     const fields = ['name'];
 
     if (this.validateFields(fields) && this.props.submitFailed)
-      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid"/>);
+      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid-icon"/>);
 
     return null;
   }
@@ -60,7 +60,7 @@ class Manage extends React.Component {
     const fields = [];
 
     if (this.validateFields(fields) && this.props.submitFailed)
-      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid"/>);
+      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid-icon"/>);
 
     return null;
   }
@@ -69,7 +69,7 @@ class Manage extends React.Component {
     const fields = ['admins'];
 
     if (this.validateFields(fields) && this.props.submitFailed)
-      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid"/>);
+      return (<Icon type="exclamation-circle-o" className="organizations-manage-tab-invalid-icon"/>);
 
     return null;
   }
