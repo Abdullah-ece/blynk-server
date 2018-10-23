@@ -23,3 +23,7 @@ SELECT nspname || '.' || relname AS "relation",
   WHERE nspname NOT IN ('pg_catalog', 'information_schema')
   ORDER BY pg_relation_size(C.oid) DESC
   LIMIT 20;
+
+
+Copy file to clipboard:
+  cat ./myfile.txt|xclip -i -selection clipboard
