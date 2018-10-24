@@ -6,7 +6,7 @@ import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
 import cc.blynk.server.acme.ContentHolder;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
@@ -46,7 +46,7 @@ public class AcmeTest extends BaseTest {
     public void init() throws Exception {
         ServerProperties properties2 = new ServerProperties(Collections.emptyMap(), "no_certs.properties");
         this.holder2 = createDefaultHolder(properties2, "no-db.properties");
-        httpServer = new HardwareAndHttpAPIServer(holder2).start();
+        httpServer = new MobileAndHttpsServer(holder2).start();
     }
 
     @Override

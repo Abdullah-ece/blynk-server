@@ -40,7 +40,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -63,6 +62,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
@@ -88,7 +88,7 @@ import static org.mockito.Mockito.verify;
 public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     private static CloseableHttpClient httpclient;
-    private static String httpServerUrl;
+    private static String httpsServerUrl;
 
     @AfterClass
     public static void closeHttp() throws Exception {
@@ -104,8 +104,8 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new MobileAndHttpsServer(holder).start();
 
-        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
-        httpclient = HttpClients.createDefault();
+        httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+        httpclient = getDefaultHttpsClient();
     }
 
     @Test
@@ -115,7 +115,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v10");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -142,7 +142,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -174,7 +174,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/rtc");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/rtc");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -194,7 +194,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         reset(clientPair.appClient.responseMock);
 
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v100");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v100");
         request.setEntity(new StringEntity("[\"37\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -235,7 +235,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -275,7 +275,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 0"))));
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -293,7 +293,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/d18");
+        HttpGet requestGET = new HttpGet(httpsServerUrl + clientPair.token + "/get/d18");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -302,7 +302,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("1", values.get(0));
         }
 
-        HttpPut requestPUT = new HttpPut(httpServerUrl + clientPair.token + "/update/d18");
+        HttpPut requestPUT = new HttpPut(httpsServerUrl + clientPair.token + "/update/d18");
         requestPUT.setEntity(new StringEntity("[\"0\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(requestPUT)) {
@@ -315,8 +315,8 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v4");
-        HttpGet getRequest = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v4");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + clientPair.token + "/get/v4");
 
         for (int i = 0; i < 50; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
@@ -338,7 +338,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testQRWorks() throws Exception {
-        HttpGet getRequest = new HttpGet(httpServerUrl + clientPair.token + "/qr");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + clientPair.token + "/qr");
         String cloneToken;
         try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -370,7 +370,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testIsHardwareAndAppConnected() throws Exception {
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -379,7 +379,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("true", value);
         }
 
-        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
+        request = new HttpGet(httpsServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -393,7 +393,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     public void testIsHardwareAndAppDisconnected() throws Exception {
         clientPair.stop();
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -402,7 +402,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("false", value);
         }
 
-        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
+        request = new HttpGet(httpsServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -414,7 +414,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testIsHardwareConnecteedWithMultiDevices() throws Exception {
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -423,7 +423,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("true", value);
         }
 
-        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
+        request = new HttpGet(httpsServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -456,7 +456,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         clientPair.stop();
 
-        request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
+        request = new HttpGet(httpsServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -465,7 +465,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("false", value);
         }
 
-        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
+        request = new HttpGet(httpsServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -474,7 +474,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
             assertEquals("false", value);
         }
 
-        request = new HttpGet(httpServerUrl + devices[1].token + "/isHardwareConnected");
+        request = new HttpGet(httpsServerUrl + devices[1].token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -489,7 +489,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -505,7 +505,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testChangeLCDPinValueViaHttpAPIAndValueChanged() throws Exception {
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v0");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v0");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -515,7 +515,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 0 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 0 100"))));
 
-        request = new HttpPut(httpServerUrl + clientPair.token + "/update/v1");
+        request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v1");
 
         request.setEntity(new StringEntity("[\"101\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -528,7 +528,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -544,7 +544,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/V100");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/V100");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -557,7 +557,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
-        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
+        HttpPut request = new HttpPut(httpsServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\",\"101\",\"102\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -580,7 +580,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, table);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
+        HttpGet updateTableRow = new HttpGet(httpsServerUrl + clientPair.token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -588,7 +588,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     @Test
     public void sendMultiValueToAppViaHttpApi() throws Exception {
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V1?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpsServerUrl + clientPair.token + "/update/V1?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -610,7 +610,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpsServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -634,7 +634,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpsServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -685,7 +685,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 45 124");
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 45 124"));
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v45");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v45");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -719,7 +719,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("hardware vw 44 123");
 
-        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v44");
+        HttpGet request = new HttpGet(httpsServerUrl + clientPair.token + "/get/v44");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
