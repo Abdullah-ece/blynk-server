@@ -50,8 +50,6 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
     }
 
     private static void assertEqualDevice(Device expected, Device real) {
-        assertEquals(expected.id, real.id);
-        //assertEquals(expected.name, real.name);
         assertEquals(expected.boardType, real.boardType);
         assertNotNull(real.token);
         assertEquals(expected.status, real.status);
@@ -158,7 +156,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
         device1.status = Status.ONLINE;
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
 
 
         //login with shared app
@@ -175,11 +173,11 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 value_from_device_0");
         hardClient2.send("hardware vw 88 value_from_device_1");
 
-        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 88 value_from_device_0"));
-        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 88 value_from_device_1"));
+        clientPair.appClient.verifyResult(hardware(1, "1-" + devices[0].id + " vw 88 value_from_device_0"));
+        clientPair.appClient.verifyResult(hardware(2, "1-" + devices[1].id + " vw 88 value_from_device_1"));
 
-        appClient2.verifyResult(hardware(1, "1-0 vw 88 value_from_device_0"));
-        appClient2.verifyResult(hardware(2, "1-1 vw 88 value_from_device_1"));
+        appClient2.verifyResult(hardware(1, "1-" + devices[0].id + " vw 88 value_from_device_0"));
+        appClient2.verifyResult(hardware(2, "1-" + devices[1].id +" vw 88 value_from_device_1"));
 
         //change device
         appClient2.send("hardware 1 vu 200000 1");
@@ -187,7 +185,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.never(hardware(3, "vu 200000 1"));
         hardClient2.never(hardware(3, "vu 200000 1"));
         clientPair.appClient.verifyResult(appSync(3, b("1 vu 200000 1")));
-        clientPair.appClient.verifyResult(appSync(b("1-1 vw 88 value_from_device_1")));
+        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 88 value_from_device_1")));
 
         appClient2.send("hardware 1-200000 vw 88 2");
         clientPair.hardwareClient.never(hardware(4, "vw 88 2"));
@@ -290,14 +288,14 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
 
         hardClient2.setProperty(88, "label", "124");
-        clientPair.appClient.verifyResult(setProperty(2, "1-1 88 label 124"));
+        clientPair.appClient.verifyResult(setProperty(2, "1-" + devices[1].id + " 88 label 124"));
 
         clientPair.appClient.send("hardware 1 vu 200000 1");
         clientPair.appClient.verifyResult(ok(2));
-        clientPair.appClient.verifyResult(setProperty(1111, "1-1 88 label 124"));
+        clientPair.appClient.verifyResult(setProperty(1111, "1-" + devices[1].id + " 88 label 124"));
     }
 
     @Test
@@ -337,14 +335,14 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
         device1.status = Status.ONLINE;
 
         clientPair.hardwareClient.send("hardware vw 89 value_from_device_0");
         hardClient2.send("hardware vw 89 value_from_device_1");
 
-        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 89 value_from_device_0"));
-        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 89 value_from_device_1"));
+        clientPair.appClient.verifyResult(hardware(1, "1-" + devices[0].id + " vw 89 value_from_device_0"));
+        clientPair.appClient.verifyResult(hardware(2, "1-" + devices[1].id + " vw 89 value_from_device_1"));
 
         clientPair.appClient.send("hardware 1 vw 88 100");
 
@@ -357,7 +355,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.never(hardware(3, "vu 200000 1"));
 
         clientPair.appClient.verifyResult(ok(3));
-        clientPair.appClient.verifyResult(appSync(b("1-1 vw 89 value_from_device_1")));
+        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 89 value_from_device_1")));
 
         //switch device back, expecting syncs and OK
         clientPair.appClient.send("hardware 1 vu 200000 0");
@@ -365,8 +363,8 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.never(hardware(4, "vu 200000 0"));
         hardClient2.never(hardware(4, "vu 200000 0"));
 
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 89 value_from_device_0")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 88 100")));
+        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 89 value_from_device_0")));
+        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 88 100")));
     }
 
     @Test
@@ -406,7 +404,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + devices[1].id));
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev 1"));

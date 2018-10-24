@@ -84,7 +84,7 @@ public class Device implements Target {
     public volatile boolean isUserIcon;
 
     @JsonView(View.Web.class)
-    public volatile WebDashboard webDashboard = new WebDashboard();
+    public volatile WebDashboard webDashboard;
 
     public boolean isNotValid() {
         return name == null || name.isEmpty() || name.trim().isEmpty() || name.length() > 50;
@@ -92,6 +92,7 @@ public class Device implements Target {
 
     public Device() {
         this.createdAt = System.currentTimeMillis();
+        this.webDashboard = new WebDashboard();
     }
 
     public Device(String name, BoardType boardType, String token, int productId, ConnectionType connectionType) {
@@ -272,7 +273,7 @@ public class Device implements Target {
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
         this.deviceOtaInfo = null;
-        this.webDashboard = null;
+        this.webDashboard = new WebDashboard();
         this.dataReceivedAt = 0;
         this.metadataUpdatedAt = 0;
         this.metadataUpdatedBy = null;

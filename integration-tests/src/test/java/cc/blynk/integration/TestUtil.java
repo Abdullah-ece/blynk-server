@@ -11,11 +11,15 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.SortOrder;
+import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -61,6 +65,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
@@ -130,7 +135,6 @@ public final class TestUtil {
     public static Profile parseProfile(String reader) throws Exception {
         return profileReader.readValue(reader);
     }
-
 
     public static String readTestUserProfile(String fileName) throws Exception{
         InputStream is = TestUtil.class.getResourceAsStream("/json_test/" + fileName);
@@ -518,5 +522,21 @@ public final class TestUtil {
                         SortOrder.ASC, 10, false, null, false)
         };
         return webGraph;
+    }
+
+    public static Organization createDefaultOrg() {
+        Organization org = new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID,
+                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
+                new Role(1, "Admin", 0b11111111111111111111),
+                new Role(2, "Staff", 0b11111111111111111111),
+                new Role(3, "User", 0b11111111111111111111)
+        );
+        Product product = new Product();
+        product.name = "Default Product";
+        product.boardType = BoardType.ESP8266.name();
+        org.products = new Product[] {
+                product
+        };
+        return org;
     }
 }

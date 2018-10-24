@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static cc.blynk.integration.TestUtil.internal;
 import static cc.blynk.integration.TestUtil.ok;
 
@@ -37,6 +38,9 @@ public class AppOfflineTest extends BaseTest {
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new MobileAndHttpsServer(holder).start();
 
+        holder.organizationDao.create(
+                createDefaultOrg()
+        );
         this.clientPair = initAppAndHardPair("user_profile_json_empty_dash.txt");
     }
 

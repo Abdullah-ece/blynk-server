@@ -9,10 +9,9 @@ import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.Response;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -22,12 +21,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
+import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static cc.blynk.integration.TestUtil.createHolderWithIOMock;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.GET;
@@ -51,7 +52,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class WebhookTest extends SingleServerInstancePerTest {
 
-    private static AsyncHttpClient httpclient;
+    private static CloseableHttpClient httpsClient;
+    private static String httpsServerUrl;
     private static String httpServerUrl;
 
     @BeforeClass
@@ -64,17 +66,18 @@ public class WebhookTest extends SingleServerInstancePerTest {
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new MobileAndHttpsServer(holder).start();
 
-        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
-        httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent("")
-                        .setKeepAlive(true)
-                        .build());
+        httpServerUrl = String.format("http://localhost:%s/external/api/", properties.getHttpPort());
+        httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+        httpsClient = getDefaultHttpsClient();
+
+        holder.organizationDao.create(
+                createDefaultOrg()
+        );
     }
 
     @AfterClass
     public static void closeHttpClient() throws Exception {
-        httpclient.close();
+        httpsClient.close();
     }
 
     @Test
@@ -149,13 +152,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 $$");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("$$", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("$$", values.get(0));
+        }
     }
 
     @Test
@@ -176,13 +180,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("124", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("124", values.get(0));
+        }
     }
 
     @Test
@@ -203,10 +208,11 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V125").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V125");
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
 
-        assertEquals(400, response.getStatusCode());
     }
 
     @Test
@@ -226,15 +232,16 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(3, values.size());
-        assertEquals("10", values.get(0));
-        assertEquals("11", values.get(1));
-        assertEquals("12", values.get(2));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(3, values.size());
+            assertEquals("10", values.get(0));
+            assertEquals("11", values.get(1));
+            assertEquals("12", values.get(2));
+        }
     }
 
     @Test
@@ -265,14 +272,15 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(10, values.size());
-        for (int i = 0; i < 10; i++) {
-            assertEquals("" + i, values.get(i));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(10, values.size());
+            for (int i = 0; i < 10; i++) {
+                assertEquals("" + i, values.get(i));
+            }
         }
     }
 
@@ -294,14 +302,15 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertTrue(values.get(0).endsWith("Z"));
-        assertTrue(values.get(0).contains("T"));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertTrue(values.get(0).endsWith("Z"));
+            assertTrue(values.get(0).contains("T"));
+        }
     }
 
     @Test
@@ -322,20 +331,21 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10 11");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        String[] resp = values.get(0).split(",");
-        String dateTime = resp[0];
-        String pin0 = resp[1];
-        String pin1 = resp[2];
-        assertTrue(dateTime.endsWith("Z"));
-        assertTrue(dateTime.contains("T"));
-        assertEquals("10", pin0);
-        assertEquals("11", pin1);
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            String[] resp = values.get(0).split(",");
+            String dateTime = resp[0];
+            String pin0 = resp[1];
+            String pin1 = resp[2];
+            assertTrue(dateTime.endsWith("Z"));
+            assertTrue(dateTime.contains("T"));
+            assertEquals("10", pin0);
+            assertEquals("11", pin1);
+        }
     }
 
     @Test
@@ -356,13 +366,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
     }
 
     @Test
@@ -383,15 +394,16 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(3, values.size());
-        assertEquals("10", values.get(0));
-        assertEquals("11", values.get(1));
-        assertEquals("12", values.get(2));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(3, values.size());
+            assertEquals("10", values.get(0));
+            assertEquals("11", values.get(1));
+            assertEquals("12", values.get(2));
+        }
     }
 
     @Test
@@ -412,13 +424,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
     }
 
     @Test
@@ -439,36 +452,38 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
 
         clientPair.hardwareClient.send("hardware vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(600).times(0)).channelRead(any(), any());
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        response = f.get();
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
-
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
 
         clientPair.hardwareClient.send("hardware vw 123 12");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        response = f.get();
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("12", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("12", values.get(0));
+        }
     }
 
     @Test
@@ -490,13 +505,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("124", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("124", values.get(0));
+        }
     }
 
     @Test
@@ -517,36 +533,38 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
-
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
         clientPair.appClient.send("hardware 1 vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(1000)).channelRead(any(), eq(hardware(3, "vw 123 11")));
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        response = f.get();
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("10", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("10", values.get(0));
+        }
 
 
         clientPair.appClient.send("hardware 1 vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(4, "vw 123 11")));
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        response = f.get();
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("11", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("11", values.get(0));
+        }
     }
 
     @Test
@@ -597,13 +615,14 @@ public class WebhookTest extends SingleServerInstancePerTest {
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
                 new HardwareMessage(2, b("vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124"))));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124");
 
-        assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
-        assertEquals(1, values.size());
-        assertEquals("text", values.get(0));
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("text", values.get(0));
+        }
     }
 
     @Test
@@ -623,11 +642,12 @@ public class WebhookTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("hardware 1 vw 123 1");
         clientPair.hardwareClient.verifyResult(hardware(2, "vw 123 1"));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V126").execute();
-        Response response = f.get();
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V126");
 
-        assertEquals(400, response.getStatusCode());
-        assertEquals("Requested pin doesn't exist in the app.", response.getResponseBody());
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("{\"error\":{\"message\":\"Requested pin doesn't exist in the app.\"}}", consumeText(response));
+        }
     }
 
 }

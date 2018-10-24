@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static org.mockito.Mockito.reset;
 
 /**
@@ -34,6 +35,10 @@ public abstract class SingleServerInstancePerTest extends CounterBase {
         holder = createDefaultHolder(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new MobileAndHttpsServer(holder).start();
+
+        holder.organizationDao.create(
+                createDefaultOrg()
+        );
     }
 
     @AfterClass
@@ -57,18 +62,14 @@ public abstract class SingleServerInstancePerTest extends CounterBase {
         reset(holder.smsWrapper);
     }
 
-    public ClientPair initAppAndHardPair() throws Exception {
-        return TestUtil.initAppAndHardPair("localhost",
-                properties.getHttpsPort(), properties.getHttpPort(),
-                getUserName(), "1", changeProfileTo(), properties, 10000);
-    }
-
     protected String changeProfileTo() {
         return "user_profile_json.txt";
     }
 
     protected ClientPair initClientPair() throws Exception {
-        return initAppAndHardPair();
+        return TestUtil.initAppAndHardPair("localhost",
+                properties.getHttpsPort(), properties.getHttpPort(),
+                getUserName(), "1", changeProfileTo(), properties, 10000);
     }
 
 }

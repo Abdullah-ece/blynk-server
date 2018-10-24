@@ -464,7 +464,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response updateWidgetPinDataNew(@Context ChannelHandlerContext ctx,
                                            @PathParam("token") String token,
                                            @PathParam("pin") String pinString,
-                                           Object[] pinValues) {
+                                           String[] pinValues) {
         return updateWidgetPinData(ctx, token, pinString, pinValues);
     }
 
@@ -475,7 +475,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
     public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
                                         @PathParam("token") String token,
                                         @PathParam("pin") String pinString,
-                                        Object[] pinValues) {
+                                        String[] pinValues) {
 
         if (pinValues.length == 0) {
             log.debug("No pin for update provided.");

@@ -69,7 +69,7 @@ public class BlynkInternalTest extends SingleServerInstancePerTest {
 
     @Test
     public void appConnectedEvent() throws Exception {
-        clientPair.appClient.updateDash("{\"orgId\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         clientPair.appClient.verifyResult(ok(1));
 
         TestAppClient appClient = new TestAppClient(properties);
@@ -83,7 +83,7 @@ public class BlynkInternalTest extends SingleServerInstancePerTest {
 
     @Test
     public void appDisconnectedEvent() throws Exception {
-        clientPair.appClient.updateDash("{\"orgId\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.stop().await();

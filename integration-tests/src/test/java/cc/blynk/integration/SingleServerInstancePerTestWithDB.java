@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.reset;
 
@@ -36,6 +37,9 @@ public abstract class SingleServerInstancePerTestWithDB extends CounterBase {
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new MobileAndHttpsServer(holder).start();
         assertNotNull(holder.dbManager.getConnection());
+        holder.organizationDao.create(
+                createDefaultOrg()
+        );
     }
 
     @AfterClass
