@@ -111,6 +111,10 @@ public class DashBoard {
         this.name = "New Project";
     }
 
+    public boolean isChild() {
+        return parentId != IS_PARENT_DASH;
+    }
+
     public void update(int deviceId, byte pin, PinType pinType, String value, long now) {
         if (!updateWidgets(deviceId, pin, pinType, value)) {
             //special case. #237 if no widget - storing without widget.

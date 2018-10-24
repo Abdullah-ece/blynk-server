@@ -91,9 +91,11 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
                 : Version.UNKNOWN_VERSION;
 
         if (messageParts.length == 5) {
-            if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
+            String appName = messageParts[4];
+            if (AppNameUtil.FACEBOOK.equals(appName)) {
                 facebookLogin(ctx, message.id, email, messageParts[1], version);
             } else {
+                version.appName = appName;
                 blynkLogin(ctx, message.id, email, messageParts[1], version);
             }
         } else {

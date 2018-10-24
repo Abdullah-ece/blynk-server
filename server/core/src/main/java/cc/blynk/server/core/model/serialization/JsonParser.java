@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.serialization;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
+import cc.blynk.server.core.model.ExportAppProfileDTO;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
@@ -82,6 +83,7 @@ public final class JsonParser {
             .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
             .writerWithView(View.WebUser.class);
     private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
+    private static final ObjectWriter exportAppProfileDTOWriter = MAPPER.writerFor(ExportAppProfileDTO.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
     private static final ObjectWriter productWriter = MAPPER.writerFor(Product.class);
@@ -162,6 +164,10 @@ public final class JsonParser {
 
     public static byte[] gzipProfile(Profile profile) {
         return writeJsonAsCompressedBytes(profileWriter, profile);
+    }
+
+    public static byte[] gzipExportProfileDTO(ExportAppProfileDTO profile) {
+        return writeJsonAsCompressedBytes(exportAppProfileDTOWriter, profile);
     }
 
     private static byte[] writeJsonAsCompressedBytes(ObjectWriter objectWriter, Object o) {

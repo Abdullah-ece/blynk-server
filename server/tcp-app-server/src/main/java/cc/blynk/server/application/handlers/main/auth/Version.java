@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.auth;
 
+import cc.blynk.utils.AppNameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +19,7 @@ public final class Version {
 
     public final OsType osType;
     final int versionSingleNumber;
+    public String appName;
 
     public Version(OsType osType, int version) {
         this.osType = osType;
@@ -26,6 +28,10 @@ public final class Version {
 
     public Version(String osString, String versionString) {
         this(OsType.parse(osString), parseToSingleInt(versionString));
+    }
+
+    public boolean isExportApp() {
+        return !AppNameUtil.BLYNK.equals(appName);
     }
 
     /**
@@ -61,6 +67,6 @@ public final class Version {
 
     @Override
     public String toString() {
-        return osType.label + "-" + versionSingleNumber;
+        return osType.label + "-" + versionSingleNumber + "-" + appName;
     }
 }
