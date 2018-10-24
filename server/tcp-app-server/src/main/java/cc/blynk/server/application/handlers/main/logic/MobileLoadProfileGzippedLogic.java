@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipExportProfileDTO;
+import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
@@ -44,12 +45,17 @@ public final class MobileLoadProfileGzippedLogic {
 
         if (message.body.length() == 0) {
             DashBoard[] dashBoards = state.user.profile.dashBoards;
-            //special case for the super admin, as admin can have parent and
+
+            //special case for the super admin in exported app, as admin can have parent and
             //child projects within same account, so we have to filter dashes for exported app
             if (state.user.isSuperAdmin() && state.version.isExportApp()) {
+                log.debug("Filtering dashboards for super admin {} and exported app {}.",
+                        state.user.email, state.version);
                 dashBoards = filter(dashBoards);
+                write(ctx, gzipExportProfileDTO(new ExportAppProfileDTO(dashBoards)), msgId);
+            } else {
+                write(ctx, gzipProfile(state.user.profile), msgId);
             }
-            write(ctx, gzipExportProfileDTO(new ExportAppProfileDTO(dashBoards)), msgId);
             return;
         }
 

@@ -173,15 +173,17 @@ public final class ServerLauncher {
 
             String hash = SHA256Util.makeHash(pass, email);
             User superAdmin = holder.userDao.add(email, hash, superOrg.id, Role.SUPER_ADMIN_ROLE_ID);
+
             DashBoard defaultSuperAdminDash = new DashBoard();
             defaultSuperAdminDash.id = 1;
-            defaultSuperAdminDash.name = "Main Airius Project";
+            defaultSuperAdminDash.name = "Main Airius Project 2";
 
             DashBoard childDash = new DashBoard();
             childDash.id = 123;
             childDash.name = "Child Airius Project";
             childDash.parentId = defaultSuperAdminDash.id;
             childDash.isPreview = true;
+            childDash.isActive = true;
             superAdmin.profile.dashBoards = new DashBoard[] {
                     defaultSuperAdminDash,
                     childDash
