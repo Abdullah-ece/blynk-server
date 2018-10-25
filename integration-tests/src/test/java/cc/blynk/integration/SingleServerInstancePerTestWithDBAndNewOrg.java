@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
-import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -49,13 +49,7 @@ public abstract class SingleServerInstancePerTestWithDBAndNewOrg extends SingleS
 
     @Before
     public void initClients() throws Exception {
-        Organization newOrg = new Organization("Blynk Inc.", "Europe/Kiev",
-                "/static/logo.png", true, SUPER_ORG_PARENT_ID,
-                new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
-                new Role(1, "Admin", 0b11111111111111111111),
-                new Role(2, "Staff", 0b11111111111111111111),
-                new Role(3, "User", 0b11111111111111111111));
-        newOrg = holder.organizationDao.create(newOrg);
+        Organization newOrg = holder.organizationDao.create(createDefaultOrg());
         orgId = newOrg.id;
         this.clientPair = initAppAndHardPair();
 
