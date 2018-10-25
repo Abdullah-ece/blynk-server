@@ -47,6 +47,7 @@ import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
@@ -665,27 +666,26 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(10);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.createDevice(10, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice(2);
+        String token = device.token;
         assertNotNull(token);
 
-        clientPair.appClient.getToken(10, 0);
-        String token2 = clientPair.appClient.getBody(3);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 2);
+        Device device2 = clientPair.appClient.parseDevice(3);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
-        clientPair.appClient.getToken(10, 0);
-        token2 = clientPair.appClient.getBody(4);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 2);
+        device2 = clientPair.appClient.parseDevice(4);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
         clientPair.appClient.createDash("{\"id\":11, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.getToken(11, 0);
-        token2 = clientPair.appClient.getBody(6);
-        assertNotNull(token2);
-        assertNotEquals(token, token2);
+        clientPair.appClient.getDevice(11, 0);
+        clientPair.appClient.verifyResult(illegalCommandBody(6));
     }
 
     @Test
@@ -694,8 +694,9 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(10);
-        String token = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(10, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token = device.token;
         assertNotNull(token);
 
         clientPair.appClient.reset();
@@ -833,8 +834,9 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(2);
-        String token2 = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(2, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token2 = device.token;
         hardClient2.login(token2);
         hardClient2.verifyResult(ok(1));
 
@@ -844,7 +846,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(1, "1-0 aw 1 1")));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "2-0 aw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "2-" + device.id + " aw 1 1")));
 
 
         clientPair.appClient.deactivate(1);
@@ -854,7 +856,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "2-0 aw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "2-" + device.id + " aw 1 1")));
         hardClient2.stop().awaitUninterruptibly();
     }
 
@@ -1179,7 +1181,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
     public void testClosedConnectionWhenNotLogged() throws Exception {
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.getToken(1);
+        appClient2.getDevice(1, 0);
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
@@ -1249,16 +1251,15 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(2);
+        clientPair.appClient.createDevice(2, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
 
-        //getting token for second GetTokenMessage
-        String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
         TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", properties.getHttpPort());
         nonActiveDashHardClient.start();
-        nonActiveDashHardClient.login(token);
+        nonActiveDashHardClient.login(device.token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         nonActiveDashHardClient.reset();
 
@@ -1267,7 +1268,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         nonActiveDashHardClient.send("hardware aw 1 1");
         //verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-0")));
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-" + device.id)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
