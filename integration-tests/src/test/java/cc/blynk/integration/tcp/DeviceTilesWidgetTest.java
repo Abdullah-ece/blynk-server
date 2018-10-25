@@ -31,10 +31,9 @@ import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.utils.FileUtils;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.Response;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -45,12 +44,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
@@ -807,14 +807,14 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
-        hardClient2.login(device.token);
+        hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
 
         clientPair.appClient.reset();
@@ -861,7 +861,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         hardClient2.send("hardware vw 66 444");
-        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 66 444"));
+        clientPair.appClient.verifyResult(hardware(2, "1-" + device1.id + " vw 66 444"));
 
         clientPair.hardwareClient.send("hardware vw 66 555");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 66 555"));
@@ -1940,19 +1940,17 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("hardware 1-0 vw 111 1");
 
-        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setKeepAlive(true)
-                        .build()
-        );
+        CloseableHttpClient httpsClient = getDefaultHttpsClient();
 
-        String httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + device.token + "/get/v111").execute();
-        Response response = f.get();
-        assertEquals(200, response.getStatusCode());
-        assertEquals("1", response.getResponseBody());
-        httpclient.close();
+        String httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+        HttpGet request = new HttpGet(httpsServerUrl + device.token + "/get/v111");
+
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("1", consumeText(response));
+        }
+
+        httpsClient.close();
     }
 
     @Test
@@ -2268,35 +2266,30 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
-        TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
-                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
-
-        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
-        clientPair.appClient.verifyResult(ok(2));
-
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.parseDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         Device device = devices[0];
         assertNotNull(device);
         assertNotNull(device.token);
 
-        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setKeepAlive(true)
-                        .build()
-        );
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {device.id}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
-        String httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
-        Future<Response> f = httpclient
-                .prepareGet(httpsServerUrl + device.token + "/update/v5?value=111")
-                .execute();
-        Response response = f.get();
-        assertEquals(200, response.getStatusCode());
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(3));
+
+        CloseableHttpClient httpsClient = getDefaultHttpsClient();
+
+        String httpsServerUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
+        HttpGet request = new HttpGet(httpsServerUrl + device.token + "/update/v5?value=111");
+
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
 
         clientPair.appClient.verifyResult(hardware(111, "1-0 vw 5 111"));
-        httpclient.close();
+        httpsClient.close();
     }
 }

@@ -158,22 +158,22 @@ public class TagCommandsTest extends SingleServerInstancePerTest {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
-        hardClient2.login(device.token);
+        hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         //creating new tag
         Tag tag0 = new Tag(100_000, "Tag1");
         //assigning 2 devices on 1 tag.
-        tag0.deviceIds = new int[] {0, 1};
+        tag0.deviceIds = new int[] {0, device1.id};
 
         clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();

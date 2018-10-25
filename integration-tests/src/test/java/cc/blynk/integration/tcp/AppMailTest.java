@@ -39,7 +39,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1");
-        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
+        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device ESP8266"), startsWith("Auth Token : "));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1 0");
-        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
+        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device ESP8266"), startsWith("Auth Token : "));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token);
 
-        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), eq(expectedBody));
+        verify(holder.mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device ESP8266"), eq(expectedBody));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
 
         appClient.send("email 1");
 
-        String expectedBody = String.format("Auth Token for device 'My Device' : %s\n" +
+        String expectedBody = String.format("Auth Token for device 'ESP8266' : %s\n" +
                 "Auth Token for device 'My Device2' : %s\n" +
                 "\n" +
                 "Happy Blynking!\n" +
@@ -172,7 +172,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to@to.com SUBJ_{DEVICE_NAME} BODY_{DEVICE_NAME}");
-        verify(holder.mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("SUBJ_My Device"), eq("BODY_My Device"));
+        verify(holder.mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("SUBJ_ESP8266"), eq("BODY_ESP8266"));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 

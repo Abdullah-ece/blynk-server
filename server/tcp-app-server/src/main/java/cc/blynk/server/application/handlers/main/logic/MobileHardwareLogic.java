@@ -54,27 +54,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         this.deviceDao = holder.deviceDao;
     }
 
-    private void processWebDashState(ChannelHandlerContext ctx, int deviceId, String body, int msgId) {
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-        if (device == null) {
-            return;
-        }
-
-        String[] splitBody = split3(body);
-
-        if (splitBody.length < 3) {
-            log.debug("Not valid write command.");
-            ctx.writeAndFlush(illegalCommandBody(msgId), ctx.voidPromise());
-            return;
-        }
-
-        PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-        byte pin = Byte.parseByte(splitBody[1]);
-        String value = splitBody[2];
-
-        device.webDashboard.update(device.id, pin, pinType, value);
-    }
-
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         var session = sessionDao.userSession.get(state.user.email);
 
@@ -99,9 +78,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
-
-        //todo temp solution
-        processWebDashState(ctx, targetId, split[1], message.id);
 
         //sending message only if widget assigned to device or tag has assigned devices
         var target = dash.getTarget(targetId);
@@ -140,6 +116,10 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value, now);
+                    Device device = deviceDao.getById(deviceId);
+                    if (device != null) {
+                        device.webDashboard.update(device.id, pin, pinType, value);
+                    }
                 }
 
                 //additional state for tag widget itself

@@ -4,20 +4,17 @@ import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.utils.StringUtils;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.Response;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.concurrent.Future;
-
+import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
 import static cc.blynk.integration.TestUtil.serverError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -126,44 +123,13 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
     }
 
     @Test
-    public void getProjectByCloneCodeViaHttp() throws Exception {
-        clientPair.appClient.send("getCloneCode 1");
-        String token = clientPair.appClient.getBody();
-        assertNotNull(token);
-        assertEquals(32, token.length());
-
-        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setKeepAlive(true)
-                        .build()
-        );
-
-        Future<Response> f = httpclient.prepareGet("https://localhost:" + properties.getHttpsPort() + "/external/api/" + token + "/clone").execute();
-        Response response = f.get();
-        assertEquals(200, response.getStatusCode());
-        String responseBody = response.getResponseBody();
-        assertNotNull(responseBody);
-        DashBoard dashBoard = JsonParser.parseDashboard(responseBody, 0);
-        assertEquals("My Dashboard", dashBoard.name);
-        httpclient.close();
-    }
-
-    @Test
     public void getProjectByNonExistingCloneCodeViaHttp() throws Exception {
-        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setKeepAlive(true)
-                        .build()
-        );
+        CloseableHttpClient httpsClient = getDefaultHttpsClient();
 
-        Future<Response> f = httpclient.prepareGet("https://localhost:" + properties.getHttpsPort() + "/external/api/" + 123 + "/clone").execute();
-        Response response = f.get();
-        assertEquals(500, response.getStatusCode());
-        String responseBody = response.getResponseBody();
-        assertEquals("Requested QR not found.", responseBody);
-        httpclient.close();
+        HttpGet request = new HttpGet("https://localhost:" + properties.getHttpsPort() + "/external/api/" + 123 + "/clone");
+        try (CloseableHttpResponse response = httpsClient.execute(request)) {
+            assertEquals(401, response.getStatusLine().getStatusCode());
+        }
     }
 
 }

@@ -226,6 +226,32 @@ public class OrganizationDao {
         return organizations.values();
     }
 
+    public void assignToOrgAndAddDevice(int orgId, Device newDevice) {
+        Organization org = getOrgByIdOrThrow(orgId);
+        assignToOrgAndAddDevice(org, newDevice);
+    }
+
+    public void assignToOrgAndAddDevice(Organization org, Device newDevice) {
+        //todo temp solution
+        Product product;
+        if (newDevice.productId == -1) {
+            log.warn("Using random product for device {}.", newDevice.id);
+            product = org.getFirstProduct();
+            newDevice.productId = product.id;
+        } else {
+            product = org.getProduct(newDevice.productId);
+        }
+
+        if (product == null) {
+            log.error("Product with passed id {} not exists for org {}.", newDevice.productId, org.id);
+            throw new ProductNotFoundException("Product with passed id not exists.");
+        }
+
+        newDevice.metaFields = product.copyMetaFields();
+        newDevice.webDashboard = product.webDashboard.copy();
+        deviceDao.create(org.id, newDevice);
+    }
+
     private static Organization getOrgById(List<Organization> orgs, int id) {
         for (Organization org : orgs) {
             if (org.id == id) {

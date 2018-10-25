@@ -57,16 +57,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelector() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -95,9 +95,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.never(hardware(2, "vw 88 1"));
 
         //change device
-        clientPair.appClient.send("hardware 1 vu 200000 1");
+        clientPair.appClient.send("hardware 1 vu 200000 " + device1.id);
         clientPair.appClient.verifyResult(ok(3));
-        clientPair.hardwareClient.never(hardware(3, "vu 200000 1"));
+        clientPair.hardwareClient.never(hardware(3, "vu 200000 " + device1.id));
         hardClient2.never(hardware(3, "vu 200000 1"));
 
         clientPair.appClient.send("hardware 1-200000 vw 88 2");
@@ -118,16 +118,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelectorInSharedApp() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -180,11 +180,11 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         appClient2.verifyResult(hardware(2, "1-" + devices[1].id +" vw 88 value_from_device_1"));
 
         //change device
-        appClient2.send("hardware 1 vu 200000 1");
+        appClient2.send("hardware 1 vu 200000 " + device1.id);
         appClient2.verifyResult(ok(3));
-        clientPair.hardwareClient.never(hardware(3, "vu 200000 1"));
+        clientPair.hardwareClient.never(hardware(3, "vu 200000 " + device1.id));
         hardClient2.never(hardware(3, "vu 200000 1"));
-        clientPair.appClient.verifyResult(appSync(3, b("1 vu 200000 1")));
+        clientPair.appClient.verifyResult(appSync(3, b("1 vu 200000 " + device1.id)));
         clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 88 value_from_device_1")));
 
         appClient2.send("hardware 1-200000 vw 88 2");
@@ -208,7 +208,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsSentForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -254,16 +254,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsRememberedBetweenDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -293,24 +293,24 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         hardClient2.setProperty(88, "label", "124");
         clientPair.appClient.verifyResult(setProperty(2, "1-" + devices[1].id + " 88 label 124"));
 
-        clientPair.appClient.send("hardware 1 vu 200000 1");
+        clientPair.appClient.send("hardware 1 vu 200000 " + device1.id);
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(setProperty(1111, "1-" + devices[1].id + " 88 label 124"));
     }
 
     @Test
     public void testBasicSelectorWorkflow() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
+        device1 = clientPair.appClient.parseDevice();
 
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -349,10 +349,10 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(hardware(2, "vw 88 100"));
 
         //change device, expecting syncs and OK
-        clientPair.appClient.send("hardware 1 vu 200000 1");
+        clientPair.appClient.send("hardware 1 vu 200000 " + device1.id);
         clientPair.appClient.verifyResult(ok(3));
-        clientPair.hardwareClient.never(hardware(3, "vu 200000 1"));
-        hardClient2.never(hardware(3, "vu 200000 1"));
+        clientPair.hardwareClient.never(hardware(3, "vu 200000 " + device1.id));
+        hardClient2.never(hardware(3, "vu 200000 " + device1.id));
 
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 89 value_from_device_1")));
@@ -363,13 +363,13 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.never(hardware(4, "vu 200000 0"));
         hardClient2.never(hardware(4, "vu 200000 0"));
 
-        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 89 value_from_device_0")));
-        clientPair.appClient.verifyResult(appSync(b("1-" + devices[1].id + " vw 88 100")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 89 value_from_device_0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 88 100")));
     }
 
     @Test
     public void testDeviceSelectorSyncTimeInput() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -438,7 +438,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testNoSyncForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -466,16 +466,16 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorWorksAfterDeviceRemoval() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
+        device1 = clientPair.appClient.parseDevice();
+        assertNotNull(device1);
+        assertNotNull(device1.token);
+        clientPair.appClient.verifyResult(createDevice(1, device1));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -504,14 +504,14 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(hardware(2, "vw 88 100"));
 
         //change device, expecting syncs and OK
-        clientPair.appClient.send("hardware 1 vu 200000 1");
+        clientPair.appClient.send("hardware 1 vu 200000 " + device1.id);
         clientPair.appClient.verifyResult(ok(3));
-        clientPair.hardwareClient.never(hardware(3, "vu 200000 1"));
+        clientPair.hardwareClient.never(hardware(3, "vu 200000 " + + device1.id));
 
         clientPair.appClient.send("hardware 1-200000 vw 88 101");
         hardClient2.verifyResult(hardware(4, "vw 88 101"));
 
-        clientPair.appClient.send("deleteDevice 1\0" + "1");
+        clientPair.appClient.deleteDevice(1, + device1.id);
         clientPair.appClient.verifyResult(ok(5));
 
         //channel should be closed. so will not receive message
@@ -521,7 +521,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void terminalWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -571,7 +571,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void TableWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -621,7 +621,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void LCDWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        var device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
@@ -670,7 +670,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorForSharedApp() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;

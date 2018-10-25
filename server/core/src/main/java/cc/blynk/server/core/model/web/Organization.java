@@ -120,7 +120,7 @@ public class Organization {
         Product product = getProduct(productId);
         if (product == null) {
             throw new ProductNotFoundException("Product with passed id " + productId
-                    + " not found.");
+                    + " not exists.");
         }
         return product;
     }
