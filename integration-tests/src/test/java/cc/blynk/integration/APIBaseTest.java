@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
@@ -36,8 +35,8 @@ import java.util.List;
 import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.createDefaultOrg;
 import static cc.blynk.integration.TestUtil.getDefaultHttpsClient;
-import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -110,12 +109,7 @@ public abstract class APIBaseTest extends CounterBase {
         holder.userDao.add(regularUser);
 
         holder.organizationDao.create(
-                new Organization("Blynk Inc.", "Europe/Kiev", "/static/logo.png", true, SUPER_ORG_PARENT_ID,
-                        new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
-                        new Role(1, "Admin", 0b11111111111111111111),
-                        new Role(2, "Staff", 0b11111111111111111111),
-                        new Role(3, "User", 0b11111111111111111111)
-                )
+                createDefaultOrg()
         );
     }
 

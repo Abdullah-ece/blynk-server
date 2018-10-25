@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.enums.SortOrder;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
+import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -65,6 +66,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cc.blynk.integration.APIBaseTest.createTextMeta;
 import static cc.blynk.server.core.model.web.Organization.SUPER_ORG_PARENT_ID;
 import static cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType.RAW_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -295,7 +297,7 @@ public final class TestUtil {
         int dashId = profile.dashBoards[0].id;
 
         appClient.register(user, pass, AppNameUtil.BLYNK);
-        appClient.login(user, pass, "Android", "1.10.4");
+        appClient.login(user, pass, "Android", "2.27.0");
         int rand = ThreadLocalRandom.current().nextInt();
         appClient.send("addEnergy " + energy + "\0" + String.valueOf(rand));
         //we should wait until login finished. Only after that we can send commands
@@ -314,7 +316,7 @@ public final class TestUtil {
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "" + dashId + "-0")));
+        //verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "" + dashId + "-0")));
 
         appClient.reset();
         hardClient.reset();
@@ -524,6 +526,9 @@ public final class TestUtil {
         Product product = new Product();
         product.name = "Default Product";
         product.boardType = BoardType.ESP8266.name();
+        product.metaFields = new MetaField[] {
+                createTextMeta(2, "Device Name", "My Default device Name", true),
+        };
         org.products = new Product[] {
                 product
         };

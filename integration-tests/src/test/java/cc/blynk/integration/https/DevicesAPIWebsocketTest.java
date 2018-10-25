@@ -103,7 +103,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getDevices(orgId);
         DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
-        assertEquals(2, devices.length);
+        assertEquals(3, devices.length);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getDevices(orgId);
         DeviceDTO[] devices = client.parseDevicesDTO(4);
         assertNotNull(devices);
-        assertEquals(0, devices.length);
+        assertEquals(1, devices.length);
 
         client.getDevices(fromApi.id);
         devices = client.parseDevicesDTO(5);
@@ -326,7 +326,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getDevices(orgId);
         DeviceDTO[] devices = client.parseDevicesDTO(1);
         assertNotNull(devices);
-        assertEquals(0, devices.length);
+        assertEquals(1, devices.length);
     }
 
     @Test

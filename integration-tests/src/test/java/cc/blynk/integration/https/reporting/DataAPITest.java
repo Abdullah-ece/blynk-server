@@ -92,7 +92,7 @@ public class DataAPITest extends APIBaseTest {
         login(regularUser.email, regularUser.pass);
 
         DataQueryRequestGroupDTO dataQueryRequestGroup = makeReq(PinType.VIRTUAL, 1, 0, System.currentTimeMillis());
-        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/1/history");
+        HttpPost getData = new HttpPost(httpsAdminServerUrl + "/data/100/history");
         getData.setEntity(new StringEntity(JsonParser.toJson(dataQueryRequestGroup), APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(getData)) {
             assertEquals(400, response.getStatusLine().getStatusCode());

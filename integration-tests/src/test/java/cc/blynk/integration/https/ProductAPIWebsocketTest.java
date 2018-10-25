@@ -471,7 +471,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProducts();
         Product[] fromApi = client.parseProducts(1);
         assertNotNull(fromApi);
-        assertEquals(0, fromApi.length);
+        assertEquals(1, fromApi.length);
     }
 
     @Test
@@ -488,7 +488,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProducts();
         Product[] fromApiProducts = client.parseProducts(2);
         assertNotNull(fromApiProducts);
-        assertEquals(1, fromApiProducts.length);
+        assertEquals(2, fromApiProducts.length);
 
         Product product2 = new Product();
         product2.name = "getListOfProducts2";
@@ -500,7 +500,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProducts();
         fromApiProducts = client.parseProducts(4);
         assertNotNull(fromApiProducts);
-        assertEquals(2, fromApiProducts.length);
+        assertEquals(3, fromApiProducts.length);
     }
 
     @Test
@@ -517,7 +517,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProducts();
         Product[] fromApiProducts = client.parseProducts(2);
         assertNotNull(fromApiProducts);
-        assertEquals(1, fromApiProducts.length);
+        assertEquals(2, fromApiProducts.length);
 
         client.deleteProduct(fromApiProduct.id);
         client.verifyResult(ok(3));
@@ -525,7 +525,7 @@ public class ProductAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         client.getProducts();
         fromApiProducts = client.parseProducts(4);
         assertNotNull(fromApiProducts);
-        assertEquals(0, fromApiProducts.length);
+        assertEquals(1, fromApiProducts.length);
     }
 
     @Test

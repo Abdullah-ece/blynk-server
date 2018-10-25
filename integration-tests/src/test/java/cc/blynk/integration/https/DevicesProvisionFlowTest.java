@@ -565,8 +565,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(2, provisionedDevice.metaFields.length);
-        assertEquals(fromApiProduct.id, provisionedDevice.productId);
+
+        //id of default product that is first in the list
+        assertEquals(0, provisionedDevice.productId);
+        assertEquals(1, provisionedDevice.metaFields.length);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
 
@@ -630,9 +632,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
+        //id of default product that is first in the list
+        assertEquals(0, provisionedDevice.productId);
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(1, provisionedDevice.metaFields.length);
-        assertEquals(fromApiProduct.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertNull(provisionedDevice.hardwareInfo.templateId);
 
@@ -687,7 +690,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.never(hardwareConnected(1, "1-1"));
+        appClient.never(hardwareConnected(1, "1-" + deviceFromApi.id));
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
@@ -696,9 +699,11 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
         assertNotNull(provisionedDevice);
+        //id of default product that is first in the list
+        assertEquals(0, provisionedDevice.productId);
+
         assertNotNull(provisionedDevice.metaFields);
         assertEquals(1, provisionedDevice.metaFields.length);
-        assertEquals(fromApiProduct.id, provisionedDevice.productId);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertNull(provisionedDevice.hardwareInfo.templateId);
 
