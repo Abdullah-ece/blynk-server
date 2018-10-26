@@ -97,6 +97,13 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         int parentId = 0;
 
         //Step 2. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = parentId;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
+        //Step 2. Create minimal project with 1 widget.
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.label = "Temperature";
         valueDisplay.id = 1;
@@ -105,7 +112,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         valueDisplay.height = 1;
         valueDisplay.pinType = PinType.VIRTUAL;
         appClient.createWidget(parentId, valueDisplay);
-        appClient.verifyResult(ok(2));
+        appClient.verifyResult(ok(3));
 
         DashBoard childDash = new DashBoard();
         childDash.id = 123;
@@ -113,22 +120,22 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         childDash.parentId = parentId;
         childDash.isPreview = true;
         appClient.createDash(childDash);
-        appClient.verifyResult(ok(3));
+        appClient.verifyResult(ok(4));
 
         appClient.createWidget(childDash.id, valueDisplay);
-        appClient.verifyResult(ok(4));
+        appClient.verifyResult(ok(5));
 
         //Step 3. Create the app
         App app = new App(null, Theme.BlynkLight,
                 ProvisionType.DYNAMIC,
                 0, false, "My app", null, new int[] {childDash.id});
         appClient.createApp(app);
-        App appFromApi = appClient.parseApp(5);
+        App appFromApi = appClient.parseApp(6);
         assertNotNull(appFromApi);
         assertNotNull(appFromApi.id);
         assertTrue(appFromApi.id.startsWith("blynk"));
         appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
-        appClient.verifyResult(ok(6));
+        appClient.verifyResult(ok(7));
         verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. Invite new user
@@ -166,7 +173,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
-        DashBoard dashBoard = profile.dashBoards[0];
+        dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         ValueDisplay valueDisplayInNewProfile = (ValueDisplay) dashBoard.getWidgetById(valueDisplay.id);
         assertNotNull(valueDisplayInNewProfile);
@@ -190,6 +197,12 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         int parentId = 0;
 
         //Step 2. Create minimal project with 1 widget.
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = parentId;
+        dashBoard.name = "123";
+        appClient.createDash(dashBoard);
+        appClient.verifyResult(ok(2));
+
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.label = "Temperature";
         valueDisplay.id = 1;
@@ -198,7 +211,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         valueDisplay.height = 1;
         valueDisplay.pinType = PinType.VIRTUAL;
         appClient.createWidget(parentId, valueDisplay);
-        appClient.verifyResult(ok(2));
+        appClient.verifyResult(ok(3));
 
         DashBoard childDash = new DashBoard();
         childDash.id = 123;
@@ -207,22 +220,22 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         childDash.isPreview = true;
         childDash.isActive = true;
         appClient.createDash(childDash);
-        appClient.verifyResult(ok(3));
+        appClient.verifyResult(ok(4));
 
         appClient.createWidget(childDash.id, valueDisplay);
-        appClient.verifyResult(ok(4));
+        appClient.verifyResult(ok(5));
 
         //Step 3. Create the app
         App app = new App(null, Theme.BlynkLight,
                 ProvisionType.DYNAMIC,
                 0, false, "My app", null, new int[] {childDash.id});
         appClient.createApp(app);
-        App appFromApi = appClient.parseApp(5);
+        App appFromApi = appClient.parseApp(6);
         assertNotNull(appFromApi);
         assertNotNull(appFromApi.id);
         assertTrue(appFromApi.id.startsWith("blynk"));
         appClient.send("emailQr " + childDash.id + StringUtils.BODY_SEPARATOR_STRING + appFromApi.id);
-        appClient.verifyResult(ok(6));
+        appClient.verifyResult(ok(7));
         verify(holder.mailWrapper, timeout(1000)).sendWithAttachment(eq(superUser), eq("My app" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "Test")), any(QrHolder.class));
 
         //Step 4. No need for invite step as we are already here
@@ -238,7 +251,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
-        DashBoard dashBoard = profile.dashBoards[0];
+        dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         ValueDisplay valueDisplayInNewProfile = (ValueDisplay) dashBoard.getWidgetById(valueDisplay.id);
         assertNotNull(valueDisplayInNewProfile);

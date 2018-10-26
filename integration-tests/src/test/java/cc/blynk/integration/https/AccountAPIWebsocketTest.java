@@ -74,7 +74,7 @@ public class AccountAPIWebsocketTest extends APIBaseTest {
         assertEquals(Role.SUPER_ADMIN_ROLE_ID, user.roleId);
         assertEquals(UserStatus.Active, user.status);
         assertNotNull(user.profile);
-        assertEquals(1, user.profile.dashBoards.length);;
+        assertEquals(0, user.profile.dashBoards.length);;
     }
 
     @Test

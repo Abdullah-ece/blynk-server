@@ -65,7 +65,6 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         //todo this should be changed
-        this.profile.dashBoards = new DashBoard[] {new DashBoard()};
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.orgId = OrganizationDao.DEFAULT_ORGANIZATION_ID;

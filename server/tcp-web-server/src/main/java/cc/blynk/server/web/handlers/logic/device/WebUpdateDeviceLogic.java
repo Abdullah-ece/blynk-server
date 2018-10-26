@@ -67,11 +67,10 @@ public class WebUpdateDeviceLogic {
         }
 
         //default dash for all devices...
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with id = {} not exists.", dashId);
+            log.error("Dash with id = {} not exists.", dash.id);
             ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }

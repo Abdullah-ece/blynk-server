@@ -90,11 +90,10 @@ public class DevicesHandler extends BaseHttpHandler {
         organizationDao.hasAccess(user, orgId);
 
         //default dash for all devices...
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dash.id);
             return badRequest();
         }
 
@@ -165,11 +164,10 @@ public class DevicesHandler extends BaseHttpHandler {
                                  Device newDevice) {
 
         //default dash for all devices...
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dash.id);
             return badRequest();
         }
 
@@ -289,11 +287,10 @@ public class DevicesHandler extends BaseHttpHandler {
 
         deviceDao.delete(deviceId);
 
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dashId);
+            log.error("Dash with orgId = {} not exists.", dash.id);
             return badRequest();
         }
 

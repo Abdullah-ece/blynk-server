@@ -76,11 +76,16 @@ public class WebCreateDeviceLogic {
         }
 
         //default dash for all devices...
-        final int dashId = 0;
-        DashBoard dash = user.profile.getDashById(dashId);
+        //todo fix
+        if (user.profile.dashBoards.length == 0) {
+            user.profile.dashBoards = new DashBoard[] {
+                    new DashBoard()
+            };
+        }
+        DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with id = {} not exists.", dashId);
+            log.error("User {} has no dashboards.", user.email);
             ctx.writeAndFlush(json(message.id, "Dash not exists."), ctx.voidPromise());
             return;
         }

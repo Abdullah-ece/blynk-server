@@ -73,7 +73,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(1));
         newHardClient.send("logEvent temp_is_high");
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, "0-" + device.id));
+        client.verifyResult(hardwareConnected(1, "1-" + device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -103,7 +103,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-" + device.id));
+        client.verifyResult(hardwareConnected(1, "1-" + device.id));
         client.reset();
 
         newHardClient.send("logEvent temp_is_high");
@@ -484,7 +484,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-" + device.id));
+        client.verifyResult(hardwareConnected(1, "1-" + device.id));
         newHardClient.stop();
         client.reset();
 
@@ -492,7 +492,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-" + + device.id));
+        client.verifyResult(hardwareConnected(1, "1-" + + device.id));
         newHardClient.stop();
         client.reset();
 
@@ -524,7 +524,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "0-" + device.id));
+        client.verifyResult(hardwareConnected(1, "1-" + device.id));
         client.reset();
 
         sleep(500);
@@ -545,9 +545,10 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.stop();
         //we have to wait until DB query will be executed and ignore period will pass. it is 1000 millis.
         sleep(1100);
+        client.reset();
 
         client.getTimeline(orgId, device.id, EventType.OFFLINE, null, 0, System.currentTimeMillis(), 0, 10);
-        timeLineResponse = client.parseTimelineResponse(2);
+        timeLineResponse = client.parseTimelineResponse(1);
         assertNotNull(timeLineResponse);
         assertEquals(0, timeLineResponse.totalCritical);
         assertEquals(0, timeLineResponse.totalWarning);

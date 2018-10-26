@@ -310,9 +310,10 @@ public final class TestUtil {
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
-        appClient.getDevice(dashId, 0);
-        Device device = appClient.parseDevice(5 + profile.dashBoards.length + expectedSyncCommandsCount);
-        String token = device.token;
+        appClient.getDevices(dashId);
+        Device[] devices = appClient.parseDevices(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device latestOne = devices[devices.length - 1];
+        String token = latestOne.token;
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
@@ -321,7 +322,7 @@ public final class TestUtil {
         appClient.reset();
         hardClient.reset();
 
-        return new ClientPair(appClient, hardClient, token);
+        return new ClientPair(appClient, hardClient, token, latestOne.id);
     }
 
     public static String getDataFolder() {

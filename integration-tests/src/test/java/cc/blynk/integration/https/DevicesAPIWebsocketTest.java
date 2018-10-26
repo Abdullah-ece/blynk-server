@@ -849,7 +849,7 @@ public class DevicesAPIWebsocketTest extends SingleServerInstancePerTestWithDBAn
         newHardClient.send("login " + token);
         newHardClient.verifyResult(ok(1));
         newHardClient.send("hardware vw 1 121");
-        client.verifyResult(hardwareConnected(1, "0-" + createdDevice.id));
+        client.verifyResult(hardwareConnected(1, "1-" + createdDevice.id));
 
         client.getDevice(orgId, createdDevice.id);
         createdDevice = client.parseDevice(4);

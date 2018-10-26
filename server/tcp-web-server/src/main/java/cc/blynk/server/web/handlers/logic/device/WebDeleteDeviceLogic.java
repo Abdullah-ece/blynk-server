@@ -70,12 +70,14 @@ public class WebDeleteDeviceLogic {
             return;
         }
 
-        int dashId = 0;
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        //default dash for all devices...
+        //todo fix
+        DashBoard dash = user.profile.dashBoards[0];
+
         deviceDao.delete(deviceId);
         tokenManager.deleteDevice(device);
         Session session = sessionDao.userSession.get(state.user.email);
-        session.closeHardwareChannelByDeviceId(dashId, deviceId);
+        session.closeHardwareChannelByDeviceId(dash.id, deviceId);
 
         int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
@@ -87,7 +89,7 @@ public class WebDeleteDeviceLogic {
         }
         blockingIOProcessor.executeHistory(() -> {
             try {
-                reportingDiskDao.delete(state.user, dashId, deviceId);
+                reportingDiskDao.delete(state.user, dash.id, deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }
