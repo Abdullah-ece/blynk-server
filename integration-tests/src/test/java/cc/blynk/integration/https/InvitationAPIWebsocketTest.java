@@ -113,7 +113,10 @@ public class InvitationAPIWebsocketTest extends SingleServerInstancePerTestWithD
         AppWebSocketClient appWebSocketClient = defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.loginViaInvite(token, passHash);
-        User user = appWebSocketClient.parseAccount(1);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
         assertNotNull(user);
         assertEquals("test@gmail.com", user.email);
         assertEquals("Dmitriy", user.name);

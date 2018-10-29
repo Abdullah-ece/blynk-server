@@ -155,7 +155,10 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         AppWebSocketClient appWebSocketClient = defaultClient();
         appWebSocketClient.start();
         appWebSocketClient.loginViaInvite(token, passHash);
-        User user = appWebSocketClient.parseAccount(1);
+        appWebSocketClient.verifyResult(ok(1));
+
+        appWebSocketClient.getAccount();
+        User user = appWebSocketClient.parseAccount(2);
         TestCase.assertNotNull(user);
         assertEquals(invitedUser, user.email);
         assertEquals("Dmitriy", user.name);

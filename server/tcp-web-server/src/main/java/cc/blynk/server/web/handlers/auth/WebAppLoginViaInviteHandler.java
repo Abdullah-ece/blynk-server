@@ -23,9 +23,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.WEB_LOGIN_VIA_INVITE;
 import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
 
 
@@ -129,8 +128,7 @@ public class WebAppLoginViaInviteHandler extends SimpleChannelInboundHandler<Web
         user.lastLoggedAt = System.currentTimeMillis();
 
         session.addWebChannel(channel);
-        channel.writeAndFlush(makeUTF8StringMessage(WEB_LOGIN_VIA_INVITE,
-                msgId, user.toString()), channel.voidPromise());
+        channel.writeAndFlush(ok(msgId), channel.voidPromise());
         holder.tokensPool.removeToken(token);
 
         log.info("{} orgId={} ({}) joined via invite.", user.email, user.orgId, version);
