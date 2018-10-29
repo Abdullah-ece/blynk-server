@@ -97,7 +97,7 @@ public final class WebInviteUserLogic {
         }
 
         String token = TokenGeneratorUtil.generateNewToken();
-        log.info("Trying to send invitation email to {}.", userInvite.email);
+        log.info("Trying to send invitation email to {}, token {}.", userInvite.email, token);
 
         blockingIOProcessor.execute(() -> {
             MessageBase response;
