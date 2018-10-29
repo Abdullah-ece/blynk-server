@@ -13,6 +13,7 @@ export const ACTIONS = {
   'BLYNK_WS_LOG_EVENT_RESOLVE'      : 'BLYNK_WS_LOG_EVENT_RESOLVE',
   'BLYNK_WS_DEVICE_CONNECT'         : 'BLYNK_WS_DEVICE_CONNECT',
   'BLYNK_WS_DEVICE_DISCONNECT'      : 'BLYNK_WS_DEVICE_DISCONNECT',
+  'BLYNK_WS_LOGIN_VIA_INVITE'       : 'BLYNK_WS_LOGIN_VIA_INVITE',
 };
 
 // export const blynkWsAddMessageToHistory = (message = {}) => {
@@ -70,6 +71,14 @@ export const blynkWsConnect = () => ({
 
 export const blynkWsLogin = (params) => ({
   type : ACTIONS.BLYNK_WS_LOGIN,
+  value: {
+    user: params.username,
+    hash: params.hash
+  }
+});
+
+export const blynkWsLoginViaInvite = (params) => ({
+  type : ACTIONS.BLYNK_WS_LOGIN_VIA_INVITE,
   value: {
     user: params.username,
     hash: params.hash

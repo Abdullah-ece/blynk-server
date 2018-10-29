@@ -9,6 +9,7 @@ import {
   blynkWsChartDataFetch,
   blynkWsApiCall,
   API_COMMANDS,
+  COMMANDS
 } from './commands';
 
 export const createBlynkWsMiddleware = (options = {}) => {
@@ -73,6 +74,12 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
     if (action && action.type === blynkWsActions.BLYNK_WS_LOGIN) {
       return blynkWsLogin(params).then(() => {
+        connectionReadyResolve();
+      });
+    }
+
+    if (action && action.type === blynkWsActions.BLYNK_WS_LOGIN_VIA_INVITE) {
+      return blynkWsLogin(params, COMMANDS.LOGIN_VIA_INVITE).then(() => {
         connectionReadyResolve();
       });
     }

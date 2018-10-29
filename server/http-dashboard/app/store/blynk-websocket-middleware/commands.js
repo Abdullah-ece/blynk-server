@@ -28,6 +28,7 @@ export const RESPONSE_CODES = {
 export const COMMANDS = {
   RESPONSE               : 0,
   LOGIN                  : 2,
+  LOGIN_VIA_INVITE       : 125,
   DEVICE_CONNECTED       : 4,
   HARDWARE               : 20,
   APP_SYNC               : 25,
@@ -65,7 +66,6 @@ export const API_COMMANDS = {
   DELETE_ORG                    : 122,
   CAN_DELETE_PRODUCT            : 123,
   INVITE_USER                   : 124,
-  LOGIN_VIA_INVITE              : 125,
   UPDATE_DEVICE_METAFIELD       : 126,
   GET_DEVICE_TIMELINE           : 127,
   LOG_EVENT_RESOLVE             : 75,
@@ -156,7 +156,7 @@ export const blynkWsApiCall = (params) => {
 
 };
 
-export const blynkWsLogin = (params) => {
+export const blynkWsLogin = (params, command = COMMANDS.LOGIN, ) => {
 
   const {store, action, options} = params;
 
@@ -166,13 +166,13 @@ export const blynkWsLogin = (params) => {
   const {user, hash} = action.value;
 
   const value = makeMessage(
-      COMMANDS.LOGIN, ++MSG_ID, `${user}\0${hash}`
+    command, ++MSG_ID, `${user}\0${hash}`
   );
 
   store.dispatch(blynkWsRequest({
     id     : MSG_ID,
     request: {
-      command: COMMANDS.LOGIN,
+      command: command,
       value  : `${user}\0${hash}`
     }
   }));

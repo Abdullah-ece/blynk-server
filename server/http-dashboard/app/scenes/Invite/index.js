@@ -2,20 +2,21 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import './styles.less';
-import {SubmissionError} from 'redux-form';
+import {message} from 'antd';
 import InviteForm from './components/InviteForm';
 import {encryptUserPassword} from 'services/Crypto';
 import {Invite as SendInvite} from './data/actions';
 import * as AccountAPI from 'data/Account/actions';
 import {LoginWsSuccess} from 'data/Login/actions';
 import {
-  blynkWsLogin
+  blynkWsLoginViaInvite
 } from 'store/blynk-websocket-middleware/actions';
+import {displayError} from "../../services/ErrorHandling";
 
 
 @connect(() => ({}), (dispatch) => ({
   LoginWsSuccess: bindActionCreators(LoginWsSuccess, dispatch),
-  blynkWsLogin: bindActionCreators(blynkWsLogin, dispatch),
+  blynkWsLogin: bindActionCreators(blynkWsLoginViaInvite, dispatch),
   SendInvite: bindActionCreators(SendInvite, dispatch),
   AccountFetch: bindActionCreators(AccountAPI.Account, dispatch),
   AccountSaveCredentials: bindActionCreators(AccountAPI.AccountSaveCredentials, dispatch),
@@ -39,31 +40,23 @@ class Invite extends React.Component {
 
     const password = encryptUserPassword(this.props.location.query.email, values.password);
 
-    return this.props.SendInvite({
-      token: this.props.location.query.token,
-      password: password
+    return this.props.blynkWsLogin({
+      username: this.props.location.query.token,
+      hash: password
     }).then(() => {
-
-      return this.props.blynkWsLogin({
+      this.props.AccountSaveCredentials({
         username: this.props.location.query.email,
-        hash: password
-      }).then(() => {
-        this.props.AccountSaveCredentials({
-          username: this.props.location.query.email,
-          password: password,
-        });
-        //todo this is not required since api send back user data on successful login
-        this.props.AccountFetch().then(() => {
-          this.props.LoginWsSuccess();
-          this.context.router.push('/devices');
-        });
+        password: password,
       });
-
+      //todo this is not required since api send back user data on successful login
+      this.props.AccountFetch().then(() => {
+        this.props.LoginWsSuccess();
+        this.context.router.push('/devices');
+      });
     }).catch((err) => {
-      throw new SubmissionError({
-        _error: err.error.response.message
-      });
+      displayError(err, message.error);
     });
+
   }
 
   render() {
