@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
@@ -311,7 +312,7 @@ public class ReportingDiskDao implements Closeable {
         }
 
         //store history data only for the pins assigned to the superchart
-        Widget widgetWithLogPins = dash.getWidgetWithLoggedPin(deviceId, pin, pinType);
+        Widget widgetWithLogPins = Profile.getWidgetWithLoggedPin(dash, deviceId, pin, pinType);
         if (widgetWithLogPins != null) {
             BaseReportingKey key = new BaseReportingKey(user.email, user.orgId, dash.id, deviceId, pinType, pin);
             averageAggregator.collect(key, ts, doubleVal);
