@@ -1,0 +1,54 @@
+@import "style-guide";
+
+@user-layout-navigation-background-color: #fff;
+
+@user-layout-navigation-menu-item-icon-color: fade(#000, 65%);
+
+@user-layout-navigation-collapse-btn-idle-color: fade(#000, 65%);
+@user-layout-navigation-collapse-btn-hover-color: #e92126;
+
+@user-layout-navigation-menu-item-idle-color: fade(#000, 65%);
+@user-layout-navigation-menu-item-idle-background-color: @user-layout-navigation-background-color;
+
+@user-layout-navigation-menu-item-hover-color: #e92126;
+@user-layout-navigation-menu-item-hover-background-color: #fff2f0;
+
+@user-layout-navigation-menu-item-active-color: #e92126;
+@user-layout-navigation-menu-item-active-background-color: #fff2f0;
+
+.user-layout-left-navigation {
+  background-color: @user-layout-navigation-background-color;
+
+  .ant-menu {
+    background-color: @user-layout-navigation-background-color;
+
+    .ant-menu-item {
+      margin-right: 1px;
+      color: @user-layout-navigation-menu-item-idle-color;
+      background-color: @user-layout-navigation-menu-item-idle-background-color;
+
+      &.ant-menu-item-selected {
+        margin-right: 0;
+        color: @user-layout-navigation-menu-item-active-color;
+        background-color: @user-layout-navigation-menu-item-active-background-color;
+      }
+
+      &:hover {
+        color: @user-layout-navigation-menu-item-active-color;
+        background-color: @user-layout-navigation-menu-item-active-background-color;
+      }
+    }
+  }
+}
+
+.user-layout-left-navigation-collapse-btn {
+  i {
+    color: @user-layout-navigation-collapse-btn-idle-color;
+  }
+
+  &:hover {
+    i {
+      color: @user-layout-navigation-collapse-btn-hover-color;
+    }
+  }
+}
