@@ -2,6 +2,7 @@ import {OrganizationFetch} from "data/Organization/actions";
 import {OrganizationsFetch} from "data/Organizations/actions";
 import React from 'react';
 import {Menu, Icon, Avatar, Dropdown} from 'antd';
+import {LinearIcon} from "components";
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -126,30 +127,35 @@ class UserLayout extends React.Component {
     const menuItemActive = [this.context.router.getCurrentLocation().pathname];
 
     return (
-      <Menu onClick={this.handleClick.bind(this)}
+      <Menu className="user-layout-profile-dropdown-menu" onClick={this.handleClick.bind(this)}
             defaultSelectedKeys={menuItemActive}>
-        <Menu.Item key="/user-profile/account-settings">
-          My Profile
-        </Menu.Item>
-        <Menu.Item key="/user-profile/organization-settings">
-          Organization Settings
-        </Menu.Item>
-        <Menu.Item key="/user-profile/users">
-          Users
-        </Menu.Item>
-        {/*<Menu.Item key="/user-profile/branding">*/}
+        <Menu.ItemGroup title="Profile">
+          <Menu.Item key="/user-profile/account-settings">
+            <LinearIcon type="user"/> My Profile
+          </Menu.Item>
+        </Menu.ItemGroup>
+        <Menu.Divider/>
+        <Menu.ItemGroup title="Organization">
+          <Menu.Item key="/user-profile/organization-settings">
+            <LinearIcon type="cog"/> Organization Settings
+          </Menu.Item>
+          <Menu.Item key="/user-profile/users">
+            <LinearIcon type="users2"/> Users
+          </Menu.Item>
+          {/*<Menu.Item key="/user-profile/branding">*/}
           {/*Branding*/}
-        {/*</Menu.Item>*/}
-        <Menu.Item key="/user-profile/roles-and-permissions">
-          Roles & Permissions
-        </Menu.Item>
+          {/*</Menu.Item>*/}
+          <Menu.Item key="/user-profile/roles-and-permissions">
+            <LinearIcon type="lock"/> Roles & Permissions
+          </Menu.Item>
+        </Menu.ItemGroup>
 
         {/*<Menu.Item key="/billing">*/}
         {/*Billing*/}
         {/*</Menu.Item>*/}
         <Menu.Divider className="user-layout--menu-divider"/>
         <Menu.Item key="logout">
-          <Icon type="login"/> Log out
+          <LinearIcon type="exit"/> Log out
         </Menu.Item>
       </Menu>
     );
