@@ -275,6 +275,14 @@ public class UserDao {
         return data;
     }
 
+    //removes devices that has no widgets assigned to
+    //probably those devices were added via device tiles widget
+    private static void removeDevicesProvisionedFromDeviceTiles(DashBoard dash) {
+        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
+        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
+        dash.devices = list.toArray(new Device[0]);
+    }
+
     public void createProjectForExportedApp(TimerWorker timerWorker,
                                             TokenManager tokenManager,
                                             User newUser, String appName, int msgId) {
@@ -332,14 +340,6 @@ public class UserDao {
                 tokenManager.assignToken(newUser, clonedDash, device, token);
             }
         }
-    }
-
-    //removes devices that has no widgets assigned to
-    //probably those devices were added via device tiles widget
-    private static void removeDevicesProvisionedFromDeviceTiles(DashBoard dash) {
-        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
-        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
-        dash.devices = list.toArray(new Device[0]);
     }
 
 

@@ -13,7 +13,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,14 +78,7 @@ public class WebDeleteDeviceLogic {
         Session session = sessionDao.userSession.get(state.user.email);
         session.closeHardwareChannelByDeviceId(dash.id, deviceId);
 
-        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
-        dash.eraseValuesForDevice(deviceId);
-        try {
-            dash.deleteDeviceFromObjects(deviceId);
-        } catch (Exception e) {
-            log.warn("Error erasing widget device. Reason : {}", e.getMessage());
-        }
+        dash.deleteDevice(deviceId);
         blockingIOProcessor.executeHistory(() -> {
             try {
                 reportingDiskDao.delete(state.user, dash.id, deviceId);
@@ -94,7 +86,6 @@ public class WebDeleteDeviceLogic {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }
         });
-        dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -282,22 +282,24 @@ public class DashBoard {
         return null;
     }
 
-    private int getDeviceIndexByIdOrThrow(int id) {
-        for (int i = 0; i < devices.length; i++) {
-            if (devices[i].id == id) {
-                return i;
+    private static void cleanPinStorage(DashBoard dash,
+                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+        if (multiPinWidget.dataStreams != null) {
+            for (DataStream dataStream : multiPinWidget.dataStreams) {
+                if (dataStream != null && dataStream.isValid()) {
+                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                            dataStream.pinType, dataStream.pin, removeProperties);
+                }
             }
         }
-        throw new IllegalCommandException("Device with passed id not found.");
     }
 
-    public boolean hasWidgetsByDeviceId(int deviceId) {
-        for (Widget widget : widgets) {
-            if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
-                return true;
-            }
+    private static void cleanPinStorage(DashBoard dash,
+                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
+        if (onePinWidget.isValid()) {
+            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
         }
-        return false;
     }
 
     public Device getDeviceById(int id) {
@@ -309,12 +311,27 @@ public class DashBoard {
         return null;
     }
 
-    public DeviceSelector getDeviceSelector(long targetId) {
-        Widget widget = getWidgetById(targetId);
-        if (widget instanceof DeviceSelector) {
-            return (DeviceSelector) widget;
+    private static void removePinStorageValue(DashBoard dash,
+                                              int targetId, PinType pinType, byte pin, boolean removeProperties) {
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
         }
-        return null;
+        if (target != null) {
+            for (int deviceId : target.getAssignedDeviceIds()) {
+                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
+                    }
+                }
+            }
+        }
     }
 
     public Widget getWidgetByIdOrThrow(long id) {
@@ -408,27 +425,22 @@ public class DashBoard {
         }
     }
 
-    private void eraseValuesForDevice(int deviceId) {
-        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
-        for (Widget widget : widgets) {
-            if (widget.isAssignedToDevice(deviceId)) {
-                //deviceTiles has a bit different removal logic, so we skip it here
-                if (!(widget instanceof DeviceTiles)) {
-                    widget.erase();
-                }
+    public int getDeviceIndexByIdOrThrow(int id) {
+        for (int i = 0; i < devices.length; i++) {
+            if (devices[i].id == id) {
+                return i;
             }
         }
+        throw new IllegalCommandException("Device with passed id not found.");
     }
 
-    private void deleteDeviceFromObjects(int deviceId) {
+    public boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
-            if (widget instanceof DeviceCleaner) {
-                ((DeviceCleaner) widget).deleteDevice(deviceId);
+            if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
+                return true;
             }
         }
-        for (Tag tag : tags) {
-            tag.deleteDevice(deviceId);
-        }
+        return false;
     }
 
     public void addTimers(TimerWorker timerWorker, String email) {
@@ -444,9 +456,12 @@ public class DashBoard {
         }
     }
 
-    public void cleanPinStorage(Widget widget, boolean removeTemplates) {
-        cleanPinStorageInternalWithoutUpdatedAt(widget, true, removeTemplates);
-        this.updatedAt = System.currentTimeMillis();
+    public DeviceSelector getDeviceSelector(long targetId) {
+        Widget widget = getWidgetById(targetId);
+        if (widget instanceof DeviceSelector) {
+            return (DeviceSelector) widget;
+        }
+        return null;
     }
 
     private static Tag[] copyTags(Tag[] tagsToCopy) {
@@ -475,6 +490,34 @@ public class DashBoard {
         }
     }
 
+    private void eraseValuesForDevice(int deviceId) {
+        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+        for (Widget widget : widgets) {
+            if (widget.isAssignedToDevice(deviceId)) {
+                //deviceTiles has a bit different removal logic, so we skip it here
+                if (!(widget instanceof DeviceTiles)) {
+                    widget.erase();
+                }
+            }
+        }
+    }
+
+    private void deleteDeviceFromObjects(int deviceId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceCleaner) {
+                ((DeviceCleaner) widget).deleteDevice(deviceId);
+            }
+        }
+        for (Tag tag : tags) {
+            tag.deleteDevice(deviceId);
+        }
+    }
+
+    public void cleanPinStorage(Widget widget, boolean removeTemplates) {
+        cleanPinStorageInternalWithoutUpdatedAt(widget, true, removeTemplates);
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     public void cleanPinStorageForTileTemplate(TileTemplate tileTemplate, boolean removeProperties) {
         for (int deviceId : tileTemplate.deviceIds) {
             for (Widget widget : tileTemplate.widgets) {
@@ -484,49 +527,6 @@ public class DashBoard {
                 } else if (widget instanceof MultiPinWidget) {
                     MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                     cleanPinStorage(this, multiPinWidget, deviceId, removeProperties);
-                }
-            }
-        }
-    }
-
-    private static void cleanPinStorage(DashBoard dash,
-                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
-        if (multiPinWidget.dataStreams != null) {
-            for (DataStream dataStream : multiPinWidget.dataStreams) {
-                if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
-                            dataStream.pinType, dataStream.pin, removeProperties);
-                }
-            }
-        }
-    }
-
-    private static void cleanPinStorage(DashBoard dash,
-                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
-        if (onePinWidget.isValid()) {
-            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
-                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
-        }
-    }
-
-    private static void removePinStorageValue(DashBoard dash,
-                                              int targetId, PinType pinType, byte pin, boolean removeProperties) {
-        Target target;
-        if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
-        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
-        if (target != null) {
-            for (int deviceId : target.getAssignedDeviceIds()) {
-                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
-                if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
-                    }
                 }
             }
         }

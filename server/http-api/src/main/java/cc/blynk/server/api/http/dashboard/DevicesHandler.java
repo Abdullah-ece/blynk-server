@@ -294,13 +294,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        try {
-            int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-            dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
-        } catch (Exception e) {
-          //no device in app dashboard. ignore.
-          //todo provide method without exception thrown
-        }
+        dash.deleteDevice(deviceId);
 
         tokenManager.deleteDevice(device);
 

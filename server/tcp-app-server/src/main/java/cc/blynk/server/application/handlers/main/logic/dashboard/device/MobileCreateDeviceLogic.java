@@ -60,7 +60,7 @@ public final class MobileCreateDeviceLogic {
 
         holder.organizationDao.assignToOrgAndAddDevice(user.orgId, newDevice);
 
-        dash.addDevice(newDevice);
+        dash.addDevice(newDevice, null);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
