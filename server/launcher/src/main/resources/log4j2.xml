@@ -67,7 +67,7 @@
 
         <Logger name="org.jooq" level="DEBUG" additivity="false" />
 
-        <Root>
+        <Root level="trace">
             <AppenderRef ref="userLog"/>
         </Root>
 
