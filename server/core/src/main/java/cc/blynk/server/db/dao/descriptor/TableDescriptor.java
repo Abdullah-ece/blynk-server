@@ -229,7 +229,7 @@ public class TableDescriptor {
         return list;
     }
 
-    public static TableDescriptor getTableByPin(byte pin, PinType pinType) {
+    public static TableDescriptor getTableByPin(short pin, PinType pinType) {
         if (pin == 100 && pinType == PinType.VIRTUAL) {
             return TableDescriptor.KNIGHT_LAUNDRY;
         } else if (pin == 101 && pinType == PinType.VIRTUAL) {

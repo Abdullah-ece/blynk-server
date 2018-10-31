@@ -90,7 +90,7 @@ public class ExternalAPITest extends APIBaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Wrong pin format.", TestUtil.consumeText(response));
+            assertEquals("{\"error\":{\"message\":\"Wrong pin format.\"}}", consumeText(response));
         }
     }
 

@@ -37,6 +37,19 @@ public class CSVGenerator {
         this.reportingDao = reportingDao;
     }
 
+    public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
+
+    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, short pin) {
+        return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
+    }
+
+    //"%s_%s_%c%d.csv.gz"
+    private static String format(String email, int dashId, int deviceId, PinType pinType, short pin) {
+        long now = System.currentTimeMillis();
+        return email + "_" + dashId + "_" + deviceId + "_"
+                + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;
+    }
+
     public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, short pin, int... deviceIds)
             throws Exception {
         if (!DataStream.isValid(pin, pinType)) {
@@ -65,18 +78,5 @@ public class CSVGenerator {
         }
 
         return path;
-    }
-
-    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, short pin) {
-        return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
-    }
-
-    public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
-
-    //"%s_%s_%c%d.csv.gz"
-    private static String format(String email, int dashId, int deviceId, PinType pinType, short pin) {
-        long now = System.currentTimeMillis();
-        return email + "_" + dashId + "_" + deviceId + "_"
-                + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;
     }
 }

@@ -22,6 +22,7 @@ import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.dao.descriptor.DataQueryRequestDTO;
 import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -66,7 +67,7 @@ public class DataHandler extends BaseHttpHandler {
         organizationDao.verifyUserAccessToDevice(user, device);
 
         PinType pinType = PinType.getPinType(dataStream.charAt(0));
-        byte pin = Byte.parseByte(dataStream.substring(1));
+        short pin = NumberUtil.parsePin(dataStream.substring(1));
 
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
 

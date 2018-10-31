@@ -97,16 +97,16 @@ public class DataStream implements CopyObject<DataStream> {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public boolean isSame(short pin, PinType type) {
-        return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
+    public static boolean isValid(short pin, PinType pinType) {
+        return pin != NO_PIN && pinType != null;
     }
 
     public String makeHardwareBody() {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public static boolean isValid(short pin, PinType pinType) {
-        return pin != NO_PIN && pinType != null;
+    public boolean isSame(short pin, PinType type) {
+        return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
     }
 
     public boolean isValid() {

@@ -137,49 +137,21 @@ public class ReportingDBDao {
         }
     }
 
-    public void insertRawData(Map<AggregationKey, Object> rawData) {
-        long start = System.currentTimeMillis();
-
-        log.info("Storing raw reporting...");
-        int counter = 0;
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
-
-            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry<AggregationKey, Object> entry = iter.next();
-
-                final AggregationKey key = entry.getKey();
-                final Object value = entry.getValue();
-
-                ps.setString(1, key.getEmail());
-                ps.setInt(2, key.getDashId());
-                ps.setInt(3, key.getDeviceId());
-                ps.setByte(4, key.getPin());
-                ps.setString(5, key.getPinType().pinTypeString);
-                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
-
-                if (value instanceof String) {
-                    ps.setString(7, (String) value);
-                    ps.setNull(8, Types.DOUBLE);
-                } else {
-                    ps.setNull(7, Types.VARCHAR);
-                    ps.setDouble(8, (Double) value);
-                }
-
-                ps.addBatch();
-                counter++;
-                iter.remove();
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting raw reporting data in DB.", e);
-        }
-
-        log.info("Storing raw reporting finished. Time {}. Records saved {}",
-                System.currentTimeMillis() - start, counter);
+    public static void prepareReportingInsert(PreparedStatement ps,
+                                                 String email,
+                                                 int dashId,
+                                                 int deviceId,
+                                                 short pin,
+                                                 PinType pinType,
+                                                 long ts,
+                                                 double value) throws SQLException {
+        ps.setString(1, email);
+        ps.setInt(2, dashId);
+        ps.setInt(3, deviceId);
+        ps.setShort(4, pin);
+        ps.setInt(5, pinType.ordinal());
+        ps.setTimestamp(6, new Timestamp(ts));
+        ps.setDouble(7, value);
     }
 
     private static String getTableByGranularity(GraphGranularityType graphGranularityType) {
@@ -205,34 +177,6 @@ public class ReportingDBDao {
         AggregationValue value = entry.getValue();
         prepareReportingInsert(ps, key.getEmail(), key.getDashId(), key.getDeviceId(),
                 key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
-    }
-
-    public static void prepareReportingInsert(PreparedStatement ps,
-                                                 String email,
-                                                 int dashId,
-                                                 int deviceId,
-                                                 short pin,
-                                                 PinType pinType,
-                                                 long ts,
-                                                 double value) throws SQLException {
-        ps.setString(1, email);
-        ps.setInt(2, dashId);
-        ps.setInt(3, deviceId);
-        ps.setShort(4, pin);
-        ps.setInt(5, pinType.ordinal());
-        ps.setTimestamp(6, new Timestamp(ts));
-        ps.setDouble(7, value);
-    }
-
-    private static String getTableByGraphType(GraphGranularityType graphGranularityType) {
-        switch (graphGranularityType) {
-            case MINUTE :
-                return insertMinute;
-            case HOURLY :
-                return insertHourly;
-            default :
-                return insertDaily;
-        }
     }
 
     public void insertRawData(Map<AggregationKey, Object> rawData) {
@@ -278,6 +222,17 @@ public class ReportingDBDao {
 
         log.info("Storing raw reporting finished. Time {}. Records saved {}",
                 System.currentTimeMillis() - start, counter);
+    }
+
+    private static String getTableByGraphType(GraphGranularityType graphGranularityType) {
+        switch (graphGranularityType) {
+            case MINUTE :
+                return insertMinute;
+            case HOURLY :
+                return insertHourly;
+            default :
+                return insertDaily;
+        }
     }
 
     public void insertStat(String region, Stat stat) {

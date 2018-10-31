@@ -40,7 +40,7 @@ public class WebDashboard implements CopyObject<WebDashboard> {
         this.widgets = DashBoard.copyWidgetsAndPreservePrevValues(widgets, updatedDashboard.widgets);
     }
 
-    public boolean update(int deviceId, byte pin, PinType type, String value) {
+    public boolean update(int deviceId, short pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
@@ -59,7 +59,7 @@ public class WebDashboard implements CopyObject<WebDashboard> {
         return null;
     }
 
-    public boolean needRawDataForGraph(byte pin, PinType pinType) {
+    public boolean needRawDataForGraph(short pin, PinType pinType) {
         for (Widget widget : widgets) {
             //realtime is needed only for webgraph widget
             if (widget instanceof BaseWebGraph) {

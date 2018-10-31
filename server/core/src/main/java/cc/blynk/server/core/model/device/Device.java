@@ -248,7 +248,7 @@ public class Device implements Target {
         updateFromMobile(newDevice);
     }
 
-    public void updateWebDashboard(byte pin, PinType type, String value, long now) {
+    public void updateWebDashboard(short pin, PinType type, String value, long now) {
         webDashboard.update(id, pin, type, value);
         this.dataReceivedAt = now;
     }

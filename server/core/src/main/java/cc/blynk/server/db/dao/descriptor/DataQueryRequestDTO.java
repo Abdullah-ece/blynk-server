@@ -18,7 +18,7 @@ public class DataQueryRequestDTO {
 
     public final AggregationFunctionType sourceType;
     public final PinType pinType;
-    public final byte pin;
+    public final short pin;
     public final SelectedColumn[] selectedColumns;
     public final SelectedColumn[] groupByFields;
     public final SelectedColumn[] sortByFields;
@@ -36,7 +36,7 @@ public class DataQueryRequestDTO {
     public DataQueryRequestDTO(AggregationFunctionType sourceType,
                                int deviceId,
                                PinType pinType,
-                               byte pin,
+                               short pin,
                                SelectedColumn[] selectedColumns,
                                SelectedColumn[] groupByFields,
                                SelectedColumn[] sortByFields,
@@ -51,7 +51,7 @@ public class DataQueryRequestDTO {
     @JsonCreator
     public DataQueryRequestDTO(@JsonProperty("sourceType") AggregationFunctionType sourceType,
                                @JsonProperty("pinType") PinType pinType,
-                               @JsonProperty("pin") byte pin,
+                               @JsonProperty("pin") short pin,
                                @JsonProperty("selectedColumns") SelectedColumn[] selectedColumns,
                                @JsonProperty("groupByFields") SelectedColumn[] groupByFields,
                                @JsonProperty("sortByFields") SelectedColumn[] sortByFields,

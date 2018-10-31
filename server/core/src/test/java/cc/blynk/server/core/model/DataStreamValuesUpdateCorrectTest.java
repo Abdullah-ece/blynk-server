@@ -32,6 +32,16 @@ public class DataStreamValuesUpdateCorrectTest {
         }
     }
 
+    public static void update(DashBoard dash, int deviceId, String[] splitted) {
+        final PinType type = PinType.getPinType(splitted[0].charAt(0));
+        final short pin = NumberUtil.parsePin(splitted[1]);
+        dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
+    }
+
+    public static void update(DashBoard dash, int deviceId, String body) {
+        update(dash, deviceId, split3(body));
+    }
+
     @Test
     public void testHas1Pin() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
@@ -82,16 +92,6 @@ public class DataStreamValuesUpdateCorrectTest {
         update(dash, 0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.dataStreams[0].value);
-    }
-
-    public static void update(DashBoard dash, int deviceId, String body) {
-        update(dash, deviceId, split3(body));
-    }
-
-    public static void update(DashBoard dash, int deviceId, String[] splitted) {
-        final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final short pin = NumberUtil.parsePin(splitted[1]);
-        dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
     }
 
 }

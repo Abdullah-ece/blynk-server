@@ -46,6 +46,7 @@ import cc.blynk.server.db.dao.descriptor.TableDataMapper;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
@@ -216,60 +217,17 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         return getWidgetPinData(token, pinString);
     }
 
-    //todo old API.
-    @GET
-    @Path("/{token}/pin/{pin}")
-    @Metric(HTTP_GET_PIN_DATA)
-    public Response getWidgetPinData(@PathParam("token") String token,
-                                     @PathParam("pin") String pinString) {
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int deviceId = tokenValue.device.id;
-        DashBoard dashBoard = tokenValue.dash;
-
-        PinType pinType;
-        byte pin;
-
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
-
+    private static String makeBody(DashBoard dash, int deviceId, short pin, PinType pinType, String pinValue) {
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
         if (widget == null) {
-            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
-            if (value == null) {
-                log.debug("Requested pin {} not found. User {}", pinString, user.email);
-                return Response.badRequest("Requested pin doesn't exist in the app.");
-            }
-            if (value instanceof SinglePinStorageValue) {
-                return ok(JsonParser.valueToJsonAsString((SinglePinStorageValue) value));
+            return DataStream.makeHardwareBody(pinType, pin, pinValue);
+        } else {
+            if (widget instanceof OnePinWidget) {
+                return ((OnePinWidget) widget).makeHardwareBody();
             } else {
-                return ok(JsonParser.valueToJsonAsString(value.values()));
+                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
             }
         }
-
-        if (widget instanceof DeviceTiles) {
-            String value = ((DeviceTiles) widget).getValue(deviceId, pin, pinType);
-            if (value == null) {
-                log.debug("Requested pin {} not found. User {}", pinString, user.email);
-                return badRequest("Requested pin doesn't exist in the app.");
-            }
-            return ok(value);
-        }
-
-        return ok(widget.getJsonValue());
     }
 
     @GET
@@ -319,6 +277,62 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
     }
 
+    //todo old API.
+    @GET
+    @Path("/{token}/pin/{pin}")
+    @Metric(HTTP_GET_PIN_DATA)
+    public Response getWidgetPinData(@PathParam("token") String token,
+                                     @PathParam("pin") String pinString) {
+
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        User user = tokenValue.user;
+        int deviceId = tokenValue.device.id;
+        DashBoard dashBoard = tokenValue.dash;
+
+        PinType pinType;
+        short pin;
+
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = NumberUtil.parsePin(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.debug("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
+
+        if (widget == null) {
+            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+            if (value == null) {
+                log.debug("Requested pin {} not found. User {}", pinString, user.email);
+                return Response.badRequest("Requested pin doesn't exist in the app.");
+            }
+            if (value instanceof SinglePinStorageValue) {
+                return ok(JsonParser.valueToJsonAsString((SinglePinStorageValue) value));
+            } else {
+                return ok(JsonParser.valueToJsonAsString(value.values()));
+            }
+        }
+
+        if (widget instanceof DeviceTiles) {
+            String value = ((DeviceTiles) widget).getValue(deviceId, pin, pinType);
+            if (value == null) {
+                log.debug("Requested pin {} not found. User {}", pinString, user.email);
+                return badRequest("Requested pin doesn't exist in the app.");
+            }
+            return ok(value);
+        }
+
+        return ok(widget.getJsonValue());
+    }
+
     @GET
     @Path("/{token}/data/{pin}")
     @Metric(HTTP_GET_HISTORY_DATA)
@@ -336,11 +350,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         int deviceId = tokenValue.device.id;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
@@ -361,69 +375,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             log.debug("Error getting pin data.");
             return Response.badRequest("Error getting pin data.");
         }
-    }
-
-    public Response updateWidgetProperty(String token,
-                                         String pinString,
-                                         String property,
-                                         String... values) {
-        if (values.length == 0) {
-            log.debug("No properties for update provided.");
-            return Response.badRequest("No properties for update provided.");
-        }
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int deviceId = tokenValue.device.id;
-        DashBoard dash = tokenValue.dash;
-
-        //todo add test for this use case
-        if (!dash.isActive) {
-            return Response.badRequest("Project is not active.");
-        }
-
-        PinType pinType;
-        byte pin;
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-
-        if (widget == null || pinType != PinType.VIRTUAL) {
-            log.debug("No widget for SetWidgetProperty command.");
-            return Response.badRequest("No widget for SetWidgetProperty command.");
-        }
-
-      WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
-      if (widgetProperty == null) {
-        log.debug("Property not exists. Property : {}", property);
-        return badRequest("Property not exists.");
-      }
-
-        try {
-            //todo for now supporting only single property
-            widget.setProperty(widgetProperty, values[0]);
-        } catch (Exception e) {
-            log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            return Response.badRequest("Error setting widget property.");
-        }
-
-        Session session = sessionDao.userSession.get(user.email);
-        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
-                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
-        return ok();
     }
 
     //todo it is a bit ugly right now. could be simplified by passing map of query params.
@@ -478,6 +429,69 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         return updateWidgetPinData(ctx, token, pinString, pinValues);
     }
 
+    public Response updateWidgetProperty(String token,
+                                         String pinString,
+                                         String property,
+                                         String... values) {
+        if (values.length == 0) {
+            log.debug("No properties for update provided.");
+            return Response.badRequest("No properties for update provided.");
+        }
+
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        User user = tokenValue.user;
+        int deviceId = tokenValue.device.id;
+        DashBoard dash = tokenValue.dash;
+
+        //todo add test for this use case
+        if (!dash.isActive) {
+            return Response.badRequest("Project is not active.");
+        }
+
+        PinType pinType;
+        short pin;
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = NumberUtil.parsePin(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.debug("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        //for now supporting only virtual pins
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
+
+        if (widget == null || pinType != PinType.VIRTUAL) {
+            log.debug("No widget for SetWidgetProperty command.");
+            return Response.badRequest("No widget for SetWidgetProperty command.");
+        }
+
+      WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+      if (widgetProperty == null) {
+        log.debug("Property not exists. Property : {}", property);
+        return badRequest("Property not exists.");
+      }
+
+        try {
+            //todo for now supporting only single property
+            widget.setProperty(widgetProperty, values[0]);
+        } catch (Exception e) {
+            log.debug("Error setting widget property. Reason : {}", e.getMessage());
+            return Response.badRequest("Error setting widget property.");
+        }
+
+        Session session = sessionDao.userSession.get(user.email);
+        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
+                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
+        return ok();
+    }
+
     @PUT
     @Path("/{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
@@ -506,11 +520,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         DashBoard dash = tokenValue.dash;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
@@ -585,11 +599,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
@@ -620,69 +634,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         return null;
-    }
-
-    @PUT
-    @Path("/{token}/extra/pin/{pin}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinData(@PathParam("token") String token,
-                                        @PathParam("pin") String pinString,
-                                        PinData[] pinsData) {
-
-        if (pinsData.length == 0) {
-            log.debug("No pin for update provided.");
-            return Response.badRequest("No pin for update provided.");
-        }
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.device.id;
-
-        DashBoard dash = tokenValue.dash;
-
-        PinType pinType;
-        byte pin;
-
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        Device device = deviceDao.getByIdOrThrow(deviceId);
-        for (PinData pinData : pinsData) {
-            reportingDiskDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
-        }
-
-        long now = System.currentTimeMillis();
-        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
-
-        String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
-
-        if (body != null) {
-            Session session = sessionDao.userSession.get(user);
-            if (session == null) {
-                log.error("No session for user {}.", user.email);
-                return Response.ok();
-            }
-            session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
-
-            if (dash.isActive) {
-                session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
-            }
-        }
-
-        return Response.ok();
     }
 
     @POST
@@ -782,17 +733,66 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         });
     }
 
+    @PUT
+    @Path("/{token}/extra/pin/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
+    public Response updateWidgetPinData(@PathParam("token") String token,
+                                        @PathParam("pin") String pinString,
+                                        PinData[] pinsData) {
 
-    private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-        if (widget == null) {
-            return DataStream.makeHardwareBody(pinType, pin, pinValue);
-        } else {
-            if (widget instanceof OnePinWidget) {
-                return ((OnePinWidget) widget).makeHardwareBody();
-            } else {
-                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
+        if (pinsData.length == 0) {
+            log.debug("No pin for update provided.");
+            return Response.badRequest("No pin for update provided.");
+        }
+
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.device.id;
+
+        DashBoard dash = tokenValue.dash;
+
+        PinType pinType;
+        short pin;
+
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = NumberUtil.parsePin(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.debug("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        Device device = deviceDao.getByIdOrThrow(deviceId);
+        for (PinData pinData : pinsData) {
+            reportingDiskDao.process(user, dash, device, pin, pinType, pinData.value, pinData.timestamp);
+        }
+
+        long now = System.currentTimeMillis();
+        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
+
+        String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
+
+        if (body != null) {
+            Session session = sessionDao.userSession.get(user);
+            if (session == null) {
+                log.error("No session for user {}.", user.email);
+                return Response.ok();
+            }
+            session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
+
+            if (dash.isActive) {
+                session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
             }
         }
+
+        return Response.ok();
     }
 }

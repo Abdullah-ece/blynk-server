@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -66,7 +67,7 @@ public class WebAppHardwareLogic {
         }
 
         PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-        byte pin = Byte.parseByte(splitBody[1]);
+        short pin = NumberUtil.parsePin(splitBody[1]);
         String value = splitBody[2];
 
         device.webDashboard.update(device.id, pin, pinType, value);

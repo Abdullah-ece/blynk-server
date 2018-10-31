@@ -116,23 +116,47 @@ public class DashBoard {
         return parentId != IS_PARENT_DASH;
     }
 
-    public void update(int deviceId, short pin, PinType pinType, String value, long now) {
-        if (!updateWidgets(deviceId, pin, pinType, value)) {
-            //special case. #237 if no widget - storing without widget.
-            putPinStorageValue(deviceId, pinType, pin, value);
-        }
-
-        this.updatedAt = now;
-    }
-
-    private boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
-        boolean hasWidget = false;
-        for (Widget widget : widgets) {
-            if (widget.updateIfSame(deviceId, pin, type, value)) {
-                hasWidget = true;
+    private static void cleanPinStorage(DashBoard dash,
+                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+        if (multiPinWidget.dataStreams != null) {
+            for (DataStream dataStream : multiPinWidget.dataStreams) {
+                if (dataStream != null && dataStream.isValid()) {
+                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                            dataStream.pinType, dataStream.pin, removeProperties);
+                }
             }
         }
-        return hasWidget;
+    }
+
+    private static void cleanPinStorage(DashBoard dash,
+                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
+        if (onePinWidget.isValid()) {
+            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
+        }
+    }
+
+    private static void removePinStorageValue(DashBoard dash,
+                                              int targetId, PinType pinType, short pin, boolean removeProperties) {
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
+        if (target != null) {
+            for (int deviceId : target.getAssignedDeviceIds()) {
+                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
+                    }
+                }
+            }
+        }
     }
 
     public String getNameOrEmpty() {
@@ -143,13 +167,13 @@ public class DashBoard {
         return name == null ? DEFAULT_NAME : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, short pin,
-                                           WidgetProperty property, String value) {
-        putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
-    }
+    public void update(int deviceId, short pin, PinType pinType, String value, long now) {
+        if (!updateWidgets(deviceId, pin, pinType, value)) {
+            //special case. #237 if no widget - storing without widget.
+            putPinStorageValue(deviceId, pinType, pin, value);
+        }
 
-    private void putPinStorageValue(int deviceId, PinType type, short pin, String value) {
-        putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
+        this.updatedAt = now;
     }
 
     private void putPinStorageValue(PinStorageKey key, String value) {
@@ -230,25 +254,19 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(int deviceId, short pin, PinType pinType) {
+    private boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
+        boolean hasWidget = false;
         for (Widget widget : widgets) {
-            if (widget.isSame(deviceId, pin, pinType)) {
-                return widget;
+            if (widget.updateIfSame(deviceId, pin, type, value)) {
+                hasWidget = true;
             }
         }
-        return null;
+        return hasWidget;
     }
 
-    public WebHook findWebhookByPin(int deviceId, short pin, PinType pinType) {
-        for (Widget widget : widgets) {
-            if (widget instanceof WebHook) {
-                WebHook webHook = (WebHook) widget;
-                if (webHook.isSameWebHook(deviceId, pin, pinType)) {
-                    return webHook;
-                }
-            }
-        }
-        return null;
+    public void putPinPropertyStorageValue(int deviceId, PinType type, short pin,
+                                           WidgetProperty property, String value) {
+        putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
     public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
@@ -282,26 +300,6 @@ public class DashBoard {
         return null;
     }
 
-    private static void cleanPinStorage(DashBoard dash,
-                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
-        if (multiPinWidget.dataStreams != null) {
-            for (DataStream dataStream : multiPinWidget.dataStreams) {
-                if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
-                            dataStream.pinType, dataStream.pin, removeProperties);
-                }
-            }
-        }
-    }
-
-    private static void cleanPinStorage(DashBoard dash,
-                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
-        if (onePinWidget.isValid()) {
-            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
-                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
-        }
-    }
-
     public Device getDeviceById(int id) {
         for (Device device : devices) {
             if (device.id == id) {
@@ -309,29 +307,6 @@ public class DashBoard {
             }
         }
         return null;
-    }
-
-    private static void removePinStorageValue(DashBoard dash,
-                                              int targetId, PinType pinType, byte pin, boolean removeProperties) {
-        Target target;
-        if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
-        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
-        if (target != null) {
-            for (int deviceId : target.getAssignedDeviceIds()) {
-                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
-                if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
-                    }
-                }
-            }
-        }
     }
 
     public Widget getWidgetByIdOrThrow(long id) {
@@ -532,47 +507,29 @@ public class DashBoard {
         }
     }
 
-    private static void cleanPinStorage(DashBoard dash,
-                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
-        if (multiPinWidget.dataStreams != null) {
-            for (DataStream dataStream : multiPinWidget.dataStreams) {
-                if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
-                            dataStream.pinType, dataStream.pin, removeProperties);
+    private void putPinStorageValue(int deviceId, PinType type, short pin, String value) {
+        putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
+    }
+
+    public Widget findWidgetByPin(int deviceId, short pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            if (widget.isSame(deviceId, pin, pinType)) {
+                return widget;
+            }
+        }
+        return null;
+    }
+
+    public WebHook findWebhookByPin(int deviceId, short pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            if (widget instanceof WebHook) {
+                WebHook webHook = (WebHook) widget;
+                if (webHook.isSameWebHook(deviceId, pin, pinType)) {
+                    return webHook;
                 }
             }
         }
-    }
-
-    private static void cleanPinStorage(DashBoard dash,
-                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
-        if (onePinWidget.isValid()) {
-            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
-                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
-        }
-    }
-
-    private static void removePinStorageValue(DashBoard dash,
-                                              int targetId, PinType pinType, short pin, boolean removeProperties) {
-        Target target;
-        if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
-        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
-        } else {
-            //means widget assigned to device selector widget.
-            target = dash.getDeviceSelector(targetId);
-        }
-        if (target != null) {
-            for (int deviceId : target.getAssignedDeviceIds()) {
-                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
-                if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
-                    }
-                }
-            }
-        }
+        return null;
     }
 
     public void sendAppSyncs(Channel appChannel, int targetId, boolean useNewFormat) {

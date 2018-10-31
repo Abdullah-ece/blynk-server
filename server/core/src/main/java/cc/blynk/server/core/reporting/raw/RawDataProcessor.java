@@ -26,7 +26,7 @@ public class RawDataProcessor {
         rawStorage = new ConcurrentLinkedQueue<>();
     }
 
-    public void collect(int deviceId, PinType pinType, byte pin, String stringValue) {
+    public void collect(int deviceId, PinType pinType, short pin, String stringValue) {
         if (stringValue.contains(StringUtils.BODY_SEPARATOR_STRING)) {
             //storing for now just first part for multi value
             stringValue = stringValue.split(StringUtils.BODY_SEPARATOR_STRING)[0];

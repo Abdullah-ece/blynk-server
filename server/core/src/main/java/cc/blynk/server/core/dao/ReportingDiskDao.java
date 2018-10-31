@@ -89,23 +89,8 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
-                                            PinType pinType, short pin, int count,
-                                            GraphGranularityType type, int skipCount) {
-        Path userDataFile = Paths.get(
-                dataFolder,
-                FileUtils.getUserStorageDir(user.email),
-                generateFilename(dashId, deviceId, pinType, pin, type)
-        );
-        if (Files.exists(userDataFile)) {
-            try {
-                return FileUtils.read(userDataFile, count, skipCount);
-            } catch (Exception ioe) {
-                log.error(ioe);
-            }
-        }
-
-        return null;
+    private static String generateFilename(int dashId, int deviceId, char pinType, short pin, String type) {
+        return generateFilenamePrefix(dashId, deviceId) + pinType + pin + "_" + type + ".bin";
     }
 
     private static boolean hasData(byte[][] data) {
@@ -216,8 +201,11 @@ public class ReportingDiskDao implements Closeable {
         return false;
     }
 
-    private static String generateFilename(int dashId, int deviceId, char pinType, short pin, String type) {
-        return generateFilenamePrefix(dashId, deviceId) + pinType + pin + "_" + type + ".bin";
+    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, short pin,
+                               GraphGranularityType reportGranularity) {
+        Path userDataFile = Paths.get(userReportingDir,
+                generateFilename(dashId, deviceId, pinType, pin, reportGranularity));
+        FileUtils.deleteQuietly(userDataFile);
     }
 
     private static String generateFilenamePrefix(int dashId, int deviceId, String pin) {
@@ -228,16 +216,28 @@ public class ReportingDiskDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_";
     }
 
-    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, short pin,
-                               GraphGranularityType reportGranularity) {
-        Path userDataFile = Paths.get(userReportingDir,
-                generateFilename(dashId, deviceId, pinType, pin, reportGranularity));
-        FileUtils.deleteQuietly(userDataFile);
-    }
-
     public static String generateFilename(int dashId, int deviceId,
                                           PinType pinType, short pin, GraphGranularityType type) {
         return generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label);
+    }
+
+    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
+                                            PinType pinType, short pin, int count,
+                                            GraphGranularityType type, int skipCount) {
+        Path userDataFile = Paths.get(
+                dataFolder,
+                FileUtils.getUserStorageDir(user.email),
+                generateFilename(dashId, deviceId, pinType, pin, type)
+        );
+        if (Files.exists(userDataFile)) {
+            try {
+                return FileUtils.read(userDataFile, count, skipCount);
+            } catch (Exception ioe) {
+                log.error(ioe);
+            }
+        }
+
+        return null;
     }
 
     public int delete(User user, int dashId, int deviceId, String[] pins) throws IOException {
