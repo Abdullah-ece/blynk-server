@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.graph;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.NumberUtil;
 
 /**
  * The Blynk Project.
@@ -11,7 +12,7 @@ public class GraphKey {
 
     public final int dashId;
 
-    public final byte pin;
+    public final short pin;
 
     public final PinType pinType;
 
@@ -22,7 +23,7 @@ public class GraphKey {
     public GraphKey(int dashId, String[] bodyParts, long ts) {
         this.dashId = dashId;
         this.pinType = PinType.getPinType(bodyParts[0].charAt(0));
-        this.pin = Byte.parseByte(bodyParts[1]);
+        this.pin = NumberUtil.parsePin(bodyParts[1]);
         this.value = bodyParts[2];
         this.ts = ts;
     }

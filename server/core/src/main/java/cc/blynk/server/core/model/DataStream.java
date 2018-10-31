@@ -23,7 +23,7 @@ public class DataStream implements CopyObject<DataStream> {
 
     public final int id;
 
-    public final byte pin;
+    public final short pin;
 
     public final boolean pwmMode;
 
@@ -45,7 +45,7 @@ public class DataStream implements CopyObject<DataStream> {
 
     @JsonCreator
     public DataStream(@JsonProperty("id") int id,
-                      @JsonProperty("pin") byte pin,
+                      @JsonProperty("pin") short pin,
                       @JsonProperty("pwmMode") boolean pwmMode,
                       @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
                       @JsonProperty("pinType") PinType pinType,
@@ -73,11 +73,11 @@ public class DataStream implements CopyObject<DataStream> {
                 dataStream.min, dataStream.max, dataStream.label, dataStream.units);
     }
 
-    public DataStream(byte pin, PinType pinType) {
+    public DataStream(short pin, PinType pinType) {
         this(0, pin, false, false, pinType, null, 0, 255, null, null);
     }
 
-    public static String makeReadingHardwareBody(char pinType, byte pin) {
+    public static String makeReadingHardwareBody(char pinType, short pin) {
         return "" + pinType + 'r' + BODY_SEPARATOR + pin;
     }
 
@@ -85,19 +85,19 @@ public class DataStream implements CopyObject<DataStream> {
         return "" + pinType + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
-    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+    public static String makeHardwareBody(PinType pinType, short pin, String value) {
         return makeHardwareBody(pinType.pintTypeChar, pin, value);
     }
 
-    public static String makeHardwareBody(char pinTypeChar, byte pin, String value) {
+    public static String makeHardwareBody(char pinTypeChar, short pin, String value) {
         return "" + pinTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
-    public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
+    public static String makeHardwareBody(boolean pwmMode, PinType pinType, short pin, String value) {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public boolean isSame(byte pin, PinType type) {
+    public boolean isSame(short pin, PinType type) {
         return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
     }
 
@@ -105,7 +105,7 @@ public class DataStream implements CopyObject<DataStream> {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public static boolean isValid(byte pin, PinType pinType) {
+    public static boolean isValid(short pin, PinType pinType) {
         return pin != NO_PIN && pinType != null;
     }
 

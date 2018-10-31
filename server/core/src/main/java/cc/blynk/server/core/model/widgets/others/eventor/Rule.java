@@ -45,7 +45,7 @@ public class Rule {
         return triggerDataStream != null && condition != null && actions != null;
     }
 
-    public boolean isReady(byte pin, PinType pinType) {
+    public boolean isReady(short pin, PinType pinType) {
         return isActive && notEmpty() && triggerDataStream.isSame(pin, pinType);
     }
 

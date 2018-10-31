@@ -116,7 +116,7 @@ public class DashBoard {
         return parentId != IS_PARENT_DASH;
     }
 
-    public void update(int deviceId, byte pin, PinType pinType, String value, long now) {
+    public void update(int deviceId, short pin, PinType pinType, String value, long now) {
         if (!updateWidgets(deviceId, pin, pinType, value)) {
             //special case. #237 if no widget - storing without widget.
             putPinStorageValue(deviceId, pinType, pin, value);
@@ -125,7 +125,7 @@ public class DashBoard {
         this.updatedAt = now;
     }
 
-    private boolean updateWidgets(int deviceId, byte pin, PinType type, String value) {
+    private boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
@@ -143,12 +143,12 @@ public class DashBoard {
         return name == null ? DEFAULT_NAME : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
+    public void putPinPropertyStorageValue(int deviceId, PinType type, short pin,
                                            WidgetProperty property, String value) {
         putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
-    private void putPinStorageValue(int deviceId, PinType type, byte pin, String value) {
+    private void putPinStorageValue(int deviceId, PinType type, short pin, String value) {
         putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
     }
 
@@ -230,7 +230,7 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
+    public Widget findWidgetByPin(int deviceId, short pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget.isSame(deviceId, pin, pinType)) {
                 return widget;
@@ -239,7 +239,7 @@ public class DashBoard {
         return null;
     }
 
-    public WebHook findWebhookByPin(int deviceId, byte pin, PinType pinType) {
+    public WebHook findWebhookByPin(int deviceId, short pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof WebHook) {
                 WebHook webHook = (WebHook) widget;
@@ -527,6 +527,49 @@ public class DashBoard {
                 } else if (widget instanceof MultiPinWidget) {
                     MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                     cleanPinStorage(this, multiPinWidget, deviceId, removeProperties);
+                }
+            }
+        }
+    }
+
+    private static void cleanPinStorage(DashBoard dash,
+                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+        if (multiPinWidget.dataStreams != null) {
+            for (DataStream dataStream : multiPinWidget.dataStreams) {
+                if (dataStream != null && dataStream.isValid()) {
+                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                            dataStream.pinType, dataStream.pin, removeProperties);
+                }
+            }
+        }
+    }
+
+    private static void cleanPinStorage(DashBoard dash,
+                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
+        if (onePinWidget.isValid()) {
+            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
+        }
+    }
+
+    private static void removePinStorageValue(DashBoard dash,
+                                              int targetId, PinType pinType, short pin, boolean removeProperties) {
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
+        if (target != null) {
+            for (int deviceId : target.getAssignedDeviceIds()) {
+                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
+                    }
                 }
             }
         }

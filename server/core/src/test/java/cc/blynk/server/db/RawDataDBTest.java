@@ -56,7 +56,7 @@ public class RawDataDBTest {
     @SuppressWarnings("unchecked")
     public void testSelectSingleRawData() {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "123");
+        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "123");
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);
@@ -75,9 +75,9 @@ public class RawDataDBTest {
     @SuppressWarnings("unchecked")
     public void testSelectFewRawData() {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "123");
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "124");
-        rawDataProcessor.collect(2, PinType.VIRTUAL, (byte) 3, "125.25");
+        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "123");
+        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "124");
+        rawDataProcessor.collect(2, PinType.VIRTUAL, (short) 3, "125.25");
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertDataPoint(rawDataProcessor.rawStorage);

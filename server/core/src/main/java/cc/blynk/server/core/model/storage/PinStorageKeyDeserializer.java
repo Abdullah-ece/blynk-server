@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
@@ -20,9 +21,9 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
 
         var deviceId = Integer.parseInt(split[0]);
         var pinType = PinType.getPinType(split[1].charAt(0));
-        byte pin = 0;
+        short pin = 0;
         try {
-            pin = Byte.parseByte(split[1].substring(1, split[1].length()));
+            pin = NumberUtil.parsePin(split[1].substring(1));
         } catch (NumberFormatException e) {
             //special case for outdated data format.
             return new PinStorageKey(deviceId, pinType, pin);

@@ -18,7 +18,7 @@ public final class BaseReportingKey implements Serializable {
     public final int dashId;
     public final int deviceId;
     public final PinType pinType;
-    public final byte pin;
+    public final short pin;
 
     public BaseReportingKey(User user, GraphPinRequest graphPinRequest) {
         this(user.email, user.orgId,
@@ -26,7 +26,7 @@ public final class BaseReportingKey implements Serializable {
              graphPinRequest.pinType, graphPinRequest.pin);
     }
 
-    public BaseReportingKey(String email, int orgId, int dashId, int deviceId, PinType pinType, byte pin) {
+    public BaseReportingKey(String email, int orgId, int dashId, int deviceId, PinType pinType, short pin) {
         this.email = email;
         this.orgId = orgId;
         this.dashId = dashId;

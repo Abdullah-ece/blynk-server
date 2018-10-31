@@ -328,7 +328,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
