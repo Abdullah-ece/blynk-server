@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.web.product.events.OnlineEvent;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.web.handlers.logic.device.timeline.TimelineResponseDTO;
+import cc.blynk.utils.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -91,6 +92,37 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         assertFalse(logEvents.get(0).isResolved);
         assertEquals("Temp is super high", logEvents.get(0).name);
         assertEquals("This is my description", logEvents.get(0).description);
+    }
+
+    @Test
+    public void testCorruptedLogEvent() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        Device device = createProductAndDevice(client, orgId);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
+        newHardClient.start();
+        newHardClient.send("login " + device.token);
+        newHardClient.verifyResult(ok(1));
+        newHardClient.logEvent("temp_is_high", "123" + StringUtils.BODY_SEPARATOR_STRING);
+        newHardClient.verifyResult(ok(2));
+        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.reset();
+
+        long now = System.currentTimeMillis();
+        client.getTimeline(orgId, device.id, EventType.CRITICAL, null, 0, now, 0, 10);
+        TimelineResponseDTO timeLineResponse = client.parseTimelineResponse(1);
+        assertNotNull(timeLineResponse);
+        assertEquals(1, timeLineResponse.totalCritical);
+        assertEquals(0, timeLineResponse.totalWarning);
+        assertEquals(0, timeLineResponse.totalResolved);
+        List<LogEvent> logEvents = timeLineResponse.eventList;
+        assertNotNull(timeLineResponse.eventList);
+        assertEquals(1, logEvents.size());
+        assertEquals(device.id, logEvents.get(0).deviceId);
+        assertEquals(EventType.CRITICAL, logEvents.get(0).eventType);
+        assertFalse(logEvents.get(0).isResolved);
+        assertEquals("Temp is super high", logEvents.get(0).name);
+        assertEquals("123", logEvents.get(0).description);
     }
 
     @Test
