@@ -112,7 +112,11 @@ export const createBlynkWsMiddleware = (options = {}) => {
 
       next(action);
 
-      return execCommand(blynkWsApiCall, params);
+      if(action && action.ws && action.ws.request && action.ws.request.waitForAuth === false) {
+        return blynkWsApiCall(params);
+      } else {
+        return execCommand(blynkWsApiCall, params);
+      }
 
     }
 

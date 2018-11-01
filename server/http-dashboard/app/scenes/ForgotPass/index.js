@@ -3,16 +3,17 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {SubmissionError} from 'redux-form';
 
-import * as API from './data/actions';
+import {SendResetPasswordEmail} from "data/ResetPass/actions";
 import ForgotPassForm from "./components/ForgotPassForm";
 import Confirmation from "./components/Confirmation";
 import './styles.less';
+import {displayError} from "../../services/ErrorHandling";
 
 @connect(() => {
   return {};
 }, (dispatch) => {
   return {
-    ForgotPass: bindActionCreators(API.ForgotPass, dispatch)
+    ForgotPass: bindActionCreators(SendResetPasswordEmail, dispatch)
   };
 })
 export default class ForgotPass extends React.Component {
@@ -36,11 +37,13 @@ export default class ForgotPass extends React.Component {
 
   handleSubmit(values) {
     this.setState({ loading: true });
-    return this.props.ForgotPass(values).catch(() => {
+    return this.props.ForgotPass({
+      email: values.email
+    }).catch((err) => {
       this.setState({
         loading: false
       });
-      throw new SubmissionError({_error: "Account doesn't exist."});
+      throw new SubmissionError({_error: displayError(err)});
     }).then(() => {
       this.setState({
         loading: false,

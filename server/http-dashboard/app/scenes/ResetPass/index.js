@@ -4,16 +4,17 @@ import {connect} from 'react-redux';
 import {SubmissionError} from 'redux-form';
 
 import {encryptUserPassword} from 'services/Crypto';
-import * as API from './data/actions';
+import {ResetPassword} from "data/ResetPass/actions";
 import ResetPassForm from "./components/ResetPassForm";
 import Confirmation from "./components/Confirmation";
+import {displayError} from "services/ErrorHandling";
 import './styles.less';
 
 @connect(() => {
   return {};
 }, (dispatch) => {
   return {
-    ResetPass: bindActionCreators(API.ResetPass, dispatch)
+    ResetPass: bindActionCreators(ResetPassword, dispatch)
   };
 })
 export default class ResetPass extends React.Component {
@@ -51,14 +52,14 @@ export default class ResetPass extends React.Component {
   handleSubmit(values) {
     const token = this.props.location.query.token;
     const email = this.props.location.query.email;
-    const password = encryptUserPassword(email, values.password);
+    const hash = encryptUserPassword(email, values.password);
 
     this.setState({ loading: true });
-    return this.props.ResetPass({token, password}).catch(() => {
+    return this.props.ResetPass({token, hash}).catch((err) => {
       this.setState({
         loading: false
       });
-      throw new SubmissionError({_error: "Password change failed."});
+      throw new SubmissionError({_error: displayError(err)});
     }).then(() => {
       this.setState({
         loading: false,

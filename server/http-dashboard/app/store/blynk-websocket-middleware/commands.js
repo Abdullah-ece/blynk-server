@@ -42,6 +42,7 @@ export const COMMANDS = {
 };
 
 export const API_COMMANDS = {
+  RESET_PASSWORD                : 81,
   GET_ACCOUNT                   : 100,
   UPDATE_ACCOUNT                : 101,
   CREATE_DEVICE                 : 102,
