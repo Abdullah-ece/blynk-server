@@ -71,7 +71,7 @@ class DataStreamItem extends React.Component {
 
   Pins() {
     const pins = [];
-    [...Array(128).keys()].map((i, k) => {
+    [...Array(256).keys()].map((i, k) => {
       pins.push({
         key: `${k}`,
         value: `V${k}`
