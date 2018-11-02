@@ -322,7 +322,7 @@ public class UserDao {
         clonedDash.createdAt = System.currentTimeMillis();
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
-        clonedDash.eraseValues();
+        clonedDash.eraseWidgetValues();
         removeDevicesProvisionedFromDeviceTiles(clonedDash);
 
         clonedDash.addTimers(timerWorker, newUser.email);

@@ -13,6 +13,8 @@ import java.util.List;
  */
 public final class ArrayUtil {
 
+    private static final int[] EMPTY_INTS = {};
+
     private ArrayUtil() {
     }
 
@@ -59,6 +61,14 @@ public final class ArrayUtil {
             }
         }
         return -1;
+    }
+
+    public static int[] deleteFromArray(int[] ids, int id) {
+        int index = getIndexByVal(ids, id);
+        if (index == -1) {
+            return ids;
+        }
+        return ids.length == 1 ? EMPTY_INTS : remove(ids, index);
     }
 
     public static int[] remove(int[] array, int index) {

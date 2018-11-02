@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -35,7 +36,7 @@ public final class MobileCreateDashLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var generateTokensForDevices = true;
+        boolean generateTokensForDevices = true;
         final String dashString;
         if (message.body.startsWith("no_token")) {
             generateTokensForDevices = false;
@@ -53,14 +54,14 @@ public final class MobileCreateDashLogic {
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        var newDash = JsonParser.parseDashboard(dashString, message.id);
+        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
 
-        var user = state.user;
+        User user = state.user;
         if (user.profile.dashBoards.length >= holder.limits.dashboardsLimit) {
             throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
-        for (var dashBoard : user.profile.dashBoards) {
+        for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
                 throw new NotAllowedException("Dashboard already exists.", message.id);
             }
@@ -101,7 +102,7 @@ public final class MobileCreateDashLogic {
         newDash.addTimers(holder.timerWorker, state.user.email);
 
         if (!generateTokensForDevices) {
-            newDash.eraseValues();
+            newDash.eraseWidgetValues();
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

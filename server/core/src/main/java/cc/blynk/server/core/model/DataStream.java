@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
 import cc.blynk.server.db.dao.descriptor.TableDescriptor;
 import cc.blynk.utils.CopyObject;
@@ -95,6 +96,10 @@ public class DataStream implements CopyObject<DataStream> {
 
     public static String makeHardwareBody(boolean pwmMode, PinType pinType, short pin, String value) {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+    }
+
+    public static String makePropertyHardwareBody(short pin, WidgetProperty property, String value) {
+        return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
     }
 
     public static boolean isValid(short pin, PinType pinType) {

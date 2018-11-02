@@ -28,9 +28,9 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.PinStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageValue;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -293,7 +293,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
-        DashBoard dashBoard = tokenValue.dash;
+        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
@@ -306,10 +306,11 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
-            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+            PinStorageValue value = user.profile.pinsStorage.get(
+                    new DashPinStorageKey(dash.id, deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return Response.badRequest("Requested pin doesn't exist in the app.");
@@ -557,7 +558,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         reportingDiskDao.process(user, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
-        dash.update(deviceId, pin, pinType, pinValue, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinValue, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
@@ -776,12 +777,12 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
         if (body != null) {
-            Session session = sessionDao.userSession.get(user);
+            Session session = sessionDao.userSession.get(user.email);
             if (session == null) {
                 log.error("No session for user {}.", user.email);
                 return Response.ok();

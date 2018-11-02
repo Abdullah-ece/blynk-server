@@ -30,7 +30,7 @@ public final class EmptyArraysUtil {
     }
 
     public static final WebSource[] EMPTY_WEB_SOURCES = {};
-    public static final int[] EMPTY_INTS = EmptyArrays.EMPTY_INTS;
+    public static final int[] EMPTY_INTS = {};
     public static final DashBoard[] EMPTY_DASHBOARDS = {};
     public static final Tag[] EMPTY_TAGS = {};
     public static final Device[] EMPTY_DEVICES = {};

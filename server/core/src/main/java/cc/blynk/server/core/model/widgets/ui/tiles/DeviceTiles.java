@@ -253,11 +253,6 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
 
     @Override
     public boolean isAssignedToDevice(int deviceId) {
-        for (Tile tile : tiles) {
-            if (tile.deviceId == deviceId) {
-                return true;
-            }
-        }
         return false;
     }
 
@@ -305,7 +300,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
         }
 
         for (TileTemplate tileTemplate : this.templates) {
-            tileTemplate.deviceIds = deleteDeviceFromArray(tileTemplate.deviceIds, deviceId);
+            tileTemplate.deviceIds = ArrayUtil.deleteFromArray(tileTemplate.deviceIds, deviceId);
         }
 
     }

@@ -74,7 +74,7 @@ public class WebAppHardwareLogic {
 
         //todo temp solution.
         DashBoard dash = state.user.profile.dashBoards[0];
-        dash.update(device.id, pin, pinType, value, System.currentTimeMillis());
+        state.user.profile.update(dash, device.id, pin, pinType, value, System.currentTimeMillis());
 
         Channel channel = ctx.channel();
 

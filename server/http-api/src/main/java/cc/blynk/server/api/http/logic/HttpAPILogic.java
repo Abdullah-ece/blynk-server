@@ -28,9 +28,9 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.PinStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageValue;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -181,9 +181,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Invalid token.");
         }
 
-        var user = tokenValue.user;
-        var deviceId = tokenValue.device.id;
-        var dashBoard = tokenValue.dash;
+        User user = tokenValue.user;
+        int deviceId = tokenValue.device.id;
+        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
@@ -196,10 +196,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Wrong pin format.");
         }
 
-        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
-            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+            PinStorageValue value = user.profile.pinsStorage.get(
+                    new DashPinStorageKey(dash.id, deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return badRequest("Requested pin doesn't exist in the app.");
@@ -456,7 +457,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         Device device = deviceDao.getByIdOrThrow(deviceId);
         reportingDao.process(user, dash, device, pin, pinType, pinValue, now);
 
-        dash.update(deviceId, pin, pinType, pinValue, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinValue, now);
         tokenValue.device.dataReceivedAt = now;
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
@@ -521,7 +522,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 

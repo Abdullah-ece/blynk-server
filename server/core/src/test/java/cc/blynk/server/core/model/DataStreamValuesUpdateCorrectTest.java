@@ -32,16 +32,6 @@ public class DataStreamValuesUpdateCorrectTest {
         }
     }
 
-    public static void update(DashBoard dash, int deviceId, String[] splitted) {
-        final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final short pin = NumberUtil.parsePin(splitted[1]);
-        dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
-    }
-
-    public static void update(DashBoard dash, int deviceId, String body) {
-        update(dash, deviceId, split3(body));
-    }
-
     @Test
     public void testHas1Pin() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
@@ -55,13 +45,13 @@ public class DataStreamValuesUpdateCorrectTest {
         assertEquals(PinType.DIGITAL, button.pinType);
         assertEquals("1", button.value);
 
-        update(dash, 0, "dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        update(dash, 0, "aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        update(dash, 0, "dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("1", button.value);
 
         RGB rgb = new RGB();
@@ -73,9 +63,9 @@ public class DataStreamValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        update(dash, 0, "vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
-        update(dash, 0, "vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
-        update(dash, 0, "vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         for (int i = 0; i < rgb.dataStreams.length; i++) {
             assertEquals("10" + i, rgb.dataStreams[i].value);
@@ -89,9 +79,19 @@ public class DataStreamValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        update(dash, 0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(profile, 0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.dataStreams[0].value);
+    }
+
+    public static void update(Profile profile, int deviceId, String body) {
+        update(profile, deviceId, split3(body));
+    }
+
+    public static void update(Profile profile, int deviceId, String[] splitted) {
+        final PinType type = PinType.getPinType(splitted[0].charAt(0));
+        final short pin = NumberUtil.parsePin(splitted[1]);
+        profile.update(profile.dashBoards[0], deviceId, pin, type, splitted[2], System.currentTimeMillis());
     }
 
 }

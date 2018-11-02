@@ -4,7 +4,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -61,8 +64,9 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
-        var device = dash.getDeviceById(deviceId);
+        User user = state.user;
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
 
         if (isWriteOperation(split[1])) {
             String[] splitBody = split3(split[1]);
@@ -79,10 +83,10 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
 
             reportingDao.process(state.user, dash, device, pin, pinType, value, now);
-            dash.update(deviceId, pin, pinType, value, now);
+            user.profile.update(dash, deviceId, pin, pinType, value, now);
 
-            Session session = sessionDao.userSession.get(state.user.email);
-            processEventorAndWebhook(state.user, dash, deviceId, session, pin, pinType, value, now);
+            Session session = sessionDao.userSession.get(user.email);
+            processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
         }
     }
 
