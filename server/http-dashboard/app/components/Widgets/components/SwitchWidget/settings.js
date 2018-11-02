@@ -303,9 +303,9 @@ class SwitchSettings extends React.Component {
 
     });
 
-    // Collect other PIN's from 0 to 127 except already existed on Data Streams
+    // Collect other PIN's from 0 to 255 except already existed on Data Streams
 
-    for(let i = 0; i <= 127; i++) {
+    for(let i = 0; i <= 255; i++) {
 
       if(pinsDescribedOnDataStreams.indexOf(i) >= 0)
         continue;
