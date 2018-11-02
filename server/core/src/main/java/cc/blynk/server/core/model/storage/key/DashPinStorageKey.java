@@ -37,10 +37,6 @@ public class DashPinStorageKey {
         this(dashId, deviceId, pinType.pintTypeChar, pin);
     }
 
-    public DashPinStorageKey(int dashId, PinStorageKey pinStorageKey) {
-        this(dashId, pinStorageKey.deviceId, pinStorageKey.pinTypeChar, pinStorageKey.pin);
-    }
-
     public boolean isSame(int dashId, OnePinWidget onePinWidget) {
         return this.dashId == dashId
                 && this.pin == onePinWidget.pin

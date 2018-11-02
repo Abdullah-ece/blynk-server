@@ -28,13 +28,6 @@ public final class DashPinPropertyStorageKey extends DashPinStorageKey {
         this.property = property;
     }
 
-    public DashPinPropertyStorageKey(int dashId, PinPropertyStorageKey pinPropertyStorageKey) {
-        this(dashId, pinPropertyStorageKey.deviceId,
-                pinPropertyStorageKey.pinTypeChar,
-                pinPropertyStorageKey.pin,
-                pinPropertyStorageKey.property);
-    }
-
     @Override
     public String makeHardwareBody(String value) {
         return makePropertyHardwareBody(pin, property, value);

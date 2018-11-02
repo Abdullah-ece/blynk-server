@@ -36,8 +36,6 @@ public class DataStreamStorageSerializationTest {
         user.profile = parseProfile(is);
         fileManager.makeProfileChanges(user);
         assertEquals(1, user.profile.dashBoards.length);
-        assertNotNull(user.profile.dashBoards[0].pinsStorage);
-        assertEquals(0, user.profile.dashBoards[0].pinsStorage.size());
         assertEquals(3, user.profile.pinsStorage.size());
 
         DashPinStorageKey pinStorageKey = new DashPinStorageKey(1, 0, PinType.VIRTUAL, (short) 0);

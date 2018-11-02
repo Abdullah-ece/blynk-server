@@ -71,8 +71,6 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         Slider slider = (Slider) dashBoard.getWidgetById(4);
         assertNotNull(slider);
         assertNull(slider.value);
-        assertNotNull(dashBoard.pinsStorage);
-        assertEquals(0, dashBoard.pinsStorage.size());
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(5);

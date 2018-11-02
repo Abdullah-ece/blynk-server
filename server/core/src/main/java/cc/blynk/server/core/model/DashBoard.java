@@ -7,11 +7,8 @@ import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
-import cc.blynk.server.core.model.storage.PinStorageKeyDeserializer;
-import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
 import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
 import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
-import cc.blynk.server.core.model.storage.key.PinStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
@@ -32,14 +29,11 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
@@ -97,12 +91,6 @@ public class DashBoard {
 
     @JsonView(View.Private.class)
     public volatile String sharedToken;
-
-    @JsonView(View.Private.class)
-    @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
-                     contentUsing = PinStorageValueDeserializer.class)
-    @Deprecated
-    public Map<PinStorageKey, PinStorageValue> pinsStorage = Collections.emptyMap();
 
     public DashBoard() {
         this.name = "New Project";

@@ -862,8 +862,6 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.send("loadProfileGzipped 1");
         DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertNotNull(dashBoard);
-        assertNotNull(dashBoard.pinsStorage);
-        assertEquals(0, dashBoard.pinsStorage.size());
         Widget w = dashBoard.findWidgetByPin(0, (short) 1, PinType.DIGITAL);
         assertNotNull(w);
         assertEquals("abc", ((OnePinWidget) w).value);
@@ -891,8 +889,6 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         appClient2.send("loadProfileGzipped " + qrHolders[0].token + "\0" + 1 + "\0" + getUserName() + "\0" + AppNameUtil.BLYNK);
         dashBoard = appClient2.parseDash(3);
         assertNotNull(dashBoard);
-        assertNotNull(dashBoard.pinsStorage);
-        assertTrue(dashBoard.pinsStorage.isEmpty());
         w = dashBoard.findWidgetByPin(0, (short) 1, PinType.DIGITAL);
         assertNotNull(w);
         assertNull(((OnePinWidget) w).value);
