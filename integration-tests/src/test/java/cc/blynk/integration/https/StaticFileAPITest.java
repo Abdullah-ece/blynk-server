@@ -44,7 +44,7 @@ public class StaticFileAPITest extends APIBaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String indexPageString = consumeText(response);
             assertNotNull(indexPageString);
-            assertTrue(indexPageString.contains("<title>Airius</title>"));
+            assertTrue(indexPageString.contains("<title>Blynk Dashboard</title>"));
 
             cssUrl = indexPageString.substring(
                     indexPageString.indexOf("/static/main."),
