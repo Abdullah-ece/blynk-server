@@ -4,6 +4,7 @@ import {Button, Modal, message} from 'antd';
 import Field from '../../../Field';
 
 import './styles.less';
+import {displayError} from "services/ErrorHandling";
 
 class MyAccount extends React.Component {
 
@@ -35,14 +36,14 @@ class MyAccount extends React.Component {
     this.props.onAccountResetPassword(Object.assign({}, {email: this.props.Account.email})).then(() => {
       this.showResetPasswordSuccessMessage();
     }).catch((err) => {
-      this.showResetPasswordErrorMessage(err && err.error && err.message);
+      this.showResetPasswordErrorMessage(err);
     });
   }
 
   showResetPasswordErrorMessage(error) {
     Modal.error({
       title: 'Error',
-      content: error || 'Server error. Please contact server administrator',
+      content: displayError(error) || 'Server error. Please contact server administrator',
       okText: 'Ok'
     });
   }

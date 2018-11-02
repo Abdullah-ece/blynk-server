@@ -26,7 +26,16 @@ export const Handlers = (params) => {
 
   const {store, options, action, command, msgId, dataView} = params;
 
-  const responseOKHandler = ({ responseCode }) => {
+  const responseOKHandler = ({ responseCode, message }) => {
+
+    if(message && message.previousAction) {
+      store.dispatch({
+        type: `${message.previousAction.type}_SUCCESS`,
+        meta: {
+          previousAction: message.previousAction
+        }
+      });
+    }
 
     store.dispatch(blynkWsResponse({
       id      : msgId,

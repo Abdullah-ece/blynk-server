@@ -1,4 +1,3 @@
-import {transformJsonToFormUrlEncoded} from 'services/Form';
 import {API_COMMANDS} from "store/blynk-websocket-middleware/commands";
 
 export function Account() {
@@ -31,13 +30,15 @@ export function AccountClearCredentials() {
 export function AccountResetPassword(data) {
   return {
     type: 'API_ACCOUNT_SEND_RESET_PASS',
-    payload: {
+    ws: {
       request: {
-        transformRequest: transformJsonToFormUrlEncoded,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        method: 'post',
-        url: '/sendResetPass',
-        data
+        command: API_COMMANDS.RESET_PASSWORD,
+        query: [
+          'start',
+          data.email,
+          'Blynk'
+        ],
+        waitForAuth: false,
       }
     }
   };

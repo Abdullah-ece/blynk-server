@@ -332,7 +332,7 @@ export const blynkWsMessage = (params) => {
 
     handlers.ResponseOKHandler({
       responseCode  : responseCode,
-      previousAction: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
+      message: message // there should be var "message", not var "message.previousAction". Just wrong naming, please keep it as it is
     });
 
   } else if (command === COMMANDS.HARDWARE) {
