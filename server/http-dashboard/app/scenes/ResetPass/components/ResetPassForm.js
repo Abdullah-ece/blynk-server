@@ -34,7 +34,7 @@ export default class ResetPassForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <span className="form-header">Password change</span>
+      <div className="form-header">Password change</div>
 
       <div className="login-error">{ error && error }</div>
 

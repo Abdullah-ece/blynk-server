@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
+import {Button} from "antd";
 
 export default class Confirmation extends React.Component {
 
@@ -10,10 +11,12 @@ export default class Confirmation extends React.Component {
   render() {
     return (<div className="confirm-container">
       <div className="form-header">Password change</div>
-      <div className="confirm-message">
+      <div>
         <div>Password was changed successfully.</div>
 
-        <Link className="back-to-login" to="/login">Continue</Link>
+        <Link className="back-to-login" to="/login">
+          <Button type="primary" className="reset-pass-confirmation-back-to-login-btn">Continue</Button>
+        </Link>
       </div>
     </div>);
   }
