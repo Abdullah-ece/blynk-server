@@ -165,6 +165,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e60d',
       hardcoded: true,
+      includeInProvision: true,
+      isMandatory: true,
     },
     {
       id: 2,
@@ -175,6 +177,8 @@ export const getHardcodedRequiredMetadataFields = ({timezoneDefaultValue, manufa
       ...MetadataInitialValues,
       [MetadataIconFieldName]: 'e71e',
       hardcoded: true,
+      includeInProvision: true,
+      isMandatory: true,
     },
     {
       id: 3,

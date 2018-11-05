@@ -6,6 +6,8 @@ import Static from './static';
 
 class TextField extends BaseField {
 
+  hideMobileAppProvisioning = true;
+
   constructor(props) {
     super(props);
 

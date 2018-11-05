@@ -7,6 +7,8 @@ import Static from './static';
 
 class DeviceOwnerField extends BaseField {
 
+  hideMobileAppProvisioning = true;
+
   constructor(props) {
     super(props);
 
