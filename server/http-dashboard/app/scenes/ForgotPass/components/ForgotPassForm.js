@@ -25,7 +25,7 @@ export default class ForgotPassForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <span className="form-header">Forgot password?</span>
+      <div className="form-header">Forgot password?</div>
 
       <div className="login-error">{ error && error }</div>
 
