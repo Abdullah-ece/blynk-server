@@ -54,7 +54,7 @@ export default class InviteForm extends React.Component {
     const FormItem = Form.Item;
 
     return (<Form onSubmit={handleSubmit.bind(this)}>
-      <span className="form-header">Create password</span>
+      <div className="form-header">Create password</div>
 
       <div className="login-error">{ error && error }</div>
 
@@ -66,16 +66,16 @@ export default class InviteForm extends React.Component {
                    Validation.Rules.required
                  ]}/>
 
-      <div className="password-copy">
-        <FormField type="password" name="passwordCopy"
-                   icon="lock"
-                   placeholder="Repeat password"
-                   displayError={true}
-                   validate={[
-                     Validation.Rules.required
-                   ]}/>
-      </div>
+      <FormField type="password" name="passwordCopy"
+                 icon="lock"
+                 placeholder="Repeat password"
+                 displayError={true}
+                 validate={[
+                   Validation.Rules.required
+                 ]}/>
+
       <Field name="conditionsAgreement" component={this.checkboxRender}/>
+
       <FormItem>
         <Button type="primary"
                 size="default"
