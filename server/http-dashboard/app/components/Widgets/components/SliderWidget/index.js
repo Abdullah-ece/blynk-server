@@ -267,19 +267,25 @@ class SliderWidget extends React.Component {
     }
   }
 
-  getValueWidth(minValue, maxValue, suffix, step, fineStep) {
+  getValueWidth(minValue, maxValue, suffix, step, fineStep, decimalFormat) {
     let suffixWidthOfSymbol = 11;
     let marginWidth = 4;
     let valueWidthOfSymbol = 12;
 
+    /*
+    * To know what is the max width of number on slider we collect decimalsFormat, step of controls and fine step
+    * to know max amount of numbers after the point . like 10.1234
+    * */
+
     let stepControlSymbols = String(step).split('.').length > 1 ? String(step).split('.')[1].length : 0;
     let fineControlSymbols = String(fineStep).split('.').length > 1 ? String(fineStep).split('.')[1].length : 0;
+    let decimalFormatSymbols = String(decimalFormat).split('.').length > 1 ? String(decimalFormat).split('.')[1].length : 0;
 
     let minValueSymbols = String(this.formatValue(Number(minValue)) || '').length;
     let maxValueSymbols = String(this.formatValue(Number(maxValue)) || '').length;
     let suffixSymbols = String(suffix || '').length;
 
-    let valueSymbols = Math.max(minValueSymbols,maxValueSymbols) + Math.max(stepControlSymbols, fineControlSymbols);
+    let valueSymbols = Math.max(minValueSymbols,maxValueSymbols) + Math.max(stepControlSymbols, fineControlSymbols, decimalFormatSymbols);
 
     return valueSymbols * valueWidthOfSymbol + suffixWidthOfSymbol * suffixSymbols + marginWidth;
   }
@@ -333,6 +339,8 @@ class SliderWidget extends React.Component {
     const value = isNoData ? '--' : params.value;
     const suffix = isNoData ? '' : params.suffix;
 
+    const decimalFormat = params.decimalFormat;
+
     let sliderValue = numberCheck(value, 0);
     let minValue = numberCheck(params.minValue, 0);
     let maxValue = numberCheck(params.maxValue, 100);
@@ -354,7 +362,7 @@ class SliderWidget extends React.Component {
 
     const controls = params.fineControlEnabled ? this.sliderWithControls : this.sliderWithoutControls;
 
-    let width = this.getValueWidth(minValue, maxValue, suffix, step, params.fineControlStep);
+    let width = this.getValueWidth(minValue, maxValue, suffix, step, params.fineControlStep, decimalFormat);
 
     return (
       <div className={`widgets--widget-slider`}>
