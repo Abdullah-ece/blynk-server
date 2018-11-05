@@ -13,14 +13,24 @@ class Form extends React.Component {
   static propTypes = {
     organizationName: PropTypes.string,
 
+    secureUploadToken: PropTypes.string,
+
     canCreateOrgs: PropTypes.bool,
   };
 
   constructor(props) {
     super(props);
+
+    this.logoComponent = this.logoComponent.bind(this);
   }
 
   logoComponent({input, meta: {error, touched}}) {
+
+    const fileProps = {
+      data: {
+        token: this.props.secureUploadToken
+      }
+    };
 
     const handleComponentChange = (info) => {
       const status = info.file.status;
@@ -35,6 +45,7 @@ class Form extends React.Component {
       <ImageUploader text={() => (<span>Upload Logo (optional)<br/><br/></span>)}
                      logo={input.value}
                      error={error}
+                     fileProps={fileProps}
                      touched={touched}
                      hint={() => (
                        <span>Upload from computer or drag-n-drop<br/>.png or .jpg, min 500x500px</span>
