@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
-    public final static String BLYNK_LANDING = "https://www.blynk.cc";
-
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
     public static final char DEVICE_SEPARATOR = '-';
@@ -32,7 +30,6 @@ public final class StringUtils {
     private static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
-    public static final String WEBSOCKET_PATH = "/websocket";
     public static final String WEBSOCKET_WEB_PATH = "/dashws";
 
     private StringUtils() {
@@ -101,10 +98,10 @@ public final class StringUtils {
 
         final int i2 = body.indexOf(separator, i1 + 1);
         if (i2 == -1) {
-            return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
+            return new String[] {body.substring(0, i1), body.substring(i1 + 1)};
         }
 
-        return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1)};
     }
 
     public static String[] split3(String body) {
@@ -121,7 +118,7 @@ public final class StringUtils {
             return new String[] {body};
         }
 
-        return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1)};
     }
 
     public static String[] split2(String body) {

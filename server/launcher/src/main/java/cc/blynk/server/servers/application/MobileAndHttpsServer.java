@@ -18,8 +18,6 @@ import cc.blynk.server.api.http.dashboard.ProductHandler;
 import cc.blynk.server.api.http.dashboard.WebLoginHandler;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
-import cc.blynk.server.api.websockets.handlers.WSHandler;
-import cc.blynk.server.api.websockets.handlers.WSWrapperEncoder;
 import cc.blynk.server.application.handlers.main.MobileChannelStateHandler;
 import cc.blynk.server.application.handlers.main.MobileResetPasswordHandler;
 import cc.blynk.server.application.handlers.main.auth.MobileGetServerHandler;
@@ -56,7 +54,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static cc.blynk.utils.properties.ServerProperties.STATIC_FILES_FOLDER;
 
@@ -81,7 +78,6 @@ public class MobileAndHttpsServer extends BaseServer {
         var getServerHandler = new MobileGetServerHandler(holder);
         var resetPasswordHandler = new MobileResetPasswordHandler(holder);
 
-        var hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         var appIdleTimeout = holder.limits.appIdleTimeout;
 
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
@@ -93,8 +89,6 @@ public class MobileAndHttpsServer extends BaseServer {
 
         //http API handlers
         var noMatchHandler = new NoMatchHandler();
-        var webSocketHandler = new WSHandler(stats);
-        var webSocketWrapperEncoder = new WSWrapperEncoder();
 
         var webAppMessageEncoder = new WSMessageEncoder();
         var webAppLoginHandler = new WebAppLoginHandler(holder);
@@ -126,9 +120,7 @@ public class MobileAndHttpsServer extends BaseServer {
                 var uri = req.uri();
 
                 log.trace("In https and websocket unificator handler.");
-                if (uri.startsWith(WEBSOCKET_PATH)) {
-                    initWebSocketPipeline(ctx, WEBSOCKET_PATH);
-                } else if (uri.equals(WEBSOCKET_WEB_PATH)) {
+                if (uri.equals(WEBSOCKET_WEB_PATH)) {
                     initWebDashboardSocket(ctx);
                 } else {
                     initHttpPipeline(ctx);
@@ -181,33 +173,6 @@ public class MobileAndHttpsServer extends BaseServer {
                 pipeline.remove(this);
                 if (log.isTraceEnabled()) {
                     log.trace("Initialized web dashboard pipeline. {}", ctx.pipeline().names());
-                }
-            }
-
-            private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
-                var pipeline = ctx.pipeline();
-
-                //websockets specific handlers
-                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardwareIdleTimeout, 0, 0))
-                        .addLast("WSChannelState", hardwareChannelStateHandler)
-                        .addLast("WSWebSocketServerProtocolHandler",
-                        new WebSocketServerProtocolHandler(websocketPath, true))
-                        .addLast("WSWebSocket", webSocketHandler)
-                        .addLast("WSMessageDecoder", new MessageDecoder(stats, holder.limits))
-                        .addLast("WSSocketWrapper", webSocketWrapperEncoder)
-                        .addLast("WSMessageEncoder", new MessageEncoder(stats))
-                        .addLast("WSLogin", hardwareLoginHandler)
-                        .addLast("WSNotLogged", alreadyLoggedHandler);
-                pipeline.remove(ChunkedWriteHandler.class);
-                pipeline.remove(UrlReWriterHandler.class);
-                pipeline.remove(StaticFileHandler.class);
-                pipeline.remove(HttpObjectAggregator.class);
-                pipeline.remove(HttpServerKeepAliveHandler.class);
-                pipeline.remove(ExternalAPIHandler.class);
-                pipeline.remove(HttpContentCompressor.class);
-                pipeline.remove(this);
-                if (log.isTraceEnabled()) {
-                    log.trace("Initialized secured hardware websocket pipeline. {}", ctx.pipeline().names());
                 }
             }
         };
