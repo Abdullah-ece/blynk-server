@@ -294,7 +294,7 @@ public class DevicesHandler extends BaseHttpHandler {
             return badRequest();
         }
 
-        dash.deleteDevice(deviceId);
+        user.profile.deleteDevice(dash, deviceId);
 
         tokenManager.deleteDevice(device);
 

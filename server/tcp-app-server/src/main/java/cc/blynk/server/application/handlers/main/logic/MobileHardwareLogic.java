@@ -59,6 +59,32 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         this.deviceDao = holder.deviceDao;
     }
 
+    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
+                                                    Session session, Profile profile, DashBoard dash,
+                                                    StringMessage message, String[] splitBody) {
+        //in format "vu 200000 1"
+        long widgetId = Long.parseLong(splitBody[1]);
+        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
+        if (deviceSelector instanceof DeviceSelector) {
+            int selectedDeviceId = Integer.parseInt(splitBody[2]);
+            ((DeviceSelector) deviceSelector).value = selectedDeviceId;
+            ctx.write(ok(message.id), ctx.voidPromise());
+
+            //sending to shared dashes and master-master apps
+            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
+
+            //we need to send syncs not only to main app, but all to all shared apps
+            for (Channel channel : session.appChannels) {
+                MobileStateHolder mobileStateHolder = getAppState(channel);
+                if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
+                    boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
+                    profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
+                }
+                channel.flush();
+            }
+        }
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user.email);
 
@@ -154,32 +180,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
 
                 processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
                 break;
-        }
-    }
-
-    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
-                                                    Session session, Profile profile, DashBoard dash,
-                                                    StringMessage message, String[] splitBody) {
-        //in format "vu 200000 1"
-        long widgetId = Long.parseLong(splitBody[1]);
-        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
-        if (deviceSelector instanceof DeviceSelector) {
-            int selectedDeviceId = Integer.parseInt(splitBody[2]);
-            ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-            ctx.write(ok(message.id), ctx.voidPromise());
-
-            //sending to shared dashes and master-master apps
-            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
-
-            //we need to send syncs not only to main app, but all to all shared apps
-            for (Channel channel : session.appChannels) {
-                MobileStateHolder mobileStateHolder = getAppState(channel);
-                if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
-                    boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
-                    profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
-                }
-                channel.flush();
-            }
         }
     }
 

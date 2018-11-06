@@ -427,15 +427,6 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    public Device deleteDevice(DashBoard dash, int deviceId) {
-        int existingDeviceIndex = dash.getDeviceIndexByIdOrThrow(deviceId);
-        Device deviceToRemove = this.devices[existingDeviceIndex];
-        this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
-        eraseWidgetValuesForDevice(deviceId);
-        this.updatedAt = System.currentTimeMillis();
-        return deviceToRemove;
-    }
-
     public void addDevice(Device device, String templateId) {
         this.devices = ArrayUtil.add(this.devices, device, Device.class);
         addDeviceToTemplate(device, templateId);

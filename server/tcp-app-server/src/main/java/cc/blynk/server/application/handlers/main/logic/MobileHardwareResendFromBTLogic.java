@@ -66,7 +66,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
         User user = state.user;
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-        Device device = dash.getDeviceById(deviceId);
+        Device device = state.user.profile.getDeviceById(dash, deviceId);
 
         if (isWriteOperation(split[1])) {
             String[] splitBody = split3(split[1]);

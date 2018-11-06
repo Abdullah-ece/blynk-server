@@ -66,43 +66,6 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private int removeUnsedInHistoryGraphData() {
-        int removedFilesCounter = 0;
-        Set<String> doNotRemovePaths = new HashSet<>();
-
-        for (User user : userDao.getUsers().values()) {
-            //we don't want to do a lot of work here,
-            //so we check only active profiles that actually write data
-            if (user.isUpdated(lastStart)) {
-                doNotRemovePaths.clear();
-                try {
-                    Profile profile = user.profile;
-                    for (DashBoard dashBoard : profile.dashBoards) {
-                        for (Widget widget : dashBoard.widgets) {
-                            if (widget instanceof DeviceTiles) {
-                                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                                for (TileTemplate tileTemplate : deviceTiles.templates) {
-                                    for (Widget tilesWidget : tileTemplate.widgets) {
-                                        add(doNotRemovePaths, profile,
-                                                dashBoard, tilesWidget, tileTemplate.deviceIds);
-                                    }
-                                }
-                            } else {
-                                add(doNotRemovePaths, profile, dashBoard, widget, null);
-                            }
-                        }
-                    }
-
-                    removedFilesCounter += reportingDao.delete(user,
-                            reportingFile -> !doNotRemovePaths.contains(reportingFile.getFileName().toString()));
-                } catch (Exception e) {
-                    log.error("Error cleaning reporting record for user {}. {}", user.email, e.getMessage());
-                }
-            }
-        }
-        return removedFilesCounter;
-    }
-
     private static void add(Set<String> doNotRemovePaths, Profile profile,
                             DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
@@ -112,25 +75,6 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             //reports can't be assigned to device tiles so we ignore deviceIds parameter
             ReportingWidget reportingWidget = (ReportingWidget) widget;
             add(doNotRemovePaths, dash, reportingWidget);
-        }
-    }
-
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash,
-                            ReportingWidget reportingWidget) {
-        for (Report report : reportingWidget.reports) {
-            for (ReportSource reportSource : report.reportSources) {
-                int[] deviceIds = reportSource.getDeviceIds();
-                for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
-                    for (int deviceId : deviceIds) {
-                        for (GraphGranularityType type : GraphGranularityType.values()) {
-                            String filename = ReportingDiskDao.generateFilename(dash.id,
-                                    deviceId,
-                                    reportDataStream.pinType, reportDataStream.pin, type);
-                            doNotRemovePaths.add(filename);
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -171,6 +115,62 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                 }
             }
         }
+    }
+
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash,
+                            ReportingWidget reportingWidget) {
+        for (Report report : reportingWidget.reports) {
+            for (ReportSource reportSource : report.reportSources) {
+                int[] deviceIds = reportSource.getDeviceIds();
+                for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                    for (int deviceId : deviceIds) {
+                        for (GraphGranularityType type : GraphGranularityType.values()) {
+                            String filename = ReportingDiskDao.generateFilename(dash.id,
+                                    deviceId,
+                                    reportDataStream.pinType, reportDataStream.pin, type);
+                            doNotRemovePaths.add(filename);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private int removeUnsedInHistoryGraphData() {
+        int removedFilesCounter = 0;
+        Set<String> doNotRemovePaths = new HashSet<>();
+
+        for (User user : userDao.getUsers().values()) {
+            //we don't want to do a lot of work here,
+            //so we check only active profiles that actually write data
+            if (user.isUpdated(lastStart)) {
+                doNotRemovePaths.clear();
+                try {
+                    Profile profile = user.profile;
+                    for (DashBoard dashBoard : profile.dashBoards) {
+                        for (Widget widget : dashBoard.widgets) {
+                            if (widget instanceof DeviceTiles) {
+                                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                                    for (Widget tilesWidget : tileTemplate.widgets) {
+                                        add(doNotRemovePaths, profile,
+                                                dashBoard, tilesWidget, tileTemplate.deviceIds);
+                                    }
+                                }
+                            } else {
+                                add(doNotRemovePaths, profile, dashBoard, widget, null);
+                            }
+                        }
+                    }
+
+                    removedFilesCounter += reportingDao.delete(user,
+                            reportingFile -> !doNotRemovePaths.contains(reportingFile.getFileName().toString()));
+                } catch (Exception e) {
+                    log.error("Error cleaning reporting record for user {}. {}", user.email, e.getMessage());
+                }
+            }
+        }
+        return removedFilesCounter;
     }
 
 }
