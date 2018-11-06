@@ -4,7 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.TextHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -64,18 +66,18 @@ public final class MobileMailQRsLogic {
             return;
         }
 
-        if (app.provisionType == ProvisionType.STATIC && dash.devices.length == 0) {
+        if (app.provisionType == ProvisionType.STATIC && user.profile.devices.length == 0) {
             log.debug("No devices in project.");
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
-        makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, appId, message.id);
+        makePublishPreviewEmail(ctx, dash, app.provisionType, user, app.name, appId, message.id);
     }
 
     private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
-                                         ProvisionType provisionType, String to,
+                                         ProvisionType provisionType, User user,
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         Channel channel = ctx.channel();
@@ -86,7 +88,7 @@ public final class MobileMailQRsLogic {
                     var newToken = TokenGeneratorUtil.generateNewToken();
                     var qrHolder = new QrHolder(dash.id, -1, null, newToken,
                                 QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-                    var flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
+                    var flashedToken = new FlashedToken(user.email, newToken, publishAppId, dash.id, -1);
 
                     if (!dbManager.insertFlashedTokens(flashedToken)) {
                         throw new Exception("App Publishing Preview requires enabled DB.");
@@ -95,17 +97,17 @@ public final class MobileMailQRsLogic {
                     String finalBody = textHolder.dynamicMailBody
                             .replace(Placeholders.PROJECT_NAME, dashName);
 
-                    mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
+                    mailWrapper.sendWithAttachment(user.email, subj, finalBody, qrHolder);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
                 } catch (Exception e) {
-                    log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
+                    log.error("Error sending dynamic email from application. For user {}. Error: ", user.email, e);
                     channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
                 }
             });
         } else {
             blockingIOProcessor.execute(() -> {
                 try {
-                    var qrHolders = makeQRs(to, publishAppId, dash);
+                    var qrHolders = makeQRs(user.profile, user.email, publishAppId, dash);
                     var sb = new StringBuilder();
                     for (QrHolder qrHolder : qrHolders) {
                         qrHolder.attach(sb);
@@ -115,10 +117,10 @@ public final class MobileMailQRsLogic {
                             .replace(Placeholders.PROJECT_NAME, dashName)
                             .replace(Placeholders.DYNAMIC_SECTION, sb.toString());
 
-                    mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
+                    mailWrapper.sendWithAttachment(user.email, subj, finalBody, qrHolders);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
                 } catch (Exception e) {
-                    log.error("Error sending static email from application. For user {}. Reason: {}", to, e);
+                    log.error("Error sending static email from application. For user {}. Reason: {}", user.email, e);
                     channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
                 }
             });
@@ -126,13 +128,13 @@ public final class MobileMailQRsLogic {
     }
 
 
-    private QrHolder[] makeQRs(String username, String appId, DashBoard dash) throws Exception {
-        var tokensCount = dash.devices.length;
+    private QrHolder[] makeQRs(Profile profile, String username, String appId, DashBoard dash) throws Exception {
+        var tokensCount = profile.devices.length;
         var qrHolders = new QrHolder[tokensCount];
         var flashedTokens = new FlashedToken[tokensCount];
 
         var i = 0;
-        for (var device : dash.devices) {
+        for (Device device : profile.devices) {
             var newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());

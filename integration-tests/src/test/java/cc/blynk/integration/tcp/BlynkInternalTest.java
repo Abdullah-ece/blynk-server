@@ -61,7 +61,7 @@ public class BlynkInternalTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].devices[0].hardwareInfo));
+        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.devices[0].hardwareInfo));
 
 
         hardClient2.stop().awaitUninterruptibly();

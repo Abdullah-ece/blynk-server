@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -41,7 +40,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
@@ -69,8 +67,6 @@ public class DashBoard {
     public volatile long updatedAt;
 
     public volatile Widget[] widgets = EMPTY_WIDGETS;
-
-    public volatile Device[] devices = EMPTY_DEVICES;
 
     public volatile Tag[] tags = EMPTY_TAGS;
 

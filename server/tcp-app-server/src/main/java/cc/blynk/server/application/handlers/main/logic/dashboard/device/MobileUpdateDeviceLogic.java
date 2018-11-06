@@ -50,7 +50,7 @@ public final class MobileUpdateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        Device existingDevice = user.profile.getDeviceById(dash, newDevice.id);
+        Device existingDevice = user.profile.getDeviceById(newDevice.id);
 
         if (existingDevice == null) {
             log.debug("Attempt to update device with non existing id.");

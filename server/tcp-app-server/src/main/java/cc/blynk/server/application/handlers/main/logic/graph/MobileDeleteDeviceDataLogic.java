@@ -66,7 +66,7 @@ public final class MobileDeleteDeviceDataLogic {
         }
 
         if ("*".equals(dashIdAndDeviceId[1])) {
-            int[] deviceIds = getDeviceIds(dash.devices);
+            int[] deviceIds = getDeviceIds(user.profile.devices);
             delete(holder, ctx.channel(), message.id, user, dash, deviceIds);
         } else {
             int deviceId = Integer.parseInt(dashIdAndDeviceId[1]);

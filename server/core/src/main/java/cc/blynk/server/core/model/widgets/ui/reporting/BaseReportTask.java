@@ -159,7 +159,7 @@ public abstract class BaseReportTask implements Runnable {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = profile.getCSVDeviceName(dash, deviceId);
+                        String deviceName = profile.getCSVDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
@@ -189,7 +189,7 @@ public abstract class BaseReportTask implements Runnable {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = profile.getDeviceName(dash, deviceId);
+                        String deviceName = profile.getDeviceName(deviceId);
                         String deviceFileName = deviceFileName(deviceName, deviceId);
                         ZipEntry zipEntry = new ZipEntry(deviceFileName);
                         zipStream.putNextEntry(zipEntry);
@@ -221,7 +221,7 @@ public abstract class BaseReportTask implements Runnable {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = profile.getDeviceName(dash, deviceId);
+                        String deviceName = profile.getDeviceName(deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,

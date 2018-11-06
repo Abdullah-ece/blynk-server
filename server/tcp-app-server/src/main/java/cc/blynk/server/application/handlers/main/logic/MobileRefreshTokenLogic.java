@@ -40,7 +40,7 @@ public final class MobileRefreshTokenLogic {
         User user = state.user;
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = user.profile.getDeviceById(dash, deviceId);
+        Device device = user.profile.getDeviceById(deviceId);
 
         if (device == null) {
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());

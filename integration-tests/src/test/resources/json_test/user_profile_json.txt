@@ -1,4 +1,14 @@
 {
+   "devices" :
+     [
+       {
+         "id":0,
+         "boardType":"Arduino UNO",
+         "token":"12345678901234567890123456789012",
+         "connectionType":"ETHERNET",
+         "name":"My Device"
+       }
+     ],
     "dashBoards" :
         [
             {
@@ -134,16 +144,6 @@
                 ],
                 "advancedMode":true,"textLight":false,"textLightOn":false,"frequency":0
                 }
-             ],
-             "devices" :
-             [
-               {
-                  "id":0,
-                  "boardType":"Arduino UNO",
-                  "token":"12345678901234567890123456789012",
-                  "connectionType":"ETHERNET",
-                  "name":"My Device"
-               }
              ]
             }
         ]

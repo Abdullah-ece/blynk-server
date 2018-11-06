@@ -118,7 +118,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (tokenValue.isTemporary()) {
             holder.tokenManager.updateRegularCache(token, tokenValue);
-            user.profile.addDevice(dash, device);
+            user.profile.addDevice(device);
             user.lastModifiedTs = System.currentTimeMillis();
         }
 

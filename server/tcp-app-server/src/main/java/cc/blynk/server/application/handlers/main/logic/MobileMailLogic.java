@@ -59,7 +59,7 @@ public class MobileMailLogic {
                 //dashId deviceId
                 if (splitBody.length == 2) {
                     int deviceId = Integer.parseInt(splitBody[1]);
-                    Device device = user.profile.getDeviceById(dash, deviceId);
+                    Device device = user.profile.getDeviceById(deviceId);
 
                     if (device == null || device.token == null) {
                         log.debug("Wrong device id.");
@@ -71,10 +71,10 @@ public class MobileMailLogic {
 
                     //dashId theme provisionType color appname
                 } else {
-                    if (dash.devices.length == 1) {
-                        makeSingleTokenEmail(ctx, dash, dash.devices[0], user.email, message.id);
+                    if (user.profile.devices.length == 1) {
+                        makeSingleTokenEmail(ctx, dash, user.profile.devices[0], user.email, message.id);
                     } else {
-                        sendMultiTokenEmail(ctx, dash, user.email, message.id);
+                        sendMultiTokenEmail(ctx, user, dash, message.id);
                     }
                 }
         }
@@ -109,12 +109,12 @@ public class MobileMailLogic {
         mail(ctx.channel(), to, subj, body + tokenMailBody, msgId, false);
     }
 
-    private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
+    private void sendMultiTokenEmail(ChannelHandlerContext ctx, User user, DashBoard dash, int msgId) {
         String dashName = dash.getNameOrDefault();
-        String subj = "Auth Tokens for " + dashName + " project and " + dash.devices.length + " devices";
+        String subj = "Auth Tokens for " + dashName + " project and " + user.profile.devices.length + " devices";
 
         StringBuilder body = new StringBuilder();
-        for (Device device : dash.devices) {
+        for (Device device : user.profile.devices) {
             String deviceName = device.getNameOrDefault();
             body.append("Auth Token for device '")
                 .append(deviceName)
@@ -125,8 +125,8 @@ public class MobileMailLogic {
 
         body.append(tokenMailBody);
 
-        log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
-        mail(ctx.channel(), to, subj, body.toString(), msgId, false);
+        log.trace("Sending multi tokens mail for user {}, with {} tokens.", user.email, user.profile.devices.length);
+        mail(ctx.channel(), user.email, subj, body.toString(), msgId, false);
     }
 
     private void mail(Channel channel, String to, String subj, String body, int msgId, boolean isHtml) {

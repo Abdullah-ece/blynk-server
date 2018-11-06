@@ -42,7 +42,7 @@ public final class MobileGetProvisionTokenLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (Device device : dash.devices) {
+        for (Device device : user.profile.devices) {
             if (device.id == temporaryDevice.id) {
                 throw new NotAllowedException("Device with same id already exists.", message.id);
             }

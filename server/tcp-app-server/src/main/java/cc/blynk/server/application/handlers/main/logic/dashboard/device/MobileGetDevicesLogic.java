@@ -26,10 +26,10 @@ public final class MobileGetDevicesLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         String devicesJson;
-        if (dash.devices == null || dash.devices.length == 0) {
+        if (user.profile.devices == null || user.profile.devices.length == 0) {
             devicesJson = "[]";
         } else {
-            DeviceStatusDTO[] deviceStatusDTOS = DeviceStatusDTO.transform(dash.devices);
+            DeviceStatusDTO[] deviceStatusDTOS = DeviceStatusDTO.transform(user.profile.devices);
             devicesJson = JsonParser.toJson(deviceStatusDTOS);
         }
 

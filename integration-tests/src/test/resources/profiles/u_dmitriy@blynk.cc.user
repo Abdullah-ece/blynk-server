@@ -9,12 +9,17 @@
    "pass":"DXaPEHb7PFXXxOm7BUj55+q6l5Eh9KFWCPu/Wg8OxXY=",
    "lastModifiedTs":1451305621599,
    "profile":{
+      "devices" : [
+      {"id":0, "token":"4ae3851817194e2596cf1b7103603ef8", "boardType":"ESP8266"},
+      {"id":1, "token":"cd2f5a62151e4fa2a6ae8ea506b6e15c", "boardType":"ESP8266"},
+      {"id":2, "token":"f77d5ece132f4ac880d7c028d1200792", "boardType":"ESP8266"},
+      {"id":3, "token":"7b0a3a61322e41a5b50589cf52d775d1", "boardType":"ESP8266"}
+      ],
       "dashBoards":[
          {
             "id":79780619,
             "name":"Blynk",
             "timestamp":1450970049,
-            "devices" : [{"id":0, "token":"1bd322be8fb24f3691b4724332e708e9", "boardType":"ESP8266"}],
             "widgets":[
                {
                   "type":"LCD",
@@ -114,7 +119,6 @@
          {
             "id":125564119,
             "name":"New Project",
-            "devices" : [{"id":0, "token":"4ae3851817194e2596cf1b7103603ef8", "boardType":"ESP8266"}],
             "widgets":[
                {
                   "type":"TWO_AXIS_JOYSTICK",
@@ -422,7 +426,6 @@
             "id":698702475,
             "name":"A",
             "timestamp":1449678105,
-            "devices" : [{"id":0, "token":"cd2f5a62151e4fa2a6ae8ea506b6e15c", "boardType":"ESP8266"}],
             "widgets":[
                {
                   "type":"LOGGER",
@@ -577,7 +580,6 @@
             "id":698702476,
             "name":"infoPoint",
             "timestamp":1449678105,
-            "devices" : [{"id":0, "token":"f77d5ece132f4ac880d7c028d1200792", "boardType":"ESP8266"}],
             "widgets":[
                {
                   "type":"BUTTON",
@@ -634,7 +636,6 @@
          {
             "id":698702477,
             "timestamp":1450882233,
-            "devices" : [{"id":0, "token":"7b0a3a61322e41a5b50589cf52d775d1", "boardType":"ESP8266"}],
             "widgets":[
                {
                   "type":"SLIDER",

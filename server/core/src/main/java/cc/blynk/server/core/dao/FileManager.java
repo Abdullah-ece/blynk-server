@@ -220,7 +220,7 @@ public class FileManager {
         }
         user.ip = host;
         for (DashBoard dash : user.profile.dashBoards) {
-            user.profile.setOfflineDevice(dash);
+            user.profile.setOfflineDevice();
             if (dash.pinsStorage != null && dash.pinsStorage.size() > 0) {
                 int dashId = dash.id;
                 for (Map.Entry<PinStorageKey, PinStorageValue> pinsStorageEntry : dash.pinsStorage.entrySet()) {

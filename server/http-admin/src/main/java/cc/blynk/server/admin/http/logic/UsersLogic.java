@@ -136,7 +136,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = user.profile.getDeviceById(dash, deviceId);
+        Device device = user.profile.getDeviceById(deviceId);
 
         tokenManager.assignToken(user, dash, device, newToken);
         return ok();
@@ -165,16 +165,14 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         //user name was changed
         if (!updatedUser.email.equals(oldUser.email)) {
             deleteUserByName(id);
-            for (DashBoard dashBoard : oldUser.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    String token;
-                    if (device.token == null) {
-                        token = TokenGeneratorUtil.generateNewToken();
-                    } else {
-                        token = device.token;
-                    }
-                    tokenManager.assignToken(updatedUser, dashBoard, device, token);
+            for (Device device : oldUser.profile.devices) {
+                String token;
+                if (device.token == null) {
+                    token = TokenGeneratorUtil.generateNewToken();
+                } else {
+                    token = device.token;
                 }
+                tokenManager.assignToken(updatedUser, oldUser.profile.getFirstDashOrEmpty(), device, token);
             }
         }
 
@@ -186,12 +184,13 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         userDao.add(updatedUser);
 
-        for (DashBoard dash : updatedUser.profile.dashBoards) {
-            for (Device device : dash.devices) {
-                if (device.token != null) {
-                    tokenManager.updateRegularCache(device.token, updatedUser, dash, device);
-                }
+        for (Device device : updatedUser.profile.devices) {
+            if (device.token != null) {
+                tokenManager.updateRegularCache(device.token,
+                        updatedUser, oldUser.profile.getFirstDashOrEmpty(), device);
             }
+        }
+        for (DashBoard dash : updatedUser.profile.dashBoards) {
             if (dash.sharedToken != null) {
                 tokenManager.updateSharedCache(dash.sharedToken, updatedUser, dash.id);
             }

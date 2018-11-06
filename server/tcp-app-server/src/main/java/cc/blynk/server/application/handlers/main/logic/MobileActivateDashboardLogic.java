@@ -51,7 +51,7 @@ public final class MobileActivateDashboardLogic {
         Session session = sessionDao.userSession.get(state.userKey);
 
         if (session.isHardwareConnected(dashId)) {
-            for (Device device : dash.devices) {
+            for (Device device : user.profile.devices) {
                 String pmBody = dash.buildPMMessage(device.id);
                 if (pmBody == null) {
                     if (!session.isHardwareConnected(dashId, device.id)) {

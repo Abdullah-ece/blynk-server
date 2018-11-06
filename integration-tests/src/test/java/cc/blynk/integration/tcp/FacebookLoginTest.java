@@ -105,11 +105,11 @@ public class FacebookLoginTest extends SingleServerInstancePerTest {
         appClient.send("addEnergy " + 10000 + "\0" + "123456");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        saveProfile(appClient, profile.dashBoards);
+        saveProfile(appClient, profile);
 
         appClient.activate(dashId);
         appClient.getDevice(dashId, 0);
-        Device device = appClient.parseDevice(4 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device device = appClient.parseDevice(4 + profile.devices.length + profile.dashBoards.length + expectedSyncCommandsCount);
         String token = device.token;
 
         hardClient.login(token);

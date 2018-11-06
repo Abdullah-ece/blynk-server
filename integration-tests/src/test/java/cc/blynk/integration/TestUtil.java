@@ -118,9 +118,12 @@ public final class TestUtil {
         return readTestUserProfile("user_profile_json.txt");
     }
 
-    public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
-        for (DashBoard dash : dashBoards) {
+    public static void saveProfile(TestAppClient appClient, Profile profile) {
+        for (DashBoard dash : profile.dashBoards) {
             appClient.createDash(dash);
+        }
+        for (Device device : profile.devices) {
+            appClient.createDevice(profile.getFirstDashOrEmpty().id, device);
         }
     }
 
@@ -266,15 +269,18 @@ public final class TestUtil {
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        saveProfile(appClient, profile.dashBoards);
+        saveProfile(appClient, profile);
 
         appClient.activate(dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(
+                4 + profile.devices.length + profile.dashBoards.length
+                + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
         appClient.getDevice(dashId, 0);
-        Device device = appClient.parseDevice(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device device = appClient.parseDevice(
+                5 + profile.devices.length + profile.dashBoards.length + expectedSyncCommandsCount);
         String token = device.token;
 
         hardClient.login(token);
