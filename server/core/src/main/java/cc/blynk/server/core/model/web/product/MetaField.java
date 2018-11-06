@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.web.product.metafields.CoordinatesMetaField;
 import cc.blynk.server.core.model.web.product.metafields.CostMetaField;
 import cc.blynk.server.core.model.web.product.metafields.DeviceReferenceMetaField;
 import cc.blynk.server.core.model.web.product.metafields.EmailMetaField;
+import cc.blynk.server.core.model.web.product.metafields.ImageMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnitMetaField;
@@ -62,7 +63,8 @@ import static cc.blynk.server.core.model.web.product.metafields.TextMetaField.DE
         @JsonSubTypes.Type(value = ListMetaField.class, name = "List"),
         @JsonSubTypes.Type(value = DeviceReferenceMetaField.class, name = "DeviceReference"),
         @JsonSubTypes.Type(value = LocationMetaField.class, name = "Location"),
-        @JsonSubTypes.Type(value = TimeZoneMetaField.class, name = "Tz")
+        @JsonSubTypes.Type(value = TimeZoneMetaField.class, name = "Tz"),
+        @JsonSubTypes.Type(value = ImageMetaField.class, name = "Image")
 
 })
 public abstract class MetaField implements CopyObject<MetaField> {
