@@ -144,7 +144,6 @@ public class RealtimeStatsDBTest {
         cs.eventor = i++;
         cs.webhooks = i++;
         cs.appTotal = i++;
-        cs.mqttTotal = i;
 
         reportingDBManager.reportingDBDao.insertStat(region, stat);
 

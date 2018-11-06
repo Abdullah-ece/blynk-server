@@ -56,7 +56,6 @@ public class Stat {
         }
 
         this.commands.appTotal = (int) globalStats.getTotalAppCounter(reset);
-        this.commands.mqttTotal = (int) globalStats.getTotalMqttCounter(reset);
         this.commands.webTotal = (int) globalStats.getTotalWebCounter(reset);
 
         this.oneMinRate = (int) globalStats.totalMessages.getOneMinuteRate();

@@ -95,7 +95,7 @@ public class ReportingDBDao {
                     + "web_sockets, eventor, webhooks, appTotal, hardTotal) "
                     + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?"
                     + ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    //todo add one more column mqttTotal and replace hardTotal with mqtt total
+
     private static final String insertStatHttpCommandMinute =
             "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, "
                     + "is_app_connected, get_pin_data, update_pin, email, push, get_project, qr,"
@@ -326,7 +326,6 @@ public class ReportingDBDao {
             commandStatPS.setInt(49, cs.eventor);
             commandStatPS.setInt(50, cs.webhooks);
             commandStatPS.setInt(51, cs.appTotal);
-            commandStatPS.setInt(52, cs.mqttTotal);
             commandStatPS.executeUpdate();
 
             connection.commit();

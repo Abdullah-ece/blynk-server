@@ -12,8 +12,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class GlobalStats {
 
     private static final int APP_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 1;
-    private static final int MQTT_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 2;
-    private static final int WEB_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 3;
+    private static final int WEB_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 2;
 
     //separate by income/outcome?
     public final Meter totalMessages;
@@ -52,10 +51,6 @@ public class GlobalStats {
         specificCounters[APP_STAT_COUNTER_INDEX].increment();
     }
 
-    public void incrementMqttStat() {
-        specificCounters[MQTT_STAT_COUNTER_INDEX].increment();
-    }
-
     public long getTotalWebCounter(boolean reset) {
         LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
         return reset ? longAdder.sumThenReset() : longAdder.sum();
@@ -63,11 +58,6 @@ public class GlobalStats {
 
     public long getTotalAppCounter(boolean reset) {
         LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
-        return reset ? longAdder.sumThenReset() : longAdder.sum();
-    }
-
-    public long getTotalMqttCounter(boolean reset) {
-        LongAdder longAdder = specificCounters[MQTT_STAT_COUNTER_INDEX];
         return reset ? longAdder.sumThenReset() : longAdder.sum();
     }
 
