@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -33,13 +34,13 @@ public final class MobileDeleteTagLogic {
         int dashId = Integer.parseInt(split[0]);
         int tagId = Integer.parseInt(split[1]);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Profile profile = user.profile;
+        DashBoard dash = profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting tag with id {}.", tagId);
 
-        dash.deleteTag(tagId);
-        dash.updatedAt = System.currentTimeMillis();
-        user.lastModifiedTs = dash.updatedAt;
+        profile.deleteTag(dash, tagId);
+        user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

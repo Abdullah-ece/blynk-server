@@ -3,6 +3,7 @@ package cc.blynk.server.workers;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
@@ -72,7 +73,8 @@ public class ReadingWidgetsWorker implements Runnable {
                 String userKey = entry.getKey();
                 User user = userDao.users.get(userKey);
                 if (user != null) {
-                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                    Profile profile = user.profile;
+                    for (DashBoard dashBoard : profile.dashBoards) {
                         if (dashBoard.isActive) {
                             for (Channel channel : session.hardwareChannels) {
                                 HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
@@ -80,7 +82,8 @@ public class ReadingWidgetsWorker implements Runnable {
                                     int deviceId = stateHolder.device.id;
                                     for (Widget widget : dashBoard.widgets) {
                                         if (widget instanceof FrequencyWidget) {
-                                            process(channel, (FrequencyWidget) widget, dashBoard, deviceId, now);
+                                            process(channel, (FrequencyWidget) widget,
+                                                    profile, dashBoard, deviceId, now);
                                         } else if (widget instanceof DeviceTiles) {
                                             processDeviceTile(channel, (DeviceTiles) widget, deviceId, now);
                                         }
@@ -115,21 +118,21 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private void process(Channel channel, FrequencyWidget frequencyWidget,
-                         DashBoard dashBoard, int deviceId, long now) {
+                         Profile profile, DashBoard dashBoard, int deviceId, long now) {
         if (channel.isWritable()
-                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), deviceId)
+                && sameDeviceId(profile, dashBoard, frequencyWidget.getDeviceId(), deviceId)
                 && frequencyWidget.isTicked(now)) {
             frequencyWidget.writeReadingCommand(channel);
             tickedWidgets++;
         }
     }
 
-    private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
+    private boolean sameDeviceId(Profile profile, DashBoard dash, int targetId, int channelDeviceId) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
+            target = profile.getDeviceById(dash, targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
+            target = profile.getTagById(dash, targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);

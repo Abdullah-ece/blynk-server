@@ -60,12 +60,12 @@ public final class MobileCreateDeviceLogic {
 
         holder.organizationDao.assignToOrgAndAddDevice(user.orgId, newDevice);
 
-        dash.addDevice(newDevice, null);
+        user.profile.addDevice(dash, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
-        user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(

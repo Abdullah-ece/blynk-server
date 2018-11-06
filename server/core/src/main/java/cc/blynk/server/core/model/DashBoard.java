@@ -217,42 +217,6 @@ public class DashBoard {
         return getWidgetIndexByIdOrThrow(widgets, id);
     }
 
-    public void deleteTag(int tagId) {
-        int existingTagIndex = getTagIndexByIdOrThrow(tagId);
-        this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);
-    }
-
-    public void addTag(Tag newTag) {
-        this.tags = ArrayUtil.add(tags, newTag, Tag.class);
-    }
-
-    public int getTagIndexByIdOrThrow(int id) {
-        for (int i = 0; i < tags.length; i++) {
-            if (tags[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Tag with passed id not found.");
-    }
-
-    public Tag getTagById(int id) {
-        for (Tag tag : tags) {
-            if (tag.id == id) {
-                return tag;
-            }
-        }
-        return null;
-    }
-
-    private int getDeviceIndexByIdOrThrow(int id) {
-        for (int i = 0; i < devices.length; i++) {
-            if (devices[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Device with passed id not found.");
-    }
-
     public boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
@@ -260,15 +224,6 @@ public class DashBoard {
             }
         }
         return false;
-    }
-
-    public Device getDeviceById(int id) {
-        for (Device device : devices) {
-            if (device.id == id) {
-                return device;
-            }
-        }
-        return null;
     }
 
     public DeviceSelector getDeviceSelector(long targetId) {
@@ -369,7 +324,7 @@ public class DashBoard {
         }
     }
 
-    private void eraseWidgetValuesForDevice(int deviceId) {
+    public void eraseWidgetValuesForDevice(int deviceId) {
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
                 widget.erase();
@@ -377,12 +332,6 @@ public class DashBoard {
             if (widget instanceof DeviceCleaner) {
                 ((DeviceCleaner) widget).deleteDevice(deviceId);
             }
-        }
-    }
-
-    public void deleteDeviceFromTags(int deviceId) {
-        for (Tag tag : tags) {
-            tag.deleteDevice(deviceId);
         }
     }
 
@@ -408,6 +357,8 @@ public class DashBoard {
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
         this.widgetBackgroundOn = settings.widgetBackgroundOn;
+        this.color = settings.color;
+        this.isDefaultColor = settings.isDefaultColor;
         this.updatedAt = System.currentTimeMillis();
     }
 
@@ -476,8 +427,8 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    public Device deleteDevice(int deviceId) {
-        int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
+    public Device deleteDevice(DashBoard dash, int deviceId) {
+        int existingDeviceIndex = dash.getDeviceIndexByIdOrThrow(deviceId);
         Device deviceToRemove = this.devices[existingDeviceIndex];
         this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
         eraseWidgetValuesForDevice(deviceId);

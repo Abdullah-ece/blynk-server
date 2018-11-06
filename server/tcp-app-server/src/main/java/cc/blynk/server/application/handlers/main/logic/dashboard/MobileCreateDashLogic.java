@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -86,7 +87,7 @@ public final class MobileCreateDashLogic {
             newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
         } else {
             Organization org = holder.organizationDao.getOrgByIdOrThrow(user.orgId);
-            for (var device : newDash.devices) {
+            for (Device device : newDash.devices) {
                 //this case only possible for clone,
                 device.erase();
                 if (generateTokensForDevices) {

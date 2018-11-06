@@ -133,7 +133,7 @@ public class UsersLogic extends BaseHttpHandler {
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = dash.getDeviceById(deviceId);
+        Device device = user.profile.getDeviceById(dash, deviceId);
 
         tokenManager.assignToken(user, dash, device, newToken);
         return ok();
