@@ -12,6 +12,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -115,6 +116,7 @@ public class ExternalAPIForKnightTest extends APIBaseTest {
     }
 
     @Test
+    @Ignore("no need in it for now")
     public void testInsertAllTestRows() throws Exception {
         URL url = getClass().getResource("/2017_ISSA_Sample_IOT_Data.csv");
         Path resPath = Paths.get(url.toURI());
