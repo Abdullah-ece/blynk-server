@@ -2,7 +2,15 @@ package cc.blynk.integration.https.reporting;
 
 import cc.blynk.integration.APIBaseTest;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.web.product.MetaField;
+import cc.blynk.server.core.model.web.product.metafields.MultiTextMetaField;
+import cc.blynk.server.core.model.web.product.metafields.Shift;
+import cc.blynk.server.core.model.web.product.metafields.ShiftMetaField;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.dao.descriptor.Column;
+import cc.blynk.server.db.dao.descriptor.MetaDataFormatters;
+import cc.blynk.server.db.dao.descriptor.TableDescriptor;
+import cc.blynk.server.db.dao.descriptor.fucntions.ReplaceFunction;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -19,7 +27,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.sql.Connection;
 import java.sql.Timestamp;
 
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_SCOPETECH;
+import static java.sql.Types.DATE;
+import static java.sql.Types.INTEGER;
+import static java.sql.Types.SMALLINT;
+import static java.sql.Types.TIME;
+import static java.sql.Types.TIMESTAMP;
+import static java.sql.Types.VARCHAR;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +43,114 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalAPIForKnightScopeTechTest extends APIBaseTest {
+
+    public static final String SHIFTS_METAINFO_NAME = "Shifts";
+    public static final String PUMP_METAINFO_NAME = "Pump Names";
+    public static final String FORMULA_METAINFO_NAME = "Formula Names";
+    public static final MetaField[] shifts = new MetaField[] {
+            new ShiftMetaField(1, SHIFTS_METAINFO_NAME, new int[] {1}, false, false, false, null, new Shift[] {
+                    //order is important. it defines related ids.
+                    new Shift("Shift 3", "00:00:00", "08:00:00"),
+                    new Shift("Shift 1", "08:00:00", "16:00:00"),
+                    new Shift("Shift 2", "16:00:00", "00:00:00")
+            })
+    };
+    public static final MetaField[] pumpNames = new MetaField[] {
+            new MultiTextMetaField(2, PUMP_METAINFO_NAME,  new int[] {1}, false, false, false, null, new String[]{
+                    "",
+                    "Saphire",
+                    "Boost",
+                    "Emulsifier",
+                    "Destain",
+                    "Bleach",
+                    "Sour",
+                    "Supreme",
+                    "Jasmine"
+            })
+    };
+    public static final MetaField[] formulaNames = new MetaField[] {
+            new MultiTextMetaField(3, FORMULA_METAINFO_NAME,  new int[] {1}, false, false, false, null, new String[]{
+                    "",
+                    "Towel White",
+                    "Bed sheet White",
+                    "Pillow Case",
+                    "Pool Towel",
+                    "Dark",
+                    "",
+                    "F&B Light",
+                    "F&B Dark",
+                    "",
+                    "Light Guest/Uniform",
+                    "Dark Guest/Uniform",
+                    "Nil1",
+                    "Nil2",
+                    "F&B White",
+                    "White Guest/Uniform",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "Towel White 2",
+                    "Bedsheet White 2",
+                    "Pillow Case 2",
+                    "Pool Towel 2",
+                    "Dark2",
+                    "",
+                    "F&B Light 2",
+                    "F&B Dark 2",
+                    "",
+                    "Light Guest/Uniform",
+                    "Dark Guest/Uniform",
+                    "Nil 2",
+                    "Nil2 2",
+                    "F&B White",
+                    "White Guest/Uniform"
+            })
+    };
+    private static final String KNIGHT_SCOPETECH_TABLE_NAME = "knight_scopetech";
+    public static final TableDescriptor KNIGHT_SCOPETECH = new TableDescriptor(KNIGHT_SCOPETECH_TABLE_NAME,
+            new Column[] {
+                    //default blynk columns
+                    new Column("Device Id", INTEGER),
+                    new Column("Pin", SMALLINT),
+                    new Column("Pin Type", SMALLINT),
+                    new Column("Created", TIMESTAMP),
+
+                    //knight specific columns
+                    new Column("Time", TIMESTAMP, MetaDataFormatters.M_DD_YYYY_HH_MM_SS),
+                    new Column("Scope User", VARCHAR),
+                    new Column("Serial", INTEGER),
+                    new Column("Dose Volume", INTEGER),
+                    new Column("Flush Volume", INTEGER),
+                    new Column("Rinse Volume", INTEGER),
+                    new Column("Leak Test", INTEGER),
+                    new Column("Pressure", INTEGER),
+                    new Column("Temperature", INTEGER),
+                    new Column("Error", INTEGER)
+            });
+    private static final String KNIGHT_TABLE_NAME = "knight_laundry";
+    public static final TableDescriptor KNIGHT_LAUNDRY = new TableDescriptor(KNIGHT_TABLE_NAME, new Column[] {
+            //default blynk columns
+            new Column("Device Id", INTEGER),
+            new Column("Pin", SMALLINT),
+            new Column("Pin Type", SMALLINT),
+            new Column("Created", TIMESTAMP),
+
+            //knight specific columns
+            new Column("Type Of Record", INTEGER),
+            new Column("Washer Id", INTEGER),
+            new Column("Start Date", DATE, MetaDataFormatters.MM_DD_YY),
+            new Column("Start Time", TIME, MetaDataFormatters.HH_MM_SS, shifts),
+            new Column("Finish Time", TIME, MetaDataFormatters.HH_MM_SS),
+            new Column("Cycle Time", TIME, MetaDataFormatters.HH_MM_SS),
+            new Column("Formula Number", INTEGER, formulaNames),
+            new Column("Load Weight", INTEGER, new ReplaceFunction(" KG")),
+            new Column("Pump Id", INTEGER, pumpNames),
+            new Column("Volume", INTEGER),
+            new Column("Run Time", INTEGER),
+            new Column("Pulse Count", INTEGER)
+    });
 
     private String httpsServerUrl;
     private DBManager dbManager;

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.getTableByPin;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -65,7 +64,7 @@ public class DataStream implements CopyObject<DataStream> {
         this.max = max;
         this.label = label;
         this.units = units;
-        this.tableDescriptor = getTableByPin(pin, pinType);
+        this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
     }
 
     public DataStream(DataStream dataStream) {

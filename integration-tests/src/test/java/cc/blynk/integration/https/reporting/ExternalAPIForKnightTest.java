@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.https.reporting.ExternalAPIForKnightScopeTechTest.KNIGHT_LAUNDRY;
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.junit.Assert.assertEquals;
 
@@ -38,6 +38,7 @@ import static org.junit.Assert.assertEquals;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class ExternalAPIForKnightTest extends APIBaseTest {
 
     private String httpsServerUrl;

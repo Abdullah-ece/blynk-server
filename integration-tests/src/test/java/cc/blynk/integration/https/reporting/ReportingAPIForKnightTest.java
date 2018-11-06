@@ -16,6 +16,7 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -31,13 +32,13 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.https.reporting.ExternalAPIForKnightScopeTechTest.FORMULA_METAINFO_NAME;
+import static cc.blynk.integration.https.reporting.ExternalAPIForKnightScopeTechTest.KNIGHT_LAUNDRY;
+import static cc.blynk.integration.https.reporting.ExternalAPIForKnightScopeTechTest.PUMP_METAINFO_NAME;
 import static cc.blynk.integration.https.reporting.KnightData.makeNewDataFromOldData;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.columnFrom;
 import static cc.blynk.integration.https.reporting.ReportingTestUtils.metaDataFrom;
 import static cc.blynk.server.core.model.web.product.metafields.Shift.parse;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.FORMULA_METAINFO_NAME;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.PUMP_METAINFO_NAME;
 import static cc.blynk.server.db.dao.descriptor.TableDescriptor.SHIFTS_METAINFO_NAME;
 import static org.jooq.SQLDialect.POSTGRES_9_4;
 import static org.jooq.impl.DSL.count;
@@ -54,6 +55,7 @@ import static org.junit.Assert.assertNotNull;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class ReportingAPIForKnightTest extends APIBaseTest {
 
     private static Holder staticHolder;

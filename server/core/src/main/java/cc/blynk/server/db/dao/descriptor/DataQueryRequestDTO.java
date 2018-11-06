@@ -7,8 +7,6 @@ import cc.blynk.server.core.model.widgets.web.SelectedColumn;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.getTableByPin;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -72,11 +70,7 @@ public class DataQueryRequestDTO {
         this.limit = limit;
         this.from = from;
         this.to = to;
-
-        //todo remove hardcode
-        if (this.tableDescriptor == null) {
-            this.tableDescriptor = getTableByPin(pin, pinType);
-        }
+        this.tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
     }
 
     public void setDeviceId(int deviceId) {

@@ -76,7 +76,6 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.server.db.dao.descriptor.TableDescriptor.KNIGHT_LAUNDRY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -531,7 +530,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        TableDescriptor tableDescriptor = TableDescriptor.getTableByPin(pin, pinType);
+        TableDescriptor tableDescriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
         if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
             blockingIOProcessor.executeDB(() -> {
                 try {
@@ -575,66 +574,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();
-    }
-
-    //todo remove later?
-    @PUT
-    @Path("/{token}/updateBatch/{pin}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Metric(HTTP_UPDATE_PIN_DATA)
-    public Response updateWidgetPinData(@Context ChannelHandlerContext ctx,
-                                        @PathParam("token") String token,
-                                        @PathParam("pin") String pinString,
-                                        String[][] pinValues) {
-
-        if (pinValues.length == 0) {
-            log.debug("No pin for update provided.");
-            return Response.badRequest("No pin for update provided.");
-        }
-
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        PinType pinType;
-        short pin;
-
-        try {
-            pinType = PinType.getPinType(pinString.charAt(0));
-            pin = NumberUtil.parsePin(pinString.substring(1));
-        } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.debug("Wrong pin format. {}", pinString);
-            return Response.badRequest("Wrong pin format.");
-        }
-
-        int deviceId = tokenValue.device.id;
-        LocalDateTime now = LocalDateTime.now();
-
-        TableDescriptor tableDescriptor = TableDescriptor.getTableByPin(pin, pinType);
-        if (TableDescriptor.BLYNK_DEFAULT_INSTANCE != tableDescriptor) {
-            blockingIOProcessor.executeDB(() -> {
-                try {
-                    TableDataMapper[] tableDataMappers = new TableDataMapper[pinValues.length];
-                    int i = 0;
-                    for (String[] pinValue : pinValues) {
-                        tableDataMappers[i++] = new TableDataMapper(KNIGHT_LAUNDRY,
-                                deviceId, pin, pinType, now,
-                                pinValue);
-                    }
-
-                    reportingDBManager.reportingDBDao.insertDataPoint(tableDataMappers);
-                    ctx.writeAndFlush(ok());
-                } catch (Exception e) {
-                    log.error("Error insert knight record.", e);
-                    ctx.writeAndFlush(serverError("Error insert knight record. " + e.getMessage()));
-                }
-            });
-        }
-
-        return null;
     }
 
     @POST

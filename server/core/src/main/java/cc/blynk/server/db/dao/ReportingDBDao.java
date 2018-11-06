@@ -398,7 +398,7 @@ public class ReportingDBDao {
 
             connection.commit();
         } catch (Exception e) {
-            log.error("Error inserting knight data.", e);
+            log.error("Error inserting data.", e);
         }
     }
 
@@ -420,7 +420,7 @@ public class ReportingDBDao {
 
             connection.commit();
         } catch (Exception e) {
-            log.error("Error inserting knight data.", e);
+            log.error("Error inserting data.", e);
         }
     }
 
@@ -444,7 +444,7 @@ public class ReportingDBDao {
 
             connection.commit();
         } catch (Exception e) {
-            log.error("Error inserting knight data.", e);
+            log.error("Error inserting data.", e);
         }
     }
 

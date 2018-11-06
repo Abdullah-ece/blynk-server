@@ -71,7 +71,7 @@ public class DataHandler extends BaseHttpHandler {
 
         long ts = (inTs == null ? System.currentTimeMillis() : inTs);
 
-        TableDescriptor descriptor = TableDescriptor.getTableByPin(pin, pinType);
+        TableDescriptor descriptor = TableDescriptor.BLYNK_DEFAULT_INSTANCE;
 
         blockingIOProcessor.executeDB(() -> {
             reportingDBManager.reportingDBDao.insertDataPoint(new TableDataMapper(
