@@ -49,7 +49,7 @@ public final class MobileUpdateTagLogic {
             throw new IllegalCommandException("Income tag name is not valid.");
         }
 
-        Tag existingTag = user.profile.getTagById(dash, newTag.id);
+        Tag existingTag = user.profile.getTagById(newTag.id);
 
         if (existingTag == null) {
             throw new IllegalCommandException("Attempt to update tag with non existing id.");

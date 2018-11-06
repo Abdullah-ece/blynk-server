@@ -39,6 +39,7 @@ import java.util.Map;
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 import static cc.blynk.utils.StringUtils.truncateFileName;
 
 /**
@@ -51,6 +52,8 @@ public class Profile {
     public volatile DashBoard[] dashBoards = EMPTY_DASHBOARDS;
 
     public volatile App[] apps = EMPTY_APPS;
+
+    public volatile Tag[] tags = EMPTY_TAGS;
 
     @JsonView(View.Private.class)
     @JsonDeserialize(keyUsing = DashPinStorageKeyDeserializer.class,
@@ -128,26 +131,26 @@ public class Profile {
         }
     }
 
-    public void deleteTag(DashBoard dash, int tagId) {
-        int existingTagIndex = getTagIndexByIdOrThrow(dash, tagId);
-        dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
+    public void deleteTag(int tagId) {
+        int existingTagIndex = getTagIndexByIdOrThrow(tagId);
+        this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);
     }
 
-    public void addTag(DashBoard dash, Tag newTag) {
-        dash.tags = ArrayUtil.add(dash.tags, newTag, Tag.class);
+    public void addTag(Tag newTag) {
+        this.tags = ArrayUtil.add(this.tags, newTag, Tag.class);
     }
 
-    private int getTagIndexByIdOrThrow(DashBoard dash, int id) {
-        for (int i = 0; i < dash.tags.length; i++) {
-            if (dash.tags[i].id == id) {
+    private int getTagIndexByIdOrThrow(int id) {
+        for (int i = 0; i < this.tags.length; i++) {
+            if (this.tags[i].id == id) {
                 return i;
             }
         }
         throw new IllegalCommandException("Tag with passed id not found.");
     }
 
-    public Tag getTagById(DashBoard dash, int id) {
-        for (Tag tag : dash.tags) {
+    public Tag getTagById(int id) {
+        for (Tag tag : this.tags) {
             if (tag.id == id) {
                 return tag;
             }
@@ -156,7 +159,7 @@ public class Profile {
     }
 
     public void deleteDeviceFromTags(DashBoard dash, int deviceId) {
-        for (Tag tag : dash.tags) {
+        for (Tag tag : this.tags) {
             tag.deleteDevice(deviceId);
         }
     }
@@ -207,7 +210,7 @@ public class Profile {
         if (targetId < Tag.START_TAG_ID) {
             target = getDeviceById(dash, targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = getTagById(dash, targetId);
+            target = getTagById(targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);
@@ -379,7 +382,7 @@ public class Profile {
                 if (graphTargetId < Tag.START_TAG_ID) {
                     target = getDeviceById(dash, graphTargetId);
                 } else if (graphTargetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = getTagById(dash, graphTargetId);
+                    target = getTagById(graphTargetId);
                 } else {
                     //means widget assigned to device selector widget.
                     target = dash.getDeviceSelector(graphTargetId);

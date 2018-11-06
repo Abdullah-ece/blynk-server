@@ -52,13 +52,13 @@ public final class MobileCreateTagLogic {
             throw new IllegalCommandException("Income tag name is not valid.");
         }
 
-        for (Tag tag : dash.tags) {
+        for (Tag tag : profile.tags) {
             if (tag.id == newTag.id || tag.name.equals(newTag.name)) {
                 throw new IllegalCommandException("Tag with same id/name already exists.");
             }
         }
 
-        profile.addTag(dash, newTag);
+        profile.addTag(newTag);
         user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {

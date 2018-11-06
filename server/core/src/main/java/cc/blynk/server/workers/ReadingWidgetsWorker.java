@@ -132,7 +132,7 @@ public class ReadingWidgetsWorker implements Runnable {
         if (targetId < Tag.START_TAG_ID) {
             target = profile.getDeviceById(dash, targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = profile.getTagById(dash, targetId);
+            target = profile.getTagById(targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);

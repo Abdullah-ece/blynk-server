@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -22,9 +21,7 @@ public final class MobileGetTagsLogic {
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int dashId = Integer.parseInt(message.body);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-
-        String response = JsonParser.toJson(dash.tags);
+        String response = JsonParser.toJson(user.profile.tags);
         if (response == null) {
             response = "[]";
         }

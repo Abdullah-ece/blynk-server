@@ -39,7 +39,7 @@ public final class MobileDeleteTagLogic {
 
         log.debug("Deleting tag with id {}.", tagId);
 
-        profile.deleteTag(dash, tagId);
+        profile.deleteTag(tagId);
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

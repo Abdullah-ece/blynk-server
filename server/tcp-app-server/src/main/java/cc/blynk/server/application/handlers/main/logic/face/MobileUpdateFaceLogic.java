@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 
-import static cc.blynk.server.core.model.serialization.CopyUtil.copyTags;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -67,7 +66,6 @@ public final class MobileUpdateFaceLogic {
                     log.debug("Found face for {}-{}.", existingUser.email, existingUser.orgId);
                     try {
                         existingDash.updateFaceFields(parent);
-                        existingDash.tags = copyTags(parent.tags);
                         //do not close connection for initiator
                         if (existingUser != user) {
                             holder.sessionDao.closeAppChannelsByUser(existingUser.email);
