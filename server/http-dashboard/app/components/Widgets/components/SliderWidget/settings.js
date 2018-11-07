@@ -8,11 +8,11 @@ import {Preview} from './scenes';
 import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import {
-  WIDGETS_SLIDER_VALUE_POSITION,
+  WIDGETS_SLIDER_VALUE_POSITION, WIDGETS_SOURCE_TYPES_LIST,
 } from 'services/Widgets';
 import Validation from 'services/Validation';
 import {
-  Field as FormField,
+  Field as FormField, MetadataSelect as Select,
 } from 'components/Form';
 import {
   Select as AntdSelect,
@@ -26,15 +26,20 @@ import {
   SimpleContentEditable,
 } from 'components';
 import {
-  Item,
+  Item, ItemsGroup,
 } from "components/UI";
 import {
   Map,
 } from 'immutable';
+import {FORMS} from "services/Products";
 
 @connect((state, ownProps) => ({
   formValues: (getFormValues(ownProps.form)(state) || {}),
-  dataStreams: state.Product.edit.dataStreams.fields || [],
+  dataStreams: (() => {
+    const formValues = getFormValues(FORMS.PRODUCTS_PRODUCT_MANAGE)(state);
+
+    return (formValues && formValues.dataStreams || []);
+  })(),
 }), (dispatch) => ({
   changeForm: bindActionCreators(change, dispatch),
   resetForm: bindActionCreators(reset, dispatch),
@@ -45,7 +50,7 @@ import {
   validate: (values) => {
     const errors = {};
 
-    if(!isNaN(Number(values.minValue)) && !isNaN(Number(values.maxValue)) && values.minValue >= values.maxValue) {
+    if(!isNaN(Number(values.minValue)) && !isNaN(Number(values.maxValue)) && Number(values.minValue) >= Number(values.maxValue)) {
       errors.minValue = 'Min value should be less than Max value';
       errors.maxValue = 'Max value should be more than Min value';
     }
@@ -217,24 +222,26 @@ class SliderWidgetSettings extends React.Component {
 
     const onChange = (value) => {
 
-      if(!value)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
-
       const getStreamByPin = (pin) => {
         return _.find(props.dataStreams, (stream) => {
-          return parseInt(stream.values.pin) === parseInt(pin);
+          return parseInt(stream.pin) === parseInt(pin);
         });
       };
 
       let dataStream = getStreamByPin(value);
 
       if(!dataStream)
-        return props.changeForm(this.props.form, 'sources.0.dataStream', {
-          pin: value,
-          pinType: "VIRTUAL",
-        });
+        return props.changeForm(this.props.form, 'sources.0.dataStream', null);
 
-      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream.values);
+      props.changeForm(this.props.form, 'sources.0.dataStream', dataStream);
+
+      let min = Number(dataStream && dataStream.min);
+      let max = Number(dataStream && dataStream.max);
+
+      if(!isNaN(min) && !isNaN(max) && min !== max) {
+        props.changeForm(this.props.form, 'minValue', min);
+        props.changeForm(this.props.form, 'maxValue', max);
+      }
 
     };
 
@@ -310,18 +317,13 @@ class SliderWidgetSettings extends React.Component {
   getSourceOptions() {
     const dataStreamsOptions = [];
 
-    const pinsDescribedOnDataStreams = [];
-
     this.props.dataStreams.forEach((stream) => {
-
-      // collect streams described on Data Streams
 
       dataStreamsOptions.push({
         key: `${stream.pin}`,
-        value: `${stream.label}`,
+        value: stream.label,
       });
 
-      pinsDescribedOnDataStreams.push(stream.pin);
 
       /* Uncomment when need tableDescription fields listed on Dropdown */
 
@@ -338,20 +340,9 @@ class SliderWidgetSettings extends React.Component {
 
     });
 
-    // Collect other PIN's from 0 to 255 except already existed on Data Streams
-
-    for(let i = 0; i <= 255; i++) {
-
-      if(pinsDescribedOnDataStreams.indexOf(i) >= 0)
-        continue;
-
-      dataStreamsOptions.push({
-        key: `${i}`,
-        value: `V${i}`,
-      });
-    }
-
-    return dataStreamsOptions;
+    return {
+      'Data Streams': dataStreamsOptions
+    };
   }
 
   render() {
@@ -377,22 +368,36 @@ class SliderWidgetSettings extends React.Component {
 
               <div className="modal-window-widget-settings-config-column-bar-configuration">
 
-                <Item label="Target" offset="medium">
-                  <Field name="sources.0.dataStream"
-                         style={{width: '100%'}}
-                         placeholder="Choose Target"
-                         validate={[Validation.Rules.required]}
-                         component={this.sourceMultipleSelectComponent}
-                         values={sourcesOptions}
-                         dataStreams={this.props.dataStreams}
-                         formValues={this.props.formValues}
-                         changeForm={this.props.changeForm}
-                         form={this.props.form}
-                         filterOption={this.simpleMatch}
-                         notFoundContent={sourcesOptions.length > 0 ?
-                           "No DataStreams or PINs match search":"Create at least one DataStream"}
-                  />
-                </Item>
+                  <ItemsGroup>
+                    <Item label="Data" offset="medium">
+                      <Select displayError={false}
+                              dropdownMatchSelectWidth={false}
+                              name="sources.0.sourceType"
+                              values={WIDGETS_SOURCE_TYPES_LIST}
+                              placeholder="Choose type"
+                              filterOption={this.simpleMatch}
+                              validate={[Validation.Rules.required]}
+                              style={{width: '100px'}}/>
+                    </Item>
+                    <Item label=" " offset="medium" style={{width: '100%'}}>
+
+                      <Field name="sources.0.dataStream"
+                             style={{width: '100%'}}
+                             placeholder="Choose Source"
+                             validate={[Validation.Rules.required]}
+                             component={this.sourceMultipleSelectComponent}
+                             values={sourcesOptions}
+                             dataStreams={this.props.dataStreams}
+                             formValues={this.props.formValues}
+                             changeForm={this.props.changeForm}
+                             form={this.props.form}
+                             filterOption={this.simpleMatch}
+                             notFoundContent={sourcesOptions["Data Streams"].length > 0 ?
+                               "No DataStreams to match search" : "Create at least one DataStream"}
+                      />
+
+                    </Item>
+                  </ItemsGroup>
 
                 <Row>
                   <Col span={8}>
