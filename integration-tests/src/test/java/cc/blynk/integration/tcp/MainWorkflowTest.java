@@ -289,7 +289,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Device device = new Device();
         device.id = 0;
         device.name = "123";
-        dash.devices = new Device[] {device};
 
         appClient.createDash("no_token\0" + dash.toString());
         appClient.verifyResult(ok(3));
@@ -741,9 +740,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Profile profile = clientPair.appClient.parseProfile(1);
 
         profile.dashBoards[0].updatedAt = 0;
-
-        expectedProfile.dashBoards[0].devices = null;
-        profile.dashBoards[0].devices = null;
 
         assertEquals(expectedProfile.toString(), profile.toString());
     }
@@ -1344,9 +1340,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         device.id = 1;
         device.name = "MyDevice";
         device.token = "aaa";
-        dashBoard.devices = new Device[] {
-                device
-        };
 
         clientPair.appClient.createDash(dashBoard);
         clientPair.appClient.verifyResult(ok(1));

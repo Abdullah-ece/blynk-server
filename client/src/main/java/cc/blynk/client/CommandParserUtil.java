@@ -26,7 +26,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
@@ -145,8 +144,6 @@ public final class CommandParserUtil {
                 return GET_ENHANCED_GRAPH_DATA;
             case "deleteenhanceddata" :
                 return DELETE_ENHANCED_GRAPH_DATA;
-            case "export" :
-                return EXPORT_GRAPH_DATA;
             case "activate" :
                 return ACTIVATE_DASHBOARD;
             case "deactivate" :

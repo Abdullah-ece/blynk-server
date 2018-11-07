@@ -87,7 +87,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         //sending message only if widget assigned to device or tag has assigned devices
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = user.profile.getDeviceById(dash, targetId);
+            target = user.profile.getDeviceById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = user.profile.getTagById(targetId);
         } else {

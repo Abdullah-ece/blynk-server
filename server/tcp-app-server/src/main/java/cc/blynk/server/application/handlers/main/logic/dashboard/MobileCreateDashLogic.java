@@ -4,17 +4,13 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.EmptyArraysUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
-import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,6 +79,7 @@ public final class MobileCreateDashLogic {
         user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
+        /*
         if (newDash.devices == null) {
             newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
         } else {
@@ -97,6 +94,7 @@ public final class MobileCreateDashLogic {
                 }
             }
         }
+        */
 
         user.lastModifiedTs = System.currentTimeMillis();
 

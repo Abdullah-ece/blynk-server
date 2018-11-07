@@ -42,7 +42,6 @@ public final class Command {
     public static final short APP_SYNC = 25;
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
-    public static final short EXPORT_GRAPH_DATA = 28;
 
     public static final short HARDWARE_LOGIN = 29;
     //app sharing commands
@@ -191,7 +190,6 @@ public final class Command {
             Map.entry(REFRESH_TOKEN, "RefreshToken"),
             Map.entry(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest"),
             Map.entry(DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest"),
-            Map.entry(EXPORT_GRAPH_DATA, "ExportGraphData"),
             Map.entry(SET_WIDGET_PROPERTY, "setWidgetProperty"),
             Map.entry(BRIDGE, "Bridge"),
             Map.entry(HARDWARE, "Hardware"),

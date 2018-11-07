@@ -45,7 +45,7 @@ public final class MobileDeleteDeviceLogic {
 
         Device device = user.profile.deleteDevice(dash, deviceId);
         user.profile.cleanPinStorageForDevice(deviceId);
-        user.profile.deleteDeviceFromTags(dash, deviceId);
+        user.profile.deleteDeviceFromTags(deviceId);
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);
         Session session = holder.sessionDao.userSession.get(state.user.email);

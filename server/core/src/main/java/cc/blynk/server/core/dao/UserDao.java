@@ -5,19 +5,16 @@ import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.UserInviteDTO;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.TokenGeneratorUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,13 +114,11 @@ public class UserDao {
     public Map<String, Integer> getBoardsUsage() {
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    if (device.boardType != null) {
-                        String label = device.boardType.label;
-                        Integer i = boards.getOrDefault(label, 0);
-                        boards.put(label, ++i);
-                    }
+            for (Device device : user.profile.devices) {
+                if (device.boardType != null) {
+                    String label = device.boardType.label;
+                    Integer i = boards.getOrDefault(label, 0);
+                    boards.put(label, ++i);
                 }
             }
         }
@@ -170,13 +165,11 @@ public class UserDao {
     public Map<String, Integer> getLibraryVersion() {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.blynkVersion != null) {
-                        String key = device.hardwareInfo.blynkVersion;
-                        Integer i = data.getOrDefault(key, 0);
-                        data.put(key, ++i);
-                    }
+            for (Device device : user.profile.devices) {
+                if (device.hardwareInfo != null && device.hardwareInfo.blynkVersion != null) {
+                    String key = device.hardwareInfo.blynkVersion;
+                    Integer i = data.getOrDefault(key, 0);
+                    data.put(key, ++i);
                 }
             }
         }
@@ -186,13 +179,11 @@ public class UserDao {
     public Map<String, Integer> getCpuType() {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.cpuType != null) {
-                        String key = device.hardwareInfo.cpuType;
-                        Integer i = data.getOrDefault(key, 0);
-                        data.put(key, ++i);
-                    }
+            for (Device device : user.profile.devices) {
+                if (device.hardwareInfo != null && device.hardwareInfo.cpuType != null) {
+                    String key = device.hardwareInfo.cpuType;
+                    Integer i = data.getOrDefault(key, 0);
+                    data.put(key, ++i);
                 }
             }
         }
@@ -202,13 +193,11 @@ public class UserDao {
     public Map<String, Integer> getConnectionType() {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.connectionType != null) {
-                        String key = device.hardwareInfo.connectionType;
-                        Integer i = data.getOrDefault(key, 0);
-                        data.put(key, ++i);
-                    }
+            for (Device device : user.profile.devices) {
+                if (device.hardwareInfo != null && device.hardwareInfo.connectionType != null) {
+                    String key = device.hardwareInfo.connectionType;
+                    Integer i = data.getOrDefault(key, 0);
+                    data.put(key, ++i);
                 }
             }
         }
@@ -218,13 +207,11 @@ public class UserDao {
     public Map<String, Integer> getHardwareBoards() {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.boardType != null) {
-                        String key = device.hardwareInfo.boardType;
-                        Integer i = data.getOrDefault(key, 0);
-                        data.put(key, ++i);
-                    }
+            for (Device device : user.profile.devices) {
+                if (device.hardwareInfo != null && device.hardwareInfo.boardType != null) {
+                    String key = device.hardwareInfo.boardType;
+                    Integer i = data.getOrDefault(key, 0);
+                    data.put(key, ++i);
                 }
             }
         }
@@ -275,16 +262,7 @@ public class UserDao {
         return data;
     }
 
-    //removes devices that has no widgets assigned to
-    //probably those devices were added via device tiles widget
-    private static void removeDevicesProvisionedFromDeviceTiles(DashBoard dash) {
-        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
-        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
-        dash.devices = list.toArray(new Device[0]);
-    }
-
     public void createProjectForExportedApp(TimerWorker timerWorker,
-                                            TokenManager tokenManager,
                                             User newUser, String appName, int msgId) {
         if (appName.equals(AppNameUtil.BLYNK)) {
             return;
@@ -323,12 +301,18 @@ public class UserDao {
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
         clonedDash.eraseWidgetValues();
-        removeDevicesProvisionedFromDeviceTiles(clonedDash);
+
+        /*
+        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
+        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
+        dash.devices = list.toArray(new Device[0]);
+        */
 
         clonedDash.addTimers(timerWorker, newUser.email);
 
         newUser.profile.dashBoards = new DashBoard[] {clonedDash};
 
+        /*
         if (app.provisionType == ProvisionType.STATIC) {
             for (Device device : clonedDash.devices) {
                 device.erase();
@@ -340,6 +324,7 @@ public class UserDao {
                 tokenManager.assignToken(newUser, clonedDash, device, token);
             }
         }
+        */
     }
 
 

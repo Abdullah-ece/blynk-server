@@ -66,7 +66,7 @@ public final class MobileMailQRsLogic {
             return;
         }
 
-        if (app.provisionType == ProvisionType.STATIC && dash.devices.length == 0) {
+        if (app.provisionType == ProvisionType.STATIC && user.profile.devices.length == 0) {
             log.debug("No devices in project.");
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
@@ -130,12 +130,12 @@ public final class MobileMailQRsLogic {
 
 
     private QrHolder[] makeQRs(User user, String appId, DashBoard dash) throws Exception {
-        int tokensCount = dash.devices.length;
+        int tokensCount = user.profile.devices.length;
         QrHolder[] qrHolders = new QrHolder[tokensCount];
         FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
 
         int i = 0;
-        for (Device device : dash.devices) {
+        for (Device device : user.profile.devices) {
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());

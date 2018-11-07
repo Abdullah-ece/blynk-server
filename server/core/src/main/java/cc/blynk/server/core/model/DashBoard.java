@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
@@ -64,8 +63,6 @@ public class DashBoard {
     public volatile long updatedAt;
 
     public volatile Widget[] widgets = EMPTY_WIDGETS;
-
-    public volatile Device[] devices = EMPTY_DEVICES;
 
     public volatile Theme theme = Theme.Blynk;
 
@@ -423,13 +420,7 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    public void addDevice(Device device, String templateId) {
-        this.devices = ArrayUtil.add(this.devices, device, Device.class);
-        addDeviceToTemplate(device, templateId);
-        this.updatedAt = System.currentTimeMillis();
-    }
-
-    private void addDeviceToTemplate(Device device, String templateId) {
+    public void addDeviceToTemplate(Device device, String templateId) {
         if (templateId == null) {
             return;
         }
@@ -452,6 +443,7 @@ public class DashBoard {
         if (tileTemplate.boardType != null) {
             device.boardType = tileTemplate.boardType;
         }
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public Widget updateProperty(int deviceId, short pin, WidgetProperty widgetProperty, String propertyValue) {

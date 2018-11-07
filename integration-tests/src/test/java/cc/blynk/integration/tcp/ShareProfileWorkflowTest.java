@@ -111,8 +111,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
 
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
-        serverDash.devices = null;
-        profile.dashBoards[0].devices = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
@@ -649,7 +647,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clearPrivateData(twitter);
         Notification notification = parentProfile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
-        for (Device device : parentProfile.dashBoards[0].devices) {
+        for (Device device : parentProfile.devices) {
             device.token = null;
             device.hardwareInfo = null;
             device.deviceOtaInfo = null;
@@ -697,7 +695,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clearPrivateData(twitter);
         Notification notification = parentProfile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
-        for (Device device : parentProfile.dashBoards[0].devices) {
+        for (Device device : parentProfile.devices) {
             device.token = null;
             device.hardwareInfo = null;
             device.deviceOtaInfo = null;
@@ -781,9 +779,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
 
-        serverDash.devices = null;
-        profile.dashBoards[0].devices = null;
-
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
         //System.out.println(dashboard);
     }
@@ -841,7 +836,7 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         Device device = new Device();
         device.id = 0;
         device.name = "123";
-        dash.devices = new Device[] {device};
+        //dash.devices = new Device[] {device};
 
         clientPair.appClient.createDash(dash);
         clientPair.appClient.verifyResult(ok(1));

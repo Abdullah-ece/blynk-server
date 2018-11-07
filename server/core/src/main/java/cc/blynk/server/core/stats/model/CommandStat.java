@@ -18,7 +18,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
@@ -72,7 +71,6 @@ public class CommandStat {
     public int deactivate;
     public int refreshToken;
     public int getGraphData;
-    public int exportGraphData;
     public int setWidgetProperty;
     public int bridge;
     public int hardware;
@@ -164,9 +162,6 @@ public class CommandStat {
                 break;
             case REFRESH_TOKEN :
                 this.refreshToken = val;
-                break;
-            case EXPORT_GRAPH_DATA :
-                this.exportGraphData = val;
                 break;
             case SET_WIDGET_PROPERTY :
                 this.setWidgetProperty = val;

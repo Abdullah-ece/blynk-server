@@ -310,8 +310,11 @@ public final class TestUtil {
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
+        Device device = new Device();
+        device.name = "Default Device";
+        appClient.createDevice(dashId, device);
         appClient.getDevices(dashId);
-        Device[] devices = appClient.parseDevices(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device[] devices = appClient.parseDevices(6 + profile.dashBoards.length + expectedSyncCommandsCount);
         Device latestOne = devices[devices.length - 1];
         String token = latestOne.token;
 

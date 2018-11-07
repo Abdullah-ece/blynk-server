@@ -39,6 +39,7 @@ import java.util.Map;
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 import static cc.blynk.utils.StringUtils.truncateFileName;
 
@@ -55,6 +56,8 @@ public class Profile {
 
     public volatile Tag[] tags = EMPTY_TAGS;
 
+    public volatile Device[] devices = EMPTY_DEVICES;
+
     @JsonView(View.Private.class)
     @JsonDeserialize(keyUsing = DashPinStorageKeyDeserializer.class,
                      contentUsing = PinStorageValueDeserializer.class)
@@ -69,16 +72,16 @@ public class Profile {
         return dashBoards[0];
     }
 
-    public String getDeviceName(DashBoard dash, int deviceId) {
-        Device device = getDeviceById(dash, deviceId);
+    public String getDeviceName(int deviceId) {
+        Device device = getDeviceById(deviceId);
         if (device != null) {
             return truncateFileName(device.name);
         }
         return "";
     }
 
-    public String getCSVDeviceName(DashBoard dash, int deviceId) {
-        Device device = getDeviceById(dash, deviceId);
+    public String getCSVDeviceName(int deviceId) {
+        Device device = getDeviceById(deviceId);
         if (device == null) {
             return String.valueOf(deviceId);
         }
@@ -91,8 +94,8 @@ public class Profile {
         return StringUtils.escapeCSV(deviceName);
     }
 
-    public Device getDeviceById(DashBoard dash, int id) {
-        for (Device device : dash.devices) {
+    public Device getDeviceById(int id) {
+        for (Device device : this.devices) {
             if (device.id == id) {
                 return device;
             }
@@ -100,20 +103,20 @@ public class Profile {
         return null;
     }
 
-    public void addDevice(DashBoard dash, Device device) {
-        dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
+    public void addDevice(Device device) {
+        this.devices = ArrayUtil.add(this.devices, device, Device.class);
     }
 
     public Device deleteDevice(DashBoard dash, int deviceId) {
-        int existingDeviceIndex = getDeviceIndexByIdOrThrow(dash, deviceId);
-        Device deviceToRemove = dash.devices[existingDeviceIndex];
-        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
+        int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
+        Device deviceToRemove = this.devices[existingDeviceIndex];
+        this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
         dash.eraseWidgetValuesForDevice(deviceId);
         return deviceToRemove;
     }
 
-    private int getDeviceIndexByIdOrThrow(DashBoard dash, int id) {
-        Device[] devices = dash.devices;
+    private int getDeviceIndexByIdOrThrow(int id) {
+        Device[] devices = this.devices;
         for (int i = 0; i < devices.length; i++) {
             if (devices[i].id == id) {
                 return i;
@@ -122,8 +125,8 @@ public class Profile {
         throw new IllegalCommandException("Device with passed id not found.");
     }
 
-    public void setOfflineDevice(DashBoard dash) {
-        Device[] devices = dash.devices;
+    public void setOfflineDevice() {
+        Device[] devices = this.devices;
         if (devices != null) {
             for (Device device : devices) {
                 device.status = Status.OFFLINE;
@@ -158,7 +161,7 @@ public class Profile {
         return null;
     }
 
-    public void deleteDeviceFromTags(DashBoard dash, int deviceId) {
+    public void deleteDeviceFromTags(int deviceId) {
         for (Tag tag : this.tags) {
             tag.deleteDevice(deviceId);
         }
@@ -208,7 +211,7 @@ public class Profile {
                                        PinType pinType, short pin, boolean removeProperties) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = getDeviceById(dash, targetId);
+            target = getDeviceById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = getTagById(targetId);
         } else {
@@ -380,7 +383,7 @@ public class Profile {
                 //this is the case when graph is within device selector or tags
                 Target target;
                 if (graphTargetId < Tag.START_TAG_ID) {
-                    target = getDeviceById(dash, graphTargetId);
+                    target = getDeviceById(graphTargetId);
                 } else if (graphTargetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                     target = getTagById(graphTargetId);
                 } else {

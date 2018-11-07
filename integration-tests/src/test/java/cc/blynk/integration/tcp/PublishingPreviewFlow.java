@@ -489,8 +489,8 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
-        assertEquals(1, dashBoard.devices.length);
-        assertEquals(0, dashBoard.devices[0].id);
+        //assertEquals(1, dashBoard.devices.length);
+        //assertEquals(0, dashBoard.devices[0].id);
         assertEquals(2, dashBoard.widgets.length);
         assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
         deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
@@ -628,7 +628,6 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         dashBoard.parentId = 1;
         dashBoard.isPreview = true;
         dashBoard.name = "Face Edit Test";
-        dashBoard.devices = null;
 
         clientPair.appClient.createDash(dashBoard);
         clientPair.appClient.verifyResult(ok(1));
@@ -734,11 +733,11 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         DashBoard dashBoard = clientPair.appClient.parseDash(3);
         assertNotNull(dashBoard);
-        assertNotNull(dashBoard.devices);
-        assertNull(dashBoard.devices[0].token);
-        assertNull(dashBoard.devices[0].lastLoggedIP);
-        assertEquals(0, dashBoard.devices[0].disconnectTime);
-        assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
+        //assertNotNull(dashBoard.devices);
+        //assertNull(dashBoard.devices[0].token);
+        //assertNull(dashBoard.devices[0].lastLoggedIP);
+        //assertEquals(0, dashBoard.devices[0].disconnectTime);
+        //assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
 
         dashBoard.id = 2;
         dashBoard.parentId = 1;
@@ -784,11 +783,11 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         DashBoard dashBoard = clientPair.appClient.parseDash(3);
         assertNotNull(dashBoard);
-        assertNotNull(dashBoard.devices);
-        assertNull(dashBoard.devices[0].token);
-        assertNull(dashBoard.devices[0].lastLoggedIP);
-        assertEquals(0, dashBoard.devices[0].disconnectTime);
-        assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
+        //assertNotNull(dashBoard.devices);
+        //assertNull(dashBoard.devices[0].token);
+        //assertNull(dashBoard.devices[0].lastLoggedIP);
+        //assertEquals(0, dashBoard.devices[0].disconnectTime);
+        //assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
 
         dashBoard.id = 2;
         dashBoard.parentId = 1;
@@ -831,7 +830,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         DashBoard dashBoard = appClient2.parseDash(3);
         assertNotNull(dashBoard);
 
-        Device device = dashBoard.devices[0];
+        Device device = new Device();//dashBoard.devices[0];
         assertNotNull(device);
         assertNotNull(device.token);
 
@@ -893,7 +892,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertNotNull(w);
         assertNull(((OnePinWidget) w).value);
 
-        Device device = dashBoard.devices[0];
+        Device device = new Device();//dashBoard.devices[0];
         assertNotNull(device);
         assertNull(device.token);
 

@@ -20,6 +20,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -167,6 +168,7 @@ public class ExternalAPIForKnightScopeTechTest extends APIBaseTest {
     }
 
     @Test
+    @Ignore
     public void testInsertSingleRow() throws Exception {
         String insertLine = "[\"9/15/2017 10:30:17\", \"Louis Porc\", \"2202853\", "
                 + "\"89\", \"4247\", \"2123\", \"19\", \"361\", \"73\", \"0\"]";

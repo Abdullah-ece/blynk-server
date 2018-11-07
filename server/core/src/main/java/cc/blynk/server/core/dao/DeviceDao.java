@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
@@ -33,11 +32,9 @@ public class DeviceDao {
 
         int maxDeviceId = 0;
         for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Device device : dashBoard.devices) {
-                    maxDeviceId = Math.max(maxDeviceId, device.id);
-                    devices.put(new DeviceKey(user.orgId, device.productId, device.id), device);
-                }
+            for (Device device : user.profile.devices) {
+                maxDeviceId = Math.max(maxDeviceId, device.id);
+                devices.put(new DeviceKey(user.orgId, device.productId, device.id), device);
             }
 
         }

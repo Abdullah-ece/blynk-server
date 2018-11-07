@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.OrganizationDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.web.Organization;
@@ -39,14 +38,12 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
     private static final Logger log = LogManager.getLogger(MobileRegisterHandler.class);
 
     private final UserDao userDao;
-    private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
     private final LimitChecker registrationLimitChecker;
     private final OrganizationDao organizationDao;
 
     public MobileRegisterHandler(Holder holder) {
         this.userDao = holder.userDao;
-        this.tokenManager = holder.tokenManager;
         this.timerWorker = holder.timerWorker;
         this.organizationDao = holder.organizationDao;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
@@ -94,7 +91,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         log.info("Registered {}.", email);
 
-        userDao.createProjectForExportedApp(timerWorker, tokenManager, newUser, appName, message.id);
+        userDao.createProjectForExportedApp(timerWorker, newUser, appName, message.id);
 
         ctx.pipeline().remove(this);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

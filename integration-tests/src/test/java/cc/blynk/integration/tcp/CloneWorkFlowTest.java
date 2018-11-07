@@ -61,7 +61,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.send("getProjectByCloneCode " + token);
         DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertEquals("My Dashboard", dashBoard.name);
-        Device device = dashBoard.devices[0];
+        Device device = new Device(); //dashBoard.devices[0];
         assertEquals(0, device.connectTime);
         assertEquals(0, device.dataReceivedAt);
         assertEquals(0, device.disconnectTime);
@@ -87,7 +87,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.send("getProjectByCloneCode " + token + "\0" + "new");
         DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
-        Device device = dashBoard.devices[0];
+        Device device = new Device(); //dashBoard.devices[0];
         assertEquals(-1, dashBoard.parentId);
         assertEquals(2, dashBoard.id);
         assertEquals(0, device.connectTime);

@@ -50,7 +50,6 @@ import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateAppLogic
 import cc.blynk.server.application.handlers.main.logic.face.MobileUpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileDeleteEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.MobileExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.MobileGetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileCreateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.MobileDeleteReportLogic;
@@ -89,7 +88,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
@@ -137,7 +135,6 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
     private final MobileHardwareLogic hardwareLogic;
 
     private MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
-    private MobileExportGraphDataLogic exportGraphData;
     private MobileMailLogic mailLogic;
     private MobilePurchaseLogic purchaseLogic;
     private MobileDeleteAppLogic deleteAppLogic;
@@ -193,12 +190,6 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
             case DELETE_ENHANCED_GRAPH_DATA :
                 MobileDeleteEnhancedGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
-                break;
-            case EXPORT_GRAPH_DATA :
-                if (exportGraphData == null) {
-                    this.exportGraphData = new MobileExportGraphDataLogic(holder);
-                }
-                exportGraphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

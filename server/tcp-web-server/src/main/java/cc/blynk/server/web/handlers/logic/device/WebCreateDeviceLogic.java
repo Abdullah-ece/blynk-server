@@ -13,7 +13,6 @@ import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.web.session.WebAppStateHolder;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -102,7 +101,7 @@ public class WebCreateDeviceLogic {
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);
-        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
+        user.profile.addDevice(newDevice);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, newDevice, newToken);

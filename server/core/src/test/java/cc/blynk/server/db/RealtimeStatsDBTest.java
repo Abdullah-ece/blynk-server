@@ -107,7 +107,6 @@ public class RealtimeStatsDBTest {
         cs.deactivate = i++;
         cs.refreshToken = i++;
         cs.getGraphData = i++;
-        cs.exportGraphData = i++;
         cs.setWidgetProperty = i++;
         cs.bridge = i++;
         cs.hardware = i++;

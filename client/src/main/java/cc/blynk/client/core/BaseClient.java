@@ -25,7 +25,6 @@ import java.util.Random;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
-import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
@@ -93,7 +92,6 @@ public abstract class BaseClient {
                 || command == BRIDGE
                 || command == EMAIL
                 || command == SHARING
-                || command == EXPORT_GRAPH_DATA
                 || command == SET_WIDGET_PROPERTY
                 || command == HARDWARE_SYNC
                 || command == RESET_PASSWORD

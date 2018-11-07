@@ -11,7 +11,6 @@ import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -172,11 +171,9 @@ public class StatsLogic extends BaseHttpHandler {
                 String name = user.email + "-" + user.orgId;
                 if (ip == null) {
                     res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "app"));
-                    for (DashBoard dashBoard : user.profile.dashBoards) {
-                        for (Device device : dashBoard.devices) {
-                            if (device.lastLoggedIP != null) {
-                                res.add(new IpNameResponse(counter++, name, device.lastLoggedIP, "hard"));
-                            }
+                    for (Device device : user.profile.devices) {
+                        if (device.lastLoggedIP != null) {
+                            res.add(new IpNameResponse(counter++, name, device.lastLoggedIP, "hard"));
                         }
                     }
                 } else {
@@ -191,11 +188,9 @@ public class StatsLogic extends BaseHttpHandler {
     }
 
     private boolean deviceContains(User user, String ip) {
-        for (DashBoard dash : user.profile.dashBoards) {
-            for (Device device : dash.devices) {
-                if (device.lastLoggedIP != null && device.lastLoggedIP.contains(ip)) {
-                    return true;
-                }
+        for (Device device : user.profile.devices) {
+            if (device.lastLoggedIP != null && device.lastLoggedIP.contains(ip)) {
+                return true;
             }
         }
         return false;

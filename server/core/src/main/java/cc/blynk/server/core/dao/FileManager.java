@@ -1,6 +1,5 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
@@ -253,9 +252,7 @@ public class FileManager {
             user.email = user.name;
         }
         user.ip = host;
-        for (DashBoard dash : user.profile.dashBoards) {
-            user.profile.setOfflineDevice(dash);
-        }
+        user.profile.setOfflineDevice();
     }
 
     public Map<String, Integer> getUserProfilesSize() {

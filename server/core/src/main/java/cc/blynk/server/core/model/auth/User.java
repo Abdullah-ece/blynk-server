@@ -174,7 +174,7 @@ public class User {
             if (lastStart <= dashBoard.updatedAt) {
                 return true;
             }
-            for (Device device : dashBoard.devices) {
+            for (Device device : profile.devices) {
                 if (lastStart <= device.metadataUpdatedAt
                         || lastStart <= device.dataReceivedAt
                         || lastStart <= device.updatedAt) {

@@ -42,7 +42,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private final DashBoard dash;
     private final Device device;
 
-    public ProvisionedHardwareFirstHandler(Holder holder, User user, DashBoard dash, Device device) {
+    ProvisionedHardwareFirstHandler(Holder holder, User user, DashBoard dash, Device device) {
         super(StringMessage.class);
         this.holder = holder;
         this.user = user;
@@ -105,7 +105,9 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(user, dash, device));
-                    dash.addDevice(device, templateId);
+
+                    user.profile.addDevice(device);
+                    dash.addDeviceToTemplate(device, templateId);
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)

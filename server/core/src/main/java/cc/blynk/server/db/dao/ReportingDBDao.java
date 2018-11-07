@@ -289,7 +289,7 @@ public class ReportingDBDao {
             commandStatPS.setInt(12, cs.deactivate);
             commandStatPS.setInt(13, cs.refreshToken);
             commandStatPS.setInt(14, cs.getGraphData);
-            commandStatPS.setInt(15, cs.exportGraphData);
+            commandStatPS.setInt(15, 0);
             commandStatPS.setInt(16, cs.setWidgetProperty);
             commandStatPS.setInt(17, cs.bridge);
             commandStatPS.setInt(18, cs.hardware);

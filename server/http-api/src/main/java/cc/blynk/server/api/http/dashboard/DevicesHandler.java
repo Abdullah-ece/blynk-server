@@ -36,7 +36,6 @@ import cc.blynk.server.core.model.web.product.events.Event;
 import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.db.model.LogEvent;
 import cc.blynk.server.db.model.LogEventCountKey;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
@@ -93,7 +92,7 @@ public class DevicesHandler extends BaseHttpHandler {
         DashBoard dash = user.profile.dashBoards[0];
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dash.id);
+            log.error("Dash with orgId = {} not exists.", orgId);
             return badRequest();
         }
 
@@ -108,7 +107,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);
-        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
+        user.profile.addDevice(newDevice);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, newDevice, newToken);

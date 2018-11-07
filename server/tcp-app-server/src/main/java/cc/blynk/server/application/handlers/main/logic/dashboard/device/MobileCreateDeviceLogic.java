@@ -46,7 +46,7 @@ public final class MobileCreateDeviceLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (dash.devices.length > holder.limits.deviceLimit) {
+        if (user.profile.devices.length > holder.limits.deviceLimit) {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
@@ -60,7 +60,7 @@ public final class MobileCreateDeviceLogic {
 
         holder.organizationDao.assignToOrgAndAddDevice(user.orgId, newDevice);
 
-        user.profile.addDevice(dash, newDevice);
+        user.profile.addDevice(newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);

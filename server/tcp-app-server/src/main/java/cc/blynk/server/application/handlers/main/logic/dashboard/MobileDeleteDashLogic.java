@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -50,16 +49,6 @@ public final class MobileDeleteDashLogic {
         holder.tokenManager.deleteDash(dash);
         holder.sessionDao.closeHardwareChannelByDashId(state.user.email, dashId);
         holder.reportScheduler.cancelStoredFuture(user, dashId);
-
-        holder.blockingIOProcessor.executeHistory(() -> {
-            for (Device device : dash.devices) {
-                try {
-                    holder.reportingDiskDao.delete(state.user, dashId, device.id);
-                } catch (Exception e) {
-                    log.warn("Error removing device data. Reason : {}.", e.getMessage());
-                }
-            }
-        });
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
     }

@@ -5,8 +5,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.metafields.ContactMetaField;
 import cc.blynk.server.core.model.web.product.metafields.ListMetaField;
 import cc.blynk.server.core.model.web.product.metafields.MeasurementUnit;
@@ -16,6 +18,7 @@ import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -61,6 +64,7 @@ public abstract class APIBaseTest extends CounterBase {
     protected User admin;
     protected User regularAdmin;
     protected User regularUser;
+    public String token;
 
     @BeforeClass
     public static void initRootPath() {
@@ -108,9 +112,15 @@ public abstract class APIBaseTest extends CounterBase {
         regularUser.status = UserStatus.Active;
         holder.userDao.add(regularUser);
 
-        holder.organizationDao.create(
+        Organization org = holder.organizationDao.create(
                 createDefaultOrg()
         );
+
+        Device device = new Device();
+        device.name = "Default Device";
+        this.token = TokenGeneratorUtil.generateNewToken();
+        holder.tokenManager.assignToken(regularUser, regularUser.profile.dashBoards[0], device, token);
+        holder.deviceDao.createWithPredefinedId(org.id, device);
     }
 
     @After
