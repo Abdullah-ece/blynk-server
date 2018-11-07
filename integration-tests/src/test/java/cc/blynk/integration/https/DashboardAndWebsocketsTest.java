@@ -199,6 +199,7 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.login(regularUser);
         appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.track(device.id);
+        appWebSocketClient.verifyResult(ok(2));
 
         String apiUrl = String.format("https://localhost:%s/external/api/", properties.getHttpsPort());
 
