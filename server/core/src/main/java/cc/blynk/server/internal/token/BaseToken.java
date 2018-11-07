@@ -12,7 +12,7 @@ public abstract class BaseToken implements Serializable {
 
     public final String email;
     private final long expireAt;
-    static final long DEFAULT_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(45);
+    static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(1);
 
     BaseToken(String email, long tokenExpirationPeriodMillis) {
         this.email = email;

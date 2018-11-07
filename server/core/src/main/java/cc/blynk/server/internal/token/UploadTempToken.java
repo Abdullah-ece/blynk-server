@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class UploadTempToken extends BaseToken implements Serializable {
 
-    private static final long UPLOAD_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(1);
+    private static final long UPLOAD_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(5);
 
     public UploadTempToken(String email) {
         super(email, UPLOAD_EXPIRE_TIME);
