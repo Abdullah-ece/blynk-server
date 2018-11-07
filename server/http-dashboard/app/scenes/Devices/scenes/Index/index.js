@@ -6,6 +6,8 @@ import {DEVICES_SORT,TABS} from 'services/Devices';
 import PropTypes from 'prop-types';
 import {blynkWsSetTrackDeviceId} from 'store/blynk-websocket-middleware/actions';
 import {DeviceDelete, DevicesFetch} from 'data/Devices/api';
+import {displayError} from "services/ErrorHandling";
+import {message} from "antd";
 
 @connect((state) => ({
   productsCount: state.Product.products && state.Product.products.length,
@@ -90,6 +92,8 @@ class Devices extends React.Component {
     }
     this.props.deviceDelete(deviceId, this.props.organization.id).then(() => {
       this.props.fetchDevices({orgId: this.props.organization.id});
+    }).catch((err) => {
+      displayError(err, message.error);
     });
 
   }

@@ -1,4 +1,5 @@
 import {fromJS} from 'immutable';
+import {Log} from 'services/Log';
 import {
   DEVICES_SORT,
   TIMELINE_TIME_FILTERS,
@@ -801,6 +802,22 @@ export default function Devices(state = initialState, action) {
       //
       //   });
       // });
+
+    case "API_DEVICE_DELETE_SUCCESS":
+      let returnState =  state;
+
+      try {
+        returnState = {
+          ...state,
+          devices: state.devices.filter((device) => {
+            return Number(device.id) !== Number(action.meta.previousAction.ws.request.query[1]);
+          })
+        };
+      } catch (e) {
+        Log.error('Unable to delete device from storage: ', e);
+      }
+
+      return returnState;
 
     case "API_DEVICE_AVAILABLE_ORGANIZATIONS_FETCH":
       return {
