@@ -107,6 +107,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                             device.token, new TokenValue(user, dash, device));
 
                     dash.addDeviceToTemplate(device, templateId);
+                    device.activatedBy = user.email;
+                    device.activatedAt = dash.updatedAt;
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)
