@@ -108,7 +108,7 @@ public final class MobileCreateWidgetLogic {
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }
 
-        user.profile.cleanPinStorage(dash, newWidget, true);
+        user.profile.cleanPinStorage(holder.deviceDao, dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         TimerWorker timerWorker = holder.timerWorker;

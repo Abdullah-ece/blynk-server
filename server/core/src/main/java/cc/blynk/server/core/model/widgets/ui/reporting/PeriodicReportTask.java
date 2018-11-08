@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 
@@ -15,9 +16,9 @@ public class PeriodicReportTask extends BaseReportTask {
 
     private final ReportScheduler reportScheduler;
 
-    PeriodicReportTask(User user, int dashId, Report report, ReportScheduler reportScheduler) {
+    PeriodicReportTask(User user, int dashId, Report report, ReportScheduler reportScheduler, DeviceDao deviceDao) {
         super(user, dashId, report,
-                reportScheduler.mailWrapper, reportScheduler.reportingDao,
+                reportScheduler.mailWrapper, reportScheduler.reportingDao, deviceDao,
                 reportScheduler.downloadUrl);
         this.reportScheduler = reportScheduler;
     }

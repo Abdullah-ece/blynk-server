@@ -584,7 +584,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         //id of default product that is first in the list
         assertEquals(0, provisionedDevice.productId);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertEquals("TMPL0001", provisionedDevice.hardwareInfo.templateId);
 
@@ -651,7 +651,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         //id of default product that is first in the list
         assertEquals(0, provisionedDevice.productId);
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertNull(provisionedDevice.hardwareInfo.templateId);
 
@@ -719,7 +719,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         assertEquals(0, provisionedDevice.productId);
 
         assertNotNull(provisionedDevice.metaFields);
-        assertEquals(1, provisionedDevice.metaFields.length);
+        assertEquals(2, provisionedDevice.metaFields.length);
         assertNotNull(provisionedDevice.hardwareInfo);
         assertNull(provisionedDevice.hardwareInfo.templateId);
 

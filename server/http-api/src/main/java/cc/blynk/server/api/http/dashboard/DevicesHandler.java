@@ -107,9 +107,7 @@ public class DevicesHandler extends BaseHttpHandler {
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);
-        user.profile.addDevice(newDevice);
-
-        final String newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
@@ -285,15 +283,13 @@ public class DevicesHandler extends BaseHttpHandler {
         organizationDao.verifyUserAccessToDevice(user, device);
 
         deviceDao.delete(deviceId);
-
-        DashBoard dash = user.profile.dashBoards[0];
+        DashBoard dash = user.profile.getFirstDashOrEmpty();
 
         if (dash == null) {
-            log.error("Dash with orgId = {} not exists.", dash.id);
+            log.error("Dash not exists.");
             return badRequest();
         }
-
-        user.profile.deleteDevice(dash, deviceId);
+        dash.eraseWidgetValuesForDevice(deviceId);
 
         tokenManager.deleteDevice(device);
 

@@ -64,7 +64,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                MobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
+                MobileGetDevicesLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

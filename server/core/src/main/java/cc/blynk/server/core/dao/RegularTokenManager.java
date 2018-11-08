@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,17 +21,13 @@ class RegularTokenManager {
 
     final ConcurrentHashMap<String, TokenValue> cache;
 
-    RegularTokenManager(Collection<User> users) {
+    RegularTokenManager(Collection<Organization> orgs) {
         ///in average user has 2 devices
-        this.cache = new ConcurrentHashMap<>(users.size() == 0 ? 16 : users.size() * 2);
-        for (User user : users) {
-            if (user.profile != null) {
-                for (Device device : user.profile.devices) {
-                    if (device.token != null) {
-                        //todo fix
-                        DashBoard dash = user.profile.getFirstDashOrEmpty();
-                        cache.put(device.token, new TokenValue(user, dash, device));
-                    }
+        this.cache = new ConcurrentHashMap<>(orgs.size() == 0 ? 16 : orgs.size() * 2);
+        for (Organization org : orgs) {
+            for (Device device : org.devices) {
+                if (device.token != null) {
+                    cache.put(device.token, new TokenValue(null, null, device));
                 }
             }
         }

@@ -13,6 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
@@ -50,8 +52,9 @@ public final class MobileActivateDashboardLogic {
         SessionDao sessionDao = holder.sessionDao;
         Session session = sessionDao.userSession.get(state.user.email);
 
+        List<Device> devices = holder.deviceDao.getDevicesOwnedByUser(user.email);
         if (session.isHardwareConnected()) {
-            for (Device device : user.profile.devices) {
+            for (Device device : devices) {
                 String pmBody = dash.buildPMMessage(device.id);
                 if (pmBody == null) {
                     if (!session.isHardwareConnected(dashId, device.id)) {

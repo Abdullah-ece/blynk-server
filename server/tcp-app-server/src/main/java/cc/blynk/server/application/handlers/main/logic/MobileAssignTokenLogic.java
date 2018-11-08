@@ -56,7 +56,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            Device device = user.profile.getDeviceById(dbFlashedToken.deviceId);
+            Device device = holder.deviceDao.getById(dbFlashedToken.deviceId);
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);

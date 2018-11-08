@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -28,7 +29,8 @@ public final class MobileUpdateTileTemplateLogic {
     private MobileUpdateTileTemplateLogic() {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder,
+                                       ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
         String[] split = split3(message.body);
 
         if (split.length < 3) {
@@ -62,7 +64,7 @@ public final class MobileUpdateTileTemplateLogic {
         log.debug("Updating tile template {}.", tileTemplateString);
         deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
 
-        user.profile.cleanPinStorage(dash, deviceTiles, false);
+        user.profile.cleanPinStorage(holder.deviceDao, dash, deviceTiles, false);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

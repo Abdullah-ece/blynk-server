@@ -29,7 +29,6 @@ import java.util.List;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.forbidden;
-import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 
 /**
@@ -213,10 +212,10 @@ public class ProductHandler extends BaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
     public Response delete(@ContextUser User user, @PathParam("id") int productId) {
-        if (organizationDao.deleteProduct(user, productId)) {
+        //if (organizationDao.deleteProduct(user, productId)) {
             return ok();
-        } else {
-            return notFound();
-        }
+        //} else {
+        //    return notFound();
+        //}
     }
 }

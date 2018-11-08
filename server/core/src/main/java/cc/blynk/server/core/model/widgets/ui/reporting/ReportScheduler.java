@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -32,10 +33,13 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
     public final Map<ReportTaskKey, ScheduledFuture<?>> map;
     public final MailWrapper mailWrapper;
     public final ReportingDiskDao reportingDao;
+    public final DeviceDao deviceDao;
     public final String downloadUrl;
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
-                           MailWrapper mailWrapper, ReportingDiskDao reportingDao, Map<String, User> users) {
+                           MailWrapper mailWrapper, ReportingDiskDao reportingDao,
+                           Map<String, User> users,
+                           DeviceDao deviceDao) {
         super(corePoolSize,  BlynkTPFactory.build("report"));
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
@@ -43,6 +47,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
         this.downloadUrl = downloadUrl;
         this.mailWrapper = mailWrapper;
         this.reportingDao = reportingDao;
+        this.deviceDao = deviceDao;
         init(users);
     }
 
@@ -92,7 +97,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public void schedule(User user, int dashId, Report report, long delayInSeconds) {
         schedule(
-                new PeriodicReportTask(user, dashId, report, this),
+                new PeriodicReportTask(user, dashId, report, this, deviceDao),
                 delayInSeconds,
                 TimeUnit.SECONDS
         );

@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.face;
 import cc.blynk.server.Holder;
 import cc.blynk.server.TextHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
@@ -22,6 +23,8 @@ import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
@@ -43,12 +46,14 @@ public final class MobileMailQRsLogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final DBManager dbManager;
+    private final DeviceDao deviceDao;
 
     public MobileMailQRsLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.mailWrapper =  holder.mailWrapper;
         this.dbManager = holder.dbManager;
         this.textHolder = holder.textHolder;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -66,17 +71,20 @@ public final class MobileMailQRsLogic {
             return;
         }
 
-        if (app.provisionType == ProvisionType.STATIC && user.profile.devices.length == 0) {
+        List<Device> deviceList = deviceDao.getDevicesOwnedByUser(user.email);
+        if (app.provisionType == ProvisionType.STATIC && deviceList.size() == 0) {
             log.debug("No devices in project.");
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
-        makePublishPreviewEmail(ctx, user, dash, app.provisionType, app.name, appId, message.id);
+        makePublishPreviewEmail(ctx, user, deviceList, dash, app.provisionType, app.name, appId, message.id);
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, User user, DashBoard dash,
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, User user,
+                                         List<Device> deviceList,
+                                         DashBoard dash,
                                          ProvisionType provisionType,
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
@@ -108,7 +116,7 @@ public final class MobileMailQRsLogic {
         } else {
             blockingIOProcessor.execute(() -> {
                 try {
-                    QrHolder[] qrHolders = makeQRs(user, publishAppId, dash);
+                    QrHolder[] qrHolders = makeQRs(user, deviceList, publishAppId, dash);
                     StringBuilder sb = new StringBuilder();
                     for (QrHolder qrHolder : qrHolders) {
                         qrHolder.attach(sb);
@@ -129,13 +137,13 @@ public final class MobileMailQRsLogic {
     }
 
 
-    private QrHolder[] makeQRs(User user, String appId, DashBoard dash) throws Exception {
-        int tokensCount = user.profile.devices.length;
+    private QrHolder[] makeQRs(User user, List<Device> deviceList, String appId, DashBoard dash) throws Exception {
+        int tokensCount = deviceList.size();
         QrHolder[] qrHolders = new QrHolder[tokensCount];
         FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
 
         int i = 0;
-        for (Device device : user.profile.devices) {
+        for (Device device : deviceList) {
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());

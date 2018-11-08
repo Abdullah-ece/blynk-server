@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.sharing.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -41,6 +42,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
     private static final Logger log = LogManager.getLogger(MobileShareHardwareLogic.class);
 
     private final SessionDao sessionDao;
+    private final DeviceDao deviceDao;
 
     public MobileShareHardwareLogic(Holder holder, String email) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
@@ -50,6 +52,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 holder.stats,
                 email));
         this.sessionDao = holder.sessionDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileShareStateHolder state, StringMessage message) {
@@ -87,7 +90,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         //sending message only if widget assigned to device or tag has assigned devices
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = user.profile.getDeviceById(targetId);
+            target = deviceDao.getById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = user.profile.getTagById(targetId);
         } else {

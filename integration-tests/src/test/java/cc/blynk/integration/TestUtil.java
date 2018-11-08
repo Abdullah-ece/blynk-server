@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
+import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -312,9 +313,18 @@ public final class TestUtil {
 
         Device device = new Device();
         device.name = "Default Device";
+        device.metaFields = new MetaField[] {
+                new TextMetaField(1, TextMetaField.DEVICE_OWNER, new int[] {0}, true, true, false, null, user)
+        };
         appClient.createDevice(dashId, device);
+        Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+
+        TextMetaField textMetaField = (TextMetaField) createdDevice.metaFields[1];
+        appClient.updateDeviceMetafield(createdDevice.id, createTextMeta(textMetaField.id, textMetaField.name, user));
+        //appClient.verifyResult(ok(6 + profile.dashBoards.length + expectedSyncCommandsCount));
+
         appClient.getDevices(dashId);
-        Device[] devices = appClient.parseDevices(6 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device[] devices = appClient.parseDevices(7 + profile.dashBoards.length + expectedSyncCommandsCount);
         Device latestOne = devices[devices.length - 1];
         String token = latestOne.token;
 
@@ -531,7 +541,8 @@ public final class TestUtil {
         product.name = "Default Product";
         product.boardType = BoardType.ESP8266.name();
         product.metaFields = new MetaField[] {
-                createTextMeta(2, "Device Name", "My Default device Name", true),
+                createTextMeta(1, TextMetaField.DEVICE_NAME, "My Default device Name", true),
+                createTextMeta(2, TextMetaField.DEVICE_OWNER, null),
         };
         org.products = new Product[] {
                 product

@@ -1,9 +1,10 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.DeviceNotFoundException;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static cc.blynk.utils.StringUtils.truncateFileName;
 
 /**
  * The Blynk Project.
@@ -27,16 +30,15 @@ public class DeviceDao {
     public final ConcurrentMap<DeviceKey, Device> devices;
     private final AtomicInteger deviceSequence;
 
-    public DeviceDao(ConcurrentMap<String, User> users) {
+    public DeviceDao(Collection<Organization> orgs) {
         devices = new ConcurrentHashMap<>();
 
         int maxDeviceId = 0;
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
+        for (Organization org : orgs) {
+            for (Device device : org.devices) {
                 maxDeviceId = Math.max(maxDeviceId, device.id);
-                devices.put(new DeviceKey(user.orgId, device.productId, device.id), device);
+                devices.put(new DeviceKey(org.id, device.productId, device.id), device);
             }
-
         }
 
         this.deviceSequence = new AtomicInteger(maxDeviceId);
@@ -104,6 +106,38 @@ public class DeviceDao {
         for (Map.Entry<DeviceKey, Device> entry : devices.entrySet()) {
             Device device = entry.getValue();
             if (device.productId == productId && ArrayUtil.contains(deviceIds, device.id)) {
+                result.add(device);
+            }
+        }
+        return result;
+    }
+
+    public String getDeviceName(int deviceId) {
+        Device device = getById(deviceId);
+        if (device != null) {
+            return truncateFileName(device.name);
+        }
+        return "";
+    }
+
+    public String getCSVDeviceName(int deviceId) {
+        Device device = getById(deviceId);
+        if (device == null) {
+            return String.valueOf(deviceId);
+        }
+
+        String deviceName = device.name;
+        if (deviceName == null || deviceName.isEmpty()) {
+            return String.valueOf(deviceId);
+        }
+
+        return StringUtils.escapeCSV(deviceName);
+    }
+
+    public List<Device> getDevicesOwnedByUser(String ownerEmail) {
+        List<Device> result = new ArrayList<>();
+        for (Device device : devices.values()) {
+            if (device.hasOwner(ownerEmail)) {
                 result.add(device);
             }
         }

@@ -9,6 +9,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -33,6 +34,7 @@ import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentMap;
 
@@ -121,9 +123,10 @@ public class Holder {
             this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         }
 
-        this.tokenManager = new TokenManager(this.userDao.users, dbManager, serverProperties.host);
-        this.deviceDao = new DeviceDao(userDao.users);
-        this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
+        this.organizationDao = new OrganizationDao(fileManager, userDao);
+        Collection<Organization> orgs = organizationDao.organizations.values();
+        this.deviceDao = new DeviceDao(orgs);
+        this.tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
 
         this.stats = new GlobalStats();
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
@@ -146,8 +149,9 @@ public class Holder {
 
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
-        this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
+        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, gcmWrapper);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao,
+                userDao, deviceDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
@@ -155,7 +159,8 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
+        this.reportScheduler = new ReportScheduler(
+                1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -180,10 +185,10 @@ public class Holder {
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
         this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
 
-        this.tokenManager = new TokenManager(this.userDao.users, dbManager, serverProperties.host);
-
-        this.deviceDao = new DeviceDao(userDao.users);
-        this.organizationDao = new OrganizationDao(fileManager, deviceDao, userDao);
+        this.organizationDao = new OrganizationDao(fileManager, userDao);
+        Collection<Organization> orgs = organizationDao.organizations.values();
+        this.deviceDao = new DeviceDao(orgs);
+        this.tokenManager = new TokenManager(orgs, userDao.users.values(), dbManager, serverProperties.host);
 
         this.stats = new GlobalStats();
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
@@ -206,8 +211,9 @@ public class Holder {
                 .build()
         );
 
-        this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
+        this.timerWorker = new TimerWorker(userDao, deviceDao, sessionDao, gcmWrapper);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao,
+                userDao, deviceDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
@@ -215,7 +221,8 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
+        this.reportScheduler = new ReportScheduler(
+                1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users, deviceDao);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(serverProperties.getReportingFolder());

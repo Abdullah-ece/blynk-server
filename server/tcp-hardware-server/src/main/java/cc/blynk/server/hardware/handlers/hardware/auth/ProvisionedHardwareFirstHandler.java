@@ -106,7 +106,6 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.tokenManager.updateRegularCache(
                             device.token, new TokenValue(user, dash, device));
 
-                    user.profile.addDevice(device);
                     dash.addDeviceToTemplate(device, templateId);
 
                     ChannelPipeline pipeline = ctx.pipeline();

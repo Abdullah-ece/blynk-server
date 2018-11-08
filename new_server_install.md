@@ -32,7 +32,6 @@ log.level=info
 enable.db=true
 force.port.80.for.csv=true
 contact.email=xxx@blynk.cc
-user.devices.limit=100000
 user.message.quota.limit=10000
 web.request.max.size=5242880
 #maximum number of days minute records for reporting will be stored

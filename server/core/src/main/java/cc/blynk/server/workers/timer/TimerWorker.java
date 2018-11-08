@@ -1,5 +1,6 @@
 package cc.blynk.server.workers.timer;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -59,14 +60,16 @@ public class TimerWorker implements Runnable {
     public static final int TIMER_MSG_ID = 7777;
 
     private final UserDao userDao;
+    private final DeviceDao deviceDao;
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
     private final AtomicReferenceArray<ConcurrentHashMap<TimerKey, BaseAction[]>> timerExecutors;
     private final static int size = 86400;
 
     @SuppressWarnings("unchecked")
-    public TimerWorker(UserDao userDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
+    public TimerWorker(UserDao userDao, DeviceDao deviceDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
         this.userDao = userDao;
+        this.deviceDao = deviceDao;
         this.sessionDao = sessionDao;
         this.gcmWrapper = gcmWrapper;
         //array cell for every second in a day,
@@ -259,7 +262,7 @@ public class TimerWorker implements Runnable {
                     Target target;
                     int targetId = key.deviceId;
                     if (targetId < Tag.START_TAG_ID) {
-                        target = profile.getDeviceById(targetId);
+                        target = deviceDao.getById(targetId);
                     } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                         target = profile.getTagById(targetId);
                     } else {

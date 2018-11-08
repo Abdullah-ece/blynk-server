@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -39,15 +40,16 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(HistoryGraphUnusedPinDataCleanerWorker.class);
 
     private final UserDao userDao;
+    private final DeviceDao deviceDao;
     private final ReportingDiskDao reportingDao;
 
     private long lastStart;
 
-    public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, ReportingDiskDao reportingDao) {
+    public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, DeviceDao deviceDao, ReportingDiskDao reportingDao) {
         this.userDao = userDao;
+        this.deviceDao = deviceDao;
         this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();
-
     }
 
     @Override
@@ -66,8 +68,8 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths, Profile profile,
-                            DashBoard dash, Widget widget, int[] deviceIds) {
+    private void add(Set<String> doNotRemovePaths, Profile profile,
+                     DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
             add(doNotRemovePaths, profile, dash, enhancedHistoryGraph, deviceIds);
@@ -78,8 +80,8 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths, Profile profile,
-                            DashBoard dash, Superchart graph, int[] deviceIds) {
+    private void add(Set<String> doNotRemovePaths, Profile profile,
+                     DashBoard dash, Superchart graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
@@ -89,7 +91,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     Target target;
                     int targetId = graphDataStream.targetId;
                     if (targetId < Tag.START_TAG_ID) {
-                        target = profile.getDeviceById(targetId);
+                        target = deviceDao.getById(targetId);
                     } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                         target = profile.getTagById(targetId);
                     } else {

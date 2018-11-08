@@ -3,11 +3,11 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.TokenGeneratorUtil;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
@@ -21,9 +21,10 @@ public class TokenManager {
     private final DBManager dbManager;
     private final String host;
 
-    public TokenManager(ConcurrentMap<String, User> users, DBManager dbManager, String host) {
-        Collection<User> allUsers = users.values();
-        this.regularTokenManager = new RegularTokenManager(allUsers);
+    public TokenManager(Collection<Organization> orgs,
+                        Collection<User> allUsers,
+                        DBManager dbManager, String host) {
+        this.regularTokenManager = new RegularTokenManager(orgs);
         this.sharedTokenManager = new SharedTokenManager(allUsers);
         this.dbManager = dbManager;
         this.host = host;
@@ -38,7 +39,6 @@ public class TokenManager {
     }
 
     public void deleteDash(DashBoard dash) {
-        //todo clear shared token from DB?
         sharedTokenManager.deleteProject(dash);
     }
 

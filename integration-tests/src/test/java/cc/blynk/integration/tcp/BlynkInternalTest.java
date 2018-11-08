@@ -2,10 +2,6 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.model.Profile;
-import cc.blynk.server.core.model.device.HardwareInfo;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -40,31 +36,6 @@ public class BlynkInternalTest extends SingleServerInstancePerTest {
         assertNotNull(rtcTime);
         assertEquals(10, rtcTime.length());
         assertEquals(System.currentTimeMillis(), Long.parseLong(rtcTime) * 1000, 10000L);
-    }
-
-    @Test
-    public void testHardwareLoginWithInfo() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
-        hardClient2.start();
-
-        hardClient2.login(clientPair.token);
-        hardClient2.verifyResult(ok(1));
-
-        hardClient2.send("internal " + b("ver 0.3.1 fw 3.3.3 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
-
-        hardClient2.verifyResult(ok(2));
-
-        clientPair.appClient.reset();
-
-        HardwareInfo hardwareInfo = new HardwareInfo("3.3.3", "0.3.1", "Arduino", "ATmega328P", "W5100", null, "tmpl00123", 10, 256);
-
-        clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.parseProfile(1);
-
-        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.devices[0].hardwareInfo));
-
-
-        hardClient2.stop().awaitUninterruptibly();
     }
 
     @Test

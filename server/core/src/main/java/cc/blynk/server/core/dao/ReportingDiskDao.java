@@ -5,10 +5,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -310,22 +308,13 @@ public class ReportingDiskDao implements Closeable {
             return;
         }
 
-        //store history data only for the pins assigned to the superchart
-        Widget widgetWithLogPins = user.profile.getWidgetWithLoggedPin(dash, deviceId, pin, pinType);
-        if (widgetWithLogPins != null) {
-            BaseReportingKey key = new BaseReportingKey(user.email, user.orgId, dash.id, deviceId, pinType, pin);
-            averageAggregator.collect(key, ts, doubleVal);
-            if (device.webDashboard.needRawDataForGraph(pin, pinType)) {
-                rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
-            } else {
-                if (widgetWithLogPins instanceof Superchart) {
-                    if (((Superchart) widgetWithLogPins).hasLivePeriodsSelected()) {
-                        rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
-                    }
-                }
-            }
+        BaseReportingKey key = new BaseReportingKey(user.email, user.orgId, dash.id, deviceId, pinType, pin);
+        averageAggregator.collect(key, ts, doubleVal);
+        if (device.webDashboard.needRawDataForGraph(pin, pinType) || dash.needRawDataForGraph(pin, pinType)) {
+            rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
         }
     }
+
 
     public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) throws NoDataException {
         byte[][] values = new byte[requestedPins.length][];

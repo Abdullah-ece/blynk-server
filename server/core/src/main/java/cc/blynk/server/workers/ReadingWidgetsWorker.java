@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -33,15 +34,18 @@ public class ReadingWidgetsWorker implements Runnable {
 
     private final SessionDao sessionDao;
     private final UserDao userDao;
+    private final DeviceDao deviceDao;
     private final boolean allowRunWithoutApp;
 
     private int tickedWidgets = 0;
     private int counter = 0;
     private long totalTime = 0;
 
-    public ReadingWidgetsWorker(SessionDao sessionDao, UserDao userDao, boolean allowRunWithoutApp) {
+    public ReadingWidgetsWorker(SessionDao sessionDao,
+                                UserDao userDao, DeviceDao deviceDao, boolean allowRunWithoutApp) {
         this.sessionDao = sessionDao;
         this.userDao = userDao;
+        this.deviceDao = deviceDao;
         this.allowRunWithoutApp = allowRunWithoutApp;
     }
 
@@ -130,7 +134,7 @@ public class ReadingWidgetsWorker implements Runnable {
     private boolean sameDeviceId(Profile profile, DashBoard dash, int targetId, int channelDeviceId) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = profile.getDeviceById(targetId);
+            target = deviceDao.getById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = profile.getTagById(targetId);
         } else {

@@ -73,12 +73,12 @@ public class WebDeleteDeviceLogic {
         //todo fix
         DashBoard dash = user.profile.dashBoards[0];
 
+        dash.eraseWidgetValuesForDevice(deviceId);
         deviceDao.delete(deviceId);
         tokenManager.deleteDevice(device);
         Session session = sessionDao.userSession.get(state.user.email);
         session.closeHardwareChannelByDeviceId(dash.id, deviceId);
 
-        user.profile.deleteDevice(dash, deviceId);
         blockingIOProcessor.executeHistory(() -> {
             try {
                 reportingDiskDao.delete(state.user, dash.id, deviceId);

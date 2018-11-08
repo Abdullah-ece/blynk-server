@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -15,6 +16,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
@@ -36,12 +39,14 @@ public class MobileMailLogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final String templateIdMailBody;
+    private final DeviceDao deviceDao;
 
     public MobileMailLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.tokenMailBody = holder.textHolder.tokenBody;
         this.mailWrapper = holder.mailWrapper;
         this.templateIdMailBody = holder.textHolder.templateIdMailBody;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -59,7 +64,7 @@ public class MobileMailLogic {
                 //dashId deviceId
                 if (splitBody.length == 2) {
                     int deviceId = Integer.parseInt(splitBody[1]);
-                    Device device = user.profile.getDeviceById(deviceId);
+                    Device device = deviceDao.getByIdOrThrow(deviceId);
 
                     if (device == null || device.token == null) {
                         log.debug("Wrong device id.");
@@ -71,10 +76,11 @@ public class MobileMailLogic {
 
                     //dashId theme provisionType color appname
                 } else {
-                    if (user.profile.devices.length == 1) {
-                        makeSingleTokenEmail(ctx, dash, user.profile.devices[0], user.email, message.id);
+                    List<Device> devices = deviceDao.getDevicesOwnedByUser(user.email);
+                    if (devices.size() == 1) {
+                        makeSingleTokenEmail(ctx, dash, devices.get(0), user.email, message.id);
                     } else {
-                        sendMultiTokenEmail(ctx, user, dash, message.id);
+                        sendMultiTokenEmail(ctx, user, devices, dash, message.id);
                     }
                 }
         }
@@ -109,12 +115,13 @@ public class MobileMailLogic {
         mail(ctx.channel(), to, subj, body + tokenMailBody, msgId, false);
     }
 
-    private void sendMultiTokenEmail(ChannelHandlerContext ctx, User user, DashBoard dash, int msgId) {
+    private void sendMultiTokenEmail(ChannelHandlerContext ctx, User user,
+                                     List<Device> devices, DashBoard dash, int msgId) {
         String dashName = dash.getNameOrDefault();
-        String subj = "Auth Tokens for " + dashName + " project and " + user.profile.devices.length + " devices";
+        String subj = "Auth Tokens for " + dashName + " project and " + devices.size() + " devices";
 
         StringBuilder body = new StringBuilder();
-        for (Device device : user.profile.devices) {
+        for (Device device : devices) {
             String deviceName = device.getNameOrDefault();
             body.append("Auth Token for device '")
                 .append(deviceName)
@@ -126,7 +133,7 @@ public class MobileMailLogic {
         body.append(tokenMailBody);
 
         String to = user.email;
-        log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, user.profile.devices.length);
+        log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, devices.size());
         mail(ctx.channel(), to, subj, body.toString(), msgId, false);
     }
 

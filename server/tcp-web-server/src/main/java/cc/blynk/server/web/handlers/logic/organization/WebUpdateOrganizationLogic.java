@@ -1,6 +1,7 @@
 package cc.blynk.server.web.handlers.logic.organization;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.exceptions.ForbiddenWebException;
@@ -28,9 +29,11 @@ public class WebUpdateOrganizationLogic {
     private static final Logger log = LogManager.getLogger(WebUpdateOrganizationLogic.class);
 
     private final OrganizationDao organizationDao;
+    private final DeviceDao deviceDao;
 
     public WebUpdateOrganizationLogic(Holder holder) {
         this.organizationDao = holder.organizationDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
@@ -88,7 +91,12 @@ public class WebUpdateOrganizationLogic {
             for (Product product : org.products) {
                 if (product.parentId == parentProductId) {
                     try {
-                        organizationDao.deleteProduct(org, product.id);
+                        int productId = product.id;
+                        if (deviceDao.productHasDevices(productId)) {
+                            log.error("You are not allowed to remove product with devices.");
+                            throw new ForbiddenWebException("You are not allowed to remove product with devices.");
+                        }
+                        org.deleteProduct(productId);
                         log.debug("Product was removed.");
                     } catch (ForbiddenWebException e) {
                         log.debug("Cannot delete product. {}", e.getMessage());

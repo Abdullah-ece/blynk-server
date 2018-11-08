@@ -1,8 +1,7 @@
 package cc.blynk.server.core.model;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.auth.App;
-import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
@@ -18,16 +17,12 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
@@ -39,9 +34,7 @@ import java.util.Map;
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
-import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
-import static cc.blynk.utils.StringUtils.truncateFileName;
 
 /**
  * User: ddumanskiy
@@ -56,8 +49,6 @@ public class Profile {
 
     public volatile Tag[] tags = EMPTY_TAGS;
 
-    public volatile Device[] devices = EMPTY_DEVICES;
-
     @JsonView(View.Private.class)
     @JsonDeserialize(keyUsing = DashPinStorageKeyDeserializer.class,
                      contentUsing = PinStorageValueDeserializer.class)
@@ -70,68 +61,6 @@ public class Profile {
             return EMPTY_DASH;
         }
         return dashBoards[0];
-    }
-
-    public String getDeviceName(int deviceId) {
-        Device device = getDeviceById(deviceId);
-        if (device != null) {
-            return truncateFileName(device.name);
-        }
-        return "";
-    }
-
-    public String getCSVDeviceName(int deviceId) {
-        Device device = getDeviceById(deviceId);
-        if (device == null) {
-            return String.valueOf(deviceId);
-        }
-
-        String deviceName = device.name;
-        if (deviceName == null || deviceName.isEmpty()) {
-            return String.valueOf(deviceId);
-        }
-
-        return StringUtils.escapeCSV(deviceName);
-    }
-
-    public Device getDeviceById(int id) {
-        for (Device device : this.devices) {
-            if (device.id == id) {
-                return device;
-            }
-        }
-        return null;
-    }
-
-    public void addDevice(Device device) {
-        this.devices = ArrayUtil.add(this.devices, device, Device.class);
-    }
-
-    public Device deleteDevice(DashBoard dash, int deviceId) {
-        int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
-        Device deviceToRemove = this.devices[existingDeviceIndex];
-        this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
-        dash.eraseWidgetValuesForDevice(deviceId);
-        return deviceToRemove;
-    }
-
-    private int getDeviceIndexByIdOrThrow(int id) {
-        Device[] devices = this.devices;
-        for (int i = 0; i < devices.length; i++) {
-            if (devices[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Device with passed id not found.");
-    }
-
-    public void setOfflineDevice() {
-        Device[] devices = this.devices;
-        if (devices != null) {
-            for (Device device : devices) {
-                device.status = Status.OFFLINE;
-            }
-        }
     }
 
     public void deleteTag(int tagId) {
@@ -167,51 +96,51 @@ public class Profile {
         }
     }
 
-    public void cleanPinStorage(DashBoard dash, Widget widget, boolean removeTemplates) {
-        cleanPinStorageInternalWithoutUpdatedAt(dash, widget, true, removeTemplates);
+    public void cleanPinStorage(DeviceDao deviceDao, DashBoard dash, Widget widget, boolean removeTemplates) {
+        cleanPinStorageInternalWithoutUpdatedAt(deviceDao, dash, widget, true, removeTemplates);
         dash.updatedAt = System.currentTimeMillis();
     }
 
-    public void cleanPinStorageForTileTemplate(DashBoard dash, TileTemplate tileTemplate,
+    public void cleanPinStorageForTileTemplate(DeviceDao deviceDao, DashBoard dash, TileTemplate tileTemplate,
                                                boolean removeProperties) {
         for (int deviceId : tileTemplate.deviceIds) {
             for (Widget widget : tileTemplate.widgets) {
                 if (widget instanceof OnePinWidget) {
                     OnePinWidget onePinWidget = (OnePinWidget) widget;
-                    cleanPinStorage(dash, onePinWidget, deviceId, removeProperties);
+                    cleanPinStorage(deviceDao, dash, onePinWidget, deviceId, removeProperties);
                 } else if (widget instanceof MultiPinWidget) {
                     MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                    cleanPinStorage(dash, multiPinWidget, deviceId, removeProperties);
+                    cleanPinStorage(deviceDao, dash, multiPinWidget, deviceId, removeProperties);
                 }
             }
         }
     }
 
-    private void cleanPinStorage(DashBoard dash,
-                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+    private void cleanPinStorage(DeviceDao deviceDao, DashBoard dash,
+                                 MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
         if (multiPinWidget.dataStreams != null) {
             for (DataStream dataStream : multiPinWidget.dataStreams) {
                 if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                    removePinStorageValue(deviceDao, dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
                             dataStream.pinType, dataStream.pin, removeProperties);
                 }
             }
         }
     }
 
-    private void cleanPinStorage(DashBoard dash, OnePinWidget onePinWidget,
+    private void cleanPinStorage(DeviceDao deviceDao, DashBoard dash, OnePinWidget onePinWidget,
                                  int targetId, boolean removeProperties) {
         if (onePinWidget.isValid()) {
-            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+            removePinStorageValue(deviceDao, dash, targetId == -1 ? onePinWidget.deviceId : targetId,
                     onePinWidget.pinType, onePinWidget.pin, removeProperties);
         }
     }
 
-    private void removePinStorageValue(DashBoard dash, int targetId,
+    private void removePinStorageValue(DeviceDao deviceDao, DashBoard dash, int targetId,
                                        PinType pinType, short pin, boolean removeProperties) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = getDeviceById(targetId);
+            target = deviceDao.getById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = getTagById(targetId);
         } else {
@@ -253,27 +182,27 @@ public class Profile {
         }
     }
 
-    public void cleanPinStorage(DashBoard dash, boolean removeProperties,
+    public void cleanPinStorage(DeviceDao deviceDao, DashBoard dash, boolean removeProperties,
                                 boolean eraseTemplates) {
         for (Widget widget : dash.widgets) {
-            cleanPinStorageInternalWithoutUpdatedAt(dash, widget, removeProperties, eraseTemplates);
+            cleanPinStorageInternalWithoutUpdatedAt(deviceDao, dash, widget, removeProperties, eraseTemplates);
         }
         dash.updatedAt = System.currentTimeMillis();
     }
 
-    private void cleanPinStorageInternalWithoutUpdatedAt(DashBoard dash, Widget widget,
+    private void cleanPinStorageInternalWithoutUpdatedAt(DeviceDao deviceDao, DashBoard dash, Widget widget,
                                                          boolean removeProperties, boolean eraseTemplates) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(dash, onePinWidget, -1, removeProperties);
+            cleanPinStorage(deviceDao, dash, onePinWidget, -1, removeProperties);
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(dash, multiPinWidget, -1, removeProperties);
+            cleanPinStorage(deviceDao, dash, multiPinWidget, -1, removeProperties);
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             cleanPinStorage(dash.id, deviceTiles, removeProperties);
             if (eraseTemplates) {
-                cleanPinStorageForTemplate(dash, deviceTiles, removeProperties);
+                cleanPinStorageForTemplate(deviceDao, dash, deviceTiles, removeProperties);
             }
         }
     }
@@ -293,10 +222,10 @@ public class Profile {
         }
     }
 
-    private void cleanPinStorageForTemplate(DashBoard dash,
-                                                   DeviceTiles deviceTiles, boolean removeProperties) {
+    private void cleanPinStorageForTemplate(DeviceDao deviceDao, DashBoard dash,
+                                            DeviceTiles deviceTiles, boolean removeProperties) {
         for (TileTemplate tileTemplate : deviceTiles.templates) {
-            cleanPinStorageForTileTemplate(dash, tileTemplate, removeProperties);
+            cleanPinStorageForTileTemplate(deviceDao, dash, tileTemplate, removeProperties);
         }
     }
 
@@ -329,73 +258,6 @@ public class Profile {
             pinsStorage.put(key, pinStorageValue);
         }
         pinStorageValue.update(value);
-    }
-
-    public Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, short pin, PinType pinType) {
-        for (Widget widget : dash.widgets) {
-            if (widget instanceof Superchart) {
-                Superchart graph = (Superchart) widget;
-                if (isWithinGraph(dash, graph, pin, pinType, deviceId)) {
-                    return graph;
-                }
-            }
-            if (widget instanceof DeviceTiles) {
-                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                for (TileTemplate tileTemplate : deviceTiles.templates) {
-                    for (Widget tilesWidget : tileTemplate.widgets) {
-                        if (tilesWidget instanceof Superchart) {
-                            Superchart graph = (Superchart) tilesWidget;
-                            if (isWithinGraph(dash, graph, pin, pinType, deviceId, tileTemplate.deviceIds)) {
-                                return graph;
-                            }
-                        }
-                    }
-                }
-            }
-            if (widget instanceof ReportingWidget) {
-                ReportingWidget reportingWidget = (ReportingWidget) widget;
-                if (reportingWidget.hasPin(pin, pinType)) {
-                    return reportingWidget;
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isWithinGraph(DashBoard dash, Superchart graph,
-                                         short pin, PinType pinType, int deviceId, int... deviceIds) {
-        for (GraphDataStream graphDataStream : graph.dataStreams) {
-            if (graphDataStream != null && graphDataStream.dataStream != null
-                    && graphDataStream.dataStream.isSame(pin, pinType)) {
-
-                int graphTargetId = graphDataStream.targetId;
-
-                //this is the case when datastream assigned directly to the device
-                if (deviceId == graphTargetId) {
-                    return true;
-                }
-
-                //this is the case when graph is within deviceTiles
-                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
-                    return true;
-                }
-
-                //this is the case when graph is within device selector or tags
-                Target target;
-                if (graphTargetId < Tag.START_TAG_ID) {
-                    target = getDeviceById(graphTargetId);
-                } else if (graphTargetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = getTagById(graphTargetId);
-                } else {
-                    //means widget assigned to device selector widget.
-                    target = dash.getDeviceSelector(graphTargetId);
-                }
-                if (target != null && ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public int getDashIndexOrThrow(int dashId) {

@@ -233,13 +233,13 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
 
             case CREATE_TILE_TEMPLATE :
-                MobileCreateTileTemplateLogic.messageReceived(ctx, state, msg);
+                MobileCreateTileTemplateLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case UPDATE_TILE_TEMPLATE :
-                MobileUpdateTileTemplateLogic.messageReceived(ctx, state, msg);
+                MobileUpdateTileTemplateLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case DELETE_TILE_TEMPLATE :
-                MobileDeleteTileTemplateLogic.messageReceived(ctx, state, msg);
+                MobileDeleteTileTemplateLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case REDEEM :
@@ -264,13 +264,13 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 MobileCreateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case UPDATE_DEVICE :
-                MobileUpdateDeviceLogic.messageReceived(ctx, state.user, msg);
+                MobileUpdateDeviceLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case DELETE_DEVICE :
                 MobileDeleteDeviceLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
-                MobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
+                MobileGetDevicesLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case MOBILE_UPDATE_DEVICE_METAFIELD:
                 WebUpdateDeviceMetafieldLogic.messageReceived(holder, ctx, state, msg);

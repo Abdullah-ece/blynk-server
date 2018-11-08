@@ -5,7 +5,6 @@ import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -33,14 +32,6 @@ public final class MobileDeleteDeviceDataLogic {
     private MobileDeleteDeviceDataLogic() {
     }
 
-    private static int[] getDeviceIds(Device[] devices) {
-        int[] deviceIds = new int[devices.length];
-        for (int i = 0; i < devices.length; i++) {
-            deviceIds[i] = devices[i].id;
-        }
-        return deviceIds;
-    }
-
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
         String[] messageParts = StringUtils.split2(message.body);
@@ -65,20 +56,16 @@ public final class MobileDeleteDeviceDataLogic {
             }
         }
 
-        if ("*".equals(dashIdAndDeviceId[1])) {
-            int[] deviceIds = getDeviceIds(user.profile.devices);
-            delete(holder, ctx.channel(), message.id, user, dash, deviceIds);
-        } else {
-            int deviceId = Integer.parseInt(dashIdAndDeviceId[1]);
 
-            //we have only deviceId
-            if (messageParts.length == 1) {
-                delete(holder, ctx.channel(), message.id, user, dash, deviceId);
-            } else {
-                //we have deviceId and datastreams to clean
-                delete(holder,  ctx.channel(), message.id, user, dash, deviceId,
-                        messageParts[1].split(StringUtils.BODY_SEPARATOR_STRING));
-            }
+        int deviceId = Integer.parseInt(dashIdAndDeviceId[1]);
+
+        //we have only deviceId
+        if (messageParts.length == 1) {
+            delete(holder, ctx.channel(), message.id, user, dash, deviceId);
+        } else {
+            //we have deviceId and datastreams to clean
+            delete(holder,  ctx.channel(), message.id, user, dash, deviceId,
+                    messageParts[1].split(StringUtils.BODY_SEPARATOR_STRING));
         }
     }
 

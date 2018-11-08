@@ -252,7 +252,6 @@ public class FileManager {
             user.email = user.name;
         }
         user.ip = host;
-        user.profile.setOfflineDevice();
     }
 
     public Map<String, Integer> getUserProfilesSize() {

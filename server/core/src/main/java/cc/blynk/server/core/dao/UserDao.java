@@ -4,22 +4,17 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.auth.UserStatus;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.UserInviteDTO;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.AppNameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 /**
  * Helper class for holding info regarding registered users and profiles.
@@ -75,14 +70,6 @@ public class UserDao {
         return users;
     }
 
-    public List<User> searchByUsername(String name) {
-        if (name == null) {
-            return new ArrayList<>(users.values());
-        }
-
-        return users.values().stream().filter(user -> user.email.contains(name)).collect(Collectors.toList());
-    }
-
     public List<User> getUsersByOrgId(int orgId, String filterMail) {
         List<User> result = new ArrayList<>();
         for (User user : users.values()) {
@@ -109,157 +96,6 @@ public class UserDao {
 
     public void add(User user) {
         users.put(user.email, user);
-    }
-
-    public Map<String, Integer> getBoardsUsage() {
-        Map<String, Integer> boards = new HashMap<>();
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
-                if (device.boardType != null) {
-                    String label = device.boardType.label;
-                    Integer i = boards.getOrDefault(label, 0);
-                    boards.put(label, ++i);
-                }
-            }
-        }
-        return boards;
-    }
-
-    public Map<String, Integer> getFacebookLogin() {
-        Map<String, Integer> facebookLogin = new HashMap<>();
-        for (User user : users.values()) {
-            facebookLogin.compute(
-                    user.isFacebookUser
-                            ? AppNameUtil.FACEBOOK
-                            : AppNameUtil.BLYNK, (k, v) -> v == null ? 1 : v++
-            );
-        }
-        return facebookLogin;
-    }
-
-    public Map<String, Integer> getWidgetsUsage() {
-        Map<String, Integer> widgets = new HashMap<>();
-        for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.widgets != null) {
-                    for (Widget widget : dashBoard.widgets) {
-                        Integer i = widgets.getOrDefault(widget.getClass().getSimpleName(), 0);
-                        widgets.put(widget.getClass().getSimpleName(), ++i);
-                    }
-                }
-            }
-        }
-        return widgets;
-    }
-
-    public Map<String, Integer> getProjectsPerUser() {
-        Map<String, Integer> projectsPerUser = new HashMap<>();
-        for (User user : users.values()) {
-            String key = String.valueOf(user.profile.dashBoards.length);
-            Integer i = projectsPerUser.getOrDefault(key, 0);
-            projectsPerUser.put(key, ++i);
-        }
-        return projectsPerUser;
-    }
-
-    public Map<String, Integer> getLibraryVersion() {
-        Map<String, Integer> data = new HashMap<>();
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
-                if (device.hardwareInfo != null && device.hardwareInfo.blynkVersion != null) {
-                    String key = device.hardwareInfo.blynkVersion;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
-                }
-            }
-        }
-        return data;
-    }
-
-    public Map<String, Integer> getCpuType() {
-        Map<String, Integer> data = new HashMap<>();
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
-                if (device.hardwareInfo != null && device.hardwareInfo.cpuType != null) {
-                    String key = device.hardwareInfo.cpuType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
-                }
-            }
-        }
-        return data;
-    }
-
-    public Map<String, Integer> getConnectionType() {
-        Map<String, Integer> data = new HashMap<>();
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
-                if (device.hardwareInfo != null && device.hardwareInfo.connectionType != null) {
-                    String key = device.hardwareInfo.connectionType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
-                }
-            }
-        }
-        return data;
-    }
-
-    public Map<String, Integer> getHardwareBoards() {
-        Map<String, Integer> data = new HashMap<>();
-        for (User user : users.values()) {
-            for (Device device : user.profile.devices) {
-                if (device.hardwareInfo != null && device.hardwareInfo.boardType != null) {
-                    String key = device.hardwareInfo.boardType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
-                }
-            }
-        }
-        return data;
-    }
-
-    public Map<String, Integer> getFilledSpace() {
-        Map<String, Integer> filledSpace = new HashMap<>();
-        for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                int sum = 0;
-                for (Widget widget : dashBoard.widgets) {
-                    if (widget.height < 0 || widget.width < 0) {
-                        //log.error("Widget without length fields. User : {}", user.name);
-                        continue;
-                    }
-                    sum += widget.height * widget.width;
-                }
-
-                String key = String.valueOf(sum);
-                Integer i = filledSpace.getOrDefault(key, 0);
-                filledSpace.put(key, ++i);
-            }
-        }
-        return filledSpace;
-    }
-
-    public Map<String, Integer> getWebHookHosts() {
-        Map<String, Integer> data = new HashMap<>();
-        for (User user : users.values()) {
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                for (Widget widget : dashBoard.widgets) {
-                    if (widget instanceof WebHook) {
-                        WebHook webHook = (WebHook) widget;
-                        if (webHook.url != null) {
-                            try {
-                                String key = getHost(webHook.url);
-                                Integer i = data.getOrDefault(key, 0);
-                                data.put(key, ++i);
-                            } catch (Exception e) {
-                                //don't care if we couldn't parse.
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return data;
     }
 
     public void createProjectForExportedApp(TimerWorker timerWorker,
@@ -325,31 +161,6 @@ public class UserDao {
             }
         }
         */
-    }
-
-
-    /**
-     * Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com
-     */
-    private static String getHost(String url) {
-        if (url == null || url.length() == 0) {
-            return "";
-        }
-
-        int doubleslash = url.indexOf("//");
-        if (doubleslash == -1) {
-            doubleslash = 0;
-        } else {
-            doubleslash += 2;
-        }
-
-        int end = url.indexOf('/', doubleslash);
-        end = end >= 0 ? end : url.length();
-
-        int port = url.indexOf(':', doubleslash);
-        end = (port > 0 && port < end) ? port : end;
-
-        return url.substring(doubleslash, end);
     }
 
     public User addFacebookUser(String email, int orgId) {

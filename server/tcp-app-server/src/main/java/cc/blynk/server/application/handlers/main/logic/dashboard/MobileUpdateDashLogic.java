@@ -59,7 +59,7 @@ public final class MobileUpdateDashLogic {
         updatedDash.addTimers(timerWorker, state.user.email);
 
         existingDash.updateFields(updatedDash);
-        user.profile.cleanPinStorage(existingDash, false, true);
+        user.profile.cleanPinStorage(holder.deviceDao, existingDash, false, true);
 
         user.lastModifiedTs = existingDash.updatedAt;
 

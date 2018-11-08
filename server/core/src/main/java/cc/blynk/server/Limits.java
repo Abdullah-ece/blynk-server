@@ -15,7 +15,6 @@ public class Limits {
     public final int webRequestMaxSize;
 
     //user limits
-    public final int deviceLimit;
     public final int tagsLimit;
     public final int dashboardsLimit;
     public final int widgetSizeLimitBytes;
@@ -36,7 +35,6 @@ public class Limits {
     public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
 
-        this.deviceLimit = props.getIntProperty("user.devices.limit", 50);
         this.tagsLimit = props.getIntProperty("user.tags.limit", 100);
         this.dashboardsLimit = props.getIntProperty("user.dashboard.max.limit", 100);
         this.widgetSizeLimitBytes = props.getIntProperty("user.widget.max.size.limit", 10) * 1024;

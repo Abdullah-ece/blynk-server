@@ -14,7 +14,6 @@ server.ssl.key.pass=${SERVER_SSL_KEY_PASS}
 data.folder=${DATA_FOLDER}
 logs.folder=./logs
 log.level=${LOG_LEVEL}
-user.devices.limit=${USER_DEVICES_LIMIT}
 user.tags.limit=${USER_TAGS_LIMIT}
 user.dashboard.max.limit=${USER_DASHBOARD_MAX_LIMIT}
 user.widget.max.size.limit=${USER_WIDGET_MAX_SIZE_LIMIT}

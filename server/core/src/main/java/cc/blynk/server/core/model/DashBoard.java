@@ -20,6 +20,8 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -456,6 +458,23 @@ public class DashBoard {
             }
         }
         return widget;
+    }
+
+    public boolean needRawDataForGraph(short pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            if (widget instanceof Superchart) {
+                Superchart superchart = (Superchart) widget;
+                if (superchart.hasLivePeriodsSelected()) {
+                    //todo check targetId?
+                    for (GraphDataStream graphDataStream : superchart.dataStreams) {
+                        if (graphDataStream.dataStream != null && graphDataStream.dataStream.isSame(pin, pinType)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

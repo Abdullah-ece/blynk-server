@@ -101,9 +101,8 @@ public class WebCreateDeviceLogic {
         newDevice.webDashboard = product.webDashboard.copy();
 
         deviceDao.create(orgId, newDevice);
-        user.profile.addDevice(newDevice);
 
-        final String newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();

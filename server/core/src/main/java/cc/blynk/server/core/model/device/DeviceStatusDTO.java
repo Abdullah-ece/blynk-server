@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.device;
 
+import java.util.List;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -47,6 +49,14 @@ public class DeviceStatusDTO {
         this.hardwareInfo = device.hardwareInfo;
         this.iconName = device.iconName;
         this.isUserIcon = device.isUserIcon;
+    }
+
+    public static DeviceStatusDTO[] transform(List<Device> devices) {
+        DeviceStatusDTO[] deviceStatusDTO = new DeviceStatusDTO[devices.size()];
+        for (int i = 0; i < devices.size(); i++) {
+            deviceStatusDTO[i] = new DeviceStatusDTO(devices.get(i));
+        }
+        return deviceStatusDTO;
     }
 
     public static DeviceStatusDTO[] transform(Device[] devices) {

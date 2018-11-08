@@ -72,7 +72,7 @@ public final class MobileExportReportLogic {
 
         ReportScheduler reportScheduler = holder.reportScheduler;
         reportScheduler.schedule(new BaseReportTask(user, dashId, report,
-                reportScheduler.mailWrapper, reportScheduler.reportingDao,
+                reportScheduler.mailWrapper, reportScheduler.reportingDao, holder.deviceDao,
                 reportScheduler.downloadUrl) {
             @Override
             public void run() {

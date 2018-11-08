@@ -2,7 +2,6 @@ package cc.blynk.server.tools;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.dao.ForwardingTokenEntry;
 
@@ -38,12 +37,14 @@ public final class ForwardingTokenGenerator {
         int count = 0;
         List<ForwardingTokenEntry> entryList = new ArrayList<>(1100);
         for (User user : users.values()) {
+            /*
             for (Device device : user.profile.devices) {
                 if (device != null && device.token != null) {
                     count++;
                     entryList.add(new ForwardingTokenEntry(device.token, ip, user.email, 0, device.id));
                 }
             }
+            */
             if (entryList.size() > 1000) {
                 dbManager.forwardingTokenDBDao.insertTokenHostBatch(entryList);
                 System.out.println(entryList.size() + " tokens inserted.");

@@ -72,7 +72,7 @@ final class JobLauncher {
         //running once every 3 day
         //todo could be removed?
         var reportingDataDiskCleaner =
-                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
+                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.deviceDao, holder.reportingDiskDao);
         //once every 7 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
 

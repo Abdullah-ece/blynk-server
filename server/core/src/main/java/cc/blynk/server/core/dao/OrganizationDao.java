@@ -8,12 +8,12 @@ import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.Product;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +34,9 @@ public class OrganizationDao {
     private final AtomicInteger orgSequence;
     private final AtomicInteger productSequence;
     private final FileManager fileManager;
-    private final DeviceDao deviceDao;
     private final UserDao userDao;
 
-    public OrganizationDao(FileManager fileManager, DeviceDao deviceDao, UserDao userDao) {
+    public OrganizationDao(FileManager fileManager, UserDao userDao) {
         this.fileManager = fileManager;
         this.organizations = fileManager.deserializeOrganizations();
 
@@ -51,7 +50,6 @@ public class OrganizationDao {
         }
         this.orgSequence = new AtomicInteger(largestOrgSequenceNumber);
         this.productSequence = new AtomicInteger(largestProductSequenceNumber);
-        this.deviceDao = deviceDao;
         this.userDao = userDao;
         log.info("Organization sequence number is {}", largestOrgSequenceNumber);
     }
@@ -136,9 +134,11 @@ public class OrganizationDao {
 
     private Map<Integer, Integer> productDeviceCount() {
         Map<Integer, Integer> productIdCount =  new HashMap<>();
-        for (Device device : deviceDao.getAll()) {
-            Integer count = productIdCount.getOrDefault(device.productId, 0);
-            productIdCount.put(device.productId, count + 1);
+        for (Organization org : organizations.values()) {
+            for (Device device : org.devices) {
+                Integer count = productIdCount.getOrDefault(device.productId, 0);
+                productIdCount.put(device.productId, count + 1);
+            }
         }
         return productIdCount;
     }
@@ -164,11 +164,9 @@ public class OrganizationDao {
         List<Device> result = new ArrayList<>();
         //getting org and all it child orgs
         int[] orgIds = orgListToIdList(getOrgsByParentId(orgId));
-        for (Map.Entry<DeviceKey, Device> entry : deviceDao.devices.entrySet()) {
-            DeviceKey key = entry.getKey();
-            if (ArrayUtil.contains(orgIds, key.orgId)) {
-                result.add(entry.getValue());
-            }
+        for (int tmpOrgId : orgIds) {
+            Organization org = organizations.get(tmpOrgId);
+            result.addAll(Arrays.asList(org.devices));
         }
         return result;
     }
@@ -249,7 +247,6 @@ public class OrganizationDao {
 
         newDevice.metaFields = product.copyMetaFields();
         newDevice.webDashboard = product.webDashboard.copy();
-        deviceDao.create(org.id, newDevice);
     }
 
     private static Organization getOrgById(List<Organization> orgs, int id) {
@@ -272,29 +269,6 @@ public class OrganizationDao {
             throw new OrgNotFoundException("Cannot find organization with passed id.");
         }
         return org;
-    }
-
-    public boolean deleteProduct(User user, int productId) {
-        for (Organization org : organizations.values()) {
-            for (Product product : org.products) {
-                if (product.id == productId) {
-                    if (!hasAccess(user, org.id)) {
-                        throw new ForbiddenWebException("User has no rights for product removal.");
-                    }
-                    deleteProduct(org, product.id);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void deleteProduct(Organization org, int productId) {
-        if (deviceDao.productHasDevices(productId)) {
-            log.error("You are not allowed to remove product with devices.");
-            throw new ForbiddenWebException("You are not allowed to remove product with devices.");
-        }
-        org.deleteProduct(productId);
     }
 
     public boolean delete(int orgId) {

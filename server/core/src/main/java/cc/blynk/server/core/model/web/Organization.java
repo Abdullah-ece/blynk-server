@@ -1,11 +1,13 @@
 package cc.blynk.server.core.model.web;
 
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.exceptions.ProductNotFoundException;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
 
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.utils.ArrayUtil.remove;
@@ -46,6 +48,8 @@ public class Organization {
     public volatile int[] selectedProducts = EMPTY_INTS;
 
     public volatile int parentId = SUPER_ORG_PARENT_ID;
+
+    public volatile Device[] devices = EMPTY_DEVICES;
 
     public Role[] roles;
 

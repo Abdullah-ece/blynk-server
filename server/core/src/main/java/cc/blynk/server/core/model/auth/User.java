@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.auth;
 import cc.blynk.server.core.dao.OrganizationDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.permissions.Role;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
@@ -173,13 +172,6 @@ public class User {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (lastStart <= dashBoard.updatedAt) {
                 return true;
-            }
-            for (Device device : profile.devices) {
-                if (lastStart <= device.metadataUpdatedAt
-                        || lastStart <= device.dataReceivedAt
-                        || lastStart <= device.updatedAt) {
-                    return true;
-                }
             }
         }
         return false;

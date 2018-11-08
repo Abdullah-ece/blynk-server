@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -33,6 +34,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
     private final ReportingDiskDao reportingDao;
     private final SessionDao sessionDao;
+    private final DeviceDao deviceDao;
 
     public MobileHardwareResendFromBTLogic(Holder holder, String email) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
@@ -43,6 +45,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
                 email));
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDiskDao;
+        this.deviceDao = holder.deviceDao;
     }
 
     private static boolean isWriteOperation(String body) {
@@ -66,7 +69,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
 
         User user = state.user;
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-        Device device = state.user.profile.getDeviceById(deviceId);
+        Device device = deviceDao.getByIdOrThrow(deviceId);
 
         if (isWriteOperation(split[1])) {
             String[] splitBody = split3(split[1]);

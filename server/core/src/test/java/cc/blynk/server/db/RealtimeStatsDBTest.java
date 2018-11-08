@@ -77,7 +77,7 @@ public class RealtimeStatsDBTest {
         UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test", "127.0.0.1");
         BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 1000);
 
-        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap()), false);
+        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap(), null), false);
         int i;
 
         final HttpStat hs = stat.http;

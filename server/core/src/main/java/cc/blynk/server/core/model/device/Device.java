@@ -351,6 +351,18 @@ public class Device implements Target {
         return bodySize + 5 <= hardwareInfo.buffIn;
     }
 
+    public boolean hasOwner(String ownerEmail) {
+        for (MetaField metaField : metaFields) {
+            if (metaField.isDeviceOwnerMetaField()) {
+                TextMetaField textMetaField = (TextMetaField) metaField;
+                if (ownerEmail.equals(textMetaField.value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
-import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -26,7 +26,7 @@ public final class MobileUpdateDeviceLogic {
     private MobileUpdateDeviceLogic() {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -40,8 +40,6 @@ public final class MobileUpdateDeviceLogic {
             throw new IllegalCommandException("Income device message is empty.");
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-
         Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Updating new device {}.", newDevice.id);
@@ -51,7 +49,7 @@ public final class MobileUpdateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        Device existingDevice = user.profile.getDeviceById(newDevice.id);
+        Device existingDevice = holder.deviceDao.getById(newDevice.id);
 
         if (existingDevice == null) {
             log.debug("Attempt to update device with non existing id.");

@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,10 +45,6 @@ public final class MobileCreateDeviceLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (user.profile.devices.length > holder.limits.deviceLimit) {
-            throw new NotAllowedException("Device limit is reached.", message.id);
-        }
-
         Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
@@ -58,14 +53,15 @@ public final class MobileCreateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        holder.organizationDao.assignToOrgAndAddDevice(user.orgId, newDevice);
-
-        user.profile.addDevice(newDevice);
+        int orgId = user.orgId;
+        holder.organizationDao.assignToOrgAndAddDevice(orgId, newDevice);
+        holder.deviceDao.create(orgId, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
+        log.debug("Device for orgId {} created {}.", orgId, newDevice);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(
