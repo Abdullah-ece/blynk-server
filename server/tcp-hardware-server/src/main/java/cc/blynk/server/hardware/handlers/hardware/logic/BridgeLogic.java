@@ -84,7 +84,7 @@ public class BridgeLogic {
             }
 
             if (!tokenValue.user.equals(state.user)) {
-                log.debug("User {} allowed to access devices only within own account.", state.user);
+                log.debug("User {} allowed to access devices only within own account.", state.user.email);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }

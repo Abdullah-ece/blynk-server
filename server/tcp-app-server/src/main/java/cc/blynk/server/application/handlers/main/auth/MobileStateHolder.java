@@ -8,12 +8,13 @@ import cc.blynk.server.core.session.StateHolderBase;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class MobileStateHolder extends StateHolderBase {
+public class MobileStateHolder implements StateHolderBase {
 
+    public final User user;
     public final Version version;
 
     public MobileStateHolder(User user, Version version) {
-        super(user);
+        this.user = user;
         this.version = version;
     }
 

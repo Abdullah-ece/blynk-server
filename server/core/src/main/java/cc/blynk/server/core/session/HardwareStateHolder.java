@@ -9,13 +9,14 @@ import cc.blynk.server.core.model.device.Device;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public final class HardwareStateHolder extends StateHolderBase {
+public final class HardwareStateHolder implements StateHolderBase {
 
+    public final User user;
     public final DashBoard dash;
     public final Device device;
 
     public HardwareStateHolder(User user, DashBoard dash, Device device) {
-        super(user);
+        this.user = user;
         this.dash = dash;
         this.device = device;
     }

@@ -8,14 +8,15 @@ import cc.blynk.server.core.session.StateHolderBase;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class WebAppStateHolder extends StateHolderBase {
+public class WebAppStateHolder implements StateHolderBase {
 
     private static final int NO_DEVICE = -1;
 
+    public final User user;
     public int selectedDeviceId;
 
     public WebAppStateHolder(User user) {
-        super(user);
+        this.user = user;
         this.selectedDeviceId = NO_DEVICE;
     }
 
