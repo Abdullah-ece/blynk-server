@@ -38,8 +38,8 @@ public class TokenManager {
         }
     }
 
-    public void deleteDash(DashBoard dash) {
-        sharedTokenManager.deleteProject(dash);
+    public void deleteSharedToken(String sharedToken) {
+        sharedTokenManager.deleteSharedToken(sharedToken);
     }
 
     public TokenValue getTokenValueByToken(String token) {
@@ -77,14 +77,6 @@ public class TokenManager {
 
     public void updateRegularCache(String token, TokenValue tokenValue) {
         regularTokenManager.cache.put(token, new TokenValue(tokenValue.user, tokenValue.dash, tokenValue.device));
-    }
-
-    public void updateRegularCache(String token, User user, DashBoard dash, Device device) {
-        regularTokenManager.cache.put(token, new TokenValue(user, dash, device));
-    }
-
-    public void updateSharedCache(String token, User user, int dashId) {
-        sharedTokenManager.cache.put(token, new SharedTokenValue(user, dashId));
     }
 
     public boolean clearTemporaryTokens() {

@@ -205,7 +205,7 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void deleteDash(int dashId) {
-        send("deleteDash " + dashId);
+        send("deleteSharedToken " + dashId);
     }
 
     public void deleteTag(int dashId, int tagId) {

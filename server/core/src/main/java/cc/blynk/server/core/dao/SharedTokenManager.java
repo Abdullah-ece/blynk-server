@@ -19,7 +19,7 @@ public class SharedTokenManager {
 
     public static final String ALL = "*";
 
-    final ConcurrentHashMap<String, SharedTokenValue> cache;
+    private final ConcurrentHashMap<String, SharedTokenValue> cache;
 
     SharedTokenManager(Collection<User> users) {
         this.cache = new ConcurrentHashMap<>();
@@ -53,10 +53,10 @@ public class SharedTokenManager {
         return cache.get(token);
     }
 
-    void deleteProject(DashBoard dash) {
-        if (dash.sharedToken != null) {
-            cache.remove(dash.sharedToken);
-            log.info("Deleted {} shared token.", dash.sharedToken);
+    void deleteSharedToken(String sharedToken) {
+        if (sharedToken != null) {
+            cache.remove(sharedToken);
+            log.info("Deleted {} shared token.", sharedToken);
         }
     }
 

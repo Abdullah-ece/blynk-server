@@ -27,7 +27,7 @@ public final class MobileDeleteDashLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         deleteDash(holder, state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();
@@ -48,6 +48,7 @@ public final class MobileDeleteDashLogic {
         holder.timerWorker.deleteTimers(state.user.email, dash);
         holder.sessionDao.closeHardwareChannelByDashId(state.user.email, dashId);
         holder.reportScheduler.cancelStoredFuture(user, dashId);
+        holder.tokenManager.deleteSharedToken(dash.sharedToken);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
     }
