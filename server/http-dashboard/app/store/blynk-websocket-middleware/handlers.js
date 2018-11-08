@@ -106,6 +106,7 @@ export const Handlers = (params) => {
 
     const deviceId = bodyArray[0];
     const eventCode = bodyArray[2];
+    const eventDescription = bodyArray[3] || null;
 
     if (options.isDebugMode)
       options.debug("blynkWsMessage LogEvent", action, {
@@ -113,12 +114,14 @@ export const Handlers = (params) => {
         msgId       : msgId,
         bodyArray: bodyArray,
         deviceId,
-        eventCode
+        eventCode,
+        eventDescription
       });
 
     store.dispatch(blynkWsLogEvent({
       deviceId,
       eventCode,
+      eventDescription
     }));
 
   };

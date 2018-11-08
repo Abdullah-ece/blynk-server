@@ -411,7 +411,7 @@ export default function Devices(state = initialState, action) {
           id         : -1,
           eventType  : event.type,
           name       : event.name,
-          description: event.description,
+          description: action.value.eventDescription || event.description,
           ts         : new Date().getTime(),
           isResolved : false,
         }, ...logEvents];

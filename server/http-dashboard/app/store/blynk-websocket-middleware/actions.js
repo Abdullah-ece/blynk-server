@@ -94,11 +94,12 @@ export const blynkWsHardware = ({ deviceId, pin, value }) => ({
   }
 });
 
-export const blynkWsLogEvent = ({ deviceId, eventCode }) => ({
+export const blynkWsLogEvent = ({ deviceId, eventCode, eventDescription }) => ({
   type : ACTIONS.BLYNK_WS_LOG_EVENT,
   value: {
     deviceId,
     eventCode,
+    eventDescription,
   }
 });
 
