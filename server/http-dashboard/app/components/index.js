@@ -22,3 +22,4 @@ export Cards                  from './Cards';
 export LinearIcon             from './LinearIcon';
 export LocationAutocomplete   from './LocationAutocomplete';
 export UI                     from './UI';
+export ResendInvite           from './ResendInvite';
