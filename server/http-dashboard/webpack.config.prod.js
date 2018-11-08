@@ -6,6 +6,7 @@ import WebpackMd5Hash from 'webpack-md5-hash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import autoprefixer from 'autoprefixer';
+import moment from "moment";
 import path from 'path';
 
 const GLOBALS = {
@@ -83,6 +84,14 @@ export default {
   module: {
     noParse: [ /^canvasjs$/gi ],
     rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'string-replace-loader',
+        options: {
+          search: '%(built_date)s',
+          replace: `Build hash: ${moment().format("HHmmssDDMM")}`,
+        }
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
