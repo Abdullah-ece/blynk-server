@@ -182,6 +182,10 @@ public final class TestUtil {
         return new HardwareLogEventMessage(msgId, b(body));
     }
 
+    public static StringMessage hardwareConnected(int msgId, int deviceId) {
+        return new StringMessage(msgId, HARDWARE_CONNECTED, "" + deviceId);
+    }
+
     public static StringMessage hardwareConnected(int msgId, String body) {
         return new StringMessage(msgId, HARDWARE_CONNECTED, body);
     }

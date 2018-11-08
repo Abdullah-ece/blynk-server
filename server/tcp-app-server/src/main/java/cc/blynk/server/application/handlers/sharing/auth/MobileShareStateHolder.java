@@ -26,14 +26,4 @@ public final class MobileShareStateHolder extends MobileStateHolder {
         return token.equals(sharedToken) || SharedTokenManager.ALL.equals(sharedToken);
     }
 
-    @Override
-    public boolean isSameDash(int inDashId) {
-        return this.dashId == inDashId;
-    }
-
-    @Override
-    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
-        return isSameDash(inDashId);
-    }
-
 }

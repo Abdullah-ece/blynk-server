@@ -25,17 +25,8 @@ public class WebAppStateHolder extends StateHolderBase {
     }
 
     @Override
-    public boolean isSameDash(int inDashId) {
-        return true;
-    }
-
-    @Override
     public boolean isSameDevice(int deviceId) {
         return selectedDeviceId == deviceId;
     }
 
-    @Override
-    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
-        return isSameDevice(deviceId);
-    }
 }

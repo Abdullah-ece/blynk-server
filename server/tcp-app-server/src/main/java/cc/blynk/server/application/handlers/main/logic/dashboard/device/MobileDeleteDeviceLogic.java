@@ -50,7 +50,7 @@ public final class MobileDeleteDeviceLogic {
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);
         Session session = holder.sessionDao.userSession.get(state.user.email);
-        session.closeHardwareChannelByDeviceId(dashId, deviceId);
+        session.closeHardwareChannelByDeviceId(deviceId);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

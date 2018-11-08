@@ -191,8 +191,8 @@ public class EventorProcessor {
     private void execute(Session session, Profile profile, DashBoard dash,
                          int deviceId, SetPinAction action, long now) {
         String body = action.makeHardwareBody();
-        session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
-        session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
+        session.sendMessageToHardware(HARDWARE, 888, body, deviceId);
+        session.sendToApps(HARDWARE, 888, deviceId, body);
 
         profile.update(dash, deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
     }
@@ -200,7 +200,7 @@ public class EventorProcessor {
     private void execute(Session session, Profile profile, DashBoard dash,
                          int deviceId, SetPropertyPinAction action, long now) {
         String body = action.makeHardwareBody();
-        session.sendToApps(SET_WIDGET_PROPERTY, 888, dash.id, deviceId, body);
+        session.sendToApps(SET_WIDGET_PROPERTY, 888, deviceId, body);
 
         Widget widget = dash.updateProperty(deviceId, action.dataStream.pin, action.property, action.value);
         //this is possible case for device selector

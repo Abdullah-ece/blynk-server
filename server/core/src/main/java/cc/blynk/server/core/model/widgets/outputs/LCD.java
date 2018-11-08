@@ -16,7 +16,7 @@ import io.netty.channel.Channel;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
  * The Blynk Project.
@@ -39,9 +39,9 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     //todo move to persistent LCDLimitedQueue?
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(LCDLimitedQueue.POOL_SIZE);
 
-    private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
+    private static void sendSyncOnActivate(DataStream dataStream, int deviceId, Channel appChannel) {
         if (dataStream.notEmptyAndIsValid()) {
-            String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
+            String body = prependDeviceId(deviceId, dataStream.makeHardwareBody());
             appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                     appChannel.voidPromise());
         }
@@ -65,7 +65,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int targetId) {
         if (dataStreams == null) {
             return;
         }
@@ -80,11 +80,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             if (advancedMode) {
                 for (String command : lastCommands) {
                     dataStreams[0].value = command;
-                    sendSyncOnActivate(dataStreams[0], dashId, deviceId, appChannel);
+                    sendSyncOnActivate(dataStreams[0], deviceId, appChannel);
                 }
             } else {
                 for (DataStream dataStream : dataStreams) {
-                    sendSyncOnActivate(dataStream, dashId, deviceId, appChannel);
+                    sendSyncOnActivate(dataStream, deviceId, appChannel);
                 }
             }
         }

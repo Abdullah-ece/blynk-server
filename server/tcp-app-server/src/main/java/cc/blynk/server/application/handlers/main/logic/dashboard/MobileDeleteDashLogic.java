@@ -46,7 +46,6 @@ public final class MobileDeleteDashLogic {
         user.addEnergy(dash.energySum());
 
         holder.timerWorker.deleteTimers(state.user.email, dash);
-        holder.sessionDao.closeHardwareChannelByDashId(state.user.email, dashId);
         holder.reportScheduler.cancelStoredFuture(user, dashId);
         holder.tokenManager.deleteSharedToken(dash.sharedToken);
 

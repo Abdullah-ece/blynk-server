@@ -188,7 +188,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         Session session = sessionDao.userSession.get(user.email);
 
-        return ok(session.isHardwareConnected(dashId, deviceId));
+        return ok(session.isHardwareConnected(deviceId));
     }
 
     @GET
@@ -487,7 +487,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         Session session = sessionDao.userSession.get(user.email);
-        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
+        session.sendToApps(SET_WIDGET_PROPERTY, 111,
                 deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
         return ok();
     }
@@ -570,7 +570,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         eventorProcessor.process(user, session, dash, deviceId, pin, pinType, pinValue, now);
 
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
-        session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
+        session.sendToApps(HARDWARE, 111, deviceId, body);
         session.sendToSelectedDeviceOnWeb(HARDWARE, 111, body, deviceId);
 
         return ok();
@@ -726,10 +726,10 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
                 log.error("No session for user {}.", user.email);
                 return Response.ok();
             }
-            session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
+            session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
 
             if (dash.isActive) {
-                session.sendToApps(HARDWARE, 111, dashId, deviceId, body);
+                session.sendToApps(HARDWARE, 111, deviceId, body);
             }
         }
 

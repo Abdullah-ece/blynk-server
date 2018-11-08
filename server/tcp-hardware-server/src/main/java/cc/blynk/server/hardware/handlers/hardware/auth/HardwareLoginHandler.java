@@ -37,7 +37,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -89,8 +88,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         channel.flush();
 
-        String responseBody = String.valueOf(dash.id) + DEVICE_SEPARATOR + device.id;
-        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, responseBody);
+        String responseBody = "" + device.id;
+        session.sendToApps(HARDWARE_CONNECTED, msgId, responseBody);
         session.sendToWeb(HARDWARE_CONNECTED, msgId, responseBody);
         log.trace("Connected device id {}, dash id {}", device.id, dash.id);
         device.connected();

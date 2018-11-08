@@ -25,7 +25,6 @@ import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -116,9 +115,8 @@ public final class CommonByteBufUtil {
         return new ResponseMessage(msgId, responseCode);
     }
 
-    public static StringMessage deviceOffline(int dashId, int deviceId) {
-        return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
-                String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
+    public static StringMessage deviceOffline(int deviceId) {
+        return makeASCIIStringMessage(DEVICE_OFFLINE, 0, String.valueOf(deviceId));
     }
 
     public static StringMessage makeUTF8StringMessage(short cmd, int msgId, String data) {

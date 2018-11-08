@@ -57,7 +57,7 @@ public final class MobileActivateDashboardLogic {
             for (Device device : devices) {
                 String pmBody = dash.buildPMMessage(device.id);
                 if (pmBody == null) {
-                    if (!session.isHardwareConnected(dashId, device.id)) {
+                    if (!session.isHardwareConnected(device.id)) {
                         log.debug("No device in session.");
                         if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                             ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
@@ -65,7 +65,7 @@ public final class MobileActivateDashboardLogic {
                     }
                 } else {
                     if (device.fitsBufferSize(pmBody.length())) {
-                        if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
+                        if (session.sendMessageToHardware(HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
                             log.debug("No device in session.");
                             if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                                 ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
@@ -96,8 +96,7 @@ public final class MobileActivateDashboardLogic {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, isNewSyncFormat);
+            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET);
             appChannel.flush();
         }
     }

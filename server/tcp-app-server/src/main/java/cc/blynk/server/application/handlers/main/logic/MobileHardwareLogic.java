@@ -77,8 +77,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             for (Channel channel : session.appChannels) {
                 MobileStateHolder mobileStateHolder = getAppState(channel);
                 if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
-                    boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
-                    profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
+                    profile.sendAppSyncs(dash, channel, selectedDeviceId);
                 }
                 channel.flush();
             }
@@ -172,7 +171,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
                 session.sendToSelectedDeviceOnWeb(APP_SYNC, message.id, split[1], deviceIds);
 
-                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)
+                if (session.sendMessageToHardware(HARDWARE, message.id, split[1], deviceIds)
                         && !dash.isNotificationsOff) {
                     log.debug("No device in session.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());

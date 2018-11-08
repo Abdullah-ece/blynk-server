@@ -23,7 +23,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
  * The Blynk Project.
@@ -166,12 +166,12 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int targetId) {
         for (Tile tile : tiles) {
             if ((targetId == ANY_TARGET || tile.deviceId == targetId)
                     && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
-                String body = prependDashIdAndDeviceId(dashId, tile.deviceId, hardBody);
+                String body = prependDeviceId(tile.deviceId, hardBody);
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }

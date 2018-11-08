@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 
 /**
@@ -56,13 +56,13 @@ public class Map extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int targetId) {
         if (isNotValid() || lastCommands.size() == 0) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             for (String storedValue : lastCommands) {
-                String body = prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
+                String body = prependDeviceId(deviceId, makeHardwareBody(pinType, pin, storedValue));
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }

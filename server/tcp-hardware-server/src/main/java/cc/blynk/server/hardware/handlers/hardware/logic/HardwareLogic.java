@@ -87,9 +87,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             Session session = sessionDao.userSession.get(email);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
-            if (dash.isActive) {
-                session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
-            }
+            session.sendToApps(HARDWARE, message.id, deviceId, body);
             session.sendToSelectedDeviceOnWeb(HARDWARE, message.id, body, deviceId);
         }
     }

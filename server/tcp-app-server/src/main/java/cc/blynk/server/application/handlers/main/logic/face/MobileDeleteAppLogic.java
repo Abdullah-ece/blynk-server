@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -23,11 +22,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 public final class MobileDeleteAppLogic {
 
     private final TimerWorker timerWorker;
-    private final SessionDao sessionDao;
 
     public MobileDeleteAppLogic(Holder holder) {
         this.timerWorker = holder.timerWorker;
-        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
@@ -47,7 +44,6 @@ public final class MobileDeleteAppLogic {
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
                 timerWorker.deleteTimers(state.user.email, dash);
-                sessionDao.closeHardwareChannelByDashId(state.user.email, dash.id);
             } else {
                 result.add(dash);
             }

@@ -41,7 +41,7 @@ public class MobileChannelStateHandler extends ChannelInboundHandlerAdapter {
                     if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                         log.trace("{}-{}. Sending App Disconnected event to hardware.",
                                 state.user.email, state.user.orgId);
-                        session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "adis");
+                        session.sendMessageToHardware(Command.BLYNK_INTERNAL, 7777, "adis");
                     }
                 }
             }

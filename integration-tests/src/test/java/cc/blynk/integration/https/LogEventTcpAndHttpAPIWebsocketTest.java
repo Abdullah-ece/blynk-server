@@ -74,7 +74,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(1));
         newHardClient.send("logEvent temp_is_high");
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -105,7 +105,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.verifyResult(ok(1));
         newHardClient.logEvent("temp_is_high", "123" + StringUtils.BODY_SEPARATOR_STRING);
         newHardClient.verifyResult(ok(2));
-        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         client.reset();
 
         long now = System.currentTimeMillis();
@@ -135,7 +135,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         client.reset();
 
         newHardClient.send("logEvent temp_is_high");
@@ -516,7 +516,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         newHardClient.stop();
         client.reset();
 
@@ -524,7 +524,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "1-" + + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         newHardClient.stop();
         client.reset();
 
@@ -556,7 +556,7 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         newHardClient.start();
         newHardClient.send("login " + device.token);
         newHardClient.verifyResult(ok(1));
-        client.verifyResult(hardwareConnected(1, "1-" + device.id));
+        client.verifyResult(hardwareConnected(1, device.id));
         client.reset();
 
         sleep(500);

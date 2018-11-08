@@ -14,8 +14,7 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
  * The Blynk Project.
@@ -41,10 +40,10 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
 
     public volatile String value;
 
-    public static String makeMultiValueHardwareBody(int dashId, int deviceId,
-                                                       char pintTypeChar, short pin, Iterator<?> values) {
+    public static String makeMultiValueHardwareBody(int deviceId,
+                                                    char pintTypeChar, short pin, Iterator<?> values) {
         StringBuilder sb = new StringBuilder();
-        sb.append(dashId).append(DEVICE_SEPARATOR).append(deviceId).append(BODY_SEPARATOR)
+        sb.append(deviceId).append(BODY_SEPARATOR)
           .append(pintTypeChar).append('m').append(BODY_SEPARATOR).append(pin);
         while (values.hasNext()) {
             String value = values.next().toString();
@@ -62,7 +61,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int targetId) {
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
         if (isAssignedToDeviceSelector()) {
@@ -71,7 +70,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             String hardBody = makeHardwareBody();
             if (hardBody != null) {
-                String body = prependDashIdAndDeviceId(dashId, this.deviceId, hardBody);
+                String body = prependDeviceId(this.deviceId, hardBody);
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }

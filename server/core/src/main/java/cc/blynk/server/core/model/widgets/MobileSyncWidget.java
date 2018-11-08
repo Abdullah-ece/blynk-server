@@ -16,7 +16,6 @@ public interface MobileSyncWidget {
     int SYNC_DEFAULT_MESSAGE_ID = 1111;
     int ANY_TARGET = -1;
 
-    //todo remove useNewFormat in future. leave it for a while for back compatibility
-    void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewFormat);
+    void sendAppSync(Channel appChannel, int targetId);
 
 }

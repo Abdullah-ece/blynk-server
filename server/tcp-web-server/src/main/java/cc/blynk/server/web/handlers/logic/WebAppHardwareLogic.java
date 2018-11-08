@@ -80,8 +80,7 @@ public class WebAppHardwareLogic {
 
         //sending to shared dashes and master-master apps
 
-        //"0" - temp solution, until app will not support new format.
-        session.sendToApps(APP_SYNC, message.id, 0, deviceId, split[1]);
+        session.sendToApps(APP_SYNC, message.id, deviceId, split[1]);
 
         session.sendToSelectedDeviceOnWeb(channel, APP_SYNC, message.id, split[1], deviceId);
 

@@ -148,7 +148,7 @@ public class WebhookProcessor extends NotificationBase {
                         String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin,
                                 response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);
-                        session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body, deviceId);
+                        session.sendMessageToHardware(Command.HARDWARE, 888, body, deviceId);
                     }
                 } else {
                     webHook.failureCounter++;

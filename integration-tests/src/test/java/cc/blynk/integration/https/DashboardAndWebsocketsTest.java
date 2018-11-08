@@ -260,10 +260,10 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appClient.verifyResult(ok(1));
 
         appWebSocketClient.send("hardware 0 vw 10 100");
-        appClient.verifyResult(appSync(2, "0-0 vw 10 100"));
+        appClient.verifyResult(appSync(2, "0 vw 10 100"));
 
         appClient.sync(1);
-        appClient.verifyResult(appSync(2, b("0-0 vw 10 100")));
+        appClient.verifyResult(appSync(2, b("0 vw 10 100")));
 
     }
 
@@ -324,7 +324,8 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.verifyResult(appSync(3, b("1 vw 2 222")));
 
         appWebSocketClient.send("hardware 1 vw 10 100");
-        appClient.verifyResult(appSync(3, b("0-1 vw 10 100")));
+        appClient.verifyResult(appSync(3, b("1 vw 10 100")));
+        appClient.verifyResult(deviceNotInNetwork(3));
     }
 
     @Test

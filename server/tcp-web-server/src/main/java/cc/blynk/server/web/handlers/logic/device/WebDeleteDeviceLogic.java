@@ -77,7 +77,7 @@ public class WebDeleteDeviceLogic {
         deviceDao.delete(deviceId);
         tokenManager.deleteDevice(device);
         Session session = sessionDao.userSession.get(state.user.email);
-        session.closeHardwareChannelByDeviceId(dash.id, deviceId);
+        session.closeHardwareChannelByDeviceId(deviceId);
 
         blockingIOProcessor.executeHistory(() -> {
             try {

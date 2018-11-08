@@ -125,8 +125,8 @@ public final class StringUtils {
         return split2(BODY_SEPARATOR, body);
     }
 
-    public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
-        return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
+    public static String prependDeviceId(int deviceId, String body) {
+        return "" + deviceId + BODY_SEPARATOR + body;
     }
 
     public static String randomPassword(int len) {

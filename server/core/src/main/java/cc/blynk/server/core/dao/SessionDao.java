@@ -86,11 +86,6 @@ public class SessionDao {
         return null;
     }
 
-    public void closeHardwareChannelByDashId(String email, int dashId) {
-        Session session = userSession.get(email);
-        session.closeHardwareChannelByDashId(dashId);
-    }
-
     public void close() {
         System.out.println("Closing all sockets...");
         DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);

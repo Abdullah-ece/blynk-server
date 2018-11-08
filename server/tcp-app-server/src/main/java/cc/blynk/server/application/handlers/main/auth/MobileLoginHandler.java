@@ -212,7 +212,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                 log.trace("{}-{}. Sending App Connected event to hardware for project {}.",
                         user.email, user.orgId, dashBoard.id);
-                session.sendMessageToHardware(dashBoard.id, BLYNK_INTERNAL, 7777, "acon");
+                session.sendMessageToHardware(BLYNK_INTERNAL, 7777, "acon");
             }
         }
 

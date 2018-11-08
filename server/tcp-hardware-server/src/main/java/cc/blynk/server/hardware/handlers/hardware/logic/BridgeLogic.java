@@ -109,7 +109,6 @@ public class BridgeLogic {
             var bridgeMessage = new StringMessage(message.id, BRIDGE, body);
 
             var targetDeviceId = tokenvalue.device.id;
-            var targetDashId = tokenvalue.dash.id;
 
             if (session.hardwareChannels.size() > 1) {
                 var messageWasSent = false;
@@ -117,7 +116,7 @@ public class BridgeLogic {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (hardwareState != null
-                                && hardwareState.isSameDashAndDeviceId(targetDashId, targetDeviceId)) {
+                                && hardwareState.isSameDevice(targetDeviceId)) {
                             messageWasSent = true;
                             channel.writeAndFlush(bridgeMessage, channel.voidPromise());
                         }

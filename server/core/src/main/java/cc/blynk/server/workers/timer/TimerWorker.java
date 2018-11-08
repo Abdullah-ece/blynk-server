@@ -296,11 +296,11 @@ public class TimerWorker implements Runnable {
     private void triggerTimer(SessionDao sessionDao, String userKey, String value, int dashId, int[] deviceIds) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
-            if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceIds)) {
+            if (!session.sendMessageToHardware(HARDWARE, TIMER_MSG_ID, value, deviceIds)) {
                 actuallySendTimers++;
             }
             for (int deviceId : deviceIds) {
-                session.sendToApps(HARDWARE, TIMER_MSG_ID, dashId, deviceId, value);
+                session.sendToApps(HARDWARE, TIMER_MSG_ID, deviceId, value);
             }
         }
     }

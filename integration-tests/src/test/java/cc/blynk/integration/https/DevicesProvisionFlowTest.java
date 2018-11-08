@@ -399,7 +399,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.send("ping");
         newHardClient.verifyResult(ok(3));
 
-        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(2, deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id, true);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -417,7 +417,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -486,7 +486,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(2, deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(6);
@@ -516,7 +516,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(1, deviceFromApi.id));
 
         appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(appClient.getBody(2), 0);
@@ -575,7 +575,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient.send("internal " + b("ver 0.3.1 tmpl TMPL0001 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(2, deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -595,7 +595,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -643,7 +643,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(2, deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -662,7 +662,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(1, deviceFromApi.id));
     }
 
     @Test
@@ -710,7 +710,7 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
 
         newHardClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         newHardClient.verifyResult(ok(2));
-        appClient.verifyResult(hardwareConnected(2, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(2, deviceFromApi.id));
 
         appClient.getDevice(deviceFromApi.id);
         Device provisionedDevice = appClient.parseDevice(4);
@@ -730,6 +730,6 @@ public class DevicesProvisionFlowTest extends SingleServerInstancePerTestWithDBA
         newHardClient.start();
         newHardClient.send("login " + deviceFromApi.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        appClient.verifyResult(hardwareConnected(1, "1-" + deviceFromApi.id));
+        appClient.verifyResult(hardwareConnected(1, deviceFromApi.id));
     }
 }

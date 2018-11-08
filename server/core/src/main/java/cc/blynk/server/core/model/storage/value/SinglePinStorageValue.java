@@ -10,7 +10,7 @@ import java.util.Collections;
 
 import static cc.blynk.server.core.model.widgets.MobileSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
  * The Blynk Project.
@@ -43,10 +43,10 @@ public class SinglePinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, DashPinStorageKey key, boolean useNewFormat) {
+    public void sendAppSync(Channel appChannel, DashPinStorageKey key) {
         if (value != null) {
             String body = key.makeHardwareBody(value);
-            String finalBody = prependDashIdAndDeviceId(key.dashId, key.deviceId, body);
+            String finalBody = prependDeviceId(key.deviceId, body);
             //special case for setProperty
             short cmdType = key.getCmdType();
             StringMessage message = makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, finalBody);

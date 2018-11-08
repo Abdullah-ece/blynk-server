@@ -1,8 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
-import cc.blynk.server.core.protocol.handlers.decoders.MobileMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -11,22 +9,20 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
-import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.getWebState;
-import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
-import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDeviceId;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.utils.StringUtils.prependDeviceId;
 
 /**
  * The Blynk Project.
@@ -40,9 +36,9 @@ public class Session {
     private static final Logger log = LogManager.getLogger(Session.class);
 
     public final EventLoop initialEventLoop;
-    public final Set<Channel> webChannels = new ConcurrentSet<>();
-    public final Set<Channel> appChannels = new ConcurrentSet<>();
-    public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+    public final Set<Channel> appChannels = ConcurrentHashMap.newKeySet();
+    public final Set<Channel> hardwareChannels = ConcurrentHashMap.newKeySet();
+    private final Set<Channel> webChannels = ConcurrentHashMap.newKeySet();
 
     private final ChannelFutureListener webRemover = future -> webChannels.remove(future.channel());
     private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
@@ -58,22 +54,6 @@ public class Session {
 
     public boolean isSameEventLoop(Channel channel) {
         return initialEventLoop == channel.eventLoop();
-    }
-
-    private static int getRequestRate(Set<Channel> channels) {
-        double sum = 0;
-        for (Channel ch : channels) {
-            MessageDecoder messageDecoder = ch.pipeline().get(MessageDecoder.class);
-            if (messageDecoder != null) {
-                sum += messageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
-            } else {
-                MobileMessageDecoder mobileMessageDecoder = ch.pipeline().get(MobileMessageDecoder.class);
-                if (mobileMessageDecoder != null) {
-                    sum += mobileMessageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
-                }
-            }
-        }
-        return (int) sum;
     }
 
     public static boolean needSync(Channel channel, String sharedToken) {
@@ -99,11 +79,11 @@ public class Session {
         }
     }
 
-    private Set<Channel> filter(int bodySize, int activeDashId, int[] deviceIds) {
+    private Set<Channel> filter(int bodySize, int[] deviceIds) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dash.id == activeDashId
+            if (hardwareState != null
                     && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
                 if (hardwareState.device.fitsBufferSize(bodySize)) {
                     targetChannels.add(channel);
@@ -130,24 +110,14 @@ public class Session {
         return targetChannels;
     }
 
-    private Set<Channel> filter(int deviceId) {
-        Set<Channel> targetChannels = new HashSet<>();
-        for (Channel channel : hardwareChannels) {
-            if (isSameDeviceId(channel, deviceId)) {
-                targetChannels.add(channel);
-            }
-        }
-        return targetChannels;
-    }
-
     public boolean sendMessageToHardware(short cmd, int msgId, String body, int deviceId) {
         return hardwareChannels.size() == 0
                 || sendMessageToHardware(filter(body.length(), deviceId), cmd, msgId, body);
     }
 
-    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
+    public boolean sendMessageToHardware(short cmd, int msgId, String body, int... deviceIds) {
         return hardwareChannels.size() == 0
-                || sendMessageToHardware(filter(body.length(), activeDashId, deviceIds), cmd, msgId, body);
+                || sendMessageToHardware(filter(body.length(), deviceIds), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(short cmd, int msgId, String body) {
@@ -169,40 +139,31 @@ public class Session {
         return hardwareChannels.size() > 0;
     }
 
-    public boolean isHardwareConnected(int dashId, int deviceId) {
+    public boolean isHardwareConnected(int devideId) {
         for (Channel channel : hardwareChannels) {
-            if (isSameDashAndDeviceId(channel, dashId, deviceId)) {
+            if (isSameDeviceId(channel, devideId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isHardwareConnected(int dashId) {
-        for (Channel channel : hardwareChannels) {
-            if (isSameDash(channel, dashId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void sendOfflineMessageToApps(int dashId, int deviceId) {
+    public void sendOfflineMessageToApps(int deviceId) {
         int targetsNum = appChannels.size();
         if (targetsNum > 0) {
             log.trace("Sending device offline message to app.");
 
-            StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            StringMessage deviceOfflineMessage = deviceOffline(deviceId);
             sendMessageToMultipleReceivers(appChannels, deviceOfflineMessage);
         }
     }
 
-    public void sendOfflineMessageToWeb(int dashId, int deviceId) {
+    public void sendOfflineMessageToWeb(int deviceId) {
         int targetsNum = webChannels.size();
         if (targetsNum > 0) {
             log.trace("Sending device offline message to webapp.");
 
-            StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            StringMessage deviceOfflineMessage = deviceOffline(deviceId);
             sendMessageToMultipleReceivers(webChannels, deviceOfflineMessage);
         }
     }
@@ -233,15 +194,16 @@ public class Session {
         }
     }
 
-    public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
+    public void sendToApps(short cmd, int msgId, int deviceId, String body) {
         if (isAppConnected()) {
-            String finalBody = prependDashIdAndDeviceId(dashId, deviceId, body);
-            sendToApps(cmd, msgId, dashId, finalBody);
+            String finalBody = prependDeviceId(deviceId, body);
+            sendToApps(cmd, msgId, finalBody);
         }
     }
 
-    public void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
-        Set<Channel> targetChannels = filterByDash(dashId);
+    public void sendToApps(short cmd, int msgId, String finalBody) {
+        //todo permissions filter
+        Set<Channel> targetChannels = appChannels;
 
         int targetsNum = targetChannels.size();
         if (targetsNum > 0) {
@@ -254,16 +216,6 @@ public class Session {
         if (targetsNum > 0) {
             send(webChannels, cmd, msgId, finalBody);
         }
-    }
-
-    private Set<Channel> filterByDash(int dashId) {
-        Set<Channel> targetChannels = new HashSet<>();
-        for (Channel channel : appChannels) {
-            if (isSameDash(channel, dashId)) {
-                targetChannels.add(channel);
-            }
-        }
-        return targetChannels;
     }
 
     private static void sendMessageToMultipleReceivers(Set<Channel> targets, StringMessage msg) {
@@ -301,25 +253,9 @@ public class Session {
         return webChannels.size() > 0;
     }
 
-    public int getAppRequestRate() {
-        return getRequestRate(appChannels);
-    }
-
-    public int getHardRequestRate() {
-        return getRequestRate(hardwareChannels);
-    }
-
-    public void closeHardwareChannelByDeviceId(int dashId, int deviceId) {
+    public void closeHardwareChannelByDeviceId(int deviceId) {
         for (Channel channel : hardwareChannels) {
-            if (isSameDashAndDeviceId(channel, dashId, deviceId)) {
-                channel.close();
-            }
-        }
-    }
-
-    public void closeHardwareChannelByDashId(int dashId) {
-        for (Channel channel : hardwareChannels) {
-            if (isSameDash(channel, dashId)) {
+            if (isSameDeviceId(channel, deviceId)) {
                 channel.close();
             }
         }
