@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.TokenGeneratorUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 
@@ -15,6 +17,8 @@ import java.util.Collection;
  * Created on 14.10.16.
  */
 public class TokenManager {
+
+    private static final Logger log = LogManager.getLogger(TokenManager.class);
 
     private final RegularTokenManager regularTokenManager;
     private final SharedTokenManager sharedTokenManager;
@@ -50,17 +54,21 @@ public class TokenManager {
         return sharedTokenManager.getUserByToken(token);
     }
 
-    public void assignToken(User user, DashBoard dash, Device device, String newToken, boolean isTemporary) {
-        String oldToken = regularTokenManager.assignToken(user, dash, device, newToken, isTemporary);
+    public void assignTempToken(TemporaryTokenValue temporaryTokenValue) {
+        String newToken = TokenGeneratorUtil.generateNewToken();
+        temporaryTokenValue.device.token = newToken;
+        regularTokenManager.cache.put(newToken, temporaryTokenValue);
+        log.debug("Generated temp token for user {}, dashId {}, deviceId {} is {}.",
+                temporaryTokenValue.user.email, temporaryTokenValue.dash.id, temporaryTokenValue.device.id, newToken);
+    }
+
+    public void assignToken(User user, DashBoard dash, Device device, String newToken) {
+        String oldToken = regularTokenManager.assignToken(user, dash, device, newToken);
 
         dbManager.assignServerToToken(newToken, host, user.email, dash.id, device.id);
         if (oldToken != null) {
             dbManager.removeToken(oldToken);
         }
-    }
-
-    public void assignToken(User user, DashBoard dash, Device device, String newToken) {
-        assignToken(user, dash, device, newToken, false);
     }
 
     public String refreshToken(User user, DashBoard dash, Device device) {

@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,9 +43,8 @@ public final class MobileGetProvisionTokenLogic {
 
         temporaryDevice.id = holder.deviceDao.getId();
 
-        String tempToken = TokenGeneratorUtil.generateNewToken();
-        log.debug("Getting provision dashId = {} token {} for deviceId {}.", dashId, tempToken, temporaryDevice.id);
-        holder.tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
+        log.debug("Getting provision token for dashId = {} and deviceId {}.", dashId, temporaryDevice.id);
+        holder.tokenManager.assignTempToken(new TemporaryTokenValue(user, dash, temporaryDevice));
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,

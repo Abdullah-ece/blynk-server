@@ -33,15 +33,13 @@ class RegularTokenManager {
         }
     }
 
-    String assignToken(User user, DashBoard dash, Device device, String newToken, boolean isTemporary) {
+    String assignToken(User user, DashBoard dash, Device device, String newToken) {
         // Clean old token from cache if exists.
         String oldToken = deleteDeviceToken(device.token);
 
         //assign new token
         device.token = newToken;
-        TokenValue tokenValue = isTemporary
-                ? new TemporaryTokenValue(user, dash, device)
-                : new TokenValue(user, dash, device);
+        TokenValue tokenValue = new TokenValue(user, dash, device);
         cache.put(newToken, tokenValue);
 
         //device activated when new token is assigned
