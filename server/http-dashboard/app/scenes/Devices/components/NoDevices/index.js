@@ -49,12 +49,7 @@ class NoDevices extends React.Component {
       return (
         <div>
           <div className="devices-no-items-description">
-            Here you will find a list of all of your activated devices and their data visualized.
-            You will be able to edit their data and track important events.
-            <br/>
-            <br/>
-            You need to have at least one Product set up before adding new devices. <br/><br/>
-            Please contact {this.props.organization.name} for details
+            Here you will find a list of all of your activated devices and their data visualized
           </div>
         </div>
       );
@@ -87,8 +82,7 @@ class NoDevices extends React.Component {
           { !this.props.isAnyProductExist && this.renderNoDevice() || (
             <div>
               <div className="devices-no-items-description">
-                Here you will find a list of all of your activated devices and their data visualized.
-                You will be able to edit their data and track important events.
+                Here you will find a list of all of your activated devices and their data visualized
               </div>
               <div className="devices-no-items-action">
                 <Link to="/devices/create">
