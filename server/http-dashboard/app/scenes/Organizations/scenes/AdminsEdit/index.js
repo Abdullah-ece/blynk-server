@@ -46,6 +46,10 @@ class AdminsEditScene extends React.Component {
 
     params: PropTypes.object,
 
+    allowResendInvite: PropTypes.bool,
+
+    orgId: PropTypes.number,
+
     resetForm: PropTypes.func,
     OrganizationSendInvite: PropTypes.func,
     OrganizationsUsersFetch: PropTypes.func,
@@ -138,6 +142,8 @@ class AdminsEditScene extends React.Component {
       loading: this.props.admins.get('userDeleteLoading'),
       onAdminDelete: this.handleAdminDelete,
       data: this.props.admins.get('users').filter(user => user.get('roleId') === ORG_INVITE_ROLE_ID),
+      allowResendInvite: this.props.allowResendInvite,
+      orgId: this.props.orgId,
     };
 
     return (

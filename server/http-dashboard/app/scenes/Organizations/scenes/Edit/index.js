@@ -307,7 +307,7 @@ class Edit extends React.Component {
         onDelete={this.handleOrganizationDelete}
         products={this.props.products}
         onTabChange={this.handleTabChange}
-        adminsComponent={<AdminsEditScene params={this.props.params}/>}
+        adminsComponent={<AdminsEditScene params={this.props.params} allowResendInvite={true} orgId={Number(this.props.params.id)}/>}
         productsComponent={<ProductsEdit products={this.props.products}/>}
         activeTab={this.props.activeTab}
       />

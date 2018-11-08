@@ -195,7 +195,7 @@ class Details extends React.Component {
             <TabPane tab="Admins"
                      key={this.TABS.ADMINS}>
               <div className="organizations-manage-tab-wrapper">
-                <AdminsEditScene params={this.props.params}/>
+                <AdminsEditScene params={this.props.params} allowResendInvite={true} orgId={Number(this.props.params.id)}/>
               </div>
             </TabPane>
           </Tabs>

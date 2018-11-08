@@ -18,6 +18,7 @@ import {
   Map
 }                           from 'immutable';
 import './styles.less';
+import {ResendInvite} from "components";
 
 @connect((state) => ({
   sortInfo: state.Organizations.getIn(['adminTableListOptions', 'sortInfo']),
@@ -33,9 +34,13 @@ class AdminTableList extends React.Component {
     sortInfo: PropTypes.instanceOf(Map),
     selectedRows: PropTypes.instanceOf(List),
 
+    allowResendInvite: PropTypes.bool,
+
     onAdminDelete: PropTypes.func,
     updateSortInfo: PropTypes.func,
     updateSelectedRows: PropTypes.func,
+
+    orgId: PropTypes.number,
 
     loading: PropTypes.bool,
   };
@@ -84,6 +89,27 @@ class AdminTableList extends React.Component {
       onFilter: (value, record) => record.status === value,
       sorter: (a, b) => alphabetSort(a.status, b.status),
       render: (text, record) => <Status status={record.status}/>
+    }, {
+      title: '',
+      dataIndex: '',
+      render: (text, record) => {
+        if(this.props.allowResendInvite !== true)
+          return null;
+
+        if(record.status === 'Pending') {
+
+          const user = {
+            orgId: this.props.orgId,
+            name: record.name,
+            email: record.email,
+            roleId: record.roleId,
+          };
+
+          return (
+            <ResendInvite user={user}/>
+          );
+        }
+      }
     }];
   }
 
