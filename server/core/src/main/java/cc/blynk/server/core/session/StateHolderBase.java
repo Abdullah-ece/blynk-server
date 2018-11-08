@@ -15,4 +15,6 @@ public interface StateHolderBase {
 
     boolean isSameDevice(int deviceId);
 
+
+
 }

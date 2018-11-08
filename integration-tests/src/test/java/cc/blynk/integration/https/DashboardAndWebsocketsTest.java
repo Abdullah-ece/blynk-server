@@ -407,9 +407,9 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         appWebSocketClient.reset();
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDiskDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, PinType.VIRTUAL, (byte) 3, GraphGranularityType.DAILY));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", regularUser.email,
-                ReportingDiskDao.generateFilename(0, 1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, PinType.VIRTUAL, (byte) 4, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -519,14 +519,14 @@ public class DashboardAndWebsocketsTest extends APIBaseTest {
         aggregationValue.update(1.11D);
         Map<AggregationKey, AggregationValue> data = new HashMap<>();
         data.put(
-                new AggregationKey("123", 1, 1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
+                new AggregationKey("123", 1, 1, PinType.VIRTUAL, (byte) 3, (now - 60_000) / MINUTE),
                 aggregationValue
         );
 
         aggregationValue = new AggregationValue();
         aggregationValue.update(1.22D);
         data.put(
-                new AggregationKey("123", 1, 1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
+                new AggregationKey("123", 1, 1, PinType.VIRTUAL, (byte) 3, now / MINUTE),
                 aggregationValue
         );
         holder.reportingDBManager.reportingDBDao.insert(data, GraphGranularityType.MINUTE);

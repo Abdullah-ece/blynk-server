@@ -285,7 +285,7 @@ public class TimerWorker implements Runnable {
                             setPinAction.dataStream.pinType, setPinAction.value, now);
                 }
 
-                triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);
+                triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
                 EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
@@ -293,7 +293,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void triggerTimer(SessionDao sessionDao, String userKey, String value, int dashId, int[] deviceIds) {
+    private void triggerTimer(SessionDao sessionDao, String userKey, String value, int[] deviceIds) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
             if (!session.sendMessageToHardware(HARDWARE, TIMER_MSG_ID, value, deviceIds)) {

@@ -57,14 +57,14 @@ import static org.jooq.impl.DSL.table;
 public class ReportingDBDao {
 
     public static final String insertMinute =
-            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO reporting_average_minute (email, device_id, pin, pin_type, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?)";
     private static final String insertHourly =
-            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO reporting_average_hourly (email, device_id, pin, pin_type, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?)";
     private static final String insertDaily =
-            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pin_type, ts, value) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO reporting_average_daily (email, device_id, pin, pin_type, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?)";
 
     public static final String selectMinute =
             "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -139,19 +139,17 @@ public class ReportingDBDao {
 
     public static void prepareReportingInsert(PreparedStatement ps,
                                                  String email,
-                                                 int dashId,
                                                  int deviceId,
                                                  short pin,
                                                  PinType pinType,
                                                  long ts,
                                                  double value) throws SQLException {
         ps.setString(1, email);
-        ps.setInt(2, dashId);
-        ps.setInt(3, deviceId);
-        ps.setShort(4, pin);
-        ps.setInt(5, pinType.ordinal());
-        ps.setTimestamp(6, new Timestamp(ts));
-        ps.setDouble(7, value);
+        ps.setInt(2, deviceId);
+        ps.setShort(3, pin);
+        ps.setInt(4, pinType.ordinal());
+        ps.setTimestamp(5, new Timestamp(ts));
+        ps.setDouble(6, value);
     }
 
     private static String getTableByGranularity(GraphGranularityType graphGranularityType) {
@@ -175,7 +173,7 @@ public class ReportingDBDao {
                                                GraphGranularityType type) throws SQLException {
         AggregationKey key = entry.getKey();
         AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.getEmail(), key.getDashId(), key.getDeviceId(),
+        prepareReportingInsert(ps, key.getEmail(), key.getDeviceId(),
                 key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
     }
 
@@ -195,18 +193,17 @@ public class ReportingDBDao {
                 final Object value = entry.getValue();
 
                 ps.setString(1, key.getEmail());
-                ps.setInt(2, key.getDashId());
-                ps.setInt(3, key.getDeviceId());
-                ps.setShort(4, key.getPin());
-                ps.setString(5, key.getPinType().pinTypeString);
-                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
+                ps.setInt(2, key.getDeviceId());
+                ps.setShort(3, key.getPin());
+                ps.setString(4, key.getPinType().pinTypeString);
+                ps.setTimestamp(5, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
 
                 if (value instanceof String) {
-                    ps.setString(7, (String) value);
-                    ps.setNull(8, Types.DOUBLE);
+                    ps.setString(6, (String) value);
+                    ps.setNull(7, Types.DOUBLE);
                 } else {
-                    ps.setNull(7, Types.VARCHAR);
-                    ps.setDouble(8, (Double) value);
+                    ps.setNull(6, Types.VARCHAR);
+                    ps.setDouble(7, (Double) value);
                 }
 
                 ps.addBatch();

@@ -117,15 +117,15 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -154,15 +154,15 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -191,17 +191,17 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -530,7 +530,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
@@ -611,7 +611,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.HOURLY));
         long pointNow = System.currentTimeMillis();
         long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
         pointNowTruncated -= TimeUnit.DAYS.toMillis(1);
@@ -682,12 +682,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature,yes", true);
@@ -763,12 +763,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
@@ -852,12 +852,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Мій датастрім", true);
@@ -941,17 +941,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1043,9 +1043,9 @@ public class ReportingTest extends BaseTest {
         long pointNow = System.currentTimeMillis();
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1127,17 +1127,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1227,17 +1227,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1320,17 +1320,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1413,17 +1413,17 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
@@ -1503,7 +1503,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
@@ -1575,7 +1575,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1654,7 +1654,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1738,7 +1738,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1817,7 +1817,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -1874,7 +1874,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
@@ -2028,7 +2028,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath10, 1.11D, 111111);
 
 
@@ -2179,7 +2179,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);

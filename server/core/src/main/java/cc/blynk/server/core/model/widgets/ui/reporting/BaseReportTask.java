@@ -162,7 +162,7 @@ public abstract class BaseReportTask implements Runnable {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
-                                        key.dashId, deviceId, reportDataStream.pinType,
+                                        deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
@@ -194,7 +194,7 @@ public abstract class BaseReportTask implements Runnable {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
-                                        key.dashId, deviceId, reportDataStream.pinType,
+                                        deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
@@ -222,7 +222,7 @@ public abstract class BaseReportTask implements Runnable {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
-                                        key.dashId, deviceId, reportDataStream.pinType,
+                                        deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {

@@ -15,21 +15,19 @@ public final class BaseReportingKey implements Serializable {
 
     public final String email;
     public final int orgId;
-    public final int dashId;
     public final int deviceId;
     public final PinType pinType;
     public final short pin;
 
     public BaseReportingKey(User user, GraphPinRequest graphPinRequest) {
         this(user.email, user.orgId,
-             graphPinRequest.dashId, graphPinRequest.deviceId,
+             graphPinRequest.deviceId,
              graphPinRequest.pinType, graphPinRequest.pin);
     }
 
-    public BaseReportingKey(String email, int orgId, int dashId, int deviceId, PinType pinType, short pin) {
+    public BaseReportingKey(String email, int orgId, int deviceId, PinType pinType, short pin) {
         this.email = email;
         this.orgId = orgId;
-        this.dashId = dashId;
         this.deviceId = deviceId;
         this.pinType = pinType;
         this.pin = pin;
@@ -46,9 +44,6 @@ public final class BaseReportingKey implements Serializable {
 
         BaseReportingKey that = (BaseReportingKey) o;
 
-        if (dashId != that.dashId) {
-            return false;
-        }
         if (deviceId != that.deviceId) {
             return false;
         }
@@ -68,7 +63,6 @@ public final class BaseReportingKey implements Serializable {
     public int hashCode() {
         int result = email != null ? email.hashCode() : 0;
         result = 31 * result + orgId;
-        result = 31 * result + dashId;
         result = 31 * result + deviceId;
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         result = 31 * result + (int) pin;

@@ -73,7 +73,7 @@ public final class MobileDeleteDeviceDataLogic {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (int deviceId : deviceIds) {
-                    int removedCounter = holder.reportingDiskDao.delete(user, dash.id, deviceId);
+                    int removedCounter = holder.reportingDiskDao.delete(user, deviceId);
                     log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());

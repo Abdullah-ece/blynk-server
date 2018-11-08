@@ -1349,7 +1349,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 

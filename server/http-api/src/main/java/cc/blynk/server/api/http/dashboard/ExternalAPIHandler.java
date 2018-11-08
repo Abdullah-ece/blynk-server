@@ -346,7 +346,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
         PinType pinType;
@@ -363,7 +362,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         //todo may be optimized
         try {
             java.nio.file.Path path = reportingDiskDao.csvGenerator.createCSV(
-                    user, dashId, deviceId, pinType, pin, deviceId);
+                    user, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());

@@ -99,7 +99,7 @@ public class ReportingWorker implements Runnable {
                         Files.createDirectories(userReportFolder);
                     }
 
-                    String fileName = generateFilename(keyToRemove.getDashId(),
+                    String fileName = generateFilename(
                             keyToRemove.getDeviceId(), keyToRemove.getPinType(), keyToRemove.getPin(), type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 

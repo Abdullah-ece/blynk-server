@@ -2,7 +2,6 @@ package cc.blynk.server.web.handlers;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileLogoutLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.common.WebBaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -18,6 +17,7 @@ import cc.blynk.server.web.handlers.logic.device.WebGetDevicesLogic;
 import cc.blynk.server.web.handlers.logic.device.WebGetMetaFieldLogic;
 import cc.blynk.server.web.handlers.logic.device.WebTrackDeviceLogic;
 import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceLogic;
+import cc.blynk.server.web.handlers.logic.device.WebUpdateDeviceMetafieldLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebGetDeviceTimelineLogic;
 import cc.blynk.server.web.handlers.logic.device.timeline.WebResolveLogEventLogic;
 import cc.blynk.server.web.handlers.logic.organization.WebCreateOrganizationLogic;

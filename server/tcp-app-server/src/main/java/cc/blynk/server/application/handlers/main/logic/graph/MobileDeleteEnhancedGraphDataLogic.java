@@ -89,7 +89,7 @@ public final class MobileDeleteEnhancedGraphDataLogic {
                     DataStream dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null && dataStream.pinType != null) {
                         int deviceId = target.getDeviceId();
-                        holder.reportingDiskDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
+                        holder.reportingDiskDao.delete(user, deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());

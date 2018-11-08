@@ -1,2 +1,6 @@
 alter table users add column org_id int;
 alter table users drop column appName;
+alter table reporting_average_minute drop column project_id;
+alter table reporting_average_hourly drop column project_id;
+alter table reporting_average_daily drop column project_id;
+alter table reporting_raw_data drop column project_id;

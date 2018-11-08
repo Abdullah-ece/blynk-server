@@ -651,13 +651,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);

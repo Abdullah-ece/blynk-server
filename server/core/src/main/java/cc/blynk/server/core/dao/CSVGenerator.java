@@ -39,24 +39,24 @@ public class CSVGenerator {
 
     public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
 
-    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, short pin) {
-        return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
+    private static Path generateExportCSVPath(String email, int deviceId, PinType pinType, short pin) {
+        return Paths.get(CSV_DIR, format(email, deviceId, pinType, pin));
     }
 
     //"%s_%s_%c%d.csv.gz"
-    private static String format(String email, int dashId, int deviceId, PinType pinType, short pin) {
+    private static String format(String email, int deviceId, PinType pinType, short pin) {
         long now = System.currentTimeMillis();
-        return email + "_" + dashId + "_" + deviceId + "_"
+        return email + "_" + deviceId + "_"
                 + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;
     }
 
-    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, short pin, int... deviceIds)
+    public Path createCSV(User user, int inDeviceId, PinType pinType, short pin, int... deviceIds)
             throws Exception {
         if (!DataStream.isValid(pin, pinType)) {
             throw new IllegalStateException("Wrong pin format.");
         }
 
-        Path path = generateExportCSVPath(user.email, dashId, inDeviceId, pinType, pin);
+        Path path = generateExportCSVPath(user.email, inDeviceId, pinType, pin);
 
         try (OutputStream output = Files.newOutputStream(path);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -64,7 +64,7 @@ public class CSVGenerator {
 
             int emptyDataCounter = 0;
             for (int deviceId : deviceIds) {
-                ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId,
+                ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, deviceId,
                         pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE, 0);
                 if (onePinData != null) {
                     writeBufToCsv(writer, onePinData, deviceId);

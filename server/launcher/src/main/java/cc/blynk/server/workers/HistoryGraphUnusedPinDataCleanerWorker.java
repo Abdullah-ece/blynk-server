@@ -68,6 +68,25 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
+    private static void add(Set<String> doNotRemovePaths,
+                            ReportingWidget reportingWidget) {
+        for (Report report : reportingWidget.reports) {
+            for (ReportSource reportSource : report.reportSources) {
+                int[] deviceIds = reportSource.getDeviceIds();
+                for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                    for (int deviceId : deviceIds) {
+                        for (GraphGranularityType type : GraphGranularityType.values()) {
+                            String filename = ReportingDiskDao.generateFilename(
+                                    deviceId,
+                                    reportDataStream.pinType, reportDataStream.pin, type);
+                            doNotRemovePaths.add(filename);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void add(Set<String> doNotRemovePaths, Profile profile,
                      DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
@@ -76,7 +95,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         } else if (widget instanceof ReportingWidget) {
             //reports can't be assigned to device tiles so we ignore deviceIds parameter
             ReportingWidget reportingWidget = (ReportingWidget) widget;
-            add(doNotRemovePaths, dash, reportingWidget);
+            add(doNotRemovePaths, reportingWidget);
         }
     }
 
@@ -109,29 +128,10 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
                 for (int deviceId : resultIds) {
                     for (GraphGranularityType type : GraphGranularityType.values()) {
-                        String filename = ReportingDiskDao.generateFilename(dash.id,
+                        String filename = ReportingDiskDao.generateFilename(
                                 deviceId,
                                 dataStream.pinType, dataStream.pin, type);
                         doNotRemovePaths.add(filename);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash,
-                            ReportingWidget reportingWidget) {
-        for (Report report : reportingWidget.reports) {
-            for (ReportSource reportSource : report.reportSources) {
-                int[] deviceIds = reportSource.getDeviceIds();
-                for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
-                    for (int deviceId : deviceIds) {
-                        for (GraphGranularityType type : GraphGranularityType.values()) {
-                            String filename = ReportingDiskDao.generateFilename(dash.id,
-                                    deviceId,
-                                    reportDataStream.pinType, reportDataStream.pin, type);
-                            doNotRemovePaths.add(filename);
-                        }
                     }
                 }
             }
