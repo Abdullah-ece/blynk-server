@@ -173,11 +173,11 @@ public final class ServerLauncher {
 
             DashBoard defaultSuperAdminDash = new DashBoard();
             defaultSuperAdminDash.id = 1;
-            defaultSuperAdminDash.name = "Main Airius Project 2";
+            defaultSuperAdminDash.name = "Main Blynk Project 2";
 
             DashBoard childDash = new DashBoard();
             childDash.id = 123;
-            childDash.name = "Child Airius Project";
+            childDash.name = "Child Blynk Project";
             childDash.parentId = defaultSuperAdminDash.id;
             childDash.isPreview = true;
             childDash.isActive = true;
@@ -197,7 +197,7 @@ public final class ServerLauncher {
 
     private static Organization createDefaultOrgData(Holder holder) {
         System.out.println("Creating default organization structure.");
-        Organization superOrg = new Organization("Airius", "Europe/Kiev",
+        Organization superOrg = new Organization("Blynk", "Europe/Kiev",
                 "/static/logo.png", true, SUPER_ORG_PARENT_ID, true,
                 new Role(Role.SUPER_ADMIN_ROLE_ID, "Super Admin", 0b11111111111111111111),
                 new Role(1, "Admin", 0b11111111111111111111),
