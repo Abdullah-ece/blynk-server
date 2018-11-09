@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
 import static cc.blynk.server.internal.WebByteBufUtil.json;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -32,6 +33,12 @@ public class WebCreateOrganizationLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, WebAppStateHolder state, StringMessage message) {
+        String[] split = split2(message.body);
+
+        int orgId = state.user.orgId;
+        if (split.length == 2) {
+            orgId = Integer.parseInt(split[0]);
+        }
         Organization newOrganization = JsonParser.parseOrganization(message.body, message.id);
 
         User user = state.user;
@@ -41,11 +48,11 @@ public class WebCreateOrganizationLogic {
             return;
         }
 
-        newOrganization.parentId = user.orgId;
+        newOrganization.parentId = orgId;
         //products are created via selectedProducts field
         newOrganization.products = EMPTY_PRODUCTS;
 
-        Organization parentOrg = organizationDao.getOrgById(user.orgId);
+        Organization parentOrg = organizationDao.getOrgById(orgId);
         if (parentOrg == null) {
             log.error("Organization for {} not found.", user.email);
             ctx.writeAndFlush(json(message.id, "Organization not found."), ctx.voidPromise());
@@ -55,6 +62,13 @@ public class WebCreateOrganizationLogic {
         if (!parentOrg.canCreateOrgs) {
             log.debug("Organization of {} cannot have sub organizations.", user.email);
             ctx.writeAndFlush(json(message.id, "Organization cannot have sub organizations."), ctx.voidPromise());
+            return;
+        }
+
+        newOrganization.roles = parentOrg.copyRolesExceptSuperAdminRole();
+        if (newOrganization.roles.length == 0) {
+            log.debug("Parent org {} cannot has 0 roles.", orgId);
+            ctx.writeAndFlush(json(message.id, "Parent organization has 0 roles."), ctx.voidPromise());
             return;
         }
 

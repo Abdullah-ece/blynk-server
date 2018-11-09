@@ -5,6 +5,7 @@ import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.api.http.dashboard.dto.OrganizationDTO;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.web.Organization;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.LocationMetaField;
@@ -208,4 +209,21 @@ public class OrganizationAPIWebsocketTest extends SingleServerInstancePerTestWit
         assertEquals("Dmitriy2", users[0].name);
     }
 
+    @Test
+    public void createSubOrg() throws Exception {
+        AppWebSocketClient client = loggedDefaultClient(getUserName(), "1");
+        client.getOrganization(orgId);
+        OrganizationDTO organizationDTO = client.parseOrganizationDTO(1);
+        assertNotNull(organizationDTO);
+        assertEquals(orgId, organizationDTO.id);
+
+        Organization subOrg = new Organization("SubOrg", "Europe/Kiev", "/static/logo.png", true, organizationDTO.id);
+        client.createOrganization(subOrg);
+        OrganizationDTO subOrgDTO = client.parseOrganizationDTO(2);
+        assertNotNull(subOrgDTO);
+        assertEquals(organizationDTO.id, subOrgDTO.parentId);
+        assertNotNull(subOrgDTO.roles);
+        assertEquals(3, subOrgDTO.roles.length);
+        assertEquals(1, subOrgDTO.roles[0].id);
+    }
 }

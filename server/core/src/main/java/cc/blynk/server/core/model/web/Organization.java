@@ -7,6 +7,9 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.utils.ArrayUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_PRODUCTS;
@@ -176,6 +179,16 @@ public class Organization {
     public int getDefaultRoleId() {
         Role lastRole = roles[roles.length - 1];
         return lastRole == null ? 1 : lastRole.id;
+    }
+
+    public Role[] copyRolesExceptSuperAdminRole() {
+        List<Role> copy = new ArrayList<>();
+        for (Role role : roles) {
+            if (!role.isSuperAdmin()) {
+                copy.add(role.copy());
+            }
+        }
+        return copy.toArray(new Role[0]);
     }
 
     @Override

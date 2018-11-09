@@ -1,11 +1,12 @@
 package cc.blynk.server.core.model.permissions;
 
+import cc.blynk.utils.CopyObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static cc.blynk.server.core.model.permissions.PermissionsTable.SUB_ORG_VIEW;
 
-public class Role {
+public class Role implements CopyObject<Role> {
 
     //special ID for role that indicates it is super admin role
     public static final int SUPER_ADMIN_ROLE_ID = 0;
@@ -37,4 +38,8 @@ public class Role {
         return (permissions & mask) == mask;
     }
 
+    @Override
+    public Role copy() {
+        return new Role(id, name, permissions);
+    }
 }
