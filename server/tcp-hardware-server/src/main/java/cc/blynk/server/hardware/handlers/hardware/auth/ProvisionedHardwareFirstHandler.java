@@ -38,13 +38,15 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
     private static final Logger log = LogManager.getLogger(ProvisionedHardwareFirstHandler.class);
 
     private final Holder holder;
+    private final int orgId;
     private final User user;
     private final DashBoard dash;
     private final Device device;
 
-    ProvisionedHardwareFirstHandler(Holder holder, User user, DashBoard dash, Device device) {
+    ProvisionedHardwareFirstHandler(Holder holder, int orgId, User user, DashBoard dash, Device device) {
         super(StringMessage.class);
         this.holder = holder;
+        this.orgId = orgId;
         this.user = user;
         this.dash = dash;
         this.device = device;
@@ -72,7 +74,6 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                 case 't': //tmpl
                     HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
                     String templateId = hardwareInfo.templateId;
-                    int orgId = user.orgId;
 
                     Product product;
                     if (templateId == null) {
@@ -104,7 +105,7 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
                     holder.deviceDao.createWithPredefinedId(orgId, device);
 
                     holder.tokenManager.updateRegularCache(
-                            device.token, new TokenValue(user, dash, device));
+                            device.token, new TokenValue(orgId, user, dash, device));
 
                     dash.addDeviceToTemplate(device, templateId);
                     device.activatedBy = user.email;

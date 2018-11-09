@@ -70,7 +70,7 @@ public final class MobileAssignTokenLogic {
                 return;
             }
 
-            tokenManager.assignToken(user, dash, device, token);
+            tokenManager.assignToken(user.orgId, user, dash, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

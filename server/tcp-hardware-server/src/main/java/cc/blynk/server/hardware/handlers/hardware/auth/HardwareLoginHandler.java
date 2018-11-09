@@ -120,6 +120,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
+        int orgId = tokenValue.orgId;
         User user = tokenValue.user;
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
@@ -128,7 +129,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             //this is special case for provisioned devices, we adding additional
             //handler in order to add product to the device
             ctx.pipeline().addBefore("H_Login", "HHProvisionedHardwareFirstGandler",
-                    new ProvisionedHardwareFirstHandler(holder, user, dash, device));
+                    new ProvisionedHardwareFirstHandler(holder, orgId, user, dash, device));
             ctx.writeAndFlush(ok(message.id));
             return;
         }

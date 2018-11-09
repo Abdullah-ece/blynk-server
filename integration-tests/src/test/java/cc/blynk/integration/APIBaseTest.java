@@ -119,7 +119,7 @@ public abstract class APIBaseTest extends CounterBase {
         Device device = new Device();
         device.name = "Default Device";
         this.token = TokenGeneratorUtil.generateNewToken();
-        holder.tokenManager.assignToken(regularUser, regularUser.profile.dashBoards[0], device, token);
+        holder.tokenManager.assignToken(org.id, regularUser, regularUser.profile.dashBoards[0], device, token);
         holder.deviceDao.createWithPredefinedId(org.id, device);
     }
 

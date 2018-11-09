@@ -58,7 +58,7 @@ public final class MobileCreateDeviceLogic {
         holder.deviceDao.create(orgId, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
-        holder.tokenManager.assignToken(user, dash, newDevice, newToken);
+        holder.tokenManager.assignToken(orgId, user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
         log.debug("Device for orgId {} created {}.", orgId, newDevice);

@@ -244,6 +244,10 @@ public final class AppWebSocketClient extends BaseTestAppClient {
         send("webGetMetafield " + deviceId + BODY_SEPARATOR + metafieldId);
     }
 
+    public void deleteOrg(int orgId) {
+        send("webDeleteOrg " + orgId);
+    }
+
     public void getOrganization(int orgId) {
         send("webGetOrg " + orgId);
     }

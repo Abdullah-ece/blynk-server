@@ -27,19 +27,19 @@ class RegularTokenManager {
         for (Organization org : orgs) {
             for (Device device : org.devices) {
                 if (device.token != null) {
-                    cache.put(device.token, new TokenValue(null, null, device));
+                    cache.put(device.token, new TokenValue(org.id, null, null, device));
                 }
             }
         }
     }
 
-    String assignToken(User user, DashBoard dash, Device device, String newToken) {
+    String assignToken(int orgId, User user, DashBoard dash, Device device, String newToken) {
         // Clean old token from cache if exists.
         String oldToken = deleteDeviceToken(device.token);
 
         //assign new token
         device.token = newToken;
-        TokenValue tokenValue = new TokenValue(user, dash, device);
+        TokenValue tokenValue = new TokenValue(orgId, user, dash, device);
         cache.put(newToken, tokenValue);
 
         //device activated when new token is assigned

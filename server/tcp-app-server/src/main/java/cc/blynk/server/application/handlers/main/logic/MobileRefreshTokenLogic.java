@@ -47,7 +47,7 @@ public final class MobileRefreshTokenLogic {
             return;
         }
 
-        String token = holder.tokenManager.refreshToken(user, dash, device);
+        String token = holder.tokenManager.refreshToken(user.orgId, user, dash, device);
 
         Session session = holder.sessionDao.userSession.get(state.user.email);
         session.closeHardwareChannelByDeviceId(deviceId);

@@ -108,7 +108,7 @@ public class DevicesHandler extends BaseHttpHandler {
 
         deviceDao.create(orgId, newDevice);
         String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, dash, newDevice, newToken);
+        tokenManager.assignToken(orgId, user, dash, newDevice, newToken);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

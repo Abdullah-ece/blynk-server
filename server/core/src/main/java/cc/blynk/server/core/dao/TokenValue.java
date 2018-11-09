@@ -11,13 +11,16 @@ import cc.blynk.server.core.model.device.Device;
  */
 public class TokenValue {
 
+    public final int orgId;
+
     public final User user;
 
     public final DashBoard dash;
 
     public final Device device;
 
-    public TokenValue(User user, DashBoard dash, Device device) {
+    public TokenValue(int orgId, User user, DashBoard dash, Device device) {
+        this.orgId = orgId;
         this.user = user;
         this.dash = dash;
         this.device = device;
@@ -29,6 +32,10 @@ public class TokenValue {
 
     public boolean isExpired(long now) {
         return false;
+    }
+
+    public boolean belongsToOrg(int orgId) {
+        return this.orgId == orgId;
     }
 
 }

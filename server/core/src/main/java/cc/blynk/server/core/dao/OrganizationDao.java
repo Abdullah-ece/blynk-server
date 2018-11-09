@@ -272,13 +272,13 @@ public class OrganizationDao {
     }
 
     public boolean delete(int orgId) {
+        List<User> users = userDao.getAllUsersByOrgId(orgId);
+        for (User user : users) {
+            userDao.delete(user.email);
+            fileManager.delete(user.email);
+        }
         Organization org = organizations.remove(orgId);
         if (org != null) {
-            List<User> users = userDao.getAllUsersByOrgId(orgId);
-            for (User user : users) {
-                userDao.delete(user.email);
-                fileManager.delete(user.email);
-            }
             fileManager.deleteOrg(orgId);
             return true;
         }

@@ -62,8 +62,8 @@ public class TokenManager {
                 temporaryTokenValue.user.email, temporaryTokenValue.dash.id, temporaryTokenValue.device.id, newToken);
     }
 
-    public void assignToken(User user, DashBoard dash, Device device, String newToken) {
-        String oldToken = regularTokenManager.assignToken(user, dash, device, newToken);
+    public void assignToken(int orgId, User user, DashBoard dash, Device device, String newToken) {
+        String oldToken = regularTokenManager.assignToken(orgId, user, dash, device, newToken);
 
         dbManager.assignServerToToken(newToken, host, user.email, dash.id, device.id);
         if (oldToken != null) {
@@ -71,9 +71,9 @@ public class TokenManager {
         }
     }
 
-    public String refreshToken(User user, DashBoard dash, Device device) {
+    public String refreshToken(int orgId, User user, DashBoard dash, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        assignToken(user, dash, device, newToken);
+        assignToken(orgId, user, dash, device, newToken);
         return newToken;
     }
 
@@ -84,11 +84,17 @@ public class TokenManager {
     }
 
     public void updateRegularCache(String token, TokenValue tokenValue) {
-        regularTokenManager.cache.put(token, new TokenValue(tokenValue.user, tokenValue.dash, tokenValue.device));
+        regularTokenManager.cache.put(token,
+                new TokenValue(tokenValue.orgId, tokenValue.user, tokenValue.dash, tokenValue.device));
     }
 
     public boolean clearTemporaryTokens() {
         long now = System.currentTimeMillis();
         return regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
+    }
+
+    public void deleteOrg(int orgId) {
+        //todo remove from DB?
+        regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().belongsToOrg(orgId));
     }
 }
