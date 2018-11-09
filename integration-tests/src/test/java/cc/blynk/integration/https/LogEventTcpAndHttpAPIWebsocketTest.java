@@ -138,10 +138,15 @@ public class LogEventTcpAndHttpAPIWebsocketTest extends SingleServerInstancePerT
         client.verifyResult(hardwareConnected(1, device.id));
         client.reset();
 
-        newHardClient.send("logEvent temp_is_high");
+        newHardClient.logEvent("temp_is_high");
         newHardClient.verifyResult(ok(2));
 
         client.verifyResult(logEvent(2, device.id + " CRITICAL temp_is_high"));
+
+        newHardClient.logEvent("temp_is_high", "222");
+        newHardClient.verifyResult(ok(3));
+
+        client.verifyResult(logEvent(3, device.id + " CRITICAL temp_is_high 222"));
     }
 
     @Test
