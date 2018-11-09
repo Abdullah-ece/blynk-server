@@ -28,7 +28,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
 import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -37,7 +36,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
-import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -146,7 +144,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             try {
                 long now = System.currentTimeMillis();
                 reportingDBManager.insertEvent(device.id, event.getType(), now, eventCode.hashCode(), description);
-                device.dataReceivedAt = now;
+                device.pinStorage.setDataReceivedAt(now);
                 ctx.writeAndFlush(ok(), ctx.voidPromise());
             } catch (Exception e) {
                 log.error("Error inserting log event.", e);
@@ -292,7 +290,6 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
-        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
@@ -305,11 +302,10 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
+        Device device = deviceDao.getById(deviceId);
 
-        if (widget == null) {
-            PinStorageValue value = user.profile.pinsStorage.get(
-                    new DashPinStorageKey(dash.id, deviceId, pinType, pin));
+        if (device != null) {
+            PinStorageValue value = device.pinStorage.get(pin, pinType);
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return Response.badRequest("Requested pin doesn't exist in the app.");
@@ -321,16 +317,8 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             }
         }
 
-        if (widget instanceof DeviceTiles) {
-            String value = ((DeviceTiles) widget).getValue(deviceId, pin, pinType);
-            if (value == null) {
-                log.debug("Requested pin {} not found. User {}", pinString, user.email);
-                return badRequest("Requested pin doesn't exist in the app.");
-            }
-            return ok(value);
-        }
-
-        return ok(widget.getJsonValue());
+        log.debug("Requested pin {} not found. User {}", pinString, user.email);
+        return Response.badRequest("Requested pin doesn't exist in the app.");
     }
 
     @GET
@@ -556,7 +544,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
 
         reportingDiskDao.process(user, dash, device, pin, pinType, pinValue, now);
         device.webDashboard.update(deviceId, pin, pinType, pinValue);
-        user.profile.update(dash, deviceId, pin, pinType, pinValue, now);
+        device.updateValue(dash, pin, pinType, pinValue, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
@@ -566,7 +554,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
             return Response.ok();
         }
 
-        eventorProcessor.process(user, session, dash, deviceId, pin, pinType, pinValue, now);
+        eventorProcessor.process(user, session, dash, device, pin, pinType, pinValue);
 
         session.sendMessageToHardware(HARDWARE, 111, body, deviceId);
         session.sendToApps(HARDWARE, 111, deviceId, body);
@@ -715,7 +703,7 @@ public class ExternalAPIHandler extends TokenBaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        user.profile.update(dash, deviceId, pin, pinType, pinsData[0].value, now);
+        device.updateValue(dash, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 

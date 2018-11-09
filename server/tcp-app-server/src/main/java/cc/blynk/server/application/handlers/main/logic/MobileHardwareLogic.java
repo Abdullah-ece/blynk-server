@@ -54,14 +54,16 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
                 holder.stats,
-                email));
+                email),
+                holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
     }
 
     public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
-                                                    Session session, Profile profile, DashBoard dash,
-                                                    StringMessage message, String[] splitBody) {
+                                             DeviceDao deviceDao,
+                                             Session session, DashBoard dash,
+                                             StringMessage message, String[] splitBody) {
         //in format "vu 200000 1"
         long widgetId = Long.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
@@ -74,10 +76,11 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
 
             //we need to send syncs not only to main app, but all to all shared apps
+            Device device = deviceDao.getByIdOrThrow(selectedDeviceId);
             for (Channel channel : session.appChannels) {
                 MobileStateHolder mobileStateHolder = getAppState(channel);
                 if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
-                    profile.sendAppSyncs(dash, channel, selectedDeviceId);
+                    device.sendPinStorageSyncs(channel);
                 }
                 channel.flush();
             }
@@ -138,7 +141,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             case 'u' :
                 //splitting "vu 200000 1"
                 String[] splitBody = split3(split[1]);
-                processDeviceSelectorCommand(ctx, session, state.user.profile, dash, message, splitBody);
+                processDeviceSelectorCommand(ctx, deviceDao, session, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -155,16 +158,11 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
-                    profile.update(dash, deviceId, pin, pinType, value, now);
                     Device device = deviceDao.getById(deviceId);
                     if (device != null) {
+                        device.updateValue(dash, pin, pinType, value, now);
                         device.webDashboard.update(device.id, pin, pinType, value);
                     }
-                }
-
-                //additional state for tag widget itself
-                if (target.isTag()) {
-                    profile.update(dash, targetId, pin, pinType, value, now);
                 }
 
                 //sending to shared dashes and master-master apps

@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -281,8 +282,10 @@ public class TimerWorker implements Runnable {
                 }
 
                 for (int deviceId : deviceIds) {
-                    profile.update(dash, deviceId, setPinAction.dataStream.pin,
-                            setPinAction.dataStream.pinType, setPinAction.value, now);
+                    Device device = deviceDao.getById(deviceId);
+                    if (device != null) {
+                        device.updateValue(dash, setPinAction.dataStream, setPinAction.value, now);
+                    }
                 }
 
                 triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), deviceIds);

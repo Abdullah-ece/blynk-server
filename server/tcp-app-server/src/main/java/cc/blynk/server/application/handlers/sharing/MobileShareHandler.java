@@ -70,7 +70,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case APP_SYNC :
-                MobileSyncLogic.messageReceived(ctx, state, msg);
+                MobileSyncLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case LOGOUT :
                 MobileLogoutLogic.messageReceived(ctx, state.user, msg);

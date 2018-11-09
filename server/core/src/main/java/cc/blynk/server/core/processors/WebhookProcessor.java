@@ -78,11 +78,11 @@ public class WebhookProcessor extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(now);
 
         if (webhook.isNotFailed(webhookFailureLimit) && webhook.url != null) {
-            process(session, dash.id, deviceId, webhook, triggerValue);
+            process(session, deviceId, webhook, triggerValue);
         }
     }
 
-    private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
+    private void process(Session session, int deviceId,  WebHook webHook, String triggerValue) {
         String newUrl = format(webHook.url, triggerValue);
 
         if (!WebHook.isValidUrl(newUrl)) {

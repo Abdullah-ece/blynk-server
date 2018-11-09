@@ -23,9 +23,6 @@ import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.Product;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
-import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.web.WebLineGraph;
 import cc.blynk.server.core.model.widgets.web.WebSlider;
 import cc.blynk.server.core.model.widgets.web.WebSource;
@@ -274,31 +271,6 @@ public final class TestUtil {
 
         String userProfileString = readTestUserProfile(jsonProfile);
         Profile profile = parseProfile(userProfileString);
-
-        int expectedSyncCommandsCount = 0;
-        for (Widget widget : profile.dashBoards[0].widgets) {
-            if (widget instanceof OnePinWidget) {
-                if (((OnePinWidget) widget).makeHardwareBody() != null) {
-                    expectedSyncCommandsCount++;
-                }
-            } else if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.dataStreams != null) {
-                    if (multiPinWidget.isSplitMode()) {
-                        for (DataStream dataStream : multiPinWidget.dataStreams) {
-                            if (dataStream.notEmptyAndIsValid()) {
-                                expectedSyncCommandsCount++;
-                            }
-                        }
-                    } else {
-                        if (multiPinWidget.dataStreams[0].notEmptyAndIsValid()) {
-                            expectedSyncCommandsCount++;
-                        }
-                    }
-                }
-            }
-        }
-
         int dashId = profile.dashBoards[0].id;
 
         appClient.register(user, pass, AppNameUtil.BLYNK);
@@ -313,7 +285,7 @@ public final class TestUtil {
         appClient.activate(dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length)).channelRead(any(), objectArgumentCaptor.capture());
 
         Device device = new Device();
         device.name = "Default Device";
@@ -321,14 +293,14 @@ public final class TestUtil {
                 new TextMetaField(1, TextMetaField.DEVICE_OWNER, new int[] {0}, true, true, false, null, user)
         };
         appClient.createDevice(dashId, device);
-        Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device createdDevice = appClient.parseDevice(5 + profile.dashBoards.length);
 
         TextMetaField textMetaField = (TextMetaField) createdDevice.metaFields[1];
         appClient.updateDeviceMetafield(createdDevice.id, createTextMeta(textMetaField.id, textMetaField.name, user));
         //appClient.verifyResult(ok(6 + profile.dashBoards.length + expectedSyncCommandsCount));
 
         appClient.getDevices(dashId);
-        Device[] devices = appClient.parseDevices(7 + profile.dashBoards.length + expectedSyncCommandsCount);
+        Device[] devices = appClient.parseDevices(7 + profile.dashBoards.length );
         Device latestOne = devices[devices.length - 1];
         String token = latestOne.token;
 

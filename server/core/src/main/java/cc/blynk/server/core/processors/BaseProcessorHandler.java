@@ -1,8 +1,10 @@
 package cc.blynk.server.core.processors;
 
+import cc.blynk.server.core.dao.DeviceDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import org.apache.logging.log4j.LogManager;
@@ -21,28 +23,34 @@ public abstract class BaseProcessorHandler {
 
     private final EventorProcessor eventorProcessor;
     private final WebhookProcessor webhookProcessor;
+    private final DeviceDao deviceDao;
 
-    protected BaseProcessorHandler(EventorProcessor eventorProcessor, WebhookProcessor webhookProcessor) {
+    protected BaseProcessorHandler(EventorProcessor eventorProcessor,
+                                   WebhookProcessor webhookProcessor, DeviceDao deviceDao) {
         this.eventorProcessor = eventorProcessor;
         this.webhookProcessor = webhookProcessor;
+        this.deviceDao = deviceDao;
     }
 
     protected void processEventorAndWebhook(User user, DashBoard dash, int deviceId, Session session, short pin,
                                             PinType pinType, String value, long now) {
-        try {
-            eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
-            webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
-        } catch (QuotaLimitException qle) {
-            log.debug("User {} reached notification limit for eventor/webhook.", user.name);
-        } catch (IllegalArgumentException iae) {
-            String errorMessage = iae.getMessage();
-            if (errorMessage != null && errorMessage.contains("missing host")) {
-                log.debug("Error processing webhook for {}. Reason : {}", user.email, errorMessage);
-            } else {
-                log.error("Error processing eventor/webhook.", iae);
+        Device device = deviceDao.getById(deviceId);
+        if (device != null) {
+            try {
+                eventorProcessor.process(user, session, dash, device, pin, pinType, value);
+                webhookProcessor.process(session, dash, device.id, pin, pinType, value, now);
+            } catch (QuotaLimitException qle) {
+                log.debug("User {} reached notification limit for eventor/webhook.", user.name);
+            } catch (IllegalArgumentException iae) {
+                String errorMessage = iae.getMessage();
+                if (errorMessage != null && errorMessage.contains("missing host")) {
+                    log.debug("Error processing webhook for {}. Reason : {}", user.email, errorMessage);
+                } else {
+                    log.error("Error processing eventor/webhook.", iae);
+                }
+            } catch (Exception e) {
+                log.error("Error processing eventor/webhook.", e);
             }
-        } catch (Exception e) {
-            log.error("Error processing eventor/webhook.", e);
         }
     }
 

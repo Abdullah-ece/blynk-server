@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -39,10 +38,6 @@ public class WebHook extends OnePinWidget {
 
     @Override
     public void sendAppSync(Channel appChannel, int targetId) {
-    }
-
-    @Override
-    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override

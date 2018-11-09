@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.storage.value;
 
-import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import io.netty.channel.Channel;
 
 import java.util.Collection;
@@ -17,6 +17,6 @@ public abstract class PinStorageValue {
 
     public abstract Collection<String> values();
 
-    public abstract void sendAppSync(Channel appChannel, DashPinStorageKey key);
+    public abstract void sendAppSync(Channel appChannel, int deviceId, DeviceStorageKey key);
 
 }

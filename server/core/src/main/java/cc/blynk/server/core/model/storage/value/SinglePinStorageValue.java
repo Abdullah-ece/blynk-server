@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.storage.value;
 
-import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.netty.channel.Channel;
@@ -43,10 +43,10 @@ public class SinglePinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, DashPinStorageKey key) {
+    public void sendAppSync(Channel appChannel, int deviceId, DeviceStorageKey key) {
         if (value != null) {
             String body = key.makeHardwareBody(value);
-            String finalBody = prependDeviceId(key.deviceId, body);
+            String finalBody = prependDeviceId(deviceId, body);
             //special case for setProperty
             short cmdType = key.getCmdType();
             StringMessage message = makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, finalBody);

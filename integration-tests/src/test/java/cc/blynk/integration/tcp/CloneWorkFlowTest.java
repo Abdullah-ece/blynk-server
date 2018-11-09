@@ -63,7 +63,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals("My Dashboard", dashBoard.name);
         Device device = new Device(); //dashBoard.devices[0];
         assertEquals(0, device.connectTime);
-        assertEquals(0, device.dataReceivedAt);
+        assertEquals(0, device.pinStorage.dataReceivedAt);
         assertEquals(0, device.disconnectTime);
         assertEquals(0, device.firstConnectTime);
         assertNull(device.deviceOtaInfo);
@@ -91,7 +91,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals(-1, dashBoard.parentId);
         assertEquals(2, dashBoard.id);
         assertEquals(0, device.connectTime);
-        assertEquals(0, device.dataReceivedAt);
+        assertEquals(0, device.pinStorage.dataReceivedAt);
         assertEquals(0, device.disconnectTime);
         assertEquals(0, device.firstConnectTime);
         assertNull(device.deviceOtaInfo);

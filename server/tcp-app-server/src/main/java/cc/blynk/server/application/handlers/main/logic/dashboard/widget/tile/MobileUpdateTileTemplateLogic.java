@@ -63,8 +63,7 @@ public final class MobileUpdateTileTemplateLogic {
 
         log.debug("Updating tile template {}.", tileTemplateString);
         deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
-
-        user.profile.cleanPinStorage(holder.deviceDao, dash, deviceTiles, false);
+        dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -1,16 +1,23 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.ota.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.ota.OTAStatus;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
+import cc.blynk.server.core.model.storage.key.DevicePropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DeviceStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.web.product.MetaField;
 import cc.blynk.server.core.model.web.product.WebDashboard;
 import cc.blynk.server.core.model.web.product.metafields.TextMetaField;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.netty.channel.Channel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,9 +67,6 @@ public class Device implements Target {
     public volatile long firstConnectTime;
 
     @JsonView(View.Private.class)
-    public volatile long dataReceivedAt;
-
-    @JsonView(View.Private.class)
     public volatile String lastLoggedIP;
 
     @JsonView(View.Private.class)
@@ -85,6 +89,9 @@ public class Device implements Target {
 
     @JsonView(View.Web.class)
     public volatile WebDashboard webDashboard;
+
+    @JsonView(View.Private.class)
+    public final PinStorage pinStorage = new PinStorage();
 
     public boolean isNotValid() {
         return name == null || name.isEmpty() || name.trim().isEmpty() || name.length() > 50;
@@ -139,10 +146,6 @@ public class Device implements Target {
             }
         }
         return -1;
-    }
-
-    private int findMetaFieldIndexOrThrow(int id) {
-        return findMetaFieldIndexOrThrow(this.metaFields, id);
     }
 
     private static int findMetaFieldIndexOrThrow(MetaField[] metaFields, int id) {
@@ -250,7 +253,6 @@ public class Device implements Target {
 
     public void updateWebDashboard(short pin, PinType type, String value, long now) {
         webDashboard.update(id, pin, type, value);
-        this.dataReceivedAt = now;
     }
 
     public void disconnected() {
@@ -268,17 +270,16 @@ public class Device implements Target {
         this.disconnectTime = 0;
         this.connectTime = 0;
         this.firstConnectTime = 0;
-        this.dataReceivedAt = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
         this.deviceOtaInfo = null;
         this.webDashboard = new WebDashboard();
-        this.dataReceivedAt = 0;
         this.metadataUpdatedAt = 0;
         this.metadataUpdatedBy = null;
         this.updatedAt = 0;
         this.deviceOtaInfo = null;
+        this.pinStorage.erase();
     }
 
     public String getNameOrDefault() {
@@ -361,6 +362,43 @@ public class Device implements Target {
             }
         }
         return false;
+    }
+
+    public void removePinValue(PinType pinType, short pin, boolean removeProperties) {
+        pinStorage.removePinValue(pinType, pin, removeProperties);
+    }
+
+    //property users always virtual pins
+    public void updateValue(DashBoard dash, short pin, WidgetProperty widgetProperty, String value) {
+        pinStorage.updateValue(id, dash, new DevicePropertyStorageKey(PinType.VIRTUAL, pin, widgetProperty), value);
+    }
+
+    public void updateValue(DashBoard dash, short pin, PinType pinType, String value) {
+        pinStorage.updateValue(id, dash, new DeviceStorageKey(pin, pinType), value);
+    }
+
+    public void updateValue(DashBoard dash, DeviceStorageKey key, String value) {
+        pinStorage.updateValue(id, dash, key, value, System.currentTimeMillis());
+    }
+
+    public void updateValue(DashBoard dash, DataStream dataStream, String value, long now) {
+        pinStorage.updateValue(id, dash, new DeviceStorageKey(dataStream.pin, dataStream.pinType), value, now);
+    }
+
+    public void updateValue(DashBoard dash, short pin, PinType pinType,  String value, long now) {
+        pinStorage.updateValue(id, dash, pin, pinType, value, now);
+    }
+
+    public void updateValue(DashBoard dash, DeviceStorageKey key, String value, long now) {
+        pinStorage.updateValue(id, dash, key, value, now);
+    }
+
+    public void sendPinStorageSyncs(Channel appChannel) {
+        pinStorage.sendPinStorageSyncs(appChannel, this.id);
+    }
+
+    public PinStorageValue getValue(short pin, PinType pinType) {
+        return pinStorage.get(pin, pinType);
     }
 
     @Override

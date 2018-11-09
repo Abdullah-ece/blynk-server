@@ -27,8 +27,6 @@ public class DeviceStatusDTO {
 
     public final long connectTime;
 
-    public final long dataReceivedAt;
-
     public final HardwareInfo hardwareInfo;
 
     public final String iconName;
@@ -45,7 +43,6 @@ public class DeviceStatusDTO {
         this.status = device.status;
         this.disconnectTime = device.disconnectTime;
         this.connectTime = device.connectTime;
-        this.dataReceivedAt = device.dataReceivedAt;
         this.hardwareInfo = device.hardwareInfo;
         this.iconName = device.iconName;
         this.isUserIcon = device.isUserIcon;

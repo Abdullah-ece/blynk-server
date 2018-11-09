@@ -4,9 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.NumberUtil;
@@ -72,14 +70,7 @@ public final class SetWidgetPropertyLogic {
         int deviceId = state.device.id;
         short pin = NumberUtil.parsePin(bodyParts[0]);
 
-        Widget widget = dash.updateProperty(deviceId, pin, widgetProperty, propertyValue);
-        //this is possible case for device selector
-        if (widget == null) {
-            state.user.profile.putPinPropertyStorageValue(dash,
-                    deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
-        }
-
-        dash.updatedAt = System.currentTimeMillis();
+        state.device.updateValue(dash, pin, widgetProperty, propertyValue);
 
         Session session = sessionDao.userSession.get(state.user.email);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, deviceId, message.body);

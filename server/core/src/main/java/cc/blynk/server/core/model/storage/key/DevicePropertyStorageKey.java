@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.utils.StringUtils;
 
-import java.util.Objects;
-
 import static cc.blynk.server.core.model.DataStream.makePropertyHardwareBody;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 
@@ -14,17 +12,17 @@ import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.06.17.
  */
-public final class DashPinPropertyStorageKey extends DashPinStorageKey {
+public final class DevicePropertyStorageKey extends DeviceStorageKey {
 
     private final WidgetProperty property;
 
-    private DashPinPropertyStorageKey(int dashId, int deviceId, char pinTypeChar, short pin, WidgetProperty property) {
-        super(dashId, deviceId, pinTypeChar, pin);
+    private DevicePropertyStorageKey(char pinTypeChar, short pin, WidgetProperty property) {
+        super(pin, pinTypeChar);
         this.property = property;
     }
 
-    public DashPinPropertyStorageKey(int dashId, int deviceId, PinType pinType, short pin, WidgetProperty property) {
-        super(dashId, deviceId, pinType, pin);
+    public DevicePropertyStorageKey(PinType pinType, short pin, WidgetProperty property) {
+        super(pin, pinType);
         this.property = property;
     }
 
@@ -49,13 +47,17 @@ public final class DashPinPropertyStorageKey extends DashPinStorageKey {
         if (!super.equals(o)) {
             return false;
         }
-        DashPinPropertyStorageKey that = (DashPinPropertyStorageKey) o;
+
+        DevicePropertyStorageKey that = (DevicePropertyStorageKey) o;
+
         return property == that.property;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), property);
+        int result = super.hashCode();
+        result = 31 * result + (property != null ? property.hashCode() : 0);
+        return result;
     }
 
     @Override

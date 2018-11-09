@@ -40,7 +40,8 @@ public class HardwareLogic extends BaseProcessorHandler {
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
                 holder.stats,
-                email));
+                email),
+                holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDiskDao;
     }
@@ -80,9 +81,8 @@ public class HardwareLogic extends BaseProcessorHandler {
             int deviceId = device.id;
 
             reportingDao.process(user, dash, device, pin, pinType, value, now);
-            user.profile.update(dash, deviceId, pin, pinType, value, now);
+            device.updateValue(dash, pin, pinType, value, now);
             device.updateWebDashboard(pin, pinType, value, now);
-            device.dataReceivedAt = now;
 
             Session session = sessionDao.userSession.get(email);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);

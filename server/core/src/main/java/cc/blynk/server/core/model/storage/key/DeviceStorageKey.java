@@ -6,45 +6,35 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.Objects;
-
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 01.11.18.
  */
-public class DashPinStorageKey {
-
-    public final int dashId;
-
-    public final int deviceId;
+public class DeviceStorageKey {
 
     public final short pin;
 
     public final char pinTypeChar;
 
-    public DashPinStorageKey(int dashId, int deviceId, char pintTypeChar, short pin) {
-        this.dashId = dashId;
-        this.deviceId = deviceId;
-        this.pinTypeChar = pintTypeChar;
+    public DeviceStorageKey(short pin, char pintTypeChar) {
         this.pin = pin;
+        this.pinTypeChar = pintTypeChar;
     }
 
-    public DashPinStorageKey(int dashId, int deviceId, PinType pinType, short pin) {
-        this(dashId, deviceId, pinType.pintTypeChar, pin);
+    public DeviceStorageKey(short pin, PinType pinType) {
+        this(pin, pinType.pintTypeChar);
     }
 
-    public boolean isSame(int dashId, OnePinWidget onePinWidget) {
-        return this.dashId == dashId
-                && this.pin == onePinWidget.pin
+    public boolean isSame(OnePinWidget onePinWidget) {
+        return this.pin == onePinWidget.pin
                 && this.pinTypeChar == onePinWidget.pinType.pintTypeChar;
     }
 
-    public boolean isSame(int dashId, MultiPinWidget multiPinWidget) {
-        if (multiPinWidget.dataStreams == null || this.dashId != dashId) {
+    public boolean isSame(MultiPinWidget multiPinWidget) {
+        if (multiPinWidget.dataStreams == null) {
             return false;
         }
         for (DataStream dataStream : multiPinWidget.dataStreams) {
@@ -71,21 +61,25 @@ public class DashPinStorageKey {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DashPinStorageKey that = (DashPinStorageKey) o;
-        return dashId == that.dashId
-                && deviceId == that.deviceId
-                && pin == that.pin
-                && pinTypeChar == that.pinTypeChar;
+
+        DeviceStorageKey that = (DeviceStorageKey) o;
+
+        if (pin != that.pin) {
+            return false;
+        }
+        return pinTypeChar == that.pinTypeChar;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dashId, deviceId, pin, pinTypeChar);
+        int result = (int) pin;
+        result = 31 * result + (int) pinTypeChar;
+        return result;
     }
 
     @Override
     @JsonValue
     public String toString() {
-        return "" + dashId + DEVICE_SEPARATOR + deviceId + DEVICE_SEPARATOR + pinTypeChar + pin;
+        return "" + pinTypeChar + pin;
     }
 }

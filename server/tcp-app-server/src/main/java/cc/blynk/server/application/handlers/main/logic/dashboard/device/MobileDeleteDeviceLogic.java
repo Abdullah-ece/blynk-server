@@ -45,7 +45,6 @@ public final class MobileDeleteDeviceLogic {
         log.debug("Deleting device with id {}.", deviceId);
 
         dash.eraseWidgetValuesForDevice(deviceId);
-        user.profile.cleanPinStorageForDevice(deviceId);
         user.profile.deleteDeviceFromTags(deviceId);
         holder.tokenManager.deleteDevice(device);
         holder.deviceDao.delete(device.id);

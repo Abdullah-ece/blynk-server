@@ -6,12 +6,10 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Iterator;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDeviceId;
@@ -22,7 +20,7 @@ import static cc.blynk.utils.StringUtils.prependDeviceId;
  * Created on 02.12.15.
  */
 //todo all this should be replaced with 1 Pin field.
-public abstract class OnePinWidget extends Widget implements MobileSyncWidget, HardwareSyncWidget {
+public abstract class OnePinWidget extends Widget implements MobileSyncWidget {
 
     public int deviceId;
 
@@ -102,16 +100,6 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
-        if (this.deviceId == deviceId) {
-            String body = makeHardwareBody();
-            if (body != null) {
-                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
-            }
-        }
     }
 
     @Override

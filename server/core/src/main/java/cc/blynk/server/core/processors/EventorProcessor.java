@@ -2,10 +2,11 @@ package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -90,11 +91,11 @@ public class EventorProcessor {
         }
     }
 
-    public void process(User user, Session session, DashBoard dash, int deviceId, short pin,
-                        PinType type, String triggerValue, long now) {
+    public void process(User user, Session session, DashBoard dash, Device device, short pin,
+                        PinType type, String triggerValue) {
         Eventor eventor = dash.getEventorWidget();
         if (eventor == null || eventor.rules == null
-                || eventor.deviceId != deviceId || !dash.isActive) {
+                || eventor.deviceId != device.id || !dash.isActive) {
             return;
         }
 
@@ -107,9 +108,9 @@ public class EventorProcessor {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
-                                    execute(session, user.profile, dash, deviceId, (SetPinAction) action, now);
+                                    execute(session, dash, device, (SetPinAction) action);
                                 } else if (action instanceof SetPropertyPinAction) {
-                                    execute(session, user.profile, dash, deviceId, (SetPropertyPinAction) action, now);
+                                    execute(session, dash, device, (SetPropertyPinAction) action);
                                 } else if (action instanceof NotificationAction) {
                                     execute(user, dash, triggerValue, (NotificationAction) action);
                                 }
@@ -188,26 +189,26 @@ public class EventorProcessor {
         );
     }
 
-    private void execute(Session session, Profile profile, DashBoard dash,
-                         int deviceId, SetPinAction action, long now) {
+    private void execute(Session session, DashBoard dash,
+                         Device device, SetPinAction action) {
         String body = action.makeHardwareBody();
+        int deviceId = device.id;
         session.sendMessageToHardware(HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, deviceId, body);
-
-        profile.update(dash, deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
+        device.updateValue(dash, action.dataStream.pin, action.dataStream.pinType, action.value);
     }
 
-    private void execute(Session session, Profile profile, DashBoard dash,
-                         int deviceId, SetPropertyPinAction action, long now) {
+    private void execute(Session session, DashBoard dash,
+                         Device device, SetPropertyPinAction action) {
         String body = action.makeHardwareBody();
-        session.sendToApps(SET_WIDGET_PROPERTY, 888, deviceId, body);
+        session.sendToApps(SET_WIDGET_PROPERTY, 888, device.id, body);
 
-        Widget widget = dash.updateProperty(deviceId, action.dataStream.pin, action.property, action.value);
+        Widget widget = dash.updateProperty(device.id, action.dataStream.pin, action.property, action.value);
         //this is possible case for device selector
         if (widget == null) {
-            profile.putPinPropertyStorageValue(dash, deviceId,
-                    PinType.VIRTUAL, action.dataStream.pin, action.property, action.value);
+            short pin = action.dataStream.pin;
+            WidgetProperty property = action.property;
+            device.updateValue(dash, pin, property, action.value);
         }
-        dash.updatedAt = now;
     }
 }

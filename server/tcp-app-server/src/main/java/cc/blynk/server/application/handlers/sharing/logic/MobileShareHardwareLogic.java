@@ -8,6 +8,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
@@ -50,7 +51,8 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
                 holder.stats,
-                email));
+                email),
+                holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.deviceDao = holder.deviceDao;
     }
@@ -114,7 +116,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
             case 'u' :
                 //splitting "vu 200000 1"
                 String[] splitBody = split3(split[1]);
-                MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, user.profile, dash, message, splitBody);
+                MobileHardwareLogic.processDeviceSelectorCommand(ctx, deviceDao, session, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -131,12 +133,10 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
-                    user.profile.update(dash, deviceId, pin, pinType, value, now);
-                }
-
-                //additional state for tag widget itself
-                if (target.isTag()) {
-                    user.profile.update(dash, targetId, pin, pinType, value, now);
+                    Device device = deviceDao.getById(deviceId);
+                    if (device != null) {
+                        device.updateValue(dash, pin, pinType, value, now);
+                    }
                 }
 
                 String sharedToken = state.token;

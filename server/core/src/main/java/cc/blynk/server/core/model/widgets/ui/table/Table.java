@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Iterator;
 
@@ -33,10 +32,6 @@ public class Table extends OnePinWidget {
     public boolean isReoderingAllowed;
 
     public boolean isClickableRows;
-
-    @Override
-    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
-    }
 
     @Override
     public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {

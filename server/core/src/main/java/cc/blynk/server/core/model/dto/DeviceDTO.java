@@ -50,8 +50,6 @@ public class DeviceDTO {
 
     public final String lastLoggedIP;
 
-    public final long dataReceivedAt;
-
     public final long metadataUpdatedAt;
 
     public final String metadataUpdatedBy;
@@ -114,7 +112,6 @@ public class DeviceDTO {
         this.activatedBy = activatedBy;
         this.disconnectTime = disconnectTime;
         this.lastLoggedIP = lastLoggedIP;
-        this.dataReceivedAt = dataReceivedAt;
         this.iconName = iconName;
         this.metadataUpdatedAt = metadataUpdatedAt;
         this.metadataUpdatedBy = metadataUpdatedBy;
@@ -140,7 +137,6 @@ public class DeviceDTO {
         this.createdAt = device.createdAt;
         this.disconnectTime = device.disconnectTime;
         this.lastLoggedIP = device.lastLoggedIP;
-        this.dataReceivedAt = device.dataReceivedAt;
         this.iconName = device.iconName;
         this.metaFields = device.metaFields;
         this.webDashboard = device.webDashboard;

@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -96,7 +95,9 @@ public final class MobileActivateDashboardLogic {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET);
+            for (Device device : devices) {
+                device.sendPinStorageSyncs(appChannel);
+            }
             appChannel.flush();
         }
     }

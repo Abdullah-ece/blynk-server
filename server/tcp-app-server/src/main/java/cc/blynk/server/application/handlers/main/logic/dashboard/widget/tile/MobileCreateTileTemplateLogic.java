@@ -74,7 +74,7 @@ public final class MobileCreateTileTemplateLogic {
         deviceTiles.templates = ArrayUtil.add(deviceTiles.templates, newTileTemplate, TileTemplate.class);
         deviceTiles.recreateTilesIfNecessary(newTileTemplate, null);
 
-        user.profile.cleanPinStorage(holder.deviceDao, dash, deviceTiles, true);
+        dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

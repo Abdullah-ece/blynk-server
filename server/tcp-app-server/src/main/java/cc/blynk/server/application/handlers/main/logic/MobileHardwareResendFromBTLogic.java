@@ -42,7 +42,8 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
                 holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
                 holder.stats,
-                email));
+                email),
+                holder.deviceDao);
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDiskDao;
         this.deviceDao = holder.deviceDao;
@@ -86,7 +87,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
 
             reportingDao.process(state.user, dash, device, pin, pinType, value, now);
-            user.profile.update(dash, deviceId, pin, pinType, value, now);
+            device.updateValue(dash, pin, pinType, value, now);
 
             Session session = sessionDao.userSession.get(user.email);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);

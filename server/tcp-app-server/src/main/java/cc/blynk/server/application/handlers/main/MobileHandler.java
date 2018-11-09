@@ -296,7 +296,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
 
             case APP_SYNC :
-                MobileSyncLogic.messageReceived(ctx, state, msg);
+                MobileSyncLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
             case CREATE_APP :
