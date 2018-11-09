@@ -54,8 +54,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             var session = sessionDao.userSession.get(state.user.email);
             if (session != null) {
                 var device = state.device;
-                log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
-                        state.user.email, state.dash.id, device.id, device.token);
+                log.trace("Hardware channel disconnect for deviceId {}, token {}.", device.id, device.token);
                 sentOfflineMessage(ctx, session, state.dash, device);
             }
         }

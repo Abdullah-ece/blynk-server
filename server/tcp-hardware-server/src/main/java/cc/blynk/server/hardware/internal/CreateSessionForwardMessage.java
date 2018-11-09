@@ -11,6 +11,8 @@ import cc.blynk.server.core.model.device.Device;
  */
 public class CreateSessionForwardMessage {
 
+    public final int orgId;
+
     public final User user;
 
     public final DashBoard dash;
@@ -19,7 +21,8 @@ public class CreateSessionForwardMessage {
 
     public final int msgId;
 
-    public CreateSessionForwardMessage(User user, DashBoard dash, Device device, int msgId) {
+    public CreateSessionForwardMessage(int orgId, User user, DashBoard dash, Device device, int msgId) {
+        this.orgId = orgId;
         this.user = user;
         this.dash = dash;
         this.device = device;

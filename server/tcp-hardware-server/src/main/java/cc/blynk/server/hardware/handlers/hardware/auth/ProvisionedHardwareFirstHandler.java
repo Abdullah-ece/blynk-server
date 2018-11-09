@@ -113,7 +113,8 @@ public class ProvisionedHardwareFirstHandler extends SimpleChannelInboundHandler
 
                     ChannelPipeline pipeline = ctx.pipeline();
                     pipeline.remove(this)
-                            .fireUserEventTriggered(new CreateSessionForwardMessage(user, dash, device, message.id));
+                            .fireUserEventTriggered(
+                                    new CreateSessionForwardMessage(orgId, user, dash, device, message.id));
                     break;
             }
         } else {

@@ -134,7 +134,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
-        createSessionAndReregister(ctx, user, dash, device, message.id);
+        createSessionAndReregister(ctx, orgId, user, dash, device, message.id);
     }
 
     @Override
@@ -143,6 +143,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             CreateSessionForwardMessage bridgeForwardMessage = (CreateSessionForwardMessage) evt;
             log.debug("Triggered user event for provisioned device (id={}).", bridgeForwardMessage.device.id);
             createSessionAndReregister(ctx,
+                    bridgeForwardMessage.orgId,
                     bridgeForwardMessage.user,
                     bridgeForwardMessage.dash,
                     bridgeForwardMessage.device,
@@ -152,9 +153,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
     }
 
-    private void createSessionAndReregister(ChannelHandlerContext ctx,
+    private void createSessionAndReregister(ChannelHandlerContext ctx, int orgId,
                                             User user, DashBoard dash, Device device, int msgId) {
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, dash, device);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(orgId, user, dash, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
